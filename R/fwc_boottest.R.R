@@ -67,11 +67,12 @@ boottest <- function(object,
   
   R0 <- as.numeric(param == names(object$coefficients))
   
-  Y <- model.frame(object)[, 1]
+  Y <- as.vector(model.frame(object)[, 1])
   X <- model.matrix(object)
   Xr <- model.matrix(object)[, which(names(object$coefficients) != param)]
   
-  N <- ncol(Y)
+  N <- length(Y)
+  k <- ncol(X)
   
   clustid <- 1:nrow(data)
   #clustid <- rep(1:20, 100)
@@ -89,17 +90,17 @@ boottest <- function(object,
   v[,1] <- 1
   
   XinvXXr <- X %*% (invXX %*% R0) # N x 1
-  SXinvXXRu_prep <- data.table(prod = XinvXXr * matrix(rep(u_hat, 1), 2000, 1) , clustid = clustid) 
+  SXinvXXRu_prep <- data.table(prod = XinvXXr * matrix(rep(u_hat, 1), N, 1) , clustid = clustid) 
   SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid"][, clustid := NULL])
   
   if(ncol(SXinvXXRu) == 1){
     SXinvXXRu <- as.vector(SXinvXXRu)
   }
   
-  SXinvXXRX_prep <- data.table(prod = matrix(rep(XinvXXr, 4), 2000, 4) * X, clustid = clustid)
+  SXinvXXRX_prep <- data.table(prod = matrix(rep(XinvXXr, k), N, k) * X, clustid = clustid)
   SXinvXXRX <- as.matrix(SXinvXXRX_prep[, lapply(.SD, sum), by = "clustid"][, clustid := NULL])
   
-  SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, 4), 2000, 4), clustid = clustid) 
+  SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
   SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid"][, clustid := NULL])
   
   numer <- SXinvXXRu %*% v
