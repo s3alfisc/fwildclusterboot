@@ -8,47 +8,54 @@
 # - also note: the larger the numbers of clusters, the slower the 
 #   function is. Real speed gains will be achieved if the number of 
 #   clusters is small
+# - there is still smth wrong with the p-value for the intercept in 
+#   the second example
+# - also effectively I broke the first example
 # ==================================================================== #
 
 
-library(data.table)
-library(estimatr)
-library(magrittr)
-library(mvtnorm)
+# library(data.table)
+# library(estimatr)
+# library(magrittr)
+# library(mvtnorm)
+# 
+# N <- 1000
+# 
+# x1 <- rnorm(N)
+# x2 <- rnorm(N)
+# x3 <- rnorm(N)
+# x4 <- rnorm(N)
+# error <- rnorm(N)
+# 
+# y <- 1 + 0.05*x1 - 0.02*x2 + 0.5*x3 + x4 + error
+# 
+# data <- data.table(y = y, 
+#                    x1 = x1, 
+#                    x2 = x2, 
+#                    x3 = x3, 
+#                    x4 = x4, 
+#                    cluster = 1:length(y))
+# 
+# # just heteroskedasticity robust
+# lm_fit <- lm_robust(y ~ x1 + x2 + x3 + x4 , data = data)
+# lm_fit %>% 
+#   summary()
+# 
+# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "(Intercept)")
+# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x1")
+# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2")
+# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x3")
+# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x4")
+# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x5male")
 
-N <- 1000
-
-x1 <- rnorm(N)
-x2 <- rnorm(N)
-x3 <- rnorm(N)
-x4 <- rnorm(N)
-error <- rnorm(N)
-
-y <- 1 + 0.05*x1 - 0.02*x2 + 0.5*x3 + x4 + error
-
-data <- data.table(y = y, 
-                   x1 = x1, 
-                   x2 = x2, 
-                   x3 = x3, 
-                   x4 = x4, 
-                   cluster = 1:length(y))
-
-
-lm_fit <- lm_robust(y ~ x1 + x2 + x3 + x4, data = data, clusters = 1:nrow(data))
-lm_fit %>% 
-  summary()
-
-boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "(Intercept)")
-boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x1")
-boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2")
-boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x3")
 
 
 
 # Now add an example with actual clustered errors
 
+seed = sample(1:1000, 1)
 
-gen_cluster <- function(param = c(.1, .01), n = 10000, n_cluster = 100, rho = .5, seed = 1) {
+gen_cluster <- function(param = c(.1, .01), n = 10000, n_cluster = 50, rho = .8, seed = seed) {
   # Function to generate clustered data
   # Required package: mvtnorm
   
@@ -69,7 +76,7 @@ gen_cluster <- function(param = c(.1, .01), n = 10000, n_cluster = 100, rho = .5
   error <- values_i[ , 2] + rep(values_cl[ , 2], each = n / n_cluster)
   
   # data generating process
-  y <- param[1] + param[2]*x + error
+  y <- 1 + param[2]*x + error
   
   df <- data.frame(x, y, cluster = cluster_name)
   return(df)
@@ -81,8 +88,8 @@ lm_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
 lm_fit %>% 
   summary()
 
-boottest(lm_fit, clustid = data$cluster, B = 1000, seed = 1, param = "(Intercept)")
-boottest(lm_fit, clustid = data$cluster, B = 1000, seed = 1, param = "x")
+boottest(lm_fit, clustid = data$cluster, B = 1000, seed = seed, param = "(Intercept)")
+boottest(lm_fit, clustid = data$cluster, B = 1000, seed = seed, param = "x")
 
 
 
