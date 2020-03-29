@@ -56,11 +56,11 @@ boottest <- function(object,
   clustid[i] <- lapply(clustid[i], as.character)
   
   # Make all combinations of clustid dimensions
-  if(clustid_dims > 1) {
-    for(i in acc) {
-      clustid <- cbind(clustid, Reduce(paste0, clustid[,i]))
-    }
-  }
+  # if(clustid_dims > 1) {
+  #   for(i in acc) {
+  #     clustid <- cbind(clustid, Reduce(paste0, clustid[,i]))
+  #   }
+  # }
 
   
   # start estimation here: 
