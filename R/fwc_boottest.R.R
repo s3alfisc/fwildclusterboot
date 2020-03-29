@@ -62,15 +62,7 @@ boottest <- function(object,
     }
   }
   
-  # save number of observations, number of individual clustids, number of paramaters K
-  df <- data.frame(M = integer(tcc),
-                   N = integer(tcc),
-                   K = integer(tcc))
-  for(i in 1:tcc) {
-    df[i, "M"] <- length(unique(clustid[,i]))
-    df[i, "N"] <- length(clustid[,i])
-    df[i, "K"] <- object$rank
-  }
+
   
   N <- ncol(Y)
   
