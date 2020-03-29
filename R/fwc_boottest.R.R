@@ -67,16 +67,22 @@ boottest <- function(object,
   
   R0 <- as.numeric(param == names(object$coefficients))
   
-  Y <- as.vector(model.frame(object)[, 1])
-  X <- model.matrix(object)
-  Xr <- model.matrix(object)[, which(names(object$coefficients) != param)]
-  
+  Y <- as.matrix(model.frame(object)[, 1])
+  X <- cbind(1, model.frame(object)[, 2:length(object$coefficients)])
   N <- length(Y)
   k <- ncol(X)
   
-  clustid <- 1:nrow(data)
+  Xr <- model.frame(object)[, 2:length(object$coefficients)]
+  if(is.vector(Xr)){
+    Xr <- matrix(rep(1, N), N, 1)
+  } else{
+    Xr <- cbind(1, Xr[, which(names(object$coefficients) != param)])
+  }
+
+  
+  #clustid <- as.vector(clustid)
   #clustid <- rep(1:20, 100)
-  N_G <- length(unique(clustid)) #number of clusters
+  N_G <- nrow(unique(clustid)) #number of clusters
   if(N_G > 2000){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
@@ -91,17 +97,17 @@ boottest <- function(object,
   
   XinvXXr <- X %*% (invXX %*% R0) # N x 1
   SXinvXXRu_prep <- data.table(prod = XinvXXr * matrix(rep(u_hat, 1), N, 1) , clustid = clustid) 
-  SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid"][, clustid := NULL])
+  SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
   
   if(ncol(SXinvXXRu) == 1){
     SXinvXXRu <- as.vector(SXinvXXRu)
   }
   
   SXinvXXRX_prep <- data.table(prod = matrix(rep(XinvXXr, k), N, k) * X, clustid = clustid)
-  SXinvXXRX <- as.matrix(SXinvXXRX_prep[, lapply(.SD, sum), by = "clustid"][, clustid := NULL])
+  SXinvXXRX <- as.matrix(SXinvXXRX_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
   
   SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
-  SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid"][, clustid := NULL])
+  SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
   
   numer <- SXinvXXRu %*% v
   J <- (diag(SXinvXXRu) - SXinvXXRX  %*% invXX %*% t(SXu)) %*% v  
