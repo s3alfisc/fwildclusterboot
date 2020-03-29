@@ -61,11 +61,7 @@ boottest <- function(object,
       clustid <- cbind(clustid, Reduce(paste0, clustid[,i]))
     }
   }
-  
 
-  
-  N <- ncol(Y)
-  
   
   # start estimation here: 
   
@@ -74,6 +70,8 @@ boottest <- function(object,
   Y <- model.frame(object)[, 1]
   X <- model.matrix(object)
   Xr <- model.matrix(object)[, which(names(object$coefficients) != param)]
+  
+  N <- ncol(Y)
   
   clustid <- 1:nrow(data)
   #clustid <- rep(1:20, 100)
