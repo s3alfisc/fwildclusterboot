@@ -20,7 +20,7 @@ boottest <- function(object,
   if(!is.null(seed)){
     set.seed(seed)
   } else if(is.null(seed)){
-    set.seed(1)
+    set.seed(2)
   }
   
   # retrieve clusters / multiple clusters
