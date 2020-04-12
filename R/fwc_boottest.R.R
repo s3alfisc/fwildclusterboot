@@ -17,6 +17,12 @@ boottest <- function(object,
                      debug = FALSE, 
                      seed = NULL) {
   
+  
+  if(class(object) != "lm"){
+    break("Model is not of class lm.")
+  }
+  
+  
   if(!is.null(seed)){
     set.seed(seed)
   } else if(is.null(seed)){
@@ -25,7 +31,7 @@ boottest <- function(object,
   
   # retrieve clusters / multiple clusters
   if(inherits(clustid, "formula")) {
-    clustid_tmp <- expand.model.frame(model, clustid, na.expand = FALSE)
+    clustid_tmp <- expand.model.frame(object, clustid, na.expand = FALSE)
     clustid <- model.frame(clustid, clustid_tmp, na.action = na.pass)
   } else {
     clustid <- as.data.frame(clustid, stringsAsFactors = FALSE)
@@ -48,7 +54,7 @@ boottest <- function(object,
     }
     clustid <- as.data.frame(clustid)  # silly error somewhere
   }
-  if(debug) print(class(clustid))
+  #if(debug) print(class(clustid))
   
   # Factors in our clustiding variables can potentially cause problems
   # Blunt fix is to force conversion to characters
@@ -66,18 +72,24 @@ boottest <- function(object,
   # start estimation here: 
   
   R0 <- as.numeric(param == names(object$coefficients))
+  groupvars <- names(coef(object))
+  depvar <- all.vars(as.formula(object$call))[1]
+  #measurevar <- "y"
+  #formula <- as.formula(paste(measurevar, paste(groupvars, collapse=" + "), sep=" ~ "))
   
-  Y <- as.matrix(model.frame(object)[, 1])
-  X <- cbind(1, model.frame(object)[, 2:length(object$coefficients)])
+  X <- model.matrix(as.formula(object$call), data = object$model)
+  
+  Y <- as.matrix(model.frame(object)[, depvar])
+  #X <- cbind(1, model.frame(object)[, 2:length(object$coefficients)])
   N <- length(Y)
   k <- ncol(X)
   
-  Xr <- model.frame(object)[, 2:length(object$coefficients)]
-  if(is.vector(Xr)){
-    Xr <- matrix(rep(1, N), N, 1)
-  } else{
-    Xr <- cbind(1, Xr[, which(names(object$coefficients) != param)])
-  }
+  Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
+  # if(is.vector(Xr)){
+  #   Xr <- matrix(rep(1, N), N, 1)
+  # } else{
+  #   Xr <- cbind(1, Xr[, which(names(object$coefficients) != param)])
+  # }
 
   
   #clustid <- as.vector(clustid)
