@@ -18,6 +18,8 @@ library(data.table)
 library(estimatr)
 library(magrittr)
 library(mvtnorm)
+library(multiwayvcov)
+library(lmtest)
 # 
 # N <- 1000
 # 
@@ -55,7 +57,7 @@ library(mvtnorm)
 
 seed = sample(1:1000, 1)
 
-gen_cluster <- function(param = c(-0.4, .05), n = 1000, n_cluster = 50, rho = .5) {
+gen_cluster <- function(param = c(-0.4, .05), n = 10000, n_cluster = 50, rho = .5) {
   # source: https://yukiyanai.github.io/teaching/rm1/contents/R/clustered-data-analysis.html
   # Function to generate clustered data
   # Required package: mvtnorm
@@ -96,17 +98,24 @@ lm_fit %>%
   summary()
 
 # standard bootstrap
-data <- as.data.frame(data)
-boot_fit <- cluster.boot(lm_fit, 
+B <- 1000
+
+# basic bootstrap, not parallel
+system.time(boot_fit <- multiwayvcov::cluster.boot(lm_fit, 
                           as.factor(data$cluster), 
                           R = B, 
                           boot_type = "residual", 
-                          wild_type = "rademacher")
+                          wild_type = "rademacher"))
 
-coeftest(lm_fit, boot_fit)
+lmtest::coeftest(lm_fit, boot_fit)
 summary(lm_robust_fit)
-boottest(lm_fit, clustid = data$cluster, B = 100000, seed = seed, param = "(Intercept)")
-boottest(lm_fit, clustid = data$cluster, B = 100000, seed = seed, param = "x")
+
+system.time(
+  boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
+)
+
+boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)")
+boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
 
 
 
