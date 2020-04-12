@@ -21,34 +21,34 @@ library(mvtnorm)
 library(multiwayvcov)
 library(lmtest)
 # 
-# N <- 1000
+N <- 1000
 # 
-# x1 <- rnorm(N)
-# x2 <- rnorm(N)
-# x3 <- rnorm(N)
-# x4 <- rnorm(N)
-# error <- rnorm(N)
+x1 <- rnorm(N)
+x2 <- rnorm(N)
+x3 <- rnorm(N)
+x4 <- rnorm(N)
+error <- rnorm(N)
 # 
 # y <- 1 + 0.05*x1 - 0.02*x2 + 0.5*x3 + x4 + error
 # 
-# data <- data.table(y = y, 
-#                    x1 = x1, 
-#                    x2 = x2, 
-#                    x3 = x3, 
-#                    x4 = x4, 
-#                    cluster = 1:length(y))
+data <- data.table(y = y, 
+                  x1 = x1, 
+                  x2 = x2, 
+                  x3 = x3, 
+                  x4 = x4, 
+                  cluster = 1:length(y))
 # 
 # # just heteroskedasticity robust
-# lm_fit <- lm_robust(y ~ x1 + x2 + x3 + x4 , data = data)
-# lm_fit %>% 
-#   summary()
+lm_fit <- lm(y ~ x1 + x2 + x3 + x4, data = data)
+lm_robust(y ~ x1 + x2 + x3 + x4 , data = data) %>% 
+ summary()
 # 
-# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "(Intercept)")
-# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x1")
-# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2")
-# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x3")
-# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x4")
-# boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x5male")
+boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "(Intercept)")
+boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x1")
+boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2")
+boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x3")
+boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x4")
+
 
 
 
@@ -57,7 +57,7 @@ library(lmtest)
 
 seed = sample(1:1000, 1)
 
-gen_cluster <- function(param = c(-0.4, .05), n = 10000, n_cluster = 50, rho = .5) {
+gen_cluster <- function(param = c(-0.1, .05), n = 10000, n_cluster = 50, rho = .5) {
   # source: https://yukiyanai.github.io/teaching/rm1/contents/R/clustered-data-analysis.html
   # Function to generate clustered data
   # Required package: mvtnorm
@@ -89,9 +89,6 @@ data <- gen_cluster()
 head(data)
 data[, mean(y)]
 
-lm_robust_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
-lm_robust_fit %>% 
-  summary()
 
 lm_fit <- lm(y ~ x, data = data)
 lm_fit %>% 
@@ -117,7 +114,9 @@ system.time(
 boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)")
 boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
 
-
+lm_robust_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
+lm_robust_fit %>% 
+  summary()
 
 
 
