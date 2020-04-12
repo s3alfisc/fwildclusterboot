@@ -14,10 +14,10 @@
 # ==================================================================== #
 
 
-# library(data.table)
-# library(estimatr)
-# library(magrittr)
-# library(mvtnorm)
+library(data.table)
+library(estimatr)
+library(magrittr)
+library(mvtnorm)
 # 
 # N <- 1000
 # 
@@ -55,18 +55,18 @@
 
 seed = sample(1:1000, 1)
 
-gen_cluster <- function(param = c(.1, .01), n = 10000, n_cluster = 50, rho = .8, seed = seed) {
+gen_cluster <- function(param = c(-0.4, .05), n = 1000, n_cluster = 50, rho = .5) {
+  # source: https://yukiyanai.github.io/teaching/rm1/contents/R/clustered-data-analysis.html
   # Function to generate clustered data
   # Required package: mvtnorm
   
   # individual level
-  Sigma_i <- diag(length(param)) * rho
-  #matrix(c(1, 0, 0, 1 - rho), ncol = 2)
+  Sigma_i <- matrix(c(1, 0, 0, 1 - rho), ncol = 2)
   values_i <- rmvnorm(n = n, sigma = Sigma_i)
   
   # cluster level
   cluster_name <- rep(1:n_cluster, each = n / n_cluster)
-  Sigma_cl <- matrix(c(1, 0, 0, rho), ncol = length(param))
+  Sigma_cl <- matrix(c(1, 0, 0, rho), ncol = 2)
   values_cl <- rmvnorm(n = n_cluster, sigma = Sigma_cl)
   
   # predictor var consists of individual- and cluster-level components
@@ -76,20 +76,37 @@ gen_cluster <- function(param = c(.1, .01), n = 10000, n_cluster = 50, rho = .8,
   error <- values_i[ , 2] + rep(values_cl[ , 2], each = n / n_cluster)
   
   # data generating process
-  y <- 1 + param[2]*x + error
+  y <- param[1] + param[2]*x + error
   
   df <- data.frame(x, y, cluster = cluster_name)
+  data.table::setDT(df)
   return(df)
 }
 
 data <- gen_cluster()
+head(data)
+data[, mean(y)]
 
-lm_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
+lm_robust_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
+lm_robust_fit %>% 
+  summary()
+
+lm_fit <- lm(y ~ x, data = data)
 lm_fit %>% 
   summary()
 
-boottest(lm_fit, clustid = data$cluster, B = 1000, seed = seed, param = "(Intercept)")
-boottest(lm_fit, clustid = data$cluster, B = 1000, seed = seed, param = "x")
+# standard bootstrap
+data <- as.data.frame(data)
+boot_fit <- cluster.boot(lm_fit, 
+                          as.factor(data$cluster), 
+                          R = B, 
+                          boot_type = "residual", 
+                          wild_type = "rademacher")
+
+coeftest(lm_fit, boot_fit)
+summary(lm_robust_fit)
+boottest(lm_fit, clustid = data$cluster, B = 100000, seed = seed, param = "(Intercept)")
+boottest(lm_fit, clustid = data$cluster, B = 100000, seed = seed, param = "x")
 
 
 
