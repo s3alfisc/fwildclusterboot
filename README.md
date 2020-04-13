@@ -12,7 +12,8 @@ status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-p
 <!-- badges: end -->
 
 The goal of fwildclusterboot is to estimate a fast wild cluster
-bootstrap.
+bootstrap for linear regression models of classes “lm”, “lm\_robust” and
+“felm” (from packages base, estimatr and lfe).
 
 ## Installation
 
@@ -39,9 +40,9 @@ library(fwildclusterboot)
 
 seed <- sample(1:1000, 1)
 seed
-#> [1] 720
+#> [1] 774
  
-gen_cluster <- function(param = c(1, 0), n = 10000, n_cluster = 50, rho = .8) {
+gen_cluster <- function(param = c(1, 0), n = 20000, n_cluster = 50, rho = .8) {
  # source: https://yukiyanai.github.io/teaching/rm1/contents/R/clustered-data-analysis.html
  # Function to generate clustered data
  # Required package: mvtnorm
@@ -75,30 +76,16 @@ data <- gen_cluster()
 
  
 lm_fit <- lm(y ~ x, data = data)
-lm_fit %>% 
- summary()
-#> 
-#> Call:
-#> lm(formula = y ~ x, data = data)
-#> 
-#> Residuals:
-#>     Min      1Q  Median      3Q     Max 
-#> -3.0867 -0.6375 -0.0903  0.5357  4.0759 
-#> 
-#> Coefficients:
-#>             Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept) 0.815631   0.009986  81.677  < 2e-16 ***
-#> x           0.028337   0.007511   3.772 0.000163 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> 
-#> Residual standard error: 0.9778 on 9998 degrees of freedom
-#> Multiple R-squared:  0.001421,   Adjusted R-squared:  0.001322 
-#> F-statistic: 14.23 on 1 and 9998 DF,  p-value: 0.0001626
+
  
 # standard bootstrap
-B <- 2000
+B <- 10000
  
+```
+
+As can be seen, the fast bootstrap is much faster.
+
+``` r
 # basic bootstrap, not parallel
 system.time(boot_fit <- multiwayvcov::cluster.boot(lm_fit, 
                            as.factor(data$cluster), 
@@ -107,14 +94,14 @@ system.time(boot_fit <- multiwayvcov::cluster.boot(lm_fit,
                            wild_type = "rademacher", 
                            parallel = TRUE))
 #>    user  system elapsed 
-#>   19.52    0.06   19.75
+#>  182.13    0.45  193.40
  
  
 system.time(
   boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
 )
 #>    user  system elapsed 
-#>    0.50    0.09    0.59
+#>    1.88    7.38   11.95
 ```
 
 And let’s have a look at the output:
@@ -124,16 +111,16 @@ lmtest::coeftest(lm_fit, boot_fit)
 #> 
 #> t test of coefficients:
 #> 
-#>             Estimate Std. Error t value  Pr(>|t|)    
-#> (Intercept) 0.815631   0.123455  6.6067 4.129e-11 ***
-#> x           0.028337   0.059502  0.4762    0.6339    
+#>              Estimate Std. Error t value  Pr(>|t|)    
+#> (Intercept) 0.9294973  0.1324880  7.0157 2.361e-12 ***
+#> x           0.0051399  0.0657761  0.0781    0.9377    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)")
-#> [1] "The wild cluster bootstrap p-value for the parameter (Intercept) is 0 , with B 2000 bootstrap iterations."
+#> [1] "The wild cluster bootstrap p-value for the parameter (Intercept) is 0 , with B 10000 bootstrap iterations."
 boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
-#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.5705 , with B 2000 bootstrap iterations."
+#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.931 , with B 10000 bootstrap iterations."
 
 lm_robust_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
 lm_robust_fit %>% 
@@ -146,13 +133,13 @@ summary()
 #> 
 #> Coefficients:
 #>             Estimate Std. Error t value  Pr(>|t|) CI Lower CI Upper    DF
-#> (Intercept)  0.81563    0.12652  6.4466 6.383e-08  0.56090   1.0704 45.64
-#> x            0.02834    0.04805  0.5898 5.588e-01 -0.06893   0.1256 38.02
+#> (Intercept)  0.92950    0.13456 6.90746 9.591e-09   0.6590   1.2000 48.61
+#> x            0.00514    0.05964 0.08618 9.318e-01  -0.1155   0.1258 38.62
 #> 
-#> Multiple R-squared:  0.001421 ,  Adjusted R-squared:  0.001322 
-#> F-statistic: 0.3478 on 1 and 49 DF,  p-value: 0.5581
+#> Multiple R-squared:  4.755e-05 , Adjusted R-squared:  -2.452e-06 
+#> F-statistic: 0.007426 on 1 and 49 DF,  p-value: 0.9317
 # does the method work with object lm_robust?
 #boottest.lm_robust(lm_robust_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)") # ror: need to feed in data
 boottest.lm_robust(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = "x") 
-#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.5705 , with B 2000 bootstrap iterations."
+#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.931 , with B 10000 bootstrap iterations."
 ```

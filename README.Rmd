@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-project.org/package=fwildclusterboot)
 <!-- badges: end -->
 
-The goal of fwildclusterboot is to estimate a fast wild cluster bootstrap. 
+The goal of fwildclusterboot is to estimate a fast wild cluster bootstrap for linear regression models of classes "lm", "lm_robust" and "felm" (from packages base, estimatr and lfe).
 
 ## Installation
 
@@ -482,7 +482,7 @@ library(fwildclusterboot)
 seed <- sample(1:1000, 1)
 seed
  
-gen_cluster <- function(param = c(1, 0), n = 10000, n_cluster = 50, rho = .8) {
+gen_cluster <- function(param = c(1, 0), n = 20000, n_cluster = 50, rho = .8) {
  # source: https://yukiyanai.github.io/teaching/rm1/contents/R/clustered-data-analysis.html
  # Function to generate clustered data
  # Required package: mvtnorm
@@ -516,12 +516,16 @@ data <- gen_cluster()
 
  
 lm_fit <- lm(y ~ x, data = data)
-lm_fit %>% 
- summary()
+
  
 # standard bootstrap
-B <- 2000
+B <- 10000
  
+```
+
+As can be seen, the fast bootstrap is much faster. 
+
+```{r}
 # basic bootstrap, not parallel
 system.time(boot_fit <- multiwayvcov::cluster.boot(lm_fit, 
                            as.factor(data$cluster), 
@@ -534,7 +538,6 @@ system.time(boot_fit <- multiwayvcov::cluster.boot(lm_fit,
 system.time(
   boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
 )
-
 ```
 
 And let's have a look at the output: 
