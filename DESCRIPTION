@@ -2,15 +2,23 @@ Package: fwildclusterboot
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Alexander",
+           family = "Fischer",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "afischer@econ.au.dk",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: Estimates fast wild cluster bootstrap for linear regression models.
 License: GPL-3
+Imports: 
+  data.table 
 Suggests: 
-    testthat
+    testthat,
+    lfe, 
+    estimatr, 
+    multiwayvcoc, 
+    mvtnorm, 
+    magrittr, 
+    lmtest
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
