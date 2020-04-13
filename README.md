@@ -27,41 +27,21 @@ install.packages("fwildclusterboot")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-#setwd("C:/Users/au563468/Dropbox")
-#devtools::install("fwildclusterboot")
-library(fwildclusterboot)
 
-library(data.table)
-#> Warning: package 'data.table' was built under R version 3.6.3
-library(estimatr)
-#> Warning: package 'estimatr' was built under R version 3.6.3
-library(magrittr)
-#> Warning: package 'magrittr' was built under R version 3.6.3
-library(mvtnorm)
-library(multiwayvcov)
-#> Warning: package 'multiwayvcov' was built under R version 3.6.3
-library(lmtest)
-#> Warning: package 'lmtest' was built under R version 3.6.3
-#> Loading required package: zoo
-#> Warning: package 'zoo' was built under R version 3.6.3
+library(fwildclusterboot)
 #> 
-#> Attaching package: 'zoo'
-#> The following objects are masked from 'package:base':
+#> Attaching package: 'fwildclusterboot'
+#> The following objects are masked _by_ '.GlobalEnv':
 #> 
-#>     as.Date, as.Date.numeric
-library(lfe)
-#> Warning: package 'lfe' was built under R version 3.6.3
-#> Loading required package: Matrix
-#> 
-#> Attaching package: 'lfe'
-#> The following object is masked from 'package:lmtest':
-#> 
-#>     waldtest
+#>     boottest.lm, boottest.lm_robust
+
 ## basic example code
 
-seed = sample(1:1000, 1)
+seed <- sample(1:1000, 1)
+seed
+#> [1] 720
  
-gen_cluster <- function(param = c(1, 0), n = 10000, n_cluster = 20, rho = .8) {
+gen_cluster <- function(param = c(1, 0), n = 10000, n_cluster = 50, rho = .8) {
  # source: https://yukiyanai.github.io/teaching/rm1/contents/R/clustered-data-analysis.html
  # Function to generate clustered data
  # Required package: mvtnorm
@@ -103,21 +83,21 @@ lm_fit %>%
 #> 
 #> Residuals:
 #>     Min      1Q  Median      3Q     Max 
-#> -2.9833 -0.7429 -0.0272  0.6616  3.3676 
+#> -3.0867 -0.6375 -0.0903  0.5357  4.0759 
 #> 
 #> Coefficients:
-#>              Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept)  0.960504   0.010618  90.462  < 2e-16 ***
-#> x           -0.040790   0.007862  -5.188 2.16e-07 ***
+#>             Estimate Std. Error t value Pr(>|t|)    
+#> (Intercept) 0.815631   0.009986  81.677  < 2e-16 ***
+#> x           0.028337   0.007511   3.772 0.000163 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
-#> Residual standard error: 1.06 on 9998 degrees of freedom
-#> Multiple R-squared:  0.002685,   Adjusted R-squared:  0.002585 
-#> F-statistic: 26.92 on 1 and 9998 DF,  p-value: 2.164e-07
+#> Residual standard error: 0.9778 on 9998 degrees of freedom
+#> Multiple R-squared:  0.001421,   Adjusted R-squared:  0.001322 
+#> F-statistic: 14.23 on 1 and 9998 DF,  p-value: 0.0001626
  
 # standard bootstrap
-B <- 1000
+B <- 2000
  
 # basic bootstrap, not parallel
 system.time(boot_fit <- multiwayvcov::cluster.boot(lm_fit, 
@@ -127,26 +107,52 @@ system.time(boot_fit <- multiwayvcov::cluster.boot(lm_fit,
                            wild_type = "rademacher", 
                            parallel = TRUE))
 #>    user  system elapsed 
-#>    7.47    0.16    9.64
+#>   19.52    0.06   19.75
  
  
-# system.time(
-#   boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
-# )
+system.time(
+  boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
+)
+#>    user  system elapsed 
+#>    0.50    0.09    0.59
 ```
 
 And let’s have a look at the output:
 
 ``` r
-# lmtest::coeftest(lm_fit, boot_fit)
-# 
-# boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)")
-# boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
-# 
-# lm_robust_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
-# lm_robust_fit %>% 
-#  summary()
-# # does the method work with object lm_robust?
-# #boottest.lm_robust(lm_robust_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)") # error: need to feed in data
-# boottest.lm_robust(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = "x") 
+lmtest::coeftest(lm_fit, boot_fit)
+#> 
+#> t test of coefficients:
+#> 
+#>             Estimate Std. Error t value  Pr(>|t|)    
+#> (Intercept) 0.815631   0.123455  6.6067 4.129e-11 ***
+#> x           0.028337   0.059502  0.4762    0.6339    
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)")
+#> [1] "The wild cluster bootstrap p-value for the parameter (Intercept) is 0 , with B 2000 bootstrap iterations."
+boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
+#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.5705 , with B 2000 bootstrap iterations."
+
+lm_robust_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
+lm_robust_fit %>% 
+summary()
+#> 
+#> Call:
+#> lm_robust(formula = y ~ x, data = data, clusters = cluster)
+#> 
+#> Standard error type:  CR2 
+#> 
+#> Coefficients:
+#>             Estimate Std. Error t value  Pr(>|t|) CI Lower CI Upper    DF
+#> (Intercept)  0.81563    0.12652  6.4466 6.383e-08  0.56090   1.0704 45.64
+#> x            0.02834    0.04805  0.5898 5.588e-01 -0.06893   0.1256 38.02
+#> 
+#> Multiple R-squared:  0.001421 ,  Adjusted R-squared:  0.001322 
+#> F-statistic: 0.3478 on 1 and 49 DF,  p-value: 0.5581
+# does the method work with object lm_robust?
+#boottest.lm_robust(lm_robust_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)") # ror: need to feed in data
+boottest.lm_robust(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = "x") 
+#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.5705 , with B 2000 bootstrap iterations."
 ```
