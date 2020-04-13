@@ -1,8 +1,0 @@
-TO DO List: 
-
-- write a method for felm objects
-- allow for multiple clusters + formula for clusters + tests
-- allow for more complex hypothesis [c(0, 1, -1, 0, 0)] -> write as formula c ~ x1 - x2 + 2x3
-    - first: c scalar
-    - then: multivariate hypotheses
-- eventually: maybe add IV methods
