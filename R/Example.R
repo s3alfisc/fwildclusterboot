@@ -38,7 +38,8 @@ data <- data.table(y = y,
                   x2 = x2, 
                   x3 = x3, 
                   x4 = x4, 
-                  cluster = 1:N)
+                  cluster1 = 1:N, 
+                  cluster2 = rep(1:(N/10), 10))
 # 
 # # just heteroskedasticity robust
 lm_fit <- lm(y ~ x1 + x2 + x3 + x4, data = data)
@@ -46,11 +47,11 @@ lm_robust(y ~ x1 + x2 + x3 + x4 , data = data) %>%
  summary()
 
 # note that this part is rather slow, as a speed gains mainly for few clusters
-boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "(Intercept)")
-boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x1")
-boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2")
-boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x3")
-boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x4")
+boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "(Intercept)")
+boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x1")
+boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2")
+boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x3")
+boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x4")
 
 
 
@@ -126,7 +127,7 @@ boottest.lm_robust(lm_robust_fit, clustid = data$cluster, B = B, seed = seed, pa
 boottest.lm_robust(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = "x") 
 
 
-felm_fit <- lfe::felm(y ~ x1 | x2 | 0 | data$cluster, data = data)
+felm_fit <- lfe::felm(y ~ x | 0 | 0 | data$cluster, data = data)
 summary(felm_fit)
 
 # felm_fit$coefficients

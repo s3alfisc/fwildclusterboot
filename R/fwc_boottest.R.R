@@ -229,7 +229,7 @@ boottest.lm <- function(object,
     #measurevar <- "y"
     #formula <- as.formula(paste(measurevar, paste(groupvars, collapse=" + "), sep=" ~ "))
     
-    X <- model.matrix(as.formula(object$call), data = object$model)
+    X <- model.matrix(as.formula(object$call), object$model)
     Y <- as.matrix(model.frame(object)[, depvar])  
 
   
@@ -347,13 +347,16 @@ boottest.lm_robust <- boottest <- function(object,
   
   # start estimation here: 
   
-  R0 <- as.numeric(param == names(object$coefficients))
+  # names(object$coefficients) == NULL for class == lm_robust
+  R0 <- as.numeric(param == names(coef(object))) 
+  
   groupvars <- names(coef(object))
   
   #if(object_type == "felm"){
     
     depvar <- names(object$response)
-    Y <- object$response
+    model_frame <- model.frame(as.formula(object$call), data = data)
+    Y <- model.response(model_frame)
     X <- model.matrix(as.formula(object$call), data = data)
   #}
   
