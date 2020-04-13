@@ -20,8 +20,10 @@ library(magrittr)
 library(mvtnorm)
 library(multiwayvcov)
 library(lmtest)
+library(lfe)
+
 # 
-N <- 1000
+N <- 4000
 # 
 x1 <- rnorm(N)
 x2 <- rnorm(N)
@@ -29,20 +31,21 @@ x3 <- rnorm(N)
 x4 <- rnorm(N)
 error <- rnorm(N)
 # 
-# y <- 1 + 0.05*x1 - 0.02*x2 + 0.5*x3 + x4 + error
+y <- 1 + 0.05*x1 - 0.02*x2 + 0.5*x3 + x4 + error
 # 
 data <- data.table(y = y, 
                   x1 = x1, 
                   x2 = x2, 
                   x3 = x3, 
                   x4 = x4, 
-                  cluster = 1:length(y))
+                  cluster = 1:N)
 # 
 # # just heteroskedasticity robust
 lm_fit <- lm(y ~ x1 + x2 + x3 + x4, data = data)
 lm_robust(y ~ x1 + x2 + x3 + x4 , data = data) %>% 
  summary()
-# 
+
+# note that this part is rather slow, as a speed gains mainly for few clusters
 boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "(Intercept)")
 boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x1")
 boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2")
@@ -57,7 +60,7 @@ boottest(lm_fit, 1:2000, B = 1000, seed = 1, param = "x4")
 
 seed = sample(1:1000, 1)
 
-gen_cluster <- function(param = c(-0.1, .05), n = 10000, n_cluster = 50, rho = .5) {
+gen_cluster <- function(param = c(1, 0), n = 10000, n_cluster = 20, rho = .8) {
   # source: https://yukiyanai.github.io/teaching/rm1/contents/R/clustered-data-analysis.html
   # Function to generate clustered data
   # Required package: mvtnorm
@@ -95,21 +98,22 @@ lm_fit %>%
   summary()
 
 # standard bootstrap
-B <- 1000
+B <- 2000
 
 # basic bootstrap, not parallel
 system.time(boot_fit <- multiwayvcov::cluster.boot(lm_fit, 
                           as.factor(data$cluster), 
                           R = B, 
                           boot_type = "residual", 
-                          wild_type = "rademacher"))
+                          wild_type = "rademacher", 
+                          parallel = TRUE))
 
-lmtest::coeftest(lm_fit, boot_fit)
-summary(lm_robust_fit)
 
 system.time(
   boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
 )
+
+lmtest::coeftest(lm_fit, boot_fit)
 
 boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)")
 boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
@@ -117,13 +121,19 @@ boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
 lm_robust_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
 lm_robust_fit %>% 
   summary()
+# does the method work with object lm_robust?
+boottest(lm_robust_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)") # error: need to feed in data
+boottest(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = "x") 
 
 
+felm_fit <- lfe::felm(y ~ x1 | x2 | 0 | data$cluster, data = data)
+summary(felm_fit)
 
-
-
-
-
+# felm_fit$coefficients
+# felm_fit$formula
+# felm_fit$response %>% head()
+# felm_fit$clustervar
+# felm_fit$keepCX
 
 
 
