@@ -115,15 +115,15 @@ system.time(
 
 lmtest::coeftest(lm_fit, boot_fit)
 
-boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)")
-boottest(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
+boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)")
+boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
 
 lm_robust_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
 lm_robust_fit %>% 
   summary()
 # does the method work with object lm_robust?
-boottest(lm_robust_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)") # error: need to feed in data
-boottest(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = "x") 
+boottest.lm_robust(lm_robust_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)") # error: need to feed in data
+boottest.lm_robust(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = "x") 
 
 
 felm_fit <- lfe::felm(y ~ x1 | x2 | 0 | data$cluster, data = data)
