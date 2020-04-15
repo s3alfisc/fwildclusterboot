@@ -456,20 +456,23 @@ boottest.lm_robust <- boottest <- function(object,
 
 
 ```{r, echo=FALSE, include=FALSE, results="hide"}
-#bothPaths <- .libPaths()   # extract both paths
-#bothPaths <- c(bothPaths [2], bothPaths [1])  # change order
-#.libPaths(bothPaths )  # modify the order
-#setwd("C:/Users/au563468/Dropbox")
-#devtools::install("fwildclusterboot")
-#devtools::document("fwildclusterboot")
+bothPaths <- .libPaths()   # extract both paths
+bothPaths <- c(bothPaths [2], bothPaths [1])  # change order
+.libPaths(bothPaths )  # modify the order
+setwd("C:/Users/au563468/Dropbox")
+devtools::install("fwildclusterboot")
+devtools::document("fwildclusterboot")
 
-library(data.table)
-library(estimatr)
-library(magrittr)
-library(mvtnorm)
-library(multiwayvcov)
-library(lmtest)
-library(lfe)
+library(usethis)
+setwd("C:/Users/au563468/Dropbox/fwildclusterboot")
+use_package("data.table", type = "Imports")
+use_package("esitimatr", type = "Suggests")
+use_package("magrittr", type = "Suggests")
+use_package("mvtnorm", type = "Suggests")
+use_package("lmtest", type = "Suggests")
+use_package("lfe", type = "Suggests")
+
+
 ```
 
 
@@ -519,7 +522,7 @@ lm_fit <- lm(y ~ x, data = data)
 
  
 # standard bootstrap
-B <- 10000
+B <- 1000
  
 ```
 

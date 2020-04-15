@@ -150,7 +150,7 @@
 
 # Rewrite for OOP
 
-
+#' @export
 boottest <- function(x, ...){UseMethod("boottest")}
 
 #' method for object of class "lm"
