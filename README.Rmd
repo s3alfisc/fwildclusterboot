@@ -559,12 +559,31 @@ boottest.lm_robust(lm_robust_fit, data = data, clustid = data$cluster, B = B, se
 ```
 
 
+Now, with a real data set: 
+
+```{r}
+
+data("petersen")
+lm_robust_fit_real <- lm_robust(y ~ x, clusters = "firmid", data = petersen)
+lm_robust_fit_real %>% 
+  summary()
+boottest.lm_robust(lm_robust_fit_real, data = petersen, clustid = petersen$firmid, B = B, param = "(Intercept)")
+boottest.lm_robust(lm_robust_fit_real, data = petersen, clustid = petersen$firmid, B = B, param = "x")
+
+
+
+```
+
+
+
 How to get p-values for all parameters?
 
 ```{r}
-lapply(1:length(names(coef(lm_fit))), function(i) boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = names(coef(lm_fit))[i]))
-
-vboot <- Vectorize(boottest.lm_robust, vectorize.args = "param")
+# lapply(1:length(names(coef(lm_fit))), function(i) boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = names(coef(lm_fit))[i]))
+# 
+# vboot <- Vectorize(boottest.lm_robust, vectorize.args = "param")
+# 
+# vboot(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = c("(Intercept)", "x"))
 ```
 
 
