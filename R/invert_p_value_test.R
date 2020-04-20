@@ -6,21 +6,6 @@ library(magrittr)
 library(broom)
 library(estimatr)
 
-set.seed(123)
-N <- 100000
-x1 <- rnorm(N)
-x2 <- rnorm(N)
-error <- rnorm(N)
-beta1 <- runif(1, -1, 5)
-beta2 <- - 0
-y = 1 + beta1 * x1 + beta2 * x2 + error
-data <- data.table(y = y, x = x)
-lm_fit <- lm_robust(y ~ x1 + x2, data = data) 
-lm_tidy <- lm_fit %>% tidy()
-lm_tidy
-c(beta1, beta2)
-
-# how to get confidence interval? 
 p_value <- function(beta_0, data = data){
   lm_fit <- lm(y ~ x1 + x2, data) 
   lm_tidy <- tidy(lm_fit)[3,]
@@ -28,18 +13,6 @@ p_value <- function(beta_0, data = data){
   2 - 2*pnorm(abs(lm_t_stat))
   #1 - pnorm(abs(lm_t_stat)) - pnorm(-abs(lm_t_stat))
 }
-
-
-
-# should both be around 0.05
-p_value(data = data,  beta_0 = lm_tidy[3,"conf.low"])
-p_value(data = data,  beta_0 = lm_tidy[3,"conf.high"])
-
-# starting value: estimate +/- 3 times standard dev (does not really make sense as st dev unknown)
-starting_vals <- as.numeric(lm_tidy[3, "estimate"] + c(-3,3) * lm_tidy[3, "std.error"])
-
-p_value(data = data, beta_0 = as.numeric(starting_vals[1])) < 0.05
-p_value(data = data, beta_0 = as.numeric(starting_vals[2])) < 0.05
 
 ind_conf_int <- function(data = data, starting_vals){
   
@@ -77,10 +50,36 @@ ind_conf_int <- function(data = data, starting_vals){
   })
   
   conf_int <- unlist(res)
- 
+  
   conf_int
   
 }
+
+set.seed(1234567)
+N <- 673
+x1 <- rnorm(N)
+x2 <- rnorm(N)
+error <- rnorm(N)
+beta1 <- runif(1, -1, 5)
+beta2 <- 0
+y = 1 + beta1 * x1 + beta2 * x2 + error
+data <- data.table(y = y, x = x)
+lm_fit <- lm_robust(y ~ x1 + x2, data = data) 
+lm_tidy <- lm_fit %>% tidy()
+lm_tidy
+c(beta1, beta2)
+
+
+# should both be around 0.05
+param <- 3
+p_value(data = data,  beta_0 = lm_tidy[3,"conf.low"])
+p_value(data = data,  beta_0 = lm_tidy[3,"conf.high"])
+
+# starting value: estimate +/- 3 times standard dev (does not really make sense as st dev unknown)
+starting_vals <- as.numeric(lm_tidy[3, "estimate"] + c(-3,3) * lm_tidy[3, "std.error"])
+
+p_value(data = data, beta_0 = as.numeric(starting_vals[1])) < 0.05
+p_value(data = data, beta_0 = as.numeric(starting_vals[2])) < 0.05
 
 summary(lm_fit)
 
