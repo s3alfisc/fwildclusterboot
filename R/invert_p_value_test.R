@@ -6,34 +6,37 @@ library(magrittr)
 library(broom)
 library(estimatr)
 
-N <- 1000
-x <- rnorm(N)
+set.seed(123)
+N <- 100000
+x1 <- rnorm(N)
+x2 <- rnorm(N)
 error <- rnorm(N)
-beta <- 2
-y = 1 + beta * rnorm(N) + error
+beta1 <- runif(1, -1, 5)
+beta2 <- - 0
+y = 1 + beta1 * x1 + beta2 * x2 + error
 data <- data.table(y = y, x = x)
-lm_fit <- lm_robust(y ~ x) 
+lm_fit <- lm_robust(y ~ x1 + x2, data = data) 
 lm_tidy <- lm_fit %>% tidy()
+lm_tidy
+c(beta1, beta2)
 
 # how to get confidence interval? 
 p_value <- function(beta_0, data = data){
-  lm_fit <- lm(y ~ x, data) 
-  lm_tidy <- tidy(lm_fit)[2, ]
+  lm_fit <- lm(y ~ x1 + x2, data) 
+  lm_tidy <- tidy(lm_fit)[3,]
   lm_t_stat <- (lm_tidy$estimate - beta_0) / lm_tidy$std.error
   2 - 2*pnorm(abs(lm_t_stat))
   #1 - pnorm(abs(lm_t_stat)) - pnorm(-abs(lm_t_stat))
 }
 
 
-p_value(data = data, beta_0 = conf_int_beta[1])
-p_value(data = data, beta_0 = conf_int_beta[2])
 
 # should both be around 0.05
-p_value(data = data, beta_0 = lm_tidy[2,"conf.low"])
-p_value(data = data, beta_0 = lm_tidy[2,"conf.high"])
+p_value(data = data,  beta_0 = lm_tidy[3,"conf.low"])
+p_value(data = data,  beta_0 = lm_tidy[3,"conf.high"])
 
 # starting value: estimate +/- 3 times standard dev (does not really make sense as st dev unknown)
-starting_vals <- as.numeric(lm_tidy[2, "estimate"] + c(-3,3) * lm_tidy[2, "std.error"])
+starting_vals <- as.numeric(lm_tidy[3, "estimate"] + c(-3,3) * lm_tidy[3, "std.error"])
 
 p_value(data = data, beta_0 = as.numeric(starting_vals[1])) < 0.05
 p_value(data = data, beta_0 = as.numeric(starting_vals[2])) < 0.05
