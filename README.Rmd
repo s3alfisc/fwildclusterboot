@@ -115,7 +115,9 @@ feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income, fixef =
 felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration + Q2_defence, weights = NULL, data = voters)
 ```
 
-The boottest command offers two functions. First, it calculates p-values for a given null hypothesis. This is ususally extremely fast: 
+The boottest command offers two functions. First, it calculates p-values for a given null hypothesis of the form HO: $\beta = 0$ vs H1: $\beta \neq 1$. 
+In order to work, an object from a regression model of class lm, lm_robust, felm or feols needs to be passed to the boottest function. Currently, the user is still required to pass a vector with information on clusters to the function. As of now, the function only supports one-dimensional clustering. 
+By default, the boottest function calculates confidence intervals by inversion. The user can considerably speed up the inference procedure by setting the argument conf_int to FALSE, in which case no confidence intervals are computed.
 
 ```{r}
 lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
@@ -147,7 +149,7 @@ res_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, par
 res_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
 ```
 
-This leads to the following results: 
+A summary method collects the results. 
 
 ```{r}
 summary(res_lm)
@@ -155,6 +157,16 @@ summary(res_lm)
 #summary(res_estimatr)
 summary(res_felm)
 summary(res_fixest)
+```
+
+Furthermore, boottest comes with a tidy method which, in analogy with the broom-package, returns the estimation results as a data.frame.
+
+```{r}
+tidy(res_lm)
+#summary(res_estimatr_fe)
+#summary(res_estimatr)
+tidy(res_felm)
+tidy(res_fixest)
 ```
 
 

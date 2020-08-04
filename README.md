@@ -98,8 +98,16 @@ felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immig
 ```
 
 The boottest command offers two functions. First, it calculates p-values
-for a given null hypothesis. This is ususally extremely
-fast:
+for a given null hypothesis of the form HO: \(\beta = 0\) vs H1:
+\(\beta \neq 1\). In order to work, an object from a regression model of
+class lm, lm\_robust, felm or feols needs to be passed to the boottest
+function. Currently, the user is still required to pass a vector with
+information on clusters to the function. As of now, the function only
+supports one-dimensional clustering. By default, the boottest function
+calculates confidence intervals by inversion. The user can considerably
+speed up the inference procedure by setting the argument conf\_int to
+FALSE, in which case no confidence intervals are
+computed.
 
 ``` r
 lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
@@ -120,7 +128,7 @@ res_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, par
 res_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
 ```
 
-This leads to the following results:
+A summary method collects the results.
 
 ``` r
 summary(res_lm)
@@ -154,6 +162,23 @@ summary(res_fixest)
 #>  Number of Clusters:  20
 #>  Adj. R-Squared: NA
 #>  
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment -0.01471   1.161   0.2716 -0.04204  0.01279
+```
+
+Furthermore, boottest comes with a tidy method which, in analogy with
+the broom-package, returns the estimation results as a data.frame.
+
+``` r
+tidy(res_lm)
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment -0.01471   1.161   0.2709 -0.04193   0.0128
+#summary(res_estimatr_fe)
+#summary(res_estimatr)
+tidy(res_felm)
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment -0.01471   1.161   0.2716 -0.04204  0.01279
+tidy(res_fixest)
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
 #> treatment -0.01471   1.161   0.2716 -0.04204  0.01279
 ```
