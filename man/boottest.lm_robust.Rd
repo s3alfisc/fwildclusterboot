@@ -4,7 +4,7 @@
 \alias{boottest.lm_robust}
 \title{method for object of class "lm_robust"}
 \usage{
-boottest.lm_robust(
+\method{boottest}{lm_robust}(
   object,
   param,
   B,

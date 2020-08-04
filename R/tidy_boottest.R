@@ -8,7 +8,7 @@ tidy.boottest <- function(object){
   
   res <- data.frame(estimate, t_stat, p_val, conf_int_lower, conf_int_upper)
   colnames(res) <- c("Estimate", "t value", "Pr(>|t|)", "CI Lower", "CI Upper")
-  rownames(res) <- param
+  #rownames(res) <- NA
   
   print(res, digits = 4)
   

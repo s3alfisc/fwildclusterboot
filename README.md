@@ -29,30 +29,7 @@ B <- 10000
 seed <- 1345671
 set.seed(seed)
 
-
-voters <- fabricate(
-  N = 2000,
-  group_id = rep(1:20, 100),
-  ideology = draw_normal_icc(mean = 0, N = N, clusters = group_id, ICC = 0.1),
-  ideological_label = draw_ordered(
-    x = ideology,
-    break_labels = c(
-      "Very Conservative", "Conservative",
-      "Liberal", "Very Liberal"
-    )
-  ),
-  income = exp(rlnorm(n = N, meanlog = 2.4 - (ideology * 0.1), sdlog = 0.12)),
-  Q1_immigration = draw_likert(x = ideology, type = 7),
-  Q2_defence = draw_likert(x = ideology + 0.5, type = 7),
-  treatment = draw_binary(0.5, N = N),
-  proposition_vote = draw_binary(latent = ideology + 0.01 * treatment, link = "probit")
-)
-
-setDT(voters)
-voters[, log_income := log(income)]
-voters[, Q1_immigration := as.factor(Q1_immigration) ]
-voters[, Q2_defence := as.factor(Q2_defence)]
-
+voters <- create_data(N = 2000, N_G = 20)
 head(voters)
 #>      ID group_id    ideology ideological_label      income       Q1_immigration
 #> 1: 0001        1 -0.05943174      Conservative   16208.622 Don't Know / Neutral
@@ -181,4 +158,62 @@ tidy(res_felm)
 tidy(res_fixest)
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
 #> treatment -0.01471   1.161   0.2716 -0.04204  0.01279
+```
+
+## Benchmarks
+
+``` r
+
+# seed <- 1
+# set.seed(seed)
+# N <- 5000
+# N_G <- 10
+# B <- 1000
+# 
+# data <- create_data(N = N, N_G = N_G)
+# 
+# lapply(c(100, 1000, 5000, 1000), function(B){
+#       lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration + Q2_defence, weights = NULL, data = data)
+#       bench <- benchmark(
+#           boot =  multiwayvcov::cluster.boot(lm_fit, 
+#                                              as.factor(data$group_id), 
+#                                              R = B, 
+#                                              boot_type = "residual", 
+#                                              wild_type = "rademacher", 
+#                                              parallel = FALSE), 
+#           fast_boot_1 = boottest(lm_fit, clustid = data$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE),
+#           fast_boot_1_2 = boottest(lm_fit, clustid = data$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE), 
+#           replications = 10)
+#       c(N, N_G, bench$elapsed)
+# })
+# 
+# 
+# res <- data.frame()
+# 
+# data <- create_data(N = N, N_G = 20)
+# i <- 0
+# 
+# res <- 
+# lapply(c(1000, 5000, 10000, 20000), function(N){
+#   lapply(c(10, 20, 50, 100, 200), function(N_G){
+#     data <- create_data(N = N, N_G = N_G)
+#     lapply(c(100, 1000, 5000, 1000), function(B){
+#       lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration + Q2_defence, weights = NULL, data = data)
+#       bench <- benchmark(
+#         boot =  multiwayvcov::cluster.boot(lm_fit, 
+#                                                        as.factor(data$group_id), 
+#                                                        R = B, 
+#                                                        boot_type = "residual", 
+#                                                        wild_type = "rademacher", 
+#                                                        parallel = FALSE), 
+#         fast_boot_1 = boottest(lm_fit, clustid = data$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE),
+#         fast_boot_1_2 = boottest(lm_fit, clustid = data$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE), 
+#         replications = 10, 
+#         columns = c("bootstrap", "fast bootstrap 1", "fast bootstrap 2")#,
+#         #relative = c("bootstrap")
+#       )
+#       c(N, N_G, bench$elapsed)
+#     })
+#   })
+# })
 ```

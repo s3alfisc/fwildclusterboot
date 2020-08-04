@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style type="text/css">
+@font-face {
+font-family: octicons-link;
+src: url(data:font/woff;charset=utf-8;base64,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) format('woff');
+}
+body {
+-webkit-text-size-adjust: 100%;
+text-size-adjust: 100%;
+color: #333;
+font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+font-size: 16px;
+line-height: 1.6;
+word-wrap: break-word;
+}
+a {
+background-color: transparent;
+}
+a:active,
+a:hover {
+outline: 0;
+}
+strong {
+font-weight: bold;
+}
+h1 {
+font-size: 2em;
+margin: 0.67em 0;
+}
+img {
+border: 0;
+}
+hr {
+box-sizing: content-box;
+height: 0;
+}
+pre {
+overflow: auto;
+}
+code,
+kbd,
+pre {
+font-family: monospace, monospace;
+font-size: 1em;
+}
+input {
+color: inherit;
+font: inherit;
+margin: 0;
+}
+html input[disabled] {
+cursor: default;
+}
+input {
+line-height: normal;
+}
+input[type="checkbox"] {
+box-sizing: border-box;
+padding: 0;
+}
+table {
+border-collapse: collapse;
+border-spacing: 0;
+}
+td,
+th {
+padding: 0;
+}
+* {
+box-sizing: border-box;
+}
+input {
+font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+a {
+color: #4078c0;
+text-decoration: none;
+}
+a:hover,
+a:active {
+text-decoration: underline;
+}
+hr {
+height: 0;
+margin: 15px 0;
+overflow: hidden;
+background: transparent;
+border: 0;
+border-bottom: 1px solid #ddd;
+}
+hr:before {
+display: table;
+content: "";
+}
+hr:after {
+display: table;
+clear: both;
+content: "";
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+margin-top: 15px;
+margin-bottom: 15px;
+line-height: 1.1;
+}
+h1 {
+font-size: 30px;
+}
+h2 {
+font-size: 21px;
+}
+h3 {
+font-size: 16px;
+}
+h4 {
+font-size: 14px;
+}
+h5 {
+font-size: 12px;
+}
+h6 {
+font-size: 11px;
+}
+blockquote {
+margin: 0;
+}
+ul,
+ol {
+padding: 0;
+margin-top: 0;
+margin-bottom: 0;
+}
+ol ol,
+ul ol {
+list-style-type: lower-roman;
+}
+ul ul ol,
+ul ol ol,
+ol ul ol,
+ol ol ol {
+list-style-type: lower-alpha;
+}
+dd {
+margin-left: 0;
+}
+code {
+font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+font-size: 12px;
+}
+pre {
+margin-top: 0;
+margin-bottom: 0;
+font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+.select::-ms-expand {
+opacity: 0;
+}
+.octicon {
+font: normal normal normal 16px/1 octicons-link;
+display: inline-block;
+text-decoration: none;
+text-rendering: auto;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+.octicon-link:before {
+content: '\f05c';
+}
+.markdown-body:before {
+display: table;
+content: "";
+}
+.markdown-body:after {
+display: table;
+clear: both;
+content: "";
+}
+.markdown-body>*:first-child {
+margin-top: 0 !important;
+}
+.markdown-body>*:last-child {
+margin-bottom: 0 !important;
+}
+a:not([href]) {
+color: inherit;
+text-decoration: none;
+}
+.anchor {
+display: inline-block;
+padding-right: 2px;
+margin-left: -18px;
+}
+.anchor:focus {
+outline: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+margin-top: 1em;
+margin-bottom: 16px;
+font-weight: bold;
+line-height: 1.4;
+}
+h1 .octicon-link,
+h2 .octicon-link,
+h3 .octicon-link,
+h4 .octicon-link,
+h5 .octicon-link,
+h6 .octicon-link {
+color: #000;
+vertical-align: middle;
+visibility: hidden;
+}
+h1:hover .anchor,
+h2:hover .anchor,
+h3:hover .anchor,
+h4:hover .anchor,
+h5:hover .anchor,
+h6:hover .anchor {
+text-decoration: none;
+}
+h1:hover .anchor .octicon-link,
+h2:hover .anchor .octicon-link,
+h3:hover .anchor .octicon-link,
+h4:hover .anchor .octicon-link,
+h5:hover .anchor .octicon-link,
+h6:hover .anchor .octicon-link {
+visibility: visible;
+}
+h1 {
+padding-bottom: 0.3em;
+font-size: 2.25em;
+line-height: 1.2;
+border-bottom: 1px solid #eee;
+}
+h1 .anchor {
+line-height: 1;
+}
+h2 {
+padding-bottom: 0.3em;
+font-size: 1.75em;
+line-height: 1.225;
+border-bottom: 1px solid #eee;
+}
+h2 .anchor {
+line-height: 1;
+}
+h3 {
+font-size: 1.5em;
+line-height: 1.43;
+}
+h3 .anchor {
+line-height: 1.2;
+}
+h4 {
+font-size: 1.25em;
+}
+h4 .anchor {
+line-height: 1.2;
+}
+h5 {
+font-size: 1em;
+}
+h5 .anchor {
+line-height: 1.1;
+}
+h6 {
+font-size: 1em;
+color: #777;
+}
+h6 .anchor {
+line-height: 1.1;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table,
+pre {
+margin-top: 0;
+margin-bottom: 16px;
+}
+hr {
+height: 4px;
+padding: 0;
+margin: 16px 0;
+background-color: #e7e7e7;
+border: 0 none;
+}
+ul,
+ol {
+padding-left: 2em;
+}
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+margin-top: 0;
+margin-bottom: 0;
+}
+li>p {
+margin-top: 16px;
+}
+dl {
+padding: 0;
+}
+dl dt {
+padding: 0;
+margin-top: 16px;
+font-size: 1em;
+font-style: italic;
+font-weight: bold;
+}
+dl dd {
+padding: 0 16px;
+margin-bottom: 16px;
+}
+blockquote {
+padding: 0 15px;
+color: #777;
+border-left: 4px solid #ddd;
+}
+blockquote>:first-child {
+margin-top: 0;
+}
+blockquote>:last-child {
+margin-bottom: 0;
+}
+table {
+display: block;
+width: 100%;
+overflow: auto;
+word-break: normal;
+word-break: keep-all;
+}
+table th {
+font-weight: bold;
+}
+table th,
+table td {
+padding: 6px 13px;
+border: 1px solid #ddd;
+}
+table tr {
+background-color: #fff;
+border-top: 1px solid #ccc;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+img {
+max-width: 100%;
+box-sizing: content-box;
+background-color: #fff;
+}
+code {
+padding: 0;
+padding-top: 0.2em;
+padding-bottom: 0.2em;
+margin: 0;
+font-size: 85%;
+background-color: rgba(0,0,0,0.04);
+border-radius: 3px;
+}
+code:before,
+code:after {
+letter-spacing: -0.2em;
+content: "\00a0";
+}
+pre>code {
+padding: 0;
+margin: 0;
+font-size: 100%;
+word-break: normal;
+white-space: pre;
+background: transparent;
+border: 0;
+}
+.highlight {
+margin-bottom: 16px;
+}
+.highlight pre,
+pre {
+padding: 16px;
+overflow: auto;
+font-size: 85%;
+line-height: 1.45;
+background-color: #f7f7f7;
+border-radius: 3px;
+}
+.highlight pre {
+margin-bottom: 0;
+word-break: normal;
+}
+pre {
+word-wrap: normal;
+}
+pre code {
+display: inline;
+max-width: initial;
+padding: 0;
+margin: 0;
+overflow: initial;
+line-height: inherit;
+word-wrap: normal;
+background-color: transparent;
+border: 0;
+}
+pre code:before,
+pre code:after {
+content: normal;
+}
+kbd {
+display: inline-block;
+padding: 3px 5px;
+font-size: 11px;
+line-height: 10px;
+color: #555;
+vertical-align: middle;
+background-color: #fcfcfc;
+border: solid 1px #ccc;
+border-bottom-color: #bbb;
+border-radius: 3px;
+box-shadow: inset 0 -1px 0 #bbb;
+}
+.pl-c {
+color: #969896;
+}
+.pl-c1,
+.pl-s .pl-v {
+color: #0086b3;
+}
+.pl-e,
+.pl-en {
+color: #795da3;
+}
+.pl-s .pl-s1,
+.pl-smi {
+color: #333;
+}
+.pl-ent {
+color: #63a35c;
+}
+.pl-k {
+color: #a71d5d;
+}
+.pl-pds,
+.pl-s,
+.pl-s .pl-pse .pl-s1,
+.pl-sr,
+.pl-sr .pl-cce,
+.pl-sr .pl-sra,
+.pl-sr .pl-sre {
+color: #183691;
+}
+.pl-v {
+color: #ed6a43;
+}
+.pl-id {
+color: #b52a1d;
+}
+.pl-ii {
+background-color: #b52a1d;
+color: #f8f8f8;
+}
+.pl-sr .pl-cce {
+color: #63a35c;
+font-weight: bold;
+}
+.pl-ml {
+color: #693a17;
+}
+.pl-mh,
+.pl-mh .pl-en,
+.pl-ms {
+color: #1d3e81;
+font-weight: bold;
+}
+.pl-mq {
+color: #008080;
+}
+.pl-mi {
+color: #333;
+font-style: italic;
+}
+.pl-mb {
+color: #333;
+font-weight: bold;
+}
+.pl-md {
+background-color: #ffecec;
+color: #bd2c00;
+}
+.pl-mi1 {
+background-color: #eaffea;
+color: #55a532;
+}
+.pl-mdr {
+color: #795da3;
+font-weight: bold;
+}
+.pl-mo {
+color: #1d3e81;
+}
+kbd {
+display: inline-block;
+padding: 3px 5px;
+font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+line-height: 10px;
+color: #555;
+vertical-align: middle;
+background-color: #fcfcfc;
+border: solid 1px #ccc;
+border-bottom-color: #bbb;
+border-radius: 3px;
+box-shadow: inset 0 -1px 0 #bbb;
+}
+.task-list-item {
+list-style-type: none;
+}
+.task-list-item+.task-list-item {
+margin-top: 3px;
+}
+.task-list-item input {
+margin: 0 0.35em 0.25em -1.6em;
+vertical-align: middle;
+}
+:checked+.radio-label {
+z-index: 1;
+position: relative;
+border-color: #4078c0;
+}
+.sourceLine {
+display: inline-block;
+}
+code .kw { color: #000000; }
+code .dt { color: #ed6a43; }
+code .dv { color: #009999; }
+code .bn { color: #009999; }
+code .fl { color: #009999; }
+code .ch { color: #009999; }
+code .st { color: #183691; }
+code .co { color: #969896; }
+code .ot { color: #0086b3; }
+code .al { color: #a61717; }
+code .fu { color: #63a35c; }
+code .er { color: #a61717; background-color: #e3d2d2; }
+code .wa { color: #000000; }
+code .cn { color: #008080; }
+code .sc { color: #008080; }
+code .vs { color: #183691; }
+code .ss { color: #183691; }
+code .im { color: #000000; }
+code .va {color: #008080; }
+code .cf { color: #000000; }
+code .op { color: #000000; }
+code .bu { color: #000000; }
+code .ex { color: #000000; }
+code .pp { color: #999999; }
+code .at { color: #008080; }
+code .do { color: #969896; }
+code .an { color: #008080; }
+code .cv { color: #008080; }
+code .in { color: #008080; }
+</style>
+<style>
+body {
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 45px;
+  padding-top: 0px;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+<h1 id="fwildclusterboot">fwildclusterboot</h1>
+<!-- badges: start -->
+
+<p><a href="https://www.tidyverse.org/lifecycle/#experimental"><img src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTM4IiBoZWlnaHQ9IjIwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9ImxpZmVjeWNsZTogZXhwZXJpbWVudGFsIj48dGl0bGU+bGlmZWN5Y2xlOiBleHBlcmltZW50YWw8L3RpdGxlPjxsaW5lYXJHcmFkaWVudCBpZD0icyIgeDI9IjAiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNiYmIiIHN0b3Atb3BhY2l0eT0iLjEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3Atb3BhY2l0eT0iLjEiLz48L2xpbmVhckdyYWRpZW50PjxjbGlwUGF0aCBpZD0iciI+PHJlY3Qgd2lkdGg9IjEzOCIgaGVpZ2h0PSIyMCIgcng9IjMiIGZpbGw9IiNmZmYiLz48L2NsaXBQYXRoPjxnIGNsaXAtcGF0aD0idXJsKCNyKSI+PHJlY3Qgd2lkdGg9IjU1IiBoZWlnaHQ9IjIwIiBmaWxsPSIjNTU1Ii8+PHJlY3QgeD0iNTUiIHdpZHRoPSI4MyIgaGVpZ2h0PSIyMCIgZmlsbD0iI2ZlN2QzNyIvPjxyZWN0IHdpZHRoPSIxMzgiIGhlaWdodD0iMjAiIGZpbGw9InVybCgjcykiLz48L2c+PGcgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IlZlcmRhbmEsR2VuZXZhLERlamFWdSBTYW5zLHNhbnMtc2VyaWYiIHRleHQtcmVuZGVyaW5nPSJnZW9tZXRyaWNQcmVjaXNpb24iIGZvbnQtc2l6ZT0iMTEwIj48dGV4dCBhcmlhLWhpZGRlbj0idHJ1ZSIgeD0iMjg1IiB5PSIxNTAiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiIHRyYW5zZm9ybT0ic2NhbGUoLjEpIiB0ZXh0TGVuZ3RoPSI0NTAiPmxpZmVjeWNsZTwvdGV4dD48dGV4dCB4PSIyODUiIHk9IjE0MCIgdHJhbnNmb3JtPSJzY2FsZSguMSkiIGZpbGw9IiNmZmYiIHRleHRMZW5ndGg9IjQ1MCI+bGlmZWN5Y2xlPC90ZXh0Pjx0ZXh0IGFyaWEtaGlkZGVuPSJ0cnVlIiB4PSI5NTUiIHk9IjE1MCIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyIgdHJhbnNmb3JtPSJzY2FsZSguMSkiIHRleHRMZW5ndGg9IjczMCI+ZXhwZXJpbWVudGFsPC90ZXh0Pjx0ZXh0IHg9Ijk1NSIgeT0iMTQwIiB0cmFuc2Zvcm09InNjYWxlKC4xKSIgZmlsbD0iI2ZmZiIgdGV4dExlbmd0aD0iNzMwIj5leHBlcmltZW50YWw8L3RleHQ+PC9nPjwvc3ZnPg==" alt="Lifecycle: experimental" /></a> <a href="https://CRAN.R-project.org/package=fwildclusterboot"><img src="data:image/svg+xml; charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMzEiIGhlaWdodD0iMjAiPgogIDxsaW5lYXJHcmFkaWVudCBpZD0iYiIgeDI9IjAiIHkyPSIxMDAlIj4KICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2JiYiIgc3RvcC1vcGFjaXR5PSIuMSIvPgogICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLW9wYWNpdHk9Ii4xIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8bWFzayBpZD0iYSI+CiAgICA8cmVjdCB3aWR0aD0iMTMxIiBoZWlnaHQ9IjIwIiByeD0iMyIgZmlsbD0iI2ZmZiIvPgogIDwvbWFzaz4KICA8ZyBtYXNrPSJ1cmwoI2EpIj4KICAgIDxwYXRoIGZpbGw9IiM1NTUiIGQ9Ik0wIDBoNDN2MjBIMHoiLz4KICAgIDxwYXRoIGZpbGw9IiNlMDVkNDQiIGQ9Ik00MyAwaDExNHYyMEg0M3oiLz4KICAgIDxwYXRoIGZpbGw9InVybCgjYikiIGQ9Ik0wIDBoMTMxdjIwSDB6Ii8+CiAgPC9nPgogIDxnIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiCiAgICAgZm9udC1mYW1pbHk9IkRlamFWdSBTYW5zLFZlcmRhbmEsR2VuZXZhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiPgogICAgPHRleHQgeD0iMjEuNSIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPgogICAgICBDUkFOCiAgICA8L3RleHQ+CiAgICA8dGV4dCB4PSIyMS41IiB5PSIxNCI+CiAgICAgIENSQU4KICAgIDwvdGV4dD4KICAgIDx0ZXh0IHg9Ijg2IiB5PSIxNSIgZmlsbD0iIzAxMDEwMSIgZmlsbC1vcGFjaXR5PSIuMyI+CiAgICAgIG5vdCBwdWJsaXNoZWQKICAgIDwvdGV4dD4KICAgIDx0ZXh0IHg9Ijg2IiB5PSIxNCI+CiAgICAgIG5vdCBwdWJsaXNoZWQKICAgIDwvdGV4dD4KICA8L2c+Cjwvc3ZnPg==" alt="CRAN status" /></a></p>
+<!-- badges: end -->
+
+<p>The goal of fwildclusterboot is to estimate a fast wild cluster bootstrap for linear regression models of classes “lm”, “lm_robust” and “felm” (from packages base, estimatr and lfe).</p>
+<h2 id="installation">Installation</h2>
+<p>You can install the released version of fwildclusterboot from github…</p>
+<p>In a first step, simulate some data</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"></a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="co"># library(fwildclusterboot)</span></a>
+<a class="sourceLine" id="cb1-4" title="4">B &lt;-<span class="st"> </span><span class="dv">10000</span></a>
+<a class="sourceLine" id="cb1-5" title="5">seed &lt;-<span class="st"> </span><span class="dv">1345671</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="kw">set.seed</span>(seed)</a>
+<a class="sourceLine" id="cb1-7" title="7"></a>
+<a class="sourceLine" id="cb1-8" title="8">voters &lt;-<span class="st"> </span><span class="kw">create_data</span>(<span class="dt">N =</span> <span class="dv">2000</span>, <span class="dt">N_G =</span> <span class="dv">20</span>)</a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="kw">head</span>(voters)</a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="co">#&gt;      ID group_id    ideology ideological_label      income       Q1_immigration</span></a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="co">#&gt; 1: 0001        1 -0.05943174      Conservative   16208.622 Don&#39;t Know / Neutral</span></a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="co">#&gt; 2: 0002        2  2.11075601      Very Liberal   27050.976                Agree</span></a>
+<a class="sourceLine" id="cb1-13" title="13"><span class="co">#&gt; 3: 0003        3 -0.57228225      Conservative  287686.820        Lean Disagree</span></a>
+<a class="sourceLine" id="cb1-14" title="14"><span class="co">#&gt; 4: 0004        4 -0.98017940      Conservative 2943631.268        Lean Disagree</span></a>
+<a class="sourceLine" id="cb1-15" title="15"><span class="co">#&gt; 5: 0005        5  1.42551925      Very Liberal    2557.386           Lean Agree</span></a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="co">#&gt; 6: 0006        6 -1.10655250 Very Conservative  631037.107        Lean Disagree</span></a>
+<a class="sourceLine" id="cb1-17" title="17"><span class="co">#&gt;              Q2_defence treatment proposition_vote log_income</span></a>
+<a class="sourceLine" id="cb1-18" title="18"><span class="co">#&gt; 1: Don&#39;t Know / Neutral         1                1   9.693299</span></a>
+<a class="sourceLine" id="cb1-19" title="19"><span class="co">#&gt; 2:         Strong Agree         0                1  10.205478</span></a>
+<a class="sourceLine" id="cb1-20" title="20"><span class="co">#&gt; 3: Don&#39;t Know / Neutral         0                0  12.569628</span></a>
+<a class="sourceLine" id="cb1-21" title="21"><span class="co">#&gt; 4: Don&#39;t Know / Neutral         1                0  14.895155</span></a>
+<a class="sourceLine" id="cb1-22" title="22"><span class="co">#&gt; 5:                Agree         0                0   7.846741</span></a>
+<a class="sourceLine" id="cb1-23" title="23"><span class="co">#&gt; 6:        Lean Disagree         1                0  13.355120</span></a></code></pre></div>
+<p>The fwildclusterboot package supports estimation of linear models based on base R’s lm() function, estimatr’s lm_robust function, lfe’s felm() function and fixest’s feols() function.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">library</span>(estimatr)</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="kw">library</span>(lfe)</a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="co">#&gt; Loading required package: Matrix</span></a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="co">#&gt; Attaching package: &#39;Matrix&#39;</span></a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="co">#&gt; The following objects are masked from &#39;package:pracma&#39;:</span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb2-8" title="8"><span class="co">#&gt;     expm, lu, tril, triu</span></a>
+<a class="sourceLine" id="cb2-9" title="9"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb2-10" title="10"><span class="co">#&gt; Attaching package: &#39;lfe&#39;</span></a>
+<a class="sourceLine" id="cb2-11" title="11"><span class="co">#&gt; The following object is masked from &#39;package:lmtest&#39;:</span></a>
+<a class="sourceLine" id="cb2-12" title="12"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb2-13" title="13"><span class="co">#&gt;     waldtest</span></a>
+<a class="sourceLine" id="cb2-14" title="14"><span class="kw">library</span>(fixest)</a>
+<a class="sourceLine" id="cb2-15" title="15"></a>
+<a class="sourceLine" id="cb2-16" title="16">lm_fit &lt;-<span class="st"> </span><span class="kw">lm</span>(proposition_vote <span class="op">~</span><span class="st"> </span>treatment <span class="op">+</span><span class="st"> </span>ideology <span class="op">+</span><span class="st"> </span>log_income <span class="op">+</span>Q1_immigration <span class="op">+</span><span class="st"> </span>Q2_defence, <span class="dt">weights =</span> <span class="ot">NULL</span>, <span class="dt">data =</span> voters)</a>
+<a class="sourceLine" id="cb2-17" title="17">lm_robust_fit &lt;-<span class="st"> </span><span class="kw">lm_robust</span>(proposition_vote <span class="op">~</span><span class="st"> </span>treatment <span class="op">+</span><span class="st"> </span>ideology <span class="op">+</span><span class="st"> </span>log_income, <span class="dt">fixed_effects =</span> <span class="op">~</span><span class="st"> </span>Q1_immigration <span class="op">+</span><span class="st"> </span>Q2_defence, <span class="dt">weights =</span> <span class="ot">NULL</span>, <span class="dt">data =</span> voters)</a>
+<a class="sourceLine" id="cb2-18" title="18">lm_robust_fit1 &lt;-<span class="st"> </span><span class="kw">lm_robust</span>(proposition_vote <span class="op">~</span><span class="st"> </span>treatment <span class="op">+</span><span class="st"> </span>ideology <span class="op">+</span><span class="st"> </span>log_income <span class="op">+</span><span class="st"> </span>Q1_immigration <span class="op">+</span><span class="st"> </span>Q2_defence, <span class="dt">weights =</span> <span class="ot">NULL</span>, <span class="dt">data =</span> voters )</a>
+<a class="sourceLine" id="cb2-19" title="19">feols_fit &lt;-<span class="st"> </span><span class="kw">feols</span>(proposition_vote <span class="op">~</span><span class="st"> </span>treatment <span class="op">+</span><span class="st"> </span>ideology <span class="op">+</span><span class="st"> </span>log_income, <span class="dt">fixef =</span> <span class="kw">c</span>(<span class="st">&quot;Q1_immigration&quot;</span>, <span class="st">&quot;Q2_defence&quot;</span>), <span class="dt">weights =</span> <span class="ot">NULL</span>, <span class="dt">data =</span> voters)</a>
+<a class="sourceLine" id="cb2-20" title="20">felm_fit &lt;-<span class="st"> </span><span class="kw">felm</span>(proposition_vote <span class="op">~</span><span class="st"> </span>treatment <span class="op">+</span><span class="st"> </span>ideology <span class="op">+</span><span class="st"> </span>log_income <span class="op">|</span><span class="st"> </span>Q1_immigration <span class="op">+</span><span class="st"> </span>Q2_defence, <span class="dt">weights =</span> <span class="ot">NULL</span>, <span class="dt">data =</span> voters)</a></code></pre></div>
+<p>The boottest command offers two functions. First, it calculates p-values for a given null hypothesis of the form HO: (\beta = 0) vs H1: (\beta \neq 1). In order to work, an object from a regression model of class lm, lm_robust, felm or feols needs to be passed to the boottest function. Currently, the user is still required to pass a vector with information on clusters to the function. As of now, the function only supports one-dimensional clustering. By default, the boottest function calculates confidence intervals by inversion. The user can considerably speed up the inference procedure by setting the argument conf_int to FALSE, in which case no confidence intervals are computed.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">lm =<span class="st"> </span><span class="kw">boottest</span>(lm_fit, <span class="dt">clustid =</span> voters<span class="op">$</span>group_id, <span class="dt">B =</span> B, <span class="dt">seed =</span> seed, <span class="dt">param =</span> <span class="st">&quot;treatment&quot;</span>, <span class="dt">conf_int =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb3-2" title="2">estimatr_fe =<span class="st"> </span><span class="kw">boottest</span>(lm_robust_fit, <span class="dt">clustid =</span> voters<span class="op">$</span>group_id, <span class="dt">B =</span> B, <span class="dt">seed =</span> seed, <span class="dt">param =</span> <span class="st">&quot;treatment&quot;</span>, <span class="dt">conf_int =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb3-3" title="3">estimatr =<span class="st"> </span><span class="kw">boottest</span>(lm_robust_fit1, <span class="dt">clustid =</span> voters<span class="op">$</span>group_id, <span class="dt">B =</span> B, <span class="dt">seed =</span> seed, <span class="dt">param =</span> <span class="st">&quot;treatment&quot;</span>, <span class="dt">conf_int =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb3-4" title="4">felm =<span class="st"> </span><span class="kw">boottest</span>(felm_fit, <span class="dt">clustid =</span> voters<span class="op">$</span>group_id, <span class="dt">B =</span> B, <span class="dt">seed =</span> seed, <span class="dt">param =</span> <span class="st">&quot;treatment&quot;</span>, <span class="dt">conf_int =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb3-5" title="5">fixest =<span class="st"> </span><span class="kw">boottest</span>(feols_fit, <span class="dt">clustid =</span> voters<span class="op">$</span>group_id, <span class="dt">B =</span> B, <span class="dt">seed =</span> seed, <span class="dt">param =</span> <span class="st">&quot;treatment&quot;</span>, <span class="dt">conf_int =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p>Secondly, the user may specify to obtain confidence intervals.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1">res_lm =<span class="st"> </span><span class="kw">boottest</span>(lm_fit, <span class="dt">clustid =</span> voters<span class="op">$</span>group_id, <span class="dt">B =</span> B, <span class="dt">seed =</span> seed, <span class="dt">param =</span> <span class="st">&quot;treatment&quot;</span>, <span class="dt">conf_int =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">#res_estimatr_fe = boottest(lm_robust_fit, clustid = voters$group_id, B = B, seed = seed, param = &quot;treatment&quot;, conf_int = #TRUE)</span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#res_estimatr = boottest(lm_robust_fit1, clustid = voters$group_id, B = B, seed = seed, param = &quot;treatment&quot;, conf_int = #TRUE)</span></a>
+<a class="sourceLine" id="cb4-4" title="4">res_felm =<span class="st"> </span><span class="kw">boottest</span>(felm_fit, <span class="dt">clustid =</span> voters<span class="op">$</span>group_id, <span class="dt">B =</span> B, <span class="dt">seed =</span> seed, <span class="dt">param =</span> <span class="st">&quot;treatment&quot;</span>, <span class="dt">conf_int =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb4-5" title="5">res_fixest =<span class="st"> </span><span class="kw">boottest</span>(feols_fit, <span class="dt">clustid =</span> voters<span class="op">$</span>group_id, <span class="dt">B =</span> B, <span class="dt">seed =</span> seed, <span class="dt">param =</span> <span class="st">&quot;treatment&quot;</span>, <span class="dt">conf_int =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<p>A summary method collects the results.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">summary</span>(res_lm)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt;  </span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="co">#&gt;  OLS estimation, Dep.Var: proposition_vote</span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt;  Estimation Function: lm</span></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="co">#&gt;  Observations:2000</span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt;  Standard-errors: Clustered  </span></a>
+<a class="sourceLine" id="cb5-7" title="7"><span class="co">#&gt;  Number of Clusters:  20</span></a>
+<a class="sourceLine" id="cb5-8" title="8"><span class="co">#&gt;  Adj. R-Squared: 0.350656</span></a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="co">#&gt;  </span></a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span></a>
+<a class="sourceLine" id="cb5-11" title="11"><span class="co">#&gt; treatment -0.01471   1.161   0.2709 -0.04193   0.0128</span></a>
+<a class="sourceLine" id="cb5-12" title="12"><span class="co">#summary(res_estimatr_fe)</span></a>
+<a class="sourceLine" id="cb5-13" title="13"><span class="co">#summary(res_estimatr)</span></a>
+<a class="sourceLine" id="cb5-14" title="14"><span class="kw">summary</span>(res_felm)</a>
+<a class="sourceLine" id="cb5-15" title="15"><span class="co">#&gt;  </span></a>
+<a class="sourceLine" id="cb5-16" title="16"><span class="co">#&gt;   Estimation Function: felm</span></a>
+<a class="sourceLine" id="cb5-17" title="17"><span class="co">#&gt;  Observations:2000</span></a>
+<a class="sourceLine" id="cb5-18" title="18"><span class="co">#&gt;  Standard-errors: Clustered  </span></a>
+<a class="sourceLine" id="cb5-19" title="19"><span class="co">#&gt;  Number of Clusters:  20</span></a>
+<a class="sourceLine" id="cb5-20" title="20"><span class="co">#&gt;  Adj. R-Squared: 0.350656</span></a>
+<a class="sourceLine" id="cb5-21" title="21"><span class="co">#&gt;  </span></a>
+<a class="sourceLine" id="cb5-22" title="22"><span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span></a>
+<a class="sourceLine" id="cb5-23" title="23"><span class="co">#&gt; treatment -0.01471   1.161   0.2716 -0.04204  0.01279</span></a>
+<a class="sourceLine" id="cb5-24" title="24"><span class="kw">summary</span>(res_fixest)</a>
+<a class="sourceLine" id="cb5-25" title="25"><span class="co">#&gt;  </span></a>
+<a class="sourceLine" id="cb5-26" title="26"><span class="co">#&gt;   Estimation Function: fixest</span></a>
+<a class="sourceLine" id="cb5-27" title="27"><span class="co">#&gt;  Observations:2000</span></a>
+<a class="sourceLine" id="cb5-28" title="28"><span class="co">#&gt;  Standard-errors: Clustered  </span></a>
+<a class="sourceLine" id="cb5-29" title="29"><span class="co">#&gt;  Number of Clusters:  20</span></a>
+<a class="sourceLine" id="cb5-30" title="30"><span class="co">#&gt;  Adj. R-Squared: NA</span></a>
+<a class="sourceLine" id="cb5-31" title="31"><span class="co">#&gt;  </span></a>
+<a class="sourceLine" id="cb5-32" title="32"><span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span></a>
+<a class="sourceLine" id="cb5-33" title="33"><span class="co">#&gt; treatment -0.01471   1.161   0.2716 -0.04204  0.01279</span></a></code></pre></div>
+<p>Furthermore, boottest comes with a tidy method which, in analogy with the broom-package, returns the estimation results as a data.frame.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">tidy</span>(res_lm)</a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span></a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="co">#&gt; treatment -0.01471   1.161   0.2709 -0.04193   0.0128</span></a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="co">#summary(res_estimatr_fe)</span></a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="co">#summary(res_estimatr)</span></a>
+<a class="sourceLine" id="cb6-6" title="6"><span class="kw">tidy</span>(res_felm)</a>
+<a class="sourceLine" id="cb6-7" title="7"><span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span></a>
+<a class="sourceLine" id="cb6-8" title="8"><span class="co">#&gt; treatment -0.01471   1.161   0.2716 -0.04204  0.01279</span></a>
+<a class="sourceLine" id="cb6-9" title="9"><span class="kw">tidy</span>(res_fixest)</a>
+<a class="sourceLine" id="cb6-10" title="10"><span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span></a>
+<a class="sourceLine" id="cb6-11" title="11"><span class="co">#&gt; treatment -0.01471   1.161   0.2716 -0.04204  0.01279</span></a></code></pre></div>
+<h2 id="benchmarks">Benchmarks</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"></a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="co"># seed &lt;- 1</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co"># set.seed(seed)</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co"># N &lt;- 5000</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co"># N_G &lt;- 10</span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co"># B &lt;- 1000</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="co"># </span></a>
+<a class="sourceLine" id="cb7-8" title="8"><span class="co"># data &lt;- create_data(N = N, N_G = N_G)</span></a>
+<a class="sourceLine" id="cb7-9" title="9"><span class="co"># </span></a>
+<a class="sourceLine" id="cb7-10" title="10"><span class="co"># lapply(c(100, 1000, 5000, 1000), function(B){</span></a>
+<a class="sourceLine" id="cb7-11" title="11"><span class="co">#       lm_fit &lt;- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration + Q2_defence, weights = NULL, data = data)</span></a>
+<a class="sourceLine" id="cb7-12" title="12"><span class="co">#       bench &lt;- benchmark(</span></a>
+<a class="sourceLine" id="cb7-13" title="13"><span class="co">#           boot =  multiwayvcov::cluster.boot(lm_fit, </span></a>
+<a class="sourceLine" id="cb7-14" title="14"><span class="co">#                                              as.factor(data$group_id), </span></a>
+<a class="sourceLine" id="cb7-15" title="15"><span class="co">#                                              R = B, </span></a>
+<a class="sourceLine" id="cb7-16" title="16"><span class="co">#                                              boot_type = &quot;residual&quot;, </span></a>
+<a class="sourceLine" id="cb7-17" title="17"><span class="co">#                                              wild_type = &quot;rademacher&quot;, </span></a>
+<a class="sourceLine" id="cb7-18" title="18"><span class="co">#                                              parallel = FALSE), </span></a>
+<a class="sourceLine" id="cb7-19" title="19"><span class="co">#           fast_boot_1 = boottest(lm_fit, clustid = data$group_id, B = B, seed = seed, param = &quot;treatment&quot;, conf_int = FALSE),</span></a>
+<a class="sourceLine" id="cb7-20" title="20"><span class="co">#           fast_boot_1_2 = boottest(lm_fit, clustid = data$group_id, B = B, seed = seed, param = &quot;treatment&quot;, conf_int = TRUE), </span></a>
+<a class="sourceLine" id="cb7-21" title="21"><span class="co">#           replications = 10)</span></a>
+<a class="sourceLine" id="cb7-22" title="22"><span class="co">#       c(N, N_G, bench$elapsed)</span></a>
+<a class="sourceLine" id="cb7-23" title="23"><span class="co"># })</span></a>
+<a class="sourceLine" id="cb7-24" title="24"><span class="co"># </span></a>
+<a class="sourceLine" id="cb7-25" title="25"><span class="co"># </span></a>
+<a class="sourceLine" id="cb7-26" title="26"><span class="co"># res &lt;- data.frame()</span></a>
+<a class="sourceLine" id="cb7-27" title="27"><span class="co"># </span></a>
+<a class="sourceLine" id="cb7-28" title="28"><span class="co"># data &lt;- create_data(N = N, N_G = 20)</span></a>
+<a class="sourceLine" id="cb7-29" title="29"><span class="co"># i &lt;- 0</span></a>
+<a class="sourceLine" id="cb7-30" title="30"><span class="co"># </span></a>
+<a class="sourceLine" id="cb7-31" title="31"><span class="co"># res &lt;- </span></a>
+<a class="sourceLine" id="cb7-32" title="32"><span class="co"># lapply(c(1000, 5000, 10000, 20000), function(N){</span></a>
+<a class="sourceLine" id="cb7-33" title="33"><span class="co">#   lapply(c(10, 20, 50, 100, 200), function(N_G){</span></a>
+<a class="sourceLine" id="cb7-34" title="34"><span class="co">#     data &lt;- create_data(N = N, N_G = N_G)</span></a>
+<a class="sourceLine" id="cb7-35" title="35"><span class="co">#     lapply(c(100, 1000, 5000, 1000), function(B){</span></a>
+<a class="sourceLine" id="cb7-36" title="36"><span class="co">#       lm_fit &lt;- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration + Q2_defence, weights = NULL, data = data)</span></a>
+<a class="sourceLine" id="cb7-37" title="37"><span class="co">#       bench &lt;- benchmark(</span></a>
+<a class="sourceLine" id="cb7-38" title="38"><span class="co">#         boot =  multiwayvcov::cluster.boot(lm_fit, </span></a>
+<a class="sourceLine" id="cb7-39" title="39"><span class="co">#                                                        as.factor(data$group_id), </span></a>
+<a class="sourceLine" id="cb7-40" title="40"><span class="co">#                                                        R = B, </span></a>
+<a class="sourceLine" id="cb7-41" title="41"><span class="co">#                                                        boot_type = &quot;residual&quot;, </span></a>
+<a class="sourceLine" id="cb7-42" title="42"><span class="co">#                                                        wild_type = &quot;rademacher&quot;, </span></a>
+<a class="sourceLine" id="cb7-43" title="43"><span class="co">#                                                        parallel = FALSE), </span></a>
+<a class="sourceLine" id="cb7-44" title="44"><span class="co">#         fast_boot_1 = boottest(lm_fit, clustid = data$group_id, B = B, seed = seed, param = &quot;treatment&quot;, conf_int = FALSE),</span></a>
+<a class="sourceLine" id="cb7-45" title="45"><span class="co">#         fast_boot_1_2 = boottest(lm_fit, clustid = data$group_id, B = B, seed = seed, param = &quot;treatment&quot;, conf_int = TRUE), </span></a>
+<a class="sourceLine" id="cb7-46" title="46"><span class="co">#         replications = 10, </span></a>
+<a class="sourceLine" id="cb7-47" title="47"><span class="co">#         columns = c(&quot;bootstrap&quot;, &quot;fast bootstrap 1&quot;, &quot;fast bootstrap 2&quot;)#,</span></a>
+<a class="sourceLine" id="cb7-48" title="48"><span class="co">#         #relative = c(&quot;bootstrap&quot;)</span></a>
+<a class="sourceLine" id="cb7-49" title="49"><span class="co">#       )</span></a>
+<a class="sourceLine" id="cb7-50" title="50"><span class="co">#       c(N, N_G, bench$elapsed)</span></a>
+<a class="sourceLine" id="cb7-51" title="51"><span class="co">#     })</span></a>
+<a class="sourceLine" id="cb7-52" title="52"><span class="co">#   })</span></a>
+<a class="sourceLine" id="cb7-53" title="53"><span class="co"># })</span></a></code></pre></div>
+
+</body>
+</html>
