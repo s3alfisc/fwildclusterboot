@@ -115,10 +115,14 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   
   # --------------------------------------------------------------------------------------------- #
   # start inversion 
-  tidy_obj <- broom::tidy(lm_robust_fit)
-  setDT(tidy_obj)
-  estimate <- as.numeric(tidy_obj[term == param, "estimate"])
-  st_error_guess <- as.numeric(tidy_obj[term == param, "std.error"])
+  #tidy_obj <- broom::tidy(lm_robust_fit)
+  #setDT(tidy_obj)
+  #estimate <- as.numeric(tidy_obj[term == param, "estimate"])
+  #st_error_guess <- as.numeric(tidy_obj[term == param, "std.error"])
+  estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
+  st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
+  
+  
   starting_vals <- as.numeric(estimate + c(-3,3) * st_error_guess)
   
   test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
