@@ -19,188 +19,141 @@ bootstrap for linear regression models of classes “lm”, “lm\_robust” and
 
 You can install the released version of fwildclusterboot from github…
 
-``` r
-install.packages("fwildclusterboot")
-```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+In a first step, simulate some data
 
 ``` r
 
-library(fwildclusterboot)
-#> 
-#> Attaching package: 'fwildclusterboot'
-#> The following objects are masked _by_ '.GlobalEnv':
-#> 
-#>     boottest, boottest.lm, boottest.lm_robust
 
-## basic example code
+# library(fwildclusterboot)
+B <- 10000
+seed <- 1345671
+set.seed(seed)
 
-seed <- sample(1:1000, 1)
-seed
-#> [1] 694
- 
-gen_cluster <- function(param = c(1, 0), n = 20000, n_cluster = 50, rho = .8) {
- # source: https://yukiyanai.github.io/teaching/rm1/contents/R/clustered-data-analysis.html
- # Function to generate clustered data
- # Required package: mvtnorm
- 
- # individual level
- Sigma_i <- matrix(c(1, 0, 0, 1 - rho), ncol = 2)
- values_i <- rmvnorm(n = n, sigma = Sigma_i)
- 
- # cluster level
- cluster_name <- rep(1:n_cluster, each = n / n_cluster)
- Sigma_cl <- matrix(c(1, 0, 0, rho), ncol = 2)
- values_cl <- rmvnorm(n = n_cluster, sigma = Sigma_cl)
- 
- # predictor var consists of individual- and cluster-level components
- x <- values_i[ , 1] + rep(values_cl[ , 1], each = n / n_cluster)
- 
- # error consists of individual- and cluster-level components
- error <- values_i[ , 2] + rep(values_cl[ , 2], each = n / n_cluster)
- 
- # data generating process
- y <- param[1] + param[2]*x + error
- 
- df <- data.frame(x, y, cluster = cluster_name)
- data.table::setDT(df)
- return(df)
-}
-# 
-data <- gen_cluster()
-#head(data)
-#data[, mean(y)]
 
- 
-lm_fit <- lm(y ~ x, data = data)
-
- 
-# standard bootstrap
-B <- 1000
- 
-```
-
-As can be seen, the fast bootstrap is much faster.
-
-``` r
-# basic bootstrap, not parallel
-system.time(boot_fit <- multiwayvcov::cluster.boot(lm_fit, 
-                           as.factor(data$cluster), 
-                           R = B, 
-                           boot_type = "residual", 
-                           wild_type = "rademacher", 
-                           parallel = TRUE))
-#>    user  system elapsed 
-#>   16.50    0.04   16.87
- 
- 
-system.time(
-  boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
+voters <- fabricate(
+  N = 2000,
+  group_id = rep(1:20, 100),
+  ideology = draw_normal_icc(mean = 0, N = N, clusters = group_id, ICC = 0.1),
+  ideological_label = draw_ordered(
+    x = ideology,
+    break_labels = c(
+      "Very Conservative", "Conservative",
+      "Liberal", "Very Liberal"
+    )
+  ),
+  income = exp(rlnorm(n = N, meanlog = 2.4 - (ideology * 0.1), sdlog = 0.12)),
+  Q1_immigration = draw_likert(x = ideology, type = 7),
+  Q2_defence = draw_likert(x = ideology + 0.5, type = 7),
+  treatment = draw_binary(0.5, N = N),
+  proposition_vote = draw_binary(latent = ideology + 0.01 * treatment, link = "probit")
 )
-#>    user  system elapsed 
-#>    1.90    0.36    2.31
+
+setDT(voters)
+voters[, log_income := log(income)]
+voters[, Q1_immigration := as.factor(Q1_immigration) ]
+voters[, Q2_defence := as.factor(Q2_defence)]
+
+head(voters)
+#>      ID group_id    ideology ideological_label      income       Q1_immigration
+#> 1: 0001        1 -0.05943174      Conservative   16208.622 Don't Know / Neutral
+#> 2: 0002        2  2.11075601      Very Liberal   27050.976                Agree
+#> 3: 0003        3 -0.57228225      Conservative  287686.820        Lean Disagree
+#> 4: 0004        4 -0.98017940      Conservative 2943631.268        Lean Disagree
+#> 5: 0005        5  1.42551925      Very Liberal    2557.386           Lean Agree
+#> 6: 0006        6 -1.10655250 Very Conservative  631037.107        Lean Disagree
+#>              Q2_defence treatment proposition_vote log_income
+#> 1: Don't Know / Neutral         1                1   9.693299
+#> 2:         Strong Agree         0                1  10.205478
+#> 3: Don't Know / Neutral         0                0  12.569628
+#> 4: Don't Know / Neutral         1                0  14.895155
+#> 5:                Agree         0                0   7.846741
+#> 6:        Lean Disagree         1                0  13.355120
 ```
 
-And let’s have a look at the output:
+The fwildclusterboot package supports estimation of linear models based
+on base R’s lm() function, estimatr’s lm\_robust function, lfe’s felm()
+function and fixest’s feols() function.
 
 ``` r
-lmtest::coeftest(lm_fit, boot_fit)
+library(estimatr)
+library(lfe)
+#> Loading required package: Matrix
 #> 
-#> t test of coefficients:
+#> Attaching package: 'Matrix'
+#> The following objects are masked from 'package:pracma':
 #> 
-#>             Estimate Std. Error t value Pr(>|t|)    
-#> (Intercept) 1.119350   0.105368 10.6232   <2e-16 ***
-#> x           0.037111   0.052774  0.7032   0.4819    
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#>     expm, lu, tril, triu
+#> 
+#> Attaching package: 'lfe'
+#> The following object is masked from 'package:lmtest':
+#> 
+#>     waldtest
+library(fixest)
 
-boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)")
-#> [1] "The wild cluster bootstrap p-value for the parameter (Intercept) is 0 , with B 1000 bootstrap iterations."
-boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
-#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.495 , with B 1000 bootstrap iterations."
-
-lm_robust_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
-lm_robust_fit %>% 
-summary()
-#> 
-#> Call:
-#> lm_robust(formula = y ~ x, data = data, clusters = cluster)
-#> 
-#> Standard error type:  CR2 
-#> 
-#> Coefficients:
-#>             Estimate Std. Error t value  Pr(>|t|) CI Lower CI Upper    DF
-#> (Intercept)  1.11935    0.10673 10.4873 4.869e-14  0.90478   1.3339 48.27
-#> x            0.03711    0.05329  0.6963 4.909e-01 -0.07112   0.1453 34.63
-#> 
-#> Multiple R-squared:  0.003702 ,  Adjusted R-squared:  0.003652 
-#> F-statistic: 0.4849 on 1 and 49 DF,  p-value: 0.4895
-
-boottest.lm_robust(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = "x") 
-#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.495 , with B 1000 bootstrap iterations."
+lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration + Q2_defence, weights = NULL, data = voters)
+lm_robust_fit <- lm_robust(proposition_vote ~ treatment + ideology + log_income, fixed_effects = ~ Q1_immigration + Q2_defence, weights = NULL, data = voters)
+lm_robust_fit1 <- lm_robust(proposition_vote ~ treatment + ideology + log_income + Q1_immigration + Q2_defence, weights = NULL, data = voters )
+feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income, fixef = c("Q1_immigration", "Q2_defence"), weights = NULL, data = voters)
+felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration + Q2_defence, weights = NULL, data = voters)
 ```
 
-Now, with a real data set:
+The boottest command offers two functions. First, it calculates p-values
+for a given null hypothesis. This is ususally extremely
+fast:
 
 ``` r
-
-data("petersen")
-
-# cluster by firmid
-lm_robust_fit_real <- lm_robust(y ~ x, clusters = firmid, data = petersen)
-lm_robust_fit_real %>% 
-  summary()
-#> 
-#> Call:
-#> lm_robust(formula = y ~ x, data = petersen, clusters = firmid)
-#> 
-#> Standard error type:  CR2 
-#> 
-#> Coefficients:
-#>             Estimate Std. Error t value  Pr(>|t|) CI Lower CI Upper    DF
-#> (Intercept)  0.02968    0.06704  0.4427 6.582e-01  -0.1020   0.1614 498.7
-#> x            1.03483    0.05068 20.4199 3.002e-59   0.9351   1.1346 308.8
-#> 
-#> Multiple R-squared:  0.2078 ,    Adjusted R-squared:  0.2076 
-#> F-statistic:   417 on 1 and 499 DF,  p-value: < 2.2e-16
-boottest.lm_robust(lm_robust_fit_real, data = petersen, clustid = petersen$firmid, B = B, param = "(Intercept)")
-#> [1] "The wild cluster bootstrap p-value for the parameter (Intercept) is 0.656 , with B 1000 bootstrap iterations."
-boottest.lm_robust(lm_robust_fit_real, data = petersen, clustid = petersen$firmid, B = B, param = "x")
-#> [1] "The wild cluster bootstrap p-value for the parameter x is 0 , with B 1000 bootstrap iterations."
-
-# cluster by year
-lm_robust_fit_real <- lm_robust(y ~ x, clusters = year, data = petersen)
-lm_robust_fit_real %>% 
-  summary()
-#> 
-#> Call:
-#> lm_robust(formula = y ~ x, data = petersen, clusters = year)
-#> 
-#> Standard error type:  CR2 
-#> 
-#> Coefficients:
-#>             Estimate Std. Error t value  Pr(>|t|) CI Lower CI Upper    DF
-#> (Intercept)  0.02968    0.02339   1.269 2.364e-01 -0.02324   0.0826 9.000
-#> x            1.03483    0.03340  30.987 1.899e-10  0.95927   1.1104 8.989
-#> 
-#> Multiple R-squared:  0.2078 ,    Adjusted R-squared:  0.2076 
-#> F-statistic: 960.2 on 1 and 9 DF,  p-value: 1.861e-10
-boottest.lm_robust(lm_robust_fit_real, data = petersen, clustid = petersen$year, B = B, param = "(Intercept)")
-#> [1] "The wild cluster bootstrap p-value for the parameter (Intercept) is 0.229 , with B 1000 bootstrap iterations."
-boottest.lm_robust(lm_robust_fit_real, data = petersen, clustid = petersen$year, B = B, param = "x")
-#> [1] "The wild cluster bootstrap p-value for the parameter x is 0 , with B 1000 bootstrap iterations."
+lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+estimatr_fe = boottest(lm_robust_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+estimatr = boottest(lm_robust_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 ```
 
-How to get p-values for all
-parameters?
+Secondly, the user may specify to obtain confidence
+intervals.
 
 ``` r
-# lapply(1:length(names(coef(lm_fit))), function(i) boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = names(coef(lm_fit))[i]))
-# 
-# vboot <- Vectorize(boottest.lm_robust, vectorize.args = "param")
-# 
-# vboot(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = c("(Intercept)", "x"))
+res_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+#res_estimatr_fe = boottest(lm_robust_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = #TRUE)
+#res_estimatr = boottest(lm_robust_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = #TRUE)
+res_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+res_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+```
+
+This leads to the following results:
+
+``` r
+summary(res_lm)
+#>  
+#>  OLS estimation, Dep.Var: proposition_vote
+#>  Estimation Function: lm
+#>  Observations:2000
+#>  Standard-errors: Clustered  
+#>  Number of Clusters:  20
+#>  Adj. R-Squared: 0.350656
+#>  
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment -0.01471   1.161   0.2709 -0.04193   0.0128
+#summary(res_estimatr_fe)
+#summary(res_estimatr)
+summary(res_felm)
+#>  
+#>   Estimation Function: felm
+#>  Observations:2000
+#>  Standard-errors: Clustered  
+#>  Number of Clusters:  20
+#>  Adj. R-Squared: 0.350656
+#>  
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment -0.01471   1.161   0.2716 -0.04204  0.01279
+summary(res_fixest)
+#>  
+#>   Estimation Function: fixest
+#>  Observations:2000
+#>  Standard-errors: Clustered  
+#>  Number of Clusters:  20
+#>  Adj. R-Squared: NA
+#>  
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment -0.01471   1.161   0.2716 -0.04204  0.01279
 ```
