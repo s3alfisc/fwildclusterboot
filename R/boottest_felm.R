@@ -1,34 +1,60 @@
 #'@export
-boottest.lm <- function(object, 
-                        clustid, 
-                        param, 
-                        B,
-                        weights = NULL, 
-                        conf_int = NULL, 
-                        debug = FALSE, 
-                        seed = NULL, 
-                        beta0 = NULL){
+boottest.felm  <- function(object, 
+                                #clustid = model.frame(formula = formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 0, rhs = 4), 
+                                #                      data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
+                                #                      drop.unused.levels = TRUE),    
+                                clustid, 
+                                param, 
+                                B,
+                                data,
+                                fixed_effects = NULL, 
+                                weights = NULL,
+                                conf_int = NULL, 
+                                debug = FALSE, 
+                                seed = NULL, 
+                                beta0 = 0){
+  
+  
+  
   
   
   #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)
-  #object <- lm_fit
+  #object <- felm_fit
   #clustid = voters$group_id
-  #B <- 1000
+  #B <- 10000
   #seed <- 1
   #param <- "treatment"
   #beta0 <- 0
+  #conf_int <- TRUE
   
-  data <- fwildclusterboot:::get_model_frame(object)
+  data <- get_model_frame(object)
+  # clustid <- model.frame(formula = clustid, 
+  #                        data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
+  #                        drop.unused.levels = TRUE)    
+  
+  #clustid <- as.vector(clustid)
+  
+  # if fixed effects are specified, demean: 
+  if(formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 0, rhs = 2) != "~0"){
+    fixed_effects <- get_model_fe(object)
+    demean_data <- fixest::demean(data, fixed_effects)
+    data <- as.data.frame(demean_data)
+    R0 <- as.numeric(param == c("(Intercept)", rownames(object$coefficients)))
+  } else{
+    R0 <- as.numeric(param == c(names(object$coefficients)))
+  }
+  
+  if(!is.null(object$call$weights)){
+    stop("Function currently does not allow weights.")
+  }
+  
+  
+  
   
   if(!is.null(seed)){
     set.seed(seed)
   } else if(is.null(seed)){
     set.seed(2)
-  }
-  
-  
-  if(!is.null(object$call$weights)){
-    stop("Function currently does not allow weights.")
   }
   
   # retrieve clusters / multiple clusters
@@ -39,7 +65,7 @@ boottest.lm <- function(object,
     clustid <- as.data.frame(clustid, stringsAsFactors = FALSE)
   }
   
-  if(!(param %in% c(names(object$coefficients)))){
+  if(!(param %in% c(rownames(object$coefficients)))){
     warning("Parameter to test not in model or all. Please specify appropriate parameters to test.")
   }
   
@@ -77,7 +103,6 @@ boottest.lm <- function(object,
   
   # start estimation here: 
   
-  R0 <- as.numeric(param == names(object$coefficients))
   groupvars <- names(coef(object))
   
   # if(object_type == "felm"){
@@ -88,14 +113,15 @@ boottest.lm <- function(object,
   # }
   
   
-  depvar <- all.vars(as.formula(object$call))[1]
-  #measurevar <- "y"
-  #formula <- as.formula(paste(measurevar, paste(groupvars, collapse=" + "), sep=" ~ "))
+  #depvar <- all.vars(as.formula(object$call))[1]
   
-  X <- model.matrix(as.formula(object$call), object$model)
-  Y <- as.matrix(model.frame(object)[, depvar])  
+  depvar <- names(object$response)
   
-  #res <- boottest_fun(Y = Y, X = X, R0 = R0, clustid = clustid, B = B, param = param)
+  formula <- formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 1, rhs = 1)
+  model_frame <- model.frame(formula, data = data)
+  Y <- model.response(model_frame)
+  X <- model.matrix(formula, data = data)
+  #}
   
   N <- length(Y)
   k <- ncol(X)
@@ -167,7 +193,6 @@ boottest.lm <- function(object,
   
   res  <- list(p_val = p_val, X = X, Y = Y, B = B, R0 = R0, param = param, clustid = clustid)
   # Invert p-value
-
   
   if(is.null(conf_int) || conf_int == TRUE){
     conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX)
@@ -194,13 +219,11 @@ boottest.lm <- function(object,
                       N_G = N_G)    
   }
   
-
- 
+  
+  
   class(res_final) <- "boottest"
+  
   res_final
-  
-  
-  
+  #res
   
 } 
-

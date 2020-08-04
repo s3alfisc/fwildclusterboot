@@ -3,16 +3,73 @@ library(fwildclusterboot)
 
 test_check("fwildclusterboot")
 
-test_that("test dimensions mat_mean_by_cluster"{
+# test_that("test dimensions mat_mean_by_cluster", {
+#   
+#   N <- 1000
+#   k <- 5
+#   X <- matrix(rnorm(N * k), N, k)
+#   clustid <- sample(1:3, N, replace = TRUE)
+#   unique_clusters <- length(unique(clustid))
+#   
+#   expect_equal(dim(mat_mean_by_cluster(prod = X, clustid = clustid)), c(unique_clusters,k))
+#   
+# })
+
+
+test_that("test if results of boottest are similar to each results by sandwich se", {
   
-  N <- 1000
-  k <- 5
-  X <- matrix(rnorm(N * k), N, k)
-  clustid <- sample(1:3, N, replace = TRUE)
-  unique_clusters <- length(unique(clustid))
+  seed <- sample(1:1000, 1)
+  set.seed(seed)
   
-  expect_equal(dim(mat_mean_by_cluster(prod = X, clustid = clustid)), c(unique_clusters,k))
+  B <- 100000
+
+  voters <- fabricatr::fabricate(
+    N = 10000,
+    group_id = rep(1:100, 100),
+    ideology = draw_normal_icc(mean = 0, N = N, clusters = group_id, ICC = 0.01),
+    ideological_label = draw_ordered(
+      x = ideology,
+      break_labels = c(
+        "Very Conservative", "Conservative",
+        "Liberal", "Very Liberal"
+      )
+    ),
+    income = exp(rlnorm(n = N, meanlog = 2.4 - (ideology * 0.1), sdlog = 0.12)),
+    Q1_immigration = draw_likert(x = ideology, type = 7),
+    Q2_defence = draw_likert(x = ideology + 0.5, type = 7),
+    treatment = draw_binary(0.5, N = N),
+    proposition_vote = draw_binary(latent = ideology + 0.01 * treatment, link = "probit")
+  )
+  
+  data.table::setDT(voters)
+  voters[, log_income := log(income)]
+  voters[, Q1_immigration := as.factor(Q1_immigration) ]
+  voters[, Q2_defence := as.factor(Q2_defence)]
+  
+  # estimate regressions 
+  
+  lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration + Q2_defence, weights = NULL, data = voters)
+  lm_robust_fit <- lm_robust(proposition_vote ~ treatment + ideology + log_income, fixed_effects = ~ Q1_immigration + Q2_defence, weights = NULL, data = voters)
+  lm_robust_fit1 <- lm_robust(proposition_vote ~ treatment + ideology + log_income + Q1_immigration + Q2_defence, weights = NULL, data = voters )
+  feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income, fixef = c("Q1_immigration", "Q2_defence"), weights = NULL, data = voters)
+  felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration + Q2_defence, weights = NULL, data = voters)
+  
+  # estimate benchmark regression
+  lm_robust_sandwich <-   lm_robust_fit1 <- lm_robust(proposition_vote ~ treatment + ideology + log_income + Q1_immigration + Q2_defence, weights = NULL, data = voters, clusters = voters$group_id )
+  p_val <-  lm_robust_sandwich$p.value["treatment"]
+  
+  # calculate p-values with fast bootstrap 
+  lm = boottest.lm(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+  estimatr_fe = boottest.lm_robust(lm_robust_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+  estimatr = boottest.lm_robust(lm_robust_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+  felm = boottest.felm(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+  fixest = boottest.fixest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+  
+  # test
+  expect_equivalent(lm$p_val, p_val, tolerance = 0.01)
+  expect_equivalent(estimatr$p_val, p_val, tolerance = 0.01)
+  expect_equivalent(estimatr_fe$p_val, p_val, tolerance = 0.01)
+  expect_equivalent(felm$p_val, p_val, tolerance = 0.01)
+  expect_equivalent(fixest$p_val, p_val, tolerance = 0.01)
   
 })
-
-

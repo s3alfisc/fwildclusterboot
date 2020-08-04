@@ -34,13 +34,13 @@ library(fwildclusterboot)
 #> Attaching package: 'fwildclusterboot'
 #> The following objects are masked _by_ '.GlobalEnv':
 #> 
-#>     boottest.lm, boottest.lm_robust
+#>     boottest, boottest.lm, boottest.lm_robust
 
 ## basic example code
 
 seed <- sample(1:1000, 1)
 seed
-#> [1] 774
+#> [1] 694
  
 gen_cluster <- function(param = c(1, 0), n = 20000, n_cluster = 50, rho = .8) {
  # source: https://yukiyanai.github.io/teaching/rm1/contents/R/clustered-data-analysis.html
@@ -79,7 +79,7 @@ lm_fit <- lm(y ~ x, data = data)
 
  
 # standard bootstrap
-B <- 10000
+B <- 1000
  
 ```
 
@@ -94,14 +94,14 @@ system.time(boot_fit <- multiwayvcov::cluster.boot(lm_fit,
                            wild_type = "rademacher", 
                            parallel = TRUE))
 #>    user  system elapsed 
-#>  182.13    0.45  193.40
+#>   16.50    0.04   16.87
  
  
 system.time(
   boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
 )
 #>    user  system elapsed 
-#>    1.88    7.38   11.95
+#>    1.90    0.36    2.31
 ```
 
 And let’s have a look at the output:
@@ -111,16 +111,16 @@ lmtest::coeftest(lm_fit, boot_fit)
 #> 
 #> t test of coefficients:
 #> 
-#>              Estimate Std. Error t value  Pr(>|t|)    
-#> (Intercept) 0.9294973  0.1324880  7.0157 2.361e-12 ***
-#> x           0.0051399  0.0657761  0.0781    0.9377    
+#>             Estimate Std. Error t value Pr(>|t|)    
+#> (Intercept) 1.119350   0.105368 10.6232   <2e-16 ***
+#> x           0.037111   0.052774  0.7032   0.4819    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)")
-#> [1] "The wild cluster bootstrap p-value for the parameter (Intercept) is 0 , with B 10000 bootstrap iterations."
+#> [1] "The wild cluster bootstrap p-value for the parameter (Intercept) is 0 , with B 1000 bootstrap iterations."
 boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
-#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.931 , with B 10000 bootstrap iterations."
+#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.495 , with B 1000 bootstrap iterations."
 
 lm_robust_fit <- lm_robust(y ~ x, data = data, clusters = cluster)
 lm_robust_fit %>% 
@@ -133,13 +133,74 @@ summary()
 #> 
 #> Coefficients:
 #>             Estimate Std. Error t value  Pr(>|t|) CI Lower CI Upper    DF
-#> (Intercept)  0.92950    0.13456 6.90746 9.591e-09   0.6590   1.2000 48.61
-#> x            0.00514    0.05964 0.08618 9.318e-01  -0.1155   0.1258 38.62
+#> (Intercept)  1.11935    0.10673 10.4873 4.869e-14  0.90478   1.3339 48.27
+#> x            0.03711    0.05329  0.6963 4.909e-01 -0.07112   0.1453 34.63
 #> 
-#> Multiple R-squared:  4.755e-05 , Adjusted R-squared:  -2.452e-06 
-#> F-statistic: 0.007426 on 1 and 49 DF,  p-value: 0.9317
-# does the method work with object lm_robust?
-#boottest.lm_robust(lm_robust_fit, clustid = data$cluster, B = B, seed = seed, param = "(Intercept)") # ror: need to feed in data
+#> Multiple R-squared:  0.003702 ,  Adjusted R-squared:  0.003652 
+#> F-statistic: 0.4849 on 1 and 49 DF,  p-value: 0.4895
+
 boottest.lm_robust(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = "x") 
-#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.931 , with B 10000 bootstrap iterations."
+#> [1] "The wild cluster bootstrap p-value for the parameter x is 0.495 , with B 1000 bootstrap iterations."
+```
+
+Now, with a real data set:
+
+``` r
+
+data("petersen")
+
+# cluster by firmid
+lm_robust_fit_real <- lm_robust(y ~ x, clusters = firmid, data = petersen)
+lm_robust_fit_real %>% 
+  summary()
+#> 
+#> Call:
+#> lm_robust(formula = y ~ x, data = petersen, clusters = firmid)
+#> 
+#> Standard error type:  CR2 
+#> 
+#> Coefficients:
+#>             Estimate Std. Error t value  Pr(>|t|) CI Lower CI Upper    DF
+#> (Intercept)  0.02968    0.06704  0.4427 6.582e-01  -0.1020   0.1614 498.7
+#> x            1.03483    0.05068 20.4199 3.002e-59   0.9351   1.1346 308.8
+#> 
+#> Multiple R-squared:  0.2078 ,    Adjusted R-squared:  0.2076 
+#> F-statistic:   417 on 1 and 499 DF,  p-value: < 2.2e-16
+boottest.lm_robust(lm_robust_fit_real, data = petersen, clustid = petersen$firmid, B = B, param = "(Intercept)")
+#> [1] "The wild cluster bootstrap p-value for the parameter (Intercept) is 0.656 , with B 1000 bootstrap iterations."
+boottest.lm_robust(lm_robust_fit_real, data = petersen, clustid = petersen$firmid, B = B, param = "x")
+#> [1] "The wild cluster bootstrap p-value for the parameter x is 0 , with B 1000 bootstrap iterations."
+
+# cluster by year
+lm_robust_fit_real <- lm_robust(y ~ x, clusters = year, data = petersen)
+lm_robust_fit_real %>% 
+  summary()
+#> 
+#> Call:
+#> lm_robust(formula = y ~ x, data = petersen, clusters = year)
+#> 
+#> Standard error type:  CR2 
+#> 
+#> Coefficients:
+#>             Estimate Std. Error t value  Pr(>|t|) CI Lower CI Upper    DF
+#> (Intercept)  0.02968    0.02339   1.269 2.364e-01 -0.02324   0.0826 9.000
+#> x            1.03483    0.03340  30.987 1.899e-10  0.95927   1.1104 8.989
+#> 
+#> Multiple R-squared:  0.2078 ,    Adjusted R-squared:  0.2076 
+#> F-statistic: 960.2 on 1 and 9 DF,  p-value: 1.861e-10
+boottest.lm_robust(lm_robust_fit_real, data = petersen, clustid = petersen$year, B = B, param = "(Intercept)")
+#> [1] "The wild cluster bootstrap p-value for the parameter (Intercept) is 0.229 , with B 1000 bootstrap iterations."
+boottest.lm_robust(lm_robust_fit_real, data = petersen, clustid = petersen$year, B = B, param = "x")
+#> [1] "The wild cluster bootstrap p-value for the parameter x is 0 , with B 1000 bootstrap iterations."
+```
+
+How to get p-values for all
+parameters?
+
+``` r
+# lapply(1:length(names(coef(lm_fit))), function(i) boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = names(coef(lm_fit))[i]))
+# 
+# vboot <- Vectorize(boottest.lm_robust, vectorize.args = "param")
+# 
+# vboot(lm_robust_fit, data = data, clustid = data$cluster, B = B, seed = seed, param = c("(Intercept)", "x"))
 ```
