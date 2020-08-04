@@ -1,1 +1,4 @@
-#' boottest <- function(x, ...){UseMethod("boottest")}
+boottest <- function(x, ...){
+  UseMethod("boottest")
+}
+
