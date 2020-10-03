@@ -201,8 +201,8 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
 
   p <- p + 0.05
   
-  if(sum(p < 0.05) < 1){warning("Need to djust starting values: they are not p < 0.05. Therefore, choose more
-                                extreme starting values.")}
+  #if(sum(p < 0.05) < 1){warning("Need to djust starting values: they are not p < 0.05. Therefore, choose more
+  #                              extreme starting values.")}
   
   crossings <-  (p < 0.05) - (p > 0.05)
   x_crossings <- rep(NA, length(test_vals))
@@ -220,14 +220,39 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   test_vals_lower_max <- test_vals_lower[which.min(abs(test_vals_higher))]
 
   
+  secant_method <- function(f, x1, x2, num = 10, eps = 1e-06, eps1 = 1e-06){
+    i = 0
+    while ((abs(x1 - x2) > eps) & (i < num)) {
+      c = x2 - f(x2) * (x2 - x1)/(f(x2) - f(x1))
+      x1 = x2
+      x2 = c
+      i = i + 1
+    }
+    
+    if (abs(f(x2)) < eps1) {
+      success <- "finding root is successful"
+    }
+    success <- "finding root is fail"
+    
+    res <- 
+      list(root = x2, 
+      function_val = f(x2),
+      success = success)
+ 
+    res
+  }
   
   
   res <- lapply(list(test_vals_lower, test_vals_higher), function(x){
+    
+   #tmp <-  NLRoot::SMfzero(p_val_null_x , x1 = min(x), x2 = max(x), num = 10, eps = 1e-06)
+   tmp <- secant_method(p_val_null_x, x1 = min(x), x2 = max(x))
+    #tmp
     #tmp <- pracma::newtonRaphson(p_val_null_x, x0 =  x, dfun = NULL, maxiter = 25, tol = 1e-4)
     #tmp$root
     #tmp <- pracma::fzero(p_val_null_x , x = test_vals_higher, maxiter = 10, tol = 1e-12)
     #tmp$x
-    tmp <- pracma::bisect(p_val_null_x , a = min(x), b = max(x), maxiter = 10)
+    #tmp <- pracma::bisect(p_val_null_x , a = min(x), b = max(x), maxiter = 10)
     tmp$root
   })
 

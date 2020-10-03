@@ -11,14 +11,14 @@ boottest.lm <- function(object,
   
   
   #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)
-  #object <- lm_fit
-  #clustid = voters$group_id
-  #B <- 1000
-  #seed <- 1
-  #param <- "treatment"
-  #beta0 <- 0
+  object <- lm_fit
+  clustid = voters$group_id
+  #B <- 10000
+  seed <- 1
+  param <- "treatment"
+  beta0 <- 0
   
-  data <- fwildclusterboot:::get_model_frame(object)
+  data <- get_model_frame(object)
   
   if(!is.null(seed)){
     set.seed(seed)

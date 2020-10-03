@@ -16,23 +16,27 @@ boottest.fixest  <- function(object,
   
   
   #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)
-  #object <- feols_fit
-  #clustid = voters$group_id
-  #B <- 10000
-  #seed <- 1
-  #param <- "treatment"
-  #beta0 <- 0
-  #conf_int <- TRUE
+  object <- feols_fit1
+  clustid = voters$group_id
+  B <- 10000
+  seed <- 1
+  param <- "treatment"
+  beta0 <- 0
+  conf_int <- TRUE
   
   data <- get_model_frame(object)
   
   # if fixed effects are specified, demean: 
   if(!is.null(object$call$fixef)){
+    use_fixef <- TRUE
     fixed_effects <- get_model_fe(object)
     demean_data <- fixest::demean(data, fixed_effects)
+    names(fixed_effects) <- paste0("fixed_effect_", 1:ncol(fixed_effects))
+    # data is the demeaned data if fe are used
     data <- as.data.frame(demean_data)
     R0 <- as.numeric(param == c("(Intercept)", names(object$coefficients)))
   } else{
+    use_fixef <- FALSE
     R0 <- as.numeric(param == c(names(object$coefficients)))
   }
   
@@ -149,21 +153,57 @@ boottest.fixest  <- function(object,
   v[,1] <- 1
   
   XinvXXr <- X %*% (invXX %*% R0) # N x 1
+
   SXinvXXRu_prep <- data.table::data.table(prod = XinvXXr * matrix(rep(u_hat, 1), N, 1) , clustid = clustid) 
   SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
-  
   if(ncol(SXinvXXRu) == 1){
     SXinvXXRu <- as.vector(SXinvXXRu)
   }
-  
-  SXinvXXRX_prep <- data.table::data.table(prod = matrix(rep(XinvXXr, k), N, k) * X, clustid = clustid)
-  SXinvXXRX <- as.matrix(SXinvXXRX_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
-  
-  SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
-  SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
-  
   numer <- SXinvXXRu %*% v 
-  J <- (diag(SXinvXXRu) - SXinvXXRX  %*% invXX %*% t(SXu)) %*% v  
+  
+  if(use_fixef == FALSE){
+    
+    # "old" code - if no fixed effects used in calculation
+    
+    SXinvXXRX_prep <- data.table::data.table(prod = matrix(rep(XinvXXr, k), N, k) * X, clustid = clustid)
+    SXinvXXRX <- as.matrix(SXinvXXRX_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
+    
+    SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
+    SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
+    
+    J <- (diag(SXinvXXRu) - SXinvXXRX  %*% invXX %*% t(SXu)) %*% v  
+    
+  } else if(use_fixef == TRUE){
+    
+    crosstab_XinvXXRu_prep <- data.table::data.table(prod = XinvXXr * matrix(rep(u_hat, 1), N, 1) , clustid = clustid) 
+    crosstab_XinvXXRu <- crosstab(crosstab_XinvXXRu_prep, groups = c("clustid.clustid", "clustid.clustid"), rename_var = "prod.V1")
+    
+    crosstab_XinvXXR_prep <- data.table::data.table(prod = matrix(rep(XinvXXr, k), N, k), clustid = clustid, fe = fixed_effects)
+    crosstab_XinvXXR <- crosstab(data = crosstab_XinvXXR_prep, groups = c("clustid.clustid", "fe.fixed_effect_1"), rename_var = "prod.V1")
+    
+    S_XinvXXRX_prep <- data.table::data.table(prod = matrix(rep(XinvXXr, k), N, k) * X, clustid = clustid)
+    S_Xu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
+    
+    S_XinvXXRX <- S_XinvXXRX_prep[, lapply(.SD, sum), by = c("clustid.clustid")][, clustid.clustid := NULL]
+    S_Xu <- S_Xu_prep[, lapply(.SD, sum), by = c("clustid.clustid")][, clustid.clustid := NULL]
+    
+    setDT(fixed_effects)
+    fixed_effects[, tab := .N, by = "fixed_effect_1"]
+    fixed_effects[, freq := tab / nrow(fixed_effects)][, tab:=NULL]
+    W <- Diagonal(n = N) * fixed_effects$freq
+    crosstab_Wu_prep <- data.table(prod = as.vector(W %*% u_hat), clustid = clustid, fe = fixed_effects$fixed_effect_1)
+    crosstab_Wu <- crosstab(data = crosstab_Wu_prep, groups = c("clustid.clustid", "fe"), rename_var = "prod")
+    
+    S_XinvXXRX <- as.matrix(S_XinvXXRX)
+    S_Xu <- as.matrix(S_Xu)
+    
+    # now combine all
+    K <- crosstab_XinvXXRu - crosstab_XinvXXR %*% t(crosstab_Wu) - S_XinvXXRX %*% invXX %*% t(S_Xu)
+    J <- K %*% v
+    
+  }
+  
+ 
   
   #hypothesis <- c(0, rep(beta0, B))
   #hypothesis <- c(beta0, rep(0, B))
@@ -187,35 +227,35 @@ boottest.fixest  <- function(object,
   # Invert p-value
   
   
-  if(is.null(conf_int) || conf_int == TRUE){
-    conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX)
-    res_final <- list(p_val = res[["p_val"]], 
-                      conf_int = conf_int, 
-                      t_stat = t[1], 
-                      regression = object, 
-                      param = param, 
-                      N = N, 
-                      B = B, 
-                      clustid = clustid, 
-                      depvar = depvar, 
-                      N_G = N_G)
-  } else{
-    res_final <- list(p_val = res[["p_val"]], 
-                      t_stat = t[1], 
-                      conf_int = conf_int, 
-                      regression = object, 
-                      param = param, 
-                      N = N, 
-                      B = B, 
-                      clustid = clustid, 
-                      depvar = depvar, 
-                      N_G = N_G)    
-  }
-  
-  
-  class(res_final) <- "boottest"
-  
-  res_final
-  #res
+  # if(is.null(conf_int) || conf_int == TRUE){
+  #   conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX)
+  #   res_final <- list(p_val = res[["p_val"]], 
+  #                     conf_int = conf_int, 
+  #                     t_stat = t[1], 
+  #                     regression = object, 
+  #                     param = param, 
+  #                     N = N, 
+  #                     B = B, 
+  #                     clustid = clustid, 
+  #                     depvar = depvar, 
+  #                     N_G = N_G)
+  # } else{
+  #   res_final <- list(p_val = res[["p_val"]], 
+  #                     t_stat = t[1], 
+  #                     conf_int = conf_int, 
+  #                     regression = object, 
+  #                     param = param, 
+  #                     N = N, 
+  #                     B = B, 
+  #                     clustid = clustid, 
+  #                     depvar = depvar, 
+  #                     N_G = N_G)    
+  # }
+  # 
+  # 
+  # class(res_final) <- "boottest"
+  # 
+  # res_final
+  res
   
 } 

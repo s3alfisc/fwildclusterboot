@@ -10,15 +10,15 @@ Authors@R:
 Description: Estimates fast wild cluster bootstrap for linear regression models.
 License: GPL-3
 Imports: 
-  data.table 
+    data.table,
+    estimatr,
+    fixest, 
+    Formula
 Suggests: 
     testthat,
-    lfe, 
-    estimatr, 
-    multiwayvcoc, 
-    mvtnorm, 
-    magrittr, 
-    lmtest
+    lfe,
+    lmtest,
+    fabricatr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

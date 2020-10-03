@@ -11,40 +11,52 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-project.org/package=fwildclusterboot)
 <!-- badges: end -->
 
-The goal of fwildclusterboot is to estimate a fast wild cluster
-bootstrap for linear regression models of classes “lm”, “lm\_robust” and
-“felm” (from packages base, estimatr and lfe).
+The fwildclusterboot package implements the fast wild cluster bootstrap
+algorithm for regression objects in R following Stata’s boottest
+package. It works with regression objects of type lm, lm\_robust, felm
+and fixest from the base R and the estimatr, lfe and fixest packages.
 
 ## Installation
 
 You can install the released version of fwildclusterboot from github…
 
-In a first step, simulate some data
+# The boottest function
+
+In a first step, simulate a data set with 10000 individual observations
+that are grouped in 20 clusters and with a small intra-cluster
+correlation of 0.01. The small intra-cluster correlation implies that,
+in theory, inference based on cluster-robust covariance estimates should
+lead to results that are very similar to the bootstrap.
 
 ``` r
 
 
-# library(fwildclusterboot)
+library(fwildclusterboot)
+#> 
+#> Attaching package: 'fwildclusterboot'
+#> The following object is masked _by_ '.GlobalEnv':
+#> 
+#>     boottest
 B <- 10000
-seed <- 1345671
+seed <- 13456
 set.seed(seed)
 
-voters <- create_data(N = 2000, N_G = 20)
+voters <- create_data(N = 10000, N_G = 200, icc = 0.1)
 head(voters)
-#>      ID group_id    ideology ideological_label      income       Q1_immigration
-#> 1: 0001        1 -0.05943174      Conservative   16208.622 Don't Know / Neutral
-#> 2: 0002        2  2.11075601      Very Liberal   27050.976                Agree
-#> 3: 0003        3 -0.57228225      Conservative  287686.820        Lean Disagree
-#> 4: 0004        4 -0.98017940      Conservative 2943631.268        Lean Disagree
-#> 5: 0005        5  1.42551925      Very Liberal    2557.386           Lean Agree
-#> 6: 0006        6 -1.10655250 Very Conservative  631037.107        Lean Disagree
-#>              Q2_defence treatment proposition_vote log_income
-#> 1: Don't Know / Neutral         1                1   9.693299
-#> 2:         Strong Agree         0                1  10.205478
-#> 3: Don't Know / Neutral         0                0  12.569628
-#> 4: Don't Know / Neutral         1                0  14.895155
-#> 5:                Agree         0                0   7.846741
-#> 6:        Lean Disagree         1                0  13.355120
+#>       ID group_id    ideology ideological_label     income       Q1_immigration
+#> 1: 00001        1  0.40393432           Liberal   3714.889 Don't Know / Neutral
+#> 2: 00002        2  0.20515319           Liberal  24098.174 Don't Know / Neutral
+#> 3: 00003        3 -0.06154031      Conservative 118037.533 Don't Know / Neutral
+#> 4: 00004        4 -0.07549291      Conservative  73420.230 Don't Know / Neutral
+#> 5: 00005        5  0.80690455           Liberal  12240.079           Lean Agree
+#> 6: 00006        6 -0.06811706      Conservative 762239.189 Don't Know / Neutral
+#>    treatment proposition_vote log_income
+#> 1:         1                1   8.220104
+#> 2:         1                0  10.089891
+#> 3:         0                1  11.678758
+#> 4:         0                1  11.203955
+#> 5:         0                1   9.412471
+#> 6:         1                1  13.544016
 ```
 
 The fwildclusterboot package supports estimation of linear models based
@@ -67,11 +79,12 @@ library(lfe)
 #>     waldtest
 library(fixest)
 
-lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration + Q2_defence, weights = NULL, data = voters)
-lm_robust_fit <- lm_robust(proposition_vote ~ treatment + ideology + log_income, fixed_effects = ~ Q1_immigration + Q2_defence, weights = NULL, data = voters)
-lm_robust_fit1 <- lm_robust(proposition_vote ~ treatment + ideology + log_income + Q1_immigration + Q2_defence, weights = NULL, data = voters )
-feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income, fixef = c("Q1_immigration", "Q2_defence"), weights = NULL, data = voters)
-felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration + Q2_defence, weights = NULL, data = voters)
+# lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration, weights = NULL, data = voters)
+# lm_robust_fit <- lm_robust(proposition_vote ~ treatment + ideology + log_income, fixed_effects = ~ Q1_immigration , weights = NULL, data = voters)
+# lm_robust_fit1 <- lm_robust(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters )
+feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income, fixef = c("Q1_immigration"), weights = NULL, data = voters)
+feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters)
+felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
 ```
 
 The boottest command offers two functions. First, it calculates p-values
@@ -83,81 +96,77 @@ information on clusters to the function. As of now, the function only
 supports one-dimensional clustering. By default, the boottest function
 calculates confidence intervals by inversion. The user can considerably
 speed up the inference procedure by setting the argument conf\_int to
-FALSE, in which case no confidence intervals are
-computed.
+FALSE, in which case no confidence intervals are computed.
 
 ``` r
-lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
-estimatr_fe = boottest(lm_robust_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
-estimatr = boottest(lm_robust_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
-felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+# lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+# estimatr_fe = boottest(lm_robust_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+# estimatr = boottest(lm_robust_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+# felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 ```
 
-Secondly, the user may specify to obtain confidence
-intervals.
+Secondly, the user may specify to obtain confidence intervals.
 
 ``` r
-res_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+#res_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", #conf_int = TRUE)
 #res_estimatr_fe = boottest(lm_robust_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = #TRUE)
 #res_estimatr = boottest(lm_robust_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = #TRUE)
-res_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-res_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+#res_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", #conf_int = TRUE)
+#tic()
+# res_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+# res_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+#toc()
 ```
 
 A summary method collects the results.
 
 ``` r
-summary(res_lm)
-#>  
-#>  OLS estimation, Dep.Var: proposition_vote
-#>  Estimation Function: lm
-#>  Observations:2000
-#>  Standard-errors: Clustered  
-#>  Number of Clusters:  20
-#>  Adj. R-Squared: 0.350656
-#>  
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment -0.01471   1.161   0.2709 -0.04193   0.0128
+#summary(res_lm)
 #summary(res_estimatr_fe)
 #summary(res_estimatr)
-summary(res_felm)
-#>  
-#>   Estimation Function: felm
-#>  Observations:2000
-#>  Standard-errors: Clustered  
-#>  Number of Clusters:  20
-#>  Adj. R-Squared: 0.350656
-#>  
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment -0.01471   1.161   0.2716 -0.04204  0.01279
-summary(res_fixest)
-#>  
-#>   Estimation Function: fixest
-#>  Observations:2000
-#>  Standard-errors: Clustered  
-#>  Number of Clusters:  20
-#>  Adj. R-Squared: NA
-#>  
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment -0.01471   1.161   0.2716 -0.04204  0.01279
+#summary(res_felm)
+# summary(fixest)
+# summary(fixest1)
+fixest$p_val
+#> [1] 0.2062
+fixest1$p_val
+#> [1] 0.2062
 ```
 
-Furthermore, boottest comes with a tidy method which, in analogy with
-the broom-package, returns the estimation results as a data.frame.
+These estimates are very close to estimates using sandwich cluster
+robust estimators:
 
 ``` r
-tidy(res_lm)
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment -0.01471   1.161   0.2709 -0.04193   0.0128
+summary(feols_fit, se = "cluster", cluster = "group_id")
+#> OLS estimation, Dep. Var.: proposition_vote
+#> Observations: 10,000 
+#> Fixed-effects: Q1_immigration: 7
+#> Standard-errors: Clustered (group_id) 
+#>             Estimate Std. Error   t value  Pr(>|t|)    
+#> treatment   0.009637   0.008070  1.194100  0.232457    
+#> ideology    0.283317   0.015469 18.316000 < 2.2e-16 ***
+#> log_income -0.000419   0.002921 -0.143592  0.885825    
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> Log-likelihood: -5,107.25   Adj. R2: 0.34897 
+#>                           R2-Within: 0.0375
+```
+
+Currently they are probably not exactly equal as I might not adjust
+correctly for degrees of freedom in the fixed effects estimations.
+
+Boottest comes with a tidy method which, in analogy with the
+broom-package, returns the estimation results as a data.frame.
+
+``` r
+#tidy(res_lm)
 #summary(res_estimatr_fe)
 #summary(res_estimatr)
-tidy(res_felm)
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment -0.01471   1.161   0.2716 -0.04204  0.01279
-tidy(res_fixest)
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment -0.01471   1.161   0.2716 -0.04204  0.01279
+#tidy(res_felm)
+# tidy(res_fixest)
+# tidy(res_fixest1)
 ```
 
 ## Benchmarks
