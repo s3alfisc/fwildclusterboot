@@ -37,26 +37,26 @@ library(fwildclusterboot)
 #> The following object is masked _by_ '.GlobalEnv':
 #> 
 #>     boottest
-B <- 10000
-seed <- 13456
+B <- 50000
+seed <- 1346099863
 set.seed(seed)
 
-voters <- create_data(N = 10000, N_G = 200, icc = 0.1)
+voters <- create_data(N = 20000, N_G = 20, icc = 0.5)
 head(voters)
-#>       ID group_id    ideology ideological_label     income       Q1_immigration
-#> 1: 00001        1  0.40393432           Liberal   3714.889 Don't Know / Neutral
-#> 2: 00002        2  0.20515319           Liberal  24098.174 Don't Know / Neutral
-#> 3: 00003        3 -0.06154031      Conservative 118037.533 Don't Know / Neutral
-#> 4: 00004        4 -0.07549291      Conservative  73420.230 Don't Know / Neutral
-#> 5: 00005        5  0.80690455           Liberal  12240.079           Lean Agree
-#> 6: 00006        6 -0.06811706      Conservative 762239.189 Don't Know / Neutral
+#>       ID group_id    ideology ideological_label    income       Q1_immigration
+#> 1: 00001        1 -0.80097387      Conservative 114444.61        Lean Disagree
+#> 2: 00002        2 -0.24395930      Conservative 958330.45 Don't Know / Neutral
+#> 3: 00003        3 -1.46710380 Very Conservative 108127.88        Lean Disagree
+#> 4: 00004        4  0.41707764           Liberal  17490.26 Don't Know / Neutral
+#> 5: 00005        5 -0.76778593      Conservative  46894.25        Lean Disagree
+#> 6: 00006        6  0.03678455           Liberal  57221.38 Don't Know / Neutral
 #>    treatment proposition_vote log_income
-#> 1:         1                1   8.220104
-#> 2:         1                0  10.089891
-#> 3:         0                1  11.678758
-#> 4:         0                1  11.203955
-#> 5:         0                1   9.412471
-#> 6:         1                1  13.544016
+#> 1:         0                0   11.64785
+#> 2:         1                1   13.77295
+#> 3:         1                0   11.59107
+#> 4:         1                1    9.76940
+#> 5:         0                0   10.75565
+#> 6:         0                0   10.95468
 ```
 
 The fwildclusterboot package supports estimation of linear models based
@@ -79,12 +79,19 @@ library(lfe)
 #>     waldtest
 library(fixest)
 
-# lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration, weights = NULL, data = voters)
+voters[, group_id:=as.factor(group_id)]
+voters[, Q1_immigration:=as.factor(Q1_immigration)]
+
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration , weights = NULL, data = voters)
 # lm_robust_fit <- lm_robust(proposition_vote ~ treatment + ideology + log_income, fixed_effects = ~ Q1_immigration , weights = NULL, data = voters)
 # lm_robust_fit1 <- lm_robust(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters )
-feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income, fixef = c("Q1_immigration"), weights = NULL, data = voters)
-feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters)
+
+feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
+feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
+
 felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
+felm_fit1 <- felm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
 ```
 
 The boottest command offers two functions. First, it calculates p-values
@@ -99,10 +106,13 @@ speed up the inference procedure by setting the argument conf\_int to
 FALSE, in which case no confidence intervals are computed.
 
 ``` r
-# lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 # estimatr_fe = boottest(lm_robust_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 # estimatr = boottest(lm_robust_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
-# felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+
+felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+# felm1 = boottest(felm_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE) -> #this is still buggy
+
 fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 ```
@@ -129,10 +139,14 @@ A summary method collects the results.
 #summary(res_felm)
 # summary(fixest)
 # summary(fixest1)
+lm$p_val
+#> [1] 0.40298
 fixest$p_val
-#> [1] 0.2062
+#> [1] 0.40396
 fixest1$p_val
-#> [1] 0.2062
+#> [1] 0.40298
+felm$p_val
+#> [1] 0.40396
 ```
 
 These estimates are very close to estimates using sandwich cluster
@@ -141,17 +155,17 @@ robust estimators:
 ``` r
 summary(feols_fit, se = "cluster", cluster = "group_id")
 #> OLS estimation, Dep. Var.: proposition_vote
-#> Observations: 10,000 
+#> Observations: 20,000 
 #> Fixed-effects: Q1_immigration: 7
 #> Standard-errors: Clustered (group_id) 
 #>             Estimate Std. Error   t value  Pr(>|t|)    
-#> treatment   0.009637   0.008070  1.194100  0.232457    
-#> ideology    0.283317   0.015469 18.316000 < 2.2e-16 ***
-#> log_income -0.000419   0.002921 -0.143592  0.885825    
+#> treatment   0.004430   0.005313  0.833916  0.404338    
+#> ideology    0.222703   0.017923 12.425000 < 2.2e-16 ***
+#> log_income -0.001385   0.002210 -0.626704  0.530861    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> Log-likelihood: -5,107.25   Adj. R2: 0.34897 
-#>                           R2-Within: 0.0375
+#> Log-likelihood: -8,897.35   Adj. R2: 0.42739 
+#>                           R2-Within: 0.02943
 ```
 
 Currently they are probably not exactly equal as I might not adjust
@@ -226,3 +240,31 @@ broom-package, returns the estimation results as a data.frame.
 #   })
 # })
 ```
+
+## Theory: a fast algorithm with fixed effects
+
+<!-- Let  -->
+
+<!-- $$ -->
+
+<!-- y = X \beta + \alpha+u  -->
+
+<!-- $$ -->
+
+<!-- be the regression model of interest, where $\alpha$ is a fixed effect. By the FWL theorem, this model can be consistently estimated by a within transformation:  -->
+
+<!-- $$ -->
+
+<!--  DY = DX \beta + D\alpha + Du -->
+
+<!-- $$ -->
+
+<!-- and we will denote $DY = D_Y$, $DX = D_X$ and $DU = D_U$. -->
+
+<!-- The econometrician receives an estimator for $\ddot{\beta}$ and a regression residual $\ddot{u}$. -->
+
+<!-- $$ -->
+
+<!-- y^{b*} = X \ddot{\beta} +u^{*b}  -->
+
+<!-- $$ -->

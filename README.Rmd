@@ -69,11 +69,11 @@ In a first step, simulate a data set with 10000 individual observations that are
 
 
 library(fwildclusterboot)
-B <- 10000
-seed <- 13456
+B <- 50000
+seed <- 1346099863
 set.seed(seed)
 
-voters <- create_data(N = 10000, N_G = 200, icc = 0.1)
+voters <- create_data(N = 20000, N_G = 20, icc = 0.5)
 head(voters)
 
 ```
@@ -86,12 +86,19 @@ library(estimatr)
 library(lfe)
 library(fixest)
 
-# lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration, weights = NULL, data = voters)
+voters[, group_id:=as.factor(group_id)]
+voters[, Q1_immigration:=as.factor(Q1_immigration)]
+
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income +Q1_immigration , weights = NULL, data = voters)
 # lm_robust_fit <- lm_robust(proposition_vote ~ treatment + ideology + log_income, fixed_effects = ~ Q1_immigration , weights = NULL, data = voters)
 # lm_robust_fit1 <- lm_robust(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters )
-feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income, fixef = c("Q1_immigration"), weights = NULL, data = voters)
-feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters)
+
+feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
+feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
+
 felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
+felm_fit1 <- felm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
 ```
 
 The boottest command offers two functions. First, it calculates p-values for a given null hypothesis of the form HO: $\beta = 0$ vs H1: $\beta \neq 1$. 
@@ -99,10 +106,13 @@ In order to work, an object from a regression model of class lm, lm_robust, felm
 By default, the boottest function calculates confidence intervals by inversion. The user can considerably speed up the inference procedure by setting the argument conf_int to FALSE, in which case no confidence intervals are computed.
 
 ```{r}
-# lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 # estimatr_fe = boottest(lm_robust_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 # estimatr = boottest(lm_robust_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
-# felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+
+felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+# felm1 = boottest(felm_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE) -> #this is still buggy
+
 fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 ```
@@ -141,8 +151,10 @@ A summary method collects the results.
 #summary(res_felm)
 # summary(fixest)
 # summary(fixest1)
+lm$p_val
 fixest$p_val
 fixest1$p_val
+felm$p_val
 
 ```
 
@@ -233,6 +245,24 @@ Boottest comes with a tidy method which, in analogy with the broom-package, retu
 
 
 
+## Theory: a fast algorithm with fixed effects
 
+<!-- Let  -->
 
+<!-- $$ -->
+<!-- y = X \beta + \alpha+u  -->
+<!-- $$ -->
+
+<!-- be the regression model of interest, where $\alpha$ is a fixed effect. By the FWL theorem, this model can be consistently estimated by a within transformation:  -->
+
+<!-- $$ -->
+<!--  DY = DX \beta + D\alpha + Du -->
+<!-- $$ -->
+<!-- and we will denote $DY = D_Y$, $DX = D_X$ and $DU = D_U$. -->
+
+<!-- The econometrician receives an estimator for $\ddot{\beta}$ and a regression residual $\ddot{u}$. -->
+
+<!-- $$ -->
+<!-- y^{b*} = X \ddot{\beta} +u^{*b}  -->
+<!-- $$ -->
 

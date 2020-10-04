@@ -6,11 +6,23 @@ crosstab <- function(data, groups, rename_var){
   #data <- crosstab_XinvXXRu_prep
   #var <- "prod.v1"
   
+  # data <- crosstab_XinvXXRu_prep
+  # groups = c("clustid.clustid", "clustid.clustid")
+  # rename_var = "prod.V1"
+  # data[, sum(prod.V1), by = "clustid.clustid"]
+
   
-  setDT(data)
-  setkeyv(data, groups)
-  group1 <- groups[1]
-  group2 <- groups[2]
+  # data <- crosstab_XinvXXR_prep
+  # data
+  # groups <- c("clustid.clustid", "fe.fixed_effect_1")
+  # rename_var <- "prod.V1"
+  # data[, sum(prod.V1), by = groups]
+  # 
+  # 
+  # setDT(data)
+  # setkeyv(data, groups)
+  # group1 <- groups[1]
+  # group2 <- groups[2]
   
   res <- data[CJ(get(group1), get(group2), unique = TRUE), lapply(.SD, sum), by = .EACHI]
   
