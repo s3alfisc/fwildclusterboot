@@ -1,5 +1,3 @@
-#' method for object of class "lm_robust"
-#'@export
 boottest.lm_robust  <- function(object, 
                                 param, 
                                 B,
@@ -13,7 +11,10 @@ boottest.lm_robust  <- function(object,
                                 beta0 = 0){
   
   
-  
+  #'@output An object of class boottest
+  #'@export
+
+
   
   
   #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)

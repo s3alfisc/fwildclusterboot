@@ -1,113 +1,29 @@
-invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX){
+invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, sign_level = 0.95){
   
-
-  #object <- boottest.lm(lm_fit, clustid = data$cluster, B = B, seed = seed, param = "x")
-  #if(class(object) != "fast_boot"){warning("Feed in object of types lm_robust and fast_boot.")}
-  
-  #tic()
-  
-  #rm(!c(lm_fit, lm_robust_fit, data))
-  #object <- lm_fit
-  #clustid = data$cluster
-  #param = "x"
-  
-
-  # if(!is.null(seed)){
-  #   set.seed(seed)
-  # } else if(is.null(seed)){
-  #   set.seed(2)
-  # }
-  
-  # retrieve clusters / multiple clusters
-  # if(inherits(clustid, "formula")) {
-  #   clustid_tmp <- expand.model.frame(object, clustid, na.expand = FALSE)
-  #   clustid <- model.frame(clustid, clustid_tmp, na.action = na.pass)
-  # } else {
-  #   clustid <- as.data.frame(clustid, stringsAsFactors = FALSE)
-  # }
-  # 
-  # if(!(param %in% c(names(object$coefficients)))){
-  #   warning("Parameter to test not in model or all. Please specify appropriate parameters to test.")
-  # }
-  # # how many clustids? uniway/multiway?
-  # clustid_dims <- ncol(clustid)
-  # 
-  # 
-  # # Handle omitted or excluded observations
-  # if(!is.null(object$na.action)) {
-  #   if(class(object$na.action) == "exclude") {
-  #     clustid <- clustid[-object$na.action,]
-  #   } else if(class(object$na.action) == "omit") {
-  #     clustid <- clustid[-object$na.action,]
-  #   }
-  #   clustid <- as.data.frame(clustid)  # silly error somewhere
-  # }
-  #if(debug) print(class(clustid))
-  
-  #if(is.null(beta0)){
-  #  beta0 <- 0
-  #}
-  
-  # Factors in our clustiding variables can potentially cause problems
-  # Blunt fix is to force conversion to characters
-  #i <- !sapply(clustid, is.numeric)
-  #clustid[i] <- lapply(clustid[i], as.character)
-  
-  # Make all combinations of clustid dimensions
-  # if(clustid_dims > 1) {
-  #   for(i in acc) {
-  #     clustid <- cbind(clustid, Reduce(paste0, clustid[,i]))
-  #   }
-  # }
-  
-  
-  # start estimation here: 
-  
-  #R0 <- as.numeric(param == names(object$coefficients))
-  # R0 <- object$R0
-  # groupvars <- names(coef(object))
-  # 
-  # # if(object_type == "felm"){
-  # #   
-  # #   depvar <- names(object$response)
-  # #   Y <- object$response
-  # #   X <- lfe:::model.matrix.felm(felm_fit) 
-  # # }
-  # 
-  # 
-  # depvar <- all.vars(as.formula(object$call))[1]
-  #measurevar <- "y"
-  #formula <- as.formula(paste(measurevar, paste(groupvars, collapse=" + "), sep=" ~ "))
-  
-  #X <- model.matrix(as.formula(object$call), lm_fit$model)
-  #Y <- as.matrix(model.frame(object)[, depvar])  
-  # X <- object$X
-  # Y <- object$Y
-  # B <- object$B
-  # param <- object$param
-  # clustid <- object$clustid
-  # 
-  # N <- length(Y)
-  # k <- ncol(X)
-  # 
-  # R0 <- matrix(R0, k, 1)
-  
+  if(sign_level > 1 | sign_level < 0){stop("Significance level needs to be between 0 and 1.")}
+  sign_level <- 1 - sign_level
   # this needs to be rewritten so that correct fixed effects are used
   if(class(object) == "lm"){
-    lm_robust_fit <- lm_robust(eval(object$call$formula), clusters = as.factor(clustid$clustid), data = data, se_type = "stata")
+    lm_robust_fit <- estimatr::lm_robust(eval(object$call$formula), clusters = as.factor(clustid$clustid), data = data, se_type = "stata")
+    estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
+    st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
   } else if(class(object) == "lm_robust"){
-    lm_robust_fit <- lm_robust(object$call$formula, 
+    lm_robust_fit <-  estimatr::lm_robust(object$call$formula, 
                                clusters = eval(object$call$clusters), 
                                data = data, 
                                se_type = "stata")
+    estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
+    st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
   } else if(class(object) == "felm"){
-    lm_robust_fit <- lm_robust(formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 1, rhs = 1), 
+    lm_robust_fit <-  estimatr::lm_robust(formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 1, rhs = 1), 
                                clusters = clustid[, "clustid"], 
                                data = data, se_type = "stata")
+    estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
+    st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
   } else if(class(object) == "fixest"){
-    lm_robust_fit <- lm_robust(object$call$fml, 
-                               clusters =  clustid[, "clustid"], 
-                               data = data, se_type = "stata")
+    fit <- fixest:::summary.fixest(object, se = "cluster", cluster = clustid)
+    estimate <- fit$coefficients[names(object$coefficients) == param]
+    st_error_guess <- fit$se[names(object$se) == param]
   } else {
     stop("Function only designed for objects of type lm, lm_robust, felm and feols.")
   }
@@ -119,35 +35,11 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   #setDT(tidy_obj)
   #estimate <- as.numeric(tidy_obj[term == param, "estimate"])
   #st_error_guess <- as.numeric(tidy_obj[term == param, "std.error"])
-  estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-  st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
-  
-  
-  starting_vals <- as.numeric(estimate + c(-3,3) * st_error_guess)
-  
-  test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
-
-  #N_G <- nrow(unique(clustid)) #number of clusters
-  
-  #invXX <- solve(t(X) %*% X) # k x k matrix
-  
-  #v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
-  #v[,1] <- 1
-  
-  #R0 <- as.numeric(param == names(object$coefficients))
-  #Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
-  #XinvXXr <- X %*% (invXX %*% R0) # N x 1
-  
-  #SXinvXXRX_prep <- data.table::data.table(prod = matrix(rep(XinvXXr, k), N, k) * X, clustid = clustid)
-  #SXinvXXRX <- as.matrix(SXinvXXRX_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
-  
-  
-  XrinvXrXrtXr <- Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr)
-  SXinvXXRX_invXX <- SXinvXXRX  %*% invXX
-  Xr0 <- X[, which(R0 == 1)]
+  # estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
+  # st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
   
   p_val_null <- function(beta0, R0, Y, X, Xr,XinvXXr, clustid, 
-                          SXinvXXRu_prep,  k,  N, v, B){
+                         SXinvXXRu_prep,  k,  N, v, B){
     
     Yr <- Y -Xr0 * beta0
     u_hat <- Yr - XrinvXrXrtXr %*% Yr # N x 1 matrix 
@@ -189,22 +81,49 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   # can be smaller than zero bc of -0.5
   p_val_null_x <- function(beta0){
     p_val_null(beta0, R0 = R0, Y = Y, X = X, Xr = Xr, XinvXXr = XinvXXr, clustid = clustid, 
-                SXinvXXRu_prep = SXinvXXRu_prep, k = k, N = N, v = v, B = B) - 0.05
+               SXinvXXRu_prep = SXinvXXRu_prep, k = k, N = N, v = v, B = B) - sign_level
   }
-  #benchmark(p_val_null_x(test_vals[1]))
-  # get test values
-  p <- rep(NaN, length(test_vals))
   
-  for(i in 1:length(test_vals)){
-    p[i] <- p_val_null_x(test_vals[i]) 
+  # p-value must cross sign_level
+  check <- FALSE
+  inflate_se <- c(1, 3, 5, 10)
+  j <- 1
+  while(check == FALSE){
+    
+    if(j > 4){
+      break("Boottest confidence set calculation fails because no p-value < sign_level could succesfully
+            be guessed.")
+    }
+    starting_vals <- as.numeric(estimate + c(-inflate_se[j], inflate_se[j]) * st_error_guess)
+    
+    test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
+    
+    XrinvXrXrtXr <- Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr)
+    SXinvXXRX_invXX <- SXinvXXRX  %*% invXX
+    Xr0 <- X[, which(R0 == 1)]
+    
+    
+    #benchmark(p_val_null_x(test_vals[1]))
+    # get test values
+    p <- rep(NaN, length(test_vals))
+    
+    for(i in 1:length(test_vals)){
+      p[i] <- p_val_null_x(test_vals[i]) 
+    }
+    
+    p <- p + sign_level
+    
+    #if(sum(p < sign_level) < 1){warning("Need to djust starting values: they are not p < sign_level. Therefore, choose more
+    #                              extreme starting values.")}
+    
+    crossings <-  (p < sign_level) - (p > sign_level)
+    
+    check <- mean(crossings == -1) != 1
+    j <- j + 1
+    check    
   }
+ 
 
-  p <- p + 0.05
-  
-  #if(sum(p < 0.05) < 1){warning("Need to djust starting values: they are not p < 0.05. Therefore, choose more
-  #                              extreme starting values.")}
-  
-  crossings <-  (p < 0.05) - (p > 0.05)
   x_crossings <- rep(NA, length(test_vals))
   for(i in 1:25){
     x_crossings[i] <- ifelse(crossings[i] + crossings[i + 1] == 0 || crossings[i] + crossings[i - 1] == 0, 1, 0)
@@ -245,14 +164,14 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   
   res <- lapply(list(test_vals_lower, test_vals_higher), function(x){
     
-   #tmp <-  NLRoot::SMfzero(p_val_null_x , x1 = min(x), x2 = max(x), num = 10, eps = 1e-06)
-   tmp <- secant_method(p_val_null_x, x1 = min(x), x2 = max(x))
+    #tmp <-  NLRoot::SMfzero(p_val_null_x , x1 = min(x), x2 = max(x), num = 10, eps = 1e-06)
+    #tmp <- secant_method(p_val_null_x, x1 = min(x), x2 = max(x))
     #tmp
     #tmp <- pracma::newtonRaphson(p_val_null_x, x0 =  x, dfun = NULL, maxiter = 25, tol = 1e-4)
     #tmp$root
     #tmp <- pracma::fzero(p_val_null_x , x = test_vals_higher, maxiter = 10, tol = 1e-12)
     #tmp$x
-    #tmp <- pracma::bisect(p_val_null_x , a = min(x), b = max(x), maxiter = 10)
+    tmp <- pracma::bisect(p_val_null_x , a = min(x), b = max(x), maxiter = 10)
     tmp$root
   })
 

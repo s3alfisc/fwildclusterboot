@@ -13,12 +13,12 @@ Imports:
     data.table,
     estimatr,
     fixest, 
-    Formula
+    Formula, 
+    fabricatr
 Suggests: 
     testthat,
     lfe,
-    lmtest,
-    fabricatr
+    lmtest
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

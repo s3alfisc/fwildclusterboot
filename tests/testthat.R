@@ -1,7 +1,42 @@
 library(testthat)
 library(fwildclusterboot)
 
+
+
+
+
+
+
 test_check("fwildclusterboot")
+
+test_that("felm fe pre-processing and demeaning works properly", {
+  
+  B <- 10000
+  seed <- 42
+  set.seed(seed)
+  voters <- create_data_1(N = 10000, N_G = 20, icc = 0.5)
+
+  felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
+  felm_fit1 <- felm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
+  
+  fml <- Formula::Formula(eval(felm_fit$call$formula, envir =  attr(felm_fit$terms, ".Environment"))), lhs = 0, rhs = 2)
+  expect_true(formula( != "~0")
+  expect_false(formula(Formula::Formula(eval(felm_fit1$call$formula, envir =  attr(felm_fit1$terms, ".Environment"))), lhs = 0, rhs = 1) != "~0")
+  
+  
+  if(formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 0, rhs = 2) != "~0"){
+    fixed_effects <- get_model_fe(object)
+    demean_data <- fixest::demean(data, fixed_effects)
+    data <- as.data.frame(demean_data)
+    R0 <- as.numeric(param == c("(Intercept)", rownames(object$coefficients)))
+  } else{
+    R0 <- as.numeric(param == c(names(object$coefficients)))
+  }
+  
+})
+
+
+
 
 # test_that("test dimensions mat_mean_by_cluster", {
 #   

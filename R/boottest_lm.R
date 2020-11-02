@@ -1,4 +1,3 @@
-#'@export
 boottest.lm <- function(object, 
                         clustid, 
                         param, 
@@ -9,6 +8,10 @@ boottest.lm <- function(object,
                         seed = NULL, 
                         beta0 = NULL){
   
+  #'@output An object of class boottest
+  #'@export
+
+
   
   #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)
   # object <- lm_fit

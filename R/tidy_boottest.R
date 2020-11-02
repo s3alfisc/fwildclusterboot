@@ -1,6 +1,22 @@
+ tidy <- function(x, ...){
+   #'@export 
+   UseMethod("tidy")
+ }
+ 
+ summary <- function(x, ...){
+   #'@export 
+   UseMethod("summary")
+ }
+
+
 tidy.boottest <- function(object){
-  
-  estimate <- lm$regression$coefficients[names(lm$regression$coefficients) == object$param]
+  #'@export 
+  if(class(object$regression) == "felm"){
+    estimate <- object$regression$coefficients[rownames(object$regression$coefficients) == object$param]
+  } else{
+    estimate <- object$regression$coefficients[names(object$regression$coefficients) == object$param]
+  }
+
   t_stat <- object$t_stat
   p_val <- object$p_val
   conf_int_lower <- min(object$conf_int)
@@ -10,12 +26,12 @@ tidy.boottest <- function(object){
   colnames(res) <- c("Estimate", "t value", "Pr(>|t|)", "CI Lower", "CI Upper")
   #rownames(res) <- NA
   
-  print(res, digits = 4)
+  return(res)
   
   
 }
 
-summary.boottest <- function(object){
+summary.boottest <- function(object, digits = 3){
   
   stopifnot(inherits(object, "boottest"))
 
@@ -27,12 +43,16 @@ summary.boottest <- function(object){
   estim_function <- class(object$regression)
   numb_clusters <- object$N_G
   
-  if(class(object$regression) %in% c("lm", "lm_robust", "felm")){
-    adj_r_squared <- summary(lm_fit)$adj.r.squared
-  } else{
-    adj_r_squared <- NA
-  }
+  #if(class(object$regression) %in% c("lm", "lm_robust", "felm")){
+  #  adj_r_squared <- summary(object$regression)$adj.r.squared
+  #} else{
+  #  adj_r_squared <- NA
+  #}
 
+  tidy_object <- round(tidy(object), digits)
+  #treatment_name <- rownames(tidy_object)
+  #tidy_object <- as.data.frame(round(tidy_object, digits = 3))
+  #rownames(tidy_object) <- treatment_name
   
   cat("\t\n", 
       sprintf("OLS estimation, Dep.Var: %s\n", depvar), 
@@ -40,11 +60,10 @@ summary.boottest <- function(object){
       sprintf("Observations:%s\n", N), 
       sprintf("Standard-errors: Clustered  %s\n", ""), 
       sprintf("Number of Clusters:  %s\n", numb_clusters), 
-      sprintf("Adj. R-Squared: %s\n", round(adj_r_squared,6)), 
+      #sprintf("Adj. R-Squared: %s\n", round(adj_r_squared,6)), 
       sprintf("%s\n", "")) 
-  tidy(object)
-  
-  
+
+  return(tidy_object)
 }
 
-
+# summary(boot_felm)

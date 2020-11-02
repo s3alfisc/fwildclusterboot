@@ -1,4 +1,3 @@
-#'@export
 boottest.fixest  <- function(object, 
                            clustid, 
                            param, 
@@ -12,6 +11,18 @@ boottest.fixest  <- function(object,
                            beta0 = 0){
   
   
+  #' Computes wild cluster bootstrap for object of class fixest
+  #'@param object An object of class fixest
+  #'@param clustid A vector with the clusters
+  #'@param param The univariate coefficients for which a hypothesis is to be tested
+  #'@param data A data.frame containing the data
+  #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
+  #'@param seed An integer. Allows the user to set a seed
+  #'@param beta0 A numeric. Shifts the null hypothesis
+  #'@return An object of class boottest
+  #'@export
+
+
   
   
   
@@ -62,6 +73,12 @@ boottest.fixest  <- function(object,
     clustid <- model.frame(clustid, clustid_tmp, na.action = na.pass)
   } else {
     clustid <- as.data.frame(clustid, stringsAsFactors = FALSE)
+  }
+  
+  numb_clusters <- ncol(clustid)
+  
+ if(numb_clusters == 2){
+    clustid[, clustid12 := paste0(get(names(clustid)[1]), "-", get(names(clustid)[2]))]
   }
   
   if(!(param %in% c(names(object$coefficients)))){
@@ -157,6 +174,8 @@ boottest.fixest  <- function(object,
   
   XinvXXr <- X %*% (invXX %*% R0) # N x 1
 
+  
+  
   SXinvXXRu_prep <- data.table::data.table(prod = XinvXXr * matrix(rep(u_hat, 1), N, 1) , clustid = clustid) 
   SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
   if(ncol(SXinvXXRu) == 1){
@@ -261,6 +280,5 @@ boottest.fixest  <- function(object,
   class(res_final) <- "boottest"
   
   res_final
-  res
   
 } 

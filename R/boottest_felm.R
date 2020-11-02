@@ -1,4 +1,3 @@
-#'@export
 boottest.felm  <- function(object, 
                                 #clustid = model.frame(formula = formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 0, rhs = 4), 
                                 #                      data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
@@ -15,17 +14,27 @@ boottest.felm  <- function(object,
                                 beta0 = 0){
   
   
-  
+  #' Function that runs boottest for object of class felm
+  #' @import Formula
+  #' @import data.table
+  #' @param object an object of type felm
+  #' @param clustid a vector of clusters
+  #' @param param the paramter that is to be tested
+  #' @param B number of bootstrap iterations
+  #' @param data data
+  #' @param fixed_effects optional argument
+  #' @return An object of class boottest
+  #' @export
   
   
   #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)
-  #object <- felm_fit
-  #clustid = voters$group_id
-  #B <- 10000
-  #seed <- 1
-  #param <- "treatment"
-  #beta0 <- 0
-  #conf_int <- TRUE
+  # object <- felm_fit
+  # clustid = voters$group_id
+  # B <- 10000
+  # seed <- 1
+  # param <- "treatment"
+  # beta0 <- 0
+  # conf_int <- TRUE
   
   data <- get_model_frame(object)
   # clustid <- model.frame(formula = clustid, 
@@ -34,14 +43,17 @@ boottest.felm  <- function(object,
   
   #clustid <- as.vector(clustid)
   
+  
   # if fixed effects are specified, demean: 
-  if(formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 0, rhs = 2) != "~0"){
+  fml <- Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment")))
+  if(suppressWarnings(formula(fml, lhs = 0, rhs = 2) == "~0")){
+    data <- as.data.frame(data)
+    #R0 <- as.numeric(param == c(rownames(object$coefficients)))
+  } else{
     fixed_effects <- get_model_fe(object)
     demean_data <- fixest::demean(data, fixed_effects)
     data <- as.data.frame(demean_data)
-    R0 <- as.numeric(param == c("(Intercept)", rownames(object$coefficients)))
-  } else{
-    R0 <- as.numeric(param == c(names(object$coefficients)))
+    #R0 <- as.numeric(param == c(rownames(object$coefficients)))
   }
   
   if(!is.null(object$call$weights)){
@@ -122,6 +134,8 @@ boottest.felm  <- function(object,
   Y <- model.response(model_frame)
   X <- model.matrix(formula, data = data)
   #}
+  
+  R0 <- as.numeric(param == colnames(X))
   
   N <- length(Y)
   k <- ncol(X)
@@ -227,3 +241,4 @@ boottest.felm  <- function(object,
   #res
   
 } 
+
