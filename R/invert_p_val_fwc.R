@@ -1,7 +1,6 @@
-invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, sign_level = 0.95){
+invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha = 0.05){
   
-  if(sign_level > 1 | sign_level < 0){stop("Significance level needs to be between 0 and 1.")}
-  sign_level <- 1 - sign_level
+  if(alpha > 1 | alpha < 0){stop("Significance level needs to be between 0 and 1.")}
   # this needs to be rewritten so that correct fixed effects are used
   if(class(object) == "lm"){
     lm_robust_fit <- estimatr::lm_robust(eval(object$call$formula), clusters = as.factor(clustid$clustid), data = data, se_type = "stata")
@@ -41,11 +40,11 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   p_val_null <- function(beta0, R0, Y, X, Xr,XinvXXr, clustid, 
                          SXinvXXRu_prep,  k,  N, v, B){
     
-    Yr <- Y -Xr0 * beta0
-    u_hat <- Yr - XrinvXrXrtXr %*% Yr # N x 1 matrix 
+    Yr <- Y - matrix(Xr0, length(Xr0), 1) %*% matrix(beta0, 1, length(beta0))
+    u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
     #XrinvXrXrtXr <- Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr)
     
-    SXinvXXRu_prep <- data.table::data.table(prod = XinvXXr * matrix(rep(u_hat, 1), N, 1) , clustid = clustid) 
+    SXinvXXRu_prep <- data.table::data.table(prod = as.vector(XinvXXr) * u_hat  , clustid = clustid) 
     SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
     if(ncol(SXinvXXRu) == 1){
       SXinvXXRu <- as.vector(SXinvXXRu)
@@ -81,53 +80,63 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   # can be smaller than zero bc of -0.5
   p_val_null_x <- function(beta0){
     p_val_null(beta0, R0 = R0, Y = Y, X = X, Xr = Xr, XinvXXr = XinvXXr, clustid = clustid, 
-               SXinvXXRu_prep = SXinvXXRu_prep, k = k, N = N, v = v, B = B) - sign_level
+               SXinvXXRu_prep = SXinvXXRu_prep, k = k, N = N, v = v, B = B) - alpha
   }
   
-  # p-value must cross sign_level
+  #XrinvXrXrtXr <- Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr)
+  SXinvXXRX_invXX <- SXinvXXRX  %*% invXX
+  Xr0 <- X[, which(R0 == 1)]
+  
+  #p_val_null_x_vectorized <- Vectorize(p_val_null_x)
+  # p-value must cross alpha
   check <- FALSE
-  inflate_se <- c(1, 3, 5, 10)
+  inflate_se <- c(2, 3, 5, 10)
   j <- 1
   while(check == FALSE){
     
     if(j > 4){
-      break("Boottest confidence set calculation fails because no p-value < sign_level could succesfully
+      break("Boottest confidence set calculation fails because no p-value < alpha could succesfully
             be guessed.")
     }
+    # start guesses by taking sandwich cluster confidence intervals + inflation factor
     starting_vals <- as.numeric(estimate + c(-inflate_se[j], inflate_se[j]) * st_error_guess)
-    
+    # take 25 starting values in between the guesses
     test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
     
-    XrinvXrXrtXr <- Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr)
-    SXinvXXRX_invXX <- SXinvXXRX  %*% invXX
-    Xr0 <- X[, which(R0 == 1)]
-    
+
     
     #benchmark(p_val_null_x(test_vals[1]))
     # get test values
+
+    # calculate the p-values for all 26 guesses
     p <- rep(NaN, length(test_vals))
     
     for(i in 1:length(test_vals)){
       p[i] <- p_val_null_x(test_vals[i]) 
     }
     
-    p <- p + sign_level
+    # substract alpha in function so that I will not need to 
+    # do it in root finding algorithm, but then I will need to add 
+    # alpha here
+    p <- p + alpha 
     
-    #if(sum(p < sign_level) < 1){warning("Need to djust starting values: they are not p < sign_level. Therefore, choose more
+    #if(sum(p < alpha) < 1){warning("Need to djust starting values: they are not p < alpha. Therefore, choose more
     #                              extreme starting values.")}
     
-    crossings <-  (p < sign_level) - (p > sign_level)
+    crossings <-  (p < alpha) - (p > alpha)
     
-    check <- mean(crossings == -1) != 1
+    x_crossings <- rep(NA, length(test_vals))
+    for(i in 1:25){
+      x_crossings[i] <- ifelse(crossings[i] + crossings[i + 1] == 0 || crossings[i] + crossings[i - 1] == 0, 1, 0)
+    }
+    
+    check <- sum(x_crossings == 1, na.rm = TRUE) == 4
     j <- j + 1
     check    
   }
  
 
-  x_crossings <- rep(NA, length(test_vals))
-  for(i in 1:25){
-    x_crossings[i] <- ifelse(crossings[i] + crossings[i + 1] == 0 || crossings[i] + crossings[i - 1] == 0, 1, 0)
-  }
+
   
   #p_val[which(x_crossings == 1)]
   #test_vals[which(x_crossings == 1)]
@@ -138,43 +147,46 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   test_vals_lower <- (test_vals[which(x_crossings == 1)])[1:2]  
   test_vals_lower_max <- test_vals_lower[which.min(abs(test_vals_higher))]
 
-  
-  secant_method <- function(f, x1, x2, num = 10, eps = 1e-06, eps1 = 1e-06){
-    i = 0
-    while ((abs(x1 - x2) > eps) & (i < num)) {
-      c = x2 - f(x2) * (x2 - x1)/(f(x2) - f(x1))
-      x1 = x2
-      x2 = c
-      i = i + 1
-    }
-    
-    if (abs(f(x2)) < eps1) {
-      success <- "finding root is successful"
-    }
-    success <- "finding root is fail"
-    
-    res <- 
-      list(root = x2, 
-      function_val = f(x2),
-      success = success)
- 
-    res
-  }
-  
+  if(length(test_vals_higher_max) == 0 || length(test_vals_lower_max) == 0){
+    stop("test_vals_lower or test_vals higher is logical(0). This means that no 
+          starting value x with property x1 < 0.05 < x2 has been found for one of the 
+          confidence set boundary guesses. As a consequence, the numerical root finding
+         will not work.")
+  }  
+  # secant_method <- function(f, x1, x2, num = 10, eps = 1 / B, eps1 = 1 / B){
+  #  i = 0
+  #  while ((abs(x1 - x2) > eps) & (i < num)) {
+  #    c = x2 - f(x2) * (x2 - x1)/(f(x2) - f(x1))
+  #    x1 = x2
+  #    x2 = c
+  #    i = i + 1
+  #  }
+  #  
+  #  if (abs(f(x2)) < eps1) {
+  #    success <- "finding root is successful"
+  #  }
+  #  success <- "finding root is fail"
+  #  
+  #  res <- 
+  #    list(root = x2, 
+  #    function_val = f(x2),
+  #    success = success)
+  # 
+  #  res
+  # }
   
   res <- lapply(list(test_vals_lower, test_vals_higher), function(x){
     
     #tmp <-  NLRoot::SMfzero(p_val_null_x , x1 = min(x), x2 = max(x), num = 10, eps = 1e-06)
     #tmp <- secant_method(p_val_null_x, x1 = min(x), x2 = max(x))
     #tmp
-    #tmp <- pracma::newtonRaphson(p_val_null_x, x0 =  x, dfun = NULL, maxiter = 25, tol = 1e-4)
+    #tmp <- try(pracma::newtonRaphson(p_val_null_x, x0 =  x, dfun = NULL, maxiter = 10, tol = 1/B))
     #tmp$root
-    #tmp <- pracma::fzero(p_val_null_x , x = test_vals_higher, maxiter = 10, tol = 1e-12)
+    #tmp <- pracma::fzero(p_val_null_x , x = x, maxiter = 10, tol = 1 / B)
     #tmp$x
-    tmp <- pracma::bisect(p_val_null_x , a = min(x), b = max(x), maxiter = 10)
+    tmp <- pracma::bisect(p_val_null_x , a = min(x), b = max(x))
     tmp$root
   })
-
 
   conf_int <- unlist(res)
   #p_val_null_x(conf_int[1])

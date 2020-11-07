@@ -15,7 +15,8 @@ get_model_frame <- function(mod) {
                 data = eval(mod$call$data, envir =  attr(mod$terms, ".Environment")),
                 drop.unused.levels = TRUE)    
   } else if(class(mod) == "fixest"){
-    res <- model.frame(formula = eval(mod$call$fml, envir =  attr(mod$terms, ".Environment")), 
+    formula <- formula(Formula::Formula(eval(mod$call$fml, envir =  attr(mod$terms, ".Environment"))), lhs = 1, rhs = 1)
+    res <- model.frame(formula = formula, 
                 data = eval(mod$call$data, envir =  attr(mod$terms, ".Environment")),
                 drop.unused.levels = TRUE)    
   } else{
@@ -35,7 +36,7 @@ get_model_fe <- function(mod) {
                 data = eval(mod$call$data, envir =  attr(mod$terms, ".Environment")),
                 drop.unused.levels = TRUE)    
   } else if(class(mod) == "fixest"){
-    formula <- as.formula(paste(" ~ ", paste(eval(mod$call$fixef), collapse= "+")))
+    formula <- as.formula(paste(" ~ ", paste(mod$fixef_vars, collapse= "+")))
     res <- model.frame(formula = formula, 
                        data = eval(mod$call$data, envir =  attr(mod$terms, ".Environment")),
                        drop.unused.levels = TRUE)     

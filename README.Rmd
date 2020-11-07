@@ -67,7 +67,7 @@ library(data.table)
 ## The boottest function 
 In a first step, simulate a data set with 10000 individual observations that are grouped in 20 clusters and with a small intra-cluster correlation of 0.01. The small intra-cluster correlation implies that, in theory, inference based on cluster-robust covariance estimates should lead to results that are very similar to the bootstrap. 
 
-```{r}
+```{r, warning = FALSE, message=FALSE}
 library(lfe)
 library(fixest)
 
@@ -75,7 +75,7 @@ library(fwildclusterboot)
 B <- 1000
 seed <- 421
 set.seed(seed)
-voters <- create_data_1(N = 3000, N_G = 20, icc = 0.01)
+voters <- create_data_1(N = 10000, N_G = 20, icc = 0.01)
 head(voters)
 
 ```
@@ -86,12 +86,15 @@ The `fwildclusterboot` package supports estimation of linear models based on
 - `feols()` from `fixest`
 
 ```{r}
-
+# 1) boottest based on object of class lm
 lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters)
 
+# 2) boottest based on object of class fixest
 feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
 feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
+feols_fit2 <- feols(proposition_vote ~ treatment + ideology + log_income + as.factor(Q1_immigration), weights = NULL, data = voters)
 
+# 3) bootest based on object of class felm
 felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
 felm_fit1 <- felm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
 ```
@@ -100,27 +103,31 @@ The `boottest` command offers two options First, it always calculates p-values f
 Second and by default, the boottest function calculates confidence intervals by inversion of the p-value. The user can considerably speed up the inference procedure by setting the argument `conf_int = FALSE`, in which case no confidence intervals are computed.
 
 ```{r, include = FALSE, warning = FALSE, echo = FALSE}
-
+# 1) boottest based on object of class lm
 boot_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 
-boot_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
-
-boot_felm1 = boottest(felm_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
-
+# 2) bootest based on object of class feols
 boot_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
+# boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
+
+# 3) boottest based on object of class felm
+boot_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+boot_felm1 = boottest(felm_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 ```
 
 ```{r}
+# 1) boottest based on object of class lm
 boot_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
 
-boot_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-
-boot_felm1 = boottest(felm_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-
+# 2) bootest based on object of class feols
 boot_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
+# boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
 
-boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+# 3) boottest based on object of class felm
+boot_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_felm1 = boottest(felm_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
 ```
 
 A `summary` method collects the results. 
@@ -141,7 +148,7 @@ fixest:::summary.fixest(feols_fit, se = "cluster", cluster = "group_id")
 
 ```
 
-Boottest comes with a `tidy` method which, in analogy with the `broom` package, returns the estimation results as a data.frame.
+Boottest further comes with a `tidy` method which, in analogy with the `broom` package, returns the estimation results as a data.frame.
 
 ```{r}
 tidy(boot_lm)
@@ -150,3 +157,15 @@ tidy(boot_fixest)
 
 ```
 
+## Comparison to cluster.boot()
+
+```{r}
+library(multiwayvcov)
+library(lmtest)
+res <- cluster.boot(lm_fit, cluster = voters$group_id, parallel = TRUE, R = 10000, wild_type = "rademacher")
+coeftest(lm_fit, res)
+summary(boottest(lm_fit, B = 20000, clustid = voters$group_id, param = "treatment"))
+fixest:::summary.fixest(feols_fit, se = "cluster", cluster = "group_id")
+
+
+```

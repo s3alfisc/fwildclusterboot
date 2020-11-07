@@ -1,46 +1,21 @@
-boottest.fixest  <- function(object, 
-                           clustid, 
-                           param, 
-                           B,
-                           data,
-                           fixed_effects = NULL, 
-                           weights = NULL,
-                           conf_int = NULL, 
-                           debug = FALSE, 
-                           seed = NULL, 
-                           beta0 = 0){
+preprocess.fixest <- function(object, param, clustid, beta0){
   
-  
-  #' Computes wild cluster bootstrap for object of class fixest
-  #'@param object An object of class fixest
-  #'@param clustid A vector with the clusters
-  #'@param param The univariate coefficients for which a hypothesis is to be tested
-  #'@param data A data.frame containing the data
-  #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
-  #'@param seed An integer. Allows the user to set a seed
-  #'@param beta0 A numeric. Shifts the null hypothesis
-  #'@return An object of class boottest
-  #'@export
-
-
-  
-  
-  
-  #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)
-  # object <- feols_fit
-  # clustid = voters$group_id
-  # B <- 10000
-  # seed <- 1
-  # param <- "treatment"
-  # beta0 <- 0
-  # conf_int <- TRUE
-  # 
   data <- get_model_frame(object)
+  #try_fe <- suppressWarnings(try(get_model_fe(object)))
+  fixed_effects <- try(get_model_fe(object), TRUE)
+  numb_fe <- ncol(fixed_effects)
+  
+  if(is.null(numb_fe)){
+    fixed_effects <- NULL
+  }
+
+  N_G <- length(unique(clustid)) #number of clusters
+  if(N_G > 2000){
+    warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
+  }
   
   # if fixed effects are specified, demean: 
-  if(!is.null(object$call$fixef)){
-    use_fixef <- TRUE
-    fixed_effects <- get_model_fe(object)
+  if(!is.null(numb_fe)){
     demean_data <- fixest::demean(data, 
                                   fixed_effects, 
                                   tol = 1e-06)
@@ -50,16 +25,12 @@ boottest.fixest  <- function(object,
     # note: why do I take out (Intercept) from fixed effcts R0 but not in no_fixef?
     R0 <- as.numeric(param == c("(Intercept)", names(object$coefficients)))
   } else{
-    use_fixef <- FALSE
     R0 <- as.numeric(param == c(names(object$coefficients)))
   }
   
   if(!is.null(object$call$weights)){
     stop("Function currently does not allow weights.")
   }
-  
-  
-  
   
   if(!is.null(seed)){
     set.seed(seed)
@@ -77,7 +48,7 @@ boottest.fixest  <- function(object,
   
   numb_clusters <- ncol(clustid)
   
- if(numb_clusters == 2){
+  if(numb_clusters == 2){
     clustid[, clustid12 := paste0(get(names(clustid)[1]), "-", get(names(clustid)[2]))]
   }
   
@@ -119,7 +90,7 @@ boottest.fixest  <- function(object,
   
   # start estimation here: 
   
-  groupvars <- names(coef(object))
+  #groupvars <- names(coef(object))
   
   # if(object_type == "felm"){
   #   
@@ -129,9 +100,9 @@ boottest.fixest  <- function(object,
   # }
   
   
-  #depvar <- all.vars(as.formula(object$call))[1]
+  #depvar <- all.vars(as.formula(object$call$fml))[1]
   
-  depvar <- names(object$response)
+  #depvar <- names(object$response)
   
   formula <- object$call$fml
   model_frame <- model.frame(formula, data = data)
@@ -142,6 +113,189 @@ boottest.fixest  <- function(object,
   N <- length(Y)
   k <- ncol(X)
   
+  res_preprocess <- list(fixed_effects = fixed_effects, 
+                         data = data, 
+                         clustid = clustid, 
+                         N = N, 
+                         k = k, 
+                         Y = Y, 
+                         X = X, 
+                         #depvar = depvar, 
+                         #groupvars = groupvars, 
+                         beta0 = beta0, 
+                         clustid_dims, 
+                         R0 = R0, 
+                         N_G = N_G)
+  
+  res_preprocess
+  
+}
+
+
+
+
+boottest.fixest  <- function(object, 
+                           clustid, 
+                           param, 
+                           B,
+                           data,
+                           fixed_effects = NULL, 
+                           weights = NULL,
+                           conf_int = NULL, 
+                           debug = FALSE, 
+                           seed = NULL, 
+                           beta0 = 0){
+  
+  
+  #' Computes wild cluster bootstrap for object of class fixest
+  #'@param object An object of class fixest
+  #'@param clustid A vector with the clusters
+  #'@param param The univariate coefficients for which a hypothesis is to be tested
+  #'@param data A data.frame containing the data
+  #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
+  #'@param seed An integer. Allows the user to set a seed
+  #'@param beta0 A numeric. Shifts the null hypothesis
+  #'@return An object of class boottest
+  #'@export
+
+
+  
+  
+  
+  #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)
+  # object <- feols_fit_1
+  # clustid = voters$group_id
+  # B <- 10000
+  # seed <- 1
+  # param <- "treatment"
+  # beta0 <- 0
+  # conf_int <- TRUE
+  # 
+ #  data <- get_model_frame(object)
+ #  
+ #  # if fixed effects are specified, demean: 
+ #  if(!is.null(object$call$fixef)){
+ #    use_fixef <- TRUE
+ #    fixed_effects <- get_model_fe(object)
+ #    demean_data <- fixest::demean(data, 
+ #                                  fixed_effects, 
+ #                                  tol = 1e-06)
+ #    names(fixed_effects) <- paste0("fixed_effect_", 1:ncol(fixed_effects))
+ #    # data is the demeaned data if fe are used
+ #    data <- as.data.frame(demean_data)
+ #    # note: why do I take out (Intercept) from fixed effcts R0 but not in no_fixef?
+ #    R0 <- as.numeric(param == c("(Intercept)", names(object$coefficients)))
+ #  } else{
+ #    use_fixef <- FALSE
+ #    R0 <- as.numeric(param == c(names(object$coefficients)))
+ #  }
+ #  
+ #  if(!is.null(object$call$weights)){
+ #    stop("Function currently does not allow weights.")
+ #  }
+ #  
+ #  
+ #  
+ #  
+ #  if(!is.null(seed)){
+ #    set.seed(seed)
+ #  } else if(is.null(seed)){
+ #    set.seed(2)
+ #  }
+ #  
+ #  # retrieve clusters / multiple clusters
+ #  if(inherits(clustid, "formula")) {
+ #    clustid_tmp <- expand.model.frame(object, clustid, na.expand = FALSE)
+ #    clustid <- model.frame(clustid, clustid_tmp, na.action = na.pass)
+ #  } else {
+ #    clustid <- as.data.frame(clustid, stringsAsFactors = FALSE)
+ #  }
+ #  
+ #  numb_clusters <- ncol(clustid)
+ #  
+ # if(numb_clusters == 2){
+ #    clustid[, clustid12 := paste0(get(names(clustid)[1]), "-", get(names(clustid)[2]))]
+ #  }
+ #  
+ #  if(!(param %in% c(names(object$coefficients)))){
+ #    warning("Parameter to test not in model or all. Please specify appropriate parameters to test.")
+ #  }
+ #  
+ #  # how many clustids? uniway/multiway?
+ #  clustid_dims <- ncol(clustid)
+ #  
+ #  
+ #  # Handle omitted or excluded observations
+ #  if(!is.null(object$na.action)) {
+ #    if(class(object$na.action) == "exclude") {
+ #      clustid <- clustid[-object$na.action,]
+ #    } else if(class(object$na.action) == "omit") {
+ #      clustid <- clustid[-object$na.action,]
+ #    }
+ #    clustid <- as.data.frame(clustid)  # silly error somewhere
+ #  }
+ #  #if(debug) print(class(clustid))
+ #  
+ #  if(is.null(beta0)){
+ #    beta0 <- 0
+ #  }
+ #  
+ #  # Factors in our clustiding variables can potentially cause problems
+ #  # Blunt fix is to force conversion to characters
+ #  i <- !sapply(clustid, is.numeric)
+ #  clustid[i] <- lapply(clustid[i], as.character)
+ #  
+ #  # Make all combinations of clustid dimensions
+ #  # if(clustid_dims > 1) {
+ #  #   for(i in acc) {
+ #  #     clustid <- cbind(clustid, Reduce(paste0, clustid[,i]))
+ #  #   }
+ #  # }
+ #  
+ #  
+ #  # start estimation here: 
+ #  
+ #  groupvars <- names(coef(object))
+ #  
+ #  # if(object_type == "felm"){
+ #  #   
+ #  #   depvar <- names(object$response)
+ #  #   Y <- object$response
+ #  #   X <- lfe:::model.matrix.felm(felm_fit) 
+ #  # }
+ #  
+ #  
+ #  #depvar <- all.vars(as.formula(object$call))[1]
+ #  
+ #  depvar <- names(object$response)
+ #  
+ #  formula <- object$call$fml
+ #  model_frame <- model.frame(formula, data = data)
+ #  Y <- model.response(model_frame)
+ #  X <- model.matrix(model_frame, data = data)
+ #  #}
+ #  
+ #  N <- length(Y)
+ #  k <- ncol(X)
+  
+  preprocess <- preprocess.fixest(object = object, param = param, clustid = clustid, beta0 = beta0)
+  
+  # lapply(names(preprocess), function(i){
+  #   name <- i
+  #   assign(name, preprocess[[i]])}
+  # )
+  X <- preprocess$X
+  Y <- preprocess$Y
+  R0 <- preprocess$R0
+  data <- preprocess$data
+  N <- preprocess$N
+  k <- preprocess$k
+  clustid <- preprocess$clustid
+  fixed_effects <- preprocess$fixed_effects
+  beta0 <- preprocess$beta0
+  N_G <- preprocess$N_G
+  
+    
   Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
   
   # Yr for constraint leas squares with beta0 = c
@@ -154,16 +308,13 @@ boottest.fixest  <- function(object,
   
   #clustid <- as.vector(clustid)
   #clustid <- rep(1:20, 100)
-  N_G <- nrow(unique(clustid)) #number of clusters
-  if(N_G > 2000){
-    warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
-  }
   #clustid <- clustid$clustid
   
   # error under the null hypothesis
   #u_hat <- Y - Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr) %*% Y # N x 1 matrix 
-  u_hat <- Yr - Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr) %*% Yr # N x 1 matrix 
+  u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
   
+  #(rep(1, N) - Yr) %*% (Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr))
   
   #u_hat <- Y - R %*% (Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr) %*% Y) - beta0
   
@@ -261,7 +412,7 @@ boottest.fixest  <- function(object,
                     N = N, 
                     B = B, 
                     clustid = clustid, 
-                    depvar = depvar, 
+                    #depvar = depvar, 
                     N_G = N_G)
   } else{
   res_final <- list(p_val = res[["p_val"]], 
@@ -272,7 +423,7 @@ boottest.fixest  <- function(object,
                     N = N, 
                     B = B, 
                     clustid = clustid, 
-                    depvar = depvar, 
+                    #depvar = depvar, 
                     N_G = N_G)    
   }
   

@@ -123,7 +123,7 @@ boottest.lm <- function(object,
   
   # error under the null hypothesis
   #u_hat <- Y - Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr) %*% Y # N x 1 matrix 
-  u_hat <- Yr - Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr) %*% Yr # N x 1 matrix 
+  u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
   
   
   #u_hat <- Y - R %*% (Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr) %*% Y) - beta0
