@@ -22,13 +22,18 @@ knitr::opts_chunk$set(
 
 The `fwildclusterboot` package is an R port to Stata's `boottest` package. 
 
-It implements the fast wild cluster bootstrap algorithm developed in Roodman et al for regression objects in R. It currently works for regression objects of type `lm`, `felm` and `fixest` from the base R and the `lfe` and `fixest` packages. 
+It implements the fast wild cluster bootstrap algorithm developed in Roodman et al (2019) for regression objects in R. It currently works for regression objects of type `lm`, `felm` and `fixest` from base R and the `lfe` and `fixest` packages. 
 
 The package's central function is `boottest()`. It allows the user to test two-sided, univariate hypotheses using a wild cluster bootstrap. Importantly, it uses the "fast" algorithm developed in Roodman et al, which makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples. 
 
 The `fwildclusterboot` package currently only supports one-dimensional clustering and one-dimensional hypotheses, but allows for an arbitrary number of fixed effects. 
 
 The package is highly experimental and currently does not include any unit tests.
+
+The following will be added in the future: 
+- support for clustering of higher dimensions
+- support for multivariate hypotheses 
+- bootstrap distributions other then the rademacher distribution
 
 ## Installation
 
@@ -46,36 +51,37 @@ library(devtools)
 
 # setwd("C:/Users/alexa/Dropbox")
 # devtools::install("fwildclusterboot")
-# devtools::check("fwildclusterboot")
 # devtools::document("fwildclusterboot")
- # # 
+# devtools::check("fwildclusterboot")
+
+# 
 #  library(usethis)
 #  setwd("C:/Users/au563468/Dropbox/fwildclusterboot")
-#  use_package("data.table", type = "Imports")
-#use_package("estimatr", type = "Imports")
+#  use_package("fixest", type = "Imports")
+#  use_package("estimatr", type = "Imports")
 
 
 
 # execute all functions in fwildclusterboot 
-setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-file.sources = list.files(pattern="*.R")
-sapply(file.sources, source, .GlobalEnv)
+# setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+# file.sources = list.files(pattern="*.R")
+# sapply(file.sources, source, .GlobalEnv)
 
-library(data.table)
+# library(data.table)
 ```
 
-## The boottest function 
+## The `boottest()` function 
+
 In a first step, simulate a data set with 10000 individual observations that are grouped in 20 clusters and with a small intra-cluster correlation of 0.01. The small intra-cluster correlation implies that, in theory, inference based on cluster-robust covariance estimates should lead to results that are very similar to the bootstrap. 
 
 ```{r, warning = FALSE, message=FALSE}
-library(lfe)
-library(fixest)
-
 library(fwildclusterboot)
+
+
 B <- 1000
-seed <- 421
+seed <- 4218
 set.seed(seed)
-voters <- create_data_1(N = 10000, N_G = 20, icc = 0.01)
+voters <- create_data_1(N = 10000, N_G = 50, icc = 0.01)
 head(voters)
 
 ```
@@ -85,7 +91,10 @@ The `fwildclusterboot` package supports estimation of linear models based on
 - `felm()` from `lfe`
 - `feols()` from `fixest`
 
-```{r}
+```{r, warning = FALSE, echo = FALSE, message = FALSE}
+library(lfe)
+library(fixest)
+
 # 1) boottest based on object of class lm
 lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters)
 
@@ -99,7 +108,7 @@ felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immig
 felm_fit1 <- felm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
 ```
 
-The `boottest` command offers two options First, it always calculates p-values for a given univariate hypothesis test.
+The `boottest` always calculates p-values for a given univariate hypothesis test.
 Second and by default, the boottest function calculates confidence intervals by inversion of the p-value. The user can considerably speed up the inference procedure by setting the argument `conf_int = FALSE`, in which case no confidence intervals are computed.
 
 ```{r, include = FALSE, warning = FALSE, echo = FALSE}
@@ -116,7 +125,7 @@ boot_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, pa
 boot_felm1 = boottest(felm_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 ```
 
-```{r}
+```{r, warning = FALSE, echo = FALSE, message=FALSE}
 # 1) boottest based on object of class lm
 boot_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
 
@@ -131,41 +140,42 @@ boot_felm1 = boottest(felm_fit1, clustid = voters$group_id, B = B, seed = seed, 
 ```
 
 A `summary` method collects the results. 
-
-```{r}
-summary(boot_lm)
-summary(boot_felm)
-summary(boot_felm1)
-summary(boot_fixest)
-summary(boot_fixest1)
-```
-
-
-These estimates are very close to estimates using sandwich cluster robust estimators:
-
-```{r}
-fixest:::summary.fixest(feols_fit, se = "cluster", cluster = "group_id")
-
-```
-
 Boottest further comes with a `tidy` method which, in analogy with the `broom` package, returns the estimation results as a data.frame.
 
-```{r}
+```{r, warning = FALSE, echo = FALSE, message=FALSE}
 tidy(boot_lm)
-tidy(boot_felm)
-tidy(boot_fixest)
-
+summary(boot_lm)
 ```
 
-## Comparison to cluster.boot()
 
-```{r}
+
+## Comparison to `cluster.boot()` from `multiwayvcov`
+
+The `multiwayvcov` package offers an alternative implementation of the wild bootstrap. 
+As can be seen, `multiwayvcov::cluster.boot()`, `boottest()` and sandwich standard errors produce similar results: 
+
+```{r, warning = FALSE, echo = FALSE, message=FALSE}
 library(multiwayvcov)
 library(lmtest)
-res <- cluster.boot(lm_fit, cluster = voters$group_id, parallel = TRUE, R = 10000, wild_type = "rademacher")
+res <- cluster.boot(lm_fit, cluster = voters$group_id, parallel = TRUE, R = 1000, wild_type = "rademacher")
 coeftest(lm_fit, res)
-summary(boottest(lm_fit, B = 20000, clustid = voters$group_id, param = "treatment"))
-fixest:::summary.fixest(feols_fit, se = "cluster", cluster = "group_id")
+summary(boot_lm)
+summary(boot_fixest)
+summary(feols_fit, se = "cluster", cluster = "group_id")
 
 
 ```
+
+## Benchmark 
+
+Results of timing benchmarks of `fwildclusterboot` with `multiwayvcic` with
+- N = 10000 observations
+- b = 10000 bootstrap iterations
+- n_g = 40 clusters
+and 4 cores for the parallel option.
+
+```{r}
+readRDS("C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.rds")
+```
+
+

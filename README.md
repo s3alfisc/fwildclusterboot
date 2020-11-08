@@ -15,9 +15,9 @@ The `fwildclusterboot` package is an R port to Stata’s `boottest`
 package.
 
 It implements the fast wild cluster bootstrap algorithm developed in
-Roodman et al for regression objects in R. It currently works for
-regression objects of type `lm`, `felm` and `fixest` from the base R and
-the `lfe` and `fixest` packages.
+Roodman et al (2019) for regression objects in R. It currently works for
+regression objects of type `lm`, `felm` and `fixest` from base R and the
+`lfe` and `fixest` packages.
 
 The package’s central function is `boottest()`. It allows the user to
 test two-sided, univariate hypotheses using a wild cluster bootstrap.
@@ -32,6 +32,10 @@ number of fixed effects.
 The package is highly experimental and currently does not include any
 unit tests.
 
+The following will be added in the future: - support for clustering of
+higher dimensions - support for multivariate hypotheses - bootstrap
+distributions other then the rademacher distribution
+
 ## Installation
 
 You can install the released version of `fwildclusterboot` from github
@@ -43,7 +47,7 @@ library(devtools)
 #install_github("al_fisc/fwildclusterboot")
 ```
 
-## The boottest function
+## The `boottest()` function
 
 In a first step, simulate a data set with 10000 individual observations
 that are grouped in 20 clusters and with a small intra-cluster
@@ -52,210 +56,130 @@ in theory, inference based on cluster-robust covariance estimates should
 lead to results that are very similar to the bootstrap.
 
 ``` r
-library(lfe)
-library(fixest)
-
 library(fwildclusterboot)
+
+
 B <- 1000
-seed <- 421
+seed <- 4218
 set.seed(seed)
-voters <- create_data_1(N = 10000, N_G = 20, icc = 0.01)
+voters <- create_data_1(N = 10000, N_G = 50, icc = 0.01)
 head(voters)
-#>       ID group_id    ideology ideological_label     income       Q1_immigration
-#> 1: 00001        1 -1.81640013 Very Conservative 5552077.83             Disagree
-#> 2: 00002        2  1.73220900      Very Liberal   57090.33                Agree
-#> 3: 00003        3  1.09039484      Very Liberal   50366.35           Lean Agree
-#> 4: 00004        4 -0.04439857      Conservative  123046.47 Don't Know / Neutral
-#> 5: 00005        5  0.04503661           Liberal   22861.60 Don't Know / Neutral
-#> 6: 00006        6 -1.44487347 Very Conservative  685074.18        Lean Disagree
+#>       ID group_id   ideology ideological_label   income       Q1_immigration
+#> 1: 00001        1 -0.7989567      Conservative 76637.04        Lean Disagree
+#> 2: 00002        2  0.9313345           Liberal 60723.90           Lean Agree
+#> 3: 00003        3  0.9716515           Liberal 14010.80           Lean Agree
+#> 4: 00004        4  0.1280615           Liberal 68454.32 Don't Know / Neutral
+#> 5: 00005        5  1.6851580      Very Liberal 19400.30                Agree
+#> 6: 00006        6 -0.9016660      Conservative 12303.54        Lean Disagree
 #>    treatment proposition_vote log_income
-#> 1:         0                0   15.52968
-#> 2:         1                1   10.95239
-#> 3:         0                1   10.82708
-#> 4:         1                1   11.72032
-#> 5:         0                0   10.03721
-#> 6:         1                0   13.43728
+#> 1:         0                1  11.246836
+#> 2:         0                1  11.014093
+#> 3:         1                1   9.547584
+#> 4:         1                1  11.133922
+#> 5:         1                1   9.873044
+#> 6:         1                0   9.417643
 ```
 
 The `fwildclusterboot` package supports estimation of linear models
 based on - `lm()` from `base` R - `felm()` from `lfe` - `feols()` from
 `fixest`
 
-``` r
-# 1) boottest based on object of class lm
-lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters)
+The `boottest` always calculates p-values for a given univariate
+hypothesis test. Second and by default, the boottest function calculates
+confidence intervals by inversion of the p-value. The user can
+considerably speed up the inference procedure by setting the argument
+`conf_int = FALSE`, in which case no confidence intervals are computed.
 
-# 2) boottest based on object of class fixest
-feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
-feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
-feols_fit2 <- feols(proposition_vote ~ treatment + ideology + log_income + as.factor(Q1_immigration), weights = NULL, data = voters)
+A `summary` method collects the results. Boottest further comes with a
+`tidy` method which, in analogy with the `broom` package, returns the
+estimation results as a data.frame.
 
-# 3) bootest based on object of class felm
-felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
-felm_fit1 <- felm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
-```
+    #>               Estimate   t value Pr(>|t|)   CI Lower   CI Upper
+    #> treatment -0.002069159 0.3432983    0.739 -0.0144383 0.01041703
+    #>            Length Class      Mode     
+    #> p_val       1     -none-     numeric  
+    #> conf_int    2     -none-     numeric  
+    #> t_stat      1     -none-     numeric  
+    #> regression 13     lm         list     
+    #> param       1     -none-     character
+    #> N           1     -none-     numeric  
+    #> B           1     -none-     numeric  
+    #> clustid     1     data.frame list     
+    #> depvar      1     -none-     character
+    #> N_G         1     -none-     numeric
 
-The `boottest` command offers two options First, it always calculates
-p-values for a given univariate hypothesis test. Second and by default,
-the boottest function calculates confidence intervals by inversion of
-the p-value. The user can considerably speed up the inference procedure
-by setting the argument `conf_int = FALSE`, in which case no confidence
-intervals are computed.
+## Comparison to `cluster.boot()` from `multiwayvcov`
 
-``` r
-# 1) boottest based on object of class lm
-boot_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+The `multiwayvcov` package offers an alternative implementation of the
+wild bootstrap. As can be seen, `multiwayvcov::cluster.boot()`,
+`boottest()` and sandwich standard errors produce similar results:
 
-# 2) bootest based on object of class feols
-boot_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
-# boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
+    #> 
+    #> t test of coefficients:
+    #> 
+    #>                                      Estimate Std. Error  t value  Pr(>|t|)    
+    #> (Intercept)                         0.7883209  0.0582431  13.5350 < 2.2e-16 ***
+    #> treatment                          -0.0020692  0.0060415  -0.3425    0.7320    
+    #> ideology                            0.2795615  0.0152069  18.3839 < 2.2e-16 ***
+    #> log_income                          0.0030321  0.0026428   1.1473    0.2513    
+    #> Q1_immigrationDisagree             -0.2607537  0.0228752 -11.3990 < 2.2e-16 ***
+    #> Q1_immigrationLean Disagree        -0.3879762  0.0321257 -12.0768 < 2.2e-16 ***
+    #> Q1_immigrationDon't Know / Neutral -0.3239716  0.0453695  -7.1407 9.930e-13 ***
+    #> Q1_immigrationLean Agree           -0.2732158  0.0607674  -4.4961 6.999e-06 ***
+    #> Q1_immigrationAgree                -0.3566562  0.0703159  -5.0722 4.003e-07 ***
+    #> Q1_immigrationStrong Agree         -0.6153047  0.0852054  -7.2214 5.520e-13 ***
+    #> ---
+    #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    #>            Length Class      Mode     
+    #> p_val       1     -none-     numeric  
+    #> conf_int    2     -none-     numeric  
+    #> t_stat      1     -none-     numeric  
+    #> regression 13     lm         list     
+    #> param       1     -none-     character
+    #> N           1     -none-     numeric  
+    #> B           1     -none-     numeric  
+    #> clustid     1     data.frame list     
+    #> depvar      1     -none-     character
+    #> N_G         1     -none-     numeric
+    #>            Length Class      Mode     
+    #> p_val       1     -none-     numeric  
+    #> conf_int    2     -none-     numeric  
+    #> t_stat      1     -none-     numeric  
+    #> regression 28     fixest     list     
+    #> param       1     -none-     character
+    #> N           1     -none-     numeric  
+    #> B           1     -none-     numeric  
+    #> clustid     1     data.frame list     
+    #> N_G         1     -none-     numeric
+    #> OLS estimation, Dep. Var.: proposition_vote
+    #> Observations: 10,000 
+    #> Fixed-effects: Q1_immigration: 7
+    #> Standard-errors: Clustered (group_id) 
+    #>             Estimate Std. Error   t value  Pr(>|t|)    
+    #> treatment  -0.002069   0.006091 -0.339695  0.735538    
+    #> ideology    0.279561   0.015153 18.449000 < 2.2e-16 ***
+    #> log_income  0.003032   0.002600  1.166200  0.249195    
+    #> ---
+    #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    #> Log-likelihood: -5,267.28   Adj. R2: 0.32779 
+    #>                           R2-Within: 0.03391
 
-# 3) boottest based on object of class felm
-boot_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-boot_felm1 = boottest(felm_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-```
+## Benchmark
 
-A `summary` method collects the results.
-
-``` r
-summary(boot_lm)
-#>  
-#>  OLS estimation, Dep.Var: proposition_vote
-#>  Estimation Function: lm
-#>  Observations:10000
-#>  Standard-errors: Clustered  
-#>  Number of Clusters:  20
-#> 
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment   -0.017   1.672     0.13   -0.037    0.005
-summary(boot_felm)
-#>  
-#>   Estimation Function: felm
-#>  Observations:10000
-#>  Standard-errors: Clustered  
-#>  Number of Clusters:  20
-#> 
-#>   Estimate t value Pr(>|t|) CI Lower CI Upper
-#> 1   -0.017   1.672     0.13   -0.037    0.005
-summary(boot_felm1)
-#>  
-#>   Estimation Function: felm
-#>  Observations:10000
-#>  Standard-errors: Clustered  
-#>  Number of Clusters:  20
-#> 
-#>   Estimate t value Pr(>|t|) CI Lower CI Upper
-#> 1   -0.017   1.672     0.13   -0.037    0.005
-summary(boot_fixest)
-#>  
-#>   Estimation Function: fixest
-#>  Observations:10000
-#>  Standard-errors: Clustered  
-#>  Number of Clusters:  20
-#> 
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment   -0.017   1.672     0.13   -0.037    0.005
-summary(boot_fixest1)
-#>  
-#>   Estimation Function: fixest
-#>  Observations:10000
-#>  Standard-errors: Clustered  
-#>  Number of Clusters:  20
-#> 
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment   -0.017   1.672     0.13   -0.037    0.005
-```
-
-These estimates are very close to estimates using sandwich cluster
-robust estimators:
+Results of timing benchmarks of `fwildclusterboot` with `multiwayvcic`
+with - N = 10000 observations - b = 10000 bootstrap iterations - n\_g =
+40 clusters and 4 cores for the parallel option.
 
 ``` r
-fixest:::summary.fixest(feols_fit, se = "cluster", cluster = "group_id")
-#> OLS estimation, Dep. Var.: proposition_vote
-#> Observations: 10,000 
-#> Fixed-effects: Q1_immigration: 7
-#> Standard-errors: Clustered (group_id) 
-#>             Estimate Std. Error   t value    Pr(>|t|)    
-#> treatment  -0.016559   0.010164 -1.629200 1.19731e-01    
-#> ideology    0.278681   0.016264 17.135000 5.19000e-13 ***
-#> log_income  0.002676   0.002873  0.931516 3.63273e-01    
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> Log-likelihood: -5,276.98   Adj. R2: 0.32637 
-#>                           R2-Within: 0.03462
-```
-
-Boottest further comes with a `tidy` method which, in analogy with the
-`broom` package, returns the estimation results as a data.frame.
-
-``` r
-tidy(boot_lm)
-#>              Estimate  t value Pr(>|t|)    CI Lower    CI Upper
-#> treatment -0.01655949 1.672313     0.13 -0.03691685 0.004929245
-tidy(boot_felm)
-#>      Estimate  t value Pr(>|t|)   CI Lower    CI Upper
-#> 1 -0.01655949 1.672313     0.13 -0.0369068 0.004969819
-tidy(boot_fixest)
-#>              Estimate  t value Pr(>|t|)   CI Lower    CI Upper
-#> treatment -0.01655949 1.672313     0.13 -0.0369068 0.004969819
-```
-
-## Comparison to cluster.boot()
-
-``` r
-library(multiwayvcov)
-library(lmtest)
-#> Loading required package: zoo
-#> 
-#> Attaching package: 'zoo'
-#> The following objects are masked from 'package:base':
-#> 
-#>     as.Date, as.Date.numeric
-#> 
-#> Attaching package: 'lmtest'
-#> The following object is masked from 'package:lfe':
-#> 
-#>     waldtest
-res <- cluster.boot(lm_fit, cluster = voters$group_id, parallel = TRUE, R = 10000, wild_type = "rademacher")
-coeftest(lm_fit, res)
-#> 
-#> t test of coefficients:
-#> 
-#>                                      Estimate Std. Error  t value  Pr(>|t|)    
-#> (Intercept)                         0.7471023  0.0555905  13.4394 < 2.2e-16 ***
-#> treatment                          -0.0165595  0.0099104  -1.6709 0.0947696 .  
-#> ideology                            0.2786811  0.0158264  17.6086 < 2.2e-16 ***
-#> log_income                          0.0026758  0.0028196   0.9490 0.3426474    
-#> Q1_immigrationDisagree             -0.2118899  0.0151017 -14.0309 < 2.2e-16 ***
-#> Q1_immigrationLean Disagree        -0.3295491  0.0290362 -11.3496 < 2.2e-16 ***
-#> Q1_immigrationDon't Know / Neutral -0.2670825  0.0407878  -6.5481 6.114e-11 ***
-#> Q1_immigrationLean Agree           -0.2078264  0.0560511  -3.7078 0.0002102 ***
-#> Q1_immigrationAgree                -0.3167597  0.0694429  -4.5614 5.141e-06 ***
-#> Q1_immigrationStrong Agree         -0.5503678  0.0868162  -6.3395 2.405e-10 ***
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-summary(boottest(lm_fit, B = 20000, clustid = voters$group_id, param = "treatment"))
-#>  
-#>  OLS estimation, Dep.Var: proposition_vote
-#>  Estimation Function: lm
-#>  Observations:10000
-#>  Standard-errors: Clustered  
-#>  Number of Clusters:  20
-#> 
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment   -0.017   1.672    0.118   -0.037    0.005
-fixest:::summary.fixest(feols_fit, se = "cluster", cluster = "group_id")
-#> OLS estimation, Dep. Var.: proposition_vote
-#> Observations: 10,000 
-#> Fixed-effects: Q1_immigration: 7
-#> Standard-errors: Clustered (group_id) 
-#>             Estimate Std. Error   t value    Pr(>|t|)    
-#> treatment  -0.016559   0.010164 -1.629200 1.19731e-01    
-#> ideology    0.278681   0.016264 17.135000 5.19000e-13 ***
-#> log_income  0.002676   0.002873  0.931516 3.63273e-01    
-#> ---
-#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> Log-likelihood: -5,276.98   Adj. R2: 0.32637 
-#>                           R2-Within: 0.03462
+readRDS("C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.rds")
+#>                test replications elapsed relative user.self sys.self user.child
+#> 4    boottest_feols           10   70.14    1.000     63.59     4.84         NA
+#> 3       boottest_lm           10   72.19    1.029     66.36     3.98         NA
+#> 1          multiway           10  982.67   14.010    981.69     0.64         NA
+#> 2 multiway_parallel           10  372.48    5.311      1.00     0.50         NA
+#>   sys.child
+#> 4        NA
+#> 3        NA
+#> 1        NA
+#> 2        NA
 ```

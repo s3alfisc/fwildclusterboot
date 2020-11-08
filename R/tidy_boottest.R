@@ -1,16 +1,18 @@
  tidy <- function(x, ...){
    #'@export 
-   UseMethod("tidy")
+   UseMethod("tidy", x)
  }
- 
+  
  summary <- function(x, ...){
    #'@export 
-   UseMethod("summary")
+   UseMethod("summary", x)
  }
 
 
 tidy.boottest <- function(object){
+  
   #'@export 
+  #'@method tidy boottest
   if(class(object$regression) == "felm"){
     estimate <- object$regression$coefficients[rownames(object$regression$coefficients) == object$param]
   } else{
@@ -32,6 +34,9 @@ tidy.boottest <- function(object){
 }
 
 summary.boottest <- function(object, digits = 3){
+  
+  #'@export 
+  #'@method summary boottest
   
   stopifnot(inherits(object, "boottest"))
 

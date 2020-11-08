@@ -157,6 +157,8 @@ boottest.fixest  <- function(object,
   #'@param beta0 A numeric. Shifts the null hypothesis
   #'@return An object of class boottest
   #'@export
+  #'@method boottest fixest
+
 
 
   

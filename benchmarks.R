@@ -1,9 +1,13 @@
 library(rbenchmark)
+library(microbenchmark)
 library(boot)
+library(fwildclusterboot)
+library(fixest)
+library(multiwayvcov)
 options(boot.ncpus = 4)
 
 
-benchmark_boottest <- function(n, b, n_g, replications = 1){
+benchmark_boottest <- function(n, b, n_g, replications){
   voters <- create_data_1(N = n, N_G = n_g, icc = 0.01)
   lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters)
   feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
@@ -16,10 +20,15 @@ benchmark_boottest <- function(n, b, n_g, replications = 1){
       #boottest_lm_p_val = boottest(lm_fit, clustid = voters$group_id, B = b, param = "treatment", conf_int = FALSE), 
       #boottest_feols_p_val = boottest(feols_fit, clustid = voters$group_id, B = b, param = "treatment", conf_int = FALSE),
       
-      replications = 1
+      replications = replications
     )
   bench
 }  
 
 set.seed(768)
-benchmark_boottest(n = 10000, b = 5000, n_g = 20, replications = 1)
+
+bench_boottest <- benchmark_boottest(n = 10000, b = 10000, n_g = 40, replications = 10)
+saveRDS(bench_boottest, "C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.rds")
+
+
+

@@ -8,6 +8,7 @@ boottest.lm <- function(object,
                         seed = NULL, 
                         beta0 = NULL){
   
+  #' @method boottest lm
   #'@output An object of class boottest
   #'@export
 

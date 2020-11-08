@@ -25,6 +25,7 @@ boottest.felm  <- function(object,
   #' @param fixed_effects optional argument
   #' @return An object of class boottest
   #' @export
+  #' @method boottest felm
   
   
   #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)

@@ -11,6 +11,7 @@ boottest.lm_robust  <- function(object,
                                 beta0 = 0){
   
   
+  #'@method boottest lm_robust
   #'@output An object of class boottest
   #'@export
 

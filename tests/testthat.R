@@ -50,12 +50,9 @@ test_that("test get_model_frame() and get_fixed_effects() for objects of class f
   model_frame_fit_2 <- cbind(get_model_frame(feols_fit_2), get_model_fe(feols_fit_2))
   model_frame_fit_3 <- get_model_frame(feols_fit_3)
   
-  expect_equal(model_frame_fit_1, model_frame_fit_3)
-  expect_equal(cbind(get_model_frame(feols_fit_1), get_model_fe(feols_fit_1)), get_model_frame(feols_fit_3))
-  expect_equal(get_model_frame(feols_fit_1), get_model_frame(feols_fit_2))
-  
-  
-  
+  expect_identical(model_frame_fit_1, model_frame_fit_3)
+  expect_identical(model_frame_fit_2, model_frame_fit_3)
+
   
 }
 
