@@ -60,24 +60,24 @@ library(fwildclusterboot)
 
 
 B <- 1000
-seed <- 42180019
+seed <- 2180019
 set.seed(seed)
 voters <- create_data_1(N = 10000, N_G = 50, icc = 0.01)
 head(voters)
-#>       ID group_id   ideology ideological_label      income       Q1_immigration
-#> 1: 00001        1  0.5847759           Liberal    9364.046           Lean Agree
-#> 2: 00002        2  0.7364480           Liberal  291244.351           Lean Agree
-#> 3: 00003        3 -0.2303791      Conservative 1351961.739 Don't Know / Neutral
-#> 4: 00004        4  1.5154769      Very Liberal   18369.441                Agree
-#> 5: 00005        5 -0.8919297      Conservative  198933.176        Lean Disagree
-#> 6: 00006        6 -0.1031671      Conservative    9360.530 Don't Know / Neutral
+#>       ID group_id    ideology ideological_label     income       Q1_immigration
+#> 1: 00001        1 -0.41359792      Conservative 4209683.68 Don't Know / Neutral
+#> 2: 00002        2 -0.03513429      Conservative   18457.05 Don't Know / Neutral
+#> 3: 00003        3 -0.48570812      Conservative  102603.50 Don't Know / Neutral
+#> 4: 00004        4  0.74136367           Liberal   10540.71           Lean Agree
+#> 5: 00005        5  0.12212610           Liberal   35976.17 Don't Know / Neutral
+#> 6: 00006        6  1.07708145      Very Liberal   21126.00           Lean Agree
 #>    treatment proposition_vote log_income
-#> 1:         1                0   9.144633
-#> 2:         1                1  12.581918
-#> 3:         1                1  14.117067
-#> 4:         0                1   9.818444
-#> 5:         0                0  12.200724
-#> 6:         0                0   9.144257
+#> 1:         0                0  15.252898
+#> 2:         1                1   9.823202
+#> 3:         0                0  11.538627
+#> 4:         0                1   9.263000
+#> 5:         0                1  10.490612
+#> 6:         0                1   9.958260
 ```
 
 The `fwildclusterboot` package supports estimation of linear models
@@ -136,11 +136,11 @@ summarize_boot(boot_lm)
 #>  Number of Clusters:  50
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.016   2.115    0.047        0    0.033
+#> treatment    0.004   0.415    0.671   -0.015    0.024
 
 tidy(boot_lm)
-#>             Estimate t value Pr(>|t|)     CI Lower   CI Upper
-#> treatment 0.01641059 2.11481    0.047 0.0003776367 0.03260776
+#>              Estimate   t value Pr(>|t|)    CI Lower   CI Upper
+#> treatment 0.004085139 0.4147138    0.671 -0.01504625 0.02395238
 ```
 
 ## Comparison to `cluster.boot()` from `multiwayvcov`
@@ -160,16 +160,16 @@ coeftest(lm_fit, res)
 #> t test of coefficients:
 #> 
 #>                                      Estimate Std. Error  t value  Pr(>|t|)    
-#> (Intercept)                         0.8489377  0.0535625  15.8495 < 2.2e-16 ***
-#> treatment                           0.0164106  0.0077022   2.1306   0.03314 *  
-#> ideology                            0.2755487  0.0155510  17.7191 < 2.2e-16 ***
-#> log_income                         -0.0018217  0.0030307  -0.6011   0.54781    
-#> Q1_immigrationDisagree             -0.2675849  0.0268051  -9.9826 < 2.2e-16 ***
-#> Q1_immigrationLean Disagree        -0.3831930  0.0336418 -11.3904 < 2.2e-16 ***
-#> Q1_immigrationDon't Know / Neutral -0.3257175  0.0462373  -7.0445 1.984e-12 ***
-#> Q1_immigrationLean Agree           -0.2617430  0.0607877  -4.3059 1.679e-05 ***
-#> Q1_immigrationAgree                -0.3850310  0.0707498  -5.4422 5.389e-08 ***
-#> Q1_immigrationStrong Agree         -0.6146294  0.0842930  -7.2916 3.296e-13 ***
+#> (Intercept)                         0.8898613  0.0520122  17.1087 < 2.2e-16 ***
+#> treatment                           0.0040851  0.0096984   0.4212    0.6736    
+#> ideology                            0.3044786  0.0154906  19.6557 < 2.2e-16 ***
+#> log_income                         -0.0032876  0.0031679  -1.0378    0.2994    
+#> Q1_immigrationDisagree             -0.2440361  0.0181748 -13.4272 < 2.2e-16 ***
+#> Q1_immigrationLean Disagree        -0.3774845  0.0295260 -12.7848 < 2.2e-16 ***
+#> Q1_immigrationDon't Know / Neutral -0.3603392  0.0452919  -7.9559 1.971e-15 ***
+#> Q1_immigrationLean Agree           -0.3350370  0.0574568  -5.8311 5.677e-09 ***
+#> Q1_immigrationAgree                -0.4726871  0.0685724  -6.8933 5.782e-12 ***
+#> Q1_immigrationStrong Agree         -0.7404004  0.0825501  -8.9691 < 2.2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -183,7 +183,7 @@ summarize_boot(boot_lm)
 #>  Number of Clusters:  50
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.016   2.115    0.047        0    0.033
+#> treatment    0.004   0.415    0.671   -0.015    0.024
 summarize_boot(boot_fixest)
 #>  
 #>   Estimation Function: fixest
@@ -192,7 +192,7 @@ summarize_boot(boot_fixest)
 #>  Number of Clusters:  50
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.016   2.115    0.047        0    0.033
+#> treatment    0.004   0.415    0.671   -0.015    0.024
 
 # 3) sandwich standard errors from fixest
 summary(feols_fit, se = "cluster", cluster = "group_id")
@@ -201,13 +201,13 @@ summary(feols_fit, se = "cluster", cluster = "group_id")
 #> Fixed-effects: Q1_immigration: 7
 #> Standard-errors: Clustered (group_id) 
 #>             Estimate Std. Error   t value  Pr(>|t|)    
-#> treatment   0.016411   0.007842  2.092600  0.041585 *  
-#> ideology    0.275549   0.015834 17.402000 < 2.2e-16 ***
-#> log_income -0.001822   0.002964 -0.614579  0.541676    
+#> treatment   0.004085   0.009955  0.410361   0.68333    
+#> ideology    0.304479   0.016417 18.546000 < 2.2e-16 ***
+#> log_income -0.003288   0.003333 -0.986342  0.328811    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-#> Log-likelihood: -5,235.54   Adj. R2: 0.33063 
-#>                           R2-Within: 0.03514
+#> Log-likelihood: -5,295.64   Adj. R2: 0.32399 
+#>                           R2-Within: 0.0413
 ```
 
 ## Benchmark

@@ -79,7 +79,7 @@ library(fwildclusterboot)
 
 
 B <- 1000
-seed <- 42180019
+seed <- 2180019
 set.seed(seed)
 voters <- create_data_1(N = 10000, N_G = 50, icc = 0.01)
 head(voters)
