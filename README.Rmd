@@ -176,14 +176,14 @@ summary(feols_fit, se = "cluster", cluster = "group_id")
 
 ## Benchmark 
 
-Results of timing benchmarks of `fwildclusterboot` with `multiwayvcov` with
+Results of timing benchmarks of `fwildclusterboot` with `multiwayvcov` (on 4 cores) with
 - N = 10000 observations
 - b = 10000 bootstrap iterations
 - n_g = 40 clusters
-and 4 cores for the parallel option.
 
-```{r}
-readRDS("C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.rds")
+
+```{r, warnings = FALSE, echo = FALSE,  out.width="50%"}
+knitr::include_graphics("C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.png")
 ```
 
 

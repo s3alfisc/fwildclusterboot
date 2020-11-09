@@ -213,19 +213,7 @@ summary(feols_fit, se = "cluster", cluster = "group_id")
 ## Benchmark
 
 Results of timing benchmarks of `fwildclusterboot` with `multiwayvcov`
-with - N = 10000 observations - b = 10000 bootstrap iterations - n\_g =
-40 clusters and 4 cores for the parallel option.
+(on 4 cores) with - N = 10000 observations - b = 10000 bootstrap
+iterations - n\_g = 40 clusters
 
-``` r
-readRDS("C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.rds")
-#>                test replications elapsed relative user.self sys.self user.child
-#> 4    boottest_feols           10   70.14    1.000     63.59     4.84         NA
-#> 3       boottest_lm           10   72.19    1.029     66.36     3.98         NA
-#> 1          multiway           10  982.67   14.010    981.69     0.64         NA
-#> 2 multiway_parallel           10  372.48    5.311      1.00     0.50         NA
-#>   sys.child
-#> 4        NA
-#> 3        NA
-#> 1        NA
-#> 2        NA
-```
+<img src="C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.png" width="50%" />
