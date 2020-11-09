@@ -60,29 +60,46 @@ library(fwildclusterboot)
 
 
 B <- 1000
-seed <- 4218
+seed <- 421800
 set.seed(seed)
 voters <- create_data_1(N = 10000, N_G = 50, icc = 0.01)
 head(voters)
-#>       ID group_id   ideology ideological_label   income       Q1_immigration
-#> 1: 00001        1 -0.7989567      Conservative 76637.04        Lean Disagree
-#> 2: 00002        2  0.9313345           Liberal 60723.90           Lean Agree
-#> 3: 00003        3  0.9716515           Liberal 14010.80           Lean Agree
-#> 4: 00004        4  0.1280615           Liberal 68454.32 Don't Know / Neutral
-#> 5: 00005        5  1.6851580      Very Liberal 19400.30                Agree
-#> 6: 00006        6 -0.9016660      Conservative 12303.54        Lean Disagree
+#>       ID group_id   ideology ideological_label     income       Q1_immigration
+#> 1: 00001        1  0.4871312           Liberal  18489.800 Don't Know / Neutral
+#> 2: 00002        2 -0.6971323      Conservative 991866.614        Lean Disagree
+#> 3: 00003        3  1.2008411      Very Liberal 157013.089           Lean Agree
+#> 4: 00004        4  0.9677738           Liberal   4007.378           Lean Agree
+#> 5: 00005        5 -0.8324578      Conservative 330196.564        Lean Disagree
+#> 6: 00006        6 -0.6340254      Conservative 141973.893        Lean Disagree
 #>    treatment proposition_vote log_income
-#> 1:         0                1  11.246836
-#> 2:         0                1  11.014093
-#> 3:         1                1   9.547584
-#> 4:         1                1  11.133922
-#> 5:         1                1   9.873044
-#> 6:         1                0   9.417643
+#> 1:         1                1   9.824975
+#> 2:         0                0  13.807344
+#> 3:         0                1  11.964084
+#> 4:         1                1   8.295892
+#> 5:         1                0  12.707443
+#> 6:         0                0  11.863398
 ```
 
 The `fwildclusterboot` package supports estimation of linear models
 based on - `lm()` from `base` R - `felm()` from `lfe` - `feols()` from
 `fixest`
+
+``` r
+library(lfe)
+library(fixest)
+
+# 1) boottest based on object of class lm
+lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration , weights = NULL, data = voters)
+
+# 2) boottest based on object of class fixest
+feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
+feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
+feols_fit2 <- feols(proposition_vote ~ treatment + ideology + log_income + as.factor(Q1_immigration), weights = NULL, data = voters)
+
+# 3) bootest based on object of class felm
+felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
+felm_fit1 <- felm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
+```
 
 The `boottest` always calculates p-values for a given univariate
 hypothesis test. Second and by default, the boottest function calculates
@@ -90,23 +107,35 @@ confidence intervals by inversion of the p-value. The user can
 considerably speed up the inference procedure by setting the argument
 `conf_int = FALSE`, in which case no confidence intervals are computed.
 
-A `summary` method collects the results. Boottest further comes with a
-`tidy` method which, in analogy with the `broom` package, returns the
-estimation results as a data.frame.
+``` r
+# 1) boottest based on object of class lm
+boot_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 
-    #>               Estimate   t value Pr(>|t|)   CI Lower   CI Upper
-    #> treatment -0.002069159 0.3432983    0.739 -0.0144383 0.01041703
-    #>            Length Class      Mode     
-    #> p_val       1     -none-     numeric  
-    #> conf_int    2     -none-     numeric  
-    #> t_stat      1     -none-     numeric  
-    #> regression 13     lm         list     
-    #> param       1     -none-     character
-    #> N           1     -none-     numeric  
-    #> B           1     -none-     numeric  
-    #> clustid     1     data.frame list     
-    #> depvar      1     -none-     character
-    #> N_G         1     -none-     numeric
+# 2) bootest based on object of class feols
+boot_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
+# boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
+
+# 3) boottest based on object of class felm
+boot_felm = boottest(felm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+boot_felm1 = boottest(felm_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+```
+
+The function `summarize_boot` collects the results. Boottest further
+comes with a `tidy` method which, in analogy with the `broom` package,
+returns the estimation results as a data.frame.
+
+    #>              Estimate t value Pr(>|t|)    CI Lower   CI Upper
+    #> treatment 0.007899373 0.79631    0.438 -0.01378557 0.02825885
+    #>  
+    #>  OLS estimation, Dep.Var: proposition_vote
+    #>  Estimation Function: lm
+    #>  Observations:10000
+    #>  Standard-errors: Clustered  
+    #>  Number of Clusters:  50
+    #> 
+    #>           Estimate t value Pr(>|t|) CI Lower CI Upper
+    #> treatment    0.008   0.796    0.438   -0.014    0.028
 
 ## Comparison to `cluster.boot()` from `multiwayvcov`
 
@@ -114,55 +143,60 @@ The `multiwayvcov` package offers an alternative implementation of the
 wild bootstrap. As can be seen, `multiwayvcov::cluster.boot()`,
 `boottest()` and sandwich standard errors produce similar results:
 
-    #> 
-    #> t test of coefficients:
-    #> 
-    #>                                      Estimate Std. Error  t value  Pr(>|t|)    
-    #> (Intercept)                         0.7883209  0.0582431  13.5350 < 2.2e-16 ***
-    #> treatment                          -0.0020692  0.0060415  -0.3425    0.7320    
-    #> ideology                            0.2795615  0.0152069  18.3839 < 2.2e-16 ***
-    #> log_income                          0.0030321  0.0026428   1.1473    0.2513    
-    #> Q1_immigrationDisagree             -0.2607537  0.0228752 -11.3990 < 2.2e-16 ***
-    #> Q1_immigrationLean Disagree        -0.3879762  0.0321257 -12.0768 < 2.2e-16 ***
-    #> Q1_immigrationDon't Know / Neutral -0.3239716  0.0453695  -7.1407 9.930e-13 ***
-    #> Q1_immigrationLean Agree           -0.2732158  0.0607674  -4.4961 6.999e-06 ***
-    #> Q1_immigrationAgree                -0.3566562  0.0703159  -5.0722 4.003e-07 ***
-    #> Q1_immigrationStrong Agree         -0.6153047  0.0852054  -7.2214 5.520e-13 ***
-    #> ---
-    #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    #>            Length Class      Mode     
-    #> p_val       1     -none-     numeric  
-    #> conf_int    2     -none-     numeric  
-    #> t_stat      1     -none-     numeric  
-    #> regression 13     lm         list     
-    #> param       1     -none-     character
-    #> N           1     -none-     numeric  
-    #> B           1     -none-     numeric  
-    #> clustid     1     data.frame list     
-    #> depvar      1     -none-     character
-    #> N_G         1     -none-     numeric
-    #>            Length Class      Mode     
-    #> p_val       1     -none-     numeric  
-    #> conf_int    2     -none-     numeric  
-    #> t_stat      1     -none-     numeric  
-    #> regression 28     fixest     list     
-    #> param       1     -none-     character
-    #> N           1     -none-     numeric  
-    #> B           1     -none-     numeric  
-    #> clustid     1     data.frame list     
-    #> N_G         1     -none-     numeric
-    #> OLS estimation, Dep. Var.: proposition_vote
-    #> Observations: 10,000 
-    #> Fixed-effects: Q1_immigration: 7
-    #> Standard-errors: Clustered (group_id) 
-    #>             Estimate Std. Error   t value  Pr(>|t|)    
-    #> treatment  -0.002069   0.006091 -0.339695  0.735538    
-    #> ideology    0.279561   0.015153 18.449000 < 2.2e-16 ***
-    #> log_income  0.003032   0.002600  1.166200  0.249195    
-    #> ---
-    #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    #> Log-likelihood: -5,267.28   Adj. R2: 0.32779 
-    #>                           R2-Within: 0.03391
+``` r
+library(multiwayvcov)
+library(lmtest)
+res <- cluster.boot(lm_fit, cluster = voters$group_id, parallel = TRUE, R = 1000, wild_type = "rademacher")
+coeftest(lm_fit, res)
+#> 
+#> t test of coefficients:
+#> 
+#>                                      Estimate Std. Error  t value  Pr(>|t|)    
+#> (Intercept)                         0.7568334  0.0462710  16.3565 < 2.2e-16 ***
+#> treatment                           0.0078994  0.0094034   0.8401  0.400895    
+#> ideology                            0.2635313  0.0141726  18.5945 < 2.2e-16 ***
+#> log_income                         -0.0019768  0.0027072  -0.7302  0.465284    
+#> Q1_immigrationDisagree             -0.2084371  0.0145163 -14.3588 < 2.2e-16 ***
+#> Q1_immigrationLean Disagree        -0.2992484  0.0260510 -11.4870 < 2.2e-16 ***
+#> Q1_immigrationDon't Know / Neutral -0.2455378  0.0378556  -6.4862 9.222e-11 ***
+#> Q1_immigrationLean Agree           -0.1648203  0.0502522  -3.2799  0.001042 ** 
+#> Q1_immigrationAgree                -0.2725906  0.0637902  -4.2732 1.944e-05 ***
+#> Q1_immigrationStrong Agree         -0.5057432  0.0777175  -6.5075 8.010e-11 ***
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+summarize_boot(boot_lm)
+#>  
+#>  OLS estimation, Dep.Var: proposition_vote
+#>  Estimation Function: lm
+#>  Observations:10000
+#>  Standard-errors: Clustered  
+#>  Number of Clusters:  50
+#> 
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment    0.008   0.796    0.438   -0.014    0.028
+summarize_boot(boot_fixest)
+#>  
+#>   Estimation Function: fixest
+#>  Observations:10000
+#>  Standard-errors: Clustered  
+#>  Number of Clusters:  50
+#> 
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment    0.008   0.796    0.438   -0.014    0.028
+summary(feols_fit, se = "cluster", cluster = "group_id")
+#> OLS estimation, Dep. Var.: proposition_vote
+#> Observations: 10,000 
+#> Fixed-effects: Q1_immigration: 7
+#> Standard-errors: Clustered (group_id) 
+#>             Estimate Std. Error   t value  Pr(>|t|)    
+#> treatment   0.007899   0.010025  0.787952   0.43452    
+#> ideology    0.263531   0.014365 18.346000 < 2.2e-16 ***
+#> log_income -0.001977   0.002641 -0.748384  0.457806    
+#> ---
+#> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#> Log-likelihood: -5,314.56   Adj. R2: 0.32141 
+#>                           R2-Within: 0.03117
+```
 
 ## Benchmark
 

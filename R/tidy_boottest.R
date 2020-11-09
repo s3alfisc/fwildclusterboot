@@ -3,7 +3,7 @@
    UseMethod("tidy", x)
  }
   
- summary <- function(x, ...){
+ summarize_boot <- function(x, ...){
    #'@export 
    UseMethod("summary", x)
  }
@@ -13,6 +13,7 @@ tidy.boottest <- function(object){
   
   #'@export 
   #'@method tidy boottest
+  
   if(class(object$regression) == "felm"){
     estimate <- object$regression$coefficients[rownames(object$regression$coefficients) == object$param]
   } else{
@@ -33,7 +34,7 @@ tidy.boottest <- function(object){
   
 }
 
-summary.boottest <- function(object, digits = 3){
+summarize_boot <- function(object, digits = 3){
   
   #'@export 
   #'@method summary boottest
