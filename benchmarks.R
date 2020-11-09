@@ -33,8 +33,8 @@ bench_boottest <- benchmark_boottest(b = 10000, times = 10)
 bench_boottest_plot <- boxplot(bench_boottest, log = FALSE)
 bench_boottest_plot
 
-png(file="C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.png",
-    width=5, height=2)
+png(file="C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.png", 
+    width = 400, height = 350)
 bench_boottest_plot <- boxplot(bench_boottest, log = FALSE)
 dev.off()
 
