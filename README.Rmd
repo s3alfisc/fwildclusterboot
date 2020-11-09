@@ -72,7 +72,7 @@ library(devtools)
 
 ## The `boottest()` function 
 
-In a first step, simulate a data set with 10000 individual observations that are grouped in 20 clusters and with a small intra-cluster correlation of 0.01. The small intra-cluster correlation implies that, in theory, inference based on cluster-robust covariance estimates should lead to results that are very similar to the bootstrap. 
+In a first step, simulate a data set with 10000 individual observations that are grouped in 50 clusters and with a small intra-cluster correlation of 0.01. The small intra-cluster correlation implies that, in theory, inference based on cluster-robust covariance estimates should lead to results that are very similar to the bootstrap. 
 
 ```{r, warning = FALSE, message=FALSE}
 library(fwildclusterboot)
