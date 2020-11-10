@@ -23,6 +23,14 @@ boottest.lm <- function(object,
   # param <- "treatment"
   # beta0 <- 0
   
+  #formula <- object$call$fml
+  weights <- object$call$weights
+  
+  if(!is.null(weights)){
+    stop("Currently, boottest does not support weighted least squares. weights 
+         must be NULL.")
+  }
+  
   data <- get_model_frame(object)
   
   if(!is.null(seed)){
@@ -178,17 +186,20 @@ boottest.lm <- function(object,
 
   
   if(is.null(conf_int) || conf_int == TRUE){
-    conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha)
+    res_p_val <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha)
     res_final <- list(p_val = res[["p_val"]], 
-                      conf_int = conf_int, 
+                      conf_int = res_p_val$conf_int, 
+                      p_test_vals = res_p_val$p_test_vals, 
+                      test_vals = res_p_val$test_vals,
                       t_stat = t[1], 
                       regression = object, 
                       param = param, 
                       N = N, 
                       B = B, 
                       clustid = clustid, 
-                      depvar = depvar, 
+                      #depvar = depvar, 
                       N_G = N_G)
+    
   } else{
     res_final <- list(p_val = res[["p_val"]], 
                       t_stat = t[1], 

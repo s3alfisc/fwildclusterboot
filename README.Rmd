@@ -161,6 +161,12 @@ summarize_boot(boot_lm_20)
 
 ```
 
+Plot the confidence sets: 
+
+```{r, out.width="50%"}
+plot_boot(boot_lm)
+```
+
 
 ## Comparison to `cluster.boot()` from `multiwayvcov`
 

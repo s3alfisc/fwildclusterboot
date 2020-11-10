@@ -129,8 +129,7 @@ returns the estimation results as a data.frame.
 ``` r
 summarize_boot(boot_lm)
 #>  
-#>  OLS estimation, Dep.Var: proposition_vote
-#>  Estimation Function: lm
+#>   Estimation Function: lm
 #>  Observations:10000
 #>  Standard-errors: Clustered  
 #>  Number of Clusters:  50
@@ -152,8 +151,7 @@ boot_lm_20 = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, par
 
 summarize_boot(boot_lm_5)
 #>  
-#>  OLS estimation, Dep.Var: proposition_vote
-#>  Estimation Function: lm
+#>   Estimation Function: lm
 #>  Observations:10000
 #>  Standard-errors: Clustered  
 #>  Number of Clusters:  50
@@ -162,8 +160,7 @@ summarize_boot(boot_lm_5)
 #> treatment    0.004   0.415    0.671   -0.015    0.024
 summarize_boot(boot_lm_20)
 #>  
-#>  OLS estimation, Dep.Var: proposition_vote
-#>  Estimation Function: lm
+#>   Estimation Function: lm
 #>  Observations:10000
 #>  Standard-errors: Clustered  
 #>  Number of Clusters:  50
@@ -171,6 +168,14 @@ summarize_boot(boot_lm_20)
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
 #> treatment    0.004   0.415    0.671   -0.008    0.017
 ```
+
+Plot the confidence sets:
+
+``` r
+plot_boot(boot_lm)
+```
+
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="50%" />
 
 ## Comparison to `cluster.boot()` from `multiwayvcov`
 
@@ -205,8 +210,7 @@ coeftest(lm_fit, res)
 # 2) results from fwildclusterboot
 summarize_boot(boot_lm)
 #>  
-#>  OLS estimation, Dep.Var: proposition_vote
-#>  Estimation Function: lm
+#>   Estimation Function: lm
 #>  Observations:10000
 #>  Standard-errors: Clustered  
 #>  Number of Clusters:  50

@@ -37,6 +37,19 @@ boottest.felm  <- function(object,
   # param <- "treatment"
   # beta0 <- 0
   # conf_int <- TRUE
+
+  # 1) Check arguments of felm() command 
+  fml <- suppressWarnings(formula(Formula(eval(object$call$formula)), lhs = 0, rhs = 3))
+  weights <- object$call$weights
+  
+  if(fml != ~0){
+    stop("The boottest() function currently does not support instrumental variables
+         estimation.")
+  }
+  if(!is.null(weights)){
+    stop("Currently, boottest does not support weighted least squares. weights 
+         must be NULL.")
+  }
   
   if(is.null(alpha)){
     alpha <- 0.05
@@ -215,17 +228,20 @@ boottest.felm  <- function(object,
   # Invert p-value
   
   if(is.null(conf_int) || conf_int == TRUE){
-    conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha)
+    res_p_val <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha)
     res_final <- list(p_val = res[["p_val"]], 
-                      conf_int = conf_int, 
+                      conf_int = res_p_val$conf_int, 
+                      p_test_vals = res_p_val$p_test_vals, 
+                      test_vals = res_p_val$test_vals,
                       t_stat = t[1], 
                       regression = object, 
                       param = param, 
                       N = N, 
                       B = B, 
                       clustid = clustid, 
-                      depvar = depvar, 
+                      #depvar = depvar, 
                       N_G = N_G)
+    
   } else{
     res_final <- list(p_val = res[["p_val"]], 
                       t_stat = t[1], 

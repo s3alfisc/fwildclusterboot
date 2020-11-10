@@ -74,4 +74,20 @@ summarize_boot <- function(object, digits = 3){
   return(tidy_object)
 }
 
-# summary(boot_felm)
+plot_boot <- function(object){
+  
+  #'@export 
+  stopifnot(inherits(object, "boottest"))
+  
+  test_vals <- object$test_vals
+  p_test_vals <- object$p_test_vals
+  conf_int <- object$conf_int
+  
+  plot(test_vals, p_test_vals,  type = "b", pch = 20, lty = 2, xlab = "Constraint", ylab = "p-value")
+  lines(test_vals, p_test_vals, type = "l", lty = 1)
+  abline(v=conf_int[1], col = "blue")
+  abline(v=conf_int[2], col = "blue")
+  abline(h = 0.05, col = "red")
+  
+  
+}

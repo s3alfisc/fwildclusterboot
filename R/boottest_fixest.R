@@ -162,7 +162,15 @@ boottest.fixest  <- function(object,
   #'@method boottest fixest
 
 
+  # Step 1: check arguments of feols call
+  formula <- object$call$fml
+  weights <- object$call$weights
 
+  if(!is.null(weights)){
+    stop("Currently, boottest does not support weighted least squares. weights 
+         must be NULL.")
+  }
+  
   if(!is.null(seed)){
     set.seed(seed)
   } else if(is.null(seed)){
@@ -412,9 +420,11 @@ boottest.fixest  <- function(object,
   
   
   if(is.null(conf_int) || conf_int == TRUE){
-    conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha)
+    res_p_val <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha)
     res_final <- list(p_val = res[["p_val"]], 
-                    conf_int = conf_int, 
+                    conf_int = res_p_val$conf_int, 
+                    p_test_vals = res_p_val$p_test_vals, 
+                    test_vals = res_p_val$test_vals,
                     t_stat = t[1], 
                     regression = object, 
                     param = param, 

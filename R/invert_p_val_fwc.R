@@ -198,8 +198,11 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   #p_val_null_x(conf_int[1])
   #p_val_null_x(conf_int[2] + 0.00001)
   
+  res_all <- list(conf_int = conf_int, 
+                  p_test_vals = p, 
+                  test_vals = test_vals)
   
-  return(conf_int)
+  res_all
   #conf_int
   #lm_robust_fit
   #summary(lm_fit)  
