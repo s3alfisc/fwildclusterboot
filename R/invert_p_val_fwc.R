@@ -1,7 +1,27 @@
 invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha){
   
+  #' Inverts the bootstrap p-value and calculates confidence sets
+  #'@param object A regression object of class lm, feols or felm
+  #'@param data A data.frame with the data used in the estimation. If fixed effects are used, this data is demeaned and excludes the fixed effects
+  #'@param clustid A vector with the clusters
+  #'@param X the design matrix with the (potentially demeand) covariates
+  #'@param Y A numeric vector containing the outcome variable 
+  #'@param param The univariate coefficients for which a hypothesis is to be tested
+  #'@param R0 A vector with the test constraint. Dimension (numb_covariates - numb_fe) x 1. 0 for covariate "param", else 1
+  #'@param B An integer. Number of bootstrap iterations
+  #'@param N An integer. Number of observations
+  #'@param k An integer. Number of covariates (excluding fixed effects that are projected out)
+  #'@param seed An integer. Seed.
+  #'@param N_g An integer. Number of clusters.
+  #'@param v A matrix. Draw from bootstrap distribution
+  #'@param Xr A matrix. R0 %*% X
+  #'@param XinvXXr A matrix. see boottest()
+  #'@param SXinvXXRX A matrix. see boottest() for computation
+  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@import pracma
+  
   if(alpha > 1 | alpha < 0){stop("Significance level needs to be between 0 and 1.")}
-  # this needs to be rewritten so that correct fixed effects are used
+  
   if(class(object) == "lm"){
     lm_robust_fit <- estimatr::lm_robust(eval(object$call$formula), clusters = as.factor(clustid$clustid), data = data, se_type = "stata")
     estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
@@ -30,12 +50,7 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   
   # --------------------------------------------------------------------------------------------- #
   # start inversion 
-  #tidy_obj <- broom::tidy(lm_robust_fit)
-  #setDT(tidy_obj)
-  #estimate <- as.numeric(tidy_obj[term == param, "estimate"])
-  #st_error_guess <- as.numeric(tidy_obj[term == param, "std.error"])
-  # estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-  # st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
+
   SXinvXXRX_invXX <- SXinvXXRX  %*% invXX
   Xr0 <- matrix(X[, which(R0 == 1)], nrow(X), 1)
   
@@ -45,37 +60,18 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, 
                          SXinvXXRu_prep, v, B){
     
-    #Yr <- Y - matrix(Xr0, length(Xr0), 1) %*% matrix(beta0, 1, length(beta0))
-    #u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
     u_hat <- Q + P %*% matrix(beta0, 1, length(beta0))
-    #XrinvXrXrtXr <- Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr)
-    
+
     SXinvXXRu_prep <- data.table::data.table(prod = as.vector(XinvXXr) * u_hat  , clustid = clustid) 
     SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
     if(ncol(SXinvXXRu) == 1){
       SXinvXXRu <- as.vector(SXinvXXRu)
     }
     
-    #a <- function(){
+    
     SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
     SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL]) 
-    #}
-    #b <- function(){
-    #Sxu1 <- as.matrix(aggregate(X * matrix(rep(u_hat, k), N, k), clustid, sum))
-    #}
-    #c <-function(){
-    #  Sxu2 <- aggregate.Matrix(x = X * matrix(rep(u_hat, k), N, k), groupings = clustid, fun = "sum")
-    #}
-    #benchmark(a(), b(), c(), replications = 1000)
-    
-    #d <- function(){
-    #  mat <- X * matrix(rep(u_hat, k), N, k)
-    #  lapply(ncol(mat), function(i) lm(mat[,i] ~ 1 + factor(clustid$clustid)))
-    #}
-    
-    #benchmark(a(), d(), replications = 100)
-    
-    
+   
     numer <- SXinvXXRu %*% v 
     J <- (diag(SXinvXXRu) - SXinvXXRX_invXX %*% t(SXu)) %*% v  
     t <- abs(numer)  / sqrt(colSums(J * J))    # note: absolute value is taken here - no negative t-stats
@@ -89,11 +85,6 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
                SXinvXXRu_prep = SXinvXXRu_prep, v = v, B = B) - alpha
   }
   
-  #XrinvXrXrtXr <- Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr)
-  # SXinvXXRX_invXX <- SXinvXXRX  %*% invXX
-  # Xr0 <- X[, which(R0 == 1)]
-  
-  #p_val_null_x_vectorized <- Vectorize(p_val_null_x)
   # p-value must cross alpha
   check <- FALSE
   inflate_se <- c(2, 3, 5, 10)
@@ -195,18 +186,11 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   })
 
   conf_int <- unlist(res)
-  #p_val_null_x(conf_int[1])
-  #p_val_null_x(conf_int[2] + 0.00001)
-  
+
   res_all <- list(conf_int = conf_int, 
                   p_test_vals = p, 
                   test_vals = test_vals)
   
   res_all
-  #conf_int
-  #lm_robust_fit
-  #summary(lm_fit)  
-  
-  #toc()
-  
+
 }
