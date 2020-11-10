@@ -114,7 +114,7 @@ boot_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param 
 
 # 2) bootest based on object of class feols
 boot_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
+boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
 # boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
 
 # 3) boottest based on object of class felm
@@ -141,6 +141,35 @@ summarize_boot(boot_lm)
 tidy(boot_lm)
 #>              Estimate   t value Pr(>|t|)    CI Lower   CI Upper
 #> treatment 0.004085139 0.4147138    0.671 -0.01504625 0.02395238
+```
+
+Change the confidence level:
+
+``` r
+boot_lm_5 = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
+
+boot_lm_20 = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.20)
+
+summarize_boot(boot_lm_5)
+#>  
+#>  OLS estimation, Dep.Var: proposition_vote
+#>  Estimation Function: lm
+#>  Observations:10000
+#>  Standard-errors: Clustered  
+#>  Number of Clusters:  50
+#> 
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment    0.004   0.415    0.671   -0.015    0.024
+summarize_boot(boot_lm_20)
+#>  
+#>  OLS estimation, Dep.Var: proposition_vote
+#>  Estimation Function: lm
+#>  Observations:10000
+#>  Standard-errors: Clustered  
+#>  Number of Clusters:  50
+#> 
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment    0.004   0.415    0.671   -0.008    0.017
 ```
 
 ## Comparison to `cluster.boot()` from `multiwayvcov`
