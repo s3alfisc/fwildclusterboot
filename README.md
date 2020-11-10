@@ -11,7 +11,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-project.org/package=fwildclusterboot)
 <!-- badges: end -->
 
-The `fwildclusterboot` package is an R port to Stata’s `boottest`
+The `fwildclusterboot` package is an R port of Stata’s `boottest`
 package.
 
 It implements the fast wild cluster bootstrap algorithm developed in
@@ -23,7 +23,8 @@ The package’s central function is `boottest()`. It allows the user to
 test two-sided, univariate hypotheses using a wild cluster bootstrap.
 Importantly, it uses the “fast” algorithm developed in Roodman et al,
 which makes it feasible to calculate test statistics based on a large
-number of bootstrap draws even for large samples.
+number of bootstrap draws even for large samples--as long as the 
+number of bootstrapping clusters is not too large.
 
 The `fwildclusterboot` package currently only supports one-dimensional
 clustering and one-dimensional hypotheses, but allows for an arbitrary
