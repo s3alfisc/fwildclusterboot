@@ -153,17 +153,19 @@ boottest.fixest  <- function(object,
   #'@param object An object of class fixest
   #'@param clustid A vector with the clusters
   #'@param param The univariate coefficients for which a hypothesis is to be tested
-  #'@param data A data.frame containing the data
+  #'@param B number of bootstrap iterations
+  #'@param weights Regression weights. Currently, WLS is not supported, and weights needs to be NULL 
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
-  #'@param seed An integer. Allows the user to set a seed
-  #'@param beta0 A numeric. Shifts the null hypothesis
+  #'@param seed An integer. Allows the user to set a random seed
+  #'@param beta0 A numeric. Shifts the null hypothesis  
+  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@return An object of class boottest
   #'@export
   #'@method boottest fixest
 
 
   # Step 1: check arguments of feols call
-  formula <- object$call$fml
+  #formula <- object$call$fml
   weights <- object$call$weights
 
   if(!is.null(weights)){
