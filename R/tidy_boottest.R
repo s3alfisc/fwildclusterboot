@@ -14,6 +14,8 @@ tidy.boottest <- function(object){
   #'@export 
   #'@method tidy boottest
   
+  stopifnot(inherits(object, "boottest"))
+  
   if(class(object$regression) == "felm"){
     estimate <- object$regression$coefficients[rownames(object$regression$coefficients) == object$param]
   } else{

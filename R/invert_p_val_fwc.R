@@ -1,4 +1,4 @@
-invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha = 0.05){
+invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha){
   
   if(alpha > 1 | alpha < 0){stop("Significance level needs to be between 0 and 1.")}
   # this needs to be rewritten so that correct fixed effects are used
@@ -42,8 +42,8 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
   P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
   
-  p_val_null <- function(beta0, Q, P, R0, Y, X, Xr,XinvXXr, clustid, 
-                         SXinvXXRu_prep,  k,  N, v, B){
+  p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, 
+                         SXinvXXRu_prep, v, B){
     
     #Yr <- Y - matrix(Xr0, length(Xr0), 1) %*% matrix(beta0, 1, length(beta0))
     #u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
@@ -85,8 +85,8 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   
   # can be smaller than zero bc of -0.5
   p_val_null_x <- function(beta0){
-    p_val_null(beta0, P = P, Q = Q, R0 = R0, Y = Y, X = X, Xr = Xr, XinvXXr = XinvXXr, clustid = clustid, 
-               SXinvXXRu_prep = SXinvXXRu_prep, k = k, N = N, v = v, B = B) - alpha
+    p_val_null(beta0, P = P, Q = Q, R0 = R0, X = X, XinvXXr = XinvXXr, clustid = clustid, 
+               SXinvXXRu_prep = SXinvXXRu_prep, v = v, B = B) - alpha
   }
   
   #XrinvXrXrtXr <- Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr)

@@ -6,6 +6,7 @@ boottest.felm  <- function(object,
                                 param, 
                                 B,
                                 data,
+                                alpha = NULL,
                                 fixed_effects = NULL, 
                                 weights = NULL,
                                 conf_int = NULL, 
@@ -36,6 +37,10 @@ boottest.felm  <- function(object,
   # param <- "treatment"
   # beta0 <- 0
   # conf_int <- TRUE
+  
+  if(is.null(alpha)){
+    alpha <- 0.05
+  }
   
   data <- get_model_frame(object)
   # clustid <- model.frame(formula = clustid, 
@@ -210,7 +215,7 @@ boottest.felm  <- function(object,
   # Invert p-value
   
   if(is.null(conf_int) || conf_int == TRUE){
-    conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX)
+    conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha)
     res_final <- list(p_val = res[["p_val"]], 
                       conf_int = conf_int, 
                       t_stat = t[1], 

@@ -10,6 +10,7 @@
   param,
   B,
   data,
+  alpha = NULL,
   fixed_effects = NULL,
   weights = NULL,
   conf_int = NULL,

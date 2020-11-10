@@ -1,4 +1,5 @@
-preprocess.fixest <- function(object, param, clustid, beta0){
+preprocess.fixest <- function(object, param, clustid, beta0, alpha){
+  
   
   data <- get_model_frame(object)
   #try_fe <- suppressWarnings(try(get_model_fe(object)))
@@ -7,6 +8,10 @@ preprocess.fixest <- function(object, param, clustid, beta0){
   
   if(is.null(numb_fe)){
     fixed_effects <- NULL
+  }
+  
+  if(is.null(alpha)){
+    alpha <- 0.05
   }
 
   N_G <- length(unique(clustid)) #number of clusters
@@ -32,11 +37,6 @@ preprocess.fixest <- function(object, param, clustid, beta0){
     stop("Function currently does not allow weights.")
   }
   
-  if(!is.null(seed)){
-    set.seed(seed)
-  } else if(is.null(seed)){
-    set.seed(2)
-  }
   
   # retrieve clusters / multiple clusters
   if(inherits(clustid, "formula")) {
@@ -125,7 +125,8 @@ preprocess.fixest <- function(object, param, clustid, beta0){
                          beta0 = beta0, 
                          clustid_dims, 
                          R0 = R0, 
-                         N_G = N_G)
+                         N_G = N_G, 
+                         alpha = alpha)
   
   res_preprocess
   
@@ -139,6 +140,7 @@ boottest.fixest  <- function(object,
                            param, 
                            B,
                            data,
+                           alpha = NULL, 
                            fixed_effects = NULL, 
                            weights = NULL,
                            conf_int = NULL, 
@@ -161,7 +163,11 @@ boottest.fixest  <- function(object,
 
 
 
-  
+  if(!is.null(seed)){
+    set.seed(seed)
+  } else if(is.null(seed)){
+    set.seed(2)
+  }
   
   
   #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)
@@ -280,7 +286,7 @@ boottest.fixest  <- function(object,
  #  N <- length(Y)
  #  k <- ncol(X)
   
-  preprocess <- preprocess.fixest(object = object, param = param, clustid = clustid, beta0 = beta0)
+  preprocess <- preprocess.fixest(object = object, param = param, clustid = clustid, beta0 = beta0, alpha = alpha)
   
   # lapply(names(preprocess), function(i){
   #   name <- i
@@ -296,6 +302,7 @@ boottest.fixest  <- function(object,
   fixed_effects <- preprocess$fixed_effects
   beta0 <- preprocess$beta0
   N_G <- preprocess$N_G
+  alpha <- preprocess$alpha
   
     
   Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
@@ -405,8 +412,8 @@ boottest.fixest  <- function(object,
   
   
   if(is.null(conf_int) || conf_int == TRUE){
-  conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX)
-  res_final <- list(p_val = res[["p_val"]], 
+    conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha)
+    res_final <- list(p_val = res[["p_val"]], 
                     conf_int = conf_int, 
                     t_stat = t[1], 
                     regression = object, 

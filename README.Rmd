@@ -131,7 +131,7 @@ boot_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param 
 
 # 2) bootest based on object of class feols
 boot_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
+boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
 # boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
 
 # 3) boottest based on object of class felm
@@ -149,6 +149,17 @@ tidy(boot_lm)
 
 ```
 
+Change the confidence level: 
+
+```{r}
+boot_fixest_5 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
+
+boot_fixest_20 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.20)
+
+summarize_boot(boot_fixest_5)
+summarize_boot(boot_fixest_20)
+
+```
 
 
 ## Comparison to `cluster.boot()` from `multiwayvcov`

@@ -6,7 +6,8 @@ boottest.lm <- function(object,
                         conf_int = NULL, 
                         debug = FALSE, 
                         seed = NULL, 
-                        beta0 = NULL){
+                        beta0 = NULL, 
+                        alpha = NULL){
   
   #' @method boottest lm
   #'@output An object of class boottest
@@ -30,6 +31,9 @@ boottest.lm <- function(object,
     set.seed(2)
   }
   
+  if(is.null(alpha)){
+    alpha <- 0.05
+  }
   
   if(!is.null(object$call$weights)){
     stop("Function currently does not allow weights.")
@@ -174,7 +178,7 @@ boottest.lm <- function(object,
 
   
   if(is.null(conf_int) || conf_int == TRUE){
-    conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX)
+    conf_int <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha)
     res_final <- list(p_val = res[["p_val"]], 
                       conf_int = conf_int, 
                       t_stat = t[1], 
