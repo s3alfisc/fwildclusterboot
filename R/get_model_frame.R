@@ -5,6 +5,9 @@
 # }
 
 get_model_frame <- function(mod) {
+  # why do I not simply use model.frame? because it fails for
+  # objects of class fixest. therefore take from global environment
+  
   if(class(mod) %in% c("lm", "lm_robust")){
     res <- model.frame(formula = eval(mod$call$formula, envir =  attr(mod$terms, ".Environment")), 
                 data = eval(mod$call$data, envir =  attr(mod$terms, ".Environment")),
