@@ -1,4 +1,4 @@
-preprocess_felm <- function(object, param, clustid, beta0, alpha){
+preprocess_felm <- function(object, param, clustid, beta0, alpha, demean){
   
   data <- get_model_frame(object)
   #try_fe <- suppressWarnings(try(get_model_fe(object)))
@@ -31,7 +31,7 @@ preprocess_felm <- function(object, param, clustid, beta0, alpha){
   
   fml <- Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment")))
   fml_exclude_fe <- suppressWarnings(formula(fml, lhs = 1, rhs = 1))
-  fml_only_fe <- suppressWarnings(formula(fml, lhs = 1, rhs = 2))
+  fml_only_fe <- suppressWarnings(formula(fml, lhs = 0, rhs = 2))
   
   #use_fixed_effects <- suppressWarnings(formula(fml, lhs = 0, rhs = 2) == "~0")
   
@@ -42,6 +42,7 @@ preprocess_felm <- function(object, param, clustid, beta0, alpha){
   }
   
   # if fixed effects are specified, demean: 
+  #if(!is.null(numb_fe) & demean == TRUE){
   if(!is.null(numb_fe)){
     demean_data <- fixest::demean(data, fixed_effects)
     data <- as.data.frame(demean_data)  
@@ -97,10 +98,22 @@ preprocess_felm <- function(object, param, clustid, beta0, alpha){
   # depvar <- names(object$response)
   
   #formula <- formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 1, rhs = 1)
-  model_frame <- model.frame(fml_exclude_fe, data = data)
-  Y <- model.response(model_frame)
-  X <- model.matrix(fml_exclude_fe, data = data)
+  
+  #if(demean == TRUE){
+    model_frame <- model.frame(fml_exclude_fe, data = data)
+    X <- model.matrix(fml_exclude_fe, data = data)
+  #} else {
+  #  model_frame <- model.frame(formula(paste("~", names(data), "+ 0")),
+  #                             data = data)
+  #  fe <- model.frame(formula(paste("~", names(fixed_effects), "+ 0")), 
+  #                    fixed_effects)
+  #  X <- model.matrix(fml_exclude_fe, data = data)
+  #  X_fe <- model.matrix(fe, data = fixed_effects)
+  #  X <- cbind(X, X_fe)
+  #}
 
+  Y <- model.response(model_frame)
+  
   R0 <- as.numeric(param == colnames(X))
   
   N <- length(Y)
@@ -136,7 +149,8 @@ boottest.felm  <- function(object,
                            debug = FALSE, 
                            seed = NULL, 
                            beta0 = 0, 
-                           alpha = NULL){
+                           alpha = NULL, 
+                           demean = NULL){
   
   
   #' Function that runs boottest for object of class felm
@@ -156,7 +170,7 @@ boottest.felm  <- function(object,
   #'@method boottest felm
   
   
-  preprocess <- preprocess_felm(object = object, param = param, clustid = clustid, beta0 = beta0, alpha = alpha)
+  preprocess <- preprocess_felm(object = object, param = param, clustid = clustid, beta0 = beta0, alpha = alpha, demean = demean)
   
   X <- preprocess$X
   Y <- preprocess$Y
