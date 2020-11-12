@@ -1,39 +1,6 @@
-
-
-
-boottest.lm <- function(object, 
-                        clustid, 
-                        param, 
-                        B,
-                        weights = NULL, 
-                        conf_int = NULL, 
-                        debug = FALSE, 
-                        seed = NULL, 
-                        beta0 = NULL, 
-                        alpha = NULL){
+preprocess_lm <- function(object, param, clustid, beta0, alpha){
   
-  #'@param object An object of class fixest
-  #'@param clustid A vector with the clusters
-  #'@param param The univariate coefficients for which a hypothesis is to be tested
-  #'@param B number of bootstrap iterations
-  #'@param weights Regression weights. Currently, WLS is not supported, and weights needs to be NULL 
-  #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
-  #'@param seed An integer. Allows the user to set a random seed
-  #'@param beta0 A numeric. Shifts the null hypothesis  
-  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
-  #'#'@method boottest lm
-  #'@output An object of class boottest
-  #'@export
-
-
-  
-  #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)
-  # object <- lm_fit
-  # clustid = voters$group_id
-  # #B <- 10000
-  # seed <- 1
-  # param <- "treatment"
-  # beta0 <- 0
+  data <- get_model_frame(object)
   
   #formula <- object$call$fml
   weights <- object$call$weights
@@ -42,8 +9,6 @@ boottest.lm <- function(object,
     stop("Currently, boottest does not support weighted least squares. weights 
          must be NULL.")
   }
-  
-  data <- get_model_frame(object)
   
   if(!is.null(seed)){
     set.seed(seed)
@@ -128,11 +93,6 @@ boottest.lm <- function(object,
   N <- length(Y)
   k <- ncol(X)
   
-  Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
-  
-  # Yr for constraint leas squares with beta0 = c
-  Yr <- Y - X[, which(R0 == 1)] * beta0
-  
   #Xr1 <- X
   #Xr1[, which(R0 == 1)] <- beta0 + Xr1[, which(R0 == 1)]
   
@@ -144,10 +104,78 @@ boottest.lm <- function(object,
   if(N_G > 2000){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
+  
+  res_preprocess <- list(data = data, 
+                         clustid = clustid, 
+                         N = N, 
+                         k = k, 
+                         Y = Y, 
+                         X = X, 
+                         #depvar = depvar, 
+                         #groupvars = groupvars, 
+                         beta0 = beta0, 
+                         clustid_dims, 
+                         R0 = R0, 
+                         N_G = N_G, 
+                         alpha = alpha)
+  
+  res_preprocess
+  
+}
+
+
+boottest.lm <- function(object, 
+                        clustid, 
+                        param, 
+                        B,
+                        weights = NULL, 
+                        conf_int = NULL, 
+                        debug = FALSE, 
+                        seed = NULL, 
+                        beta0 = NULL, 
+                        alpha = NULL){
+  
+  #'@param object An object of class fixest
+  #'@param clustid A vector with the clusters
+  #'@param param The univariate coefficients for which a hypothesis is to be tested
+  #'@param B number of bootstrap iterations
+  #'@param weights Regression weights. Currently, WLS is not supported, and weights needs to be NULL 
+  #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
+  #'@param seed An integer. Allows the user to set a random seed
+  #'@param beta0 A numeric. Shifts the null hypothesis  
+  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'#'@method boottest lm
+  #'@output An object of class boottest
+  #'@export
+
+
+  
+  #boottest.lm(lm_fit, 1:2000, B = 1000, seed = 1, param = "x2", beta0 = NULL)
+  # object <- lm_fit
+  # clustid = voters$group_id
+  # #B <- 10000
+  # seed <- 1
+  # param <- "treatment"
+  # beta0 <- 0
+  
+  preprocess <- preprocess_lm(object, param, clustid, beta0, alpha)
+
+  X <- preprocess$X
+  Y <- preprocess$Y
+  R0 <- preprocess$R0
+  data <- preprocess$data
+  N <- preprocess$N
+  k <- preprocess$k
+  clustid <- preprocess$clustid
+  beta0 <- preprocess$beta0
+  N_G <- preprocess$N_G
+  alpha <- preprocess$alpha
+  
   #clustid <- clustid$clustid
   
   # error under the null hypothesis
-  #u_hat <- Y - Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr) %*% Y # N x 1 matrix 
+  Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
+  Yr <- Y - X[, which(R0 == 1)] * beta0
   u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
   
   
@@ -221,7 +249,7 @@ boottest.lm <- function(object,
                       N = N, 
                       B = B, 
                       clustid = clustid, 
-                      depvar = depvar, 
+                      #depvar = depvar, 
                       N_G = N_G)    
   }
   
