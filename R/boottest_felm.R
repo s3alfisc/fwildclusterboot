@@ -1,9 +1,40 @@
 preprocess_felm <- function(object, param, clustid, beta0, alpha, demean){
   
+  # object = felm_fit1
+  # param = "treatment"
+  # clustid = voters$group_id
+  # beta0 = 0
+  # alpha = 0.05
+  # demean = FALSE 
+  
   data <- get_model_frame(object)
   #try_fe <- suppressWarnings(try(get_model_fe(object)))
-  fixed_effects <- suppressWarnings(try(get_model_fe(object), TRUE))
-  numb_fe <- ncol(fixed_effects)
+  
+  if(length(object$fe) == 0){
+    fixed_effects <- NULL
+    numb_fe <- NULL
+  } else {
+    fixed_effects <- get_model_fe(object)
+    numb_fe <- ncol(fixed_effects)
+    fml_only_fe <- formula(paste0("~",names(fixed_effects), collapse = "+"))
+  }
+  
+  # if(!is.null(demean) || !is.logical(demean)){
+  #   stop("demean needs to be null or a logical.")
+  # }
+  # 
+  # if(is.null(numb_fe) & (is.null(demean) | demean != FALSE)){
+  #   warning("The model does not include any fixed effects - in consequence, the 
+  #           estimation proceeds without projecting out the (missing) fixed effects.")
+  # }
+
+  #fixed_effects <- suppressWarnings(try(get_model_fe(object), TRUE))
+  #numb_fe <- ncol(fixed_effects)
+  
+  # if non demeaning is chosen: set demean to zero
+  if(is.null(demean)){
+    demean <- FALSE
+  }
   
   if(is.null(numb_fe) || numb_fe == 0){
     fixed_effects <- NULL
@@ -40,13 +71,6 @@ preprocess_felm <- function(object, param, clustid, beta0, alpha, demean){
     stop("The boottest() function currently does not support instrumental variables
          estimation.")
   }
-  
-  # if fixed effects are specified, demean: 
-  #if(!is.null(numb_fe) & demean == TRUE){
-  if(!is.null(numb_fe)){
-    demean_data <- fixest::demean(data, fixed_effects)
-    data <- as.data.frame(demean_data)  
-  } 
   
   if(!is.null(seed)){
     set.seed(seed)
@@ -90,7 +114,7 @@ preprocess_felm <- function(object, param, clustid, beta0, alpha, demean){
   clustid[i] <- lapply(clustid[i], as.character)
 
   N_G <- nrow(unique(clustid)) #number of clusters
-  if(N_G > 2000){
+  if(N_G > 200){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
   
@@ -99,9 +123,35 @@ preprocess_felm <- function(object, param, clustid, beta0, alpha, demean){
   
   #formula <- formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 1, rhs = 1)
   
-  #if(demean == TRUE){
+  #fe_formula <- formula(paste0("~", names(fixed_effects), collapse = "+"))
+  
+  
+  # if fixed effects are specified, demean: 
+  if(!is.null(numb_fe) & demean == TRUE){
+    #if(!is.null(numb_fe)){
+    demean_data <- fixest::demean(data, fixed_effects)
+    data <- as.data.frame(demean_data) 
     model_frame <- model.frame(fml_exclude_fe, data = data)
     X <- model.matrix(fml_exclude_fe, data = data)
+    Y <- model.response(model_frame)
+  } else if(!is.null(numb_fe) & demean == FALSE){
+    model_frame_fe <- model.frame(fml_only_fe, data = fixed_effects)
+    X_fe <- model.matrix(model_frame_fe, data = fixed_effects)
+    # update: get rid of intercept (because of fe)
+    model_frame <- model.frame(update(fml_exclude_fe, ~ . +  0), data = data)
+    X <- model.matrix(model_frame, data = data)
+    X <- cbind(X, X_fe)
+    Y <- model.response(model_frame)
+    #fe_dummies <- fastDummies::dummy_cols(fixed_effects, remove_first_dummy = TRUE, ignore_na = TRUE)
+  } else {
+    # case where is.null(numb_fe) == TRUE
+    model_frame <- model.frame(fml_exclude_fe, data = data)
+    X <- model.matrix(model_frame, data = data)
+    Y <- model.response(model_frame)
+  }
+  
+  #if(demean == TRUE){
+
   #} else {
   #  model_frame <- model.frame(formula(paste("~", names(data), "+ 0")),
   #                             data = data)
@@ -112,8 +162,7 @@ preprocess_felm <- function(object, param, clustid, beta0, alpha, demean){
   #  X <- cbind(X, X_fe)
   #}
 
-  Y <- model.response(model_frame)
-  
+
   R0 <- as.numeric(param == colnames(X))
   
   N <- length(Y)

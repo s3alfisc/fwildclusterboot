@@ -1,13 +1,28 @@
-preprocess.fixest <- function(object, param, clustid, beta0, alpha){
+preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
   
   
   #data <- model.frame(object)
   
   data <- get_model_frame(object)
-  #try_fe <- suppressWarnings(try(get_model_fe(object)))
-  fixed_effects <- try(get_model_fe(object), TRUE)
-  numb_fe <- ncol(fixed_effects)
   
+  if(is.null(object$fixef_vars)){
+    fixed_effects <- NULL
+    numb_fe <- NULL
+  } else {
+    fixed_effects <- get_model_fe(object)
+    numb_fe <- ncol(fixed_effects)
+    fml_only_fe <- formula(paste0("~",names(fixed_effects), collapse = "+"))
+  }
+  
+  fml_exclude_fe <- formula(object$call$fml)
+
+  
+  # if non demeaning is chosen: set demeaning as default
+  if(is.null(demean)){
+    demean <- FALSE
+  }
+  
+
   if(is.null(numb_fe)){
     fixed_effects <- NULL
   }
@@ -21,23 +36,10 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha){
   }
 
   N_G <- length(unique(clustid)) #number of clusters
-  if(N_G > 2000){
+  if(N_G > 200){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
   
-  # if fixed effects are specified, demean: 
-  if(!is.null(numb_fe)){
-    demean_data <- fixest::demean(data, 
-                                  fixed_effects, 
-                                  tol = 1e-06)
-    names(fixed_effects) <- paste0("fixed_effect_", 1:ncol(fixed_effects))
-    # data is the demeaned data if fe are used
-    data <- as.data.frame(demean_data)
-    # note: why do I take out (Intercept) from fixed effcts R0 but not in no_fixef?
-    R0 <- as.numeric(param == c("(Intercept)", names(object$coefficients)))
-  } else{
-    R0 <- as.numeric(param == c(names(object$coefficients)))
-  }
   
   if(!is.null(object$call$weights)){
     stop("Function currently does not allow weights.")
@@ -86,34 +88,41 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha){
   i <- !sapply(clustid, is.numeric)
   clustid[i] <- lapply(clustid[i], as.character)
   
-  # Make all combinations of clustid dimensions
-  # if(clustid_dims > 1) {
-  #   for(i in acc) {
-  #     clustid <- cbind(clustid, Reduce(paste0, clustid[,i]))
-  #   }
-  # }
   
+  # if fixed effects are specified, demean: 
+  if(!is.null(numb_fe) & demean == TRUE){
+    demean_data <- fixest::demean(data, 
+                                  fixed_effects, 
+                                  tol = 1e-06)
+    #names(fixed_effects) <- paste0("fixed_effect_", 1:ncol(fixed_effects))
+    # data is the demeaned data if fe are used
+    data <- as.data.frame(demean_data)
+    model_frame <- model.frame(fml_exclude_fe, data = data)
+    Y <- model.response(model_frame)
+    X <- model.matrix(model_frame, data = data)
+    # note: why do I take out (Intercept) from fixed effcts R0 but not in no_fixef?
+    R0 <- as.numeric(param == c("(Intercept)", names(object$coefficients)))
+  } else if(!is.null(numb_fe) & demean == FALSE){
+    model_frame_fe <- model.frame(fml_only_fe, data = fixed_effects)
+    X_fe <- model.matrix(model_frame_fe, data = fixed_effects)
+    # update: get rid of intercept (because of fe)
+    model_frame <- model.frame(update(fml_exclude_fe, ~ . +  0), data = data)
+    X <- model.matrix(model_frame, data = data)
+    X <- cbind(X, X_fe)
+    Y <- model.response(model_frame)
+    #fe_dummies <- fastDummies::dummy_cols(fixed_effects, remove_first_dummy = TRUE, ignore_na = TRUE)
+  } else {
+    # case where is.null(numb_fe) == TRUE
+    model_frame <- model.frame(fml_exclude_fe, data = data)
+    X <- model.matrix(model_frame, data = data)
+    Y <- model.response(model_frame)
+  }
   
-  # start estimation here: 
+  R0 <- as.numeric(param == colnames(X))
   
-  #groupvars <- names(coef(object))
-  
-  # if(object_type == "felm"){
-  #   
-  #   depvar <- names(object$response)
-  #   Y <- object$response
-  #   X <- lfe:::model.matrix.felm(felm_fit) 
-  # }
-  
-  
-  #depvar <- all.vars(as.formula(object$call$fml))[1]
-  
-  #depvar <- names(object$response)
-  
-  formula <- object$call$fml
-  model_frame <- model.frame(formula, data = data)
-  Y <- model.response(model_frame)
-  X <- model.matrix(model_frame, data = data)
+  # model_frame <- model.frame(formula, data = data)
+  # Y <- model.response(model_frame)
+  # X <- model.matrix(model_frame, data = data)
   #}
   
   N <- length(Y)
@@ -152,7 +161,8 @@ boottest.fixest  <- function(object,
                            conf_int = NULL, 
                            debug = FALSE, 
                            seed = NULL, 
-                           beta0 = 0){
+                           beta0 = 0, 
+                           demean = NULL){
   
   
   #' Computes wild cluster bootstrap for object of class fixest
@@ -165,6 +175,7 @@ boottest.fixest  <- function(object,
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param demean If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default
   #'@return An object of class boottest
   #'@export
   #'@method boottest fixest
@@ -302,7 +313,7 @@ boottest.fixest  <- function(object,
  #  N <- length(Y)
  #  k <- ncol(X)
   
-  preprocess <- preprocess.fixest(object = object, param = param, clustid = clustid, beta0 = beta0, alpha = alpha)
+  preprocess <- preprocess.fixest(object = object, param = param, clustid = clustid, beta0 = beta0, alpha = alpha, demean = demean)
   
   # lapply(names(preprocess), function(i){
   #   name <- i
