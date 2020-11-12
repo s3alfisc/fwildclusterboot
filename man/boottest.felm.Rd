@@ -9,28 +9,32 @@
   clustid,
   param,
   B,
-  data,
-  alpha = NULL,
-  fixed_effects = NULL,
   weights = NULL,
   conf_int = NULL,
   debug = FALSE,
   seed = NULL,
-  beta0 = 0
+  beta0 = 0,
+  alpha = NULL
 )
 }
 \arguments{
-\item{object}{an object of type felm}
+\item{object}{An object of class fixest}
 
-\item{clustid}{a vector of clusters}
+\item{clustid}{A vector with the clusters}
 
-\item{param}{the paramter that is to be tested}
+\item{param}{The univariate coefficients for which a hypothesis is to be tested}
 
 \item{B}{number of bootstrap iterations}
 
-\item{data}{data}
+\item{weights}{Regression weights. Currently, WLS is not supported, and weights needs to be NULL}
 
-\item{fixed_effects}{optional argument}
+\item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion}
+
+\item{seed}{An integer. Allows the user to set a random seed}
+
+\item{beta0}{A numeric. Shifts the null hypothesis}
+
+\item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
 }
 \value{
 An object of class boottest

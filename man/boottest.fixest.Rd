@@ -26,11 +26,15 @@
 
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
 
-\item{data}{A data.frame containing the data}
+\item{B}{number of bootstrap iterations}
+
+\item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+
+\item{weights}{Regression weights. Currently, WLS is not supported, and weights needs to be NULL}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion}
 
-\item{seed}{An integer. Allows the user to set a seed}
+\item{seed}{An integer. Allows the user to set a random seed}
 
 \item{beta0}{A numeric. Shifts the null hypothesis}
 }
