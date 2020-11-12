@@ -13,6 +13,9 @@ preprocess_felm <- function(object, param, clustid, beta0, alpha){
   if(is.null(alpha)){
     alpha <- 0.05
   }
+  if(!is.numeric(alpha) || alpha > 1 || alpha < 0 || length(alpha) > 1){
+    stop("The level of significance alpha must be a numeric between 0 and 1")
+  }
   
   
   weights <- object$call$weights
@@ -59,7 +62,7 @@ preprocess_felm <- function(object, param, clustid, beta0, alpha){
   }
   
   if(!(param %in% c(rownames(object$coefficients)))){
-    warning("Parameter to test not in model or all. Please specify appropriate parameters to test.")
+    stop("Parameter to test not in model or all. Please specify appropriate parameters to test.")
   }
   
   # how many clustids? uniway/multiway?
