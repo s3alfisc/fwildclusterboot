@@ -23,8 +23,8 @@ The package’s central function is `boottest()`. It allows the user to
 test two-sided, univariate hypotheses using a wild cluster bootstrap.
 Importantly, it uses the “fast” algorithm developed in Roodman et al,
 which makes it feasible to calculate test statistics based on a large
-number of bootstrap draws even for large samples--as long as the 
-number of bootstrapping clusters is not too large.
+number of bootstrap draws even for large samples–as long as the number
+of bootstrapping clusters is not too large.
 
 The `fwildclusterboot` package currently only supports one-dimensional
 clustering and one-dimensional hypotheses, but allows for an arbitrary
@@ -95,7 +95,7 @@ lm_fit <- lm(proposition_vote ~ treatment + ideology + log_income + Q1_immigrati
 # 2) boottest based on object of class fixest
 feols_fit <- feols(proposition_vote ~ treatment + ideology + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
 feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
-feols_fit2 <- feols(proposition_vote ~ treatment + ideology + log_income + as.factor(Q1_immigration), weights = NULL, data = voters)
+feols_fit2 <- feols(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
 
 # 3) bootest based on object of class felm
 felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
@@ -115,6 +115,8 @@ boot_lm = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, param 
 
 # 2) bootest based on object of class feols
 boot_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_fixest = boottest(feols_fit, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, demean = TRUE)
+
 boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
 # boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
 
