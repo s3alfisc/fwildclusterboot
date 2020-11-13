@@ -1,5 +1,14 @@
 preprocess_lm <- function(object, param, clustid, beta0, alpha){
   
+  #' function that pre-processes regression objects of type lm
+  #'@param object An object of class lm
+  #'@param clustid A vector with the clusters
+  #'@param param The univariate coefficients for which a hypothesis is to be tested
+  #'@param beta0 A numeric. Shifts the null hypothesis  
+  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param demean If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default
+  #'@return preprocessed object of class boottest_preprocessed
+  
   data <- get_model_frame(object)
   
   #formula <- object$call$fml
@@ -105,7 +114,9 @@ preprocess_lm <- function(object, param, clustid, beta0, alpha){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
   
-  res_preprocess <- list(data = data, 
+  res_preprocess <- list(fixed_effects = NULL, 
+                         data = data, 
+                         param = param, 
                          clustid = clustid, 
                          N = N, 
                          k = k, 
@@ -119,6 +130,7 @@ preprocess_lm <- function(object, param, clustid, beta0, alpha){
                          N_G = N_G, 
                          alpha = alpha)
   
+  class(res_preprocess) <- "boottest_preprocessed"
   res_preprocess
   
 }
@@ -144,9 +156,11 @@ boottest.lm <- function(object,
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
-  #'#'@method boottest lm
-  #'@output An object of class boottest
+  #'@method boottest lm
+  #'@return An object of class boottest
   #'@export
+  #'@import sandwich
+  #'@import lmtest
 
 
   
@@ -158,108 +172,72 @@ boottest.lm <- function(object,
   # param <- "treatment"
   # beta0 <- 0
   
-  preprocess <- preprocess_lm(object, param, clustid, beta0, alpha)
+  preprocess <- preprocess_lm(object = object, 
+                              param = param, 
+                              clustid = clustid, 
+                              beta0 = beta0,
+                              alpha = alpha)
 
-  X <- preprocess$X
-  Y <- preprocess$Y
-  R0 <- preprocess$R0
-  data <- preprocess$data
-  N <- preprocess$N
-  k <- preprocess$k
-  clustid <- preprocess$clustid
-  beta0 <- preprocess$beta0
-  N_G <- preprocess$N_G
-  alpha <- preprocess$alpha
+  res <- boot_algo(preprocess)
   
-  #clustid <- clustid$clustid
-  
-  # error under the null hypothesis
-  Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
-  Yr <- Y - X[, which(R0 == 1)] * beta0
-  u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
-  
-  
-  #u_hat <- Y - R %*% (Xr %*% solve(t(Xr) %*% Xr) %*% t(Xr) %*% Y) - beta0
-  
-  invXX <- solve(t(X) %*% X) # k x k matrix
-  
-  v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
-  v[,1] <- 1
-  
-  XinvXXr <- X %*% (invXX %*% R0) # N x 1
-  SXinvXXRu_prep <- data.table::data.table(prod = XinvXXr * matrix(rep(u_hat, 1), N, 1) , clustid = clustid) 
-  SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
-  
-  if(ncol(SXinvXXRu) == 1){
-    SXinvXXRu <- as.vector(SXinvXXRu)
-  }
-  
-  SXinvXXRX_prep <- data.table::data.table(prod = matrix(rep(XinvXXr, k), N, k) * X, clustid = clustid)
-  SXinvXXRX <- as.matrix(SXinvXXRX_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
-  
-  SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
-  SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
-  
-  numer <- SXinvXXRu %*% v 
-  J <- (diag(SXinvXXRu) - SXinvXXRX  %*% invXX %*% t(SXu)) %*% v  
-  
-  #hypothesis <- c(0, rep(beta0, B))
-  #hypothesis <- c(beta0, rep(0, B))
-  t <- abs(numer)  / sqrt(colSums(J * J))    # note: absolute value is taken here - no negative t-stats
-  
-  
-  t_boot <- t[2:(B + 1)]
-  #t_conf <- quantile(t_boot, c(0.025, 0.975))
-  #conf_int <- 2*t[1] - t_conf
-  #t_boot <- t_boot
-  #p_val <- mean(abs(t[1]) < abs(t_boot - c(rep(beta0, B))))
-  p_val <- mean(abs(t[1] - beta0) < (t_boot))
-  
-  # res <- list(p_val = p_val#, 
-  #             #conf_int = conf_int
-  #             )
-  
-  #paste("The wild cluster bootstrap p-value for the parameter", param, "is", p_val, ",", "with B", B,  "bootstrap iterations.")
-  
-  res  <- list(p_val = p_val, X = X, Y = Y, B = B, R0 = R0, param = param, clustid = clustid)
   # Invert p-value
-
+  point_estimate <- object$coefficients[param]
+  
   
   if(is.null(conf_int) || conf_int == TRUE){
-    res_p_val <- invert_p_val_fwc(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha)
-    res_final <- list(p_val = res[["p_val"]], 
+    
+    # calculate guess for covariance matrix and standard errors
+    vcov <- sandwich::vcovCL(object, cluster = voters$group_id)
+    coefs <- lmtest::coeftest(object, vcov)
+    se_guess <- coefs[param, "Std. Error"]
+
+    res_p_val <- invert_p_val_fwc(object = object, 
+                                  point_estimate = point_estimate,
+                                  se_guess = se_guess,
+                                  #data = data,
+                                  clustid = preprocess$clustid,
+                                  X = preprocess$X,
+                                  Y = preprocess$Y,
+                                  param = param,
+                                  R0 = preprocess$R0,
+                                  alpha = preprocess$alpha,
+                                  N = preprocess$N, 
+                                  k = preprocess$k, 
+                                  B = B,
+                                  invXX = res$invXX,
+                                  v = res$v,
+                                  Xr = res$Xr,
+                                  XinvXXr = res$XinvXXr,
+                                  SXinvXXRX = res$SXinvXXRX)
+    
+    res_final <- list(point_estimate = point_estimate, 
+                      p_val = res[["p_val"]], 
                       conf_int = res_p_val$conf_int, 
                       p_test_vals = res_p_val$p_test_vals, 
                       test_vals = res_p_val$test_vals,
-                      t_stat = t[1], 
-                      regression = object, 
+                      t_stat = res$t_stat, 
+                      regression = res$object, 
                       param = param, 
-                      N = N, 
+                      N = preprocess$N, 
                       B = B, 
                       clustid = clustid, 
                       #depvar = depvar, 
-                      N_G = N_G)
-    
+                      N_G = preprocess$N_G)
   } else{
-    res_final <- list(p_val = res[["p_val"]], 
-                      t_stat = t[1], 
-                      conf_int = conf_int, 
-                      regression = object, 
+    res_final <- list(point_estimate = point_estimate, 
+                      p_val = res[["p_val"]], 
+                      t_stat = res$t_stat, 
+                      conf_int = res$conf_int, 
+                      regression = res$object, 
                       param = param, 
-                      N = N, 
+                      N = preprocess$N, 
                       B = B, 
                       clustid = clustid, 
                       #depvar = depvar, 
-                      N_G = N_G)    
+                      N_G = preprocess$N_G)     
   }
   
-
- 
   class(res_final) <- "boottest"
+  
   res_final
-  
-  
-  
-  
-} 
-
+}

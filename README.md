@@ -98,7 +98,7 @@ feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_im
 feols_fit2 <- feols(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
 
 # 3) bootest based on object of class felm
-felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
+felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration | 0 |  group_id, weights = NULL, data = voters)
 felm_fit1 <- felm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
 ```
 
@@ -132,7 +132,7 @@ returns the estimation results as a data.frame.
 ``` r
 summarize_boot(boot_lm)
 #>  
-#>   Estimation Function: lm
+#>   Estimation Function: NULL
 #>  Observations:10000
 #>  Standard-errors: Clustered  
 #>  Number of Clusters:  50
@@ -154,7 +154,7 @@ boot_lm_20 = boottest(lm_fit, clustid = voters$group_id, B = B, seed = seed, par
 
 summarize_boot(boot_lm_5)
 #>  
-#>   Estimation Function: lm
+#>   Estimation Function: NULL
 #>  Observations:10000
 #>  Standard-errors: Clustered  
 #>  Number of Clusters:  50
@@ -163,7 +163,7 @@ summarize_boot(boot_lm_5)
 #> treatment    0.004   0.415    0.671   -0.015    0.024
 summarize_boot(boot_lm_20)
 #>  
-#>   Estimation Function: lm
+#>   Estimation Function: NULL
 #>  Observations:10000
 #>  Standard-errors: Clustered  
 #>  Number of Clusters:  50
@@ -197,23 +197,23 @@ coeftest(lm_fit, res)
 #> t test of coefficients:
 #> 
 #>                                      Estimate Std. Error  t value  Pr(>|t|)    
-#> (Intercept)                         0.8898613  0.0520122  17.1087 < 2.2e-16 ***
-#> treatment                           0.0040851  0.0096984   0.4212    0.6736    
-#> ideology                            0.3044786  0.0154906  19.6557 < 2.2e-16 ***
-#> log_income                         -0.0032876  0.0031679  -1.0378    0.2994    
-#> Q1_immigrationDisagree             -0.2440361  0.0181748 -13.4272 < 2.2e-16 ***
-#> Q1_immigrationLean Disagree        -0.3774845  0.0295260 -12.7848 < 2.2e-16 ***
-#> Q1_immigrationDon't Know / Neutral -0.3603392  0.0452919  -7.9559 1.971e-15 ***
-#> Q1_immigrationLean Agree           -0.3350370  0.0574568  -5.8311 5.677e-09 ***
-#> Q1_immigrationAgree                -0.4726871  0.0685724  -6.8933 5.782e-12 ***
-#> Q1_immigrationStrong Agree         -0.7404004  0.0825501  -8.9691 < 2.2e-16 ***
+#> (Intercept)                         0.8898613  0.0520115  17.1089 < 2.2e-16 ***
+#> treatment                           0.0040851  0.0096962   0.4213    0.6735    
+#> ideology                            0.3044786  0.0154938  19.6517 < 2.2e-16 ***
+#> log_income                         -0.0032876  0.0031681  -1.0377    0.2994    
+#> Q1_immigrationDisagree             -0.2440361  0.0181694 -13.4312 < 2.2e-16 ***
+#> Q1_immigrationLean Disagree        -0.3774845  0.0295226 -12.7863 < 2.2e-16 ***
+#> Q1_immigrationDon't Know / Neutral -0.3603392  0.0452886  -7.9565 1.962e-15 ***
+#> Q1_immigrationLean Agree           -0.3350370  0.0574537  -5.8314 5.666e-09 ***
+#> Q1_immigrationAgree                -0.4726871  0.0685717  -6.8933 5.779e-12 ***
+#> Q1_immigrationStrong Agree         -0.7404004  0.0825573  -8.9683 < 2.2e-16 ***
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 # 2) results from fwildclusterboot
 summarize_boot(boot_lm)
 #>  
-#>   Estimation Function: lm
+#>   Estimation Function: NULL
 #>  Observations:10000
 #>  Standard-errors: Clustered  
 #>  Number of Clusters:  50
@@ -222,13 +222,13 @@ summarize_boot(boot_lm)
 #> treatment    0.004   0.415    0.671   -0.015    0.024
 summarize_boot(boot_fixest)
 #>  
-#>   Estimation Function: fixest
+#>   Estimation Function: NULL
 #>  Observations:10000
 #>  Standard-errors: Clustered  
 #>  Number of Clusters:  50
 #> 
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.004   0.415    0.671   -0.015    0.024
+#>   Estimate t value Pr(>|t|) CI Lower CI Upper
+#> 1    0.004   0.415    0.671   -0.015    0.024
 
 # 3) sandwich standard errors from fixest
 summary(feols_fit, se = "cluster", cluster = "group_id")

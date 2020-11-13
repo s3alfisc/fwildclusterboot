@@ -6,17 +6,16 @@
 \usage{
 invert_p_val_fwc(
   object,
-  data,
+  point_estimate,
+  se_guess,
   clustid,
   X,
   Y,
+  N,
+  k,
   param,
   R0,
   B,
-  N,
-  k,
-  seed,
-  N_g,
   invXX,
   v,
   Xr,
@@ -28,27 +27,21 @@ invert_p_val_fwc(
 \arguments{
 \item{object}{A regression object of class lm, feols or felm}
 
-\item{data}{A data.frame with the data used in the estimation. If fixed effects are used, this data is demeaned and excludes the fixed effects}
-
 \item{clustid}{A vector with the clusters}
 
 \item{X}{the design matrix with the (potentially demeand) covariates}
 
 \item{Y}{A numeric vector containing the outcome variable}
 
+\item{N}{An integer. Number of observations}
+
+\item{k}{An integer. Number of covariates (excluding fixed effects that are projected out)}
+
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
 
 \item{R0}{A vector with the test constraint. Dimension (numb_covariates - numb_fe) x 1. 0 for covariate "param", else 1}
 
 \item{B}{An integer. Number of bootstrap iterations}
-
-\item{N}{An integer. Number of observations}
-
-\item{k}{An integer. Number of covariates (excluding fixed effects that are projected out)}
-
-\item{seed}{An integer. Seed.}
-
-\item{N_g}{An integer. Number of clusters.}
 
 \item{v}{A matrix. Draw from bootstrap distribution}
 
@@ -59,6 +52,10 @@ invert_p_val_fwc(
 \item{SXinvXXRX}{A matrix. see boottest() for computation}
 
 \item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+
+\item{seed}{An integer. Seed.}
+
+\item{N_g}{An integer. Number of clusters.}
 }
 \description{
 Inverts the bootstrap p-value and calculates confidence sets

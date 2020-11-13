@@ -105,7 +105,7 @@ feols_fit1 <- feols(proposition_vote ~ treatment + ideology + log_income + Q1_im
 feols_fit2 <- feols(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
 
 # 3) bootest based on object of class felm
-felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration, weights = NULL, data = voters)
+felm_fit <- felm(proposition_vote ~ treatment + ideology + log_income | Q1_immigration | 0 |  group_id, weights = NULL, data = voters)
 felm_fit1 <- felm(proposition_vote ~ treatment + ideology + log_income + Q1_immigration, weights = NULL, data = voters)
 ```
 

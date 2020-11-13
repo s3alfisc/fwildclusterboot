@@ -14,7 +14,8 @@
   debug = FALSE,
   seed = NULL,
   beta0 = 0,
-  alpha = NULL
+  alpha = NULL,
+  demean = NULL
 )
 }
 \arguments{

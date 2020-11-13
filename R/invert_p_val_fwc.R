@@ -1,8 +1,7 @@
-invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, seed, N_g, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha){
+invert_p_val_fwc <- function(object, point_estimate, se_guess, clustid, X, Y, N, k, param, R0, B, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
-  #'@param data A data.frame with the data used in the estimation. If fixed effects are used, this data is demeaned and excludes the fixed effects
   #'@param clustid A vector with the clusters
   #'@param X the design matrix with the (potentially demeand) covariates
   #'@param Y A numeric vector containing the outcome variable 
@@ -22,30 +21,30 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
   
   if(alpha > 1 | alpha < 0){stop("Significance level needs to be between 0 and 1.")}
   
-  if(class(object) == "lm"){
-    lm_robust_fit <- estimatr::lm_robust(eval(object$call$formula), clusters = as.factor(clustid$clustid), data = data, se_type = "stata")
-    estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-    st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
-  } else if(class(object) == "lm_robust"){
-    lm_robust_fit <-  estimatr::lm_robust(object$call$formula, 
-                               clusters = eval(object$call$clusters), 
-                               data = data, 
-                               se_type = "stata")
-    estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-    st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
-  } else if(class(object) == "felm"){
-    lm_robust_fit <-  estimatr::lm_robust(formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 1, rhs = 1), 
-                               clusters = clustid[, "clustid"], 
-                               data = data, se_type = "stata")
-    estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-    st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
-  } else if(class(object) == "fixest"){
-    fit <- fixest:::summary.fixest(object, se = "cluster", cluster = clustid)
-    estimate <- fit$coefficients[names(object$coefficients) == param]
-    st_error_guess <- fit$se[names(object$se) == param]
-  } else {
-    stop("Function only designed for objects of type lm, lm_robust, felm and feols.")
-  }
+ # if(class(object) == "lm"){
+    #lm_robust_fit <- estimatr::lm_robust(eval(object$call$formula), clusters = as.factor(clustid$clustid), data = data, se_type = "stata")
+    #estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
+    #st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
+  #} else if(class(object) == "lm_robust"){
+    #lm_robust_fit <-  estimatr::lm_robust(object$call$formula, 
+    #                           clusters = eval(object$call$clusters), 
+    #                           data = data, 
+    #                           se_type = "stata")
+    #estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
+    #st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
+  #} else if(class(object) == "felm"){
+  #  lm_robust_fit <-  estimatr::lm_robust(formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 1, rhs = 1), 
+  #                             clusters = clustid[, "clustid"], 
+  #                             data = data, se_type = "stata")
+  #  estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
+  #  st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
+  #} else if(class(object) == "fixest"){
+    #fit <- fixest:::summary.fixest(object, se = "cluster", cluster = clustid)
+    #estimate <- fit$coefficients[names(object$coefficients) == param]
+    #st_error_guess <- fit$se[names(object$se) == param]
+  #} else {
+  #  stop("Function only designed for objects of type lm, lm_robust, felm and feols.")
+  #}
 
   
   # --------------------------------------------------------------------------------------------- #
@@ -62,16 +61,22 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
     
     u_hat <- Q + P %*% matrix(beta0, 1, length(beta0))
 
-    SXinvXXRu_prep <- data.table::data.table(prod = as.vector(XinvXXr) * u_hat  , clustid = clustid) 
-    SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
+    # SXinvXXRu_prep <- data.table::data.table(prod = as.vector(XinvXXr) * u_hat  , clustid = clustid) 
+    # SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
+    # if(ncol(SXinvXXRu) == 1){
+    #   SXinvXXRu <- as.vector(SXinvXXRu)
+    # }
+    
+    SXinvXXRu <- collapse::fsum(as.vector(XinvXXr) * u_hat  , clustid)
     if(ncol(SXinvXXRu) == 1){
       SXinvXXRu <- as.vector(SXinvXXRu)
     }
     
-    
-    SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
-    SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL]) 
+    #SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
+    #SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL]) 
    
+    SXu <- collapse::fsum(X * matrix(rep(u_hat, k), N, k), clustid)
+    
     numer <- SXinvXXRu %*% v 
     J <- (diag(SXinvXXRu) - SXinvXXRX_invXX %*% t(SXu)) %*% v  
     t <- abs(numer)  / sqrt(colSums(J * J))    # note: absolute value is taken here - no negative t-stats
@@ -96,7 +101,7 @@ invert_p_val_fwc <- function(object, data, clustid, X, Y, param, R0, B, N, k, se
             be guessed.")
     }
     # start guesses by taking sandwich cluster confidence intervals + inflation factor
-    starting_vals <- as.numeric(estimate + c(-inflate_se[j], inflate_se[j]) * st_error_guess)
+    starting_vals <- as.numeric(point_estimate + c(-inflate_se[j], inflate_se[j]) * se_guess)
     # take 25 starting values in between the guesses
     test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
     

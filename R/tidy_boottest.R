@@ -16,12 +16,13 @@ tidy.boottest <- function(object){
   
   stopifnot(inherits(object, "boottest"))
   
-  if(class(object$regression) == "felm"){
-    estimate <- object$regression$coefficients[rownames(object$regression$coefficients) == object$param]
-  } else{
-    estimate <- object$regression$coefficients[names(object$regression$coefficients) == object$param]
-  }
+  # if(class(object$regression) == "felm"){
+  #   estimate <- object$regression$coefficients[rownames(object$regression$coefficients) == object$param]
+  # } else{
+  #   estimate <- object$regression$coefficients[names(object$regression$coefficients) == object$param]
+  # }
 
+  estimate <- object$point_estimate
   t_stat <- object$t_stat
   p_val <- object$p_val
   conf_int_lower <- min(object$conf_int)
