@@ -1,6 +1,6 @@
 boot_algo <- function(preprocessed_object){
   
-  #' function that implements the bootstrap algorithm 
+  #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
   #' @return A list of ... 
   #' 

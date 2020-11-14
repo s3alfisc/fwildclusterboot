@@ -56,6 +56,8 @@ invert_p_val_fwc <- function(object, point_estimate, se_guess, clustid, X, Y, N,
   Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
   P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
   
+  XinvXXr <- as.vector(XinvXXr)
+  
   p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, 
                          SXinvXXRu_prep, v, B){
     
@@ -67,10 +69,10 @@ invert_p_val_fwc <- function(object, point_estimate, se_guess, clustid, X, Y, N,
     #   SXinvXXRu <- as.vector(SXinvXXRu)
     # }
     
-    SXinvXXRu <- collapse::fsum(as.vector(XinvXXr) * u_hat  , clustid)
+    SXinvXXRu <- collapse::fsum(XinvXXr * u_hat  , clustid)
     if(ncol(SXinvXXRu) == 1){
       SXinvXXRu <- as.vector(SXinvXXRu)
-    }
+    }  
     
     #SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
     #SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL]) 
@@ -113,9 +115,12 @@ invert_p_val_fwc <- function(object, point_estimate, se_guess, clustid, X, Y, N,
     # calculate the p-values for all 26 guesses
     p <- rep(NaN, length(test_vals))
     
+    #pb = txtProgressBar(min = 0, max = length(test_vals), initial = 0, style = 3) 
     for(i in 1:length(test_vals)){
       p[i] <- p_val_null_x(test_vals[i]) 
+    #  setTxtProgressBar(pb,i)
     }
+    #close(pb)
     
     # substract alpha in function so that I will not need to 
     # do it in root finding algorithm, but then I will need to add 
@@ -155,38 +160,25 @@ invert_p_val_fwc <- function(object, point_estimate, se_guess, clustid, X, Y, N,
           confidence set boundary guesses. As a consequence, the numerical root finding
          will not work.")
   }  
-  # secant_method <- function(f, x1, x2, num = 10, eps = 1 / B, eps1 = 1 / B){
-  #  i = 0
-  #  while ((abs(x1 - x2) > eps) & (i < num)) {
-  #    c = x2 - f(x2) * (x2 - x1)/(f(x2) - f(x1))
-  #    x1 = x2
-  #    x2 = c
-  #    i = i + 1
-  #  }
-  #  
-  #  if (abs(f(x2)) < eps1) {
-  #    success <- "finding root is successful"
-  #  }
-  #  success <- "finding root is fail"
-  #  
-  #  res <- 
-  #    list(root = x2, 
-  #    function_val = f(x2),
-  #    success = success)
-  # 
-  #  res
-  # }
+  
   
   res <- lapply(list(test_vals_lower, test_vals_higher), function(x){
     
-    #tmp <-  NLRoot::SMfzero(p_val_null_x , x1 = min(x), x2 = max(x), num = 10, eps = 1e-06)
+    #tmp <- secant_rel(f = p_val_null_x, x1 = min(x), x2 = max(x), B = B)
+    #tmp <- secant_method(f = p_val_null_x, x0 = min(x), x1 = max(x))
+    #tmp
+    #tmp <-  NLRoot::SMfzero(p_val_null_x , x1 = min(x), x2 = max(x), num = 10, eps = 1/(B*1.0000001))
     #tmp <- secant_method(p_val_null_x, x1 = min(x), x2 = max(x))
     #tmp
     #tmp <- try(pracma::newtonRaphson(p_val_null_x, x0 =  x, dfun = NULL, maxiter = 10, tol = 1/B))
     #tmp$root
     #tmp <- pracma::fzero(p_val_null_x , x = x, maxiter = 10, tol = 1 / B)
     #tmp$x
-    tmp <- pracma::bisect(p_val_null_x , a = min(x), b = max(x))
+    #tmp <- pracma::bisect(p_val_null_x , a = min(x), b = max(x), tol = 1e-6)
+    #tmp <- pracma::secant(p_val_null_x , a = min(x), b = max(x), maxiter = 10, tol = 1e-6)
+    #tmp <- pracma::muller(p_val_null_x , p0 = min(x), p1 = max(x), tol = 1e-6, maxiter = 10)
+    tmp <- stats::uniroot(f = p_val_null_x, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10)
+    
     tmp$root
   })
 

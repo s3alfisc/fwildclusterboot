@@ -2,7 +2,7 @@
 % Please edit documentation in R/boot_algo.R
 \name{boot_algo}
 \alias{boot_algo}
-\title{function that implements the bootstrap algorithm}
+\title{function that implements the fast bootstrap algorithm as described in Roodman et al (2009)}
 \usage{
 boot_algo(preprocessed_object)
 }
@@ -13,5 +13,5 @@ boot_algo(preprocessed_object)
 A list of ...
 }
 \description{
-function that implements the bootstrap algorithm
+function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
 }
