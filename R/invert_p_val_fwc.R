@@ -107,8 +107,13 @@ invert_p_val_fwc <- function(object, point_estimate, se_guess, clustid, X, Y, N,
     # take 25 starting values in between the guesses
     test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
     
-
+    # later: don't have to evaluate all guesses at all points - extreme points suffice - if < alpha at both extreme points
+    # then evaluate all 26 points
     
+    #min_test_val <- min(test_vals)
+    #max_test_val <- max(test_vals)
+    
+    p_val_null_x(min_test_val) + alpha <
     #benchmark(p_val_null_x(test_vals[1]))
     # get test values
 
