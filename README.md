@@ -257,6 +257,15 @@ summary(feols_fit, se = "cluster", cluster = "group_id")
 
 Results of timing benchmarks of `fwildclusterboot` with `multiwayvcov`
 (on 4 cores) with - N = 10000 observations - b = 10000 bootstrap
-iterations - n\_g = 40 clusters
+iterations - n\_g = 50 clusters
 
-<img src="C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.png" width="50%" />
+    #> Warning: package 'microbenchmark' was built under R version 4.0.3
+    #> Unit: seconds
+    #>               expr       min        lq      mean    median        uq       max
+    #>  multiway_parallel 35.504437 38.769652 42.791902 42.034867 46.435635 50.836403
+    #>        boottest_lm  1.598980  1.736429  1.840356  1.873878  1.961045  2.048212
+    #>     boottest_feols  1.410733  1.419512  1.494686  1.428291  1.536662  1.645032
+    #>  neval
+    #>      3
+    #>      3
+    #>      3
