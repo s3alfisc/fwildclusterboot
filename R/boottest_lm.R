@@ -9,6 +9,13 @@ preprocess_lm <- function(object, param, clustid, beta0, alpha){
   #'@param demean If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default
   #'@return preprocessed object of class boottest_preprocessed
   
+  # data <- create_data_2(N = 200, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
+  # object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
+  # clustid <- data[, group_id1, group_id2]
+  # param <- "treatment"
+  # beta0 = 0
+  # alpha = 0
+  
   data <- get_model_frame(object)
   
   #formula <- object$call$fml
@@ -75,6 +82,15 @@ preprocess_lm <- function(object, param, clustid, beta0, alpha){
   #     clustid <- cbind(clustid, Reduce(paste0, clustid[,i]))
   #   }
   # }
+  
+  if(clustid_dims == 2){
+    #clustid_1 <- names(clustid)[1]
+    #clustid_2 <- names(clustid)[2]
+    names(clustid) <- c("clustid_1", "clustid_2")
+    #clustid <- paste0(clustid_1, "-", clustid_2)
+    clustid$clustid <- paste0(clustid$clustid_1, "-", clustid$clustid_2)
+  }
+  
   
   
   # start estimation here: 
@@ -178,8 +194,12 @@ boottest.lm <- function(object,
                               beta0 = beta0,
                               alpha = alpha)
 
-  res <- boot_algo(preprocess)
-  
+  #if(preprocess_clustid_dims == 1){
+    res <- boot_algo(preprocess)
+  #} else if(preprocess$clustid_dims == 2){
+  #  res <- boot_algo_2_clust(preprocess)
+  #}
+
   # Invert p-value
   point_estimate <- object$coefficients[param]
   
