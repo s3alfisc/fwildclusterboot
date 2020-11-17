@@ -1,4 +1,4 @@
-boot_algo_2_clust <- function(preprocessed_object){
+boot_algo.2_cluster <- function(preprocessed_object){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
@@ -52,10 +52,10 @@ boot_algo_2_clust <- function(preprocessed_object){
   # start collapsing for clustid and individual clusters 
   # clustid: boot_cluster
   
-  XinvXXRu <- diag(as.vector(XinvXXr * matrix(rep(u_hat, 1), N, 1)))
+  XinvXXRu <- as.vector(XinvXXr * matrix(rep(u_hat, 1), N, 1))
   SXinvXXRu <-collapse::fsum(XinvXXr * matrix(rep(u_hat, 1), N, 1), clustid)
   
-  SXinvXXRu <- collapse::fsum(XinvXXRu, clustid$clustid)
+  #SXinvXXRu <- collapse::fsum(XinvXXRu, clustid$clustid)
   XinvXXRuS <- t(collapse::fsum(XinvXXRu, clustid$clustid))
   
   # small sample correction for clusters 
@@ -65,12 +65,14 @@ boot_algo_2_clust <- function(preprocessed_object){
   #N_G3 <- length(unique(clustid$clustid))
   # things in for loop
   #tKK <- array(NA, dim = c(N_G3, N_G3, 2))
+  diag_XinvXXRuS <- t(collapse::fsum(diag(as.vector(XinvXXRu)), clustid$clustid))
   tKK <- list()
   for(x in names(clustid)){
-    SXinvXXRuS <- collapse::fsum(XinvXXRuS, clustid[x])
+    S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
     SXinvXXrX <-  collapse::fsum(matrix(rep(XinvXXr, k), N, k) * X, clustid[x])
-    K <- SXinvXXRuS - SXinvXXrX %*% invXX %*% tSuX
+    K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
     tKK[[x]] <- small_sample_correction[x] * t(K) %*% K # here: add small sample df correction
+    #tKK[[x]] <-  t(K) %*% K # here: add small sample df correction
     #J <- K %*% v
   }
   tKK_sum <- Reduce("+", tKK)
@@ -94,8 +96,7 @@ boot_algo_2_clust <- function(preprocessed_object){
                invXX = invXX,
                v = v,
                Xr = Xr,
-               XinvXXr = XinvXXr,
-               SXinvXXRX = SXinvXXRX)
+               XinvXXr = XinvXXr)
   
   res
 }

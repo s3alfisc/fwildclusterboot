@@ -1,5 +1,5 @@
-boottest <- function(x, ...){
-  #'@export 
-  UseMethod("boottest")
-}
-
+#' boottest <- function(x, ...){
+#'   #'@export 
+#'   UseMethod("boottest")
+#' }
+#' 

@@ -48,8 +48,8 @@ create_data_2 <-
     voters <- 
       fabricatr::fabricate(
         N = N,
-        group_id1 = rep(1:N_G1, N / N_G1),
-        group_id2 = rep(1:N_G2, N / N_G2),
+        group_id1 = sample(1:N_G1, N, replace = TRUE),
+        group_id2 = sample(1:N_G2, N , replace = TRUE),
         ideology1 = fabricatr::draw_normal_icc(mean = 0, N = N, clusters = group_id1, ICC = icc1),
         ideology2 = fabricatr::draw_normal_icc(mean = 0, N = N, clusters = group_id2, ICC = icc2),
         
