@@ -16,12 +16,10 @@
   param,
   R0,
   B,
-  invXX,
   v,
   Xr,
-  XinvXXr,
-  SXinvXXRX,
-  alpha
+  alpha,
+  beta0
 )
 }
 \arguments{
@@ -47,15 +45,15 @@
 
 \item{Xr}{A matrix. R0 \%*\% X}
 
-\item{XinvXXr}{A matrix. see boottest()}
-
-\item{SXinvXXRX}{A matrix. see boottest() for computation}
-
 \item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
 
 \item{seed}{An integer. Seed.}
 
 \item{N_g}{An integer. Number of clusters.}
+
+\item{XinvXXr}{A matrix. see boottest()}
+
+\item{SXinvXXRX}{A matrix. see boottest() for computation}
 }
 \description{
 Inverts the bootstrap p-value and calculates confidence sets

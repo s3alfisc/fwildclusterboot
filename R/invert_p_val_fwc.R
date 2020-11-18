@@ -1,4 +1,4 @@
-invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid, X, Y, N, k, param, R0, B, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha){
+invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid, X, Y, N, k, param, R0, B, v, Xr, alpha, beta0){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
@@ -50,12 +50,32 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   # --------------------------------------------------------------------------------------------- #
   # start inversion 
 
-  SXinvXXRX_invXX <- SXinvXXRX  %*% invXX
+  Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
   Xr0 <- matrix(X[, which(R0 == 1)], nrow(X), 1)
+  
+  # Yr for constraint leas squares with beta0 = c
+  Yr <- Y - X[, which(R0 == 1)] * beta0
+  
+  #Xr1 <- X
+  #Xr1[, which(R0 == 1)] <- beta0 + Xr1[, which(R0 == 1)]
+  
+  # small sample correction for clusters 
+  G <- sapply(clustid, function(x) length(unique(x)))
+  small_sample_correction <- G / (G - 1)
   
   Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
   P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
   
+  # v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
+  # v[,1] <- 1
+  invXX <- solve(t(X) %*% X) # k x k matrix
+  XinvXXr <- X %*% (invXX %*% R0) # N x 1
+  
+  SXinvXXRX <- collapse::fsum(matrix(rep(XinvXXr, k), N, k) * X, clustid)  
+  
+  SXinvXXRX_invXX <- SXinvXXRX  %*% invXX
+
+
   XinvXXr <- as.vector(XinvXXr)
   
   p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, 

@@ -80,9 +80,9 @@ boottest.lm <- function(object,
                                 beta0 = preprocess$beta0,
                                 alpha = preprocess$alpha)
   } else {
-    res_p_val <- list(conf_int = NULL, 
-                       p_test_vals = NULL, 
-                       test_vals = NULL)
+    res_p_val <- list(conf_int = NA, 
+                       p_test_vals = NA, 
+                       test_vals = NA)
   }
 
 

@@ -80,9 +80,9 @@ library(fwildclusterboot)
 
 
 B <- 10000
-seed <- 12394
+seed <- 9123949
 set.seed(seed)
-voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
+voters <- create_data_2(N = 10000, N_G1 = 50, icc1 = 0.01, N_G2 = 50, icc2 = 0.01)
 head(voters)
 
 ```
@@ -117,8 +117,10 @@ Second and by default, the boottest function calculates confidence intervals by 
 boot_lm = boottest(lm_fit, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 
 # 2) bootest based on object of class feols
-boot_fixest = boottest(feols_fit, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
-boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
+ boot_fixest = boottest(feols_fit, clustid = ~group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+ boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
+ boot_fixest1 = boottest(feols_fit1, clustid = ~group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
+
 # boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
 
 # 3) boottest based on object of class felm
@@ -132,13 +134,16 @@ boot_lm = boottest(lm_fit, clustid = voters$group_id1, B = B, seed = seed, param
 
 # 2) bootest based on object of class feols
 boot_fixest = boottest(feols_fit, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-boot_fixest = boottest(feols_fit, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, demean = TRUE)
+boot_fixest = boottest(feols_fit, clustid = ~group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, demean = TRUE)
 
 boot_fixest1 = boottest(feols_fit1, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
 # boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
 
 # 3) boottest based on object of class felm
 boot_felm = boottest(felm_fit, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+#boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = #"treatment", conf_int = TRUE)
+
+
 boot_felm1 = boottest(felm_fit1, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
 ```
 
@@ -205,14 +210,18 @@ library(sandwich)
 library(lmtest)
 library(multiwayvcov)
 options(boot.ncpus = 4)
+rm(boot_lm); rm(boot_fixest); rm(boot_felm); rm(res)
 
-boot_lm = boottest(lm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = TRUE)
-
+boot_lm <-  boottest(lm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+boot_fixest <-  boottest(feols_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+boot_felm <-  boottest(felm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
 summarize_boot(boot_lm)
+summarize_boot(boot_fixest)
+summarize_boot(boot_felm)
 
 res <- cluster.boot(lm_fit, cluster = ~group_id1 + group_id2, R = 1000, wild_type = "rademacher", parallel = TRUE)
-
 # # 1) results from multiwayvcov
+
 coeftest(lm_fit, res)
 
 vocv <- vcovCL(lm_fit, ~ group_id1 + group_id2)

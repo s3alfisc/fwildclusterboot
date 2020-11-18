@@ -385,7 +385,8 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
   # clustid <- ~ group_id1
   # beta0 = 0
   # alpha = 0.05
-  demean = FALSE
+  #demean = FALSE
+  
   data <- get_model_frame(object)
   
   if(is.null(object$fixef_vars)){
@@ -424,6 +425,17 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
   }
   
   
+ 
+  
+  #if(numb_clusters == 2){
+  #  clustid[, clustid12 := paste0(get(names(clustid)[1]), "-", get(names(clustid)[2]))]
+  #}
+  
+  if(!(param %in% c(names(object$coefficients)))){
+    stop("Parameter to test not in model or all. Please specify appropriate parameters to test.")
+  }
+  
+  # how many clustids? uniway/multiway?
   # retrieve clusters / multiple clusters
   if(inherits(clustid, "formula")) {
     clustid_tmp <- expand.model.frame(object, clustid, na.expand = FALSE)
@@ -432,31 +444,15 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
     clustid <- as.data.frame(clustid, stringsAsFactors = FALSE)
   }
   
-  numb_clusters <- ncol(clustid)
+  #numb_clusters <- ncol(clustid)
   N_G <- nrow(unique(clustid)) #number of clusters
   
   if(N_G > 200){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
-  
-  if(numb_clusters == 2){
-    clustid[, clustid12 := paste0(get(names(clustid)[1]), "-", get(names(clustid)[2]))]
-  }
-  
-  if(!(param %in% c(names(object$coefficients)))){
-    stop("Parameter to test not in model or all. Please specify appropriate parameters to test.")
-  }
-  
-  # how many clustids? uniway/multiway?
   clustid_dims <- ncol(clustid)
   
-  if(clustid_dims == 2){
-    #clustid_1 <- names(clustid)[1]
-    #clustid_2 <- names(clustid)[2]
-    names(clustid) <- c("clustid_1", "clustid_2")
-    #clustid <- paste0(clustid_1, "-", clustid_2)
-    clustid$clustid <- paste0(clustid$clustid_1, "-", clustid$clustid_2)
-  }
+
   
   # Handle omitted or excluded observations
   if(!is.null(object$na.action)) {
@@ -478,6 +474,13 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
   i <- !sapply(clustid, is.numeric)
   clustid[i] <- lapply(clustid[i], as.character)
   
+  if(clustid_dims == 2){
+    #clustid_1 <- names(clustid)[1]
+    #clustid_2 <- names(clustid)[2]
+    names(clustid) <- c("clustid_1", "clustid_2")
+    #clustid <- paste0(clustid_1, "-", clustid_2)
+    clustid$clustid <- paste0(clustid$clustid_1, "-", clustid$clustid_2)
+  }
   
   # if fixed effects are specified, demean: 
   if(!is.null(numb_fe) & demean == TRUE){

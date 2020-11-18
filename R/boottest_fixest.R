@@ -28,6 +28,25 @@ boottest.fixest  <- function(object,
   #'@export
   #'@method boottest fixest
 
+  # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+  # file.sources = list.files(pattern="*.R")
+  # sapply(file.sources, source, .GlobalEnv)
+  # set.seed(5)
+  # data <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01)
+  # object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
+  # #clustid <- data[, .(group_id1)]
+  #  
+  # clustid <- ~ group_id1 + group_id2
+  # param <- "treatment"
+  # B = 10000
+  # alpha = NULL 
+  # fixed_effects = NULL 
+  # weights = NULL
+  # conf_int = NULL 
+  # debug = FALSE
+  # seed = NULL
+  # beta0 = 0
+  # demean = NULL
 
   # Step 1: check arguments of feols call
   #formula <- object$call$fml
@@ -68,28 +87,24 @@ boottest.fixest  <- function(object,
     coefs <- lmtest::coeftest(object, vcov)
     se_guess <- coefs[param, "Std. Error"]
     
-    res_p_val <- invert_p_val(object = res, 
-                                  point_estimate = point_estimate,
-                                  se_guess = se_guess,
-                                  #data = data,
-                                  clustid = preprocess$clustid,
-                                  X = preprocess$X,
-                                  Y = preprocess$Y,
-                                  param = param,
-                                  R0 = preprocess$R0,
-                                  alpha = preprocess$alpha,
-                                  N = preprocess$N, 
-                                  k = preprocess$k, 
-                                  B = B,
-                                  invXX = res$invXX,
-                                  v = res$v,
-                                  Xr = res$Xr,
-                                  XinvXXr = res$XinvXXr,
-                                  SXinvXXRX = res$SXinvXXRX)
+    res_p_val <- invert_p_val(object = res,
+                              point_estimate = point_estimate,
+                              se_guess = se_guess, 
+                              clustid = preprocess$clustid,
+                              X = preprocess$X,
+                              Y = preprocess$Y,
+                              N = preprocess$N,
+                              k = preprocess$k,
+                              v = res$v,
+                              param = param,
+                              R0 = preprocess$R0,
+                              B = B,
+                              beta0 = preprocess$beta0,
+                              alpha = preprocess$alpha)
   } else {
-    res_p_val <- list( conf_int = NULL, 
-                       p_test_vals = NULL, 
-                       test_vals = NULL)
+    res_p_val <- list( conf_int = NA, 
+                       p_test_vals = NA, 
+                       test_vals = NA)
     }
   
   if(clustid_dims == 1){

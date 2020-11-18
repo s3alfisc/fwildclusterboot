@@ -27,17 +27,17 @@ boottest.felm  <- function(object,
   #'@export
   #'@method boottest felm
   
-   object = felm_fit1
-   param = "treatment"
-   clustid = ~ group_id1
-   beta0 = 0
-   alpha = 0.05
-   demean = FALSE 
-  B = 10000
-  weights = NULL
-  conf_int = NULL 
-  debug = FALSE 
-  seed = NULL 
+  #  object = felm_fit1
+  #  param = "treatment"
+  #  clustid = ~ group_id1
+  #  beta0 = 0
+  #  alpha = 0.05
+  #  demean = FALSE 
+  # B = 10000
+  # weights = NULL
+  # conf_int = NULL 
+  # debug = FALSE 
+  # seed = NULL 
 
     preprocess <- preprocess(object = object,
                            param = param,
@@ -64,28 +64,24 @@ boottest.felm  <- function(object,
     #coefs <- object$coefficients[param]
     se_guess <- object$se[param]
     
-    res_p_val <- invert_p_val(object = res, 
-                                  point_estimate = point_estimate,
-                                  se_guess = se_guess,
-                                  #data = data,
-                                  clustid = preprocess$clustid,
-                                  X = preprocess$X,
-                                  Y = preprocess$Y,
-                                  param = param,
-                                  R0 = preprocess$R0,
-                                  alpha = preprocess$alpha,
-                                  N = preprocess$N, 
-                                  k = preprocess$k, 
-                                  B = B,
-                                  invXX = res$invXX,
-                                  v = res$v,
-                                  Xr = res$Xr,
-                                  XinvXXr = res$XinvXXr,
-                                  SXinvXXRX = res$SXinvXXRX)
+    res_p_val <- invert_p_val(object = res,
+                              point_estimate = point_estimate,
+                              se_guess = se_guess, 
+                              clustid = preprocess$clustid,
+                              X = preprocess$X,
+                              Y = preprocess$Y,
+                              N = preprocess$N,
+                              k = preprocess$k,
+                              v = res$v,
+                              param = param,
+                              R0 = preprocess$R0,
+                              B = B,
+                              beta0 = preprocess$beta0,
+                              alpha = preprocess$alpha)
   } else {
-    res_p_val <- list( conf_int = NULL, 
-                       p_test_vals = NULL, 
-                       test_vals = NULL)
+    res_p_val <- list( conf_int = NA, 
+                       p_test_vals = NA, 
+                       test_vals = NA)
   }
   
   if(clustid_dims == 1){
