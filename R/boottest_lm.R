@@ -26,19 +26,23 @@ boottest.lm <- function(object,
 
 
   
-   # set.seed(5)
-    # data <- create_data_2(N = 10000, N_G1 = 80, icc1 = 0.01, N_G2 = 50, icc2 = 0.01)
-    # object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
-    # clustid <- data[, group_id1]
-    # param <- "treatment"
-    # beta0 = 0
-    # alpha = 0.05
-    # B = 10000
-    # weights = NULL
-    # conf_int = NULL 
-    # debug = FALSE
-    # seed = NULL
-  #p_val_sandwich <- lmtest::coeftest(object, sandwich::vcovCL(x = object, ~ group_id1 + group_id2)) # 0.554481          
+  # execute all functions in fwildclusterboot 
+  #    setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+  #     file.sources = list.files(pattern="*.R")
+  #     sapply(file.sources, source, .GlobalEnv)
+  #      set.seed(5)
+  #      data <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01)
+  #      object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
+  #      clustid <- data[, .(group_id1, group_id2)]
+  #      param <- "treatment"
+  #      beta0 = 0
+  #      alpha = 0.05
+  #      B = 10000
+  #      weights = NULL
+  #      conf_int = NULL 
+  #      debug = FALSE
+  #      seed = NULL
+  # p_val_sandwich <- lmtest::coeftest(object, sandwich::vcovCL(x = object, ~ group_id1 + group_id2)) # 0.554481          
   
   preprocess <- preprocess(object = object, 
                            param = param, 
@@ -61,24 +65,20 @@ boottest.lm <- function(object,
       coefs <- lmtest::coeftest(object, vcov)
       se_guess <- coefs[param, "Std. Error"]
       
-      res_p_val <- invert_p_val(object = res, 
-                                    point_estimate = point_estimate,
-                                    se_guess = se_guess,
-                                    #data = data,
-                                    clustid = preprocess$clustid,
-                                    X = preprocess$X,
-                                    Y = preprocess$Y,
-                                    param = param,
-                                    R0 = preprocess$R0,
-                                    alpha = preprocess$alpha,
-                                    N = preprocess$N, 
-                                    k = preprocess$k, 
-                                    B = B,
-                                    invXX = res$invXX,
-                                    v = res$v,
-                                    Xr = res$Xr,
-                                    XinvXXr = res$XinvXXr,
-                                    SXinvXXRX = res$SXinvXXRX)
+      res_p_val <- invert_p_val(object = res,
+                                point_estimate = point_estimate,
+                                se_guess = se_guess, 
+                                clustid = preprocess$clustid,
+                                X = preprocess$X,
+                                Y = preprocess$Y,
+                                N = preprocess$N,
+                                k = preprocess$k,
+                                v = res$v,
+                                param = param,
+                                R0 = preprocess$R0,
+                                B = B,
+                                beta0 = preprocess$beta0,
+                                alpha = preprocess$alpha)
   } else {
     res_p_val <- list(conf_int = NULL, 
                        p_test_vals = NULL, 
@@ -103,9 +103,9 @@ boottest.lm <- function(object,
   } else if(clustid_dims > 1){
     res_final <- list(point_estimate = point_estimate, 
                       p_val = res[["p_val"]], 
-                      #conf_int = res_p_val$conf_int, 
-                      #p_test_vals = res_p_val$p_test_vals, 
-                      #test_vals = res_p_val$test_vals,
+                      conf_int = res_p_val$conf_int, 
+                      p_test_vals = res_p_val$p_test_vals, 
+                      test_vals = res_p_val$test_vals,
                       t_stat = res$t_stat, 
                       regression = res$object, 
                       param = param, 

@@ -199,7 +199,7 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
 
 
 
-invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clustid, X, Y, N, k, param, R0, B, invXX, v, Xr, XinvXXr, SXinvXXRX, alpha){
+invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clustid, v,X, Y, N, k, param, R0, B, beta0, alpha){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
@@ -251,46 +251,66 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   # --------------------------------------------------------------------------------------------- #
   # start inversion 
   
-  SXinvXXRX_invXX <- SXinvXXRX  %*% invXX
+  # error under the null hypothesis
+  Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
   Xr0 <- matrix(X[, which(R0 == 1)], nrow(X), 1)
+  
+  # Yr for constraint leas squares with beta0 = c
+  Yr <- Y - X[, which(R0 == 1)] * beta0
+  
+  #Xr1 <- X
+  #Xr1[, which(R0 == 1)] <- beta0 + Xr1[, which(R0 == 1)]
+  
+  # small sample correction for clusters 
+  G <- sapply(clustid, function(x) length(unique(x)))
+  small_sample_correction <- G / (G - 1)
   
   Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
   P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
   
-  XinvXXr <- as.vector(XinvXXr)
+  # v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
+  # v[,1] <- 1
+  invXX <- solve(t(X) %*% X) # k x k matrix
+  XinvXXr <- X %*% (invXX %*% R0) # N x 1
   
-  p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, 
-                         SXinvXXRu_prep, v, B){
-    
+  p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, v, B, small_sample_correction){
+    # error under the null hypothesis
+    #u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
     u_hat <- Q + P %*% matrix(beta0, 1, length(beta0))
+    uX <- matrix(rep(u_hat, 1), N, k) * X
+    SuX <- collapse::fsum(uX, clustid$clustid)
+    tSuX <- t(SuX)
+    XinvXXRu <- as.vector(XinvXXr * matrix(rep(u_hat, 1), N, 1))
+    SXinvXXRu <-collapse::fsum(XinvXXr * matrix(rep(u_hat, 1), N, 1), clustid)
+    #SXinvXXRu <- collapse::fsum(XinvXXRu, clustid$clustid)
+    XinvXXRuS <- t(collapse::fsum(XinvXXRu, clustid$clustid))
+    diag_XinvXXRuS <- t(collapse::fsum(diag(as.vector(XinvXXRu)), clustid$clustid))
     
-    # SXinvXXRu_prep <- data.table::data.table(prod = as.vector(XinvXXr) * u_hat  , clustid = clustid) 
-    # SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
-    # if(ncol(SXinvXXRu) == 1){
-    #   SXinvXXRu <- as.vector(SXinvXXRu)
-    # }
+    tKK <- list()
+    for(x in names(clustid)){
+      S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
+      SXinvXXrX <-  collapse::fsum(matrix(rep(XinvXXr, k), N, k) * X, clustid[x])
+      K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
+      tKK[[x]] <- small_sample_correction[x] * t(K) %*% K # here: add small sample df correction
+      #tKK[[x]] <-  t(K) %*% K # here: add small sample df correction
+      #J <- K %*% v
+    }
     
-    SXinvXXRu <- collapse::fsum(XinvXXr * u_hat  , clustid)
-    if(ncol(SXinvXXRu) == 1){
-      SXinvXXRu <- as.vector(SXinvXXRu)
-    }  
+    tKK_sum <- Reduce("+", tKK)
+    denom <- colMeans(v * tKK_sum %*% v)
+    numer <- t(SXinvXXRu) %*% v 
     
-    #SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
-    #SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL]) 
+    t <- abs(numer) / denom
     
-    SXu <- collapse::fsum(X * matrix(rep(u_hat, k), N, k), clustid)
-    
-    numer <- SXinvXXRu %*% v 
-    J <- (diag(SXinvXXRu) - SXinvXXRX_invXX %*% t(SXu)) %*% v  
-    t <- abs(numer)  / sqrt(colSums(J * J))    # note: absolute value is taken here - no negative t-stats
     t_boot <- t[2:(B + 1)]
-    mean(abs(t[1] - beta0) < (t_boot))
+    p_val <- mean(abs(t[1] - beta0) < (t_boot))
+    
+    p_val
   }
   
   # can be smaller than zero bc of -0.5
   p_val_null_x <- function(beta0){
-    p_val_null(beta0, P = P, Q = Q, R0 = R0, X = X, XinvXXr = XinvXXr, clustid = clustid, 
-               SXinvXXRu_prep = SXinvXXRu_prep, v = v, B = B) - alpha
+    p_val_null(beta0, Q = Q, P = P, R0 = R0, X = X, XinvXXr = XinvXXr, clustid = clustid, v = v, B = B, small_sample_correction = small_sample_correction) - alpha
   }
   
   # p-value must cross alpha
@@ -314,7 +334,7 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
     #min_test_val <- min(test_vals)
     #max_test_val <- max(test_vals)
     
-    p_val_null_x(min_test_val) + alpha <
+    #p_val_null_x(min_test_val) + alpha <
       #benchmark(p_val_null_x(test_vals[1]))
       # get test values
       

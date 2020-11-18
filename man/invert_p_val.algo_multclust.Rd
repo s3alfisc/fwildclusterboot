@@ -9,6 +9,7 @@
   point_estimate,
   se_guess,
   clustid,
+  v,
   X,
   Y,
   N,
@@ -16,11 +17,7 @@
   param,
   R0,
   B,
-  invXX,
-  v,
-  Xr,
-  XinvXXr,
-  SXinvXXRX,
+  beta0,
   alpha
 )
 }
@@ -28,6 +25,8 @@
 \item{object}{A regression object of class lm, feols or felm}
 
 \item{clustid}{A vector with the clusters}
+
+\item{v}{A matrix. Draw from bootstrap distribution}
 
 \item{X}{the design matrix with the (potentially demeand) covariates}
 
@@ -43,19 +42,17 @@
 
 \item{B}{An integer. Number of bootstrap iterations}
 
-\item{v}{A matrix. Draw from bootstrap distribution}
+\item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+
+\item{seed}{An integer. Seed.}
+
+\item{N_g}{An integer. Number of clusters.}
 
 \item{Xr}{A matrix. R0 \%*\% X}
 
 \item{XinvXXr}{A matrix. see boottest()}
 
 \item{SXinvXXRX}{A matrix. see boottest() for computation}
-
-\item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
-
-\item{seed}{An integer. Seed.}
-
-\item{N_g}{An integer. Number of clusters.}
 }
 \description{
 Inverts the bootstrap p-value and calculates confidence sets

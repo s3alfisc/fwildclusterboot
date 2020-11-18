@@ -82,7 +82,7 @@ library(fwildclusterboot)
 B <- 10000
 seed <- 12394
 set.seed(seed)
-voters <- create_data_2(N = 10000, N_G1 = 80, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
+voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
 head(voters)
 
 ```
@@ -203,18 +203,21 @@ summary(feols_fit, se = "cluster", cluster = "group_id1")
 ```{r}
 library(sandwich)
 library(lmtest)
+library(multiwayvcov)
 options(boot.ncpus = 4)
 
-boot_lm = boottest(lm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+boot_lm = boottest(lm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = TRUE)
 
 summarize_boot(boot_lm)
+
+res <- cluster.boot(lm_fit, cluster = ~group_id1 + group_id2, R = 1000, wild_type = "rademacher", parallel = TRUE)
+
+# # 1) results from multiwayvcov
+coeftest(lm_fit, res)
+
 vocv <- vcovCL(lm_fit, ~ group_id1 + group_id2)
 coeftest(lm_fit, vcov)
-
-# res <- cluster.boot(lm_fit, cluster = ~group_id1 + group_id2, R = 1000, wild_type = "rademacher", parallel = TRUE)
-# 
-# # 1) results from multiwayvcov
-# coeftest(lm_fit, res)
+confint(feols_fit, "treatment", level = 0.95, se = "twoway", cluster = c("group_id1", "group_id2"))
 ```
 
 
