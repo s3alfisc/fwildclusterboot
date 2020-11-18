@@ -18,7 +18,22 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   #'@param SXinvXXRX A matrix. see boottest() for computation
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@import pracma
+  #'@import dreamerr
   
+  check_arg(point_estimate, "numeric scalar")
+  check_arg(se_guess, "numeric scalar")
+  check_arg(clustid, "data.frame")
+  check_arg(X, "numeric matrix")
+  check_arg(Y, "numeric vector | numeric matrix")
+  check_arg(N, "numeric scalar")
+  check_arg(k, "numeric scalar")
+  check_arg(R0, "numeric vector | logical vector")
+  check_arg(v, "numeric matrix")
+  check_arg(Xr, "numeric matrix")
+  check_arg(alpha, "numeric scalar")
+  check_arg(beta0, "numeric scalar")
+
+    
   if(alpha > 1 | alpha < 0){stop("Significance level needs to be between 0 and 1.")}
   
  # if(class(object) == "lm"){
@@ -239,6 +254,19 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   #'@param SXinvXXRX A matrix. see boottest() for computation
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@import pracma
+  
+  check_arg(point_estimate, "numeric scalar")
+  check_arg(se_guess, "numeric scalar")
+  check_arg(clustid, "data.frame")
+  check_arg(X, "numeric matrix")
+  check_arg(Y, "numeric vector | numeric matrix")
+  check_arg(N, "numeric scalar")
+  check_arg(k, "numeric scalar")
+  check_arg(R0, "numeric vector | logical vector")
+  check_arg(v, "numeric matrix")
+  check_arg(Xr, "numeric matrix")
+  check_arg(alpha, "numeric scalar")
+  check_arg(beta0, "numeric scalar")
   
   if(alpha > 1 | alpha < 0){stop("Significance level needs to be between 0 and 1.")}
   

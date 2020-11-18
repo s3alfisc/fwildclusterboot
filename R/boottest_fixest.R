@@ -2,9 +2,7 @@ boottest.fixest  <- function(object,
                            clustid, 
                            param, 
                            B,
-                           data,
                            alpha = NULL, 
-                           fixed_effects = NULL, 
                            weights = NULL,
                            conf_int = NULL, 
                            debug = FALSE, 
@@ -25,6 +23,7 @@ boottest.fixest  <- function(object,
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@param demean If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default
   #'@return An object of class boottest
+  #'@import dreamerr
   #'@export
   #'@method boottest fixest
 
@@ -50,12 +49,26 @@ boottest.fixest  <- function(object,
 
   # Step 1: check arguments of feols call
   #formula <- object$call$fml
-  weights <- object$call$weights
+  
+  #dreamerr::check_arg(object, "")
+  #check_arg(data, "data.frame | named list")
+  #check_arg(clustid, "os formula var(data, env) mbt", .data = data)
+  check_arg(clustid, "os formula | data.frame | named list")
+  check_arg(param, "scalar character")
+  check_arg(B, "scalar numeric ") 
+  check_arg(alpha, "scalar numeric")
+  check_arg(weights, "NULL")
+  check_arg(conf_int, "logical scalar | NULL")
+  check_arg(debug, "logical scalar")
+  check_arg(seed, "scalar integer | NULL")
+  check_arg(demean, "logcial scalar | NULL")
+  check_arg(beta0, "numeric scalar | NULL")
+    
 
-  if(!is.null(weights)){
-    stop("Currently, boottest does not support weighted least squares. weights 
-         must be NULL.")
-  }
+  # if(!is.null(weights)){
+  #   stop("Currently, boottest does not support weighted least squares. weights 
+  #        must be NULL.")
+  # }
   
   if(!is.null(seed)){
     set.seed(seed)

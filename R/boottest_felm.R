@@ -27,6 +27,17 @@ boottest.felm  <- function(object,
   #'@export
   #'@method boottest felm
   
+  check_arg(clustid, "os formula | data.frame | named list")
+  check_arg(param, "scalar character")
+  check_arg(B, "scalar numeric ") 
+  check_arg(alpha, "scalar numeric")
+  check_arg(weights, "NULL")
+  check_arg(conf_int, "logical scalar | NULL")
+  check_arg(debug, "logical scalar")
+  check_arg(seed, "scalar integer | NULL")
+  check_arg(demean, "logcial scalar | NULL")
+  check_arg(beta0, "numeric scalar | NULL")
+  
   #  object = felm_fit1
   #  param = "treatment"
   #  clustid = ~ group_id1

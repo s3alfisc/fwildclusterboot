@@ -9,6 +9,9 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha){
   #'@param demean If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default
   #'@return preprocessed object of class boottest_preprocessed
   
+  check_arg(clustid, "os formula | data.frame | named list")
+  check_arg(beta0, "numeric scalar | NULL")
+  check_arg(alpha, "numeric scalar | NULL")
   
   data <- get_model_frame(object)
   
@@ -161,6 +164,11 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, demean){
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@param demean If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default
   #'@return preprocessed object of class boottest_preprocessed
+  
+  check_arg(clustid, "os formula | data.frame | named list")
+  check_arg(beta0, "numeric scalar | NULL")
+  check_arg(alpha, "numeric scalar | NULL")
+  check_arg(demean, "logical scalar | NULL")
   
   # object = felm_fit1
   # param = "treatment"
@@ -387,6 +395,10 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
   # alpha = 0.05
   #demean = FALSE
   
+  check_arg(clustid, "os formula | data.frame | named list")
+  check_arg(beta0, "numeric scalar | NULL")
+  check_arg(alpha, "numeric scalar | NULL")
+  check_arg(demean, "logical scalar | NULL")
   data <- get_model_frame(object)
   
   if(is.null(object$fixef_vars)){
