@@ -35,33 +35,7 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
 
     
   if(alpha > 1 | alpha < 0){stop("Significance level needs to be between 0 and 1.")}
-  
- # if(class(object) == "lm"){
-    #lm_robust_fit <- estimatr::lm_robust(eval(object$call$formula), clusters = as.factor(clustid$clustid), data = data, se_type = "stata")
-    #estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-    #st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
-  #} else if(class(object) == "lm_robust"){
-    #lm_robust_fit <-  estimatr::lm_robust(object$call$formula, 
-    #                           clusters = eval(object$call$clusters), 
-    #                           data = data, 
-    #                           se_type = "stata")
-    #estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-    #st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
-  #} else if(class(object) == "felm"){
-  #  lm_robust_fit <-  estimatr::lm_robust(formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 1, rhs = 1), 
-  #                             clusters = clustid[, "clustid"], 
-  #                             data = data, se_type = "stata")
-  #  estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-  #  st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
-  #} else if(class(object) == "fixest"){
-    #fit <- fixest:::summary.fixest(object, se = "cluster", cluster = clustid)
-    #estimate <- fit$coefficients[names(object$coefficients) == param]
-    #st_error_guess <- fit$se[names(object$se) == param]
-  #} else {
-  #  stop("Function only designed for objects of type lm, lm_robust, felm and feols.")
-  #}
 
-  
   # --------------------------------------------------------------------------------------------- #
   # start inversion 
 
@@ -75,8 +49,8 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   #Xr1[, which(R0 == 1)] <- beta0 + Xr1[, which(R0 == 1)]
   
   # small sample correction for clusters 
-  G <- sapply(clustid, function(x) length(unique(x)))
-  small_sample_correction <- G / (G - 1)
+  #G <- sapply(clustid, function(x) length(unique(x)))
+  #small_sample_correction <- G / (G - 1)
   
   Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
   P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
@@ -127,6 +101,7 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
                SXinvXXRu_prep = SXinvXXRu_prep, v = v, B = B) - alpha
   }
   
+  
   # p-value must cross alpha
   check <- FALSE
   inflate_se <- c(2, 3, 5, 10)
@@ -153,15 +128,19 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
     # get test values
 
     # calculate the p-values for all 26 guesses
+    
     p <- rep(NaN, length(test_vals))
+
+
+    # for(i in 1:length(test_vals)){
+    #   p[i] <- p_val_null_x(test_vals[i]) 
+    # }
     
-    #pb = txtProgressBar(min = 0, max = length(test_vals), initial = 0, style = 3) 
-    for(i in 1:length(test_vals)){
-      p[i] <- p_val_null_x(test_vals[i]) 
-    #  setTxtProgressBar(pb,i)
-    }
-    #close(pb)
+    p <- lapply(1:length(test_vals), function(i){ p_val_null_x(test_vals[i])})
+    p <- do.call("c", p)  
     
+    
+      
     # substract alpha in function so that I will not need to 
     # do it in root finding algorithm, but then I will need to add 
     # alpha here
@@ -267,33 +246,11 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   check_arg(Xr, "numeric matrix")
   check_arg(alpha, "numeric scalar")
   check_arg(beta0, "numeric scalar")
+  #check_arg(parallel, "logical scalar | NULL")
   
   if(alpha > 1 | alpha < 0){stop("Significance level needs to be between 0 and 1.")}
   
-  # if(class(object) == "lm"){
-  #lm_robust_fit <- estimatr::lm_robust(eval(object$call$formula), clusters = as.factor(clustid$clustid), data = data, se_type = "stata")
-  #estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-  #st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
-  #} else if(class(object) == "lm_robust"){
-  #lm_robust_fit <-  estimatr::lm_robust(object$call$formula, 
-  #                           clusters = eval(object$call$clusters), 
-  #                           data = data, 
-  #                           se_type = "stata")
-  #estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-  #st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
-  #} else if(class(object) == "felm"){
-  #  lm_robust_fit <-  estimatr::lm_robust(formula(Formula::Formula(eval(object$call$formula, envir =  attr(object$terms, ".Environment"))), lhs = 1, rhs = 1), 
-  #                             clusters = clustid[, "clustid"], 
-  #                             data = data, se_type = "stata")
-  #  estimate <- lm_robust_fit$coefficients[names(lm_robust_fit$coefficients) == param]
-  #  st_error_guess <- lm_robust_fit$std.error[names(lm_robust_fit$coefficients) == param]
-  #} else if(class(object) == "fixest"){
-  #fit <- fixest:::summary.fixest(object, se = "cluster", cluster = clustid)
-  #estimate <- fit$coefficients[names(object$coefficients) == param]
-  #st_error_guess <- fit$se[names(object$se) == param]
-  #} else {
-  #  stop("Function only designed for objects of type lm, lm_robust, felm and feols.")
-  #}
+ 
   
   
   # --------------------------------------------------------------------------------------------- #
@@ -332,20 +289,30 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
     SXinvXXRu <-collapse::fsum(XinvXXr * matrix(rep(u_hat, 1), N, 1), clustid)
     #SXinvXXRu <- collapse::fsum(XinvXXRu, clustid$clustid)
     XinvXXRuS <- t(collapse::fsum(XinvXXRu, clustid$clustid))
-    diag_XinvXXRuS <- t(collapse::fsum(diag(as.vector(XinvXXRu)), clustid$clustid))
+    
+    #tic()
+    diag_XinvXXRuS <- Matrix::t(Matrix.utils::aggregate.Matrix(Matrix::Diagonal(N, as.vector(XinvXXRu)), clustid$clustid))
+    #microbenchmark(
+    #diag_XinvXXRuS <- t(collapse::fsum(diag(as.vector(XinvXXRu)), clustid$clustid))
+    #,
+    #Matrix = Matrix.utils::aggregate.Matrix(Matrix::Diagonal(N, as.vector(XinvXXRu)), clustid$clustid)
+    #,times = 10)
+    XinvXXrX <- matrix(rep(XinvXXr, k), N, k) * X
     
     tKK <- list()
     for(x in names(clustid)){
-      S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
-      SXinvXXrX <-  collapse::fsum(matrix(rep(XinvXXr, k), N, k) * X, clustid[x])
+      #S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
+      S_diag_XinvXXRu_S <- aggregate.Matrix(diag_XinvXXRuS, clustid[x])
+      SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
       K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
-      tKK[[x]] <- small_sample_correction[x] * t(K) %*% K # here: add small sample df correction
+      tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
       #tKK[[x]] <-  t(K) %*% K # here: add small sample df correction
       #J <- K %*% v
     }
     
+    #toc()
     tKK_sum <- Reduce("+", tKK)
-    denom <- colMeans(v * tKK_sum %*% v)
+    denom <- Matrix::colMeans(v * tKK_sum %*% v)
     numer <- t(SXinvXXRu) %*% v 
     
     t <- abs(numer) / denom
@@ -387,15 +354,26 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
       # get test values
       
       # calculate the p-values for all 26 guesses
+
+    #if(parallel == TRUE){
+    #    #tic()
+    #    cl <- parallel::makeCluster(2)
+    #    parallel::clusterExport(cl, list("p_val_null", "p_val_null_x","invXX", "N","k", "Q", "P", "test_vals", "XinvXXr", "clustid", "v", "B", "alpha", "X", "small_sample_correction"))
+    #    #clusterEvalQ(cl, library("thePackage"))
+    #    p <- parallel::parLapply(cl, 1:length(test_vals), function(i){ p_val_null_x(test_vals[i])})
+    #    p <- do.call("c", p)
+    #    parallel::stopCluster(cl)   
+    #    #toc()
+    #} else {
+      #tic()
       p <- rep(NaN, length(test_vals))
-    
-    #pb = txtProgressBar(min = 0, max = length(test_vals), initial = 0, style = 3) 
-    for(i in 1:length(test_vals)){
-      p[i] <- p_val_null_x(test_vals[i]) 
-      #  setTxtProgressBar(pb,i)
-    }
-    #close(pb)
-    
+      for(i in 1:length(test_vals)){
+        p[i] <- p_val_null_x(test_vals[i]) 
+      }
+      #toc()
+    #}
+   
+
     # substract alpha in function so that I will not need to 
     # do it in root finding algorithm, but then I will need to add 
     # alpha here

@@ -160,7 +160,7 @@ boot_algo.multclust <- function(preprocessed_object){
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
   #' @return A list of ... 
-  #' 
+  #' @import Matrix.utils
   
   # if(!inherits(preprocessed_object, "boottest_preprocessed")){
   #   stop("Estimation only works for inputs of class boottest_preprocessed.")
@@ -216,29 +216,35 @@ boot_algo.multclust <- function(preprocessed_object){
     SXinvXXRu <-collapse::fsum(XinvXXr * matrix(rep(u_hat, 1), N, 1), clustid)
     #SXinvXXRu <- collapse::fsum(XinvXXRu, clustid$clustid)
     XinvXXRuS <- t(collapse::fsum(XinvXXRu, clustid$clustid))
-    diag_XinvXXRuS <- t(collapse::fsum(diag(as.vector(XinvXXRu)), clustid$clustid))
+    #diag_XinvXXRuS <- t(collapse::fsum(diag(as.vector(XinvXXRu)), clustid$clustid))
+    diag_XinvXXRuS <- Matrix::t(Matrix.utils::aggregate.Matrix(Matrix::Diagonal(N, as.vector(XinvXXRu)), clustid$clustid))
     
     #tKK <- list()
     #JJ <- list()
-    n_clustid <- length(unique(clustid$clustid))
-    tKK <- array(NA, dim = c(n_clustid, n_clustid, ncol(clustid)))
-    i <- 1
+    #n_clustid <- length(unique(clustid$clustid))
+    #tKK <- array(NA, dim = c(n_clustid, n_clustid, ncol(clustid)))
+    #i <- 1
+    
+    tKK <- list()
+    
+    XinvXXrX <- matrix(rep(XinvXXr, k), N, k) * X
     
     for(x in names(clustid)){
-      S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
-      SXinvXXrX <-  collapse::fsum(matrix(rep(XinvXXr, k), N, k) * X, clustid[x])
+      #S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
+      S_diag_XinvXXRu_S <- aggregate.Matrix(diag_XinvXXRuS, clustid[x])
+      SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
       K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
-      tKK[, , i] <- small_sample_correction[x] * t(K) %*% K # here: add small sample df correction
-      i <- i + 1
+      tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
+      #i <- i + 1
       #tKK[[x]] <-  t(K) %*% K # here: add small sample df correction
       #J <- K %*% v
       #JJ[[x]] <- small_sample_correction[x] * J * J
     }
   
     #JJ_sum <- Reduce("+", JJ)
-    #tKK_sum <- Reduce("+", tKK)
-    tKK_sum <- rowSums(tKK, dims = 2)
-    denom <- colSums(v * tKK_sum %*% v)
+    tKK_sum <- Reduce("+", tKK)
+    #tKK_sum <- rowSums(tKK, dims = 2)
+    denom <- Matrix::colSums(v * tKK_sum %*% v)
     numer <- t(SXinvXXRu) %*% v 
     
     t <- abs(numer) / denom

@@ -9,6 +9,9 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha){
   #'@param demean If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default
   #'@return preprocessed object of class boottest_preprocessed
   
+  # print warnings as they occur
+  options(warn=1)
+  
   check_arg(clustid, "os formula | data.frame | named list")
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(alpha, "numeric scalar | NULL")
@@ -164,6 +167,9 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, demean){
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@param demean If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default
   #'@return preprocessed object of class boottest_preprocessed
+  
+  # print warnings as they occur
+  options(warn=1)
   
   check_arg(clustid, "os formula | data.frame | named list")
   check_arg(beta0, "numeric scalar | NULL")
@@ -387,6 +393,9 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@param demean If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default
   #'@return preprocessed object of class boottest_preprocessed
+  
+  # print warnings as they occur
+  options(warn=1)
   
   # object <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
   # param <- "treatment"

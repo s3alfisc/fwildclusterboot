@@ -80,9 +80,9 @@ library(fwildclusterboot)
 
 
 B <- 10000
-seed <- 9123949
+seed <- 424
 set.seed(seed)
-voters <- create_data_2(N = 10000, N_G1 = 50, icc1 = 0.01, N_G2 = 50, icc2 = 0.01)
+voters <- create_data_2(N = 10000, N_G1 = 40, icc1 = 0.01, N_G2 = 40, icc2 = 0.01)
 head(voters)
 
 ```
@@ -160,9 +160,9 @@ tidy(boot_lm)
 Change the confidence level: 
 
 ```{r}
-boot_lm_5 = boottest(lm_fit, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
+boot_lm_5 = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
 
-boot_lm_20 = boottest(lm_fit, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.20)
+boot_lm_20 = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.20)
 
 summarize_boot(boot_lm_5)
 summarize_boot(boot_lm_20)
@@ -187,7 +187,7 @@ As can be seen, `multiwayvcov::cluster.boot()`, `boottest()` and sandwich standa
 ```{r, warning = FALSE, message=FALSE}
 library(multiwayvcov)
 library(lmtest)
-res <- cluster.boot(lm_fit, cluster = voters$group_id1, parallel = TRUE, R = 1000, wild_type = "rademacher")
+res <- cluster.boot(lm_fit, cluster = ~ group_id1, parallel = TRUE, R = 1000, wild_type = "rademacher")
 
 # 1) results from multiwayvcov
 coeftest(lm_fit, res)

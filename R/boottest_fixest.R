@@ -27,25 +27,25 @@ boottest.fixest  <- function(object,
   #'@export
   #'@method boottest fixest
 
-  # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-  # file.sources = list.files(pattern="*.R")
-  # sapply(file.sources, source, .GlobalEnv)
-  # set.seed(5)
-  # data <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01)
-  # object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
-  # #clustid <- data[, .(group_id1)]
-  #  
-  # clustid <- ~ group_id1 + group_id2
-  # param <- "treatment"
-  # B = 10000
-  # alpha = NULL 
-  # fixed_effects = NULL 
-  # weights = NULL
-  # conf_int = NULL 
-  # debug = FALSE
-  # seed = NULL
-  # beta0 = 0
-  # demean = NULL
+   # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+   # file.sources = list.files(pattern="*.R")
+   # sapply(file.sources, source, .GlobalEnv)
+   # set.seed(5)
+   # data <- create_data_2(N = 10000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
+   # object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
+   # #clustid <- data[, .(group_id1)]
+   #  
+   # clustid <- ~ group_id1 + group_id2
+   # param <- "treatment"
+   # B = 10000
+   # alpha = NULL 
+   # fixed_effects = NULL 
+   # weights = NULL
+   # conf_int = NULL 
+   # debug = FALSE
+   # seed = NULL
+   # beta0 = 0
+   # demean = NULL
 
   # Step 1: check arguments of feols call
   #formula <- object$call$fml
@@ -63,8 +63,10 @@ boottest.fixest  <- function(object,
   check_arg(seed, "scalar integer | NULL")
   check_arg(demean, "logcial scalar | NULL")
   check_arg(beta0, "numeric scalar | NULL")
-    
-
+  #check_arg(parallel, "logical scalar | NULL")
+  
+  #if(is.null(parallel)){parallel <- FALSE}
+  
   # if(!is.null(weights)){
   #   stop("Currently, boottest does not support weighted least squares. weights 
   #        must be NULL.")
