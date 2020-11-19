@@ -2,6 +2,7 @@ boottest.fixest  <- function(object,
                            clustid, 
                            param, 
                            B,
+                           fe = NULL, 
                            alpha = NULL, 
                            weights = NULL,
                            conf_int = NULL, 
@@ -27,25 +28,26 @@ boottest.fixest  <- function(object,
   #'@export
   #'@method boottest fixest
 
-   # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-   # file.sources = list.files(pattern="*.R")
-   # sapply(file.sources, source, .GlobalEnv)
-   # set.seed(5)
-   # data <- create_data_2(N = 10000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
-   # object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
-   # #clustid <- data[, .(group_id1)]
-   #  
-   # clustid <- ~ group_id1 + group_id2
-   # param <- "treatment"
-   # B = 10000
-   # alpha = NULL 
-   # fixed_effects = NULL 
-   # weights = NULL
-   # conf_int = NULL 
-   # debug = FALSE
-   # seed = NULL
-   # beta0 = 0
-   # demean = NULL
+    setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+    file.sources = list.files(pattern="*.R")
+    sapply(file.sources, source, .GlobalEnv)
+    set.seed(21)
+    voters <- create_data_2(N = 10000, N_G1 = 80, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
+    object <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , weights = NULL, data = voters)
+    #object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
+    #clustid <- data[, .(group_id1)]
+    fe = "Q1_immigration"
+    clustid <- ~ group_id1
+    param <- "treatment"
+    B = 10000
+    alpha = NULL 
+    fixed_effects = NULL 
+    weights = NULL
+    conf_int = NULL 
+    debug = FALSE
+    seed = NULL
+    beta0 = 0
+    demean = NULL
 
   # Step 1: check arguments of feols call
   #formula <- object$call$fml
@@ -84,7 +86,7 @@ boottest.fixest  <- function(object,
                                   param = param,
                                   clustid = clustid,
                                   beta0 = beta0,
-                                  alpha = alpha,
+                                  alpha = alpha, 
                                   demean = demean)
   
   clustid_dims <- preprocess$clustid_dims
@@ -94,6 +96,8 @@ boottest.fixest  <- function(object,
   # if(clustid_dims == 1){
   #   # boot algoritm
   res <- boot_algo(preprocess)
+  res$p_val
+  summary(object, se = "cluster", cluster = "group_id1")  
   # compute confidence sets
   
   if(is.null(conf_int) || conf_int == TRUE){

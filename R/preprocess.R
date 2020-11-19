@@ -410,6 +410,7 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
   check_arg(demean, "logical scalar | NULL")
   data <- get_model_frame(object)
   
+  
   if(is.null(object$fixef_vars)){
     fixed_effects <- NULL
     numb_fe <- NULL
@@ -419,7 +420,7 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
     fml_only_fe <- formula(paste0("~",names(fixed_effects), collapse = "+"))
   }
   
-  fml_exclude_fe <- formula(object$call$fml)
+  fml_exclude_fe <- formula(object$fml)
   
   
   # if non demeaning is chosen: set demeaning as default
@@ -503,33 +504,57 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
     clustid$clustid <- paste0(clustid$clustid_1, "-", clustid$clustid_2)
   }
   
+  
   # if fixed effects are specified, demean: 
-  if(!is.null(numb_fe) & demean == TRUE){
+  #if(!is.null(numb_fe) & demean == TRUE){
+  #  demean_data <- fixest::demean(data, 
+  #                                fixed_effects, 
+  #                                tol = 1e-06)
+  #  #names(fixed_effects) <- paste0("fixed_effect_", 1:ncol(fixed_effects))
+  #  # data is the demeaned data if fe are used
+  #  data <- as.data.frame(demean_data)
+  #  model_frame <- model.frame(fml_exclude_fe, data = data)
+  #  Y <- model.response(model_frame)
+  #  X <- model.matrix(model_frame, data = data)
+  #  # note: why do I take out (Intercept) from fixed effcts R0 but not in no_fixef?
+  #  R0 <- as.numeric(param == c("(Intercept)", names(object$coefficients)))
+  #} 
+  if(!is.null(numb_fe) & demean == FALSE){
     demean_data <- fixest::demean(data, 
                                   fixed_effects, 
                                   tol = 1e-06)
-    #names(fixed_effects) <- paste0("fixed_effect_", 1:ncol(fixed_effects))
-    # data is the demeaned data if fe are used
     data <- as.data.frame(demean_data)
-    model_frame <- model.frame(fml_exclude_fe, data = data)
-    Y <- model.response(model_frame)
-    X <- model.matrix(model_frame, data = data)
-    # note: why do I take out (Intercept) from fixed effcts R0 but not in no_fixef?
-    R0 <- as.numeric(param == c("(Intercept)", names(object$coefficients)))
-  } else if(!is.null(numb_fe) & demean == FALSE){
     model_frame_fe <- model.frame(fml_only_fe, data = fixed_effects)
-    X_fe <- model.matrix(model_frame_fe, data = fixed_effects)
+    fixed_effects <- as.factor(fixed_effects[, 1])
+    #X_fe <- model.matrix(model_frame_fe, data = fixed_effects)
     # update: get rid of intercept (because of fe)
     model_frame <- model.frame(update(fml_exclude_fe, ~ . +  0), data = data)
     X <- model.matrix(model_frame, data = data)
-    X <- cbind(X, X_fe)
+    #X <- cbind(X, X_fe)
     Y <- model.response(model_frame)
+    n_fe <- nrow(unique(model_frame_fe))
+    N <- length(Y)
+    k <- ncol(X)
+    fe_weights <- table(fixed_effects) / N
+    levels(fixed_effects) <- fe_weights
+    
+    #names(fixed_effects) <- "fe_name"
+    #fe_weights_df <- data.frame(fe_name= names(fe_weights), fe_weights)
+    #fe_weights_df <- merge(fixed_effects, fe_weights_df, by = "fe_name", all.x = TRUE, sort = FALSE)
+    #Matrix.utils::merge.Matrix(x = fixed_effects, y = fe_weights_df, by.x = "fe_name", by.y = "fe_name", all.x = TRUE, all.y = TRUE)
+    
+    W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effects)))
     #fe_dummies <- fastDummies::dummy_cols(fixed_effects, remove_first_dummy = TRUE, ignore_na = TRUE)
   } else {
     # case where is.null(numb_fe) == TRUE
     model_frame <- model.frame(fml_exclude_fe, data = data)
     X <- model.matrix(model_frame, data = data)
     Y <- model.response(model_frame)
+    N <- length(Y)
+    k <- ncol(X)
+    n_fe <- NULL
+    W <- NULL
+    model_frame_fe <- NULL
   }
   
   R0 <- as.numeric(param == colnames(X))
@@ -538,11 +563,11 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
   # Y <- model.response(model_frame)
   # X <- model.matrix(model_frame, data = data)
   #}
+
   
-  N <- length(Y)
-  k <- ncol(X)
   
-  res_preprocess <- list(fixed_effects = fixed_effects, 
+  
+  res_preprocess <- list(model_frame_fe = model_frame_fe, 
                          param = param, 
                          data = data, 
                          clustid = clustid, 
@@ -557,7 +582,9 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, demean){
                          clustid_dims, 
                          R0 = R0, 
                          N_G = N_G, 
-                         alpha = alpha)
+                         alpha = alpha, 
+                         n_fe = n_fe, 
+                         W = W)
   
   if(clustid_dims == 1){
     class(res_preprocess) <- "oneclust"

@@ -10,6 +10,8 @@ boot_algo.oneclust <- function(preprocessed_object){
   # }
   
   #preprocess <- preprocess.fixest(object = preprocessed_object, param = param, clustid = clustid, beta0 = beta0, alpha = alpha, demean = demean)
+  # preprocessed_object <- preprocess
+  # preprocessed_object <- res_preprocess
   
   X <- preprocessed_object$X
   Y <- preprocessed_object$Y
@@ -18,11 +20,13 @@ boot_algo.oneclust <- function(preprocessed_object){
   N <- preprocessed_object$N
   k <- preprocessed_object$k
   clustid <- preprocessed_object$clustid
-  fixed_effects <- preprocessed_object$fixed_effects
+  model_frame_fe <- preprocessed_object$model_frame_fe
   beta0 <- preprocessed_object$beta0
   N_G <- preprocessed_object$N_G
   alpha <- preprocessed_object$alpha
   param <- preprocessed_object$param
+  W <- preprocessed_object$W
+  n_fe <- preprocessed_object$n_fe
   
   Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
   
@@ -59,8 +63,10 @@ boot_algo.oneclust <- function(preprocessed_object){
   if(ncol(SXinvXXRu) == 1){
     SXinvXXRu <- as.vector(SXinvXXRu)
   }
-  numer <- SXinvXXRu %*% v 
+  diag_SXinvXXRu <- Matrix::Diagonal(N_G, SXinvXXRu)
   
+  numer <- SXinvXXRu %*% v 
+
   # if(use_fixef == FALSE){
   
   # "old" code - if no fixed effects used in calculation
@@ -73,6 +79,31 @@ boot_algo.oneclust <- function(preprocessed_object){
   #                 times = 10)
   SXinvXXRX <- collapse::fsum(matrix(rep(XinvXXr, k), N, k) * X, clustid)  
   
+  # if model with fixed effect
+  if(!is.null(W)){
+    
+    tmp1 <- data.frame(names = paste0(1:80, ".", levels(model_frame_fe[, 1])))
+    tmp2 <- (collapse::fsum(x = XinvXXr, g = cbind(clustid, model_frame_fe)))
+    tmp2 <- data.frame(names = rownames(tmp2), vals = as.vector(tmp2))
+    tmp <- merge(tmp1, tmp2, by = "names", all.x = TRUE)
+    tmp$vals[is.na(tmp$vals)] <- 0
+    vals <- tmp$vals
+    
+    S_XinvXXR_F <- matrix(vals, n_fe, N_G)
+    
+    #S_XinvXXR_F <- matrix(collapse::fsum(x = XinvXXr, g = cbind(clustid, model_frame_fe)), n_fe, N_G)
+    tmp2 <- collapse::fsum(x = XinvXXr, g = cbind(clustid, model_frame_fe))
+    tmp2 <- data.frame(names = rownames(tmp2), vals = as.vector(tmp2))
+    tmp <- merge(tmp1, tmp2, by = "names", all.x = TRUE)
+    tmp$vals[is.na(tmp$vals)] <- 0
+    vals <- tmp$vals
+    
+    S_Wu_F <- matrix(vals, n_fe, N_G)
+    #S_XinvXXR_F <- matrix(collapse::fsum(x = XinvXXr, g = cbind(clustid, model_frame_fe)), n_fe, N_G)
+    #S_Wu_F <- matrix(collapse::fsum(as.vector(W %*% u_hat), g = cbind(clustid, model_frame_fe)), n_fe, N_G)
+    prod <- t(S_XinvXXR_F) %*% S_Wu_F
+    diag_SXinvXXRu <- diag_SXinvXXRu - prod
+  }
   #SXinvXXRX_prep <- data.table::data.table(prod = matrix(rep(XinvXXr, k), N, k) * X, clustid = clustid)
   #SXinvXXRX <- as.matrix(SXinvXXRX_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
   
@@ -81,7 +112,7 @@ boot_algo.oneclust <- function(preprocessed_object){
   
   SXu <- collapse::fsum(X * matrix(rep(u_hat, k), N, k), clustid)
   
-  J <- (diag(SXinvXXRu) - SXinvXXRX  %*% invXX %*% t(SXu)) %*% v  
+  J <- (diag_SXinvXXRu - SXinvXXRX  %*% invXX %*% t(SXu)) %*% v  
   
   # } else if(use_fixef == TRUE){
   #   
@@ -123,10 +154,7 @@ boot_algo.oneclust <- function(preprocessed_object){
   
   
   t_boot <- t[2:(B + 1)]
-  #t_conf <- quantile(t_boot, c(0.025, 0.975))
-  #conf_int <- 2*t[1] - t_conf
-  #t_boot <- t_boot
-  #p_val <- mean(abs(t[1]) < abs(t_boot - c(rep(beta0, B))))
+  
   p_val <- mean(abs(t[1] - beta0) < (t_boot))
   
   # res <- list(p_val = p_val#, 
