@@ -8,8 +8,7 @@ boottest.fixest  <- function(object,
                            conf_int = NULL, 
                            debug = FALSE, 
                            seed = NULL, 
-                           beta0 = 0, 
-                           demean = NULL){
+                           beta0 = 0){
   
   
   #' Computes wild cluster bootstrap for object of class fixest
@@ -22,33 +21,34 @@ boottest.fixest  <- function(object,
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
-  #'@param demean If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default
   #'@return An object of class boottest
   #'@import dreamerr
   #'@export
   #'@method boottest fixest
 
-    setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-    file.sources = list.files(pattern="*.R")
-    sapply(file.sources, source, .GlobalEnv)
-    set.seed(21)
-    voters <- create_data_2(N = 10000, N_G1 = 80, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
-    object <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , weights = NULL, data = voters)
-    #object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-    #clustid <- data[, .(group_id1)]
-    fe = "Q1_immigration"
-    clustid <- ~ group_id1
-    param <- "treatment"
-    B = 10000
-    alpha = NULL 
-    fixed_effects = NULL 
-    weights = NULL
-    conf_int = NULL 
-    debug = FALSE
-    seed = NULL
-    beta0 = 0
-    demean = NULL
-
+    # library(data.table)
+    # library(fixest)
+    # library(dreamerr)
+    # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+    # file.sources = list.files(pattern="*.R")
+    # sapply(file.sources, source, .GlobalEnv)
+    # set.seed(6261)
+    # voters <- create_data_2(N = 10000, N_G1 = 80, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
+    # object <- feols(fml = proposition_vote ~ treatment | ideological_label +  Q1_immigration, data = voters)
+    # #object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | ideological_label , weights = NULL, data = voters)
+    # clustid <- voters[, .(group_id1)]
+    # fe = "ideological_label"
+    # #fe = NULL
+    # clustid <- ~ group_id1
+    # param <- "treatment"
+    # B = 10000
+    # alpha = NULL 
+    # weights = NULL
+    # conf_int = NULL 
+    # debug = FALSE
+    # seed = NULL
+    # beta0 = 0
+    
   # Step 1: check arguments of feols call
   #formula <- object$call$fml
   
@@ -63,8 +63,9 @@ boottest.fixest  <- function(object,
   check_arg(conf_int, "logical scalar | NULL")
   check_arg(debug, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
-  check_arg(demean, "logcial scalar | NULL")
   check_arg(beta0, "numeric scalar | NULL")
+  check_arg(fe, "character scalar | NULL")
+  
   #check_arg(parallel, "logical scalar | NULL")
   
   #if(is.null(parallel)){parallel <- FALSE}
@@ -87,7 +88,7 @@ boottest.fixest  <- function(object,
                                   clustid = clustid,
                                   beta0 = beta0,
                                   alpha = alpha, 
-                                  demean = demean)
+                                  fe = fe)
   
   clustid_dims <- preprocess$clustid_dims
   # Invert p-value

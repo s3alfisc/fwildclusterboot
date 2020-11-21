@@ -52,7 +52,6 @@ boottest.lm <- function(object,
   check_arg(conf_int, "logical scalar | NULL")
   check_arg(debug, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
-  check_arg(demean, "logcial scalar | NULL")
   check_arg(beta0, "numeric scalar | NULL")
   
   preprocess <- preprocess(object = object, 

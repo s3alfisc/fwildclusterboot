@@ -2,13 +2,13 @@ boottest.felm  <- function(object,
                            clustid, 
                            param, 
                            B,
+                           fe = NULL, 
                            weights = NULL,
                            conf_int = NULL, 
                            debug = FALSE, 
                            seed = NULL, 
                            beta0 = 0, 
-                           alpha = NULL, 
-                           demean = NULL){
+                           alpha = NULL){
   
   
   #' Function that runs boottest for object of class felm
@@ -35,27 +35,39 @@ boottest.felm  <- function(object,
   check_arg(conf_int, "logical scalar | NULL")
   check_arg(debug, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
-  check_arg(demean, "logcial scalar | NULL")
   check_arg(beta0, "numeric scalar | NULL")
+  check_arg(fe, "character scalar | NULL")
   
-  #  object = felm_fit1
-  #  param = "treatment"
-  #  clustid = ~ group_id1
-  #  beta0 = 0
-  #  alpha = 0.05
-  #  demean = FALSE 
+  # library(data.table)
+  # library(lfe)
+  # library(dreamerr)
+  # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+  # file.sources = list.files(pattern="*.R")
+  # sapply(file.sources, source, .GlobalEnv)
+  # set.seed(320129)
+  # voters <- create_data_2(N = 10000, N_G1 = 80, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
+  # object <- felm(proposition_vote ~ treatment + Q1_immigration |  ideological_label | 0 | group_id1, data = voters)
+  # #object <- feols(fml = proposition_vote ~ treatment | ideological_label +  Q1_immigration, data = voters)
+  # #object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | ideological_label , weights = NULL, data = voters)
+  # #fe = "ideological_label"
+  # fe = NULL
+  # clustid <- ~ group_id1
+  # param <- "treatment"
   # B = 10000
+  # alpha = NULL 
   # weights = NULL
   # conf_int = NULL 
-  # debug = FALSE 
-  # seed = NULL 
-
-    preprocess <- preprocess(object = object,
+  # debug = FALSE
+  # seed = NULL
+  # beta0 = 0
+  # summary(object)
+  
+  preprocess <- preprocess(object = object,
                            param = param,
                            clustid = clustid,
                            beta0 = beta0,
-                           alpha = alpha,
-                           demean = demean)
+                           alpha = alpha, 
+                           fe = fe)
 
   clustid_dims <- preprocess$clustid_dims
   # Invert p-value
@@ -64,6 +76,7 @@ boottest.felm  <- function(object,
   # if(clustid_dims == 1){
   #   # boot algoritm
   res <- boot_algo(preprocess)
+  res$p_val
   # compute confidence sets
   
   if(is.null(conf_int) || conf_int == TRUE){
