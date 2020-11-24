@@ -4,7 +4,7 @@
 \alias{preprocess.fixest}
 \title{function that pre-processes regression objects of type fixest}
 \usage{
-\method{preprocess}{fixest}(object, param, clustid, beta0, alpha, demean)
+\method{preprocess}{fixest}(object, param, clustid, beta0, alpha, fe)
 }
 \arguments{
 \item{object}{An object of class fixest}
@@ -16,8 +16,6 @@
 \item{beta0}{A numeric. Shifts the null hypothesis}
 
 \item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
-
-\item{demean}{If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default}
 }
 \value{
 preprocessed object of class boottest_preprocessed

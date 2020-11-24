@@ -1,44 +1,72 @@
-
-crosstab <- function(data, groups, rename_var){
-  #' function to calculates crosstabs
-  #' data
-  #' 
-  #data <- crosstab_XinvXXRu_prep
-  #var <- "prod.v1"
+crosstab3 <- function(data, var1, var2){
   
-  # data <- crosstab_XinvXXRu_prep
-  # groups = c("clustid.clustid", "clustid.clustid")
-  # rename_var = "prod.V1"
-  # data[, sum(prod.V1), by = "clustid.clustid"]
-
+  unique_var1 <- as.vector(unique(var1[, names(var1)]))
+  unique_var2 <- unique(var2)
+  unique_var1_len <- length(unique_var1)
+  unique_var2_len <- length(unique_var2)
   
-  # data <- crosstab_XinvXXR_prep
-  # data
-  # groups <- c("clustid.clustid", "fe.fixed_effect_1")
-  # rename_var <- "prod.V1"
-  # data[, sum(prod.V1), by = groups]
-  # 
-  # 
-  # setDT(data)
-  # setkeyv(data, groups)
-  # group1 <- groups[1]
-  # group2 <- groups[2]
+  data <- as.vector(data)
+  add_zeros <- nrow(unique(expand.grid(var1 = unique_var1, var2 = unique_var2))) - length(data)
+  data <- c(data, rep(0, add_zeros))
+  res <- fsum(x = y, g = data.frame(grid))
+  dim(res) <- c(unique_var1_len, unique_var2_len)
+  res
   
-  res <- data[CJ(get(group1), get(group2), unique = TRUE), lapply(.SD, sum), by = .EACHI]
-  
-  setnames(res, rename_var, "prod")
-  
-  group1 <- length(unique(data[, get(groups[1])]))
-  group2 <- length(unique(data[, get(groups[2])]))
-  
-  res_mat <- matrix(res$prod, group1, group2)
-  
-  # grid <- expand.grid(group1 = group1, group2 = group2)
-  # res <- merge(grid, tab, by = groups, all.x = TRUE)
-  
-  res_mat[is.na(res_mat)] <- 0
-  
-  res_mat
 }
 
-#crosstab(data = data, groups = c("clustid.clustid", "fe.fixed_effect_1"))
+crosstab2<- function(data, var1, var2){
+  
+  # data = XinvXXr
+  # var1 = clustid
+  # var2 = fixed_effect
+  
+  dt <- data.table(var1 = var1, var2 = var2, y = data)
+  setnames(dt, names(dt), c("var1", "var2", "y"))
+  setkeyv(dt, c("var1", "var2"))
+  
+  dt <- dt[CJ(var1, var2, unique = TRUE), lapply(.SD, sum), by = .EACHI]
+  dt[is.na(y), y:=0]
+  
+  unique_var1 <- as.vector(unique(var1[, names(var1)]))
+  unique_var2 <- unique(var2)
+  
+  unique_var1_len <- length(unique_var1)
+  unique_var2_len <- length(unique_var2)
+  
+  matrix(dt$y, unique_var1_len, unique_var2_len)
+  
+}
+
+
+crosstab<- function(data, var1, var2){
+  
+  # data <- dt
+  # var1 <- "a"
+  # var2 <- "b"
+   # data <- XinvXXr
+   # var1 = clustid
+   # var2 = fixed_effect
+
+  unique_var1 <- as.vector(unique(var1[, names(var1)]))
+  unique_var2 <- unique(var2)
+  
+  unique_var1_len <- length(unique_var1)
+  unique_var2_len <- length(unique_var2)
+  df <- expand.grid(unique_var1, unique_var2)
+  # create rownames as collapse::fsum
+  df <- data.frame(names = paste0(df[, 1], ".", df[, 2]))
+  setDT(df)
+  res <- fsum(data, cbind(var1,var2))
+  res_dt <- data.table(names = rownames(res), values = res)
+  final <- merge(df, res_dt, by = "names", all.x = TRUE)
+  values <- final[, names:=NULL] 
+  values <- matrix(as.matrix(values), unique_var1_len, unique_var2_len)
+  values[is.na(values)] <- 0
+  values
+}
+
+
+# microbenchmark(
+#   crosstab(data = as.matrix(W %*% u_hat), var1 = var1, var2 = var2), 
+#   crosstab2(data = as.matrix(W %*% u_hat), var1 = var1, var2 = var2)
+# )

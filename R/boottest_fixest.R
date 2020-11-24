@@ -26,30 +26,33 @@ boottest.fixest  <- function(object,
   #'@export
   #'@method boottest fixest
 
-    # library(data.table)
-    # library(fixest)
-    # library(dreamerr)
-    # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-    # file.sources = list.files(pattern="*.R")
-    # sapply(file.sources, source, .GlobalEnv)
-    # set.seed(6261)
-    # voters <- create_data_2(N = 10000, N_G1 = 80, icc1 = 0.01, N_G2 = 10, icc2 = 0.01)
-    # object <- feols(fml = proposition_vote ~ treatment | ideological_label +  Q1_immigration, data = voters)
-    # #object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | ideological_label , weights = NULL, data = voters)
-    # clustid <- voters[, .(group_id1)]
-    # fe = "ideological_label"
-    # #fe = NULL
-    # clustid <- ~ group_id1
-    # param <- "treatment"
-    # B = 10000
-    # alpha = NULL 
-    # weights = NULL
-    # conf_int = NULL 
-    # debug = FALSE
-    # seed = NULL
-    # beta0 = 0
+     # library(data.table)
+     # library(fixest)
+     # # library(dreamerr)
+     # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+     # file.sources = list.files(pattern="*.R")
+     # sapply(file.sources, source, .GlobalEnv)
+     # # set.seed(6261)
+     # voters <- create_data_2(N = 10000, N_G1 = 80, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10)
+     # # object <- feols(fml = proposition_vote ~ treatment | ideological_label +  Q1_immigration, data = voters)
+     # # #object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | ideological_label , weights = NULL, data = voters)
+     # object <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
+     # #object2 <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,, weights = NULL, data = voters)
+     # 
+     # #clustid <- voters[, .(group_id1)]
+     # #fe = "ideological_label"
+     # fe = NULL
+     # clustid <- ~ group_id1 + group_id2
+     # param <- "treatment"
+     # B = 10000
+     # alpha = NULL 
+     # weights = NULL
+     # conf_int = NULL 
+     # debug = FALSE
+     # seed = NULL
+     # beta0 = 0
     
-  # Step 1: check arguments of feols call
+    # Step 1: check arguments of feols call
   #formula <- object$call$fml
   
   #dreamerr::check_arg(object, "")
@@ -83,12 +86,25 @@ boottest.fixest  <- function(object,
   
   
  
-  preprocess <- preprocess(object = object, 
+  preprocess <- suppressWarnings(preprocess(object = object, 
                                   param = param,
                                   clustid = clustid,
                                   beta0 = beta0,
                                   alpha = alpha, 
-                                  fe = fe)
+                                  fe = fe))
+  
+   # microbenchmark(preprocess(object = object1, 
+   #                           param = param,
+   #                           clustid = clustid,
+   #                           beta0 = beta0,
+   #                           alpha = alpha, 
+   #                           fe = fe), 
+   #                preprocess(object = object2, 
+   #                           param = param,
+   #                           clustid = clustid,
+   #                           beta0 = beta0,
+   #                           alpha = alpha, 
+   #                           fe = fe))
   
   clustid_dims <- preprocess$clustid_dims
   # Invert p-value
@@ -97,8 +113,8 @@ boottest.fixest  <- function(object,
   # if(clustid_dims == 1){
   #   # boot algoritm
   res <- boot_algo(preprocess)
-  res$p_val
-  summary(object, se = "cluster", cluster = "group_id1")  
+  #res$p_val
+  #summary(object, se = "cluster", cluster = "group_id1")  
   # compute confidence sets
   
   if(is.null(conf_int) || conf_int == TRUE){
@@ -111,6 +127,7 @@ boottest.fixest  <- function(object,
                               point_estimate = point_estimate,
                               se_guess = se_guess, 
                               clustid = preprocess$clustid,
+                              fixed_effect = preprocess$fixed_effect, 
                               X = preprocess$X,
                               Y = preprocess$Y,
                               N = preprocess$N,
@@ -120,7 +137,10 @@ boottest.fixest  <- function(object,
                               R0 = preprocess$R0,
                               B = B,
                               beta0 = preprocess$beta0,
-                              alpha = preprocess$alpha)
+                              alpha = preprocess$alpha, 
+                              W = preprocess$W, 
+                              n_fe = preprocess$n_fe, 
+                              N_G = preprocess$N_G)
   } else {
     res_p_val <- list( conf_int = NA, 
                        p_test_vals = NA, 

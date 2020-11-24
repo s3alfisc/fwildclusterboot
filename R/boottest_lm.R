@@ -27,23 +27,24 @@ boottest.lm <- function(object,
   
   
    #execute all functions in fwildclusterboot 
-      # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-      #  file.sources = list.files(pattern="*.R")
-      #  sapply(file.sources, source, .GlobalEnv)
-      #   set.seed(5)
-      #   data <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01)
-      #   object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
-      #   clustid <- ~ group_id1 + group_id2 
-      #   param <- "treatment"
-      #   beta0 = 0
-      #   alpha = 0.05
-      #   B = 10000
-      #   weights = NULL
-      #   conf_int = NULL 
-      #   debug = FALSE
-      #   seed = NULL
-  # p_val_sandwich <- lmtest::coeftest(object, sandwich::vcovCL(x = object, ~ group_id1 + group_id2)) # 0.554481          
-  
+       # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+       #  file.sources = list.files(pattern="*.R")
+       #  sapply(file.sources, source, .GlobalEnv)
+       #   set.seed(123)
+       #   data <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10)
+       #   object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
+       #   clustid <- ~ group_id1 + group_id2 
+       #   param <- "treatment"
+       #   beta0 = 0
+       #   alpha = 0.05
+       #   B = 10000
+       #   weights = NULL
+       #   conf_int = NULL 
+       #   debug = FALSE
+       #   seed = NULL
+       #   
+       #   p_val_sandwich <- lmtest::coeftest(object, sandwich::vcovCL(x = object, ~ group_id1 + group_id2)) # 0.554481          
+       # 
   check_arg(clustid, "os formula | data.frame | named list")
   check_arg(param, "scalar character")
   check_arg(B, "scalar numeric ") 
@@ -79,6 +80,7 @@ boottest.lm <- function(object,
                                 point_estimate = point_estimate,
                                 se_guess = se_guess, 
                                 clustid = preprocess$clustid,
+                                fixed_effect = preprocess$fixed_effect, 
                                 X = preprocess$X,
                                 Y = preprocess$Y,
                                 N = preprocess$N,
@@ -88,7 +90,10 @@ boottest.lm <- function(object,
                                 R0 = preprocess$R0,
                                 B = B,
                                 beta0 = preprocess$beta0,
-                                alpha = preprocess$alpha)
+                                alpha = preprocess$alpha, 
+                                W = preprocess$W, 
+                                n_fe = preprocess$n_fe, 
+                                N_G = preprocess$N_G)
   } else {
     res_p_val <- list(conf_int = NA, 
                        p_test_vals = NA, 

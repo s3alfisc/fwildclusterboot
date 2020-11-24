@@ -49,9 +49,9 @@ library(devtools)
 
 ```{r, echo=FALSE, include=FALSE, results="hide"}
 
-# setwd("C:/Users/alexa/Dropbox")
-# devtools::install("fwildclusterboot")
-# devtools::document("fwildclusterboot")
+ # setwd("C:/Users/alexa/Dropbox")
+ # devtools::install("fwildclusterboot")
+ # devtools::document("fwildclusterboot")
 # devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
 # devtools::check("fwildclusterboot")
 
@@ -82,7 +82,7 @@ library(fwildclusterboot)
 B <- 10000
 seed <- 424
 set.seed(seed)
-voters <- create_data_2(N = 10000, N_G1 = 40, icc1 = 0.01, N_G2 = 40, icc2 = 0.01)
+voters <- create_data_2(N = 10000, N_G1 = 40, icc1 = 0.01, N_G2 = 40, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10)
 head(voters)
 
 ```
@@ -119,13 +119,15 @@ boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "t
 # 2) bootest based on object of class feols
  boot_fixest = boottest(feols_fit, clustid = ~group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
  boot_fixest1 = boottest(feols_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
- boot_fixest1 = boottest(feols_fit1, clustid = ~group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
 
 # boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
 
 # 3) boottest based on object of class felm
 boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 boot_felm1 = boottest(felm_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+
+# microbenchmark(boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE),
+#                boot_felm1 = boottest(felm_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE), times = 10)
 ```
 
 ```{r, warning = FALSE, message=FALSE}
@@ -134,16 +136,12 @@ boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "t
 
 # 2) bootest based on object of class feols
 boot_fixest = boottest(feols_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-boot_fixest = boottest(feols_fit, clustid = ~group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, demean = TRUE)
 
 boot_fixest1 = boottest(feols_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
 # boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
 
 # 3) boottest based on object of class felm
 boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-#boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = #"treatment", conf_int = TRUE)
-
-
 boot_felm1 = boottest(felm_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
 ```
 
@@ -154,6 +152,10 @@ Boottest further comes with a `tidy` method which, in analogy with the `broom` p
 summarize_boot(boot_lm)
 
 tidy(boot_lm)
+tidy(boot_fixest)
+tidy(boot_felm)
+tidy(boot_fixest1)
+tidy(boot_felm1)
 
 ```
 
@@ -187,7 +189,9 @@ As can be seen, `multiwayvcov::cluster.boot()`, `boottest()` and sandwich standa
 ```{r, warning = FALSE, message=FALSE}
 library(multiwayvcov)
 library(lmtest)
-res <- cluster.boot(lm_fit, cluster = ~ group_id1, parallel = TRUE, R = 1000, wild_type = "rademacher")
+options(boot.ncpus = 4)
+
+res <- cluster.boot(lm_fit, cluster = ~ group_id1, parallel = FALSE, R = 1000, wild_type = "rademacher")
 
 # 1) results from multiwayvcov
 coeftest(lm_fit, res)
@@ -196,9 +200,10 @@ coeftest(lm_fit, res)
 summarize_boot(boot_lm)
 summarize_boot(boot_fixest)
 
-# 3) sandwich standard errors from fixest
-summary(feols_fit, se = "cluster", cluster = "group_id1")
 
+# 3) sandwich standard errors 
+vocv <- vcovCL(lm_fit, ~ group_id1)
+coeftest(lm_fit, vcov)
 
 ```
 
@@ -214,19 +219,21 @@ rm(boot_lm); rm(boot_fixest); rm(boot_felm); rm(res)
 
 boot_lm <-  boottest(lm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
 boot_fixest <-  boottest(feols_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
-boot_felm <-  boottest(felm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+# boot_felm <-  boottest(felm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
 summarize_boot(boot_lm)
 summarize_boot(boot_fixest)
 summarize_boot(boot_felm)
+
+
+vocv <- vcovCL(lm_fit, ~ group_id1 + group_id2)
+coeftest(lm_fit, vcov)
 
 res <- cluster.boot(lm_fit, cluster = ~group_id1 + group_id2, R = 1000, wild_type = "rademacher", parallel = TRUE)
 # # 1) results from multiwayvcov
 
 coeftest(lm_fit, res)
 
-vocv <- vcovCL(lm_fit, ~ group_id1 + group_id2)
-coeftest(lm_fit, vcov)
-confint(feols_fit, "treatment", level = 0.95, se = "twoway", cluster = c("group_id1", "group_id2"))
+#confint(feols_fit, "treatment", level = 0.95, se = "twoway", cluster = c("group_id1", "group_id2"))
 ```
 
 

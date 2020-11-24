@@ -4,7 +4,7 @@
 \alias{create_data_1}
 \title{Function creates data for tests and examples}
 \usage{
-create_data_1(N, N_G, icc)
+create_data_1(N, N_G, icc, numb_fe1, numb_fe2)
 }
 \arguments{
 \item{N}{number of observations}

@@ -9,13 +9,13 @@
   clustid,
   param,
   B,
+  fe = NULL,
   alpha = NULL,
   weights = NULL,
   conf_int = NULL,
   debug = FALSE,
   seed = NULL,
-  beta0 = 0,
-  demean = NULL
+  beta0 = 0
 )
 }
 \arguments{
@@ -36,8 +36,6 @@
 \item{seed}{An integer. Allows the user to set a random seed}
 
 \item{beta0}{A numeric. Shifts the null hypothesis}
-
-\item{demean}{If TRUE, fixed effects are projected out prior to the bootstrap. FALSE by default}
 }
 \value{
 An object of class boottest

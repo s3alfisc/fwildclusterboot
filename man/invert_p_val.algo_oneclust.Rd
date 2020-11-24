@@ -9,6 +9,7 @@
   point_estimate,
   se_guess,
   clustid,
+  fixed_effect,
   X,
   Y,
   N,
@@ -19,13 +20,18 @@
   v,
   Xr,
   alpha,
-  beta0
+  beta0,
+  W,
+  n_fe,
+  N_G
 )
 }
 \arguments{
 \item{object}{A regression object of class lm, feols or felm}
 
 \item{clustid}{A vector with the clusters}
+
+\item{fixed_effect}{Fixed effect to be projected out in bootstrap}
 
 \item{X}{the design matrix with the (potentially demeand) covariates}
 

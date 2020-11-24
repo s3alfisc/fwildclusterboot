@@ -9,6 +9,7 @@
   point_estimate,
   se_guess,
   clustid,
+  fixed_effect,
   v,
   X,
   Y,
@@ -18,13 +19,18 @@
   R0,
   B,
   beta0,
-  alpha
+  alpha,
+  W,
+  n_fe,
+  N_G
 )
 }
 \arguments{
 \item{object}{A regression object of class lm, feols or felm}
 
 \item{clustid}{A vector with the clusters}
+
+\item{fixed_effect}{Fixed effect to be projected out in bootstrap}
 
 \item{v}{A matrix. Draw from bootstrap distribution}
 

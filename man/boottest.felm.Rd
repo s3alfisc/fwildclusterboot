@@ -9,13 +9,13 @@
   clustid,
   param,
   B,
+  fe = NULL,
   weights = NULL,
   conf_int = NULL,
   debug = FALSE,
   seed = NULL,
   beta0 = 0,
-  alpha = NULL,
-  demean = NULL
+  alpha = NULL
 )
 }
 \arguments{

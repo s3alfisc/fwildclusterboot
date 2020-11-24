@@ -121,10 +121,13 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha){
   
   #clustid <- as.vector(clustid)
   #clustid <- rep(1:20, 100)
-  N_G <- nrow(unique(clustid)) #number of clusters
-  if(N_G > 200){
+  N_G <- sapply(clustid, function(x) length(unique(x)))
+  
+  #numb_clusters <- ncol(clustid)
+  if(max(N_G) > 200){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
+  
   
   res_preprocess <- list(fixed_effect = NULL, 
                          data = data, 
@@ -360,8 +363,10 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe){
     clustid <- as.data.frame(clustid, stringsAsFactors = FALSE)
   }
   
-  N_G <- nrow(unique(clustid)) #number of clusters
-  if(N_G > 200){
+  N_G <- sapply(clustid, function(x) length(unique(x)))
+  
+  #numb_clusters <- ncol(clustid)
+  if(max(N_G) > 200){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
   
@@ -397,12 +402,13 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe){
   # Factors in our clustiding variables can potentially cause problems
   # Blunt fix is to force conversion to characters
   i <- !sapply(clustid, is.numeric)
-  clustid[i] <- lapply(clustid[i], as.character)
-  
+
   N_G <- nrow(unique(clustid)) #number of clusters
   if(N_G > 200){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
+  
+  
   
   # groupvars <- names(coef(object))
   # depvar <- names(object$response)
@@ -680,7 +686,7 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe){
   N_G <- sapply(clustid, function(x) length(unique(x)))
   
   #numb_clusters <- ncol(clustid)
-  if(N_G > 200){
+  if(max(N_G) > 200){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
   

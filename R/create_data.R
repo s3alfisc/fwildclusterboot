@@ -1,5 +1,5 @@
 create_data_1 <- 
-  function(N, N_G, icc){
+  function(N, N_G, icc, numb_fe1, numb_fe2){
     
     #' Function creates data for tests and examples
     #' @import data.table
@@ -22,7 +22,8 @@ create_data_1 <-
           )
         ),
         income = exp(rlnorm(n = N, meanlog = 2.4 - (ideology * 0.1), sdlog = 0.12)),
-        Q1_immigration = fabricatr::draw_likert(x = ideology, type = 7),
+        Q1_immigration = factor(sample(1:numb_fe1, N, TRUE)),
+        Q2_defence = factor(sample(1:numb_fe2, N, TRUE)),
         #Q2_defence = draw_likert(x = ideology + 0.5, type = 7),
         treatment = fabricatr::draw_binary(0.5, N = N),
         proposition_vote = fabricatr::draw_binary(latent = ideology + 0.01 * treatment, link = "probit")
@@ -35,7 +36,7 @@ create_data_1 <-
   }
 
 create_data_2 <- 
-  function(N, N_G1, icc1, N_G2, icc2){
+  function(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2){
     
     #' Function creates data for tests and examples
     #' @import data.table
@@ -61,8 +62,8 @@ create_data_2 <-
           )
         ),
         income = exp(rlnorm(n = N, meanlog = 2.4 - (ideology1 * 0.1), sdlog = 0.12)),
-        Q1_immigration = fabricatr::draw_likert(x = ideology2, type = 7),
-        #Q2_defence = draw_likert(x = ideology + 0.5, type = 7),
+        Q1_immigration = factor(sample(1:numb_fe1, N, TRUE)),
+        Q2_defence = factor(sample(1:numb_fe2, N, TRUE)),   
         treatment = fabricatr::draw_binary(0.5, N = N),
         proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.01 * treatment, link = "probit")
       )

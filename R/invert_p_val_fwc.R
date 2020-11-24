@@ -1,8 +1,9 @@
-invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid, X, Y, N, k, param, R0, B, v, Xr, alpha, beta0){
+invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, X, Y, N, k, param, R0, B, v, Xr, alpha, beta0, W, n_fe, N_G){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
   #'@param clustid A vector with the clusters
+  #'@param fixed_effect Fixed effect to be projected out in bootstrap
   #'@param X the design matrix with the (potentially demeand) covariates
   #'@param Y A numeric vector containing the outcome variable 
   #'@param param The univariate coefficients for which a hypothesis is to be tested
@@ -72,20 +73,23 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
     
     u_hat <- Q + P %*% matrix(beta0, 1, length(beta0))
 
-    # SXinvXXRu_prep <- data.table::data.table(prod = as.vector(XinvXXr) * u_hat  , clustid = clustid) 
-    # SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
-    # if(ncol(SXinvXXRu) == 1){
-    #   SXinvXXRu <- as.vector(SXinvXXRu)
-    # }
     
     SXinvXXRu <- collapse::fsum(XinvXXr * u_hat  , clustid)
+
     if(ncol(SXinvXXRu) == 1){
       SXinvXXRu <- as.vector(SXinvXXRu)
     }  
+    diag_SXinvXXRu <- Matrix::Diagonal(N_G, SXinvXXRu)
     
-    #SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
-    #SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL]) 
-   
+    
+    # if model with fixed effect
+    if(!is.null(W)){
+      S_XinvXXR_F <- crosstab2(as.matrix(XinvXXr), var1 = clustid, var2 = fixed_effect)
+      S_Wu_F <- crosstab2(as.matrix(W %*% u_hat), var1 = clustid, var2 = fixed_effect)
+      prod <- S_XinvXXR_F %*% t(S_Wu_F)
+      diag_SXinvXXRu <- diag_SXinvXXRu - prod
+    } 
+    
     SXu <- collapse::fsum(X * matrix(rep(u_hat, k), N, k), clustid)
     
     numer <- SXinvXXRu %*% v 
@@ -183,20 +187,7 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   
   res <- lapply(list(test_vals_lower, test_vals_higher), function(x){
     
-    #tmp <- secant_rel(f = p_val_null_x, x1 = min(x), x2 = max(x), B = B)
-    #tmp <- secant_method(f = p_val_null_x, x0 = min(x), x1 = max(x))
-    #tmp
-    #tmp <-  NLRoot::SMfzero(p_val_null_x , x1 = min(x), x2 = max(x), num = 10, eps = 1/(B*1.0000001))
-    #tmp <- secant_method(p_val_null_x, x1 = min(x), x2 = max(x))
-    #tmp
-    #tmp <- try(pracma::newtonRaphson(p_val_null_x, x0 =  x, dfun = NULL, maxiter = 10, tol = 1/B))
-    #tmp$root
-    #tmp <- pracma::fzero(p_val_null_x , x = x, maxiter = 10, tol = 1 / B)
-    #tmp$x
-    #tmp <- pracma::bisect(p_val_null_x , a = min(x), b = max(x), tol = 1e-6)
-    #tmp <- pracma::secant(p_val_null_x , a = min(x), b = max(x), maxiter = 10, tol = 1e-6)
-    #tmp <- pracma::muller(p_val_null_x , p0 = min(x), p1 = max(x), tol = 1e-6, maxiter = 10)
-    tmp <- stats::uniroot(f = p_val_null_x, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10)
+        tmp <- stats::uniroot(f = p_val_null_x, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10)
     
     tmp$root
   })
@@ -213,11 +204,12 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
 
 
 
-invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clustid, v,X, Y, N, k, param, R0, B, beta0, alpha){
+invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, v,X, Y, N, k, param, R0, B, beta0, alpha, W, n_fe, N_G){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
   #'@param clustid A vector with the clusters
+  #'@param fixed_effect Fixed effect to be projected out in bootstrap
   #'@param X the design matrix with the (potentially demeand) covariates
   #'@param Y A numeric vector containing the outcome variable 
   #'@param param The univariate coefficients for which a hypothesis is to be tested
@@ -299,15 +291,46 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
     #,times = 10)
     XinvXXrX <- matrix(rep(XinvXXr, k), N, k) * X
     
-    tKK <- list()
-    for(x in names(clustid)){
-      #S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
-      S_diag_XinvXXRu_S <- aggregate.Matrix(diag_XinvXXRuS, clustid[x])
-      SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
-      K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
-      tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
-      #tKK[[x]] <-  t(K) %*% K # here: add small sample df correction
-      #J <- K %*% v
+    # tKK <- list()
+    # for(x in names(clustid)){
+    #   #S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
+    #   S_diag_XinvXXRu_S <- aggregate.Matrix(diag_XinvXXRuS, clustid[x])
+    #   SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
+    #   K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
+    #   tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
+    #   #tKK[[x]] <-  t(K) %*% K # here: add small sample df correction
+    #   #J <- K %*% v
+    # }
+    
+    if(is.null(W)){
+      for(x in names(clustid)){
+        #S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
+        S_diag_XinvXXRu_S <- aggregate.Matrix(diag_XinvXXRuS, clustid[x])
+        SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
+        K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
+        tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
+      }
+    } else if(!is.null(W)){
+      for(x in names(clustid)){
+        
+        # does not need to be regularly re-computed
+        S_Wu_F <- crosstab2(as.matrix(W %*% u_hat), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
+        for(x in names(clustid)){
+          
+          S_diag_XinvXXRu_S <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS, clustid[x]) # c* x c
+          # start projecting out fixed effect
+          S_XinvXXR_F <- crosstab2(XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
+          prod <- S_Wu_F %*% t(S_XinvXXR_F) # c* x c*
+          S_diag_XinvXXRu_S <- S_diag_XinvXXRu_S - t(prod)        
+          # stop projecting out fixed effect
+          
+          SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
+          K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
+          tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
+          
+        }
+        
+      }
     }
     
     #toc()
