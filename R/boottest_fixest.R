@@ -26,33 +26,35 @@ boottest.fixest  <- function(object,
   #'@export
   #'@method boottest fixest
 
-     # library(data.table)
-     # library(fixest)
-     # # library(dreamerr)
-     # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-     # file.sources = list.files(pattern="*.R")
-     # sapply(file.sources, source, .GlobalEnv)
-     # # set.seed(6261)
-     # voters <- create_data_2(N = 10000, N_G1 = 80, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10)
-     # # object <- feols(fml = proposition_vote ~ treatment | ideological_label +  Q1_immigration, data = voters)
-     # # #object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | ideological_label , weights = NULL, data = voters)
-     # object <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
-     # #object2 <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,, weights = NULL, data = voters)
-     # 
-     # #clustid <- voters[, .(group_id1)]
-     # #fe = "ideological_label"
-     # fe = NULL
-     # clustid <- ~ group_id1 + group_id2
-     # param <- "treatment"
-     # B = 10000
-     # alpha = NULL 
-     # weights = NULL
-     # conf_int = NULL 
-     # debug = FALSE
-     # seed = NULL
-     # beta0 = 0
+      # library(data.table)
+      # library(fixest)
+      # # library(dreamerr)
+      # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+      # file.sources = list.files(pattern="*.R")
+      # sapply(file.sources, source, .GlobalEnv)
+      # # set.seed(6261)
+      # voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10)
+      # # object <- feols(fml = proposition_vote ~ treatment | ideological_label +  Q1_immigration, data = voters)
+      # # #object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | ideological_label , weights = NULL, data = voters)
+      # object <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
+      # #object2 <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,, weights = NULL, data = voters)
+      # lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +Q1_immigration, data = voters )
+      # vce <- sandwich::vcovCL(lm_fit, ~group_id1+ group_id2)
+      # coeftest(lm_fit, vce)
+      # #clustid <- voters[, .(group_id1)]
+      # #fe = "ideological_label"
+      # fe = NULL
+      # clustid <- ~ group_id1 + group_id2
+      # param <- "treatment"
+      # B = 10000
+      # alpha = NULL 
+      # weights = NULL
+      # conf_int = NULL 
+      # debug = FALSE
+      # seed = NULL
+      # beta0 = 0
     
-    # Step 1: check arguments of feols call
+          # Step 1: check arguments of feols call
   #formula <- object$call$fml
   
   #dreamerr::check_arg(object, "")
@@ -164,9 +166,9 @@ boottest.fixest  <- function(object,
   } else if(clustid_dims > 1){
     res_final <- list(point_estimate = point_estimate, 
                       p_val = res[["p_val"]], 
-                      #conf_int = res_p_val$conf_int, 
-                      #p_test_vals = res_p_val$p_test_vals, 
-                      #test_vals = res_p_val$test_vals,
+                      conf_int = res_p_val$conf_int, 
+                      p_test_vals = res_p_val$p_test_vals, 
+                      test_vals = res_p_val$test_vals,
                       t_stat = res$t_stat, 
                       regression = res$object, 
                       param = param, 

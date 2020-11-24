@@ -403,8 +403,8 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe){
   # Blunt fix is to force conversion to characters
   i <- !sapply(clustid, is.numeric)
 
-  N_G <- nrow(unique(clustid)) #number of clusters
-  if(N_G > 200){
+  N_G <- sapply(clustid, function(x) length(unique(x)))
+  if(max(N_G) > 200){
     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
   }
   

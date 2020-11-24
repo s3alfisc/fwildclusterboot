@@ -26,12 +26,11 @@ It implements the fast wild cluster bootstrap algorithm developed in Roodman et 
 
 The package's central function is `boottest()`. It allows the user to test two-sided, univariate hypotheses using a wild cluster bootstrap. Importantly, it uses the "fast" algorithm developed in Roodman et al, which makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples--as long as the number of bootstrapping clusters is not too large.
 
-The `fwildclusterboot` package currently only supports one-dimensional clustering and one-dimensional hypotheses, but allows for an arbitrary number of fixed effects. 
+The `fwildclusterboot` package currently only supports one- and two-dimensional clustering and one-dimensional hypotheses, but allows for an arbitrary number of fixed effects in the estimation procedure.  
 
 The package is highly experimental and currently does not include any unit tests.
 
 The following will be added in the future: 
-- support for clustering of higher dimensions
 - support for multivariate hypotheses 
 - bootstrap distributions other then the rademacher distribution
 
@@ -80,7 +79,7 @@ library(fwildclusterboot)
 
 
 B <- 10000
-seed <- 424
+seed <- 942413
 set.seed(seed)
 voters <- create_data_2(N = 10000, N_G1 = 40, icc1 = 0.01, N_G2 = 40, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10)
 head(voters)
@@ -95,6 +94,8 @@ The `fwildclusterboot` package supports estimation of linear models based on
 ```{r, warning = FALSE, message = FALSE}
 library(lfe)
 library(fixest)
+library(sandwich)
+library(multiwayvcov)
 
 # 1) boottest based on object of class lm
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
@@ -189,7 +190,6 @@ As can be seen, `multiwayvcov::cluster.boot()`, `boottest()` and sandwich standa
 ```{r, warning = FALSE, message=FALSE}
 library(multiwayvcov)
 library(lmtest)
-options(boot.ncpus = 4)
 
 res <- cluster.boot(lm_fit, cluster = ~ group_id1, parallel = FALSE, R = 1000, wild_type = "rademacher")
 
@@ -217,18 +217,19 @@ library(multiwayvcov)
 options(boot.ncpus = 4)
 rm(boot_lm); rm(boot_fixest); rm(boot_felm); rm(res)
 
+
 boot_lm <-  boottest(lm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
-boot_fixest <-  boottest(feols_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
-# boot_felm <-  boottest(felm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+ boot_fixest <-  boottest(feols_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+ boot_felm <-  boottest(felm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+
 summarize_boot(boot_lm)
 summarize_boot(boot_fixest)
 summarize_boot(boot_felm)
 
-
 vocv <- vcovCL(lm_fit, ~ group_id1 + group_id2)
 coeftest(lm_fit, vcov)
 
-res <- cluster.boot(lm_fit, cluster = ~group_id1 + group_id2, R = 1000, wild_type = "rademacher", parallel = TRUE)
+res <- cluster.boot(lm_fit, cluster = ~group_id1 + group_id2, R = 1000, wild_type = "rademacher", parallel = FALSE)
 # # 1) results from multiwayvcov
 
 coeftest(lm_fit, res)

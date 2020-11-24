@@ -270,7 +270,9 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   invXX <- solve(t(X) %*% X) # k x k matrix
   XinvXXr <- X %*% (invXX %*% R0) # N x 1
   
-  p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, v, B, small_sample_correction){
+  p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, 
+                         v, B, small_sample_correction){
+    
     # error under the null hypothesis
     #u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
     u_hat <- Q + P %*% matrix(beta0, 1, length(beta0))
@@ -278,77 +280,75 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
     SuX <- collapse::fsum(uX, clustid$clustid)
     tSuX <- t(SuX)
     XinvXXRu <- as.vector(XinvXXr * matrix(rep(u_hat, 1), N, 1))
-    SXinvXXRu <-collapse::fsum(XinvXXr * matrix(rep(u_hat, 1), N, 1), clustid)
-    #SXinvXXRu <- collapse::fsum(XinvXXRu, clustid$clustid)
-    XinvXXRuS <- t(collapse::fsum(XinvXXRu, clustid$clustid))
-    
-    #tic()
-    diag_XinvXXRuS <- Matrix::t(Matrix.utils::aggregate.Matrix(Matrix::Diagonal(N, as.vector(XinvXXRu)), clustid$clustid))
-    #microbenchmark(
     #diag_XinvXXRuS <- t(collapse::fsum(diag(as.vector(XinvXXRu)), clustid$clustid))
-    #,
-    #Matrix = Matrix.utils::aggregate.Matrix(Matrix::Diagonal(N, as.vector(XinvXXRu)), clustid$clustid)
-    #,times = 10)
-    XinvXXrX <- matrix(rep(XinvXXr, k), N, k) * X
     
-    # tKK <- list()
-    # for(x in names(clustid)){
-    #   #S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
-    #   S_diag_XinvXXRu_S <- aggregate.Matrix(diag_XinvXXRuS, clustid[x])
-    #   SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
-    #   K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
-    #   tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
-    #   #tKK[[x]] <-  t(K) %*% K # here: add small sample df correction
-    #   #J <- K %*% v
-    # }
+    
+    tKK <- list()
+    
+    XinvXXrX <- matrix(rep(XinvXXr, k), N, k) * X
+    XinvXXRuS <- t(collapse::fsum(XinvXXRu, clustid$clustid))
+    SXinvXXRu <- XinvXXRuS
+    #SXinvXXRu <- t(collapse::fsum(XinvXXRu, clustid$clustid))
+    
+    diag_XinvXXRuS <- Matrix::t(Matrix.utils::aggregate.Matrix(Matrix::Diagonal(N, as.vector(XinvXXRu)), clustid$clustid))
+    
     
     if(is.null(W)){
+      
+      
       for(x in names(clustid)){
         #S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
-        S_diag_XinvXXRu_S <- aggregate.Matrix(diag_XinvXXRuS, clustid[x])
-        SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
-        K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
+        #SXinvXXRu <-collapse::fsum(XinvXXr , clustid[x])
+        
+        S_diag_XinvXXRu_S <- aggregate.Matrix(diag_XinvXXRuS, clustid[x]) # c* x c
+        SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
+        K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX # c* x x
         tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
       }
     } else if(!is.null(W)){
+      
+      # does not need to be regularly re-computed
+      S_Wu_F <- crosstab2(as.matrix(W %*% u_hat), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
       for(x in names(clustid)){
         
-        # does not need to be regularly re-computed
-        S_Wu_F <- crosstab2(as.matrix(W %*% u_hat), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
-        for(x in names(clustid)){
-          
-          S_diag_XinvXXRu_S <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS, clustid[x]) # c* x c
-          # start projecting out fixed effect
-          S_XinvXXR_F <- crosstab2(XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
-          prod <- S_Wu_F %*% t(S_XinvXXR_F) # c* x c*
-          S_diag_XinvXXRu_S <- S_diag_XinvXXRu_S - t(prod)        
-          # stop projecting out fixed effect
-          
-          SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
-          K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
-          tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
-          
-        }
+        #S_diag_XinvXXRu_S <- crosstab2(XinvXXRu, var1 = clustid["clustid"], var2 = clustid[x])
+        S_diag_XinvXXRu_S <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS, clustid[x]) # c* x c
+        # start projecting out fixed effect
+        S_XinvXXR_F <- crosstab2(XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
+        prod <- S_Wu_F %*% t(S_XinvXXR_F) # c* x c*
+        #diag_SXinvXXRu <- Matrix::Diagonal(N_G["clustid"], SXinvXXRu)
+        S_diag_XinvXXRu_S <- S_diag_XinvXXRu_S - t(prod)        
+        # stop projecting out fixed effect
+        
+        SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
+        K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
+        tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
         
       }
     }
     
-    #toc()
-    tKK_sum <- Reduce("+", tKK)
-    denom <- Matrix::colMeans(v * tKK_sum %*% v)
-    numer <- t(SXinvXXRu) %*% v 
+    
+    tKK_sum <- Matrix::t(Reduce("+", tKK))
+    denom <- Matrix::colSums(v * tKK_sum %*% v)
+    numer <- SXinvXXRu %*% v 
     
     t <- abs(numer) / denom
     
     t_boot <- t[2:(B + 1)]
     p_val <- mean(abs(t[1] - beta0) < (t_boot))
     
-    p_val
+    res <- list(p_val = p_val, 
+                t = t, 
+                t_boot = t_boot)
+    res
   }
+  
+    
+  
   
   # can be smaller than zero bc of -0.5
   p_val_null_x <- function(beta0){
-    p_val_null(beta0, Q = Q, P = P, R0 = R0, X = X, XinvXXr = XinvXXr, clustid = clustid, v = v, B = B, small_sample_correction = small_sample_correction) - alpha
+    p_val_null(beta0, Q = Q, P = P, R0 = R0, X = X, XinvXXr = XinvXXr, clustid = clustid, v = v, B = B, small_sample_correction = small_sample_correction)$p_val - alpha
   }
   
   # p-value must cross alpha

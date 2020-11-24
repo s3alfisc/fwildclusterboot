@@ -170,7 +170,7 @@ boot_algo.multclust <- function(preprocessed_object){
   
   
   p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, 
-                         SXinvXXRu_prep, v, B, small_sample_correction){
+                         v, B, small_sample_correction){
    
      # error under the null hypothesis
     #u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
@@ -239,12 +239,13 @@ boot_algo.multclust <- function(preprocessed_object){
     res <- list(p_val = p_val, 
                 t = t, 
                 t_boot = t_boot)
+    res
   }
   
 
   
   p_val_res <- p_val_null(beta0 = beta0, Q =Q, P = P, R0 = R0, X = X, XinvXXr = XinvXXr, clustid = clustid, 
-                SXinvXXRu_prep = SXinvXXRu_prep, v = v, B = B, small_sample_correction = small_sample_correction)
+                v = v, B = B, small_sample_correction = small_sample_correction)
   
   p_val <- p_val_res$p_val
   t <- p_val_res$t

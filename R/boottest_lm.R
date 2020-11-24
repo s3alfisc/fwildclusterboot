@@ -30,7 +30,7 @@ boottest.lm <- function(object,
        # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
        #  file.sources = list.files(pattern="*.R")
        #  sapply(file.sources, source, .GlobalEnv)
-       #   set.seed(123)
+       #   set.seed(5)
        #   data <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10)
        #   object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
        #   clustid <- ~ group_id1 + group_id2 
@@ -42,9 +42,8 @@ boottest.lm <- function(object,
        #   conf_int = NULL 
        #   debug = FALSE
        #   seed = NULL
-       #   
        #   p_val_sandwich <- lmtest::coeftest(object, sandwich::vcovCL(x = object, ~ group_id1 + group_id2)) # 0.554481          
-       # 
+  
   check_arg(clustid, "os formula | data.frame | named list")
   check_arg(param, "scalar character")
   check_arg(B, "scalar numeric ") 
