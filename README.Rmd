@@ -47,18 +47,22 @@ library(devtools)
 
 
 ```{r, echo=FALSE, include=FALSE, results="hide"}
-
  # setwd("C:/Users/alexa/Dropbox")
- # devtools::install("fwildclusterboot")
- # devtools::document("fwildclusterboot")
+ #  devtools::install("fwildclusterboot")
+ #  devtools::document("fwildclusterboot")
+#usethis::use_vignette("C:/Users/alexa/Dropbox/fwildclusterboot/my-vignette")
 # devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
 # devtools::check("fwildclusterboot")
+# usethis::use_vignette("my-vignette")
+
 
 # 
 #  library(usethis)
 #  setwd("C:/Users/au563468/Dropbox/fwildclusterboot")
 #  use_package("fixest", type = "Imports")
 #  use_package("estimatr", type = "Imports")
+# usethis::use_vignette("C:/Users/au563468/Dropbox/fwildclusterboot/vignette")
+
 
 
 
@@ -81,8 +85,10 @@ library(fwildclusterboot)
 B <- 10000
 seed <- 942413
 set.seed(seed)
-voters <- create_data_2(N = 10000, N_G1 = 40, icc1 = 0.01, N_G2 = 40, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10)
+voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 40, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
 head(voters)
+
+data.table::fwrite(voters, "voters.csv")
 
 ```
 
@@ -118,14 +124,14 @@ Second and by default, the boottest function calculates confidence intervals by 
 boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
 
 # 2) bootest based on object of class feols
- boot_fixest = boottest(feols_fit, clustid = ~group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
- boot_fixest1 = boottest(feols_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
+ boot_fixest = boottest(feols_fit, clustid = c("group_id1"), B = B, seed = seed, param = "treatment", conf_int = FALSE)
+ boot_fixest1 = boottest(feols_fit1, clustid = c("group_id1"), B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
 
 # boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
 
 # 3) boottest based on object of class felm
-boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
-boot_felm1 = boottest(felm_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+boot_felm = boottest(felm_fit, clustid =  "group_id1", B = B, seed = seed, param = "treatment", conf_int = FALSE)
+boot_felm1 = boottest(felm_fit1, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = FALSE)
 
 # microbenchmark(boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE),
 #                boot_felm1 = boottest(felm_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE), times = 10)
@@ -136,14 +142,14 @@ boot_felm1 = boottest(felm_fit1, clustid = ~ group_id1, B = B, seed = seed, para
 boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
 
 # 2) bootest based on object of class feols
-boot_fixest = boottest(feols_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_fixest = boottest(feols_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
 
-boot_fixest1 = boottest(feols_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
+boot_fixest1 = boottest(feols_fit1, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
 # boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
 
 # 3) boottest based on object of class felm
-boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-boot_felm1 = boottest(felm_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_felm = boottest(felm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_felm1 = boottest(felm_fit1, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
 ```
 
 The function `summarize_boot` collects the results. 

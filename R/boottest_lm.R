@@ -9,7 +9,7 @@ boottest.lm <- function(object,
                         beta0 = NULL, 
                         alpha = NULL){
   
-  #'@param object An object of class fixest
+  #'@param object An object of class lm
   #'@param clustid A vector with the clusters
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param B number of bootstrap iterations
@@ -27,24 +27,27 @@ boottest.lm <- function(object,
   
   
    #execute all functions in fwildclusterboot 
-       # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-       #  file.sources = list.files(pattern="*.R")
-       #  sapply(file.sources, source, .GlobalEnv)
-       #   set.seed(5)
-       #   data <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10)
-       #   object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = data)
-       #   clustid <- ~ group_id1 + group_id2 
-       #   param <- "treatment"
-       #   beta0 = 0
-       #   alpha = 0.05
-       #   B = 10000
-       #   weights = NULL
-       #   conf_int = NULL 
-       #   debug = FALSE
-       #   seed = NULL
-       #   p_val_sandwich <- lmtest::coeftest(object, sandwich::vcovCL(x = object, ~ group_id1 + group_id2)) # 0.554481          
-  
-  check_arg(clustid, "os formula | data.frame | named list")
+             # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+             #  file.sources = list.files(pattern="*.R")
+             # sapply(file.sources, source, .GlobalEnv)
+             #   set.seed(6)
+             #   voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 4)
+             #   # create a missing variable in group_id1
+             #   voters[1, group_id1 := NA]
+             #   voters[2, proposition_vote := NA]
+             #   object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
+             #   clustid <- ~ group_id1 + group_id2 
+             #   param <- "treatment"
+             #   beta0 = 0
+             #   alpha = 0.05
+             #   B = 10000
+             #   weights = NULL
+             #   conf_int = NULL 
+             #   debug = FALSE
+             #   seed = NULL
+             # 
+             #  p_val_sandwich <- lmtest::coeftest(object, sandwich::vcovCL(x = object, ~ group_id1 )) # 0.554481          
+  #  check_arg(clustid, "os formula | data.frame | named list")
   check_arg(param, "scalar character")
   check_arg(B, "scalar numeric ") 
   check_arg(alpha, "scalar numeric")
@@ -71,7 +74,7 @@ boottest.lm <- function(object,
    
     if(is.null(conf_int) || conf_int == TRUE){
       # calculate guess for covariance matrix and standard errors
-      vcov <- sandwich::vcovCL(object, cluster =  preprocess$clustid)
+      vcov <- sandwich::vcovCL(object, cluster =  clustid)
       coefs <- lmtest::coeftest(object, vcov)
       se_guess <- coefs[param, "Std. Error"]
       

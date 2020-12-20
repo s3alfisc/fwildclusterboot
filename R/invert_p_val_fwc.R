@@ -108,62 +108,60 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   
   # p-value must cross alpha
   check <- FALSE
-  inflate_se <- c(2, 3, 5, 10)
+  inflate_se <- c(2, 3, 5, 10, 15, 25, 50, 100)
+  len_inflate <- length(inflate_se)
   j <- 1
+
   while(check == FALSE){
-    
-    if(j > 4){
-      break("Boottest confidence set calculation fails because no p-value < alpha could succesfully
+      print("check")
+      if(j > len_inflate){
+        break("Boottest confidence set calculation fails because no p-value < alpha could succesfully
             be guessed.")
+      }
+      # start guesses by taking sandwich cluster confidence intervals + inflation factor
+      starting_vals <- as.numeric(point_estimate + c(-inflate_se[j], inflate_se[j]) * se_guess)
+      print(starting_vals)
+      # take 25 starting values in between the guesses
+      p_start <- rep(NaN, length(starting_vals))
+      
+      for(i in 1:length(starting_vals)){
+        p_start[i] <- p_val_null_x(starting_vals[i]) 
+      }
+      p_start <- p_start + alpha 
+      
+      if(sum(p_start < alpha) == 2){
+        check <- TRUE
+      }
+      j <- j + 1
+      print(p_start)
     }
-    # start guesses by taking sandwich cluster confidence intervals + inflation factor
-    starting_vals <- as.numeric(point_estimate + c(-inflate_se[j], inflate_se[j]) * se_guess)
-    # take 25 starting values in between the guesses
+    
     test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
     
     # later: don't have to evaluate all guesses at all points - extreme points suffice - if < alpha at both extreme points
     # then evaluate all 26 points
-    
-    #min_test_val <- min(test_vals)
-    #max_test_val <- max(test_vals)
-    
-    #p_val_null_x(min_test_val) + alpha <
-    #benchmark(p_val_null_x(test_vals[1]))
-    # get test values
-
-    # calculate the p-values for all 26 guesses
-    
     p <- rep(NaN, length(test_vals))
-
-
-    # for(i in 1:length(test_vals)){
-    #   p[i] <- p_val_null_x(test_vals[i]) 
-    # }
-    
-    p <- lapply(1:length(test_vals), function(i){ p_val_null_x(test_vals[i])})
-    p <- do.call("c", p)  
     
     
-      
+    for(i in 2:(length(test_vals) - 1)){
+      p[i] <- p_val_null_x(test_vals[i]) 
+    }
     # substract alpha in function so that I will not need to 
     # do it in root finding algorithm, but then I will need to add 
     # alpha here
     p <- p + alpha 
     
+    p[1] <- p_start[1]
+    p[26] <- p_start[2]
     #if(sum(p < alpha) < 1){warning("Need to djust starting values: they are not p < alpha. Therefore, choose more
     #                              extreme starting values.")}
     
     crossings <-  (p < alpha) - (p > alpha)
     
     x_crossings <- rep(NA, length(test_vals))
-    for(i in 1:25){
+    for(i in 1:26){
       x_crossings[i] <- ifelse(crossings[i] + crossings[i + 1] == 0 || crossings[i] + crossings[i - 1] == 0, 1, 0)
     }
-    
-    check <- sum(x_crossings == 1, na.rm = TRUE) == 4
-    j <- j + 1
-    check    
-  }
  
 
 
@@ -300,7 +298,7 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
         #S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
         #SXinvXXRu <-collapse::fsum(XinvXXr , clustid[x])
         
-        S_diag_XinvXXRu_S <- aggregate.Matrix(diag_XinvXXRuS, clustid[x]) # c* x c
+        S_diag_XinvXXRu_S <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS, clustid[x]) # c* x c
         SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
         K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX # c* x x
         tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
@@ -332,15 +330,16 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
     denom <- Matrix::colSums(v * tKK_sum %*% v)
     numer <- SXinvXXRu %*% v 
     
-    t <- abs(numer) / denom
+    t <- abs(numer) / sqrt(denom)
     
     t_boot <- t[2:(B + 1)]
     p_val <- mean(abs(t[1] - beta0) < (t_boot))
     
-    res <- list(p_val = p_val, 
-                t = t, 
-                t_boot = t_boot)
-    res
+    #res <- list(p_val = p_val, 
+    #            t = t, 
+    #            t_boot = t_boot)
+    #res
+    p_val
   }
   
     
@@ -348,76 +347,65 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   
   # can be smaller than zero bc of -0.5
   p_val_null_x <- function(beta0){
-    p_val_null(beta0, Q = Q, P = P, R0 = R0, X = X, XinvXXr = XinvXXr, clustid = clustid, v = v, B = B, small_sample_correction = small_sample_correction)$p_val - alpha
+    p_val_null(beta0, Q = Q, P = P, R0 = R0, X = X, XinvXXr = XinvXXr, clustid = clustid, v = v, B = B, small_sample_correction = small_sample_correction) - alpha
   }
   
   # p-value must cross alpha
   check <- FALSE
-  inflate_se <- c(2, 3, 5, 10)
+  inflate_se <- c(2, 3, 5, 10, 15, 25, 50, 100)
+  len_inflate <- length(inflate_se)
   j <- 1
+  
   while(check == FALSE){
-    
-    if(j > 4){
+    print("check")
+    if(j > len_inflate){
       break("Boottest confidence set calculation fails because no p-value < alpha could succesfully
             be guessed.")
     }
     # start guesses by taking sandwich cluster confidence intervals + inflation factor
     starting_vals <- as.numeric(point_estimate + c(-inflate_se[j], inflate_se[j]) * se_guess)
+    print(starting_vals)
     # take 25 starting values in between the guesses
-    test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
+    p_start <- rep(NaN, length(starting_vals))
     
-    # later: don't have to evaluate all guesses at all points - extreme points suffice - if < alpha at both extreme points
-    # then evaluate all 26 points
+    for(i in 1:length(starting_vals)){
+      p_start[i] <- p_val_null_x(starting_vals[i]) 
+    }
+    p_start <- p_start + alpha 
     
-    #min_test_val <- min(test_vals)
-    #max_test_val <- max(test_vals)
-    
-    #p_val_null_x(min_test_val) + alpha <
-      #benchmark(p_val_null_x(test_vals[1]))
-      # get test values
-      
-      # calculate the p-values for all 26 guesses
+    if(sum(p_start < alpha) == 2){
+      check <- TRUE
+    }
+    j <- j + 1
+    print(p_start)
+  }
 
-    #if(parallel == TRUE){
-    #    #tic()
-    #    cl <- parallel::makeCluster(2)
-    #    parallel::clusterExport(cl, list("p_val_null", "p_val_null_x","invXX", "N","k", "Q", "P", "test_vals", "XinvXXr", "clustid", "v", "B", "alpha", "X", "small_sample_correction"))
-    #    #clusterEvalQ(cl, library("thePackage"))
-    #    p <- parallel::parLapply(cl, 1:length(test_vals), function(i){ p_val_null_x(test_vals[i])})
-    #    p <- do.call("c", p)
-    #    parallel::stopCluster(cl)   
-    #    #toc()
-    #} else {
-      #tic()
-      p <- rep(NaN, length(test_vals))
-      for(i in 1:length(test_vals)){
-        p[i] <- p_val_null_x(test_vals[i]) 
-      }
-      #toc()
-    #}
-   
-
+  test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
+  
+  # later: don't have to evaluate all guesses at all points - extreme points suffice - if < alpha at both extreme points
+  # then evaluate all 26 points
+  p <- rep(NaN, length(test_vals))
+  
+  
+  for(i in 2:(length(test_vals) - 1)){
+    p[i] <- p_val_null_x(test_vals[i]) 
+  }
     # substract alpha in function so that I will not need to 
     # do it in root finding algorithm, but then I will need to add 
     # alpha here
-    p <- p + alpha 
+  p <- p + alpha 
     
-    #if(sum(p < alpha) < 1){warning("Need to djust starting values: they are not p < alpha. Therefore, choose more
-    #                              extreme starting values.")}
+  p[1] <- p_start[1]
+  p[26] <- p_start[2]
+  #if(sum(p < alpha) < 1){warning("Need to djust starting values: they are not p < alpha. Therefore, choose more
+  #                              extreme starting values.")}
     
-    crossings <-  (p < alpha) - (p > alpha)
+  crossings <-  (p < alpha) - (p > alpha)
     
     x_crossings <- rep(NA, length(test_vals))
-    for(i in 1:25){
+    for(i in 1:26){
       x_crossings[i] <- ifelse(crossings[i] + crossings[i + 1] == 0 || crossings[i] + crossings[i - 1] == 0, 1, 0)
     }
-    
-    check <- sum(x_crossings == 1, na.rm = TRUE) == 4
-    j <- j + 1
-    check    
-  }
-  
-  
   
   
   #p_val[which(x_crossings == 1)]
@@ -466,3 +454,4 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   res_all
   
 }
+

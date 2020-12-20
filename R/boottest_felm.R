@@ -1,7 +1,8 @@
 boottest.felm  <- function(object, 
-                           clustid, 
+                           #clustid, 
                            param, 
                            B,
+                           clustid, 
                            fe = NULL, 
                            weights = NULL,
                            conf_int = NULL, 
@@ -15,7 +16,6 @@ boottest.felm  <- function(object,
   #'@import Formula
   #'@import data.table
   #'@param object An object of class fixest
-  #'@param clustid A vector with the clusters
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param B number of bootstrap iterations
   #'@param weights Regression weights. Currently, WLS is not supported, and weights needs to be NULL 
@@ -27,10 +27,10 @@ boottest.felm  <- function(object,
   #'@export
   #'@method boottest felm
   
-  check_arg(clustid, "os formula | data.frame | named list")
+  #check_arg(clustid, "os formula | data.frame | named list")
   check_arg(param, "scalar character")
   check_arg(B, "scalar numeric ") 
-  check_arg(alpha, "scalar numeric")
+  check_arg(alpha, "scalar numeric | NULL")
   check_arg(weights, "NULL")
   check_arg(conf_int, "logical scalar | NULL")
   check_arg(debug, "logical scalar")
@@ -38,29 +38,28 @@ boottest.felm  <- function(object,
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL")
   
-  #  library(data.table)
-  #  library(lfe)
-  # # library(dreamerr)
-  #  setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-  #  file.sources = list.files(pattern="*.R")
-  #  sapply(file.sources, source, .GlobalEnv)
-  #  set.seed(3129)
-  #  voters <- create_data_2(N = 10000, N_G1 = 80, icc1 = 0.21, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10)
-  #  #object <- felm(proposition_vote ~ treatment + Q1_immigration |  ideological_label | 0 | group_id1 + group_id2, data = voters)
-  # # #object <- feols(fml = proposition_vote ~ treatment | ideological_label +  Q1_immigration, data = voters)
-  # # #object <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | ideological_label , weights = NULL, data = voters)
-  #  #fe = "ideological_label"
-  #  # fe = NULL
-  #  # clustid <- ~ group_id1 + group_id2
-  #  # param <- "treatment"
-  #  # B = 10000
-  #  # alpha = NULL 
-  #  # weights = NULL
-  #  # conf_int = NULL 
-  #  # debug = FALSE
-  #  # seed = NULL
-  #  # beta0 = 0
-  #  # summary(object)
+
+    #   setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+    #   file.sources = list.files(pattern="*.R")
+    #   sapply(file.sources, source, .GlobalEnv)
+    #   set.seed(3129)
+    #   voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.21, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 122)
+    # voters[1, group_id1 := NA]
+    # voters[2, proposition_vote := NA]
+    #   object <- felm(proposition_vote ~ treatment + Q1_immigration |  Q2_defence | 0 | group_id1 , data = voters)
+    #   #fe = "ideological_label"
+    #   fe = NULL
+    #   # fe = NULL
+    #    clustid <- c("group_id1", "group_id2")
+    #    param <- "treatment"
+    #    B = 10000
+    #    alpha = NULL 
+    #    weights = NULL
+    #    conf_int = NULL 
+    #    debug = FALSE
+    #    seed = NULL
+    #    beta0 = 0
+    # summary(object)
   
     preprocess <- preprocess(object = object,
                            param = param,

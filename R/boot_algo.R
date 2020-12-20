@@ -199,7 +199,7 @@ boot_algo.multclust <- function(preprocessed_object){
         #S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
         #SXinvXXRu <-collapse::fsum(XinvXXr , clustid[x])
         
-        S_diag_XinvXXRu_S <- aggregate.Matrix(diag_XinvXXRuS, clustid[x]) # c* x c
+        S_diag_XinvXXRu_S <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS, clustid[x]) # c* x c
         SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
         K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX # c* x x
         tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
@@ -228,10 +228,15 @@ boot_algo.multclust <- function(preprocessed_object){
  
   
     tKK_sum <- Matrix::t(Reduce("+", tKK))
-    denom <- Matrix::colSums(v * tKK_sum %*% v)
+    denom_2 <- Matrix::colSums(v * tKK_sum %*% v)
+    denom_2 <- ifelse(denom_2 > 0, denom_2, NA)
+    denom <- sqrt(denom_2)
     numer <- SXinvXXRu %*% v 
     
     t <- abs(numer) / denom
+    t <- t[!is.na(t)]
+    
+    defect_t <- B - (B - length(t))
     
     t_boot <- t[2:(B + 1)]
     p_val <- mean(abs(t[1] - beta0) < (t_boot))

@@ -26,7 +26,7 @@ create_data_1 <-
         Q2_defence = factor(sample(1:numb_fe2, N, TRUE)),
         #Q2_defence = draw_likert(x = ideology + 0.5, type = 7),
         treatment = fabricatr::draw_binary(0.5, N = N),
-        proposition_vote = fabricatr::draw_binary(latent = ideology + 0.01 * treatment, link = "probit")
+        proposition_vote = fabricatr::draw_binary(latent = ideology + 0.1 * treatment, link = "probit")
       )
     
     setDT(voters)
@@ -36,7 +36,7 @@ create_data_1 <-
   }
 
 create_data_2 <- 
-  function(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2){
+  function(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed){
     
     #' Function creates data for tests and examples
     #' @import data.table
@@ -46,6 +46,7 @@ create_data_2 <-
     #' @param icc intra-cluster correlation 
     #' @export
     
+    set.seed(seed)
     voters <- 
       fabricatr::fabricate(
         N = N,
@@ -65,7 +66,7 @@ create_data_2 <-
         Q1_immigration = factor(sample(1:numb_fe1, N, TRUE)),
         Q2_defence = factor(sample(1:numb_fe2, N, TRUE)),   
         treatment = fabricatr::draw_binary(0.5, N = N),
-        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.01 * treatment, link = "probit")
+        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.1 * treatment, link = "probit")
       )
     
     setDT(voters)

@@ -6,9 +6,9 @@
 \usage{
 \method{boottest}{felm}(
   object,
-  clustid,
   param,
   B,
+  clustid,
   fe = NULL,
   weights = NULL,
   conf_int = NULL,
@@ -20,8 +20,6 @@
 }
 \arguments{
 \item{object}{An object of class fixest}
-
-\item{clustid}{A vector with the clusters}
 
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
 

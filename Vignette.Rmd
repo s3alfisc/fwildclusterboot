@@ -1,0 +1,192 @@
+---
+title: "Vignette"
+author: "Alexander Fischer"
+date: "12/2/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Simulate Data 
+In a first step, simulate a data set with 10000 individual observations that are grouped in 50 clusters and with a small intra-cluster correlation of 0.01. The small intra-cluster correlation implies that, in theory, inference based on cluster-robust covariance estimates should lead to results that are very similar to the bootstrap. 
+
+```{r, warning = FALSE, message=FALSE}
+library(fwildclusterboot)
+
+
+B <- 10000
+seed <- 942413
+set.seed(seed)
+voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 40, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
+voters[1, proposition_vote := NA]
+voters[2, group_id1 := NA]
+head(voters)
+```
+
+
+## Fit the regression model
+
+The `fwildclusterboot` package supports estimation of linear models based on 
+- `lm()` from `base` R
+- `felm()` from `lfe`
+- `feols()` from `fixest`
+
+```{r, warning = FALSE, message = FALSE}
+library(lfe)
+library(fixest)
+library(sandwich)
+library(multiwayvcov)
+
+# 1) boottest based on object of class lm
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
+
+# 2) boottest based on object of class fixest
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
+feols_fit1 <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+feols_fit2 <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, data = voters)
+
+# 3) bootest based on object of class felm
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 |  group_id1, weights = NULL, data = voters)
+felm_fit1 <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+```
+
+## The boottest command
+
+The `boottest` function always calculates p-values for a given univariate hypothesis test.
+Second and by default, the boottest function calculates confidence intervals by inversion of the p-value. The user can considerably speed up the inference procedure by setting the argument `conf_int = FALSE`, in which case no confidence intervals are computed.
+
+```{r, warning = FALSE, message = FALSE}
+# 1) boottest based on object of class lm
+boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+
+# 2) bootest based on object of class feols
+ boot_fixest = boottest(feols_fit, clustid = ~group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+ boot_fixest1 = boottest(feols_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
+
+# 3) boottest based on object of class felm
+boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+boot_felm1 = boottest(felm_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
+```
+
+```{r, warning = FALSE, message=FALSE}
+# 1) boottest based on object of class lm
+boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+
+# 2) bootest based on object of class feols
+boot_fixest = boottest(feols_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+
+boot_fixest1 = boottest(feols_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
+# boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
+
+# 3) boottest based on object of class felm
+boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_felm1 = boottest(felm_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+```
+
+If a model with more than one fixed effect is passed to `boottest()`, the function will by default select the fixed effect with the largest number of groups and project it out within the bootstrap. 
+
+
+## Two-Way Clustering 
+
+`boottest()` currently allows for up to two-way clustering. 
+
+## Some Tests with 2-way clustering 
+
+```{r}
+boot_lm <-  boottest(lm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+ boot_fixest <-  boottest(feols_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+ boot_felm <-  boottest(felm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+```
+
+## The `summarize_boot()` function
+
+The function `summarize_boot` collects the results. 
+Boottest further comes with a `tidy` method which, in analogy with the `broom` package, returns the estimation results as a data.frame.
+
+```{r, warning = FALSE, message=FALSE}
+summarize_boot(boot_lm)
+summarize_boot(boot_fixest)
+summarize_boot(boot_felm)
+
+tidy(boot_lm)
+
+```
+
+
+
+
+
+## A comparison to other wild cluster bootstrap implementations in R and Stata's `boottest` package
+
+```{r}
+library(data.table)
+library(lmtest)
+library(sandwich)
+
+seed <- 4
+voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 30, numb_fe2 = 10, seed = seed)
+
+
+
+fwrite(voters, "C:/Users/alexa/Dropbox/fwildclusterboot/voters.csv")
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration + Q2_defence, weights = NULL, data = voters)
+summary(lm_fit)
+
+B <- 10000
+
+vce <- vcov(lm_fit, cluster = ~ group_id1 + group_id2, R = B)
+coeftest(lm_fit, vce)
+
+vcovbs <- vcovBS(lm_fit, cluster = ~ group_id1 + group_id2, R = B, type = "wild-rademacher", cores = 4)
+coeftest(lm_fit,vcovbs)
+
+boot_lm3 = boottest(lm_fit, clustid = ~ group_id1 + group_id2, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+
+tidy(boot_lm3)
+
+# options(boot.ncpus = 4)
+# res <- cluster.boot(lm_fit, cluster = ~group_id1 + group_id2, R = B, wild_type = "rademacher", parallel = TRUE)
+# coeftest(lm_fit,res)
+
+
+# microbenchmark(
+#   boot_lm2 = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE), 
+#   vcovBS(lm_fit, cluster = ~ group_id1 , R = B, type = "wild-rademacher", cores = 1), 
+#   vcovBS(lm_fit, cluster = ~ group_id1 , R = B, type = "wild-rademacher", cores = 2), 
+#   vcovBS(lm_fit, cluster = ~ group_id1 , R = B, type = "wild-rademacher", cores = 3), 
+#   vcovBS(lm_fit, cluster = ~ group_id1 , R = B, type = "wild-rademacher", cores = 4), 
+#   times = 3
+# )
+# 
+# microbenchmark(
+#   boot_lm2 = boottest(lm_fit, clustid = ~ group_id1 + group_id2, B = B, seed = seed, param = "treatment", conf_int = TRUE), 
+#   vcovBS(lm_fit, cluster = ~ group_id1 + group_id2, R = B, type = "wild-rademacher", cores = 4), 
+#   times = 1
+# )
+# 
+# microbenchmark(
+#   boot_lm = boottest(lm_fit, clustid = ~ group_id1 + group_id2, B = B, seed = seed, param = "treatment", conf_int = TRUE), 
+#   boot_felm = boottest(felm_fit, clustid = ~ group_id1 + group_id2, B = B, seed = seed, param = "treatment", conf_int = TRUE), 
+#   times = 1
+# )
+
+```
+
+```{stata, engine.path = "C:/Program Files/Stata16/StataIC-64.exe"}
+clear
+import delimited "C:/Users/alexa/Dropbox/fwildclusterboot/voters.csv"
+reg proposition_vote  treatment ideology1 log_income q1_immigration, vce(cluster group_id1)
+boottest treatment, reps(9999) nograph
+reg proposition_vote  treatment ideology1 log_income q1_immigration, vce(cluster group_id2)
+boottest treatment, reps(9999) nograph
+
+reghdfe proposition_vote  treatment ideology1 log_income, absorb(q1_immigration) vce(cluster group_id1 group_id2)
+boottest treatment, reps(9999) nograph
+```
+
+
+
