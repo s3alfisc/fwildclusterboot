@@ -259,6 +259,7 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   # small sample correction for clusters 
   G <- sapply(clustid, function(x) length(unique(x)))
   small_sample_correction <- G / (G - 1)
+  small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
   
   Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
   P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
@@ -325,14 +326,19 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
       }
     }
     
-    
     tKK_sum <- Matrix::t(Reduce("+", tKK))
-    denom <- Matrix::colSums(v * tKK_sum %*% v)
+    denom_2 <- Matrix::colSums(v * tKK_sum %*% v)
+    #denom_2 <- ifelse(denom_2 > 0, denom_2, NA)
+    denom <- suppressWarnings(sqrt(denom_2))
     numer <- SXinvXXRu %*% v 
     
-    t <- abs(numer) / sqrt(denom)
+    t <- abs(numer) / denom
+    delete_invalid_t_total <- sum(is.na(t))
+    t <- t[!is.na(t)]
     
-    t_boot <- t[2:(B + 1)]
+    t_boot <- t[2:(B + 1 - delete_invalid_t_total)]
+    
+    t_boot <- t[2:(B + 1 - delete_invalid_t_total)]
     p_val <- mean(abs(t[1] - beta0) < (t_boot))
     
     #res <- list(p_val = p_val, 

@@ -164,6 +164,7 @@ boot_algo.multclust <- function(preprocessed_object){
   # small sample correction for clusters 
   G <- sapply(clustid, function(x) length(unique(x)))
   small_sample_correction <- G / (G - 1)
+  small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
   
   Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
   P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
@@ -229,21 +230,25 @@ boot_algo.multclust <- function(preprocessed_object){
   
     tKK_sum <- Matrix::t(Reduce("+", tKK))
     denom_2 <- Matrix::colSums(v * tKK_sum %*% v)
-    denom_2 <- ifelse(denom_2 > 0, denom_2, NA)
-    denom <- sqrt(denom_2)
+    #denom_2 <- ifelse(denom_2 > 0, denom_2, NA)
+    denom <- suppressWarnings(sqrt(denom_2))
     numer <- SXinvXXRu %*% v 
     
     t <- abs(numer) / denom
+    delete_invalid_t_total <- sum(is.na(t))
+    if(delete_invalid_t_total > 0){
+      warning(paste0(delete_invalid_t_total, " replications returned an infeasible test statistic and were deleted from the bootstrap distribution."))
+    }
+    
     t <- t[!is.na(t)]
     
-    defect_t <- B - (B - length(t))
-    
-    t_boot <- t[2:(B + 1)]
+    t_boot <- t[2:(B + 1 - delete_invalid_t_total)]
     p_val <- mean(abs(t[1] - beta0) < (t_boot))
     
     res <- list(p_val = p_val, 
                 t = t, 
-                t_boot = t_boot)
+                t_boot = t_boot, 
+                delete_invalid_t_total = delete_invalid_t_total)
     res
   }
   
@@ -255,6 +260,7 @@ boot_algo.multclust <- function(preprocessed_object){
   p_val <- p_val_res$p_val
   t <- p_val_res$t
   t_boot <- p_val_res$t_boot
+  invalid_t <- p_val_res$delete_invalid_t_total
     
   res  <- list(p_val = p_val,
                t_stat = t[1],
@@ -268,7 +274,8 @@ boot_algo.multclust <- function(preprocessed_object){
                invXX = invXX,
                v = v,
                Xr = Xr,
-               XinvXXr = XinvXXr)
+               XinvXXr = XinvXXr, 
+               invalid_t = invalid_t)
   class(res) <- "algo_multclust"
   
   res
