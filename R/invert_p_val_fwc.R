@@ -113,14 +113,14 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   j <- 1
 
   while(check == FALSE){
-      print("check")
+      #print("check")
       if(j > len_inflate){
         break("Boottest confidence set calculation fails because no p-value < alpha could succesfully
             be guessed.")
       }
       # start guesses by taking sandwich cluster confidence intervals + inflation factor
       starting_vals <- as.numeric(point_estimate + c(-inflate_se[j], inflate_se[j]) * se_guess)
-      print(starting_vals)
+      #print(starting_vals)
       # take 25 starting values in between the guesses
       p_start <- rep(NaN, length(starting_vals))
       
@@ -133,7 +133,7 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
         check <- TRUE
       }
       j <- j + 1
-      print(p_start)
+      #print(p_start)
     }
     
     test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
@@ -357,14 +357,14 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   j <- 1
   
   while(check == FALSE){
-    print("check")
+    #print("check")
     if(j > len_inflate){
       break("Boottest confidence set calculation fails because no p-value < alpha could succesfully
             be guessed.")
     }
     # start guesses by taking sandwich cluster confidence intervals + inflation factor
     starting_vals <- as.numeric(point_estimate + c(-inflate_se[j], inflate_se[j]) * se_guess)
-    print(starting_vals)
+    #print(starting_vals)
     # take 25 starting values in between the guesses
     p_start <- rep(NaN, length(starting_vals))
     
@@ -377,7 +377,7 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
       check <- TRUE
     }
     j <- j + 1
-    print(p_start)
+    #print(p_start)
   }
 
   test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
