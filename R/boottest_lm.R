@@ -67,8 +67,14 @@ boottest.lm <- function(object,
   # Invert p-value
   point_estimate <- object$coefficients[param]
   
-  # if(clustid_dims == 1){
   #   # boot algoritm
+  N_G_2 <- 2^preprocess$N_G
+  if(N_G_2 < B){
+    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution. Therefore, 
+                  B = ", N_G_2, "."))
+    B <- N_G_2
+  }
+  
     res <- boot_algo(preprocess)
     # compute confidence sets
    

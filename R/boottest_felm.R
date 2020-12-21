@@ -39,27 +39,26 @@ boottest.felm  <- function(object,
   check_arg(fe, "character scalar | NULL")
   
 
-    #   setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-    #   file.sources = list.files(pattern="*.R")
-    #   sapply(file.sources, source, .GlobalEnv)
-    #   set.seed(3129)
-    #   voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.21, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 122)
-    # voters[1, group_id1 := NA]
-    # voters[2, proposition_vote := NA]
-    #   object <- felm(proposition_vote ~ treatment + Q1_immigration |  Q2_defence | 0 | group_id1 , data = voters)
-    #   #fe = "ideological_label"
-    #   fe = NULL
-    #   # fe = NULL
-    #    clustid <- c("group_id1", "group_id2")
-    #    param <- "treatment"
-    #    B = 10000
-    #    alpha = NULL 
-    #    weights = NULL
-    #    conf_int = NULL 
-    #    debug = FALSE
-    #    seed = NULL
-    #    beta0 = 0
-    # summary(object)
+    #    setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+    #    file.sources = list.files(pattern="*.R")
+    #    sapply(file.sources, source, .GlobalEnv)
+    #    set.seed(3129)
+    #    voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.21, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 122)
+    #  voters[1, group_id1 := NA]
+    #  voters[2, proposition_vote := NA]
+    #    object <- felm(proposition_vote ~ treatment + Q1_immigration |  Q2_defence | 0 | group_id1 , data = voters)
+    # fe = "Q2_defence"
+    # #   # fe = NULL
+    #     clustid <- c("group_id1", "group_id2")
+    #     param <- "treatment"
+    #     B = 10000
+    #     alpha = NULL 
+    #     weights = NULL
+    #     conf_int = NULL 
+    #     debug = FALSE
+    #     seed = NULL
+    #     beta0 = 0
+    # # summary(object)
   
     preprocess <- preprocess(object = object,
                            param = param,
@@ -72,10 +71,15 @@ boottest.felm  <- function(object,
   # Invert p-value
   point_estimate <- object$coefficients[param, ]
   
-  # if(clustid_dims == 1){
-  #   # boot algoritm
+  N_G_2 <- 2^preprocess$N_G
+  if(N_G_2 < B){
+    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution. Therefore, 
+                  B = ", N_G_2, "."))
+    B <- N_G_2
+  }
+  
   res <- boot_algo(preprocess)
-  #res$p_val
+
   # compute confidence sets
   
   if(is.null(conf_int) || conf_int == TRUE){

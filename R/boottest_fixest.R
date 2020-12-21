@@ -25,59 +25,59 @@ boottest.fixest  <- function(object,
   #'@import dreamerr
   #'@export
   #'@method boottest fixest
-
-          #  setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-          #  file.sources = list.files(pattern="*.R")
-          #  sapply(file.sources, source, .GlobalEnv)
-          #  # set.seed(6261)
-          #  voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
-          #  voters[1:2, proposition_vote:=NA]
-          #  voters[3, group_id1 := NA]      #  
-          #  object <- feols(proposition_vote ~ treatment + ideology1 + log_income , weights = NULL, data = voters)
-          # clustid <- "group_id1"
-          #  fe = NULL
-          #  param <- "treatment"
-          #  B = 10000
-          #  weights = NULL
-          #  conf_int = NULL 
-          #  debug = FALSE
-          #  seed = NULL
-          #  beta0 = NULL
-          #  alpha = NULL
-          # Step 1: check arguments of feols call
-  #formula <- object$call$fml
-  
-  #dreamerr::check_arg(object, "")
-  #check_arg(data, "data.frame | named list")
-  #check_arg(clustid, "os formula var(data, env) mbt", .data = data)
-  #check_arg(clustid, "os formula | data.frame | named list")
-  
-  check_arg(clustid, "character vector | scalar character")
-  check_arg(param, "scalar character")
-  check_arg(B, "scalar numeric ") 
-  check_arg(alpha, "scalar numeric | NULL")
-  check_arg(weights, "NULL")
-  check_arg(conf_int, "logical scalar | NULL")
-  check_arg(debug, "logical scalar")
-  check_arg(seed, "scalar integer | NULL")
-  check_arg(beta0, "numeric scalar | NULL")
-  check_arg(fe, "character scalar | NULL")
-  
-  #check_arg(parallel, "logical scalar | NULL")
-  
-  #if(is.null(parallel)){parallel <- FALSE}
-  
-  # if(!is.null(weights)){
-  #   stop("Currently, boottest does not support weighted least squares. weights 
-  #        must be NULL.")
-  # }
-  
-  if(!is.null(seed)){
-    set.seed(seed)
-  } else if(is.null(seed)){
-    set.seed(2)
-  }
-  
+# 
+#             setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+#             file.sources = list.files(pattern="*.R")
+#             sapply(file.sources, source, .GlobalEnv)
+#             # set.seed(6261)
+#             voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+#             voters[1:2, proposition_vote:=NA]
+#             voters[3, group_id1 := NA]      #  
+#             object <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, data = voters)
+#            clustid <- "group_id1"
+#             fe = "Q1_immigration"
+#             param <- "treatment"
+#             B = 10000
+#             weights = NULL
+#             conf_int = NULL 
+#             debug = FALSE
+#             seed = NULL
+#             beta0 = NULL
+#             alpha = NULL
+#           # Step 1: check arguments of feols call
+#   #formula <- object$call$fml
+#   
+#   #dreamerr::check_arg(object, "")
+#   #check_arg(data, "data.frame | named list")
+#   #check_arg(clustid, "os formula var(data, env) mbt", .data = data)
+#   #check_arg(clustid, "os formula | data.frame | named list")
+#   
+#   check_arg(clustid, "character vector | scalar character")
+#   check_arg(param, "scalar character")
+#   check_arg(B, "scalar numeric ") 
+#   check_arg(alpha, "scalar numeric | NULL")
+#   check_arg(weights, "NULL")
+#   check_arg(conf_int, "logical scalar | NULL")
+#   check_arg(debug, "logical scalar")
+#   check_arg(seed, "scalar integer | NULL")
+#   check_arg(beta0, "numeric scalar | NULL")
+#   check_arg(fe, "character scalar | NULL")
+#   
+#   #check_arg(parallel, "logical scalar | NULL")
+#   
+#   #if(is.null(parallel)){parallel <- FALSE}
+#   
+#   # if(!is.null(weights)){
+#   #   stop("Currently, boottest does not support weighted least squares. weights 
+#   #        must be NULL.")
+#   # }
+#   
+#   if(!is.null(seed)){
+#     set.seed(seed)
+#   } else if(is.null(seed)){
+#     set.seed(2)
+#   }
+#   
   
  
   preprocess <- suppressWarnings(preprocess(object = object, 
@@ -87,18 +87,6 @@ boottest.fixest  <- function(object,
                                   alpha = alpha, 
                                   fe = fe))
   
-   # microbenchmark(preprocess(object = object1, 
-   #                           param = param,
-   #                           clustid = clustid,
-   #                           beta0 = beta0,
-   #                           alpha = alpha, 
-   #                           fe = fe), 
-   #                preprocess(object = object2, 
-   #                           param = param,
-   #                           clustid = clustid,
-   #                           beta0 = beta0,
-   #                           alpha = alpha, 
-   #                           fe = fe))
   
   clustid_dims <- preprocess$clustid_dims
   # Invert p-value
@@ -106,6 +94,15 @@ boottest.fixest  <- function(object,
   
   # if(clustid_dims == 1){
   #   # boot algoritm
+  
+  N_G_2 <- 2^preprocess$N_G
+  if(N_G_2 < B){
+    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution. Therefore, 
+                  B = ", N_G_2, "."))
+    B <- N_G_2
+  }
+
+  
   res <- boot_algo(preprocess)
   #res$p_val
   #summary(object, se = "cluster", cluster = "group_id1")  
