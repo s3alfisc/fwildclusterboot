@@ -73,10 +73,10 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe){
   } 
 
   
-  fml_wo_fe <- formula(Formula::Formula(object$formula), lhs = 1, rhs = 1)
-  fml_fe <- formula(Formula::Formula(object$formula), lhs = 0, rhs = 2)
-  fml_cluster <- formula(Formula::Formula(object$formula), lhs = 0, rhs = 4)
-  fml_iv <-  formula(Formula::Formula(object$formula), lhs = 0, rhs = 3)
+  fml_wo_fe <- suppressWarnings(formula(Formula::Formula(object$formula), lhs = 1, rhs = 1))
+  fml_fe <- suppressWarnings(formula(Formula::Formula(object$formula), lhs = 0, rhs = 2))
+  fml_cluster <- suppressWarnings(formula(Formula::Formula(object$formula), lhs = 0, rhs = 4))
+  fml_iv <-  suppressWarnings(formula(Formula::Formula(object$formula), lhs = 0, rhs = 3))
   
   numb_fe <- length(model_fe_names)
   
@@ -113,7 +113,7 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe){
   } else if(data_diff > 1){
     warning(paste(data_diff, "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."))
   } else if(data_diff < 0){
-    stop("nrow(data_all) < nrow(data_diff) - this cannot be correct.")
+    stop("nrow(data_cluster) < nrow(data_clustid) - this cannot be correct.")
   }
   
   # not needed - no post-estimation allowed
@@ -165,7 +165,8 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe){
       fml_design <- formula(paste0(as.character(fml_wo_fe), "+", paste0(model_fe_names[names(model_fe_names) != fe], collapse = "+")))
     }
 
-    model_frame <- model.frame(fml_design, data_clustid)
+    # because fe is projected out, data matrix should not contain constant
+    model_frame <- model.frame(update(fml_design, . ~ . - 1), data_clustid)
     X <- model.matrix(model_frame, data = data_clustid)
     Y <- model.response(model_frame)
     

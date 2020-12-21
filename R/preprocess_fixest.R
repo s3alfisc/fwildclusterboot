@@ -125,7 +125,8 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe){
       fml_design <- formula(paste0(as.character(fml), "+", paste0(model_fe_names[model_fe_names != fe], collapse = "+")))
     }
     
-    model_frame <- model.frame(fml_design, data_all)
+    # get rid of constant due to fe out-projection
+    model_frame <- model.frame(update(fml_design, . ~ . - 1), data_all)
     X <- model.matrix(model_frame, data = data_all)
     Y <- model.response(model_frame)
     
@@ -136,7 +137,7 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe){
     # demean X and Y 
     X <- collapse::fwithin(X, fixed_effect)#
     Y <- collapse::fwithin(Y, fixed_effect)
-    fixed_effect_W <- fixed_effect[, 1]
+    fixed_effect_W <- fixed_effect
     levels(fixed_effect_W) <- 1 / table(fixed_effect)
     W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effect_W)))
     n_fe <- length(unique(fixed_effect))
