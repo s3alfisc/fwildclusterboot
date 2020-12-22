@@ -11,11 +11,36 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha){
   # print warnings as they occur
   #options(warn=1)
   
-  check_arg(clustid, "os formula | data.frame | named list")
+  check_arg(clustid, "character scalar | character vector")
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(alpha, "numeric scalar | NULL")
   
-  data <- get_model_frame(object)
+  fml <- object$call$formula
+  fml_all_clustid <- formula(paste0(as.character(fml), "+", clustid, collapse = "+"))
+  
+  data <- model.frame(formula = fml, 
+                      data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
+                      drop.unused.levels = TRUE) 
+  data_clustid <- model.frame(formula = fml_all_clustid, 
+                      data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
+                      drop.unused.levels = TRUE) 
+  
+  data_diff <- nrow(data) - nrow(data_clustid)
+  
+  if(data_diff == 1){
+    warning(paste(data_diff, 
+                  "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."),
+            .call = FALSE)
+  } else if(data_diff > 1){
+    warning(paste(data_diff, 
+                  "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
+            .call = FALSE)
+  } else if(data_diff < 0){
+    stop("nrow(data_cluster) < nrow(data_clustid) - this cannot be correct.", 
+         .call = FALSE)
+  }
+  
+  clustid <- as.data.frame(data_clustid[, clustid])
   
   #formula <- object$call$fml
   weights <- object$call$weights
@@ -35,13 +60,13 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha){
     alpha <- 0.05
   }
   
-  # retrieve clusters / multiple clusters
-  if(inherits(clustid, "formula")) {
-    clustid_tmp <- expand.model.frame(object, clustid, na.expand = FALSE)
-    clustid <- model.frame(clustid, clustid_tmp, na.action = na.pass)
-  } else {
-    clustid <- as.data.frame(clustid, stringsAsFactors = FALSE)
-  }
+  # # retrieve clusters / multiple clusters
+  # if(inherits(clustid, "formula")) {
+  #   clustid_tmp <- expand.model.frame(object, clustid, na.expand = FALSE)
+  #   clustid <- model.frame(clustid, clustid_tmp, na.action = na.pass)
+  # } else {
+  #   clustid <- as.data.frame(clustid, stringsAsFactors = FALSE)
+  # }
   
   if(!(param %in% c(names(object$coefficients)))){
     warning("Parameter to test not in model or all. Please specify appropriate parameters to test.")
@@ -55,25 +80,25 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha){
   clustid_dims <- ncol(clustid)
   
   
-  # Handle omitted or excluded observations
-  if(!is.null(object$na.action)) {
-    if(class(object$na.action) == "exclude") {
-      clustid <- clustid[-object$na.action,]
-    } else if(class(object$na.action) == "omit") {
-      clustid <- clustid[-object$na.action,]
-    }
-    clustid <- as.data.frame(clustid)  # silly error somewhere
-  }
+  # # Handle omitted or excluded observations
+  # if(!is.null(object$na.action)) {
+  #   if(class(object$na.action) == "exclude") {
+  #     clustid <- clustid[-object$na.action,]
+  #   } else if(class(object$na.action) == "omit") {
+  #     clustid <- clustid[-object$na.action,]
+  #   }
+  #   clustid <- as.data.frame(clustid)  # silly error somewhere
+  # }
   
-  clustid_na <- is.na(clustid)
-  delete_clustid <- rowSums(clustid_na)
-  delete_clustid_sum <- sum(rowSums(clustid_na))
-  
-  if(delete_clustid_sum > 0){
-    warning(paste(delete_clustid_sum, "observations deleted due to missing values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."))
-  }
-  
-  data <- data[-delete_clustid, ]
+  # clustid_na <- is.na(clustid)
+  # delete_clustid <- rowSums(clustid_na)
+  # delete_clustid_sum <- sum(rowSums(clustid_na))
+  # 
+  # if(delete_clustid_sum > 0){
+  #   warning(paste(delete_clustid_sum, "observations deleted due to missing values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."))
+  # }
+  # 
+  # data <- data[-delete_clustid, ]
   
   #if(debug) print(class(clustid))
   
@@ -120,9 +145,10 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha){
   #measurevar <- "y"
   #formula <- as.formula(paste(measurevar, paste(groupvars, collapse=" + "), sep=" ~ "))
   
-  X <- model.matrix(as.formula(object$call), object$model)
-  Y <- as.matrix(model.frame(object)[, depvar])  
-  
+  model_frame <- model.frame(fml, data_clustid)
+  X <- model.matrix(model_frame, data = data_clustid)
+  Y <- model.response(model_frame)
+
   #res <- boottest_fun(Y = Y, X = X, R0 = R0, clustid = clustid, B = B, param = param)
   
   N <- length(Y)
