@@ -34,7 +34,7 @@ lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigrat
 feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
 felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 |  group_id1, weights = NULL, data = voters)
 
-boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_lm = boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
 boot_fixest = boottest(feols_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
 boot_felm = boottest(felm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
 
