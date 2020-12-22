@@ -71,7 +71,7 @@ boottest.felm  <- function(object,
   # Invert p-value
   point_estimate <- object$coefficients[param, ]
   
-  N_G_2 <- 2^preprocess$N_G
+  N_G_2 <- 2^max(preprocess$N_G)
   if(N_G_2 < B){
     warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution. Therefore, 
                   B = ", N_G_2, "."))
@@ -148,7 +148,7 @@ boottest.felm  <- function(object,
   
   class(res_final) <- "boottest"
   
-  res_final
+  invisible(res_final)
   
 } 
 
