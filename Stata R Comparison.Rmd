@@ -1,0 +1,107 @@
+---
+title: "Compare R and Stata"
+author: "Alexander Fischer"
+date: "12/21/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Create Data 
+```{r}
+library(fwildclusterboot)
+
+
+B <- 99999
+seed <- 21
+set.seed(seed)
+voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 40, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
+head(voters)
+
+data.table::fwrite(voters, "C:/Users/alexa/Dropbox/fwildclusterboot/voters.csv")
+
+# estimate 
+library(lfe)
+library(fixest)
+library(sandwich)
+library(multiwayvcov)
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 |  group_id1, weights = NULL, data = voters)
+
+boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_fixest = boottest(feols_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_felm = boottest(felm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
+
+# results
+tidy(boot_lm)
+tidy(boot_felm)
+tidy(boot_fixest)
+```
+
+
+## Run Stata 
+
+```{stata, engine.path = "C:/Program Files/Stata16/StataIC-64.exe"}
+clear 
+import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
+reg proposition_vote treatment ideology1 log_income q1_immigration, cluster(group_id1)
+boottest treatment, reps(9999) nograph
+```
+
+
+# Twoway Clustering 
+
+```{r}
+library(fwildclusterboot)
+library(fixest)
+library(lfe)
+
+
+B <- 19999
+seed <- 2341
+set.seed(seed)
+voters <- create_data_2(N = 2000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
+
+data.table::fwrite(voters, "C:/Users/alexa/Dropbox/fwildclusterboot/voters.csv")
+
+# estimate 
+library(lfe)
+library(fixest)
+library(sandwich)
+library(multiwayvcov)
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 |  group_id1, weights = NULL, data = voters)
+
+# boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
+# boot_fixest = boottest(feols_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
+# boot_felm = boottest(felm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
+
+boot_fixest = boottest(feols_fit, clustid = c("group_id1", "group_id2"), fe = "Q1_immigration", B = B, seed = seed, param = "treatment", conf_int = TRUE)
+
+
+
+# results
+tidy(boot_fixest)
+
+```
+
+```{stata, engine.path = "C:/Program Files/Stata16/StataIC-64.exe"}
+clear 
+import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
+reg proposition_vote treatment ideology1 log_income i.q1_immigration, cluster(group_id1)
+boottest treatment, reps(99999) nograph
+
+clear 
+import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
+reghdfe proposition_vote treatment ideology1 log_income, absorb(q1_immigration) vce(cluster group_id1 group_id2)
+boottest treatment, reps(99999) nograph
+```
+
