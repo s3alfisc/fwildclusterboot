@@ -1,5 +1,7 @@
 ---
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -26,30 +28,20 @@ It implements the fast wild cluster bootstrap algorithm developed in Roodman et 
 
 The package's central function is `boottest()`. It allows the user to test two-sided, univariate hypotheses using a wild cluster bootstrap. Importantly, it uses the "fast" algorithm developed in Roodman et al, which makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples--as long as the number of bootstrapping clusters is not too large.
 
-The `fwildclusterboot` package currently only supports one- and two-dimensional clustering and one-dimensional hypotheses, but allows for an arbitrary number of fixed effects in the estimation procedure.  
+The `fwildclusterboot` package currently supports one- and two-dimensional clustering and one-dimensional hypotheses.
 
-The package is highly experimental and currently does not include any unit tests.
+The package is highly experimental and only includes few unit tests.
 
 The following will be added in the future: 
-- support for multivariate hypotheses 
-- bootstrap distributions other then the rademacher distribution
 
-## Installation
-
-You can install the released version of `fwildclusterboot` from github by running 
-
-```{r}
-library(devtools)
-#install_github("al_fisc/fwildclusterboot")
-```
-
-
+* support for multivariate hypotheses 
+* bootstrap distributions other then the rademacher distribution
 
 
 ```{r, echo=FALSE, include=FALSE, results="hide"}
  # setwd("C:/Users/alexa/Dropbox")
- #  devtools::install("fwildclusterboot")
- #  devtools::document("fwildclusterboot")
+ # devtools::install("fwildclusterboot")
+ # devtools::document("fwildclusterboot")
 #usethis::use_vignette("C:/Users/alexa/Dropbox/fwildclusterboot/my-vignette")
 # devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
 # devtools::check("fwildclusterboot")
@@ -81,15 +73,10 @@ In a first step, simulate a data set with 10000 individual observations that are
 ```{r, warning = FALSE, message=FALSE}
 library(fwildclusterboot)
 
-
 B <- 10000
 seed <- 942413
 set.seed(seed)
 voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 40, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
-head(voters)
-
-data.table::fwrite(voters, "voters.csv")
-
 ```
 
 The `fwildclusterboot` package supports estimation of linear models based on 
@@ -98,58 +85,15 @@ The `fwildclusterboot` package supports estimation of linear models based on
 - `feols()` from `fixest`
 
 ```{r, warning = FALSE, message = FALSE}
-library(lfe)
-library(fixest)
-library(sandwich)
-library(multiwayvcov)
-
-# 1) boottest based on object of class lm
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-
-# 2) boottest based on object of class fixest
-feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
-feols_fit1 <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-feols_fit2 <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, data = voters)
-
-# 3) bootest based on object of class felm
-felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 |  group_id1, weights = NULL, data = voters)
-felm_fit1 <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
 ```
 
 The `boottest` function always calculates p-values for a given univariate hypothesis test.
 Second and by default, the boottest function calculates confidence intervals by inversion of the p-value. The user can considerably speed up the inference procedure by setting the argument `conf_int = FALSE`, in which case no confidence intervals are computed.
 
-```{r, warning = FALSE, include = FALSE}
-# 1) boottest based on object of class lm
-boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE)
-
-# 2) bootest based on object of class feols
- boot_fixest = boottest(feols_fit, clustid = c("group_id1"), B = B, seed = seed, param = "treatment", conf_int = FALSE)
- boot_fixest1 = boottest(feols_fit1, clustid = c("group_id1"), B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
-
-# boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = FALSE, beta = 0)
-
-# 3) boottest based on object of class felm
-boot_felm = boottest(felm_fit, clustid =  "group_id1", B = B, seed = seed, param = "treatment", conf_int = FALSE)
-boot_felm1 = boottest(felm_fit1, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = FALSE)
-
-# microbenchmark(boot_felm = boottest(felm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE),
-#                boot_felm1 = boottest(felm_fit1, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE), times = 10)
-```
-
 ```{r, warning = FALSE, message=FALSE}
 # 1) boottest based on object of class lm
-boot_lm = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE)
-
-# 2) bootest based on object of class feols
-boot_fixest = boottest(feols_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
-
-boot_fixest1 = boottest(feols_fit1, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
-# boot_fixest2 = boottest(feols_fit2, clustid = voters$group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0)
-
-# 3) boottest based on object of class felm
-boot_felm = boottest(felm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
-boot_felm1 = boottest(felm_fit1, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
+boot_lm = boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
 ```
 
 The function `summarize_boot` collects the results. 
@@ -157,97 +101,92 @@ Boottest further comes with a `tidy` method which, in analogy with the `broom` p
 
 ```{r, warning = FALSE, message=FALSE}
 summarize_boot(boot_lm)
-
 tidy(boot_lm)
-tidy(boot_fixest)
-tidy(boot_felm)
-tidy(boot_fixest1)
-tidy(boot_felm1)
-
 ```
 
-Change the confidence level: 
 
-```{r}
-boot_lm_5 = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
+```{r, include = FALSE}
+boot_lm_5 = boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.05)
 
-boot_lm_20 = boottest(lm_fit, clustid = ~ group_id1, B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.20)
+boot_lm_20 = boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE, beta = 0, alpha = 0.20)
 
 summarize_boot(boot_lm_5)
 summarize_boot(boot_lm_20)
 
-confint(feols_fit, "treatment", level = 0.95, se = "cluster", cluster = "group_id1")
-confint(feols_fit, "treatment", level = 0.80, se = "cluster", cluster = "group_id1")
+#confint(feols_fit, "treatment", level = 0.95, se = "cluster", cluster = "group_id1")
+#confint(feols_fit, "treatment", level = 0.80, se = "cluster", cluster = "group_id1")
 
 ```
 
-Plot the confidence sets: 
-
-```{r, out.width="50%"}
+```{r, out.width="50%", include = FALSE}
 plot_boot(boot_lm)
 ```
 
 
-## Comparison to `cluster.boot()` from `multiwayvcov`
+## Installation
 
-The `multiwayvcov` package offers an alternative implementation of the wild bootstrap. 
-As can be seen, `multiwayvcov::cluster.boot()`, `boottest()` and sandwich standard errors produce similar results: 
+You can install the released version of `fwildclusterboot` from github by running 
 
-```{r, warning = FALSE, message=FALSE}
-library(multiwayvcov)
+```{r}
+library(devtools)
+#install_github("al_fisc/fwildclusterboot")
+```
+
+
+```{r, warning = FALSE, message=FALSE, include = FALSE}
+
+## Comparison to `vcovBS()` from `sandwich`
+
+#The `multiwayvcov` package offers an alternative implementation of the wild bootstrap. 
+#As can be seen, `sandwich::vcovBS`, `sandwich::vcov` and `boottest()` produce similar #results: 
+  
+library(sandwich)
 library(lmtest)
 
-res <- cluster.boot(lm_fit, cluster = ~ group_id1, parallel = FALSE, R = 1000, wild_type = "rademacher")
+res <- vcovBS(lm_fit, cluster = ~ group_id1, parallel = FALSE, R = 1000, wild_type = "rademacher")
 
-# 1) results from multiwayvcov
-coeftest(lm_fit, res)
+# 1) asymptotic sandwich standard errors 
+vocv <- vcovCL(lm_fit, ~ group_id1)
+head(coeftest(lm_fit, vcov))
+
+# 1) results from sandwich's cluster bootstrap 
+head(coeftest(lm_fit, res))
 
 # 2) results from fwildclusterboot
 summarize_boot(boot_lm)
-summarize_boot(boot_fixest)
 
 
-# 3) sandwich standard errors 
-vocv <- vcovCL(lm_fit, ~ group_id1)
-coeftest(lm_fit, vcov)
 
 ```
 
 
+
+```{r, include = FALSE}
 ## Some Tests with 2-way clustering 
 
-```{r}
 library(sandwich)
 library(lmtest)
-library(multiwayvcov)
-options(boot.ncpus = 4)
 rm(boot_lm); rm(boot_fixest); rm(boot_felm); rm(res)
 
 
-boot_lm <-  boottest(lm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
- boot_fixest <-  boottest(feols_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
- boot_felm <-  boottest(felm_fit, clustid = ~group_id1 + group_id2, B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+boot_lm <-  boottest(lm_fit, clustid = c("group_id1", "group_id2"), B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
 
 summarize_boot(boot_lm)
-summarize_boot(boot_fixest)
-summarize_boot(boot_felm)
 
 vocv <- vcovCL(lm_fit, ~ group_id1 + group_id2)
 coeftest(lm_fit, vcov)
 
-res <- cluster.boot(lm_fit, cluster = ~group_id1 + group_id2, R = 1000, wild_type = "rademacher", parallel = FALSE)
-# # 1) results from multiwayvcov
+vcovBS <- vcovBS(lm_fit, cluster = ~ group_id1, parallel = FALSE, R = 1000, wild_type = "rademacher")
 
-coeftest(lm_fit, res)
+head(coeftest(lm_fit, vcovBS))
 
-#confint(feols_fit, "treatment", level = 0.95, se = "twoway", cluster = c("group_id1", "group_id2"))
 ```
 
 
 
 ## Benchmark 
 
-Results of timing benchmarks of `fwildclusterboot` with `multiwayvcov` (on 4 cores) with
+Results of timing benchmarks of `fwildclusterboot` with `sandwich::vcovBS` (on 4 cores) with
 - N = 10000 observations
 - b = 10000 bootstrap iterations
 - n_g = 50 clusters
