@@ -31,10 +31,10 @@ two-dimensional clustering and one-dimensional hypotheses.
 
 The package is highly experimental and only includes few unit tests.
 
-The following will be added in the future:
+The following features will be added in the future:
 
   - support for multivariate hypotheses
-  - bootstrap distributions other then the rademacher distribution
+  - bootstrap distributions beyond the rademacher distribution
 
 ## The `boottest()` function
 
@@ -103,8 +103,12 @@ library(devtools)
 #install_github("al_fisc/fwildclusterboot")
 ```
 
-## Benchmark
+## Benchmarks
 
 Results of timing benchmarks of `fwildclusterboot` with
-`sandwich::vcovBS` (on 4 cores) with - N = 10000 observations - b =
-10000 bootstrap iterations - n\_g = 50 clusters
+`sandwich::vcovBS`.
+
+  - Experiment 1: N = 10000, B = 10000, one cluster with N\_G = 20
+  - Experiment 2: N = 10000, B = 10000, one cluster with N\_G = 60
+
+![Benchmarks.](C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.png)

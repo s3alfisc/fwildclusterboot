@@ -32,10 +32,10 @@ The `fwildclusterboot` package currently supports one- and two-dimensional clust
 
 The package is highly experimental and only includes few unit tests.
 
-The following will be added in the future: 
+The following features will be added in the future: 
 
 * support for multivariate hypotheses 
-* bootstrap distributions other then the rademacher distribution
+* bootstrap distributions beyond the rademacher distribution
 
 
 ```{r, echo=FALSE, include=FALSE, results="hide"}
@@ -184,34 +184,11 @@ head(coeftest(lm_fit, vcovBS))
 
 
 
-## Benchmark 
+## Benchmarks
 
-Results of timing benchmarks of `fwildclusterboot` with `sandwich::vcovBS` (on 4 cores) with
-- N = 10000 observations
-- b = 10000 bootstrap iterations
-- n_g = 50 clusters
+Results of timing benchmarks of `fwildclusterboot` with `sandwich::vcovBS`. 
 
+* Experiment 1: N = 10000, B = 10000, one cluster with N_G = 20
+* Experiment 2: N = 10000, B = 10000, one cluster with N_G = 60
 
-```{r, warnings = FALSE, echo = FALSE,  out.width="50%"}
-#knitr::include_graphics("C:/Users/alexa/Dropbox/fwildclusterboot/benchmar#ks/bench_boottest.png")
-#bench <- readRDS("C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/benc#h_boottest.rds")
-#print(bench)
-# library(microbenchmark)
-# options(boot.ncpus = 4)
-# 
-# 
-# bench <- 
-#     microbenchmark(
-#       # multiway = cluster.boot(lm_fit, cluster = voters$group_id1, parallel = FALSE, R = B, wild_type = "rademacher"),
-#       multiway_parallel = cluster.boot(lm_fit, cluster = voters$group_id1, parallel = TRUE, R = B, wild_type = "rademacher"),
-#       boottest_lm = boottest(lm_fit, clustid = voters$group_id1, B = B, param = "treatment"), 
-#       boottest_feols = boottest(feols_fit, clustid = voters$group_id1, B = B, param = "treatment"),
-#       #boottest_lm_p_val = boottest(lm_fit, clustid = voters$group_id1, B = b, param = "treatment", conf_int = FALSE), 
-#       #boottest_feols_p_val = boottest(feols_fit, clustid = voters$group_id1, B = b, param = "treatment", conf_int = FALSE),
-#       times = 3
-# )
-# 
-# bench
-```
-
-
+![Benchmarks.](C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.png){#id .class width=70% height=70%}
