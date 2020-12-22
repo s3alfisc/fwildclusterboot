@@ -184,6 +184,7 @@ boot_algo.multclust <- function(preprocessed_object){
 
     
     tKK <- list()
+    JJ <- list()
     
     XinvXXrX <- matrix(rep(XinvXXr, k), N, k) * X
     XinvXXRuS <- t(collapse::fsum(XinvXXRu, clustid$clustid))
@@ -203,7 +204,7 @@ boot_algo.multclust <- function(preprocessed_object){
         S_diag_XinvXXRu_S <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS, clustid[x]) # c* x c
         SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
         K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX # c* x x
-        tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
+        tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sa[xmple df correction
       }
     } else if(!is.null(W)){
       
@@ -223,14 +224,20 @@ boot_algo.multclust <- function(preprocessed_object){
         SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
         K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
         tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
-        
       }
     }
  
-  
+    # JJ_sum <- Reduce("+", JJ)
+    # denom_2 <- Matrix::colSums(JJ_sum)
+    
     tKK_sum <- Matrix::t(Reduce("+", tKK))
-    denom_2 <- Matrix::colSums(v * tKK_sum %*% v)
-    #denom_2 <- ifelse(denom_2 > 0, denom_2, NA)
+    
+    if(nrow(tKK_sum) >= 250){
+      denom_2 <- colSums(v * Rfast::mat.mult(as.matrix(tKK_sum), v))
+    } else{
+      denom_2 <- Matrix::colSums(v * tKK_sum %*% v)
+    }
+    
     denom <- suppressWarnings(sqrt(denom_2))
     numer <- SXinvXXRu %*% v 
     
@@ -278,6 +285,6 @@ boot_algo.multclust <- function(preprocessed_object){
                invalid_t = invalid_t)
   class(res) <- "algo_multclust"
   
-  res
+  invisible(res)
 }
 

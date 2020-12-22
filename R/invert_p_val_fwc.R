@@ -322,13 +322,19 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
         SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
         K <- S_diag_XinvXXRu_S - SXinvXXrX %*% invXX %*% tSuX
         tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
-        
       }
     }
     
+    #JJ_sum <- Reduce("+", JJ)
+    #denom_2 <- Matrix::colSums(JJ_sum)
     tKK_sum <- Matrix::t(Reduce("+", tKK))
-    denom_2 <- Matrix::colSums(v * tKK_sum %*% v)
-    #denom_2 <- ifelse(denom_2 > 0, denom_2, NA)
+    
+    if(nrow(tKK_sum) >= 250){
+      denom_2 <- colSums(v * Rfast::mat.mult(as.matrix(tKK_sum), v))
+    } else{
+      denom_2 <- Matrix::colSums(v * tKK_sum %*% v)
+    }
+    
     denom <- suppressWarnings(sqrt(denom_2))
     numer <- SXinvXXRu %*% v 
     
@@ -374,6 +380,14 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
     # take 25 starting values in between the guesses
     p_start <- rep(NaN, length(starting_vals))
     
+    # progress_bar <- function(i, n = length(starting_vals) * width){
+    #   width <- options()$width
+    #   cat(paste0(rep('.', i / n), collapse = ''))
+    #   #Sys.sleep(.05)
+    #   if (i == n) cat('.')
+    #   else cat('\014')
+    # }
+    
     for(i in 1:length(starting_vals)){
       p_start[i] <- p_val_null_x(starting_vals[i]) 
     }
@@ -393,9 +407,13 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   p <- rep(NaN, length(test_vals))
   
   
+  pb = txtProgressBar(min = 0, max = (length(test_vals) - 2), initial = 0, style = 3, char = "-") 
+  
   for(i in 2:(length(test_vals) - 1)){
     p[i] <- p_val_null_x(test_vals[i]) 
+    setTxtProgressBar(pb,i)
   }
+  close(pb)
     # substract alpha in function so that I will not need to 
     # do it in root finding algorithm, but then I will need to add 
     # alpha here
