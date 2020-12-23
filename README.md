@@ -111,5 +111,7 @@ Results of timing benchmarks of `fwildclusterboot` with
 
   - Experiment 1: N = 10000, B = 10000, one cluster with N\_G = 20
   - Experiment 2: N = 10000, B = 10000, one cluster with N\_G = 60
+  - Experiment 3: N = 10000, B = 10000, two closters with N\_G1 = 30 and
+    N\_G2 = 30, N\_G = 600
 
 <img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
