@@ -329,7 +329,7 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
     #denom_2 <- Matrix::colSums(JJ_sum)
     tKK_sum <- Matrix::t(Reduce("+", tKK))
     
-    if(nrow(tKK_sum) >= 250){
+    if(nrow(tKK_sum) >= 40){
       #denom_2 <- colSums(v * Rfast::mat.mult(as.matrix(tKK_sum), v))
       denom_2 <- colSums(v * eigenMatMult(as.matrix(tKK_sum), as.matrix(v)))
     } else{
