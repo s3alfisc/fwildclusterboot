@@ -330,7 +330,8 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
     tKK_sum <- Matrix::t(Reduce("+", tKK))
     
     if(nrow(tKK_sum) >= 250){
-      denom_2 <- colSums(v * Rfast::mat.mult(as.matrix(tKK_sum), v))
+      #denom_2 <- colSums(v * Rfast::mat.mult(as.matrix(tKK_sum), v))
+      denom_2 <- colSums(v * eigenMatMult(as.matrix(tKK_sum), as.matrix(v)))
     } else{
       denom_2 <- Matrix::colSums(v * tKK_sum %*% v)
     }
@@ -344,7 +345,6 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
     
     t_boot <- t[2:(B + 1 - delete_invalid_t_total)]
     
-    t_boot <- t[2:(B + 1 - delete_invalid_t_total)]
     p_val <- mean(abs(t[1] - beta0) < (t_boot))
     
     #res <- list(p_val = p_val, 
