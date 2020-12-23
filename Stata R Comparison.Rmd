@@ -17,7 +17,7 @@ library(fwildclusterboot)
 
 
 B <- 99999
-seed <- 21
+seed <- 213465
 set.seed(seed)
 voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 40, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
 head(voters)
@@ -64,9 +64,9 @@ library(lfe)
 
 
 B <- 19999
-seed <- 2341
+seed <- 234179
 set.seed(seed)
-voters <- create_data_2(N = 2000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
+voters <- create_data_2(N = 10000, N_G1 = 30, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
 
 data.table::fwrite(voters, "C:/Users/alexa/Dropbox/fwildclusterboot/voters.csv")
 
@@ -84,7 +84,9 @@ felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immi
 # boot_fixest = boottest(feols_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
 # boot_felm = boottest(felm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
 
-boot_fixest = boottest(feols_fit, clustid = c("group_id1", "group_id2"), fe = "Q1_immigration", B = B, seed = seed, param = "treatment", conf_int = TRUE)
+microbenchmark(
+boot_fixest = boottest(feols_fit, clustid = c("group_id1", "group_id2"), fe = "Q1_immigration", B = B, seed = seed, param = "treatment", conf_int = TRUE), 
+times = 1)
 
 
 
@@ -102,6 +104,6 @@ boottest treatment, reps(99999) nograph
 clear 
 import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
 reghdfe proposition_vote treatment ideology1 log_income, absorb(q1_immigration) vce(cluster group_id1 group_id2)
-boottest treatment, reps(99999) nograph
+boottest treatment, reps(19999) nograph
 ```
 

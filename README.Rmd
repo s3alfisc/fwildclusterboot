@@ -39,13 +39,15 @@ The following features will be added in the future:
 
 
 ```{r, echo=FALSE, include=FALSE, results="hide"}
- # setwd("C:/Users/alexa/Dropbox")
- # devtools::install("fwildclusterboot")
- # devtools::document("fwildclusterboot")
+setwd("C:/Users/alexa/Dropbox")
+devtools::install("fwildclusterboot")
+devtools::document("fwildclusterboot")
 #usethis::use_vignette("C:/Users/alexa/Dropbox/fwildclusterboot/my-vignette")
 # devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
 # devtools::check("fwildclusterboot")
 # usethis::use_vignette("my-vignette")
+setwd("C:/Users/alexa/Dropbox/fwildclusterboot")
+usethis::use_rcpp_eigen()
 
 
 # 
@@ -169,7 +171,7 @@ library(lmtest)
 rm(boot_lm); rm(boot_fixest); rm(boot_felm); rm(res)
 
 
-boot_lm <-  boottest(lm_fit, clustid = c("group_id1", "group_id2"), B = 1000, seed = seed, param = "treatment", conf_int = FALSE)
+boot_lm <-  boottest(lm_fit, clustid = c("group_id1", "group_id2"), B = 1000, seed = seed, param = "treatment", conf_int = TRUE)
 
 summarize_boot(boot_lm)
 
@@ -191,4 +193,18 @@ Results of timing benchmarks of `fwildclusterboot` with `sandwich::vcovBS`.
 * Experiment 1: N = 10000, B = 10000, one cluster with N_G = 20
 * Experiment 2: N = 10000, B = 10000, one cluster with N_G = 60
 
-![Benchmarks.](C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.png){#id .class width=70% height=70%}
+```{r,echo=FALSE, warning = FALSE, message = FALSE}
+bench <- readRDS("C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.rds")
+
+library(ggplot2)
+ggplot(aes(x = est, y = time), data = bench) + 
+  facet_wrap(~ experiment) + 
+  geom_boxplot() + 
+  scale_y_log10() + 
+  theme_bw() + 
+  xlab("") + 
+  ylab("time in s (log scale)") + 
+  theme(axis.text.x = element_text(angle=90, hjust=1)) 
+
+```
+
