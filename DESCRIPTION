@@ -12,9 +12,11 @@ License: GPL-3
 Imports: 
     data.table,
     estimatr,
-    fixest, 
-    Formula, 
-    fabricatr
+    fixest,
+    Formula,
+    fabricatr,
+    Rcpp, 
+    dreamerr
 Suggests: 
     testthat,
     lfe,
@@ -23,3 +25,6 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+LinkingTo: 
+    Rcpp,
+    RcppEigen
