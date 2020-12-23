@@ -25,7 +25,7 @@ bench_oneway_1 <-
       fwc_1 = boottest(lm_fit, clustid = "group_id1", B = B, param = "treatment"), 
       # fwc_2 = boottest(feols_fit, clustid = "group_id1", B = B, param = "treatment"),
       # fwc_3 = boottest(felm_fit, clustid = "group_id1", B = B, param = "treatment"),
-      times = 5
+      times = 1
 )
 
 plot_bench_oneway_1 <- 
@@ -51,7 +51,7 @@ bench_oneway_2 <-
     fwc_1 = boottest(lm_fit, clustid = "group_id1", B = B, param = "treatment"), 
     # fwc_2 = boottest(feols_fit, clustid = "group_id1", B = B, param = "treatment"),
     # fwc_3 = boottest(felm_fit, clustid = "group_id1", B = B, param = "treatment"),
-    times = 5
+    times = 1
   )
 
 plot_bench_oneway_2 <- 
@@ -75,7 +75,7 @@ bench_twoway_1 <-
     fwc_1 = boottest(lm_fit, clustid = c("group_id1", "group_id2"), B = B, param = "treatment"), 
     # fwc_2 = boottest(feols_fit, clustid = c("group_id1", "group_id2"), B = B, param = "treatment"),
     # fwc_3 = boottest(felm_fit, clustid = c("group_id1", "group_id2"), B = B, param = "treatment"),
-    times = 5
+    times = 1
 )
 
 plot_bench_twoway_1 <- 
@@ -107,7 +107,7 @@ res$est <- factor(res$est, levels = c("sandwich",
 library(ggplot2)
 
 final <- 
-ggplot(aes(x = est, y = time), data = res) + 
+ggplot(aes(x = est, y = time), data = bench) + 
   facet_wrap(~ experiment) + 
   geom_boxplot() + 
   scale_y_log10() + 
@@ -117,7 +117,7 @@ ggplot(aes(x = est, y = time), data = res) +
   theme(axis.text.x = element_text(angle=90, hjust=1)) 
 final
 
-ggsave( "C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.png")
+#ggsave( "C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.png")
 # ---------------------------------------------------------------------- # 
 
 saveRDS(bench, "C:/Users/alexa/Dropbox/fwildclusterboot/benchmarks/bench_boottest.rds")
