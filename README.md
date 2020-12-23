@@ -50,7 +50,7 @@ library(fwildclusterboot)
 B <- 10000
 seed <- 942413
 set.seed(seed)
-voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 40, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
+voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
 ```
 
 The `fwildclusterboot` package supports estimation of linear models
@@ -86,10 +86,10 @@ summarize_boot(boot_lm)
 #>  Number of Clusters:  20
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.018   1.629    0.128   -0.006    0.043
+#> treatment    0.011   1.118    0.292    -0.01    0.032
 tidy(boot_lm)
 #>             Estimate  t value Pr(>|t|)     CI Lower   CI Upper
-#> treatment 0.01826891 1.629005   0.1283 -0.005912488 0.04268912
+#> treatment 0.01080738 1.118153   0.2918 -0.009939883 0.03185713
 ```
 
 ## Installation
@@ -100,6 +100,7 @@ by running
 ``` r
 library(devtools)
 #> Loading required package: usethis
+#> Warning: package 'usethis' was built under R version 4.0.3
 #install_github("al_fisc/fwildclusterboot")
 ```
 

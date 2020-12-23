@@ -39,15 +39,15 @@ The following features will be added in the future:
 
 
 ```{r, echo=FALSE, include=FALSE, results="hide"}
-setwd("C:/Users/alexa/Dropbox")
-devtools::install("fwildclusterboot")
-devtools::document("fwildclusterboot")
-#usethis::use_vignette("C:/Users/alexa/Dropbox/fwildclusterboot/my-vignette")
-# devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
-# devtools::check("fwildclusterboot")
-# usethis::use_vignette("my-vignette")
-setwd("C:/Users/alexa/Dropbox/fwildclusterboot")
-usethis::use_rcpp_eigen()
+# setwd("C:/Users/alexa/Dropbox")
+# devtools::install("fwildclusterboot")
+# devtools::document("fwildclusterboot")
+# #usethis::use_vignette("C:/Users/alexa/Dropbox/fwildclusterboot/my-vignette")
+# # devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
+# # devtools::check("fwildclusterboot")
+# # usethis::use_vignette("my-vignette")
+# setwd("C:/Users/alexa/Dropbox/fwildclusterboot")
+# usethis::use_rcpp_eigen()
 
 
 # 
@@ -78,7 +78,7 @@ library(fwildclusterboot)
 B <- 10000
 seed <- 942413
 set.seed(seed)
-voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 40, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
+voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
 ```
 
 The `fwildclusterboot` package supports estimation of linear models based on 
