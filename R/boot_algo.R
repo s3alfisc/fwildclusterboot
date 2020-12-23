@@ -233,7 +233,8 @@ boot_algo.multclust <- function(preprocessed_object){
     tKK_sum <- Matrix::t(Reduce("+", tKK))
     
     if(nrow(tKK_sum) >= 250){
-      denom_2 <- colSums(v * Rfast::mat.mult(as.matrix(tKK_sum), v))
+      #denom_2 <- colSums(v * Rfast::mat.mult(as.matrix(tKK_sum), v))
+      denom_2 <- colSums(v * eigenMatMult(as.matrix(tKK_sum), as.matrix(v)))
     } else{
       denom_2 <- Matrix::colSums(v * tKK_sum %*% v)
     }
