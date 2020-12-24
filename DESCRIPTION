@@ -11,16 +11,17 @@ Description: Estimates fast wild cluster bootstrap for linear regression models.
 License: GPL-3
 Imports: 
     data.table,
-    estimatr,
-    fixest,
     Formula,
     fabricatr,
     Rcpp, 
-    dreamerr
+    dreamerr, 
+    Matrix, 
+    Matrix.utils, 
+    collapse
 Suggests: 
     testthat,
     lfe,
-    lmtest
+    fixest
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

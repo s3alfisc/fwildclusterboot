@@ -18,7 +18,6 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   #'@param XinvXXr A matrix. see boottest()
   #'@param SXinvXXRX A matrix. see boottest() for computation
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
-  #'@import pracma
   #'@import dreamerr
   
   check_arg(point_estimate, "numeric scalar")
@@ -222,8 +221,7 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   #'@param XinvXXr A matrix. see boottest()
   #'@param SXinvXXRX A matrix. see boottest() for computation
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
-  #'@import pracma
-  
+
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")
   check_arg(clustid, "data.frame")

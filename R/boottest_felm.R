@@ -13,7 +13,6 @@ boottest.felm  <- function(object,
   
   
   #' Function that runs boottest for object of class felm
-  #'@import Formula
   #'@import data.table
   #'@param object An object of class fixest
   #'@param param The univariate coefficients for which a hypothesis is to be tested

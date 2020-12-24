@@ -20,31 +20,32 @@ boottest.lm <- function(object,
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@method boottest lm
   #'@return An object of class boottest
-  #'@export
   #'@import sandwich
   #'@import lmtest
+  #'@export
+
 
   
   
    #execute all functions in fwildclusterboot 
-                  #  setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-                  #   file.sources = list.files(pattern="*.R")
-                  #  sapply(file.sources, source, .GlobalEnv)
-                  #    set.seed(6)
-                  #    voters <- create_data_2(N = 10000, N_G1 = 30, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 4)
-                  # #   # create a missing variable in group_id1
-                  #    voters[1, group_id1 := NA]
-                  #    voters[2, proposition_vote := NA]
-                  #    object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-                  #    clustid <- c("group_id1") 
-                  #    param <- "treatment"
-                  #    beta0 = 0
-                  #    alpha = 0.05
-                  #    B = 10000
-                  #    weights = NULL
-                  #    conf_int = NULL 
-                  #    debug = FALSE
-                  #   seed = NULL
+                   #  setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+                   #   file.sources = list.files(pattern="*.R")
+                   #  sapply(file.sources, source, .GlobalEnv)
+                   #    set.seed(6)
+                   #    voters <- create_data_2(N = 10000, N_G1 = 30, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 4)
+                   # #   # create a missing variable in group_id1
+                   #    voters[1, group_id1 := NA]
+                   #    voters[2, proposition_vote := NA]
+                   #    object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
+                   #    clustid <- c("group_id1") 
+                   #    param <- "treatment"
+                   #    beta0 = 0
+                   #    alpha = 0.05
+                   #    B = 10000
+                   #    weights = NULL
+                   #    conf_int = NULL 
+                   #    debug = FALSE
+                   #   seed = NULL
               
   check_arg(clustid, "character scalar | character vector")
   check_arg(param, "scalar character")
@@ -68,6 +69,10 @@ boottest.lm <- function(object,
   
   clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
   
+  if(!is.numeric(B)){
+    warning("Test 1: B is not numeric. ")
+  }
+  
   #   # boot algoritm
   N_G_2 <- 2^max(preprocess$N_G)
   if(N_G_2 < B){
@@ -76,9 +81,18 @@ boottest.lm <- function(object,
     B <- N_G_2
   }
   
+  if(!is.numeric(B)){
+    warning("Test 2: B is not numeric. ")
+  }
+  
+  
   res <- boot_algo(preprocess)
     # compute confidence sets
    
+  if(!is.numeric(res$B)){
+    warning("Test 3: B is not numeric. ")
+  }
+  
     if(is.null(conf_int) || conf_int == TRUE){
       # calculate guess for covariance matrix and standard errors
       vcov <- suppressWarnings(sandwich::vcovCL(object, cluster =  clustid_fml))

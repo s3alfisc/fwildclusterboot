@@ -2,9 +2,9 @@ boot_algo.oneclust <- function(preprocessed_object){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
+  #' @importFrom collapse fsum
   #' @return A list of ... 
-  #' 
-  
+
   # if(!inherits(preprocessed_object, "boottest_preprocessed")){
   #   stop("Estimation only works for inputs of class boottest_preprocessed.")
   # }
@@ -36,6 +36,10 @@ boot_algo.oneclust <- function(preprocessed_object){
   # error under the null hypothesis
   u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
   invXX <- solve(t(X) %*% X) # k x k matrix
+  
+  # print(N_G["clustid"])
+  # print(B)
+  # print(class(B))
   
   v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
   v[,1] <- 1
@@ -124,8 +128,12 @@ boot_algo.multclust <- function(preprocessed_object){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
-  #' @return A list of ... 
   #' @import Matrix.utils
+  #' @import Matrix
+  #' @importFrom collapse fsum
+  #' @return A list of ... 
+
+
   
   # if(!inherits(preprocessed_object, "boottest_preprocessed")){
   #   stop("Estimation only works for inputs of class boottest_preprocessed.")
@@ -155,6 +163,7 @@ boot_algo.multclust <- function(preprocessed_object){
   Xr0 <- matrix(X[, which(R0 == 1)], nrow(X), 1)
   # Yr for constraint leas squares with beta0 = c
   Yr <- Y - X[, which(R0 == 1)] * beta0
+  
   
   v <- matrix(sample(c(1, -1), N_G["clustid"] * (B + 1), replace = TRUE), N_G["clustid"], B + 1) # rademacher weights for all replications
   v[,1] <- 1
