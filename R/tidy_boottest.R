@@ -5,7 +5,7 @@
   
  summarize_boot <- function(x, ...){
    #'@export 
-   UseMethod("summary", x)
+   UseMethod("summarize_boot", x)
  }
 
 
@@ -37,10 +37,10 @@ tidy.boottest <- function(object){
   
 }
 
-summarize_boot <- function(object, digits = 3){
+summarize_boot.boottest <- function(object, digits = 3){
   
   #'@export 
-  #'@method summary boottest
+  #'@method summarize_boot boottest
   
   stopifnot(inherits(object, "boottest"))
 
