@@ -77,7 +77,7 @@ boottest.felm  <- function(object,
     B <- N_G_2
   }
   
-  res <- boot_algo(preprocess)
+  res <- boot_algo(preprocess, B)
 
   # compute confidence sets
   

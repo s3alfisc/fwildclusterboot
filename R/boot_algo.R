@@ -1,7 +1,8 @@
-boot_algo.oneclust <- function(preprocessed_object){
+boot_algo.oneclust <- function(preprocessed_object, B){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
+  #' @param B number of bootstrap iterations
   #' @importFrom collapse fsum
   #' @return A list of ... 
 
@@ -40,6 +41,7 @@ boot_algo.oneclust <- function(preprocessed_object){
   # print(N_G["clustid"])
   # print(B)
   # print(class(B))
+  
   
   v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
   v[,1] <- 1
@@ -124,10 +126,11 @@ boot_algo.oneclust <- function(preprocessed_object){
 }
 
 
-boot_algo.multclust <- function(preprocessed_object){
+boot_algo.multclust <- function(preprocessed_object, B){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
+  #' @param B number of bootstrap iterations
   #' @import Matrix.utils
   #' @import Matrix
   #' @importFrom collapse fsum
