@@ -259,7 +259,8 @@ boot_algo.multclust <- function(preprocessed_object, B){
     t <- abs(numer) / denom
     delete_invalid_t_total <- sum(is.na(t))
     if(delete_invalid_t_total > 0){
-      warning(paste0(delete_invalid_t_total, " replications returned an infeasible test statistic and were deleted from the bootstrap distribution."))
+      warning(paste0(delete_invalid_t_total, " replications returned an infeasible test statistic and were deleted from the bootstrap distribution."), 
+              .call = FALSE)
     }
     
     t <- t[!is.na(t)]
