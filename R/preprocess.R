@@ -1,4 +1,4 @@
-preprocess.lm <- function(object, param, clustid, beta0, alpha){
+preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
   
   #' function that pre-processes regression objects of type lm
   #'@param object An object of class lm
@@ -53,9 +53,9 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha){
   }
   
   if(!is.null(seed)){
-    set.seed(seed)
+    seed <- seed
   } else if(is.null(seed)){
-    set.seed(2)
+    seed <- 2
   }
   
   if(is.null(alpha)){
@@ -196,7 +196,8 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha){
                          N_G = N_G, 
                          alpha = alpha, 
                          W = NULL, 
-                         n_fe = NULL)
+                         n_fe = NULL, 
+                         seed = seed)
   if(clustid_dims == 1){
     class(res_preprocess) <- "oneclust"
   } else if(clustid_dims > 1){

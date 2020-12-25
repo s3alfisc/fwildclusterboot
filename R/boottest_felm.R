@@ -64,7 +64,8 @@ boottest.felm  <- function(object,
                            clustid = clustid,
                            beta0 = beta0,
                            alpha = alpha, 
-                           fe = fe)
+                           fe = fe, 
+                           seed = seed)
 
   clustid_dims <- preprocess$clustid_dims
   # Invert p-value
@@ -77,7 +78,7 @@ boottest.felm  <- function(object,
     B <- N_G_2
   }
   
-  res <- boot_algo(preprocess, B, seed)
+  res <- boot_algo(preprocess, B)
   
   # compute confidence sets
   

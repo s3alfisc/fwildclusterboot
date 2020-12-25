@@ -1,9 +1,8 @@
-boot_algo.oneclust <- function(preprocessed_object, B, seed){
+boot_algo.oneclust <- function(preprocessed_object, B){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
   #' @param B number of bootstrap iterations
-  #' @param seed controls seed for bootstrap draw
   #' @importFrom collapse fsum
   #' @return A list of ... 
 
@@ -29,6 +28,7 @@ boot_algo.oneclust <- function(preprocessed_object, B, seed){
   param <- preprocessed_object$param
   W <- preprocessed_object$W
   n_fe <- preprocessed_object$n_fe
+  seed <- preprocessed_object$seed
   
   Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
   
@@ -127,12 +127,11 @@ boot_algo.oneclust <- function(preprocessed_object, B, seed){
 }
 
 
-boot_algo.multclust <- function(preprocessed_object, B, seed){
+boot_algo.multclust <- function(preprocessed_object, B){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
   #' @param B number of bootstrap iterations
-  #' @param seed controls seed for bootstrap draw
   #' @import Matrix.utils
   #' @import Matrix
   #' @importFrom collapse fsum
@@ -163,6 +162,7 @@ boot_algo.multclust <- function(preprocessed_object, B, seed){
   param <- preprocessed_object$param
   W <- preprocessed_object$W
   n_fe <- preprocessed_object$n_fe
+  seed <- preprocessed_object$seed
   
   Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
   Xr0 <- matrix(X[, which(R0 == 1)], nrow(X), 1)

@@ -1,4 +1,4 @@
-preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe){
+preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed){
   
   #' function that pre-processes regression objects of type fixest
   #'@param object An object of class fixest
@@ -27,6 +27,12 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe){
   #if(!(fe %in% object$fixef_vars) | !is.null(fe)){
   #  stop("The fixed effect in boottest() is not a fixed effect in the model.")
   #}
+  
+  if(!is.null(seed)){
+    seed <- seed
+  } else if(is.null(seed)){
+    seed <- 2
+  }
   
   if(is.null(alpha)){
     alpha <- 0.05
@@ -172,7 +178,8 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe){
                          N_G = N_G, 
                          alpha = alpha, 
                          n_fe = n_fe, 
-                         W = W)
+                         W = W, 
+                         seed = seed)
   
   if(clustid_dims == 1){
     class(res_preprocess) <- "oneclust"

@@ -85,7 +85,8 @@ boottest.fixest  <- function(object,
                                   clustid = clustid,
                                   beta0 = beta0,
                                   alpha = alpha, 
-                                  fe = fe))
+                                  fe = fe, 
+                                  seed = seed))
   
   
   clustid_dims <- preprocess$clustid_dims
@@ -103,7 +104,7 @@ boottest.fixest  <- function(object,
   }
 
   
-  res <- boot_algo(preprocess, B, seed)
+  res <- boot_algo(preprocess, B)
   #res$p_val
   #summary(object, se = "cluster", cluster = "group_id1")  
   # compute confidence sets
