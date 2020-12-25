@@ -4,7 +4,7 @@
 \alias{preprocess.felm}
 \title{function that pre-processes regression objects of type fixest}
 \usage{
-\method{preprocess}{felm}(object, param, clustid, beta0, alpha, fe)
+\method{preprocess}{felm}(object, param, clustid, beta0, alpha, fe, seed)
 }
 \arguments{
 \item{object}{An object of class fixest}

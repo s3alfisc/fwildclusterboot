@@ -4,10 +4,12 @@
 \alias{boot_algo.multclust}
 \title{function that implements the fast bootstrap algorithm as described in Roodman et al (2009)}
 \usage{
-\method{boot_algo}{multclust}(preprocessed_object)
+\method{boot_algo}{multclust}(preprocessed_object, B)
 }
 \arguments{
 \item{preprocessed_object}{A preprocessed object of time preprocessed_boottest}
+
+\item{B}{number of bootstrap iterations}
 }
 \value{
 A list of ...

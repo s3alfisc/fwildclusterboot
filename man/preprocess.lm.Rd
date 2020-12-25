@@ -4,7 +4,7 @@
 \alias{preprocess.lm}
 \title{function that pre-processes regression objects of type lm}
 \usage{
-\method{preprocess}{lm}(object, param, clustid, beta0, alpha)
+\method{preprocess}{lm}(object, param, clustid, beta0, alpha, seed)
 }
 \arguments{
 \item{object}{An object of class lm}

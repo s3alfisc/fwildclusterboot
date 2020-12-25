@@ -4,7 +4,7 @@
 \alias{preprocess.fixest}
 \title{function that pre-processes regression objects of type fixest}
 \usage{
-\method{preprocess}{fixest}(object, param, clustid, beta0, alpha, fe)
+\method{preprocess}{fixest}(object, param, clustid, beta0, alpha, fe, seed)
 }
 \arguments{
 \item{object}{An object of class fixest}
