@@ -103,7 +103,7 @@ boottest.fixest  <- function(object,
   }
 
   
-  res <- boot_algo(preprocess, B)
+  res <- boot_algo(preprocess, B, seed)
   #res$p_val
   #summary(object, se = "cluster", cluster = "group_id1")  
   # compute confidence sets

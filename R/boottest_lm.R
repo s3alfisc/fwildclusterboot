@@ -88,7 +88,7 @@ boottest.lm <- function(object,
   }
   
   
-  res <- boot_algo(preprocess, B)
+  res <- boot_algo(preprocess, B, seed)
   
   #print(B)
     # compute confidence sets
