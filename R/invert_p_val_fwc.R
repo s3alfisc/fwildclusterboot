@@ -155,7 +155,9 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
     #if(sum(p < alpha) < 1){warning("Need to djust starting values: they are not p < alpha. Therefore, choose more
     #                              extreme starting values.")}
     
-    crossings <-  (p < alpha) - (p > alpha)
+    # note: one alpha <= and one > to handle the case where p is exactly 0.05 - in this case
+    # x crossing will not produce two pairs of (1, -1) and (-1, 1)
+    crossings <-  (p <= alpha) - (p > alpha)
     
     x_crossings <- rep(NA, length(test_vals))
     for(i in 1:26){
@@ -176,9 +178,9 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
 
   if(length(test_vals_higher_max) == 0 || length(test_vals_lower_max) == 0){
     stop("test_vals_lower or test_vals higher is logical(0). This means that no 
-          starting value x with property x1 < 0.05 < x2 has been found for one of the 
+          starting value x with property |p(x1) < 0.05| has been found for one of the 
           confidence set boundary guesses. As a consequence, the numerical root finding
-         will not work.")
+          procedure employed to invert p-values to compute confidence sets will not work.")
   }  
   
   
@@ -441,7 +443,7 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   
   if(length(test_vals_higher_max) == 0 || length(test_vals_lower_max) == 0){
     stop("test_vals_lower or test_vals higher is logical(0). This means that no 
-          starting value x with property x1 < 0.05 < x2 has been found for one of the 
+          starting value x with property |p(x1) < 0.05| has been found for one of the 
           confidence set boundary guesses. As a consequence, the numerical root finding
          will not work.")
   }  
