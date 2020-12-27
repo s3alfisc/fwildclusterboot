@@ -70,3 +70,25 @@ crosstab<- function(data, var1, var2){
 #   crosstab(data = as.matrix(W %*% u_hat), var1 = var1, var2 = var2), 
 #   crosstab2(data = as.matrix(W %*% u_hat), var1 = var1, var2 = var2)
 # )
+
+
+# set.seed(1)
+# a <- sample(1:5, 10, replace = TRUE)
+# b <- sample(1:3, 10, replace = TRUE)
+# y <- matrix(rnorm(10), 10, 1)
+
+crosstab4 <- function(data, var1, var2){
+  length_var1 <- length(unique(var1))
+  length_var2 <- length(unique(var2))
+  res <- aggregate(data, list(var1, var2), sum, drop = FALSE)
+  #res <- Matrix.utils::aggregate.Matrix(data, list(var1, var2), sum, drop = FALSE)
+  res <- res[, c("V1")]
+  res[is.na(res)] <- 0 
+  dim(res) <- c(length_var1, length_var2)
+  res
+}
+
+# res <- crosstab4(data = y, var1 = a, var2 = b)
+# class(res)
+# library(collapse)
+# fsum(y, cbind(a, b))
