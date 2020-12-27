@@ -54,7 +54,7 @@ boot_algo.oneclust <- function(preprocessed_object, B){
   #                data.table = as.matrix(data.table::data.table(prod = XinvXXr * matrix(rep(u_hat, 1), N, 1) , clustid = clustid)[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL]), 
   #                times = 100)
   
-  SXinvXXRu <-collapse::fsum(XinvXXr * matrix(rep(u_hat, 1), N, 1), clustid)
+  SXinvXXRu <-collapse::fsum(XinvXXr * u_hat, clustid)
   
   # SXinvXXRu_prep <- data.table::data.table(prod = XinvXXr * matrix(rep(u_hat, 1), N, 1) , clustid = clustid) 
   # SXinvXXRu <- as.matrix(SXinvXXRu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
@@ -75,7 +75,7 @@ boot_algo.oneclust <- function(preprocessed_object, B){
   # microbenchmark(collapse = collapse::fsum(matrix(rep(XinvXXr, k), N, k) * X, clustid), 
   #                 data.table = as.matrix(data.table::data.table(prod = matrix(rep(XinvXXr, k), N, k) * X, clustid = clustid)[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL]), 
   #                 times = 10)
-  SXinvXXRX <- collapse::fsum(matrix(rep(XinvXXr, k), N, k) * X, clustid)  
+  SXinvXXRX <- collapse::fsum(XinvXXr * X, clustid)  
   
   # if model with fixed effect
   if(!is.null(W)){
@@ -90,7 +90,7 @@ boot_algo.oneclust <- function(preprocessed_object, B){
   #SXu_prep <- data.table::data.table(prod = X * matrix(rep(u_hat, k), N, k), clustid = clustid) 
   #SXu <- as.matrix(SXu_prep[, lapply(.SD, sum), by = "clustid.clustid"][, clustid.clustid := NULL])
   
-  SXu <- collapse::fsum(X * matrix(rep(u_hat, k), N, k), clustid)
+  SXu <- collapse::fsum(X * as.vector(u_hat), clustid)
   
   J <- (diag_SXinvXXRu - SXinvXXRX  %*% invXX %*% t(SXu)) %*% v  
   
@@ -173,7 +173,8 @@ boot_algo.multclust <- function(preprocessed_object, B){
   v <- matrix(sample(c(1, -1), N_G["clustid"] * (B + 1), replace = TRUE), N_G["clustid"], B + 1) # rademacher weights for all replications
   v[,1] <- 1
   invXX <- solve(t(X) %*% X) # k x k matrix
-  XinvXXr <- X %*% (invXX %*% R0) # N x 1
+  XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
+  
 
   # small sample correction for clusters 
   G <- sapply(clustid, function(x) length(unique(x)))
@@ -190,17 +191,17 @@ boot_algo.multclust <- function(preprocessed_object, B){
      # error under the null hypothesis
     #u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
     u_hat <- Q + P %*% matrix(beta0, 1, length(beta0))
-    uX <- matrix(rep(u_hat, 1), N, k) * X
+    uX <- as.vector(u_hat) * X
     SuX <- collapse::fsum(uX, clustid$clustid)
     tSuX <- t(SuX)
-    XinvXXRu <- as.vector(XinvXXr * matrix(rep(u_hat, 1), N, 1))
+    XinvXXRu <-as.vector(XinvXXr * u_hat)
     #diag_XinvXXRuS <- t(collapse::fsum(diag(as.vector(XinvXXRu)), clustid$clustid))
 
     
     tKK <- list()
     JJ <- list()
     
-    XinvXXrX <- matrix(rep(XinvXXr, k), N, k) * X
+    XinvXXrX <- XinvXXr * X
     XinvXXRuS <- t(collapse::fsum(XinvXXRu, clustid$clustid))
     SXinvXXRu <- XinvXXRuS
     #SXinvXXRu <- t(collapse::fsum(XinvXXRu, clustid$clustid))
