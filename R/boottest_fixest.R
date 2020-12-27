@@ -26,24 +26,24 @@ boottest.fixest  <- function(object,
   #'@export
   #'@method boottest fixest
  
-            #  setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-            #  file.sources = list.files(pattern="*.R")
-            #  sapply(file.sources, source, .GlobalEnv)
-            #  # set.seed(6261)
-            #  voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
-            #  voters[1:2, proposition_vote:=NA]
-            #  voters[3, group_id1 := NA]      #  
-            #  object <- feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
-            # clustid <- "group_id1"
-            #  fe = "Q1_immigration"
-            #  param <- "treatment"
-            #  B = 10000
-            #  weights = NULL
-            #  conf_int = NULL 
-            #  debug = FALSE
-            #  seed = NULL
-            #  beta0 = NULL
-            #  alpha = NULL
+             #  setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+             #  file.sources = list.files(pattern="*.R")
+             #  sapply(file.sources, source, .GlobalEnv)
+             #  # set.seed(6261)
+             #  voters <- create_data_2(N = 10000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
+             #  voters[1:2, proposition_vote:=NA]
+             #  voters[3, group_id1 := NA]      #  
+             #  object <- feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
+             # clustid <- c("group_id1", "group_id2")
+             #  fe = NULL
+             #  param <- "treatment"
+             #  B = 50000
+             #  weights = NULL
+             #  conf_int = NULL 
+             #  debug = FALSE
+             #  seed = NULL
+             #  beta0 = NULL
+             #  alpha = NULL
            # Step 1: check arguments of feols call
 #   #formula <- object$call$fml
 #   
