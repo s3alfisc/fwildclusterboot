@@ -1,211 +1,5 @@
-invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, X, Y, N, k, param, R0, B, v, Xr, alpha, beta0, W, n_fe, N_G){
-  
-  #' Inverts the bootstrap p-value and calculates confidence sets
-  #'@param object A regression object of class lm, feols or felm
-  #'@param clustid A vector with the clusters
-  #'@param fixed_effect Fixed effect to be projected out in bootstrap
-  #'@param X the design matrix with the (potentially demeand) covariates
-  #'@param Y A numeric vector containing the outcome variable 
-  #'@param param The univariate coefficients for which a hypothesis is to be tested
-  #'@param R0 A vector with the test constraint. Dimension (numb_covariates - numb_fe) x 1. 0 for covariate "param", else 1
-  #'@param B An integer. Number of bootstrap iterations
-  #'@param N An integer. Number of observations
-  #'@param k An integer. Number of covariates (excluding fixed effects that are projected out)
-  #'@param seed An integer. Seed.
-  #'@param N_g An integer. Number of clusters.
-  #'@param v A matrix. Draw from bootstrap distribution
-  #'@param Xr A matrix. R0 %*% X
-  #'@param XinvXXr A matrix. see boottest()
-  #'@param SXinvXXRX A matrix. see boottest() for computation
-  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
-  #'@import dreamerr
-  
-  check_arg(point_estimate, "numeric scalar")
-  check_arg(se_guess, "numeric scalar")
-  check_arg(clustid, "data.frame")
-  check_arg(X, "numeric matrix")
-  check_arg(Y, "numeric vector | numeric matrix")
-  check_arg(N, "numeric scalar")
-  check_arg(k, "numeric scalar")
-  check_arg(R0, "numeric vector | logical vector")
-  check_arg(v, "numeric matrix")
-  check_arg(Xr, "numeric matrix")
-  check_arg(alpha, "numeric scalar")
-  check_arg(beta0, "numeric scalar")
 
-    
-  if(alpha > 1 | alpha < 0){stop("Significance level needs to be between 0 and 1.")}
-
-  # --------------------------------------------------------------------------------------------- #
-  # start inversion 
-
-  Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
-  Xr0 <- matrix(X[, which(R0 == 1)], nrow(X), 1)
-  
-  # Yr for constraint leas squares with beta0 = c
-  Yr <- Y - X[, which(R0 == 1)] * beta0
-  
-  #Xr1 <- X
-  #Xr1[, which(R0 == 1)] <- beta0 + Xr1[, which(R0 == 1)]
-  
-  # small sample correction for clusters 
-  #G <- sapply(clustid, function(x) length(unique(x)))
-  #small_sample_correction <- G / (G - 1)
-  
-  Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
-  P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
-  
-  # v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
-  # v[,1] <- 1
-  invXX <- solve(t(X) %*% X) # k x k matrix
-  XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
-  
-  SXinvXXRX <- collapse::fsum(XinvXXr * X, clustid)  
-  
-  SXinvXXRX_invXX <- SXinvXXRX  %*% invXX
-
-
-  XinvXXr <- as.vector(XinvXXr)
-  
-  p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, 
-                         SXinvXXRu_prep, v, B){
-    
-    u_hat <- Q + P %*% matrix(beta0, 1, length(beta0))
-
-    
-    SXinvXXRu <- collapse::fsum(XinvXXr * u_hat  , clustid)
-
-    if(ncol(SXinvXXRu) == 1){
-      SXinvXXRu <- as.vector(SXinvXXRu)
-    }  
-    diag_SXinvXXRu <- Matrix::Diagonal(N_G, SXinvXXRu)
-    
-    
-    # if model with fixed effect
-    if(!is.null(W)){
-      # needs to be clustid[, 1] for crosstab4 but not bor crosstab2
-      S_XinvXXR_F <- crosstab2(as.matrix(XinvXXr), var1 = clustid, var2 = fixed_effect)
-      S_Wu_F <- crosstab2(as.matrix(W %*% u_hat), var1 = clustid, var2 = fixed_effect)
-      prod <- S_XinvXXR_F %*% t(S_Wu_F)
-      diag_SXinvXXRu <- diag_SXinvXXRu - prod
-    } 
-    
-    SXu <- collapse::fsum(X * as.vector(u_hat), clustid)
-    
-    numer <- SXinvXXRu %*% v 
-    J <- (diag(SXinvXXRu) - SXinvXXRX_invXX %*% t(SXu)) %*% v  
-    t <- abs(numer)  / sqrt(colSums(J * J))    # note: absolute value is taken here - no negative t-stats
-    t_boot <- t[2:(B + 1)]
-    mean(abs(t[1] - beta0) < (t_boot))
-  }
-  
-  # can be smaller than zero bc of -0.5
-  p_val_null_x <- function(beta0){
-    p_val_null(beta0, P = P, Q = Q, R0 = R0, X = X, XinvXXr = XinvXXr, clustid = clustid, 
-               SXinvXXRu_prep = SXinvXXRu_prep, v = v, B = B) - alpha
-  }
-  
-  
-  # p-value must cross alpha
-  check <- FALSE
-  inflate_se <- c(2, 3, 5, 10, 15, 25, 50, 100)
-  len_inflate <- length(inflate_se)
-  j <- 1
-
-  while(check == FALSE){
-      #print("check")
-      if(j > len_inflate){
-        break("Boottest confidence set calculation fails because no p-value < alpha could succesfully
-            be guessed.")
-      }
-      # start guesses by taking sandwich cluster confidence intervals + inflation factor
-      starting_vals <- as.numeric(point_estimate + c(-inflate_se[j], inflate_se[j]) * se_guess)
-      #print(starting_vals)
-      # take 25 starting values in between the guesses
-      p_start <- rep(NaN, length(starting_vals))
-      
-      for(i in 1:length(starting_vals)){
-        p_start[i] <- p_val_null_x(starting_vals[i]) 
-      }
-      p_start <- p_start + alpha 
-      
-      if(sum(p_start < alpha) == 2){
-        check <- TRUE
-      }
-      j <- j + 1
-      #print(p_start)
-    }
-    
-    test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1])/ 25)      
-    
-    # later: don't have to evaluate all guesses at all points - extreme points suffice - if < alpha at both extreme points
-    # then evaluate all 26 points
-    p <- rep(NaN, length(test_vals))
-    
-    
-    for(i in 2:(length(test_vals) - 1)){
-      p[i] <- p_val_null_x(test_vals[i]) 
-    }
-    # substract alpha in function so that I will not need to 
-    # do it in root finding algorithm, but then I will need to add 
-    # alpha here
-    p <- p + alpha 
-    
-    p[1] <- p_start[1]
-    p[26] <- p_start[2]
-    #if(sum(p < alpha) < 1){warning("Need to djust starting values: they are not p < alpha. Therefore, choose more
-    #                              extreme starting values.")}
-    
-    # note: one alpha <= and one > to handle the case where p is exactly 0.05 - in this case
-    # x crossing will not produce two pairs of (1, -1) and (-1, 1)
-    crossings <-  (p <= alpha) - (p > alpha)
-    
-    x_crossings <- rep(NA, length(test_vals))
-    for(i in 1:26){
-      x_crossings[i] <- ifelse(crossings[i] + crossings[i + 1] == 0 || crossings[i] + crossings[i - 1] == 0, 1, 0)
-    }
- 
-
-
-  
-  #p_val[which(x_crossings == 1)]
-  #test_vals[which(x_crossings == 1)]
-  
-  test_vals_higher <- (test_vals[which(x_crossings == 1)])[3:4]  
-  test_vals_higher_max <- test_vals_higher[which.min(abs(test_vals_higher))]
-
-  test_vals_lower <- (test_vals[which(x_crossings == 1)])[1:2]  
-  test_vals_lower_max <- test_vals_lower[which.min(abs(test_vals_higher))]
-
-  if(length(test_vals_higher_max) == 0 || length(test_vals_lower_max) == 0){
-    stop("test_vals_lower or test_vals higher is logical(0). This means that no 
-          starting value x with property |p(x1) < 0.05| has been found for one of the 
-          confidence set boundary guesses. As a consequence, the numerical root finding
-          procedure employed to invert p-values to compute confidence sets will not work.")
-  }  
-  
-  
-  res <- lapply(list(test_vals_lower, test_vals_higher), function(x){
-    
-        tmp <- stats::uniroot(f = p_val_null_x, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10)
-    
-    tmp$root
-  })
-
-  conf_int <- unlist(res)
-
-  res_all <- list(conf_int = conf_int, 
-                  p_test_vals = p, 
-                  test_vals = test_vals)
-  
-  res_all
-
-}
-
-
-
-
-invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, v,X, Y, N, k, param, R0, B, beta0, alpha, W, n_fe, N_G){
+invert_p_val_linear.algo_multclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, v,X, Y, N, k, param, R0, B, beta0, alpha, W, n_fe, N_G){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
@@ -385,11 +179,11 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
       DD[[x]] <- D[[x]] * D[[x]]
       CD[[x]] <- C[[x]] * D[[x]]
       #pracma::toc()
-      
+
     }
     pracma::toc()
   }
-  
+ 
   #numer <- crossprod(collapse::fsum(XinvXXr * Q, clustid$clustid) + collapse::fsum(XinvXXr * (P %*% matrix(beta0, 1, length(beta0))), clustid$clustid), 
   #                   v)
   numer_a <- collapse::fsum(XinvXXrQ, clustid$clustid)
@@ -398,7 +192,7 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   B <- crossprod(numer_b, v)
   
   JJ <- list()
-  
+
   p_val_null2 <- function(beta0, A, B, C, D, boot_iter){
     
     # if(is.null(W)){
@@ -406,29 +200,29 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
     #     NULL
     #   } 
     # } else if(!is.null(W)){
-    for(x in names(clustid)){
-      numer <- A + B * beta0
-      JJ[[x]] <- colSums(small_sample_correction[x] * (CC[[x]] + 2* CD[[x]]*beta0+ DD[[x]]* beta0^2))
-    }
+          for(x in names(clustid)){
+            numer <- A + B * beta0
+            JJ[[x]] <- colSums(small_sample_correction[x] * (CC[[x]] + 2* CD[[x]]*beta0+ DD[[x]]* beta0^2))
+        }
     #}
-    JJ <- Reduce("+", JJ)
-    
-    denom <- suppressWarnings(sqrt(JJ))
-    #numer <- SXinvXXRu %*% v 
-    
-    t <- abs(numer) / denom
-    delete_invalid_t_total <- sum(is.na(t))
-    t <- t[!is.na(t)]
-    
-    t_boot <- t[2:(boot_iter + 1 - delete_invalid_t_total)]
-    p_val <- mean(abs(t[1] - beta0) < (t_boot))
-    p_val
+      JJ <- Reduce("+", JJ)
+      
+      denom <- suppressWarnings(sqrt(JJ))
+      #numer <- SXinvXXRu %*% v 
+      
+      t <- abs(numer) / denom
+      delete_invalid_t_total <- sum(is.na(t))
+      t <- t[!is.na(t)]
+      
+      t_boot <- t[2:(boot_iter + 1 - delete_invalid_t_total)]
+      p_val <- mean(abs(t[1] - beta0) < (t_boot))
+      p_val
   }
   
   p_val_null2_x <- function(beta0){
     p_val_null2(beta0, A = A, B= B, C=C, D=D, boot_iter) - alpha
   }  
-  
+    
   
   # p-value must cross alpha
   check <- FALSE
@@ -533,3 +327,26 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   res_all
   
 }
+
+# 
+# pracma::tic()
+# #invert_p_val_linear.algo_multclust(object = res,
+# invert_p_val(object = res,
+#                                     point_estimate = point_estimate,
+#                                     se_guess = se_guess, 
+#                                     clustid = preprocess$clustid,
+#                                     fixed_effect = preprocess$fixed_effect, 
+#                                     X = preprocess$X,
+#                                     Y = preprocess$Y,
+#                                     N = preprocess$N,
+#                                     k = preprocess$k,
+#                                     v = res$v,
+#                                     param = param,
+#                                     R0 = preprocess$R0,
+#                                     B = B,
+#                                     beta0 = preprocess$beta0,
+#                                     alpha = preprocess$alpha, 
+#                                     W = preprocess$W, 
+#                                     n_fe = preprocess$n_fe, 
+#                                     N_G = preprocess$N_G)
+# pracma::toc()
