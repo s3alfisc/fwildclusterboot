@@ -548,6 +548,8 @@ invert_p_val2.algo_oneclust <- function(object, B, point_estimate, se_guess, clu
   check_arg(se_guess, "numeric scalar")
   check_arg(clustid, "data.frame")
   
+  # names(clustid) <- "clustid"
+  
   if(alpha > 1 | alpha < 0){stop("Significance level needs to be between 0 and 1.")}
   boot_iter <- B
   rm(B)
@@ -708,6 +710,8 @@ invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, cl
     p_val_null2(beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction)$p_val - alpha
   }
   
+  p_val_null2_x_cmp <- compiler::cmpfun(p_val_null2_x)
+  
   # p-value must cross alpha
   check <- FALSE
   inflate_se <- c(2, 3, 5, 10, 15, 25, 50, 100)
@@ -735,7 +739,7 @@ invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, cl
     # }
     
     for(i in 1:length(starting_vals)){
-      p_start[i] <- p_val_null2_x(starting_vals[i], alpha = alpha) 
+      p_start[i] <- p_val_null2_x_cmp(starting_vals[i], alpha = alpha) 
     }
     p_start <- p_start + alpha 
     
@@ -756,7 +760,7 @@ invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, cl
   pb = txtProgressBar(min = 0, max = (length(test_vals) - 2), initial = 0, style = 3, char = "-") 
   
   for(i in 2:(length(test_vals) - 1)){
-    p[i] <- p_val_null2_x(test_vals[i], alpha) 
+    p[i] <- p_val_null2_x_cmp(test_vals[i], alpha) 
     setTxtProgressBar(pb,i)
   }
   close(pb)
@@ -798,7 +802,7 @@ invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, cl
   res <- lapply(list(test_vals_lower, test_vals_higher), function(x){
     
     p_val_null2_x_alpha <- function(x){
-      p_val_null2_x(x, alpha = alpha)
+      p_val_null2_x_cmp(x, alpha = alpha)
     }
     tmp <- stats::uniroot(f = p_val_null2_x_alpha, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10)
     
