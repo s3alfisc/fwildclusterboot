@@ -8,6 +8,11 @@ boot_algo <- function(x, ...){
   UseMethod("boot_algo")
 }
 
+boot_algo2 <- function(x, ...){
+  #'@export 
+  UseMethod("boot_algo2")
+}
+
 preprocess <- function(x, ...){
   #'@export 
   UseMethod("preprocess")
@@ -16,4 +21,9 @@ preprocess <- function(x, ...){
 invert_p_val <- function(x, ...){
   #'@export 
   UseMethod("invert_p_val")
+}
+
+invert_p_val2 <- function(x, ...){
+  #'@export 
+  UseMethod("invert_p_val2")
 }

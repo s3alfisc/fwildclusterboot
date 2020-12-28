@@ -28,33 +28,33 @@ boottest.lm <- function(object,
   #print(B)
   
    #execute all functions in fwildclusterboot 
-                        # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-                        #  file.sources = list.files(pattern="*.R")
-                        # sapply(file.sources, source, .GlobalEnv)
-                        #   #set.seed(6)
-                        # voters <-
-                        #   create_data_2(
-                        #     N = 10000,
-                        #     N_G1 = 20,
-                        #     icc1 = 0.01,
-                        #     N_G2 = 10,
-                        #     icc2 = 0.01,
-                        #     numb_fe1 = 10,
-                        #    numb_fe2 = 10,
-                        #     seed = 1234
-                        #   )                   #   # create a missing variable in group_id1
-                        #   voters[1, group_id1 := NA]
-                        #   voters[2, proposition_vote := NA]
-                        #   object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-                        #   clustid <- c("group_id1", "group_id2") 
-                        #   param <- "treatment"
-                        #   beta0 = 0
-                        #   alpha = 0.05
-                        #   B = 100000
-                        #   weights = NULL
-                        #   conf_int = NULL 
-                        #   debug = FALSE
-                        #   seed = 123
+                          # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+                          #  file.sources = list.files(pattern="*.R")
+                          # sapply(file.sources, source, .GlobalEnv)
+                          #   #set.seed(6)
+                          # voters <-
+                          #   create_data_2(
+                          #     N = 10000,
+                          #     N_G1 = 20,
+                          #     icc1 = 0.01,
+                          #     N_G2 = 10,
+                          #     icc2 = 0.01,
+                          #     numb_fe1 = 10,
+                          #    numb_fe2 = 10,
+                          #     seed = 12345
+                          #   )                   #   # create a missing variable in group_id1
+                          #   voters[1, group_id1 := NA]
+                          #   voters[2, proposition_vote := NA]
+                          #   object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
+                          #   clustid <- c("group_id1") 
+                          #   param <- "treatment"
+                          # beta0 = 0
+                          #   alpha = 0.05
+                          #   B = 100000
+                          #   weights = NULL
+                          #   conf_int = NULL 
+                          #   debug = FALSE
+                          #   seed = 1234
               
   check_arg(clustid, "character scalar | character vector")
   check_arg(param, "scalar character")
@@ -98,7 +98,7 @@ boottest.lm <- function(object,
   }
   
   
-  res <- boot_algo(preprocess, B)
+  res <- boot_algo2(preprocess, boot_iter = B)
   
   #print(B)
     # compute confidence sets
@@ -110,27 +110,29 @@ boottest.lm <- function(object,
     if(is.null(conf_int) || conf_int == TRUE){
       # calculate guess for covariance matrix and standard errors
       vcov <- suppressWarnings(sandwich::vcovCL(object, cluster =  clustid_fml))
-      coefs <- lmtest::coeftest(object, vcov)
+      coefs <- suppressWarnings(lmtest::coeftest(object, vcov))
       se_guess <- coefs[param, "Std. Error"]
       
-      res_p_val <- invert_p_val(object = res,
-                                point_estimate = point_estimate,
-                                se_guess = se_guess, 
-                                clustid = preprocess$clustid,
-                                fixed_effect = preprocess$fixed_effect, 
-                                X = preprocess$X,
-                                Y = preprocess$Y,
-                                N = preprocess$N,
-                                k = preprocess$k,
-                                v = res$v,
-                                param = param,
-                                R0 = preprocess$R0,
-                                B = B,
-                                beta0 = preprocess$beta0,
-                                alpha = preprocess$alpha, 
-                                W = preprocess$W, 
-                                n_fe = preprocess$n_fe, 
-                                N_G = preprocess$N_G)
+      # res_p_val <- invert_p_val(object = res,
+      #                           point_estimate = point_estimate,
+      #                           se_guess = se_guess, 
+      #                           clustid = preprocess$clustid,
+      #                           fixed_effect = preprocess$fixed_effect, 
+      #                           X = preprocess$X,
+      #                           Y = preprocess$Y,
+      #                           N = preprocess$N,
+      #                           k = preprocess$k,
+      #                           v = res$v,
+      #                           param = param,
+      #                           R0 = preprocess$R0,
+      #                           B = B,
+      #                           beta0 = preprocess$beta0,
+      #                           alpha = preprocess$alpha, 
+      #                           W = preprocess$W, 
+      #                           n_fe = preprocess$n_fe, 
+      #                           N_G = preprocess$N_G)
+      res_p_val <- invert_p_val2(object = res, B = B, point_estimate = point_estimate, se_guess = se_guess, clustid = preprocess$clustid, alpha = preprocess$alpha)
+      
   } else {
     res_p_val <- list(conf_int = NA, 
                        p_test_vals = NA, 

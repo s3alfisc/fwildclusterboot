@@ -26,24 +26,24 @@ boottest.fixest  <- function(object,
   #'@export
   #'@method boottest fixest
  
-             #  setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-             #  file.sources = list.files(pattern="*.R")
-             #  sapply(file.sources, source, .GlobalEnv)
-             #  # set.seed(6261)
-             #  voters <- create_data_2(N = 10000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
-             #  voters[1:2, proposition_vote:=NA]
-             #  voters[3, group_id1 := NA]      #  
-             #  object <- feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
-             # clustid <- c("group_id1", "group_id2")
-             #  fe = NULL
-             #  param <- "treatment"
-             #  B = 50000
-             #  weights = NULL
-             #  conf_int = NULL 
-             #  debug = FALSE
-             #  seed = NULL
-             #  beta0 = NULL
-             #  alpha = NULL
+              # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+              #  file.sources = list.files(pattern="*.R")
+              #  sapply(file.sources, source, .GlobalEnv)
+              #  # set.seed(6261)
+              #  voters <- create_data_2(N = 10000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
+              #  voters[1:2, proposition_vote:=NA]
+              #  voters[3, group_id1 := NA]      #  
+              #  object <- feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
+              # clustid <- c("group_id1", "group_id2")
+              #  fe = NULL
+              #  param <- "treatment"
+              #  B = 50000
+              #  weights = NULL
+              #  conf_int = NULL 
+              #  debug = FALSE
+              #  seed = NULL
+              #  beta0 = NULL
+              #  alpha = NULL
            # Step 1: check arguments of feols call
 #   #formula <- object$call$fml
 #   
@@ -52,34 +52,17 @@ boottest.fixest  <- function(object,
 #   #check_arg(clustid, "os formula var(data, env) mbt", .data = data)
 #   #check_arg(clustid, "os formula | data.frame | named list")
 #   
-#   check_arg(clustid, "character vector | scalar character")
-#   check_arg(param, "scalar character")
-#   check_arg(B, "scalar numeric ") 
-#   check_arg(alpha, "scalar numeric | NULL")
-#   check_arg(weights, "NULL")
-#   check_arg(conf_int, "logical scalar | NULL")
-#   check_arg(debug, "logical scalar")
-#   check_arg(seed, "scalar integer | NULL")
-#   check_arg(beta0, "numeric scalar | NULL")
-#   check_arg(fe, "character scalar | NULL")
-#   
-#   #check_arg(parallel, "logical scalar | NULL")
-#   
-#   #if(is.null(parallel)){parallel <- FALSE}
-#   
-#   # if(!is.null(weights)){
-#   #   stop("Currently, boottest does not support weighted least squares. weights 
-#   #        must be NULL.")
-#   # }
-#   
-#   if(!is.null(seed)){
-#     set.seed(seed)
-#   } else if(is.null(seed)){
-#     set.seed(2)
-#   }
-#   
+   check_arg(clustid, "character vector | scalar character")
+   check_arg(param, "scalar character")
+   check_arg(B, "scalar numeric ") 
+   check_arg(alpha, "scalar numeric | NULL")
+   check_arg(weights, "NULL")
+   check_arg(conf_int, "logical scalar | NULL")
+   check_arg(debug, "logical scalar")
+   check_arg(seed, "scalar integer | NULL")
+   check_arg(beta0, "numeric scalar | NULL")
+   check_arg(fe, "character scalar | NULL")
   
- 
   preprocess <- suppressWarnings(preprocess(object = object, 
                                   param = param,
                                   clustid = clustid,
@@ -104,9 +87,10 @@ boottest.fixest  <- function(object,
   }
 
   
-  res <- boot_algo(preprocess, B)
-  #res$p_val
-  #summary(object, se = "cluster", cluster = "group_id1")  
+  res <- boot_algo2(preprocess, boot_iter = B)
+  #res <- boot_algo2.multclust(preprocess, boot_iter = B, )
+  
+
   # compute confidence sets
   
   if(is.null(conf_int) || conf_int == TRUE){
@@ -117,24 +101,28 @@ boottest.fixest  <- function(object,
     
     se_guess <- object$se[param]
     
-    res_p_val <- invert_p_val(object = res,
-                              point_estimate = point_estimate,
-                              se_guess = se_guess, 
-                              clustid = preprocess$clustid,
-                              fixed_effect = preprocess$fixed_effect, 
-                              X = preprocess$X,
-                              Y = preprocess$Y,
-                              N = preprocess$N,
-                              k = preprocess$k,
-                              v = res$v,
-                              param = param,
-                              R0 = preprocess$R0,
-                              B = B,
-                              beta0 = preprocess$beta0,
-                              alpha = preprocess$alpha, 
-                              W = preprocess$W, 
-                              n_fe = preprocess$n_fe, 
-                              N_G = preprocess$N_G)
+    
+    # res_p_val <- invert_p_val(object = res,
+    #                           point_estimate = point_estimate,
+    #                           se_guess = se_guess, 
+    #                           clustid = preprocess$clustid,
+    #                           fixed_effect = preprocess$fixed_effect, 
+    #                           X = preprocess$X,
+    #                           Y = preprocess$Y,
+    #                           N = preprocess$N,
+    #                           k = preprocess$k,
+    #                           v = res$v,
+    #                           param = param,
+    #                           R0 = preprocess$R0,
+    #                           B = B,
+    #                           beta0 = preprocess$beta0,
+    #                           alpha = preprocess$alpha, 
+    #                           W = preprocess$W, 
+    #                           n_fe = preprocess$n_fe, 
+    #                           N_G = preprocess$N_G)
+    
+    res_p_val <- invert_p_val2(object = res, B = B, point_estimate = point_estimate, se_guess = se_guess, clustid = preprocess$clustid, alpha = preprocess$alpha)
+    
   } else {
     res_p_val <- list( conf_int = NA, 
                        p_test_vals = NA, 

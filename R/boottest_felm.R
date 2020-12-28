@@ -78,7 +78,9 @@ boottest.felm  <- function(object,
     B <- N_G_2
   }
   
-  res <- boot_algo(preprocess, B)
+  
+  #res <- boot_algo(preprocess, B)
+  res <- boot_algo2(preprocess, boot_iter = B)
   
   # compute confidence sets
   
@@ -91,24 +93,27 @@ boottest.felm  <- function(object,
     #coefs <- object$coefficients[param]
     se_guess <- object$se[param]
     
-    res_p_val <- invert_p_val(object = res,
-                              point_estimate = point_estimate,
-                              se_guess = se_guess, 
-                              clustid = preprocess$clustid,
-                              fixed_effect = preprocess$fixed_effect, 
-                              X = preprocess$X,
-                              Y = preprocess$Y,
-                              N = preprocess$N,
-                              k = preprocess$k,
-                              v = res$v,
-                              param = param,
-                              R0 = preprocess$R0,
-                              B = B,
-                              beta0 = preprocess$beta0,
-                              alpha = preprocess$alpha, 
-                              W = preprocess$W, 
-                              n_fe = preprocess$n_fe, 
-                              N_G = preprocess$N_G)
+    # res_p_val <- invert_p_val(object = res,
+    #                           point_estimate = point_estimate,
+    #                           se_guess = se_guess, 
+    #                           clustid = preprocess$clustid,
+    #                           fixed_effect = preprocess$fixed_effect, 
+    #                           X = preprocess$X,
+    #                           Y = preprocess$Y,
+    #                           N = preprocess$N,
+    #                           k = preprocess$k,
+    #                           v = res$v,
+    #                           param = param,
+    #                           R0 = preprocess$R0,
+    #                           B = B,
+    #                           beta0 = preprocess$beta0,
+    #                           alpha = preprocess$alpha, 
+    #                           W = preprocess$W, 
+    #                           n_fe = preprocess$n_fe, 
+    #                           N_G = preprocess$N_G)
+    
+    res_p_val <- invert_p_val2(object = res, B = B, point_estimate = point_estimate, se_guess = se_guess, clustid = preprocess$clustid, alpha = preprocess$alpha)
+    
   } else {
     res_p_val <- list( conf_int = NA, 
                        p_test_vals = NA, 
