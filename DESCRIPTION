@@ -1,5 +1,5 @@
 Package: fwildclusterboot
-Title: What the Package Does (One Line, Title Case)
+Title: Fast Wild Cluster Bootstrap for Linear Models
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Alexander",
@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "afischer@econ.au.dk",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Estimates fast wild cluster bootstrap for linear regression models.
+Description: Extremely fast wild cluster bootstrap inference for linear regression models.
 License: GPL-3
 Imports: 
     data.table,
@@ -17,7 +17,9 @@ Imports:
     dreamerr, 
     Matrix, 
     Matrix.utils, 
-    collapse
+    collapse, 
+    sandwich, 
+    lmtest
 Suggests: 
     testthat,
     lfe,
