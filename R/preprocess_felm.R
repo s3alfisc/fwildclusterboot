@@ -137,12 +137,16 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
   
   # now create clusters 
   clustid <- as.data.frame(data_clustid[, clustid])
-  
-  clustid_dims <- ncol(clustid)
-  if(is.null(clustid_dims)){clustid_dims <- 1}
   i <- !sapply(clustid, is.numeric)
   clustid[i] <- lapply(clustid[i], as.character)
-  if(clustid_dims == 2){
+  
+  clustid_dims <- ncol(clustid)
+  
+  if(is.null(clustid_dims) | clustid_dims == 1){
+    clustid_dims <- 1
+    names(clustid) <- "clustid"
+  } else if(clustid_dims == 2){
+    clustid_dims <- 3
     names(clustid) <- c("clustid_1", "clustid_2")
     clustid$clustid <- paste0(clustid$clustid_1, "-", clustid$clustid_2)
   }

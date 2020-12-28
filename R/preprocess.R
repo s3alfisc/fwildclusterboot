@@ -123,7 +123,9 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
   #   }
   # }
   
-  if(clustid_dims == 2){
+  if(clustid_dims == 1){
+    names(clustid) <- c("clustid")
+  } else if(clustid_dims == 2){
     #clustid_1 <- names(clustid)[1]
     #clustid_2 <- names(clustid)[2]
     names(clustid) <- c("clustid_1", "clustid_2")
