@@ -34,6 +34,8 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
     seed <- 2
   }
   
+  #set.seed(seed)
+  
   if(is.null(alpha)){
     alpha <- 0.05
   }
@@ -83,12 +85,13 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
   fml_fe <- suppressWarnings(formula(Formula::Formula(object$formula), lhs = 0, rhs = 2))
   fml_cluster <- suppressWarnings(formula(Formula::Formula(object$formula), lhs = 0, rhs = 4))
   fml_iv <-  suppressWarnings(formula(Formula::Formula(object$formula), lhs = 0, rhs = 3))
-  
+
   numb_fe <- length(model_fe_names)
   
   
   if(fml_fe == ~0){
     fml_all_clustid <- formula(paste0(as.character(fml_wo_fe), "+", paste0(c(unique(clustid, model_clustid_names)), collapse = "+")))
+    fml_all <- fml_wo_fe
     if(fml_cluster == ~0){
       fml_all_cluster <- fml_wo_fe
     } else{
@@ -99,6 +102,7 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
     fml_all_cluster <- formula(paste0(as.character(fml_wo_fe), "+", paste0(c(model_fe_names, model_clustid_names), collapse = "+")))
     # depvar, covariates, fe and cluster vars from felm() and boottest
     fml_all_clustid <- formula(paste0(as.character(fml_wo_fe), "+", paste0(c(model_fe_names, unique(clustid, model_clustid_names)), collapse = "+")))
+    fml_all <- formula(paste0(as.character(fml_wo_fe), "+", paste0(c(model_fe_names), collapse = "+")))
   }
 
   depvar <- colnames(object$coefficients)
@@ -186,10 +190,10 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
     fixed_effect_W <- fixed_effect[, 1]
     levels(fixed_effect_W) <- 1 / table(fixed_effect)
     W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effect_W)))
-    n_fe <- length(unique(fixed_effect))
+    n_fe <- length(unique(fixed_effect[, 1]))
   } else{
     
-    model_frame <- model.frame(fml_all_clustid, data_clustid)
+    model_frame <- model.frame(fml_all, data_clustid)
     X <- model.matrix(model_frame, data = data_clustid)
     Y <- model.response(model_frame)
     

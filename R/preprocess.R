@@ -17,6 +17,14 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(alpha, "numeric scalar | NULL")
   
+  if(!is.null(seed)){
+    seed <- seed
+  } else if(is.null(seed)){
+    seed <- 2
+  }
+  
+  set.seed(seed)
+  
   fml <- object$call$formula
   fml_all_clustid <- formula(paste0(as.character(fml), "+", clustid, collapse = "+"))
   
@@ -52,11 +60,6 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
          must be NULL.")
   }
   
-  if(!is.null(seed)){
-    seed <- seed
-  } else if(is.null(seed)){
-    seed <- 2
-  }
   
   if(is.null(alpha)){
     alpha <- 0.05

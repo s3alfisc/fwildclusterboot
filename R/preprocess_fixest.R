@@ -34,6 +34,8 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed){
     seed <- 2
   }
   
+  set.seed(seed)
+  
   if(is.null(alpha)){
     alpha <- 0.05
   }
