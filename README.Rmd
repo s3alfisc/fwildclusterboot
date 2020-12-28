@@ -39,10 +39,11 @@ The following features will be added in the future:
 
 
 ```{r, echo=FALSE, include=FALSE, results="hide"}
-setwd("C:/Users/alexa/Dropbox")
-devtools::install("fwildclusterboot")
-devtools::document("fwildclusterboot")
-devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
+# setwd("C:/Users/alexa/Dropbox")
+#  devtools::install("fwildclusterboot")
+#  devtools::document("fwildclusterboot")
+# devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
+
 # # #usethis::use_vignette("C:/Users/alexa/Dropbox/fwildclusterboot/my-vignette")
 # devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
 # devtools::check("fwildclusterboot")
