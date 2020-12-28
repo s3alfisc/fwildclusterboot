@@ -1,12 +1,21 @@
+
 p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sample_correction){
   
+  numer <- A + B * beta0
+  names_clustid <- names(clustid)
+  
   JJ <- list()
-  for(x in names(clustid)){
-    numer <- A + B * beta0
+  for(x in names_clustid){
     JJ[[x]] <- colSums(small_sample_correction[x] * (CC[[x]] + 2* CD[[x]]*beta0+ DD[[x]]* beta0^2))
   }
 
-  JJ_sum <- Reduce("+", JJ)
+  len_names_clustid <- length(names_clustid)
+  if(len_names_clustid == 1){
+    JJ_sum <- unlist(JJ)
+  } else if(len_names_clustid > 1){
+    JJ_sum <- Reduce("+", JJ)
+  }
+  
   denom <- suppressWarnings(sqrt(JJ_sum))
 
   t <- abs(numer) / denom
