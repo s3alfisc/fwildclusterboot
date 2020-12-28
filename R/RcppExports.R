@@ -5,3 +5,11 @@ eigenMatMult <- function(A, B) {
     .Call('_fwildclusterboot_eigenMatMult', PACKAGE = 'fwildclusterboot', A, B)
 }
 
+Rcpp_matrix_List_sum <- function(x) {
+    .Call('_fwildclusterboot_Rcpp_matrix_List_sum', PACKAGE = 'fwildclusterboot', x)
+}
+
+naomit_cpp <- function(x) {
+    .Call('_fwildclusterboot_naomit_cpp', PACKAGE = 'fwildclusterboot', x)
+}
+
