@@ -20,8 +20,8 @@ boottest.lm <- function(object,
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@method boottest lm
   #'@return An object of class boottest
-  #'@import sandwich
-  #'@import lmtest
+  #'@importFrom sandwich vcovCL 
+  #'@importFrom lmtest coeftest
   #'@export
 
 
@@ -109,8 +109,8 @@ boottest.lm <- function(object,
   
     if(is.null(conf_int) || conf_int == TRUE){
       # calculate guess for covariance matrix and standard errors
-      vcov <- suppressWarnings(sandwich::vcovCL(object, cluster =  clustid_fml))
-      coefs <- suppressWarnings(lmtest::coeftest(object, vcov))
+      vcov <- suppressWarnings(vcovCL(object, cluster =  clustid_fml))
+      coefs <- suppressWarnings(coeftest(object, vcov))
       se_guess <- coefs[param, "Std. Error"]
       
       # res_p_val <- invert_p_val(object = res,
