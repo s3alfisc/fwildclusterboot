@@ -330,6 +330,8 @@ boot_algo2.oneclust <- function(preprocessed_object, boot_iter){
   #' @importFrom collapse fsum
   #' @return A list of ... 
   
+  dreamerr::check_arg(preprocessed_object, "class(oneclust)")
+  
   X <- preprocessed_object$X
   Y <- preprocessed_object$Y
   R0 <- preprocessed_object$R0
@@ -345,8 +347,10 @@ boot_algo2.oneclust <- function(preprocessed_object, boot_iter){
   W <- preprocessed_object$W
   n_fe <- preprocessed_object$n_fe
   seed <- preprocessed_object$seed
-  names(clustid) <- "clustid"
-  names(N_G) <- "clustid"
+  
+  # names(clustid) <- "clustid"
+  # names(N_G) <- "clustid"
+  
   set.seed(seed)
   
   # bootstrap error 
@@ -355,7 +359,7 @@ boot_algo2.oneclust <- function(preprocessed_object, boot_iter){
   
   G <- sapply(clustid, function(x) length(unique(x)))
   small_sample_correction <- G / (G - 1)
-  small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
+  #small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
   
   # error under the null hypothesis
   Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
@@ -500,9 +504,9 @@ boot_algo2.oneclust <- function(preprocessed_object, boot_iter){
                v = v,
                Xr = Xr,
                XinvXXr = XinvXXr, 
-               invalid_t = invalid_t, 
+               invalid_t = NULL, 
                ABCD = ABCD)
-  class(res) <- "algo_multclust"
+  class(res) <- "algo_oneclust"
   
   invisible(res)
   
@@ -519,6 +523,7 @@ boot_algo2.multclust <- function(preprocessed_object, boot_iter){
   #' @return A list of ... 
   
   
+  dreamerr::check_arg(preprocessed_object, "class(multclust)")
   
   # if(!inherits(preprocessed_object, "boottest_preprocessed")){
   #   stop("Estimation only works for inputs of class boottest_preprocessed.")
