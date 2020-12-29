@@ -1,34 +1,34 @@
-// [[Rcpp::depends(RcppEigen)]]
-
-#include <RcppEigen.h>
-
-using namespace Rcpp;
-
-// [[Rcpp::export]]
-NumericMatrix Rcpp_matrix_List_sum(List x) {
- int n = x.size();
- NumericMatrix result = as<NumericMatrix>(x[0]);
- for ( int i = 1; i < n; ++i ) {
-   result += as<NumericMatrix>(x[i]);
- }
- return result;
-}
-
-// [[Rcpp::export]]
-NumericVector naomit_cpp(Rcpp::NumericVector x){
-  int n = x.length(); 
-  //Rcpp::NumericVector r(n);
-  std::vector<double> r(n); // need to do this to use .resize
-  int k=0;
-  for (int i = 0; i < n; ++i) {
-   if (x[i]==x[i]) {
-     r[k] = x[i];
-     k++;
-   }
-  }
-  r.resize(k);
-  return Rcpp::wrap(r);  
-}
+// // [[Rcpp::depends(RcppEigen)]]
+// 
+// #include <RcppEigen.h>
+// 
+// using namespace Rcpp;
+// 
+// // [[Rcpp::export]]
+// NumericMatrix Rcpp_matrix_List_sum(List x) {
+//  int n = x.size();
+//  NumericMatrix result = as<NumericMatrix>(x[0]);
+//  for ( int i = 1; i < n; ++i ) {
+//    result += as<NumericMatrix>(x[i]);
+//  }
+//  return result;
+// }
+// 
+// // [[Rcpp::export]]
+// NumericVector naomit_cpp(Rcpp::NumericVector x){
+//   int n = x.length(); 
+//   //Rcpp::NumericVector r(n);
+//   std::vector<double> r(n); // need to do this to use .resize
+//   int k=0;
+//   for (int i = 0; i < n; ++i) {
+//    if (x[i]==x[i]) {
+//      r[k] = x[i];
+//      k++;
+//    }
+//   }
+//   r.resize(k);
+//   return Rcpp::wrap(r);  
+// }
 
 // // [[Rcpp::export]]
 // SEXP p_val_null_cpp(int beta0, 

@@ -18,33 +18,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// Rcpp_matrix_List_sum
-NumericMatrix Rcpp_matrix_List_sum(List x);
-RcppExport SEXP _fwildclusterboot_Rcpp_matrix_List_sum(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(Rcpp_matrix_List_sum(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// naomit_cpp
-NumericVector naomit_cpp(Rcpp::NumericVector x);
-RcppExport SEXP _fwildclusterboot_naomit_cpp(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(naomit_cpp(x));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_fwildclusterboot_eigenMatMult", (DL_FUNC) &_fwildclusterboot_eigenMatMult, 2},
-    {"_fwildclusterboot_Rcpp_matrix_List_sum", (DL_FUNC) &_fwildclusterboot_Rcpp_matrix_List_sum, 1},
-    {"_fwildclusterboot_naomit_cpp", (DL_FUNC) &_fwildclusterboot_naomit_cpp, 1},
     {NULL, NULL, 0}
 };
 
