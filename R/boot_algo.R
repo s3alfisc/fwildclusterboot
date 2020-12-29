@@ -658,7 +658,7 @@ boot_algo2.multclust <- function(preprocessed_object, boot_iter){
     S_Wu_F_a <- crosstab2(as.matrix(W %*% Q), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
     S_Wu_F_b <- crosstab2(as.matrix(W %*% P), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
     
-    pracma::tic()
+    #pracma::tic()
     for(x in names(clustid)){
       # all
       SXinvXXrX[[x]] <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
@@ -688,7 +688,7 @@ boot_algo2.multclust <- function(preprocessed_object, boot_iter){
       #pracma::toc()
       
     }
-    pracma::toc()
+    #pracma::toc()
   }
   
   numer_a <- collapse::fsum(XinvXXrQ, clustid$clustid)
