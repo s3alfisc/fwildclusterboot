@@ -114,19 +114,20 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed){
   } else if(clustid_dims == 2){
     names(clustid) <- c("clustid_1", "clustid_2")
     clustid$clustid <- paste0(clustid$clustid_1, "-", clustid$clustid_2)
+    clustid_dims <- 3
   }
   
   N_G <- sapply(clustid, function(x) length(unique(x)))
   
-  if(clustid_dims == 1){
-    if(max(N_G) > 200){
-      warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
-    }
-  } else if(clustid_dims > 1){
-    if(max(N_G) > 200){
-      warning(paste("You are estimating a model with more than 200 clusters. The more clusters in the data, the longer the estimation process."))
-    }
-  }
+  # if(clustid_dims == 1){
+  #   if(max(N_G) > 200){
+  #     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
+  #   }
+  # } else if(clustid_dims > 1){
+  #   if(max(N_G) > 200){
+  #     warning(paste("You are estimating a model with more than 200 clusters. The more clusters in the data, the longer the estimation process."))
+  #   }
+  # }
   
   
   
@@ -147,14 +148,16 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed){
     N <- nrow(X)
     k <- ncol(X)
     
-    fixed_effect <- data_all[, fe]
+    
+    fixed_effect <- as.data.frame(data_all[, fe])
+
     # demean X and Y 
-    X <- collapse::fwithin(X, fixed_effect)#
-    Y <- collapse::fwithin(Y, fixed_effect)
-    fixed_effect_W <- fixed_effect
+    X <- collapse::fwithin(X, fixed_effect[, 1])#
+    Y <- collapse::fwithin(Y, fixed_effect[, 1])
+    fixed_effect_W <- fixed_effect[, 1]
     levels(fixed_effect_W) <- 1 / table(fixed_effect)
     W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effect_W)))
-    n_fe <- length(unique(fixed_effect))
+    n_fe <- length(unique(fixed_effect[, 1]))
   } else{
     model_frame <- model.frame(fml_fe, data_all)
     X <- model.matrix(model_frame, data = data_all)

@@ -14,11 +14,22 @@ crosstab3 <- function(data, var1, var2){
   
 }
 
+# set.seed(1)
+# a <- sample(1:5, 10, replace = TRUE)
+# b <- sample(1:3, 10, replace = TRUE)
+# y <- matrix(rnorm(10), 10, 1)
+# a <- as.data.frame(a)
+# b <- as.data.frame(b)
+# 
+# crosstab2(as.matrix(y), var1 = a, var2 = b)
+
 crosstab2<- function(data, var1, var2){
   
   # data = XinvXXr
   # var1 = clustid
   # var2 = fixed_effect
+  dreamerr::check_arg(var1, "data.frame")
+  dreamerr::check_arg(var2, "data.frame")
   
   dt <- data.table(var1 = var1, var2 = var2, y = data)
   setnames(dt, names(dt), c("var1", "var2", "y"))
@@ -72,10 +83,6 @@ crosstab<- function(data, var1, var2){
 # )
 
 
-# set.seed(1)
-# a <- sample(1:5, 10, replace = TRUE)
-# b <- sample(1:3, 10, replace = TRUE)
-# y <- matrix(rnorm(10), 10, 1)
 
 crosstab4 <- function(data, var1, var2){
   length_var1 <- length(unique(var1))

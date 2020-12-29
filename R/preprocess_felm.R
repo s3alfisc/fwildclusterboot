@@ -187,15 +187,15 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
     N <- nrow(X)
     k <- ncol(X)
     
-    fixed_effect <- data_clustid[, fe]
+    fixed_effect <- as.data.frame(data_clustid[, fe])
     # demean X and Y 
-    X <- collapse::fwithin(X, fixed_effect)#
-    Y <- collapse::fwithin(Y, fixed_effect)
-    fixed_effect_W <- fixed_effect#[, 1]
+    X <- collapse::fwithin(X, fixed_effect[, 1])#
+    Y <- collapse::fwithin(Y, fixed_effect[, 1])
+    fixed_effect_W <- fixed_effect[, 1]
     levels(fixed_effect_W) <- 1 / table(fixed_effect)
     W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effect_W)))
-    #n_fe <- length(unique(fixed_effect[, 1]))
-    n_fe <- length(unique(fixed_effect))
+    n_fe <- length(unique(fixed_effect[, 1]))
+    #n_fe <- length(unique(fixed_effect))
   } else{
     
     model_frame <- model.frame(fml_all, data_clustid)
