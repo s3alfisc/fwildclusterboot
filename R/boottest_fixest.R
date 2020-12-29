@@ -34,8 +34,8 @@ boottest.fixest  <- function(object,
                #  voters[1:2, proposition_vote:=NA]
                #  voters[3, group_id1 := NA]      #  
                #  object <- feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
-               # clustid <- c("group_id1")
-               #  fe = NULL
+               # clustid <- c("group_id1", "group_id2")
+               #  fe = "Q1_immigration"
                #  param <- "treatment"
                #  B = 50000
                #  weights = NULL
@@ -88,8 +88,8 @@ boottest.fixest  <- function(object,
 
   
   res <- boot_algo2(preprocess, boot_iter = B)
-  #res <- boot_algo2.multclust(preprocess, boot_iter = B, )
-  
+  #boot_algo2(res_preprocess, boot_iter = B)$p_val
+
 
   # compute confidence sets
   
