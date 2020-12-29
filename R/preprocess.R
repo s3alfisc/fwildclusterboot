@@ -129,6 +129,7 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
     names(clustid) <- c("clustid_1", "clustid_2")
     #clustid <- paste0(clustid_1, "-", clustid_2)
     clustid$clustid <- paste0(clustid$clustid_1, "-", clustid$clustid_2)
+    clustid_dims <- 3
   }
   
   
@@ -170,15 +171,15 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
   N_G <- sapply(clustid, function(x) length(unique(x)))
   
   #numb_clusters <- ncol(clustid)
-  if(clustid_dims == 1){
-    if(max(N_G) > 200){
-      warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
-    }
-  } else if(clustid_dims > 1){
-    if(max(N_G) > 200){
-      warning(paste("You are estimating a model with", max(N_G), "clusters. Note that the speed gains from the algorithm underlying fwildclusterboot mainly apply for small number of clusters."))
-    }
-  }
+  # if(clustid_dims == 1){
+  #   if(max(N_G) > 200){
+  #     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
+  #   }
+  # } else if(clustid_dims > 1){
+  #   if(max(N_G) > 200){
+  #     warning(paste("You are estimating a model with", max(N_G), "clusters. Note that the speed gains from the algorithm underlying fwildclusterboot mainly apply for small number of clusters."))
+  #   }
+  # }
 
   
   
