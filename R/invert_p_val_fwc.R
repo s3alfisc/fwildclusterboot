@@ -187,7 +187,7 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   
   res <- lapply(list(test_vals_lower, test_vals_higher), function(x){
     
-        tmp <- stats::uniroot(f = p_val_null_x, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10)
+        tmp <- suppressWarnings(stats::uniroot(f = p_val_null_x, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10))
     
     tmp$root
   })
@@ -520,7 +520,7 @@ invert_p_val2a.algo_multclust <- function(object, point_estimate, se_guess, clus
   
   res <- lapply(list(test_vals_lower, test_vals_higher), function(x){
     
-    tmp <- stats::uniroot(f = p_val_null2_x, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10)
+    tmp <- suppressWarnings(stats::uniroot(f = p_val_null2_x, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10))
     
     tmp$root
   })
@@ -663,7 +663,7 @@ invert_p_val2.algo_oneclust <- function(object, B, point_estimate, se_guess, clu
     p_val_null2_x_alpha <- function(x){
       p_val_null2_x(x, alpha = alpha)
     }
-    tmp <- stats::uniroot(f = p_val_null2_x_alpha, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10)
+    tmp <- suppressWarnings(stats::uniroot(f = p_val_null2_x_alpha, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10))
     
     tmp$root
   })
@@ -804,7 +804,7 @@ invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, cl
     p_val_null2_x_alpha <- function(x){
       p_val_null2_x_cmp(x, alpha = alpha)
     }
-    tmp <- stats::uniroot(f = p_val_null2_x_alpha, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10)
+    tmp <- suppressWarnings(stats::uniroot(f = p_val_null2_x_alpha, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10))
     
     tmp$root
   })
