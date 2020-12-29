@@ -6,7 +6,6 @@ boottest.felm  <- function(object,
                            fe = NULL, 
                            weights = NULL,
                            conf_int = NULL, 
-                           debug = FALSE, 
                            seed = NULL, 
                            beta0 = 0, 
                            alpha = NULL){
@@ -15,13 +14,15 @@ boottest.felm  <- function(object,
   #' Function that runs boottest for object of class felm
   #'@import data.table
   #'@param object An object of class fixest
+  #'@param clustid A vector with the clusters
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param B number of bootstrap iterations
+  #'@param fe A character scalar. Fixed effect to be projected out in the bootstrap
+  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@param weights Regression weights. Currently, WLS is not supported, and weights needs to be NULL 
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
-  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@return An object of class boottest
   #'@export
   #'@method boottest felm

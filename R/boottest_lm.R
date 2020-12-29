@@ -4,20 +4,20 @@ boottest.lm <- function(object,
                         B,
                         weights = NULL, 
                         conf_int = NULL, 
-                        debug = FALSE, 
                         seed = NULL, 
                         beta0 = NULL, 
                         alpha = NULL){
   
+  #' Function that runs boottest for object of class lm
   #'@param object An object of class lm
   #'@param clustid A vector with the clusters
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param B number of bootstrap iterations
+  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@param weights Regression weights. Currently, WLS is not supported, and weights needs to be NULL 
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
-  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@method boottest lm
   #'@return An object of class boottest
   #'@importFrom sandwich vcovCL 

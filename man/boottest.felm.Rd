@@ -12,7 +12,6 @@
   fe = NULL,
   weights = NULL,
   conf_int = NULL,
-  debug = FALSE,
   seed = NULL,
   beta0 = 0,
   alpha = NULL
@@ -24,6 +23,10 @@
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
 
 \item{B}{number of bootstrap iterations}
+
+\item{clustid}{A vector with the clusters}
+
+\item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap}
 
 \item{weights}{Regression weights. Currently, WLS is not supported, and weights needs to be NULL}
 

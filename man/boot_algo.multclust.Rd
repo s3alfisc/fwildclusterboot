@@ -7,7 +7,7 @@
 \method{boot_algo}{multclust}(preprocessed_object, B)
 }
 \arguments{
-\item{preprocessed_object}{A preprocessed object of time preprocessed_boottest}
+\item{preprocessed_object}{A preprocessed object of type preprocessed_boottest}
 
 \item{B}{number of bootstrap iterations}
 }

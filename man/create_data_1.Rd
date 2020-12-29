@@ -12,6 +12,10 @@ create_data_1(N, N_G, icc, numb_fe1, numb_fe2)
 \item{N_G}{number of clusters}
 
 \item{icc}{intra-cluster correlation}
+
+\item{numb_fe1}{A scalar. Number of fixed effect for first factor variable}
+
+\item{numb_fe2}{A scalar. Number of fixed effect for second factor variable}
 }
 \description{
 Function creates data for tests and examples

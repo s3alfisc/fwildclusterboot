@@ -7,6 +7,8 @@ create_data_1 <-
     #' @param N number of observations
     #' @param N_G number of clusters
     #' @param icc intra-cluster correlation 
+    #' @param numb_fe1 A scalar. Number of fixed effect for first factor variable
+    #' @param numb_fe2 A scalar. Number of fixed effect for second factor variable
     #' @export
     
     voters <- 
@@ -42,8 +44,14 @@ create_data_2 <-
     #' @import data.table
     #' @import fabricatr
     #' @param N number of observations
-    #' @param N_G number of clusters
-    #' @param icc intra-cluster correlation 
+    #' @param N_G1 A scalar. number of clusters for clustering variable 1
+    #' @param icc1 A scalar between 0 and 1. intra-cluster correlation for clustering variable 1
+    #' @param N_G2 A scalar. number of clusters for clustering variable 2
+    #' @param icc2 A scalar between 0 and 1. intra-cluster correlation for clustering variable 2
+    #' @param numb_fe1 A scalar. Number of fixed effect for first factor variable
+    #' @param numb_fe2 A scalar. Number of fixed effect for second factor variable
+    #' @param seed An integer. Set the random seed
+    #' @importFrom stats rlnorm
     #' @export
     
     set.seed(seed)

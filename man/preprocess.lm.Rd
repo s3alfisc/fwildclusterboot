@@ -16,6 +16,8 @@
 \item{beta0}{A numeric. Shifts the null hypothesis}
 
 \item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+
+\item{seed}{Integer. Sets the seed}
 }
 \value{
 preprocessed object of class boottest_preprocessed

@@ -7,7 +7,17 @@
 \method{invert_p_val2}{algo_multclust}(object, B, point_estimate, se_guess, clustid, alpha)
 }
 \arguments{
-\item{object}{A regression object of class lm, feols or felm}
+\item{object}{A  object of type boottest}
+
+\item{B}{An integer. Number of bootstrap iterations}
+
+\item{point_estimate}{A scalar. Point estimate of the coefficient of interest from the regression model}
+
+\item{se_guess}{A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion.}
+
+\item{clustid}{A vector with the clusters}
+
+\item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
 }
 \description{
 Inverts the bootstrap p-value and calculates confidence sets

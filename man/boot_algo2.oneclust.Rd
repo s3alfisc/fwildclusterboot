@@ -9,7 +9,7 @@
 \arguments{
 \item{preprocessed_object}{A preprocessed object of time preprocessed_boottest}
 
-\item{B}{number of bootstrap iterations}
+\item{boot_iter}{number of bootstrap iterations}
 }
 \value{
 A list of ...

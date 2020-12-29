@@ -19,7 +19,8 @@ Imports:
     Matrix.utils, 
     collapse, 
     sandwich, 
-    lmtest
+    lmtest, 
+    formula.tools
 Suggests: 
     testthat,
     lfe,

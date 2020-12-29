@@ -1,5 +1,12 @@
 crosstab3 <- function(data, var1, var2){
   
+  #' Function 3 to calculate crosstabs
+  #' @param data A matrix to collapse by two dimensions var1 var2
+  #' @param var1 a data.frame containing a single variable 
+  #' @param var2 a data.frame containing a single variable
+  #' @importFrom collapse fsum
+  #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
+  
   unique_var1 <- as.vector(unique(var1[, names(var1)]))
   unique_var2 <- unique(var2)
   unique_var1_len <- length(unique_var1)
@@ -8,7 +15,7 @@ crosstab3 <- function(data, var1, var2){
   data <- as.vector(data)
   add_zeros <- nrow(unique(expand.grid(var1 = unique_var1, var2 = unique_var2))) - length(data)
   data <- c(data, rep(0, add_zeros))
-  res <- fsum(x = y, g = data.frame(grid))
+  res <- collapse::fsum(x = y, g = data.frame(grid))
   dim(res) <- c(unique_var1_len, unique_var2_len)
   res
   
@@ -25,6 +32,12 @@ crosstab3 <- function(data, var1, var2){
 
 crosstab2<- function(data, var1, var2){
   
+  #' Function 2 to calculate crosstabs
+  #' @param data A matrix to collapse by two dimensions var1 var2
+  #' @param var1 a data.frame containing a single variable 
+  #' @param var2 a data.frame containing a single variable
+  #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
+
   # data = XinvXXr
   # var1 = clustid
   # var2 = fixed_effect
@@ -50,6 +63,13 @@ crosstab2<- function(data, var1, var2){
 
 
 crosstab<- function(data, var1, var2){
+  
+  #' Function 1 to calculate crosstabs
+  #' @param data A matrix to collapse by two dimensions var1 var2
+  #' @param var1 a data.frame containing a single variable 
+  #' @param var2 a data.frame containing a single variable
+  #' @importFrom collapse fsum
+  #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
   
   # data <- dt
   # var1 <- "a"
@@ -85,6 +105,14 @@ crosstab<- function(data, var1, var2){
 
 
 crosstab4 <- function(data, var1, var2){
+  
+  #' Function 4 to calculate crosstabs
+  #' @param data A matrix to collapse by two dimensions var1 var2
+  #' @param var1 a data.frame containing a single variable 
+  #' @param var2 a data.frame containing a single variable
+  #' @importFrom stats aggregate
+  #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
+  
   length_var1 <- length(unique(var1))
   length_var2 <- length(unique(var2))
   res <- aggregate(data, list(var1, var2), sum, drop = FALSE)

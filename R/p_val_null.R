@@ -1,6 +1,17 @@
 
 p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sample_correction){
   
+  
+  #' Calculate p-values based on A, B, CC, CD, DD and other inputs
+  #' @param beta0 Scalar. Shifts the null hypothesis. 
+  #' @param A A list. 
+  #' @param B A list. 
+  #' @param CC A list. 
+  #' @param CD A list. 
+  #' @param DD A list. 
+  #' @param clustid A data.frame containing the cluster variables. 
+  #' @param boot_iter An integer. Number of bootstrap iterations. 
+  #' @param small_sample_correction A vector of the dimension of ncol(clustid)
   numer <- A + B * beta0
   names_clustid <- names(clustid)
   

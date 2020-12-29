@@ -2,6 +2,8 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
+  #'@param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
+  #'@param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion. 
   #'@param clustid A vector with the clusters
   #'@param fixed_effect Fixed effect to be projected out in bootstrap
   #'@param X the design matrix with the (potentially demeand) covariates
@@ -9,16 +11,19 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param R0 A vector with the test constraint. Dimension (numb_covariates - numb_fe) x 1. 0 for covariate "param", else 1
   #'@param B An integer. Number of bootstrap iterations
+  #'@param v A matrix with draws from the bootstrap distribution
+  #'@param Xr A matrix, X*r
+  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param beta0 A scalar. Shifts the null hypothesis. 
   #'@param N An integer. Number of observations
   #'@param k An integer. Number of covariates (excluding fixed effects that are projected out)
-  #'@param seed An integer. Seed.
-  #'@param N_g An integer. Number of clusters.
-  #'@param v A matrix. Draw from bootstrap distribution
-  #'@param Xr A matrix. R0 %*% X
-  #'@param XinvXXr A matrix. see boottest()
-  #'@param SXinvXXRX A matrix. see boottest() for computation
-  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param W If the fixed_effect option is used,..., else NULL.
+  #'@param n_fe If the fixed_effect option is used, a scalar with the dimension of the fixed effect. Else NULL
+  #'@param N_G An integer. Number of clusters.
   #'@import dreamerr
+  #'@importFrom utils setTxtProgressBar txtProgressBar
+  #'@method invert_p_val algo_oneclust
+
   
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")
@@ -210,23 +215,26 @@ invert_p_val2a.algo_multclust <- function(object, point_estimate, se_guess, clus
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
+  #'@param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
+  #'@param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion. 
   #'@param clustid A vector with the clusters
   #'@param fixed_effect Fixed effect to be projected out in bootstrap
+  #'@param v Matrix of bootstrap draws.
   #'@param X the design matrix with the (potentially demeand) covariates
   #'@param Y A numeric vector containing the outcome variable 
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param R0 A vector with the test constraint. Dimension (numb_covariates - numb_fe) x 1. 0 for covariate "param", else 1
   #'@param B An integer. Number of bootstrap iterations
+  #'@param beta0 A scalar. Shifts the null hypothesis. 
+  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@param N An integer. Number of observations
   #'@param k An integer. Number of covariates (excluding fixed effects that are projected out)
-  #'@param seed An integer. Seed.
-  #'@param N_g An integer. Number of clusters.
-  #'@param v A matrix. Draw from bootstrap distribution
-  #'@param Xr A matrix. R0 %*% X
-  #'@param XinvXXr A matrix. see boottest()
-  #'@param SXinvXXRX A matrix. see boottest() for computation
-  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
-  
+  #'@param W If the fixed_effect option is used,..., else NULL.
+  #'@param n_fe If the fixed_effect option is used, a scalar with the dimension of the fixed effect. Else NULL
+  #'@param N_G An integer. Number of clusters.
+  #'@importFrom utils setTxtProgressBar txtProgressBar
+  #'@method invert_p_val2a algo_multclust
+
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")
   check_arg(clustid, "data.frame")
@@ -358,7 +366,7 @@ invert_p_val2a.algo_multclust <- function(object, point_estimate, se_guess, clus
     S_Wu_F_a <- crosstab2(as.matrix(W %*% Q), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
     S_Wu_F_b <- crosstab2(as.matrix(W %*% P), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
     
-    pracma::tic()
+    #pracma::tic()
     for(x in names(clustid)){
       # all
       SXinvXXrX[[x]] <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
@@ -388,7 +396,7 @@ invert_p_val2a.algo_multclust <- function(object, point_estimate, se_guess, clus
       #pracma::toc()
       
     }
-    pracma::toc()
+    #pracma::toc()
   }
   
   #numer <- crossprod(collapse::fsum(XinvXXr * Q, clustid$clustid) + collapse::fsum(XinvXXr * (P %*% matrix(beta0, 1, length(beta0))), clustid$clustid), 
@@ -542,8 +550,15 @@ invert_p_val2a.algo_multclust <- function(object, point_estimate, se_guess, clus
 invert_p_val2.algo_oneclust <- function(object, B, point_estimate, se_guess, clustid, alpha){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
-  #'@param object A regression object of class lm, feols or felm
-  
+  #'@param object A  object of type boottest
+  #'@param B An integer. Number of bootstrap iterations
+  #'@param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
+  #'@param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion. 
+  #'@param clustid A vector with the clusters
+  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@importFrom utils setTxtProgressBar txtProgressBar
+  #'@method invert_p_val2 algo_oneclust
+
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")
   check_arg(clustid, "data.frame")
@@ -683,8 +698,15 @@ invert_p_val2.algo_oneclust <- function(object, B, point_estimate, se_guess, clu
 invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, clustid, alpha){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
-  #'@param object A regression object of class lm, feols or felm
-  
+  #'@param object A  object of type boottest
+  #'@param B An integer. Number of bootstrap iterations
+  #'@param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
+  #'@param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion. 
+  #'@param clustid A vector with the clusters
+  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@importFrom utils setTxtProgressBar txtProgressBar 
+  #'@method invert_p_val2 algo_multclust
+
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")
   check_arg(clustid, "data.frame")

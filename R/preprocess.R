@@ -6,6 +6,9 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param beta0 A numeric. Shifts the null hypothesis  
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param seed Integer. Sets the seed
+  #'@importFrom stats formula model.frame coef as.formula model.matrix model.response 
+  #'@method preprocess lm
   #'@return preprocessed object of class boottest_preprocessed
 
   # print warnings as they occur

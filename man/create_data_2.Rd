@@ -9,9 +9,19 @@ create_data_2(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed)
 \arguments{
 \item{N}{number of observations}
 
-\item{N_G}{number of clusters}
+\item{N_G1}{A scalar. number of clusters for clustering variable 1}
 
-\item{icc}{intra-cluster correlation}
+\item{icc1}{A scalar between 0 and 1. intra-cluster correlation for clustering variable 1}
+
+\item{N_G2}{A scalar. number of clusters for clustering variable 2}
+
+\item{icc2}{A scalar between 0 and 1. intra-cluster correlation for clustering variable 2}
+
+\item{numb_fe1}{A scalar. Number of fixed effect for first factor variable}
+
+\item{numb_fe2}{A scalar. Number of fixed effect for second factor variable}
+
+\item{seed}{An integer. Set the random seed}
 }
 \description{
 Function creates data for tests and examples

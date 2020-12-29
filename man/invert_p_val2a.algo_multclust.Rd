@@ -4,7 +4,7 @@
 \alias{invert_p_val2a.algo_multclust}
 \title{Inverts the bootstrap p-value and calculates confidence sets}
 \usage{
-invert_p_val2a.algo_multclust(
+\method{invert_p_val2a}{algo_multclust}(
   object,
   point_estimate,
   se_guess,
@@ -28,11 +28,15 @@ invert_p_val2a.algo_multclust(
 \arguments{
 \item{object}{A regression object of class lm, feols or felm}
 
+\item{point_estimate}{A scalar. Point estimate of the coefficient of interest from the regression model}
+
+\item{se_guess}{A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion.}
+
 \item{clustid}{A vector with the clusters}
 
 \item{fixed_effect}{Fixed effect to be projected out in bootstrap}
 
-\item{v}{A matrix. Draw from bootstrap distribution}
+\item{v}{Matrix of bootstrap draws.}
 
 \item{X}{the design matrix with the (potentially demeand) covariates}
 
@@ -48,17 +52,15 @@ invert_p_val2a.algo_multclust(
 
 \item{B}{An integer. Number of bootstrap iterations}
 
+\item{beta0}{A scalar. Shifts the null hypothesis.}
+
 \item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
 
-\item{seed}{An integer. Seed.}
+\item{W}{If the fixed_effect option is used,..., else NULL.}
 
-\item{N_g}{An integer. Number of clusters.}
+\item{n_fe}{If the fixed_effect option is used, a scalar with the dimension of the fixed effect. Else NULL}
 
-\item{Xr}{A matrix. R0 \%*\% X}
-
-\item{XinvXXr}{A matrix. see boottest()}
-
-\item{SXinvXXRX}{A matrix. see boottest() for computation}
+\item{N_G}{An integer. Number of clusters.}
 }
 \description{
 Inverts the bootstrap p-value and calculates confidence sets

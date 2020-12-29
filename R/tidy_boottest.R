@@ -1,18 +1,26 @@
  tidy <- function(x, ...){
+   #' S3 method to summarize objects of class boottest into tidy data.frame
    #'@export 
+   #'@param x object of type boottest
+   #'@param ... other arguments
    UseMethod("tidy", x)
  }
   
  summarize_boot <- function(x, ...){
+   #' S3 method to summarize objects of class boottest 
    #'@export 
+   #'@param x object of type boottest
+   #'@param ... other arguments
    UseMethod("summarize_boot", x)
  }
 
 
 tidy.boottest <- function(object){
-  
+  #' S3 method to summarize objects of class boottest into tidy data.frame
   #'@export 
+  #'@param object object of type boottest
   #'@method tidy boottest
+
   
   stopifnot(inherits(object, "boottest"))
   
@@ -38,9 +46,12 @@ tidy.boottest <- function(object){
 }
 
 summarize_boot.boottest <- function(object, digits = 3){
-  
+  #' S3 method to summarize objects of class boottest 
   #'@export 
+  #'@param object object of type boottest
+  #'@param digits rounding of output
   #'@method summarize_boot boottest
+
   
   stopifnot(inherits(object, "boottest"))
 
@@ -77,7 +88,10 @@ summarize_boot.boottest <- function(object, digits = 3){
 
 plot_boot <- function(object){
   
-  #'@export 
+  #' Plot the bootstrap distribution of t-statistics
+  #' @param object An object of type boottest
+  #' @importFrom graphics abline grid lines
+  #' @export 
   stopifnot(inherits(object, "boottest"))
   
   test_vals <- object$test_vals
