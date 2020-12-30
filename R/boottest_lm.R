@@ -24,6 +24,7 @@ boottest.lm <- function(object,
   #'@importFrom lmtest coeftest
   #'@export
 
+  call <- match.call()
 
   #print(B)
   
@@ -153,7 +154,9 @@ boottest.lm <- function(object,
                       B = B, 
                       clustid = clustid, 
                       #depvar = depvar, 
-                      N_G = preprocess$N_G)
+                      N_G = preprocess$N_G, 
+                      alpha = preprocess$alpha,
+                      call = call)
   } else if(clustid_dims > 1){
     res_final <- list(point_estimate = point_estimate, 
                       p_val = res[["p_val"]], 
@@ -167,7 +170,9 @@ boottest.lm <- function(object,
                       B = B, 
                       clustid = clustid, 
                       #depvar = depvar, 
-                      N_G = preprocess$N_G)
+                      N_G = preprocess$N_G, 
+                      call = call, 
+                      alpha = preprocess$alpha)
   }
 
   

@@ -27,6 +27,9 @@ boottest.felm  <- function(object,
   #'@export
   #'@method boottest felm
   
+  call <- match.call()
+  
+  
   #check_arg(clustid, "os formula | data.frame | named list")
   check_arg(param, "scalar character")
   check_arg(B, "scalar numeric ") 
@@ -134,7 +137,9 @@ boottest.felm  <- function(object,
                       B = B, 
                       clustid = clustid, 
                       #depvar = depvar, 
-                      N_G = preprocess$N_G)
+                      N_G = preprocess$N_G, 
+                      alpha = preprocess$alpha,
+                      call = call)
   } else if(clustid_dims > 1){
     res_final <- list(point_estimate = point_estimate, 
                       p_val = res[["p_val"]], 
@@ -148,7 +153,9 @@ boottest.felm  <- function(object,
                       B = B, 
                       clustid = clustid, 
                       #depvar = depvar, 
-                      N_G = preprocess$N_G)
+                      N_G = preprocess$N_G, 
+                      alpha = preprocess$alpha,
+                      call = call)
   }
   
   

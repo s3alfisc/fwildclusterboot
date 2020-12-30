@@ -26,6 +26,8 @@ boottest.fixest  <- function(object,
   #'@export
   #'@method boottest fixest
  
+  call <- match.call()
+  
                # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
                # file.sources = list.files(pattern="*.R")
                #  sapply(file.sources, source, .GlobalEnv)
@@ -142,7 +144,9 @@ boottest.fixest  <- function(object,
                       B = B, 
                       clustid = clustid, 
                       #depvar = depvar, 
-                      N_G = preprocess$N_G)
+                      N_G = preprocess$N_G, 
+                      alpha = preprocess$alpha,
+                      call = call)
   } else if(clustid_dims > 1){
     res_final <- list(point_estimate = point_estimate, 
                       p_val = res[["p_val"]], 
@@ -156,7 +160,9 @@ boottest.fixest  <- function(object,
                       B = B, 
                       clustid = clustid, 
                       #depvar = depvar, 
-                      N_G = preprocess$N_G)
+                      N_G = preprocess$N_G, 
+                      alpha = preprocess$alpha,
+                      call = call)
   }
   
   
