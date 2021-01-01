@@ -39,32 +39,38 @@ boottest.fixest  <- function(object,
                # clustid <- c("group_id1", "group_id2")
                #  fe = "Q1_immigration"
                #  param <- "treatment"
-               #  B = 50000
+               #  B = 5000
                #  weights = NULL
                #  conf_int = NULL 
                #  debug = FALSE
                #  seed = NULL
                #  beta0 = NULL
                #  alpha = NULL
-           # Step 1: check arguments of feols call
-#   #formula <- object$call$fml
-#   
-#   #dreamerr::check_arg(object, "")
-#   #check_arg(data, "data.frame | named list")
-#   #check_arg(clustid, "os formula var(data, env) mbt", .data = data)
-#   #check_arg(clustid, "os formula | data.frame | named list")
-#   
+  
+     # Step 1: check arguments of feols call
    check_arg(clustid, "character vector | scalar character")
    check_arg(param, "scalar character")
-   check_arg(B, "scalar numeric ") 
+   check_arg(B, "scalar integer ") 
    check_arg(alpha, "scalar numeric | NULL")
    check_arg(weights, "NULL")
    check_arg(conf_int, "logical scalar | NULL")
-   check_arg(debug, "logical scalar")
    check_arg(seed, "scalar integer | NULL")
    check_arg(beta0, "numeric scalar | NULL")
    check_arg(fe, "character scalar | NULL")
   
+   if((conf_int == TRUE || is.null(conf_int)) & B <= 100){
+     stop("The function argument B is smaller than 100. The number of bootstrap iterations needs to be 100 or higher in order to guarantee that the root
+         finding procudure used to find the confidence set works properly.", 
+          .call = FALSE)
+   }
+   if(!is.null(alpha) & (alpha < 0 || alpha > 1)){
+     stop("The function argument alpha is outside of the unit interval (0, 1). Please specify alpha so that it is within the unit interval.")
+   }
+   
+   if(!is.null(fe) && fe %in% clustid){
+     stop(paste("The function argument fe =", fe, "is contained in the clustering variables. This is not allowed. Please set fe to another factor variable or NULL."))
+   }
+   
   preprocess <- suppressWarnings(preprocess(object = object, 
                                   param = param,
                                   clustid = clustid,

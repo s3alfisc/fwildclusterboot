@@ -25,47 +25,58 @@ boottest.lm <- function(object,
   #'@export
 
   call <- match.call()
+  
+  
 
   #print(B)
   
    #execute all functions in fwildclusterboot 
-                           # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-                           #  file.sources = list.files(pattern="*.R")
-                           # sapply(file.sources, source, .GlobalEnv)
-                           #   #set.seed(6)
-                           # voters <-
-                           #   create_data_2(
-                           #     N = 10000,
-                           #     N_G1 = 20,
-                           #     icc1 = 0.01,
-                           #     N_G2 = 10,
-                           #     icc2 = 0.01,
-                           #     numb_fe1 = 10,
-                           #    numb_fe2 = 10,
-                           #     seed = 12345
-                           #   )                   #   # create a missing variable in group_id1
-                           #  voters[1, group_id1 := NA]
-                           #   voters[2, proposition_vote := NA]
-                           #   object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-                           #   clustid <- c("group_id1") 
-                           #   param <- "treatment"
-                           # beta0 = 0
-                           #   alpha = 0.05
-                           #   B = 100000
-                           #   weights = NULL
-                           #   conf_int = NULL 
-                           #   debug = FALSE
-                           #   seed = 1234
-              
+                            # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
+                            #  file.sources = list.files(pattern="*.R")
+                            # sapply(file.sources, source, .GlobalEnv)
+                            #   #set.seed(6)
+                            # voters <-
+                            #   create_data_2(
+                            #     N = 10000,
+                            #     N_G1 = 20,
+                            #     icc1 = 0.01,
+                            #     N_G2 = 10,
+                            #     icc2 = 0.01,
+                            #     numb_fe1 = 10,
+                            #    numb_fe2 = 10,
+                            #     seed = 12345
+                            #   )                   #   # create a missing variable in group_id1
+                            #  voters[1, group_id1 := NA]
+                            #   voters[2, proposition_vote := NA]
+                            #   object <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
+                            #   clustid <- c("group_id1") 
+                            #   param <- "treatment"
+                            # beta0 = 0
+                            #   alpha = 0.05
+                            #   B = 100000
+                            #   weights = NULL
+                            #   conf_int = NULL 
+                            #   debug = FALSE
+                            #   seed = 1234
+                            # 
   check_arg(clustid, "character scalar | character vector")
   check_arg(param, "scalar character")
-  check_arg(B, "scalar numeric ") 
+  check_arg(B, "scalar integer") 
   check_arg(alpha, "scalar numeric")
   check_arg(weights, "NULL")
   check_arg(conf_int, "logical scalar | NULL")
-  check_arg(debug, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
   check_arg(beta0, "numeric scalar | NULL")
+  
+  if((conf_int == TRUE || is.null(conf_int)) & B <= 100){
+    stop("The function argument B is smaller than 100. The number of bootstrap iterations needs to be 100 or higher in order to guarantee that the root
+         finding procudure used to find the confidence set works properly.", 
+         .call = FALSE)
+  }
+  if(!is.null(alpha) & (alpha < 0 || alpha > 1)){
+    stop("The function argument alpha is outside of the unit interval (0, 1). Please specify alpha so that it is within the unit interval.")
+  }
+  
   
   preprocess <- preprocess(object = object, 
                            param = param, 

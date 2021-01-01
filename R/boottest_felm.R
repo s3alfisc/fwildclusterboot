@@ -32,16 +32,29 @@ boottest.felm  <- function(object,
   
   #check_arg(clustid, "os formula | data.frame | named list")
   check_arg(param, "scalar character")
-  check_arg(B, "scalar numeric ") 
+  check_arg(B, "scalar integer ") 
   check_arg(alpha, "scalar numeric | NULL")
   check_arg(weights, "NULL")
   check_arg(conf_int, "logical scalar | NULL")
-  check_arg(debug, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL")
   
-
+  if((conf_int == TRUE || is.null(conf_int)) & B <= 100){
+    stop("The function argument B is smaller than 100. The number of bootstrap iterations needs to be 100 or higher in order to guarantee that the root
+         finding procudure used to find the confidence set works properly.", 
+         .call = FALSE)
+  }
+  
+  if(!is.null(alpha) & (alpha < 0 || alpha > 1)){
+    stop("The function argument alpha is outside of the unit interval (0, 1). Please specify alpha so that it is within the unit interval.")
+  }
+  
+  if(!is.null(fe) && fe %in% clustid){
+    stop(paste("The function argument fe =", fe, "is contained in the clustering variables. This is not allowed. Please set fe to another factor variable or NULL."))
+  }
+  
+  
     #    setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
     #    file.sources = list.files(pattern="*.R")
     #    sapply(file.sources, source, .GlobalEnv)
