@@ -6,21 +6,21 @@
    UseMethod("tidy", x)
  }
   
- summary <- function(x, ...){
-   #' S3 method to summarize objects of class boottest 
-   #'@export 
-   #'@param x object of type boottest
-   #'@param ... other arguments
-   UseMethod("summary", x)
- }
-
-plot <- function(x, ...){
-   #' S3 generic to plot bootstrap t statistics
-   #'@export 
-   #'@param x object of type boottest
-   #'@param ... other arguments
-   UseMethod("plot", x)
-}
+#'  summary <- function(x, ...){
+#'    #' S3 method to summarize objects of class boottest 
+#'    #'@export 
+#'    #'@param x object of type boottest
+#'    #'@param ... other arguments
+#'    UseMethod("summary", x)
+#'  }
+#' 
+#' plot <- function(x, ...){
+#'    #' S3 generic to plot bootstrap t statistics
+#'    #'@export 
+#'    #'@param x object of type boottest
+#'    #'@param ... other arguments
+#'    UseMethod("plot", x)
+#' }
 
 tidy.boottest <- function(object){
   #' S3 method to summarize objects of class boottest into tidy data.frame
