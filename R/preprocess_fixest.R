@@ -9,7 +9,6 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed){
   #'@param fe A character scalar - fixed effect to be projected out, or NULL
   #'@param seed Integer. Sets the seed
   #'@importFrom stats formula model.frame model.matrix model.response 
-  #'@importFrom formula.tools lhs
   #'@method preprocess fixest
   #'@return preprocessed object of class boottest_preprocessed
   
@@ -79,13 +78,13 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed){
   fml <- object$fml
   if(is.null(model_fe_names)){
     fml_fe <- fml
-    fml_all <- formula(paste0(fml, paste0("+",c(clustid), collapse = "+")))
+    fml_all <- formula(fml, paste0(clustid, collapse = "+"))
   } else {
-    fml_fe <- formula(paste0(fml, paste0("+",c(model_fe_names), collapse = "+")))
-    fml_all <- formula(paste0(fml, paste0("+",c(model_fe_names, clustid), collapse = "+")))
+    fml_fe <- formula(fml, paste0(model_fe_names, collapse = "+"))
+    fml_all <- formula(fml, paste0(c(model_fe_names, clustid), collapse = "+"))
   }
 
-  depvar <- as.character(formula.tools::lhs(object$fml))
+  #depvar <- as.character(formula.tools::lhs(object$fml))
   
   
   

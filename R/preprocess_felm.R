@@ -95,22 +95,22 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
   
   
   if(fml_fe == ~0){
-    fml_all_clustid <- formula(paste0(as.character(fml_wo_fe), "+", paste0(c(unique(clustid, model_clustid_names)), collapse = "+")))
+    fml_all_clustid <- formula(fml_wo_fe, paste0(c(unique(clustid, model_clustid_names), collapse = "+")))
     fml_all <- fml_wo_fe
     if(fml_cluster == ~0){
       fml_all_cluster <- fml_wo_fe
     } else{
-      fml_all_cluster <- formula(paste0(as.character(fml_wo_fe), "+", paste0(c(model_clustid_names), collapse = "+")))
+      fml_all_cluster <- formula(fml_wo_fe, paste0(c(model_clustid_names), collapse = "+"))
     }
   } else {
     # depvar, covariates, fe and cluster vars from felm()
-    fml_all_cluster <- formula(paste0(as.character(fml_wo_fe), "+", paste0(c(model_fe_names, model_clustid_names), collapse = "+")))
+    fml_all_cluster <- formula(fml_wo_fe,  paste0(c(model_fe_names, model_clustid_names), collapse = "+"))
     # depvar, covariates, fe and cluster vars from felm() and boottest
-    fml_all_clustid <- formula(paste0(as.character(fml_wo_fe), "+", paste0(c(model_fe_names, unique(clustid, model_clustid_names)), collapse = "+")))
-    fml_all <- formula(paste0(as.character(fml_wo_fe), "+", paste0(c(model_fe_names), collapse = "+")))
+    fml_all_clustid <- formula(fml_wo_fe,  paste0(c(model_fe_names, unique(clustid, model_clustid_names)), collapse = "+"))
+    fml_all <- formula(fml_wo_fe, paste0(c(model_fe_names), collapse = "+"))
   }
 
-  depvar <- colnames(object$coefficients)
+  #depvar <- colnames(object$coefficients)
   
   
   data_cluster <- model.frame(formula = fml_all_cluster, 

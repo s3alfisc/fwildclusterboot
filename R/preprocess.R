@@ -27,7 +27,7 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
   set.seed(seed)
   
   fml <- object$call$formula
-  fml_all_clustid <- formula(paste0(as.character(fml), "+", clustid, collapse = "+"))
+  fml_all_clustid <- formula(fml, paste0(clustid, collapse = "+"))
   
   data <- model.frame(formula = fml, 
                       data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
@@ -150,7 +150,7 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
   # }
   
   
-  depvar <- all.vars(as.formula(object$call))[1]
+  #depvar <- all.vars(as.formula(object$call))[1]
   #measurevar <- "y"
   #formula <- as.formula(paste(measurevar, paste(groupvars, collapse=" + "), sep=" ~ "))
   
