@@ -1,5 +1,5 @@
-library(testthat)
-library(fwildclusterboot)
-
-test_check("fwildclusterboot")
-
+# library(testthat)
+# library(fwildclusterboot)
+# 
+# test_check("fwildclusterboot")
+# 
