@@ -93,21 +93,28 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
 
   numb_fe <- length(model_fe_names)
   
+  # clustid_update <- paste("~ . +",paste(clustid, collapse = " + "))
+  # fe_update <- paste("~ . +",paste(model_fe_names, collapse = " + "))
   
   if(fml_fe == ~0){
-    fml_all_clustid <- formula(fml_wo_fe, paste0(c(unique(clustid, model_clustid_names), collapse = "+")))
+    fml_update <- paste("~ . +",paste(c(unique(clustid, model_clustid_names)), collapse = " + "))
+    fml_all_clustid <- update(fml_wo_fe, fml_update)
     fml_all <- fml_wo_fe
     if(fml_cluster == ~0){
       fml_all_cluster <- fml_wo_fe
     } else{
-      fml_all_cluster <- formula(fml_wo_fe, paste0(c(model_clustid_names), collapse = "+"))
+      fml_update <- paste("~ . +",paste(model_clustid_names, collapse = " + "))
+      fml_all_cluster <- update(fml_wo_fe, fml_update)
     }
   } else {
     # depvar, covariates, fe and cluster vars from felm()
-    fml_all_cluster <- formula(fml_wo_fe,  paste0(c(model_fe_names, model_clustid_names), collapse = "+"))
+    fml_update <- paste("~ . +",paste(c(model_fe_names, model_clustid_names), collapse = " + "))
+    fml_all_cluster <- update(fml_wo_fe,  fml_update)
     # depvar, covariates, fe and cluster vars from felm() and boottest
-    fml_all_clustid <- formula(fml_wo_fe,  paste0(c(model_fe_names, unique(clustid, model_clustid_names)), collapse = "+"))
-    fml_all <- formula(fml_wo_fe, paste0(c(model_fe_names), collapse = "+"))
+    fml_update2 <- paste("~ . +",paste(c(model_fe_names, unique(clustid, model_clustid_names)), collapse = " + "))
+    fml_all_clustid <- update(fml_wo_fe,  fml_update2)
+    fml_update3 <- paste("~ . +",paste(model_fe_names, collapse = " + "))
+    fml_all <- update(fml_wo_fe, fml_update3)
   }
 
   #depvar <- colnames(object$coefficients)
@@ -181,7 +188,8 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
     if(numb_fe == 1){
       fml_design <- fml_wo_fe
     } else if(numb_fe > 1){
-      fml_design <- formula(paste0(as.character(fml_wo_fe), "+", paste0(model_fe_names[names(model_fe_names) != fe], collapse = "+")))
+      fe_update2 <- paste("~ . +",paste(model_fe_names[model_fe_names != fe], collapse = " + "))
+      fml_design <- update(fml_wo_fe, fe_update2)
     }
 
     # because fe is projected out, data matrix should not contain constant

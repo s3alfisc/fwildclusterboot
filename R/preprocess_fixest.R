@@ -75,13 +75,17 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed){
   numb_fe <- length(model_fe_names)
   model_param_names <- c(model_coef_names, model_fe_names)
   
+  clustid_update <- paste("~ . +",paste(clustid, collapse = " + "))
+  fe_update <- paste("~ . +",paste(model_fe_names, collapse = " + "))
+  
   fml <- object$fml
   if(is.null(model_fe_names)){
     fml_fe <- fml
-    fml_all <- formula(fml, paste0(clustid, collapse = "+"))
+    fml_all <- update(fml, clustid_update)
   } else {
-    fml_fe <- formula(fml, paste0(model_fe_names, collapse = "+"))
-    fml_all <- formula(fml, paste0(c(model_fe_names, clustid), collapse = "+"))
+    fml_fe <- update(fml, fe_update)
+    #model_fe_clustid <- c(model_fe_names, clustid)
+    fml_all <- update(fml_fe, clustid_update)
   }
 
   #depvar <- as.character(formula.tools::lhs(object$fml))
@@ -141,7 +145,8 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed){
     if(numb_fe == 1){
       fml_design <- fml
     } else if(numb_fe > 1){
-      fml_design <- formula(paste0(as.character(fml), "+", paste0(model_fe_names[model_fe_names != fe], collapse = "+")))
+      fe_update2 <- paste("~ . +",paste(model_fe_names[model_fe_names != fe], collapse = " + "))
+      fml_design <- update(fml, fe_update2)
     }
     
     # get rid of constant due to fe out-projection
