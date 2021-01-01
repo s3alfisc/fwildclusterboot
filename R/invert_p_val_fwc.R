@@ -501,7 +501,7 @@ invert_p_val2a.algo_multclust <- function(object, point_estimate, se_guess, clus
   #if(sum(p < alpha) < 1){warning("Need to djust starting values: they are not p < alpha. Therefore, choose more
   #                              extreme starting values.")}
   
-  crossings <-  (p < alpha) - (p > alpha)
+  crossings <-  (p <= alpha) - (p > alpha)
   
   x_crossings <- rep(NA, length(test_vals))
   for(i in 1:26){
@@ -648,7 +648,7 @@ invert_p_val2.algo_oneclust <- function(object, B, point_estimate, se_guess, clu
   #if(sum(p < alpha) < 1){warning("Need to djust starting values: they are not p < alpha. Therefore, choose more
   #                              extreme starting values.")}
   
-  crossings <-  (p < alpha) - (p > alpha)
+  crossings <-  (p <= alpha) - (p > alpha)
   
   x_crossings <- rep(NA, length(test_vals))
   for(i in 1:26){
@@ -796,7 +796,7 @@ invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, cl
   #if(sum(p < alpha) < 1){warning("Need to djust starting values: they are not p < alpha. Therefore, choose more
   #                              extreme starting values.")}
   
-  crossings <-  (p < alpha) - (p > alpha)
+  crossings <-  (p <= alpha) - (p > alpha)
   
   x_crossings <- rep(NA, length(test_vals))
   for(i in 1:26){
