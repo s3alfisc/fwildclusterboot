@@ -23,7 +23,6 @@ Imports:
     sandwich,
     lmtest
 Suggests: 
-    lfe,
     fixest, 
     tinytest
 Remotes: 
