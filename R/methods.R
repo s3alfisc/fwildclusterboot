@@ -45,3 +45,11 @@ invert_p_val2 <- function(x, ...){
   #'@param ... other arguments
   UseMethod("invert_p_val2")
 }
+
+invert_p_val2a <- function(x, ...){
+  #' S3 Method invert_p_val2
+  #'@export 
+  #'@param x An object of type boot_algo_oneclust or boot_algo_multclust
+  #'@param ... other arguments
+  UseMethod("invert_p_val2a")
+}

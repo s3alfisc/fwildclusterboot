@@ -1,4 +1,4 @@
-invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, X, Y, N, k, param, R0, B, v, Xr, alpha, beta0, W, n_fe, N_G){
+invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, X, Y, N, k, param, R0, B, v, Xr, alpha, beta0, W, n_fe, N_G, ...){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
@@ -20,8 +20,10 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
   #'@param W If the fixed_effect option is used,..., else NULL.
   #'@param n_fe If the fixed_effect option is used, a scalar with the dimension of the fixed effect. Else NULL
   #'@param N_G An integer. Number of clusters.
+  #'@param ... Further arguments passed to or from other methods.
   #'@import dreamerr
   #'@importFrom utils setTxtProgressBar txtProgressBar
+  #'@export
   #'@method invert_p_val algo_oneclust
 
   
@@ -211,7 +213,7 @@ invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid
 
 
 #invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, alpha, clustid){
-invert_p_val2a.algo_multclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, v,X, Y, N, k, param, R0, B, beta0, alpha, W, n_fe, N_G){
+invert_p_val2a.algo_multclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, v,X, Y, N, k, param, R0, B, beta0, alpha, W, n_fe, N_G, ...){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
@@ -232,8 +234,11 @@ invert_p_val2a.algo_multclust <- function(object, point_estimate, se_guess, clus
   #'@param W If the fixed_effect option is used,..., else NULL.
   #'@param n_fe If the fixed_effect option is used, a scalar with the dimension of the fixed effect. Else NULL
   #'@param N_G An integer. Number of clusters.
+  #'@param ... Further arguments passed to or from other methods.
   #'@importFrom utils setTxtProgressBar txtProgressBar
   #'@method invert_p_val2a algo_multclust
+  #'@export
+  
 
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")
@@ -547,7 +552,7 @@ invert_p_val2a.algo_multclust <- function(object, point_estimate, se_guess, clus
 # invert p val 2
 # ----------------------------------------------------------------------------------------------- #
 
-invert_p_val2.algo_oneclust <- function(object, B, point_estimate, se_guess, clustid, alpha){
+invert_p_val2.algo_oneclust <- function(object, B, point_estimate, se_guess, clustid, alpha, ...){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A  object of type boottest
@@ -556,7 +561,9 @@ invert_p_val2.algo_oneclust <- function(object, B, point_estimate, se_guess, clu
   #'@param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion. 
   #'@param clustid A vector with the clusters
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param ... Further arguments passed to or from other methods.
   #'@importFrom utils setTxtProgressBar txtProgressBar
+  #'@export
   #'@method invert_p_val2 algo_oneclust
 
   check_arg(point_estimate, "numeric scalar")
@@ -695,7 +702,7 @@ invert_p_val2.algo_oneclust <- function(object, B, point_estimate, se_guess, clu
 }
 
 
-invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, clustid, alpha){
+invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, clustid, alpha, ...){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A  object of type boottest
@@ -704,7 +711,9 @@ invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, cl
   #'@param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion. 
   #'@param clustid A vector with the clusters
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param ... Further arguments passed to or from other methods.
   #'@importFrom utils setTxtProgressBar txtProgressBar 
+  #'@export
   #'@method invert_p_val2 algo_multclust
 
   check_arg(point_estimate, "numeric scalar")

@@ -4,7 +4,7 @@
 \alias{preprocess.lm}
 \title{function that pre-processes regression objects of type lm}
 \usage{
-\method{preprocess}{lm}(object, param, clustid, beta0, alpha, seed)
+\method{preprocess}{lm}(object, param, clustid, beta0, alpha, seed, ...)
 }
 \arguments{
 \item{object}{An object of class lm}
@@ -18,6 +18,8 @@
 \item{alpha}{A numeric scalar between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
 
 \item{seed}{An integer. Sets the seed}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 preprocessed object of class boottest_preprocessed

@@ -1,9 +1,11 @@
-boot_algo.oneclust <- function(preprocessed_object, B){
+boot_algo.oneclust <- function(preprocessed_object, B, ...){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
   #' @param B number of bootstrap iterations
+  #'@param ... Further arguments passed to or from other methods.
   #' @method boot_algo oneclust
+  #' @export
   #' @return A list of ... 
 
   # if(!inherits(preprocessed_object, "boottest_preprocessed")){
@@ -131,13 +133,15 @@ boot_algo.oneclust <- function(preprocessed_object, B){
 }
 
 
-boot_algo.multclust <- function(preprocessed_object, B){
+boot_algo.multclust <- function(preprocessed_object, B, ...){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of type preprocessed_boottest
   #' @param B number of bootstrap iterations
+  #'@param ... Further arguments passed to or from other methods.
   #' @import Matrix.utils
   #' @import Matrix
+  #' @export
   #' @method boot_algo multclust
   #' @return A list of ... 
 
@@ -320,13 +324,15 @@ boot_algo.multclust <- function(preprocessed_object, B){
 # boot_algo2
 # --------------------------------------------------------------------------------- #
 
-boot_algo2.oneclust <- function(preprocessed_object, boot_iter){
+boot_algo2.oneclust <- function(preprocessed_object, boot_iter, ...){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
   #' @param boot_iter number of bootstrap iterations
+  #'@param ... Further arguments passed to or from other methods.
   #' @import Matrix.utils
   #' @import Matrix
+  #' @export
   #' @method boot_algo2 oneclust
   #' @return A list of ... 
   
@@ -512,13 +518,15 @@ boot_algo2.oneclust <- function(preprocessed_object, boot_iter){
   
 }
 
-boot_algo2.multclust <- function(preprocessed_object, boot_iter){
+boot_algo2.multclust <- function(preprocessed_object, boot_iter, ...){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
   #' @param boot_iter number of bootstrap iterations
+  #'@param ... Further arguments passed to or from other methods.
   #' @import Matrix.utils
   #' @import Matrix
+  #' @export
   #' @method boot_algo2 multclust
   #' @return A list of ... 
   

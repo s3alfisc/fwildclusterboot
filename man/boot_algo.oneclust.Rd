@@ -4,12 +4,14 @@
 \alias{boot_algo.oneclust}
 \title{function that implements the fast bootstrap algorithm as described in Roodman et al (2009)}
 \usage{
-\method{boot_algo}{oneclust}(preprocessed_object, B)
+\method{boot_algo}{oneclust}(preprocessed_object, B, ...)
 }
 \arguments{
 \item{preprocessed_object}{A preprocessed object of time preprocessed_boottest}
 
 \item{B}{number of bootstrap iterations}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 A list of ...

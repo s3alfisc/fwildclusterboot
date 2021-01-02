@@ -14,7 +14,8 @@
   conf_int = NULL,
   seed = NULL,
   beta0 = 0,
-  alpha = NULL
+  alpha = NULL,
+  ...
 )
 }
 \arguments{
@@ -37,6 +38,8 @@
 \item{beta0}{A numeric. Shifts the null hypothesis}
 
 \item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 An object of class boottest

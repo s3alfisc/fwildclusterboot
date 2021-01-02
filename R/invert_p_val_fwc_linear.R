@@ -1,5 +1,5 @@
 
-invert_p_val_linear.algo_multclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, v,X, Y, N, k, param, R0, B, beta0, alpha, W, n_fe, N_G){
+invert_p_val_linear.algo_multclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, v,X, Y, N, k, param, R0, B, beta0, alpha, W, n_fe, N_G, ...){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
@@ -20,6 +20,8 @@ invert_p_val_linear.algo_multclust <- function(object, point_estimate, se_guess,
   #'@param W If the fixed_effect option is used,..., else NULL.
   #'@param n_fe If the fixed_effect option is used, a scalar with the dimension of the fixed effect. Else NULL
   #'@param N_G An integer. Number of clusters.
+  #'@param ... Further arguments passed to or from other methods.
+
 
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")

@@ -6,7 +6,8 @@ boottest.lm <- function(object,
                         conf_int = NULL, 
                         seed = NULL, 
                         beta0 = NULL, 
-                        alpha = NULL){
+                        alpha = NULL, 
+                        ...){
   
   #' Function that runs boottest for object of class lm
   #'@param object An object of class lm
@@ -18,6 +19,7 @@ boottest.lm <- function(object,
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
+  #'@param ... Further arguments passed to or from other methods.
   #'@method boottest lm
   #'@return An object of class boottest
   #'@importFrom sandwich vcovCL 

@@ -8,7 +8,8 @@ boottest.felm  <- function(object,
                            conf_int = NULL, 
                            seed = NULL, 
                            beta0 = 0, 
-                           alpha = NULL){
+                           alpha = NULL, 
+                           ...){
   
   
   #' Function that runs boottest for object of class felm
@@ -23,6 +24,7 @@ boottest.felm  <- function(object,
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
+  #' @param ... Further arguments passed to or from other methods.
   #'@return An object of class boottest
   #'@export
   #'@method boottest felm

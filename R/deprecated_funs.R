@@ -1,4 +1,4 @@
-invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, v,X, Y, N, k, param, R0, B, beta0, alpha, W, n_fe, N_G){
+invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, v,X, Y, N, k, param, R0, B, beta0, alpha, W, n_fe, N_G, ...){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A regression object of class lm, feols or felm
@@ -9,16 +9,19 @@ invert_p_val.algo_multclust <- function(object, point_estimate, se_guess, clusti
   #'@param v A matrix with draws from the bootstrap distribution
   #'@param X the design matrix with the (potentially demeand) covariates
   #'@param Y A numeric vector containing the outcome variable 
+  #'@param N An integer. Number of observations
+  #'@param k An integer. Number of covariates (excluding fixed effects that are projected out)
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param R0 A vector with the test constraint. Dimension (numb_covariates - numb_fe) x 1. 0 for covariate "param", else 1
   #'@param B An integer. Number of bootstrap iterations
   #'@param beta0 A scalar. Shifts the null hypothesis. 
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
-  #'@param N An integer. Number of observations
-  #'@param k An integer. Number of covariates (excluding fixed effects that are projected out)
   #'@param W If the fixed_effect option is used,..., else NULL.
   #'@param n_fe If the fixed_effect option is used, a scalar with the dimension of the fixed effect. Else NULL
   #'@param N_G An integer. Number of clusters.
+  #'@param ... Further arguments passed to or from other methods.
+  #'@method invert_p_val algo_multclust
+  #'@export
   
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")

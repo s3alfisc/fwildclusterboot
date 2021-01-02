@@ -22,10 +22,11 @@
 #'    UseMethod("plot", x)
 #' }
 
-tidy.boottest <- function(object){
+tidy.boottest <- function(object, ...){
   #' S3 method to summarize objects of class boottest into tidy data.frame
   #'@export 
   #'@param object object of type boottest
+  #'@param ... Further arguments passed to or from other methods.
   #'@method tidy boottest
 
   
@@ -52,11 +53,12 @@ tidy.boottest <- function(object){
   
 }
 
-summary.boottest <- function(object, digits = 3){
+summary.boottest <- function(object, digits = 3, ...){
   #' S3 method to summarize objects of class boottest 
   #'@export 
   #'@param object object of type boottest
   #'@param digits rounding of output
+  #'@param ... Further arguments passed to or from other methods.
   #'@method summary boottest
 
   
@@ -106,10 +108,11 @@ summary.boottest <- function(object, digits = 3){
   return(tidy_object)
 }
 
-plot.boottest <- function(object){
+plot.boottest <- function(object, ...){
   
   #' Plot the bootstrap distribution of t-statistics
   #' @param object An object of type boottest
+  #'@param ... Further arguments passed to or from other methods.
   #' @importFrom graphics abline grid lines
   #' @method plot boottest
   #' @export 

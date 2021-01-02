@@ -10,10 +10,12 @@
 UseMethod("summary", x)
 }}
 \usage{
-\method{tidy}{boottest}(object)
+\method{tidy}{boottest}(object, ...)
 }
 \arguments{
 \item{object}{object of type boottest}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \description{
 plot <- function(x, ...){

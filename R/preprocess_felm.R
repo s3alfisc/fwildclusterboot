@@ -1,4 +1,4 @@
-preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
+preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...){
   
   #' function that pre-processes regression objects of type fixest
   #'@param object An object of class fixest
@@ -8,7 +8,9 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed){
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@param fe A character scalar - fixed effect to be projected out, or NULL
   #'@param seed Integer. Sets the seed
+  #'@param ... Further arguments passed to or from other methods.
   #'@importFrom stats formula model.frame model.matrix model.response 
+  #'@export
   #'@method preprocess felm
   #'@return preprocessed object of class boottest_preprocessed
 

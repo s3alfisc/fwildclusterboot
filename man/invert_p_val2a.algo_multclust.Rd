@@ -22,7 +22,8 @@
   alpha,
   W,
   n_fe,
-  N_G
+  N_G,
+  ...
 )
 }
 \arguments{
@@ -61,6 +62,8 @@
 \item{n_fe}{If the fixed_effect option is used, a scalar with the dimension of the fixed effect. Else NULL}
 
 \item{N_G}{An integer. Number of clusters.}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \description{
 Inverts the bootstrap p-value and calculates confidence sets

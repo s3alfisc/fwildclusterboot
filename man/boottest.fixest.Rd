@@ -14,7 +14,8 @@
   weights = NULL,
   conf_int = NULL,
   seed = NULL,
-  beta0 = 0
+  beta0 = 0,
+  ...
 )
 }
 \arguments{
@@ -37,6 +38,8 @@
 \item{seed}{An integer. Allows the user to set a random seed}
 
 \item{beta0}{A numeric. Shifts the null hypothesis}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 An object of class boottest

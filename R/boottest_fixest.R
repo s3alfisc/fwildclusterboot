@@ -7,7 +7,8 @@ boottest.fixest  <- function(object,
                            weights = NULL,
                            conf_int = NULL, 
                            seed = NULL, 
-                           beta0 = 0){
+                           beta0 = 0,
+                           ...){
   
   
   #' Computes wild cluster bootstrap for object of class fixest
@@ -21,6 +22,7 @@ boottest.fixest  <- function(object,
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
+  #'@param ... Further arguments passed to or from other methods.
   #'@return An object of class boottest
   #'@import dreamerr
   #'@export

@@ -1,4 +1,4 @@
-preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
+preprocess.lm <- function(object, param, clustid, beta0, alpha, seed, ...){
   
   #' function that pre-processes regression objects of type lm
   #'@param object An object of class lm
@@ -7,8 +7,10 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
   #'@param beta0 A numeric scalar. Shifts the null hypothesis  
   #'@param alpha A numeric scalar between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@param seed An integer. Sets the seed
+  #'@param ... Further arguments passed to or from other methods.
   #'@importFrom stats formula model.frame coef as.formula model.matrix model.response 
   #'@method preprocess lm
+  #'@export
   #'@return preprocessed object of class boottest_preprocessed
 
   # print warnings as they occur

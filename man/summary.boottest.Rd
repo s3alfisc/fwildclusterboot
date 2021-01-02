@@ -4,12 +4,14 @@
 \alias{summary.boottest}
 \title{S3 method to summarize objects of class boottest}
 \usage{
-\method{summary}{boottest}(object, digits = 3)
+\method{summary}{boottest}(object, digits = 3, ...)
 }
 \arguments{
 \item{object}{object of type boottest}
 
 \item{digits}{rounding of output}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \description{
 S3 method to summarize objects of class boottest

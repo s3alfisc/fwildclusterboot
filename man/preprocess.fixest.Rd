@@ -4,7 +4,7 @@
 \alias{preprocess.fixest}
 \title{function that pre-processes regression objects of type fixest}
 \usage{
-\method{preprocess}{fixest}(object, param, clustid, beta0, alpha, fe, seed)
+\method{preprocess}{fixest}(object, param, clustid, beta0, alpha, fe, seed, ...)
 }
 \arguments{
 \item{object}{An object of class fixest}
@@ -20,6 +20,8 @@
 \item{fe}{A character scalar - fixed effect to be projected out, or NULL}
 
 \item{seed}{Integer. Sets the seed}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 preprocessed object of class boottest_preprocessed

@@ -4,7 +4,7 @@
 \alias{invert_p_val2.algo_multclust}
 \title{Inverts the bootstrap p-value and calculates confidence sets}
 \usage{
-\method{invert_p_val2}{algo_multclust}(object, B, point_estimate, se_guess, clustid, alpha)
+\method{invert_p_val2}{algo_multclust}(object, B, point_estimate, se_guess, clustid, alpha, ...)
 }
 \arguments{
 \item{object}{A  object of type boottest}
@@ -18,6 +18,8 @@
 \item{clustid}{A vector with the clusters}
 
 \item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+
+\item{...}{Further arguments passed to or from other methods.}
 }
 \description{
 Inverts the bootstrap p-value and calculates confidence sets
