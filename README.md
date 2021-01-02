@@ -56,27 +56,14 @@ seed <- 942413
 set.seed(seed)
 voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
 
+# estimate the regression model
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-```
 
-The `boottest` function always calculates p-values for a given
-univariate hypothesis test. Second and by default, the boottest function
-calculates confidence intervals by inversion of the p-value. The user
-can considerably speed up the inference procedure by setting the
-argument `conf_int = FALSE`, in which case no confidence intervals are
-computed.
-
-``` r
-# 1) boottest based on object of class lm
+# bootstrap estimation
 boot_lm = boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
 #>   |                                                                              |                                                                      |   0%  |                                                                              |------                                                                |   8%  |                                                                              |---------                                                             |  12%  |                                                                              |------------                                                          |  17%  |                                                                              |---------------                                                       |  21%  |                                                                              |------------------                                                    |  25%  |                                                                              |--------------------                                                  |  29%  |                                                                              |-----------------------                                               |  33%  |                                                                              |--------------------------                                            |  38%  |                                                                              |-----------------------------                                         |  42%  |                                                                              |--------------------------------                                      |  46%  |                                                                              |-----------------------------------                                   |  50%  |                                                                              |--------------------------------------                                |  54%  |                                                                              |-----------------------------------------                             |  58%  |                                                                              |--------------------------------------------                          |  62%  |                                                                              |-----------------------------------------------                       |  67%  |                                                                              |--------------------------------------------------                    |  71%  |                                                                              |----------------------------------------------------                  |  75%  |                                                                              |-------------------------------------------------------               |  79%  |                                                                              |----------------------------------------------------------            |  83%  |                                                                              |-------------------------------------------------------------         |  88%  |                                                                              |----------------------------------------------------------------      |  92%  |                                                                              |-------------------------------------------------------------------   |  96%  |                                                                              |----------------------------------------------------------------------| 100%
-```
 
-The function `summary` collects the results. Boottest further comes with
-a `tidy` method, which, in analogy with the `broom` package, returns the
-estimation results as a data.frame.
-
-``` r
+# summarize the results
 summary(boot_lm)
 #> boottest.lm(object = lm_fit, clustid = "group_id1", param = "treatment", 
 #>     B = B, conf_int = TRUE, seed = seed)
@@ -94,22 +81,47 @@ tidy(boot_lm)
 #> treatment 0.01080738 1.089841   0.2918 -0.009933565 0.03186458
 ```
 
+<!-- The `boottest` function always calculates p-values for a given univariate hypothesis test. -->
+
+<!-- Second and by default, the boottest function calculates confidence intervals by inversion of the p-value. The user can considerably speed up the inference procedure by setting the argument `conf_int = FALSE`, in which case no confidence intervals are computed. -->
+
+<!-- ```{r, warning = FALSE, message=FALSE} -->
+
+<!-- # 1) boottest based on object of class lm -->
+
+<!-- boot_lm = boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE) -->
+
+<!-- ``` -->
+
+<!-- The function `summary` collects the results.  -->
+
+<!-- Boottest further comes with a `tidy` method, which, in analogy with the `broom` package, returns the estimation results as a data.frame. -->
+
+<!-- ```{r, warning = FALSE, message=FALSE} -->
+
+<!-- summary(boot_lm) -->
+
+<!-- tidy(boot_lm) -->
+
+<!-- ``` -->
+
 ## Installation
 
-You can install the released version of `fwildclusterboot` from github
-by running
+You can install the development version of `fwildclusterboot` from
+github by running
 
 ``` r
+# Note: Rtools is required
 devtools::install_github("s3alfisc/fwildclusterboot")
 ```
 
 ## Benchmarks
 
 Results of timing benchmarks of `fwildclusterboot` with
-`sandwich::vcovBS`.
+`sandwich::vcovBS` (one replication):
 
-  - Benchmark 1: N = 10000, one cluster with \(N_G = 40\)
-  - Benchmark 2: N = 10000, two closters with \(N_G1= 40\) and
+  - Benchmark 1: one cluster with dimension \(N_G = 40\)
+  - Benchmark 2: two closters with dimensions \(N_G1= 40\),
     \(N_G2 = 20\), \(N_G12 = 800\)
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
