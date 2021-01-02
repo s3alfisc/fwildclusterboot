@@ -2,14 +2,14 @@ Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap for Linear Models
 Version: 0.1
 Authors@R: 
-    person(given = "Alexander",
+    c(person(given = "Alexander",
            family = "Fischer",
            role = c("aut", "cre"),
-           email = "alexander-fischer1801@t-online.de")
+           email = "alexander-fischer1801@t-online.de"),
     person(given = "David", 
            family = "Roodman", 
-           role = "ctb")
-Description: Extremely fast wild cluster bootstrap inference for linear regression models.
+           role = "ctb"))
+Description: Fast wild cluster bootstrap inference for linear regression models.
 License: GPL-3
 Imports: 
     collapse, 
@@ -27,7 +27,7 @@ Suggests:
     fixest, 
     tinytest
 Remotes: 
-    github: SebKrantz/collapse
+    github::SebKrantz/collapse
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
