@@ -37,7 +37,18 @@ The following features will be added in the future:
   - support for multivariate hypotheses
   - bootstrap distributions beyond the rademacher distribution
 
-## The `boottest()` function
+## Benchmarks
+
+Results of timing benchmarks of `fwildclusterboot` with
+`sandwich::vcovBS` (one replication):
+
+  - Benchmark 1: one cluster with dimension \(N_G = 40\)
+  - Benchmark 2: two closters with dimensions \(N_G1= 40\),
+    \(N_G2 = 20\), \(N_G12 = 800\)
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+
+## The `boottest` function
 
 The `fwildclusterboot` package supports wild cluster bootstrap inference
 for linear models based on
@@ -114,14 +125,3 @@ github by running
 # Note: Rtools is required
 devtools::install_github("s3alfisc/fwildclusterboot")
 ```
-
-## Benchmarks
-
-Results of timing benchmarks of `fwildclusterboot` with
-`sandwich::vcovBS` (one replication):
-
-  - Benchmark 1: one cluster with dimension \(N_G = 40\)
-  - Benchmark 2: two closters with dimensions \(N_G1= 40\),
-    \(N_G2 = 20\), \(N_G12 = 800\)
-
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />

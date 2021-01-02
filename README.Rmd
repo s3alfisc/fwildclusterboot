@@ -74,7 +74,46 @@ The following features will be added in the future:
 
 ```
 
-## The `boottest()` function 
+
+## Benchmarks
+
+Results of timing benchmarks of `fwildclusterboot` with `sandwich::vcovBS` (one replication):
+
+* Benchmark 1: one cluster with dimension $N_G = 40$
+* Benchmark 2: two closters with dimensions $N_G1= 40$, $N_G2 = 20$, $N_G12 = 800$
+
+```{r,echo=FALSE, warning = FALSE, message = FALSE}
+
+benchmarks <- readRDS("C:/Users/alexa/Dropbox/fwildclusterboot develop/benchmarks.rds")
+library(data.table)
+
+setDT(benchmarks)
+
+benchmarks[benchmarks$test == "fwc_1", test := "boottest, no fixed effect"]
+benchmarks[benchmarks$test == "fwc_2", test := "boottest, fixed effect"]
+benchmarks[benchmarks$test == "sw_1c",test :="sandwich, 1 core"]
+benchmarks[benchmarks$test == "sw_2c",test :="sandwich, 2 cores"]
+benchmarks[benchmarks$test == "sw_4c",test := "sandwich, 4 cores"]
+
+
+library(ggplot2)
+library(scales)
+plot <- 
+ggplot(aes(x = B, y = elapsed, group = test, color = test), data = benchmarks) + 
+  facet_wrap(~ test_nr, nrow = 2) + 
+  scale_y_continuous(trans = 'log10', labels = comma) + 
+  geom_point() + 
+  geom_line(alpha = 0.5) + 
+  xlab("Number of Bootstrap Iterations") + 
+  ylab("Time in seconds, log scale") + 
+  theme_bw() +
+  theme(legend.title=element_blank())
+  #theme(legend.position="bottom")  
+plot
+
+```
+
+## The `boottest` function 
 
 
 The `fwildclusterboot` package supports wild cluster bootstrap inference for linear models based on 
@@ -140,46 +179,16 @@ plot(boot_lm)
 
 ## Installation
 
-You can install the development version of `fwildclusterboot` from github by running 
+You can install the development version of `fwildclusterboot` from github by following the steps below. The installation process is currently complicated by the fact that a package dependency, the `collapse` package, has been temporarily removed from cran. Once `collapse` is back on cran, the last line will suffice. 
 
 ```{r, eval = FALSE}
-# Note: Rtools is required
+# 1) install the most recent version of devtools
+install.packages("devtools")
+# 2) restart your r session
+# 3) install Rtools if not already installed
+# 4) install the package
 devtools::install_github("s3alfisc/fwildclusterboot")
 ```
 
 
-## Benchmarks
-
-Results of timing benchmarks of `fwildclusterboot` with `sandwich::vcovBS` (one replication):
-
-* Benchmark 1: one cluster with dimension $N_G = 40$
-* Benchmark 2: two closters with dimensions $N_G1= 40$, $N_G2 = 20$, $N_G12 = 800$
-
-```{r,echo=FALSE, warning = FALSE, message = FALSE}
-
-benchmarks <- readRDS("C:/Users/alexa/Dropbox/fwildclusterboot develop/benchmarks.rds")
-
-benchmarks[benchmarks$test == "fwc_1"]$test <- "boottest, no fixed effect"
-benchmarks[benchmarks$test == "fwc_2"]$test <- "boottest, fixed effect"
-benchmarks[benchmarks$test == "sw_1c"]$test <- "sandwich, 1 core"
-benchmarks[benchmarks$test == "sw_2c"]$test <- "sandwich, 2 cores"
-benchmarks[benchmarks$test == "sw_4c"]$test <- "sandwich, 4 cores"
-
-
-library(ggplot2)
-library(scales)
-plot <- 
-ggplot(aes(x = B, y = elapsed, group = test, color = test), data = benchmarks) + 
-  facet_wrap(~ test_nr, nrow = 2) + 
-  scale_y_continuous(trans = 'log2', labels = comma) + 
-  geom_point() + 
-  geom_line(alpha = 0.5) + 
-  xlab("Number of Bootstrap Iterations") + 
-  ylab("Time in seconds, log scale") + 
-  theme_bw() +
-  theme(legend.title=element_blank())
-  #theme(legend.position="bottom")  
-plot
-
-```
 
