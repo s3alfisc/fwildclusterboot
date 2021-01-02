@@ -4,10 +4,10 @@
 \alias{preprocess}
 \title{S3 Method preprocess}
 \usage{
-preprocess(x, ...)
+preprocess(object, ...)
 }
 \arguments{
-\item{x}{An object of type lm, fixest of felm}
+\item{object}{An object of type lm, fixest of felm}
 
 \item{...}{other arguments}
 }

@@ -4,10 +4,10 @@
 \alias{plot.boottest}
 \title{Plot the bootstrap distribution of t-statistics}
 \usage{
-\method{plot}{boottest}(object, ...)
+\method{plot}{boottest}(x, ...)
 }
 \arguments{
-\item{object}{An object of type boottest}
+\item{x}{An object of type boottest}
 
 \item{...}{Further arguments passed to or from other methods.}
 }

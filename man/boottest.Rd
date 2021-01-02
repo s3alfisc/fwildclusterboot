@@ -4,10 +4,10 @@
 \alias{boottest}
 \title{S3 Method boottest}
 \usage{
-boottest(x, ...)
+boottest(object, ...)
 }
 \arguments{
-\item{x}{An object of type lm, fixest of felm}
+\item{object}{An object of type lm, fixest of felm}
 
 \item{...}{other arguments}
 }

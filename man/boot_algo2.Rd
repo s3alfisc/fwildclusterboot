@@ -4,10 +4,10 @@
 \alias{boot_algo2}
 \title{S3 Method boot_algo2}
 \usage{
-boot_algo2(x, ...)
+boot_algo2(preprocessed_object, ...)
 }
 \arguments{
-\item{x}{An object of type preprocess_lm, preprocess_felm or preprocess_fixest}
+\item{preprocessed_object}{An object of type preprocess_lm, preprocess_felm or preprocess_fixest}
 
 \item{...}{other arguments}
 }

@@ -1,25 +1,25 @@
- tidy <- function(x, ...){
+ tidy <- function(object,...){
    #' S3 method to summarize objects of class boottest into tidy data.frame
    #'@export 
-   #'@param x object of type boottest
+   #'@param object object of type boottest
    #'@param ... other arguments
-   UseMethod("tidy", x)
+   UseMethod("tidy", object)
  }
   
-#'  summary <- function(x, ...){
+#'  summary <- function(object,...){
 #'    #' S3 method to summarize objects of class boottest 
 #'    #'@export 
-#'    #'@param x object of type boottest
+#'    #'@param object object of type boottest
 #'    #'@param ... other arguments
-#'    UseMethod("summary", x)
+#'    UseMethod("summary", object)
 #'  }
 #' 
-#' plot <- function(x, ...){
+#' plot <- function(object,...){
 #'    #' S3 generic to plot bootstrap t statistics
 #'    #'@export 
-#'    #'@param x object of type boottest
+#'    #'@param object object of type boottest
 #'    #'@param ... other arguments
-#'    UseMethod("plot", x)
+#'    UseMethod("plot", object)
 #' }
 
 tidy.boottest <- function(object, ...){
@@ -108,20 +108,20 @@ summary.boottest <- function(object, digits = 3, ...){
   return(tidy_object)
 }
 
-plot.boottest <- function(object, ...){
+plot.boottest <- function(x, ...){
   
   #' Plot the bootstrap distribution of t-statistics
-  #' @param object An object of type boottest
-  #'@param ... Further arguments passed to or from other methods.
+  #' @param x An object of type boottest
+  #' @param ... Further arguments passed to or from other methods.
   #' @importFrom graphics abline grid lines
   #' @method plot boottest
   #' @export 
-  stopifnot(inherits(object, "boottest"))
+  stopifnot(inherits(x, "boottest"))
   
-  test_vals <- object$test_vals
-  p_test_vals <- object$p_test_vals
-  conf_int <- object$conf_int
-  alpha <- object$alpha
+  test_vals <- x$test_vals
+  p_test_vals <- x$p_test_vals
+  conf_int <- x$conf_int
+  alpha <- x$alpha
   
   graphics::plot(x = test_vals, y = p_test_vals,  type = "b", pch = 20, lty = 2, xlab = "Constraint", ylab = "p-value")
   lines(test_vals, p_test_vals, type = "l", lty = 1)

@@ -4,10 +4,10 @@
 \alias{invert_p_val}
 \title{S3 Method invert_p_val}
 \usage{
-invert_p_val(x, ...)
+invert_p_val(object, ...)
 }
 \arguments{
-\item{x}{An object of type boot_algo_oneclust or boot_algo_multclust}
+\item{object}{An object of type boot_algo_oneclust or boot_algo_multclust}
 
 \item{...}{other arguments}
 }
