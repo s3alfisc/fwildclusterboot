@@ -25,6 +25,20 @@ boottest.fixest  <- function(object,
   #'@import dreamerr
   #'@export
   #'@method boottest fixest
+  #'@example 
+  #'library(fwildclusterboot)
+  #'library(fixest)
+  #'voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
+  #'feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
+  #'boot1 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = "group_id1")
+  #'boot2 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"))
+  #'boot3 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), fe = "Q1_immigration")
+  #'boot4 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), fe = "Q1_immigration", alpha = 0.2, seed = 8, beta0 = 2)
+  #'summary(boot1)
+  #'tidy(boot1)
+  #'plot(boot1)
+
+  
  
   call <- match.call()
   
@@ -70,6 +84,19 @@ boottest.fixest  <- function(object,
    if(!is.null(fe) && fe %in% clustid){
      stop(paste("The function argument fe =", fe, "is contained in the clustering variables. This is not allowed. Please set fe to another factor variable or NULL."))
    }
+   
+   # if(!is.null(panel_id)){
+   #   stop(paste("boottest() currently does not work if an argument panel_id is applied to feols()."))
+   # }
+   # 
+   # deparse_fml <- paste(deparse(object$fml, width.cutoff = 500), collapse="")
+   # #deparse_fml <- deparse(object$fml)
+   # if(grepl("[",deparse_fml) || 
+   #    grepl("i(", deparse_fml) ||
+   #    grepl("c(", deparse_fml) ||
+   #    grepl("^", deparse_fml)){
+   #   stop("Advanced formula notation in feols as c(), i(), ^ and [x] is not supported in boottest.")
+   # }
    
   preprocess <- suppressWarnings(preprocess(object = object, 
                                   param = param,

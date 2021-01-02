@@ -26,6 +26,18 @@ boottest.felm  <- function(object,
   #'@return An object of class boottest
   #'@export
   #'@method boottest felm
+  #'@example
+  #'library(fwildclusterboot)
+  #'library(lfe)
+  #'voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
+  #'felm_fit <-felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, data = voters)
+  #'boot1 <- boottest(felm_fit, B = 10000, param = "treatment", clustid = "group_id1")
+  #'boot2 <- boottest(felm_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"))
+  #'boot3 <- boottest(felm_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), fe = "Q1_immigration")
+  #'boot4 <- boottest(felm_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), fe = "Q1_immigration", alpha = 0.2, seed = 8, beta0 = 2)
+  #'summary(boot1)
+  #'tidy(boot1)
+  #'plot(boot1)
   
   call <- match.call()
   
