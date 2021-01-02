@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![CRAN status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-project.org/package=fwildclusterboot)
+[![R-CMD-check](https://github.com/s3alfisc/fwildclusterboot/workflows/R-CMD-check/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions)
 <!-- badges: end -->
 
 The `fwildclusterboot` package is an R port of Stata's `boottest` package. 
@@ -203,7 +204,7 @@ benchmarks[benchmarks$test == "fwc_1"]$test <- "boottest without fixed effect"
 benchmarks[benchmarks$test == "fwc_2"]$test <- "boottest with fixed effect"
 benchmarks[benchmarks$test == "sw_1c"]$test <- "sandwich, 1 core"
 benchmarks[benchmarks$test == "sw_2c"]$test <- "sandwich, 2 cores"
-benchmarks[benchmarks$test == "sw_2c"]$test <- "sandwich, 4 cores"
+benchmarks[benchmarks$test == "sw_4c"]$test <- "sandwich, 4 cores"
 
 
 library(ggplot2)
@@ -213,7 +214,7 @@ ggplot(aes(x = B, y = elapsed, group = test, color = test), data = benchmarks) +
   facet_wrap(~ test_nr) + 
  scale_y_continuous(trans = 'log10', labels = comma) + 
   geom_point() + 
-  geom_line() + 
+  geom_line(alpha = 0.5) + 
   xlab("Number of Bootstrap Iterations") + 
   ylab("Time in seconds, log scale") + 
   theme_bw()
