@@ -25,7 +25,7 @@ boottest.fixest  <- function(object,
   #'@import dreamerr
   #'@export
   #'@method boottest fixest
-  #'@example 
+  #'@examples
   #'library(fwildclusterboot)
   #'library(fixest)
   #'voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)

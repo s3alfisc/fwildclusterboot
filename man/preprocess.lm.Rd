@@ -9,15 +9,15 @@
 \arguments{
 \item{object}{An object of class lm}
 
-\item{param}{The univariate coefficients for which a hypothesis is to be tested}
+\item{param}{A scalar character. The coefficient for which a hypothesis is to be tested}
 
-\item{clustid}{A vector with the clusters}
+\item{clustid}{A character vector containing the names of the cluster variables}
 
-\item{beta0}{A numeric. Shifts the null hypothesis}
+\item{beta0}{A numeric scalar. Shifts the null hypothesis}
 
-\item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+\item{alpha}{A numeric scalar between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
 
-\item{seed}{Integer. Sets the seed}
+\item{seed}{An integer. Sets the seed}
 }
 \value{
 preprocessed object of class boottest_preprocessed

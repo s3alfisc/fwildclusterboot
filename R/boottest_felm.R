@@ -26,7 +26,7 @@ boottest.felm  <- function(object,
   #'@return An object of class boottest
   #'@export
   #'@method boottest felm
-  #'@example
+  #'@examples
   #'library(fwildclusterboot)
   #'library(lfe)
   #'voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
