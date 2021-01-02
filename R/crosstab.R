@@ -4,7 +4,6 @@ crosstab3 <- function(data, var1, var2){
   #' @param data A matrix to collapse by two dimensions var1 var2
   #' @param var1 a data.frame containing a single variable 
   #' @param var2 a data.frame containing a single variable
-  #' @importFrom collapse fsum
   #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
   
   unique_var1 <- as.vector(unique(var1[, names(var1)]))
@@ -68,7 +67,6 @@ crosstab<- function(data, var1, var2){
   #' @param data A matrix to collapse by two dimensions var1 var2
   #' @param var1 a data.frame containing a single variable 
   #' @param var2 a data.frame containing a single variable
-  #' @importFrom collapse fsum
   #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
   
   # data <- dt
@@ -87,7 +85,7 @@ crosstab<- function(data, var1, var2){
   # create rownames as collapse::fsum
   df <- data.frame(names = paste0(df[, 1], ".", df[, 2]))
   setDT(df)
-  res <- fsum(data, cbind(var1,var2))
+  res <- collapse::fsum(data, cbind(var1,var2))
   res_dt <- data.table(names = rownames(res), values = res)
   final <- merge(df, res_dt, by = "names", all.x = TRUE)
   values <- final[, names:=NULL] 

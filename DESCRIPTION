@@ -1,29 +1,33 @@
 Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap for Linear Models
-Version: 0.0.0.9000
+Version: 0.1
 Authors@R: 
     person(given = "Alexander",
            family = "Fischer",
            role = c("aut", "cre"),
-           email = "afischer@econ.au.dk",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "alexander-fischer1801@t-online.de")
+    person(given = "David", 
+           family = "Roodman", 
+           role = "ctb")
 Description: Extremely fast wild cluster bootstrap inference for linear regression models.
 License: GPL-3
 Imports: 
+    collapse, 
     data.table,
     Formula,
     fabricatr,
-    Rcpp, 
-    dreamerr, 
-    Matrix, 
-    Matrix.utils, 
-    collapse, 
-    sandwich, 
+    Rcpp,
+    dreamerr,
+    Matrix,
+    Matrix.utils,
+    sandwich,
     lmtest
 Suggests: 
     lfe,
     fixest, 
     tinytest
+Remotes: 
+    github: SebKrantz/collapse
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
