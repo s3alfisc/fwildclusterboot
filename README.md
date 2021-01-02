@@ -30,12 +30,14 @@ of bootstrapping clusters is not too large.
 The `fwildclusterboot` package currently supports one- and
 two-dimensional clustering and one-dimensional hypotheses.
 
-The package is highly experimental and only includes few unit tests.
+The package is currently in an experimental testing phase and still
+lacks sufficient unit tests.
 
-The following features will be added in the future:
+<!-- The following features will be added in the future:  -->
 
-  - support for multivariate hypotheses
-  - bootstrap distributions beyond the rademacher distribution
+<!-- * support for multivariate hypotheses  -->
+
+<!-- * bootstrap distributions beyond the rademacher distribution -->
 
 ## Benchmarks
 
@@ -119,9 +121,16 @@ tidy(boot_lm)
 ## Installation
 
 You can install the development version of `fwildclusterboot` from
-github by running
+github by following the steps below. The installation process is
+currently complicated by the fact that a package dependency, the
+`collapse` package, has been temporarily removed from cran. Once
+`collapse` is back on cran, the last line will suffice.
 
 ``` r
-# Note: Rtools is required
+# 1) install the most recent version of devtools
+install.packages("devtools")
+# 2) restart your r session
+# 3) install Rtools if not already installed
+# 4) install the package
 devtools::install_github("s3alfisc/fwildclusterboot")
 ```

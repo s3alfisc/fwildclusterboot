@@ -31,12 +31,12 @@ The package's central function is `boottest()`. It allows the user to test two-s
 
 The `fwildclusterboot` package currently supports one- and two-dimensional clustering and one-dimensional hypotheses.
 
-The package is highly experimental and only includes few unit tests.
+The package is currently in an experimental testing phase and still lacks sufficient unit tests.
 
-The following features will be added in the future: 
+<!-- The following features will be added in the future:  -->
 
-* support for multivariate hypotheses 
-* bootstrap distributions beyond the rademacher distribution
+<!-- * support for multivariate hypotheses  -->
+<!-- * bootstrap distributions beyond the rademacher distribution -->
 
 
 ```{r, echo=FALSE, include=FALSE, results="hide", execute = FALSE}
