@@ -4,10 +4,10 @@
 \alias{tidy}
 \title{S3 method to summarize objects of class boottest into tidy data.frame}
 \usage{
-tidy(x, ...)
+tidy(object, ...)
 }
 \arguments{
-\item{x}{object of type boottest}
+\item{object}{object of type boottest}
 
 \item{...}{other arguments}
 }
