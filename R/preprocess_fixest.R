@@ -50,12 +50,12 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed){
   
   
   if(!is.null(object$call$weights)){
-    stop("Function currently does not allow weights.")
+    stop("The boottest function currently does not allow for regression weights. The argument weights needs to be NULL.")
   }
   
   
   if(!(param %in% c(names(object$coefficients)))){
-    stop("Parameter to test not in model or all. Please specify appropriate parameters to test.")
+    stop(paste("The parameter", param, "is not included in the estimated model. Maybe you are trying to test for an interaction parameter? To see all model parameter names, run names(coef(model))."))
   }
   
   if(is.null(beta0)){

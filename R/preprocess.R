@@ -59,8 +59,7 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
   weights <- object$call$weights
   
   if(!is.null(weights)){
-    stop("Currently, boottest does not support weighted least squares. weights 
-         must be NULL.")
+    stop("The boottest function currently does not allow for regression weights. The argument weights needs to be NULL.")
   }
   
   
@@ -77,7 +76,7 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed){
   # }
   
   if(!(param %in% c(names(object$coefficients)))){
-    warning("Parameter to test not in model or all. Please specify appropriate parameters to test.")
+    stop(paste("The parameter", param, "is not included in the estimated model. Maybe you are trying to test for an interaction parameter? To see all model parameter names, run names(coef(model))."))
   }
   
   if(sum(!(names(clustid)) %in% c(names(object$coefficients)))>1){
