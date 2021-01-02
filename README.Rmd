@@ -91,24 +91,33 @@ seed <- 942413
 set.seed(seed)
 voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
 
+# estimate the regression model
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-```
 
-The `boottest` function always calculates p-values for a given univariate hypothesis test.
-Second and by default, the boottest function calculates confidence intervals by inversion of the p-value. The user can considerably speed up the inference procedure by setting the argument `conf_int = FALSE`, in which case no confidence intervals are computed.
-
-```{r, warning = FALSE, message=FALSE}
-# 1) boottest based on object of class lm
+# bootstrap estimation
 boot_lm = boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
-```
 
-The function `summary` collects the results. 
-Boottest further comes with a `tidy` method, which, in analogy with the `broom` package, returns the estimation results as a data.frame.
-
-```{r, warning = FALSE, message=FALSE}
+# summarize the results
 summary(boot_lm)
 tidy(boot_lm)
+
 ```
+
+<!-- The `boottest` function always calculates p-values for a given univariate hypothesis test. -->
+<!-- Second and by default, the boottest function calculates confidence intervals by inversion of the p-value. The user can considerably speed up the inference procedure by setting the argument `conf_int = FALSE`, in which case no confidence intervals are computed. -->
+
+<!-- ```{r, warning = FALSE, message=FALSE} -->
+<!-- # 1) boottest based on object of class lm -->
+<!-- boot_lm = boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE) -->
+<!-- ``` -->
+
+<!-- The function `summary` collects the results.  -->
+<!-- Boottest further comes with a `tidy` method, which, in analogy with the `broom` package, returns the estimation results as a data.frame. -->
+
+<!-- ```{r, warning = FALSE, message=FALSE} -->
+<!-- summary(boot_lm) -->
+<!-- tidy(boot_lm) -->
+<!-- ``` -->
 
 
 ```{r, include = FALSE}
@@ -131,77 +140,27 @@ plot(boot_lm)
 
 ## Installation
 
-You can install the released version of `fwildclusterboot` from github by running 
+You can install the development version of `fwildclusterboot` from github by running 
 
 ```{r, eval = FALSE}
+# Note: Rtools is required
 devtools::install_github("s3alfisc/fwildclusterboot")
 ```
 
 
-```{r, warning = FALSE, message=FALSE, include = FALSE}
-
-## Comparison to `vcovBS()` from `sandwich`
-
-#The `multiwayvcov` package offers an alternative implementation of the wild bootstrap. 
-#As can be seen, `sandwich::vcovBS`, `sandwich::vcov` and `boottest()` produce similar #results: 
-  
-library(sandwich)
-library(lmtest)
-
-res <- vcovBS(lm_fit, cluster = ~ group_id1, parallel = FALSE, R = 1000, wild_type = "rademacher")
-
-# 1) asymptotic sandwich standard errors 
-vocv <- vcovCL(lm_fit, ~ group_id1)
-head(coeftest(lm_fit, vcov))
-
-# 1) results from sandwich's cluster bootstrap 
-head(coeftest(lm_fit, res))
-
-# 2) results from fwildclusterboot
-summary(boot_lm)
-
-
-
-```
-
-
-
-```{r, include = FALSE}
-## Some Tests with 2-way clustering 
-
-library(sandwich)
-library(lmtest)
-rm(boot_lm); rm(boot_fixest); rm(boot_felm); rm(res)
-
-
-boot_lm <-  boottest(lm_fit, clustid = c("group_id1", "group_id2"), B = 1000, seed = seed, param = "treatment", conf_int = TRUE)
-
-summary(boot_lm)
-
-vocv <- vcovCL(lm_fit, ~ group_id1 + group_id2)
-coeftest(lm_fit, vcov)
-
-vcovBS <- vcovBS(lm_fit, cluster = ~ group_id1, parallel = FALSE, R = 1000, wild_type = "rademacher")
-
-head(coeftest(lm_fit, vcovBS))
-
-```
-
-
-
 ## Benchmarks
 
-Results of timing benchmarks of `fwildclusterboot` with `sandwich::vcovBS`.
+Results of timing benchmarks of `fwildclusterboot` with `sandwich::vcovBS` (one replication):
 
-* Benchmark 1: N = 10000, one cluster with $N_G = 40$
-* Benchmark 2: N = 10000, two closters with $N_G1= 40$ and $N_G2 = 20$, $N_G12 = 800$
+* Benchmark 1: one cluster with dimension $N_G = 40$
+* Benchmark 2: two closters with dimensions $N_G1= 40$, $N_G2 = 20$, $N_G12 = 800$
 
 ```{r,echo=FALSE, warning = FALSE, message = FALSE}
 
 benchmarks <- readRDS("C:/Users/alexa/Dropbox/fwildclusterboot develop/benchmarks.rds")
 
-benchmarks[benchmarks$test == "fwc_1"]$test <- "boottest without fixed effect"
-benchmarks[benchmarks$test == "fwc_2"]$test <- "boottest with fixed effect"
+benchmarks[benchmarks$test == "fwc_1"]$test <- "boottest, no fixed effect"
+benchmarks[benchmarks$test == "fwc_2"]$test <- "boottest, fixed effect"
 benchmarks[benchmarks$test == "sw_1c"]$test <- "sandwich, 1 core"
 benchmarks[benchmarks$test == "sw_2c"]$test <- "sandwich, 2 cores"
 benchmarks[benchmarks$test == "sw_4c"]$test <- "sandwich, 4 cores"
@@ -211,13 +170,15 @@ library(ggplot2)
 library(scales)
 plot <- 
 ggplot(aes(x = B, y = elapsed, group = test, color = test), data = benchmarks) + 
-  facet_wrap(~ test_nr) + 
- scale_y_continuous(trans = 'log10', labels = comma) + 
+  facet_wrap(~ test_nr, nrow = 2) + 
+  scale_y_continuous(trans = 'log2', labels = comma) + 
   geom_point() + 
   geom_line(alpha = 0.5) + 
   xlab("Number of Bootstrap Iterations") + 
   ylab("Time in seconds, log scale") + 
-  theme_bw()
+  theme_bw() +
+  theme(legend.title=element_blank())
+  #theme(legend.position="bottom")  
 plot
 
 ```
