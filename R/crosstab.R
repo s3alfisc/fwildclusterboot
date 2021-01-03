@@ -51,12 +51,15 @@ crosstab2<- function(data, var1, var2){
   dt[is.na(y), y:=0]
   
   unique_var1 <- as.vector(unique(var1[, names(var1)]))
-  unique_var2 <- unique(var2)
+  #unique_var2 <- unique(var2)
+  unique_var2 <- as.vector(unique(var2[, names(var2)]))
+  
   
   unique_var1_len <- length(unique_var1)
   unique_var2_len <- length(unique_var2)
   
-  matrix(dt$y, unique_var1_len, unique_var2_len)
+  #dt$y
+  matrix(dt$y, unique_var1_len, unique_var2_len, byrow = TRUE)
   
 }
 
@@ -68,6 +71,9 @@ crosstab<- function(data, var1, var2){
   #' @param var1 a data.frame containing a single variable 
   #' @param var2 a data.frame containing a single variable
   #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
+  
+  dreamerr::check_arg(var1, "data.frame")
+  dreamerr::check_arg(var2, "data.frame")
   
   # data <- dt
   # var1 <- "a"
@@ -111,17 +117,24 @@ crosstab4 <- function(data, var1, var2){
   #' @importFrom stats aggregate
   #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
   
-  length_var1 <- length(unique(var1))
-  length_var2 <- length(unique(var2))
-  res <- aggregate(data, list(var1, var2), sum, drop = FALSE)
+  dreamerr::check_arg(var1, "data.frame")
+  dreamerr::check_arg(var2, "data.frame")
+  
+  
+  length_var1 <- nrow(unique(var1))
+  length_var2 <- nrow(unique(var2))
+  res <- aggregate(data, data.frame(var1, var2), sum, drop = FALSE)
   #res <- Matrix.utils::aggregate.Matrix(data, list(var1, var2), sum, drop = FALSE)
-  res <- res[, c("V1")]
+  res <- res[, 3]
   res[is.na(res)] <- 0 
   dim(res) <- c(length_var1, length_var2)
   res
 }
 
-# res <- crosstab4(data = y, var1 = a, var2 = b)
-# class(res)
-# library(collapse)
-# fsum(y, cbind(a, b))
+# a <- sample(1:40, 10000, replace = TRUE)
+# b <- sample(1:100, 10000, replace = TRUE)
+# y <- matrix(rnorm(10000), 10000, 1)
+# data <- y
+# var1 <- data.frame(a = a)
+# var2 <- data.frame(b = b)
+# microbenchmark(crosstab2(data = data, var1 = var1, var2 = var2), crosstab4(data = data, var1 = var1, var2 = var2), times = 20)
