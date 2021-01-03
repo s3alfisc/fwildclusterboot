@@ -89,6 +89,10 @@ boottest.lm <- function(object,
     stop("The function argument alpha is outside of the unit interval (0, 1). Please specify alpha so that it is within the unit interval.")
   }
   
+  if(((1 - alpha) * (B + 1)) %% 1 != 0){
+    warning(paste("The bootstrap usually performs best when the confidence level (here,", 1 - alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."), 
+            call. = FALSE)
+  }
   
   preprocess <- preprocess(object = object, 
                            param = param, 

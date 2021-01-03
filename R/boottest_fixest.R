@@ -87,6 +87,11 @@ boottest.fixest  <- function(object,
      stop(paste("The function argument fe =", fe, "is contained in the clustering variables. This is not allowed. Please set fe to another factor variable or NULL."))
    }
    
+   if(((1 - alpha) * (B + 1)) %% 1 != 0){
+     warning(paste("The bootstrap usually performs best when the confidence level (here,", 1 - alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."), 
+             call. = FALSE)
+   }
+   
    # if(!is.null(panel_id)){
    #   stop(paste("boottest() currently does not work if an argument panel_id is applied to feols()."))
    # }

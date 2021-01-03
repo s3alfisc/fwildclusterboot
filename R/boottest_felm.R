@@ -43,6 +43,8 @@ boottest.felm  <- function(object,
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL")
   
+ 
+  
   if((conf_int == TRUE || is.null(conf_int)) & B <= 100){
     stop("The function argument B is smaller than 100. The number of bootstrap iterations needs to be 100 or higher in order to guarantee that the root
          finding procudure used to find the confidence set works properly.", 
@@ -57,6 +59,10 @@ boottest.felm  <- function(object,
     stop(paste("The function argument fe =", fe, "is contained in the clustering variables. This is not allowed. Please set fe to another factor variable or NULL."))
   }
   
+  if(((1 - alpha) * (B + 1)) %% 1 != 0){
+    warning(paste("The bootstrap usually performs best when the confidence level (here,", 1 - alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."), 
+            call. = FALSE)
+  }
   
     #    setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
     #    file.sources = list.files(pattern="*.R")
