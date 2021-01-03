@@ -64,50 +64,6 @@ crosstab2<- function(data, var1, var2){
 }
 
 
-crosstab<- function(data, var1, var2){
-  
-  #' Function 1 to calculate crosstabs
-  #' @param data A matrix to collapse by two dimensions var1 var2
-  #' @param var1 a data.frame containing a single variable 
-  #' @param var2 a data.frame containing a single variable
-  #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
-  
-  dreamerr::check_arg(var1, "data.frame")
-  dreamerr::check_arg(var2, "data.frame")
-  
-  # data <- dt
-  # var1 <- "a"
-  # var2 <- "b"
-   # data <- XinvXXr
-   # var1 = clustid
-   # var2 = fixed_effect
-
-  unique_var1 <- as.vector(unique(var1[, names(var1)]))
-  unique_var2 <- unique(var2)
-  
-  unique_var1_len <- length(unique_var1)
-  unique_var2_len <- length(unique_var2)
-  df <- expand.grid(unique_var1, unique_var2)
-  # create rownames as collapse::fsum
-  df <- data.frame(names = paste0(df[, 1], ".", df[, 2]))
-  setDT(df)
-  res <- collapse::fsum(data, cbind(var1,var2))
-  res_dt <- data.table(names = rownames(res), values = res)
-  final <- merge(df, res_dt, by = "names", all.x = TRUE)
-  values <- final[, names:=NULL] 
-  values <- matrix(as.matrix(values), unique_var1_len, unique_var2_len)
-  values[is.na(values)] <- 0
-  values
-}
-
-
-# microbenchmark(
-#   crosstab(data = as.matrix(W %*% u_hat), var1 = var1, var2 = var2), 
-#   crosstab2(data = as.matrix(W %*% u_hat), var1 = var1, var2 = var2)
-# )
-
-
-
 crosstab4 <- function(data, var1, var2){
   
   #' Function 4 to calculate crosstabs
@@ -130,6 +86,43 @@ crosstab4 <- function(data, var1, var2){
   dim(res) <- c(length_var1, length_var2)
   res
 }
+
+#crosstab<- function(data, var1, var2){
+#  
+#  #' Function 1 to calculate crosstabs
+#  #' @param data A matrix to collapse by two dimensions var1 var2
+#  #' @param var1 a data.frame containing a single variable 
+#  #' @param var2 a data.frame containing a single variable
+#  #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
+#  
+#  dreamerr::check_arg(var1, "data.frame")
+#  dreamerr::check_arg(var2, "data.frame")
+#  
+#  # data <- dt
+#  # var1 <- "a"
+#  # var2 <- "b"
+#  # data <- XinvXXr
+#  # var1 = clustid
+#  # var2 = fixed_effect
+#  
+#  unique_var1 <- as.vector(unique(var1[, names(var1)]))
+#  unique_var2 <- unique(var2)
+#  
+#  unique_var1_len <- length(unique_var1)
+#  unique_var2_len <- length(unique_var2)
+#  df <- expand.grid(unique_var1, unique_var2)
+#  # create rownames as collapse::fsum
+#  df <- data.frame(names = paste0(df[, 1], ".", df[, 2]))
+#  setDT(df)
+#  res <- collapse::fsum(data, cbind(var1,var2))
+#  res_dt <- data.table(names = rownames(res), values = res)
+#  final <- merge(df, res_dt, by = "names", all.x = TRUE)
+#  values <- final[, names:=NULL] 
+#  values <- matrix(as.matrix(values), unique_var1_len, unique_var2_len)
+#  values[is.na(values)] <- 0
+#  values
+#}
+
 
 # a <- sample(1:40, 10000, replace = TRUE)
 # b <- sample(1:100, 10000, replace = TRUE)
