@@ -23,8 +23,9 @@ Imports:
     sandwich,
     lmtest
 Suggests: 
-    fixest, 
-    tinytest
+    fixest,
+    tinytest,
+    covr
 Remotes: 
     github::SebKrantz/collapse
 Encoding: UTF-8
