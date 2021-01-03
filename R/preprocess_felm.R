@@ -50,6 +50,7 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
   if(!is.numeric(alpha) || alpha > 1 || alpha < 0 || length(alpha) > 1){
     stop("The level of significance alpha must be a numeric between 0 and 1")
   }
+
   
   
   if(!is.null(object$call$weights)){
@@ -135,11 +136,14 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
   data_diff <- nrow(data_cluster) - nrow(data_clustid)
   
   if(data_diff == 1){
-    warning(paste(data_diff, "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."))
+    warning(paste(data_diff, "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
+            call. = FALSE)
   } else if(data_diff > 1){
-    warning(paste(data_diff, "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."))
+    warning(paste(data_diff, "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
+            call. = FALSE)
   } else if(data_diff < 0){
-    stop("nrow(data_cluster) < nrow(data_clustid) - this cannot be correct.")
+    stop("nrow(data_cluster) < nrow(data_clustid) - this cannot be correct.", 
+         call. = FALSE)
   }
   
   # not needed - no post-estimation allowed

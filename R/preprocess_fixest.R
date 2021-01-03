@@ -50,7 +50,6 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
     stop("The level of significance alpha must be a numeric between 0 and 1")
   }
   
-  
   if(!is.null(object$call$weights)){
     stop("The boottest function currently does not allow for regression weights. The argument weights needs to be NULL.")
   }
@@ -105,9 +104,11 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
   data_diff <- nrow(data) - nrow(data_all)
   
   if(data_diff == 1){
-    warning(paste(data_diff, "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."))
+    warning(paste(data_diff, "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
+            call. = FALSE)
   } else if(data_diff > 1){
-    warning(paste(data_diff, "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."))
+    warning(paste(data_diff, "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
+            call. = FALSE)
   }
   
   # now create clusters 

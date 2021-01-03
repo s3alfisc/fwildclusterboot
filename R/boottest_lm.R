@@ -83,16 +83,13 @@ boottest.lm <- function(object,
   if((conf_int == TRUE || is.null(conf_int)) & B <= 100){
     stop("The function argument B is smaller than 100. The number of bootstrap iterations needs to be 100 or higher in order to guarantee that the root
          finding procudure used to find the confidence set works properly.", 
-         .call = FALSE)
+         call. = FALSE)
   }
   if(!is.null(alpha) & (alpha < 0 || alpha > 1)){
-    stop("The function argument alpha is outside of the unit interval (0, 1). Please specify alpha so that it is within the unit interval.")
+    stop("The function argument alpha is outside of the unit interval (0, 1). Please specify alpha so that it is within the unit interval.", 
+         call. = FALSE)
   }
-  
-  if(((1 - alpha) * (B + 1)) %% 1 != 0){
-    warning(paste("The bootstrap usually performs best when the confidence level (here,", 1 - alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."), 
-            call. = FALSE)
-  }
+
   
   preprocess <- preprocess(object = object, 
                            param = param, 
@@ -111,11 +108,17 @@ boottest.lm <- function(object,
     warning("Test 1: B is not numeric. ")
   }
   
+  if(((1 - preprocess$alpha) * (B + 1)) %% 1 != 0){
+    warning(paste("The bootstrap usually performs best when the confidence level (here,", 1 - preprocess$alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."), 
+            call. = FALSE)
+  }
+  
   #   # boot algoritm
   N_G_2 <- 2^max(preprocess$N_G)
   if(N_G_2 < B){
     warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution. Therefore, 
-                  B = ", N_G_2, "."))
+                  B = ", N_G_2, "."), 
+            call. = FALSE)
     B <- N_G_2
   }
   
@@ -124,6 +127,8 @@ boottest.lm <- function(object,
   if(!is.numeric(B)){
     warning("Test 2: B is not numeric. ")
   }
+  
+
   
   
   res <- boot_algo2(preprocess, boot_iter = B)

@@ -28,6 +28,12 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed, ...){
   
   set.seed(seed)
   
+  if(is.null(alpha)){
+    alpha <- 0.05
+  }
+  
+  
+
   clustid_update <- paste("~ . +",paste(clustid, collapse = " + "))
   
   fml <- as.formula(object$call$formula)
@@ -45,14 +51,14 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed, ...){
   if(data_diff == 1){
     warning(paste(data_diff, 
                   "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."),
-            .call = FALSE)
+            call. = FALSE)
   } else if(data_diff > 1){
     warning(paste(data_diff, 
                   "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
-            .call = FALSE)
+            call. = FALSE)
   } else if(data_diff < 0){
     stop("nrow(data_cluster) < nrow(data_clustid) - this cannot be correct.", 
-         .call = FALSE)
+         call. = FALSE)
   }
   
   clustid <- as.data.frame(data_clustid[, clustid])
@@ -64,10 +70,7 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed, ...){
     stop("The boottest function currently does not allow for regression weights. The argument weights needs to be NULL.")
   }
   
-  
-  if(is.null(alpha)){
-    alpha <- 0.05
-  }
+
   
   # # retrieve clusters / multiple clusters
   # if(inherits(clustid, "formula")) {
