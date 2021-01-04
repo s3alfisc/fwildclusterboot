@@ -25,7 +25,7 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
   # alpha = 0.05
   
   # Part 1) Check Arguments
-  #check_arg(clustid, "character scalar | character vector")
+  check_arg(clustid, "character scalar | character vector")
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(alpha, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL")
@@ -41,7 +41,7 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
     seed <- 2
   }
   
-  #set.seed(seed)
+  set.seed(seed)
   
   if(is.null(alpha)){
     alpha <- 0.05
@@ -68,6 +68,7 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
     beta0 <- 0
   }
   
+  
   # Part 3) preprocess the covariates, depvar and fixed effects
   # 4 different cases:
   # - only one fixed effect specified in feols() and fe = NULL
@@ -77,86 +78,106 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
   
   model_coef_names <- rownames(object$coefficients)
   model_fe_names <- names(object$fe)
-  model_clustid_names <- names(object$clustervar)
-  model_covariate_names <- c(model_coef_names, model_fe_names)
-  
-  # do not allow for drop of variable that is only used as cluster bot not covariate
-  not_in <- sum(!model_clustid_names %in% clustid) 
-  if(not_in != 0){
-    not_in_clustvar <- model_clustid_names[!model_clustid_names %in% clustid]
-    not_in_covariates <- ! not_in_clustvar %in% model_covariate_names
-    if(not_in_covariates == TRUE){
-      stop(paste("The cluster variable", not_in_clustvar, "has been specified as a clustering variable in the felm() model, is further not part of the covariates, but has not been listed as a clustering variable in boottest(). boottest() does not allow for such a case -  "))
-    }
-  } 
-
-  
-  fml_wo_fe <- suppressWarnings(formula(Formula::Formula(object$formula), lhs = 1, rhs = 1))
-  fml_fe <- suppressWarnings(formula(Formula::Formula(object$formula), lhs = 0, rhs = 2))
-  fml_cluster <- suppressWarnings(formula(Formula::Formula(object$formula), lhs = 0, rhs = 4))
-  fml_iv <-  suppressWarnings(formula(Formula::Formula(object$formula), lhs = 0, rhs = 3))
-
   numb_fe <- length(model_fe_names)
   
-  # clustid_update <- paste("~ . +",paste(clustid, collapse = " + "))
-  # fe_update <- paste("~ . +",paste(model_fe_names, collapse = " + "))
-  
-  if(fml_fe == ~0){
-    fml_update <- paste("~ . +",paste(c(unique(clustid, model_clustid_names)), collapse = " + "))
-    fml_all_clustid <- update(fml_wo_fe, fml_update)
-    fml_all <- fml_wo_fe
-    if(fml_cluster == ~0){
-      fml_all_cluster <- fml_wo_fe
-    } else{
-      fml_update <- paste("~ . +",paste(model_clustid_names, collapse = " + "))
-      fml_all_cluster <- update(fml_wo_fe, fml_update)
-    }
-  } else {
-    # depvar, covariates, fe and cluster vars from felm()
-    fml_update <- paste("~ . +",paste(c(model_fe_names, model_clustid_names), collapse = " + "))
-    fml_all_cluster <- update(fml_wo_fe,  fml_update)
-    # depvar, covariates, fe and cluster vars from felm() and boottest
-    fml_update2 <- paste("~ . +",paste(c(model_fe_names, unique(clustid, model_clustid_names)), collapse = " + "))
-    fml_all_clustid <- update(fml_wo_fe,  fml_update2)
-    fml_update3 <- paste("~ . +",paste(model_fe_names, collapse = " + "))
-    fml_all <- update(fml_wo_fe, fml_update3)
-  }
-
-  #depvar <- colnames(object$coefficients)
-  
-  
-  data_cluster <- model.frame(formula = fml_all_cluster, 
-                      data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
-                      drop.unused.levels = TRUE) 
-  
-  data_clustid <- model.frame(formula = fml_all_clustid, 
-                          data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
-                          drop.unused.levels = TRUE)  
-  
-  data_diff <- nrow(data_cluster) - nrow(data_clustid)
-  
-  if(data_diff == 1){
-    warning(paste(data_diff, "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
-            call. = FALSE)
-  } else if(data_diff > 1){
-    warning(paste(data_diff, "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
-            call. = FALSE)
-  } else if(data_diff < 0){
-    stop("nrow(data_cluster) < nrow(data_clustid) - this cannot be correct.", 
+  if(numb_fe == 0 & !is.null(fe)){
+    stop("Your model does not containg a fixed effect. Therefore, no fixed effect can be projected out during the bootstrap.", 
          call. = FALSE)
   }
   
-  # not needed - no post-estimation allowed
-  #data_diff <- nrow(data) - nrow(data_all)
-  # 
-  # if(data_diff == 1){
-  #   warning(paste(data_diff, "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."))
-  # } else if(data_diff > 1){
-  #   warning(paste(data_diff, "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."))
-  # }
+  #model_covariate_names <- c(model_coef_names, model_fe_names)
+
+  model_param_names <- c(model_coef_names, model_fe_names)
+  model_clustid_names <- names(object$clustervar)
+  
+  fml_felm <- Formula::Formula(eval(object$call$formula))
+  
+  fml_wo_fe <- suppressWarnings(formula(fml_felm, lhs = 1, rhs = 1))
+  #fml_fe <- suppressWarnings(formula(fml_felm, lhs = 0, rhs = 2))
+  fml_cluster <- suppressWarnings(formula(fml_felm, lhs = 0, rhs = 4))
+  fml_iv <-  suppressWarnings(formula(fml_felm, lhs = 0, rhs = 3))
+  
+  fml_fe <- suppressWarnings(formula(fml_felm, lhs = 1, rhs = c(1, 2), collapse = TRUE))
+  fml_all <- suppressWarnings(formula(fml_felm, lhs = 1, rhs = c(1, 2, 4), collapse = TRUE))
+  
+  model_names <- c(model_clustid_names, model_param_names)
+  boot_names <- c(clustid, model_param_names)
+  
+  add_clusters <- setdiff(clustid, model_names)
+  drop_clusters <- setdiff(model_clustid_names, boot_names)
+  
+  add_any_clusters <- ifelse(length(add_clusters) > 0, 1, 0)
+  drop_any_clusters <- ifelse(length(drop_clusters) > 0, 1, 0)
+
+  if(add_any_clusters == 0 & drop_any_clusters == 0){
+    data_boot <- model.frame(formula = fml_all, 
+                             data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
+                             drop.unused.levels = TRUE)
+  } else if(add_any_clusters == 1 & drop_any_clusters == 0){
+    data_model <- model.frame(formula = fml_all, 
+                              data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
+                              drop.unused.levels = TRUE)
+    
+    add_update <- paste("~ . +",paste(add_clusters, collapse = " + "))
+    fml_all <- update(fml_all, add_update)
+    
+    data_boot <- model.frame(formula = fml_all, 
+                             data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
+                             drop.unused.levels = TRUE)
+    
+    data_diff <- nrow(data_model) - nrow(data_boot)
+    
+    # print a warning if observations needed to be deleted
+    if(data_diff > 0){
+      if(length(diff) == 1){
+        warning(paste(data_diff, "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
+                call. = FALSE)
+      } else if(length(diff) > 1){
+        warning(paste(data_diff, "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
+                call. = FALSE)
+      }
+    }
+    
+  } else if(add_any_clusters == 0 & drop_any_clusters == 1){
+    drop_update <- paste("~ . +",paste(drop_clusters, collapse = " + "))
+    fml_all <- update(fml_all, drop_update)
+    data_boot <- model.frame(formula = fml_all, 
+                             data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
+                             drop.unused.levels = TRUE)
+    
+  } else if(add_any_clusters == 1 & drop_any_clusters == 1){
+    # here: no rows are dropped, only columns
+    drop_update <- paste("~ . +",paste(drop_clusters, collapse = " + "))
+    fml_all <- update(fml_all, drop_update)
+    data_model <- model.frame(formula = fml_all, 
+                              data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
+                              drop.unused.levels = TRUE)
+    
+    add_update <- paste("~ . +",paste(add_clusters, collapse = " + "))
+    fml_all <- update(fml_all, add_update)
+    
+    data_boot <- model.frame(formula = fml_all, 
+                             data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
+                             drop.unused.levels = TRUE)
+    
+    data_diff <- nrow(data_model) - nrow(data_boot)   
+    
+    # print a warning if observations needed to be deleted
+    if(data_diff > 0){
+      if(length(diff) == 1){
+        warning(paste(data_diff, "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
+                call. = FALSE)
+      } else if(length(diff) > 1){
+        warning(paste(data_diff, "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."), 
+                call. = FALSE)
+      }
+    }
+    
+  }
+  
   
   # now create clusters 
-  clustid <- as.data.frame(data_clustid[, clustid])
+  clustid <- as.data.frame(data_boot[, clustid])
   i <- !sapply(clustid, is.numeric)
   clustid[i] <- lapply(clustid[i], as.character)
   
@@ -171,24 +192,9 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
     clustid$clustid <- paste0(clustid$clustid_1, "-", clustid$clustid_2)
   }
   
-  
-  
-  
   N_G <- sapply(clustid, function(x) length(unique(x)))
   
-  # if(clustid_dims == 1){
-  #   if(max(N_G) > 200){
-  #     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
-  #   }
-  # } else if(clustid_dims > 1){
-  #   if(max(N_G) > 200){
-  #     warning(paste("You are estimating a model with more than 200 clusters. The more clusters in the data, the longer the estimation process."))
-  #   }
-  # }
-  
-
-  
-  
+  numb_fe <- length(fe)
   # now create fixed effects
   if(!is.null(fe)){
     
@@ -201,14 +207,14 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
     }
 
     # because fe is projected out, data matrix should not contain constant
-    model_frame <- model.frame(update(fml_design, . ~ . - 1), data_clustid)
-    X <- model.matrix(model_frame, data = data_clustid)
+    model_frame <- model.frame(update(fml_design, . ~ . - 1), data_boot)
+    X <- model.matrix(model_frame, data = data_boot)
     Y <- model.response(model_frame)
     
     N <- nrow(X)
     k <- ncol(X)
     
-    fixed_effect <- as.data.frame(data_clustid[, fe])
+    fixed_effect <- as.data.frame(data_boot[, fe])
     # demean X and Y 
     X <- collapse::fwithin(X, fixed_effect[, 1])#
     Y <- collapse::fwithin(Y, fixed_effect[, 1])
@@ -219,8 +225,8 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
     #n_fe <- length(unique(fixed_effect))
   } else{
     
-    model_frame <- model.frame(fml_all, data_clustid)
-    X <- model.matrix(model_frame, data = data_clustid)
+    model_frame <- model.frame(fml_fe, data_boot)
+    X <- model.matrix(model_frame, data = data_boot)
     Y <- model.response(model_frame)
     
     N <- nrow(X)
