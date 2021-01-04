@@ -1,9 +1,10 @@
-boot_algo.oneclust <- function(preprocessed_object, B, ...){
+boot_algo.oneclust <- function(preprocessed_object, B, wild_draw_fun, ...){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
   #' @param B number of bootstrap iterations
   #'@param ... Further arguments passed to or from other methods.
+  #' @param wild_draw_fun function. Specifies the type of bootstrap to use.
   #' @method boot_algo oneclust
   #' @export
   #' @return A list of ... 
@@ -47,8 +48,8 @@ boot_algo.oneclust <- function(preprocessed_object, B, ...){
   # print(B)
   # print(class(B))
   
-  
-  v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
+  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (boot_iter + 1)), N_G["clustid"], boot_iter + 1)
+  #v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
   v[,1] <- 1
   
   XinvXXr <- X %*% (invXX %*% R0) # N x 1
@@ -133,11 +134,12 @@ boot_algo.oneclust <- function(preprocessed_object, B, ...){
 }
 
 
-boot_algo.multclust <- function(preprocessed_object, B, ...){
+boot_algo.multclust <- function(preprocessed_object, B, wild_draw_fun, ...){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of type preprocessed_boottest
   #' @param B number of bootstrap iterations
+  #' @param wild_draw_fun function. Specifies the type of bootstrap to use.
   #'@param ... Further arguments passed to or from other methods.
   #' @import Matrix.utils
   #' @import Matrix
@@ -179,8 +181,8 @@ boot_algo.multclust <- function(preprocessed_object, B, ...){
   # Yr for constraint leas squares with beta0 = c
   Yr <- Y - X[, which(R0 == 1)] * beta0
   
-  
-  v <- matrix(sample(c(1, -1), N_G["clustid"] * (B + 1), replace = TRUE), N_G["clustid"], B + 1) # rademacher weights for all replications
+  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (boot_iter + 1)), N_G["clustid"], boot_iter + 1)
+  #v <- matrix(sample(c(1, -1), N_G["clustid"] * (B + 1), replace = TRUE), N_G["clustid"], B + 1) # rademacher weights for all replications
   v[,1] <- 1
   invXX <- solve(t(X) %*% X) # k x k matrix
   #XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
@@ -324,12 +326,13 @@ boot_algo.multclust <- function(preprocessed_object, B, ...){
 # boot_algo2
 # --------------------------------------------------------------------------------- #
 
-boot_algo2.oneclust <- function(preprocessed_object, boot_iter, ...){
+boot_algo2.oneclust <- function(preprocessed_object, boot_iter, wild_draw_fun, ...){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
   #' @param boot_iter number of bootstrap iterations
   #'@param ... Further arguments passed to or from other methods.
+  #' @param wild_draw_fun function. Specifies the type of bootstrap to use.
   #' @import Matrix.utils
   #' @import Matrix
   #' @export
@@ -360,7 +363,8 @@ boot_algo2.oneclust <- function(preprocessed_object, boot_iter, ...){
   set.seed(seed)
   
   # bootstrap error 
-  v <- matrix(sample(c(1, -1), N_G["clustid"] * (boot_iter + 1), replace = TRUE), N_G["clustid"], boot_iter + 1) # rademacher weights for all replications
+  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (boot_iter + 1)), N_G["clustid"], boot_iter + 1)
+  #v <- matrix(sample(c(1, -1), N_G["clustid"] * (boot_iter + 1), replace = TRUE), N_G["clustid"], boot_iter + 1) # rademacher weights for all replications
   v[,1] <- 1
   
   G <- sapply(clustid, function(x) length(unique(x)))
@@ -518,12 +522,13 @@ boot_algo2.oneclust <- function(preprocessed_object, boot_iter, ...){
   
 }
 
-boot_algo2.multclust <- function(preprocessed_object, boot_iter, ...){
+boot_algo2.multclust <- function(preprocessed_object, boot_iter, wild_draw_fun, ...){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
   #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
   #' @param boot_iter number of bootstrap iterations
-  #'@param ... Further arguments passed to or from other methods.
+  #' @param ... Further arguments passed to or from other methods.
+  #' @param wild_draw_fun function. Specifies the type of bootstrap to use.
   #' @import Matrix.utils
   #' @import Matrix
   #' @export
@@ -561,7 +566,8 @@ boot_algo2.multclust <- function(preprocessed_object, boot_iter, ...){
   set.seed(seed)
   
   # bootstrap error 
-  v <- matrix(sample(c(1, -1), N_G["clustid"] * (boot_iter + 1), replace = TRUE), N_G["clustid"], boot_iter + 1) # rademacher weights for all replications
+  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (boot_iter + 1)), N_G["clustid"], boot_iter + 1)
+  #v <- matrix(sample(c(1, -1), N_G["clustid"] * (boot_iter + 1), replace = TRUE), N_G["clustid"], boot_iter + 1) # rademacher weights for all replications
   v[,1] <- 1
   # invXX <- solve(t(X) %*% X) # k x k matrix
   # XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
@@ -588,8 +594,6 @@ boot_algo2.multclust <- function(preprocessed_object, boot_iter, ...){
   Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
   P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
   
-  # v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
-  # v[,1] <- 1
   invXX <- solve(t(X) %*% X) # k x k matrix#
   XinvXX <- X %*% invXX
   XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1

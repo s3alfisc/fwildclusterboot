@@ -72,6 +72,7 @@ summary.boottest <- function(object, digits = 3, ...){
   call <- object$call
   N_G <- object$N_G
   B <- object$B
+  type <- ifelse(object$type %in% c("rademacher", "mammen", "norm", "webb"), object$type, "custom")
   #clustid <- 
   estim_function <- class(object$regression)
   if(length(object$clustid) == 1){
@@ -98,6 +99,7 @@ summary.boottest <- function(object, digits = 3, ...){
   cat("\t\n", 
       sprintf("Observations: %s\n", N), 
       sprintf("Bootstr. Iter: %s\n", B), 
+      sprintf("Bootstr. Type: %s\n", type), 
       sprintf("Clustering: %s\n", clustering_type), 
       sprintf("Confidence Sets: %s\n", signif_level),
       sprintf("Number of Clusters: %s\n", numb_clusters), 

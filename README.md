@@ -85,6 +85,7 @@ summary(boot_lm)
 #>  
 #>  Observations: 10000
 #>  Bootstr. Iter: 10000
+#>  Bootstr. Type: rademacher
 #>  Clustering: oneway
 #>  Confidence Sets: 95%
 #>  Number of Clusters: 20

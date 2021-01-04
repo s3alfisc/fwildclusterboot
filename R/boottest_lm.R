@@ -7,6 +7,7 @@ boottest.lm <- function(object,
                         seed = NULL, 
                         beta0 = NULL, 
                         alpha = NULL, 
+                        type = "rademacher",
                         ...){
   
   #' Function that runs boottest for object of class lm
@@ -19,6 +20,7 @@ boottest.lm <- function(object,
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
+  #'@param type character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.
   #'@param ... Further arguments passed to or from other methods.
   #'@method boottest lm
   #'@return An object of class boottest
@@ -109,8 +111,7 @@ boottest.lm <- function(object,
   }
   
   if(((1 - preprocess$alpha) * (B + 1)) %% 1 != 0){
-    warning(paste("The bootstrap usually performs best when the confidence level (here,", 1 - preprocess$alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."), 
-            call. = FALSE)
+    message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - preprocess$alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."))
   }
   
   #   # boot algoritm
@@ -128,10 +129,17 @@ boottest.lm <- function(object,
     warning("Test 2: B is not numeric. ")
   }
   
-
+  # returns function
+  # function taken from the sandwich package' vcovBS.lm function
+  wild_draw_fun <- switch(type, 
+                          rademacher = function(n) sample(c(-1,1), n, replace = TRUE), 
+                          mammen = function(n) sample(c(-1,1) * (sqrt(5) + c(-1, 1))/2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1))/(2 * sqrt(5))),
+                          norm = function(n) rnorm(n), 
+                          webb = function(n) sample(c(-sqrt((3:1)/2), sqrt((1:3)/2)), n, replace = TRUE), 
+                          wild_draw_fun)
   
   
-  res <- boot_algo2(preprocess, boot_iter = B)
+  res <- boot_algo2(preprocess, boot_iter = B, wild_draw_fun = wild_draw_fun)
   
   #print(B)
     # compute confidence sets
@@ -188,7 +196,8 @@ boottest.lm <- function(object,
                       #depvar = depvar, 
                       N_G = preprocess$N_G, 
                       alpha = preprocess$alpha,
-                      call = call)
+                      call = call, 
+                      type = type)
   } else if(clustid_dims > 1){
     res_final <- list(point_estimate = point_estimate, 
                       p_val = res[["p_val"]], 
@@ -204,7 +213,8 @@ boottest.lm <- function(object,
                       #depvar = depvar, 
                       N_G = preprocess$N_G, 
                       call = call, 
-                      alpha = preprocess$alpha)
+                      alpha = preprocess$alpha, 
+                      type = type)
   }
 
   
