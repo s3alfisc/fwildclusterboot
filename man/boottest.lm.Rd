@@ -14,6 +14,7 @@
   seed = NULL,
   beta0 = NULL,
   alpha = NULL,
+  type = "rademacher",
   ...
 )
 }
@@ -35,6 +36,8 @@
 \item{beta0}{A numeric. Shifts the null hypothesis}
 
 \item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+
+\item{type}{character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }

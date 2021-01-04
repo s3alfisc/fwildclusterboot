@@ -15,6 +15,7 @@
   conf_int = NULL,
   seed = NULL,
   beta0 = 0,
+  type = "rademacher",
   ...
 )
 }
@@ -38,6 +39,8 @@
 \item{seed}{An integer. Allows the user to set a random seed}
 
 \item{beta0}{A numeric. Shifts the null hypothesis}
+
+\item{type}{character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
