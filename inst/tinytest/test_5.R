@@ -195,3 +195,4 @@ names(preprocess_fixest$fixed_effect) <- "fe"
 # expect_true(class(preprocess_fixest) == "oneclust")
 
 # })
+

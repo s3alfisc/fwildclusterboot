@@ -52,3 +52,4 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #expect_identical(boot_fixest$clustid, boot_felm$clustid)
 
 # }) 
+
