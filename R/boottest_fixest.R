@@ -45,27 +45,8 @@ boottest.fixest  <- function(object,
   
  
   call <- match.call()
-  
-                # setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-                # file.sources = list.files(pattern="*.R")
-                #  sapply(file.sources, source, .GlobalEnv)
-                #  # set.seed(6261)
-                #  voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
-                #  voters[1:2, proposition_vote:=NA]
-                #  voters[3, group_id1 := NA]      #  
-                #  object <- feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
-                # clustid <- c("group_id1", "group_id2")
-                #  fe = "Q1_immigration"
-                #  param <- "treatment"
-                #  B = 5000
-                #  weights = NULL
-                #  conf_int = NULL 
-                #  debug = FALSE
-                #  seed = NULL
-                #  beta0 = NULL
-                #  alpha = NULL
-  
-     # Step 1: check arguments of feols call
+
+   # Step 1: check arguments of feols call
    check_arg(clustid, "character vector | scalar character")
    check_arg(param, "scalar character")
    check_arg(B, "scalar integer ") 
@@ -91,6 +72,14 @@ boottest.fixest  <- function(object,
           call. = FALSE)
    }
    
+   # throw error if specific function arguments are used in feols() call
+   call_object <- names(object$call)[names(object$call) != ""]
+   banned_fun_args <- c("offset", "subset", "split", "fsplit", "panel.id", "demeaned")
+   if(sum(call_object %in% banned_fun_args) > 0){
+     stop("boottest.fixest currently does not accept objects of type fixest with function arguments 
+          offset, subset, split, fsplit, panel.id & demeaned.", 
+          call. = FALSE)
+   }
    
    # if(!is.null(panel_id)){
    #   stop(paste("boottest() currently does not work if an argument panel_id is applied to feols()."))
@@ -105,13 +94,13 @@ boottest.fixest  <- function(object,
    #   stop("Advanced formula notation in feols as c(), i(), ^ and [x] is not supported in boottest.")
    # }
    
-  preprocess <- suppressWarnings(preprocess(object = object, 
+  preprocess <- preprocess(object = object, 
                                   param = param,
                                   clustid = clustid,
                                   beta0 = beta0,
                                   alpha = alpha, 
                                   fe = fe, 
-                                  seed = seed))
+                                  seed = seed)
   
   
   clustid_dims <- preprocess$clustid_dims
