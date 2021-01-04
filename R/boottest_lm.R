@@ -106,9 +106,6 @@ boottest.lm <- function(object,
   
   clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
   
-  if(!is.numeric(B)){
-    warning("Test 1: B is not numeric. ")
-  }
   
   if(((1 - preprocess$alpha) * (B + 1)) %% 1 != 0){
     message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - preprocess$alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."))
@@ -123,11 +120,6 @@ boottest.lm <- function(object,
     B <- N_G_2
   }
   
-  #print(B)
-  
-  if(!is.numeric(B)){
-    warning("Test 2: B is not numeric. ")
-  }
   
   # returns function
   # function taken from the sandwich package' vcovBS.lm function
@@ -141,18 +133,17 @@ boottest.lm <- function(object,
   
   res <- boot_algo2(preprocess, boot_iter = B, wild_draw_fun = wild_draw_fun)
   
-  #print(B)
     # compute confidence sets
-   
-  if(!is.numeric(res$B)){
-    warning("Test 3: B is not numeric. ")
-  }
+  
   
     if(is.null(conf_int) || conf_int == TRUE){
       # calculate guess for covariance matrix and standard errors
       vcov <- suppressWarnings(vcovCL(object, cluster =  clustid_fml))
       coefs <- suppressWarnings(coeftest(object, vcov))
       se_guess <- coefs[param, "Std. Error"]
+      if(is.na(se_guess)){
+        se_guess <- object$se[param]
+      }
       
       # res_p_val <- invert_p_val(object = res,
       #                           point_estimate = point_estimate,
