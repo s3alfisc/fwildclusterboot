@@ -16,8 +16,8 @@ coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/ba
 version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/)
 <!-- badges: end -->
 
-The `fwildclusterboot` package is an R port of Stata’s `boottest`
-package.
+The `fwildclusterboot` package is an R port of Stata’s
+[boottest](https://github.com/droodman/boottest) package.
 
 It implements the fast wild cluster bootstrap algorithm developed in
 Roodman et al (2019) for regression objects in R. It currently works for

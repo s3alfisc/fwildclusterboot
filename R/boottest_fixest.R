@@ -62,7 +62,7 @@ boottest.fixest  <- function(object,
          finding procudure used to find the confidence set works properly.", 
           call. = FALSE)
    }
-   if(!is.null(alpha) & (alpha < 0 || alpha > 1)){
+   if(!is.null(alpha) & (alpha <= 0 || alpha >= 1)){
      stop("The function argument alpha is outside of the unit interval (0, 1). Please specify alpha so that it is within the unit interval.", 
           call. = FALSE)
    }
