@@ -20,6 +20,8 @@
 )
 }
 \arguments{
+\item{object}{An object of class fixest. Note: advanced formula tools in fixest or vectorized formulas are currently not supported.}
+
 \item{clustid}{A vector with the clusters}
 
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
