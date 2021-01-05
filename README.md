@@ -12,6 +12,8 @@ status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-p
 [![R-CMD-check](https://github.com/s3alfisc/fwildclusterboot/workflows/R-CMD-check/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
+[![minimal R
+version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/)
 <!-- badges: end -->
 
 The `fwildclusterboot` package is an R port of Stata’s `boottest`
