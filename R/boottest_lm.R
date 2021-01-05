@@ -15,7 +15,7 @@ boottest.lm <- function(object,
   #'@param clustid A vector with the clusters
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param B number of bootstrap iterations
-  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param alpha A numeric between 0 and 1. E.g. alpha = 0.05 returns 0.95% confidence intervals. By default, alpha = 0.05.
   #'@param weights Regression weights. Currently, WLS is not supported, and weights needs to be NULL 
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #'@param seed An integer. Allows the user to set a random seed
@@ -89,6 +89,15 @@ boottest.lm <- function(object,
   }
   if(!is.null(alpha) & (alpha < 0 || alpha > 1)){
     stop("The function argument alpha is outside of the unit interval (0, 1). Please specify alpha so that it is within the unit interval.", 
+         call. = FALSE)
+  }
+  
+  # throw error if specific function arguments are used in feols() call
+  call_object <- names(object$call)[names(object$call) != ""]
+  banned_fun_args <- c("contrasts", "subset", "offset", "x", "y")
+  if(sum(call_object %in% banned_fun_args) > 0){
+    stop(paste("boottest.lm currently does not accept objects of type fixest with function arguments", 
+               paste0(banned_fun_args[1:(length(banned_fun_args) - 1)], collapse = ", "), "and", banned_fun_args[length(banned_fun_args)], "."), 
          call. = FALSE)
   }
 

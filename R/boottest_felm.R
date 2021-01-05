@@ -20,7 +20,7 @@ boottest.felm  <- function(object,
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param B number of bootstrap iterations
   #'@param fe A character scalar. Fixed effect to be projected out in the bootstrap
-  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param alpha A numeric between 0 and 1. E.g. alpha = 0.05 returns 0.95% confidence intervals. By default, alpha = 0.05.
   #'@param weights Regression weights. Currently, WLS is not supported, and weights needs to be NULL 
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #'@param seed An integer. Allows the user to set a random seed
@@ -63,27 +63,14 @@ boottest.felm  <- function(object,
          call. = FALSE)
   }
   
-  
-    #    setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-    #    file.sources = list.files(pattern="*.R")
-    #    sapply(file.sources, source, .GlobalEnv)
-    #    set.seed(3129)
-    #    voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.21, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 122)
-    #  voters[1, group_id1 := NA]
-    #  voters[2, proposition_vote := NA]
-    #    object <- felm(proposition_vote ~ treatment + Q1_immigration |  Q2_defence | 0 | group_id1 , data = voters)
-    # fe = "Q2_defence"
-    # #   # fe = NULL
-    #     clustid <- c("group_id1", "group_id2")
-    #     param <- "treatment"
-    #     B = 10000
-    #     alpha = NULL 
-    #     weights = NULL
-    #     conf_int = NULL 
-    #     debug = FALSE
-    #     seed = NULL
-    #     beta0 = 0
-    # # summary(object)
+  # throw error if specific function arguments are used in feols() call
+  call_object <- names(object$call)[names(object$call) != ""]
+  banned_fun_args <- c("contrasts", "subset")
+  if(sum(call_object %in% banned_fun_args) > 0){
+    stop(paste("boottest.felm currently does not accept objects of type fixest with function arguments", 
+               paste0(banned_fun_args[1:(length(banned_fun_args) - 1)], collapse = ", "), "and", banned_fun_args[length(banned_fun_args)], "."), 
+         call. = FALSE)
+  }
   
     preprocess <- preprocess(object = object,
                            param = param,
@@ -130,25 +117,6 @@ boottest.felm  <- function(object,
     #vcov <- object$robustvcv
     #coefs <- object$coefficients[param]
     se_guess <- object$se[param]
-    
-    # res_p_val <- invert_p_val(object = res,
-    #                           point_estimate = point_estimate,
-    #                           se_guess = se_guess, 
-    #                           clustid = preprocess$clustid,
-    #                           fixed_effect = preprocess$fixed_effect, 
-    #                           X = preprocess$X,
-    #                           Y = preprocess$Y,
-    #                           N = preprocess$N,
-    #                           k = preprocess$k,
-    #                           v = res$v,
-    #                           param = param,
-    #                           R0 = preprocess$R0,
-    #                           B = B,
-    #                           beta0 = preprocess$beta0,
-    #                           alpha = preprocess$alpha, 
-    #                           W = preprocess$W, 
-    #                           n_fe = preprocess$n_fe, 
-    #                           N_G = preprocess$N_G)
     
     res_p_val <- invert_p_val2(object = res, B = B, point_estimate = point_estimate, se_guess = se_guess, clustid = preprocess$clustid, alpha = preprocess$alpha)
     
