@@ -11,6 +11,8 @@ Authors@R:
            role = "ctb"))
 Description: Fast wild cluster bootstrap inference for linear regression models.
 License: GPL (>= 3)
+Depends: 
+    R (>= 4.0.0)
 Imports: 
     collapse, 
     data.table,
