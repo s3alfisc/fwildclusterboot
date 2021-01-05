@@ -20,8 +20,6 @@
 )
 }
 \arguments{
-\item{object}{An object of class fixest}
-
 \item{clustid}{A vector with the clusters}
 
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
@@ -30,7 +28,7 @@
 
 \item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap}
 
-\item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+\item{alpha}{A numeric between 0 and 1. E.g. alpha = 0.05 returns 0.95\% confidence intervals. By default, alpha = 0.05.}
 
 \item{weights}{Regression weights. Currently, WLS is not supported, and weights needs to be NULL}
 

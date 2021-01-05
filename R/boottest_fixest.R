@@ -13,12 +13,12 @@ boottest.fixest  <- function(object,
   
   
   #' Computes wild cluster bootstrap for object of class fixest
-  #'@param object An object of class fixest
+  #'@param object An object of class fixest. Note: advanced formula tools in fixest or vectorized formulas are currently not supported.
   #'@param clustid A vector with the clusters
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param B number of bootstrap iterations
   #'@param fe A character scalar. Fixed effect to be projected out in the bootstrap
-  #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param alpha A numeric between 0 and 1. E.g. alpha = 0.05 returns 0.95% confidence intervals. By default, alpha = 0.05.
   #'@param weights Regression weights. Currently, WLS is not supported, and weights needs to be NULL 
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #'@param seed An integer. Allows the user to set a random seed
@@ -81,18 +81,16 @@ boottest.fixest  <- function(object,
           call. = FALSE)
    }
    
-   # if(!is.null(panel_id)){
-   #   stop(paste("boottest() currently does not work if an argument panel_id is applied to feols()."))
-   # }
-   # 
-   # deparse_fml <- paste(deparse(object$fml, width.cutoff = 500), collapse="")
-   # #deparse_fml <- deparse(object$fml)
-   # if(grepl("[",deparse_fml) || 
-   #    grepl("i(", deparse_fml) ||
-   #    grepl("c(", deparse_fml) ||
-   #    grepl("^", deparse_fml)){
-   #   stop("Advanced formula notation in feols as c(), i(), ^ and [x] is not supported in boottest.")
-   # }
+
+   
+   deparse_fml <- paste(deparse(object$fml_all, width.cutoff = 500), collapse="")
+   #deparse_fml <- deparse(object$fml)
+   if(grepl("[",deparse_fml, fixed = TRUE) || 
+      grepl("i(", deparse_fml, fixed = TRUE) ||
+      grepl("c(", deparse_fml, fixed = TRUE) ||
+      grepl("^", deparse_fml, fixed = TRUE)){
+     stop("Advanced formula notation in fixest / fixest (i(), ^, [x] and vectorized formulas via c(),) is currently not supported in boottest.")
+   }
    
   preprocess <- preprocess(object = object, 
                                   param = param,
@@ -142,26 +140,6 @@ boottest.fixest  <- function(object,
     #se_guess <- coefs[param, "Std. Error"]
     
     se_guess <- object$se[param]
-    
-    
-    # res_p_val <- invert_p_val(object = res,
-    #                           point_estimate = point_estimate,
-    #                           se_guess = se_guess, 
-    #                           clustid = preprocess$clustid,
-    #                           fixed_effect = preprocess$fixed_effect, 
-    #                           X = preprocess$X,
-    #                           Y = preprocess$Y,
-    #                           N = preprocess$N,
-    #                           k = preprocess$k,
-    #                           v = res$v,
-    #                           param = param,
-    #                           R0 = preprocess$R0,
-    #                           B = B,
-    #                           beta0 = preprocess$beta0,
-    #                           alpha = preprocess$alpha, 
-    #                           W = preprocess$W, 
-    #                           n_fe = preprocess$n_fe, 
-    #                           N_G = preprocess$N_G)
     
     res_p_val <- invert_p_val2(object = res, B = B, point_estimate = point_estimate, se_guess = se_guess, clustid = preprocess$clustid, alpha = preprocess$alpha)
     
