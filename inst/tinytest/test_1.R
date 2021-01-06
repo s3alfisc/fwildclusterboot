@@ -9,11 +9,11 @@ library(fixest)
 # test output of boottest() without any fixed effects in regression objects, oneway clustering
 # ------------------------------------------------------------------------------------------------------ 
 # Test 1: no fixed effects
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, 
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
              data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, 
+feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
                            data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-#felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, 
+#felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
 #                      data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 
 boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", B = 1000, seed = 911, param = "treatment", conf_int = TRUE))
@@ -65,9 +65,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #   
 #   # -------------------------------------------------------------------------------------------------------------------------- # 
 #   # Test 1: no fixed effects
-#   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-#   feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-#   felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+#   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+#   feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+#   felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
 #   
 #   boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid =  c("group_id1", "group_id2"), B = 1000, seed = 911, param = "treatment", conf_int = TRUE))
 #  
@@ -122,9 +122,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  
 #  # -------------------------------------------------------------------------------------------------------------------------- # 
 #  # Test 1: no fixed effects
-#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, data = voters)
+#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, data = voters)
 #  
 #  boot_lm <-  boottest(object = lm_fit, clustid = "group_id1", B = 1000, seed = 911, param = "treatment", conf_int = FALSE)
 #  
@@ -204,15 +204,15 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 # #  voters[1, group_id2 := NA]
 # #  
 # #  # -------------------------------------------------------------------------------------------------------------------------- # 
-# #  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-# #  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, data = voters)
-# #  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, data = voters)
+# #  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+# #  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, data = voters)
+# #  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, data = voters)
 # #  
 # #  expect_warning(boottest(object = lm_fit, clustid = "group_id1", B = 1000, seed = 911, param = "treatment", conf_int = FALSE))
 # #  expect_warning(boottest(object = feols_fit, clustid = c("group_id1"), B = 1000, seed = 911, param = "treatment", conf_int = FALSE, beta = 0))
 # #  expect_warning(boottest(object = felm_fit, clustid =  "group_id1", B = 1000, seed = 911, param = "treatment", conf_int = FALSE))
 # #  
-# #  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | group_id1, weights = NULL, data = voters)
+# #  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | group_id1, data = voters)
 # #  expect_warning(boottest(object = felm_fit, clustid =  c("group_id1", "group_id2"), B = 1000, seed = 911, param = "treatment", conf_int = FALSE))
 # #  
 # #  # it is not allowed to delete a cluster variable specified in felm from boottest()
@@ -240,9 +240,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  # B needs to be large  
 #  # -------------------------------------------------------------------------------------------------------------------------- # 
 #  # Test 1: oneway clustering
-#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
 #  
 #  boot_lm1 <-  boottest(object = lm_fit, clustid = "group_id1", B = 100000, seed = 1, param = "treatment", conf_int = FALSE)
 #  boot_lm2 <-  boottest(object = lm_fit, clustid = "group_id1", B = 100000, seed = 2, param = "treatment", conf_int = FALSE)
@@ -294,7 +294,7 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 # testthat::test_that("test preprocess oneclust", {
 #  
 #  
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", data = voters)
 #  
 #  preprocess1 <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                    param = "treatment",
@@ -325,9 +325,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  
 #  
 #  # lm, feols, felm without fe
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
 #  
 #  preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                          param = "treatment",
@@ -389,8 +389,8 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  
 #  
 #  # felm with fe on = lfe with fe on in estimation and boottest 
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income| Q1_immigration, weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0, weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income| Q1_immigration, data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0, data = voters)
 #  
 #  preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                          param = "treatment",
@@ -435,7 +435,7 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 # testthat::test_that("test preprocess multclust", {
 #  
 # 
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", data = voters)
 # 
 #  preprocess1 <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                            param = "treatment",
@@ -466,9 +466,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  
 #  
 #  # lm, feols, felm without fe
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
 #  
 #  preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                    param = "treatment",
@@ -530,8 +530,8 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  
 #  # --------------------------------------------------------------------------------------------- # 
 #  # felm with fe on = lfe with fe on in estimation and boottest 
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income| Q1_immigration, weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0, weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income| Q1_immigration, data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0, data = voters)
 #  
 #  preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                          param = "treatment",
@@ -578,7 +578,7 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 # test_that("output of boot_algo, oneclust", {
 #  
 #  # 1) compare feols with fe and without fe
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", data = voters)
 #  preprocess1 <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                    param = "treatment",
 #                                                    clustid = c("group_id1"),
@@ -601,9 +601,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  expect_equal(res1$clustid, res2$clustid)
 #  
 #  # 2) compare felm and lm and feols without fe 
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
 #  preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                          param = "treatment",
 #                                                          clustid = c("group_id1"),
@@ -653,9 +653,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  expect_equal(res_fixest$clustid, res_lm$clustid)
 #  
 #  # 2b) compare feols / felm with fe - boottest without fe with lm (same as 2, but feols and felm estimated with fe)
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0 , weights = NULL, data = voters)
-#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0 , data = voters)
+#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
 #  preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                          param = "treatment",
 #                                                          clustid = c("group_id1"),
@@ -708,8 +708,8 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  
 #  # 3) compare felm with fe and feols with fe
 #  
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0 , weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0 , data = voters)
 #  
 #  preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                          param = "treatment",
@@ -748,7 +748,7 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 # test_that("output of boot_algo, multclust", {
 # 
 #  # 1) compare feols with fe and without fe
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", data = voters)
 #  preprocess1 <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                    param = "treatment",
 #                                                    clustid = c("group_id1", "group_id2"),
@@ -771,9 +771,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  expect_equal(res1$clustid, res2$clustid)
 #  
 #  # 2) compare felm and lm and feols without fe 
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
-#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
 #  preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                          param = "treatment",
 #                                                          clustid = c("group_id1", "group_id2"),
@@ -823,9 +823,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  expect_equal(res_fixest$clustid, res_lm$clustid)
 #  
 #  # 2b) compare feols / felm with fe - boottest without fe with lm (same as 2, but feols and felm estimated with fe)
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0 , weights = NULL, data = voters)
-#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0 , data = voters)
+#  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
 #  preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                          param = "treatment",
 #                                                          clustid = c("group_id1", "group_id2"),
@@ -878,8 +878,8 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 #  
 #  # 3) compare felm with fe and feols with fe
 #  
-#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
-#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0 , weights = NULL, data = voters)
+#  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", data = voters)
+#  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0 , data = voters)
 #  
 #  preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 #                                                    param = "treatment",
@@ -922,9 +922,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 # #  
 # #    # 1) 
 # #    voters <- fwildclusterboot::create_data_2(N = 100000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
-# #    feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-# #    felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | 0 | 0 , weights = NULL, data = voters)
-# #    lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+# #    feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+# #    felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | 0 | 0 , data = voters)
+# #    lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
 # #    
 # #    preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 # #                                                            param = "treatment",
@@ -981,9 +981,9 @@ expect_identical(boot_lm$clustid, boot_fixest$clustid)
 # # test_that("compare invert_p_val & invert_p_val2, multclust", {
 # #    
 # #    voters <- fwildclusterboot::create_data_2(N = 10000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
-# #    feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
-# #    felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | 0 | 0 , weights = NULL, data = voters)
-# #    lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+# #    feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+# #    felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | 0 | 0 , data = voters)
+# #    lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
 # #    
 # #    preprocess_fixest <- suppressWarnings(preprocess.fixest(object = feols_fit, 
 # #                                                            param = "treatment",

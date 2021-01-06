@@ -1,7 +1,7 @@
 # Test 6: test preprocess multclust
 
 # 
-feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, 
+feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", 
                            data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 # 
 preprocess1 <- suppressWarnings(fwildclusterboot::preprocess.fixest(object = feols_fit, 
@@ -33,9 +33,9 @@ expect_equal(preprocess1$seed, preprocess2$seed)
 
 
 # lm, feols, felm without fe
-feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL,                    data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL,                    data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-# felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL,                    data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,                    data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,                    data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+# felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,                    data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 
 preprocess_fixest <- suppressWarnings(fwildclusterboot::preprocess.fixest(object = feols_fit, 
                                                   param = "treatment",
@@ -97,8 +97,8 @@ expect_equal(preprocess_lm$Y, preprocess_fixest$Y)
 
 # --------------------------------------------------------------------------------------------- # 
 # felm with fe on = lfe with fe on in estimation and boottest 
-feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income| Q1_immigration, weights = NULL,                    data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-# felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0, weights = NULL,                    data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income| Q1_immigration,                    data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+# felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration | 0 | 0,                    data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 
 preprocess_fixest <- suppressWarnings(fwildclusterboot::preprocess.fixest(object = feols_fit, 
                                                         param = "treatment",

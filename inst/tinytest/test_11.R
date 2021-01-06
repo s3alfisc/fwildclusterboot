@@ -9,7 +9,7 @@
 # 
 # N <- 1000
 # voters <- create_data_2(N = N, N_G1 = 40, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
-# lm_fit <- lm(proposition_vote ~ treatment  + log_income + Q1_immigration , weights = NULL, data = voters)
+# lm_fit <- lm(proposition_vote ~ treatment  + log_income + Q1_immigration , data = voters)
 # 
 # boottest(lm_fit, clustid = "group_id1", B = 1000, param = "treatment")
 # 

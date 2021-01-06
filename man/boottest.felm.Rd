@@ -10,7 +10,6 @@
   B,
   clustid,
   fe = NULL,
-  weights = NULL,
   conf_int = NULL,
   seed = NULL,
   beta0 = 0,
@@ -29,8 +28,6 @@
 \item{clustid}{A vector with the clusters}
 
 \item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap}
-
-\item{weights}{Regression weights. Currently, WLS is not supported, and weights needs to be NULL}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion}
 

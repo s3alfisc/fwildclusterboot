@@ -9,7 +9,6 @@
   clustid,
   param,
   B,
-  weights = NULL,
   conf_int = NULL,
   seed = NULL,
   beta0 = NULL,
@@ -26,8 +25,6 @@
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
 
 \item{B}{number of bootstrap iterations}
-
-\item{weights}{Regression weights. Currently, WLS is not supported, and weights needs to be NULL}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion}
 

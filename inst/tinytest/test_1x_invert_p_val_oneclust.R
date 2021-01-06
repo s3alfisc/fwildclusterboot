@@ -2,9 +2,9 @@
 # 
 # 
 # 
-# feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = create_data_2(N = 1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
-# #felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | 0 | 0 , weights = NULL, data = create_data_2(N = 1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
-# lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = create_data_2(N = 1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
+# feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigrationoneclust, data = create_data_2(N = 1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
+# #felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | 0 | 0 oneclust, data = create_data_2(N = 1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
+# lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigrationoneclust, data = create_data_2(N = 1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
 # 
 # preprocess_fixest <- suppressWarnings(fwildclusterboot::preprocess.fixest(object = feols_fit, 
 #                                                                           param = "treatment",

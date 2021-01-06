@@ -2,13 +2,13 @@
 
 # -------------------------------------------------------------------------------------------------------------------------- # 
 # Test 1: no fixed effects
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, 
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
              data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 
-feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, 
+feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, 
                            data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 
-#felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = NULL, 
+#felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, 
 #                      data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 
 

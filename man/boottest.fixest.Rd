@@ -11,7 +11,6 @@
   B,
   fe = NULL,
   alpha = NULL,
-  weights = NULL,
   conf_int = NULL,
   seed = NULL,
   beta0 = 0,
@@ -31,8 +30,6 @@
 \item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap}
 
 \item{alpha}{A numeric between 0 and 1. E.g. alpha = 0.05 returns 0.95\% confidence intervals. By default, alpha = 0.05.}
-
-\item{weights}{Regression weights. Currently, WLS is not supported, and weights needs to be NULL}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion}
 
