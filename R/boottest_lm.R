@@ -28,7 +28,7 @@ boottest.lm <- function(object,
   #'@examples
   #'library(fwildclusterboot)
   #'voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
-  #'lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, weights = NULL, data = voters)
+  #'lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
   #'boot1 <- boottest(lm_fit, B = 10000, param = "treatment", clustid = "group_id1")
   #'boot2 <- boottest(lm_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"))
   #'boot3 <- boottest(lm_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), alpha = 0.2, seed = 8, beta0 = 2)

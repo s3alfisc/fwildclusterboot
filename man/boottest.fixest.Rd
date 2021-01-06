@@ -51,7 +51,7 @@ Computes wild cluster bootstrap for object of class fixest
 library(fwildclusterboot)
 library(fixest)
 voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
-feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", weights = NULL, data = voters)
+feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", data = voters)
 boot1 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = "group_id1")
 boot2 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"))
 boot3 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), fe = "Q1_immigration")
