@@ -6,6 +6,14 @@ boottest <- function(object, ...){
   UseMethod("boottest")
 }
 
+boot_algo <- function(preprocessed_object, ...){
+  #' S3 Method boot_algo
+  #'@export 
+  #'@param preprocessed_object An object of type preprocess_lm, preprocess_felm or preprocess_fixest
+  #'@param ... other arguments
+  UseMethod("boot_algo")
+}
+
 boot_algo2 <- function(preprocessed_object, ...){
   #' S3 Method boot_algo2
   #'@export 
@@ -48,10 +56,3 @@ invert_p_val2 <- function(object, ...){
 #'   UseMethod("invert_p_val2a")
 #' }
 
-#' boot_algo <- function(preprocessed_object, ...){
-#'   #' S3 Method boot_algo
-#'   #'@export 
-#'   #'@param preprocessed_object An object of type preprocess_lm, preprocess_felm or preprocess_fixest
-#'   #'@param ... other arguments
-#'   UseMethod("boot_algo")
-#' }
