@@ -48,7 +48,7 @@ boot_algo.oneclust <- function(preprocessed_object, B, wild_draw_fun, ...){
   # print(B)
   # print(class(B))
   
-  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (boot_iter + 1)), N_G["clustid"], boot_iter + 1)
+  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (B + 1)), N_G["clustid"], B + 1)
   #v <- matrix(sample(c(1, -1), N_G * (B + 1), replace = TRUE), N_G, B + 1) # rademacher weights for all replications
   v[,1] <- 1
   
@@ -181,7 +181,7 @@ boot_algo.multclust <- function(preprocessed_object, B, wild_draw_fun, ...){
   # Yr for constraint leas squares with beta0 = c
   Yr <- Y - X[, which(R0 == 1)] * beta0
   
-  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (boot_iter + 1)), N_G["clustid"], boot_iter + 1)
+  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (B + 1)), N_G["clustid"], B + 1)
   #v <- matrix(sample(c(1, -1), N_G["clustid"] * (B + 1), replace = TRUE), N_G["clustid"], B + 1) # rademacher weights for all replications
   v[,1] <- 1
   invXX <- solve(t(X) %*% X) # k x k matrix
