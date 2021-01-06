@@ -11,8 +11,8 @@ lapply(alphas, function(x){
   tidy(tmp)
 })
 
-lower <- rbindlist(res)$`CI Lower`
-upper <- rbindlist(res)$`CI Upper`
+lower <- data.table::rbindlist(res)$`CI Lower`
+upper <- data.table::rbindlist(res)$`CI Upper`
 
 expect_equal(sort(lower), lower)
 expect_equal(sort(upper, decreasing = TRUE), upper)
@@ -26,7 +26,7 @@ res <-
     tidy(tmp)
   })
 
-p_vals <- round(rbindlist(res)$`Pr(>|t|)`, digits = 2)
+p_vals <- round(data.table::rbindlist(res)$`Pr(>|t|)`, digits = 2)
 
 expect_true(p_vals[1] == p_vals[2] &  p_vals[2] == p_vals[3] &  p_vals[3] == p_vals[4])
 
@@ -42,8 +42,8 @@ res <-
     tidy(tmp)
   })
 
-lower <- rbindlist(res)$`CI Lower`
-upper <- rbindlist(res)$`CI Upper`
+lower <- data.table::rbindlist(res)$`CI Lower`
+upper <- data.table::rbindlist(res)$`CI Upper`
 
 expect_equal(sort(lower), lower)
 expect_equal(sort(upper, decreasing = TRUE), upper)
@@ -57,6 +57,6 @@ res <-
     tidy(tmp)
   })
 
-p_vals <- round(rbindlist(res)$`Pr(>|t|)`, digits = 2)
+p_vals <- round(data.table::rbindlist(res)$`Pr(>|t|)`, digits = 2)
 
 expect_true(p_vals[1] == p_vals[2] &  p_vals[2] == p_vals[3] &  p_vals[3] == p_vals[4])
