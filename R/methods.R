@@ -30,13 +30,7 @@ preprocess <- function(object, ...){
   UseMethod("preprocess")
 }
 
-invert_p_val <- function(object, ...){
-  #' S3 Method invert_p_val
-  #'@export 
-  #'@param object An object of type boot_algo_oneclust or boot_algo_multclust
-  #'@param ... other arguments
-  UseMethod("invert_p_val")
-}
+
 
 invert_p_val2 <- function(object, ...){
   #' S3 Method invert_p_val2
@@ -46,10 +40,18 @@ invert_p_val2 <- function(object, ...){
   UseMethod("invert_p_val2")
 }
 
-invert_p_val2a <- function(object, ...){
-  #' S3 Method invert_p_val2
-  #'@export 
-  #'@param object An object of type boot_algo_oneclust or boot_algo_multclust
-  #'@param ... other arguments
-  UseMethod("invert_p_val2a")
-}
+#' 
+#' invert_p_val <- function(object, ...){
+#'   #' S3 Method invert_p_val
+#'   #'@export 
+#'   #'@param object An object of type boot_algo_oneclust or boot_algo_multclust
+#'   #'@param ... other arguments
+#'   UseMethod("invert_p_val")
+#' }
+#' invert_p_val2a <- function(object, ...){
+#'   #' S3 Method invert_p_val2
+#'   #'@export 
+#'   #'@param object An object of type boot_algo_oneclust or boot_algo_multclust
+#'   #'@param ... other arguments
+#'   UseMethod("invert_p_val2a")
+#' }
