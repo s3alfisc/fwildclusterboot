@@ -4,7 +4,6 @@ boottest.fixest  <- function(object,
                            B,
                            fe = NULL, 
                            alpha = NULL, 
-                           weights = NULL,
                            conf_int = NULL, 
                            seed = NULL, 
                            beta0 = 0,
@@ -19,7 +18,6 @@ boottest.fixest  <- function(object,
   #'@param B number of bootstrap iterations
   #'@param fe A character scalar. Fixed effect to be projected out in the bootstrap
   #'@param alpha A numeric between 0 and 1. E.g. alpha = 0.05 returns 0.95% confidence intervals. By default, alpha = 0.05.
-  #'@param weights Regression weights. Currently, WLS is not supported, and weights needs to be NULL 
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
@@ -74,7 +72,7 @@ boottest.fixest  <- function(object,
    
    # throw error if specific function arguments are used in feols() call
    call_object <- names(object$call)[names(object$call) != ""]
-   banned_fun_args <- c("offset", "subset", "split", "fsplit", "panel.id", "demeaned")
+   banned_fun_args <- c("offset", "subset", "split", "fsplit", "panel.id", "demeaned", "weights")
    if(sum(call_object %in% banned_fun_args) > 0){
      stop("boottest.fixest currently does not accept objects of type fixest with function arguments 
           offset, subset, split, fsplit, panel.id & demeaned.", 

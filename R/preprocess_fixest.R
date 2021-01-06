@@ -14,14 +14,6 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
   #'@export
   #'@return preprocessed object of class boottest_preprocessed
   
-  # print warnings as they occur
-  #options(warn=1)
-  
-  # object <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
-  # param <- "treatment"
-  # clustid <- ~ group_id1
-  # beta0 = 0
-  # alpha = 0.05
   
   # Part 1) Check Arguments
   check_arg(clustid, "character scalar | character vector")
@@ -29,10 +21,6 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
   check_arg(alpha, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL")
   
-  # PArt 2: Check arguments further
-  #if(!(fe %in% object$fixef_vars) | !is.null(fe)){
-  #  stop("The fixed effect in boottest() is not a fixed effect in the model.")
-  #}
   
   if(!is.null(seed)){
     seed <- seed
@@ -44,14 +32,6 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
   
   if(is.null(alpha)){
     alpha <- 0.05
-  }
-  
-  if(!is.numeric(alpha) || alpha > 1 || alpha < 0 || length(alpha) > 1){
-    stop("The level of significance alpha must be a numeric between 0 and 1")
-  }
-  
-  if(!is.null(object$call$weights)){
-    stop("The boottest function currently does not allow for regression weights. The argument weights needs to be NULL.")
   }
   
   

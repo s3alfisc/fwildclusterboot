@@ -15,15 +15,6 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
   #'@return preprocessed object of class boottest_preprocessed
 
   
-  # print warnings as they occur
-  #options(warn=1)
-  
-  # object <- feols(proposition_vote ~ treatment + ideology1 + log_income , fixef = c("Q1_immigration"), weights = NULL, data = voters)
-  # param <- "treatment"
-  # clustid <- ~ group_id1
-  # beta0 = 0
-  # alpha = 0.05
-  
   # Part 1) Check Arguments
   check_arg(clustid, "character scalar | character vector")
   check_arg(beta0, "numeric scalar | NULL")
@@ -47,17 +38,7 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
     alpha <- 0.05
   }
   
-  if(!is.numeric(alpha) || alpha > 1 || alpha < 0 || length(alpha) > 1){
-    stop("The level of significance alpha must be a numeric between 0 and 1")
-  }
 
-  
-  
-  if(!is.null(object$call$weights)){
-    stop("The boottest function currently does not allow for regression weights. The argument weights needs to be NULL.")
-  }
-  
-  
   if(!(param %in% rownames(object$coefficients))){
     stop(paste("The parameter", param, "is not included in the estimated model. Maybe you are trying to test for an interaction parameter? To see all model parameter names, run rownames(coef(model))."))
   }
