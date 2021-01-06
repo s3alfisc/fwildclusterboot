@@ -1,3 +1,10 @@
+# functions in this file: 
+# - invert_p_val.algo_oneclust
+# - invert_p_val2a.algo_multclust
+# - invert_p_val2.algo_oneclust
+# - invert_p_val2.algo_multclust
+
+
 invert_p_val.algo_oneclust <- function(object, point_estimate, se_guess, clustid, fixed_effect, X, Y, N, k, param, R0, B, v, Xr, alpha, beta0, W, n_fe, N_G, ...){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
