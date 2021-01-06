@@ -63,22 +63,6 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed, ...){
   
   clustid <- as.data.frame(data_clustid[, clustid])
   
-  #formula <- object$call$fml
-  weights <- object$call$weights
-  
-  if(!is.null(weights)){
-    stop("The boottest function currently does not allow for regression weights. The argument weights needs to be NULL.")
-  }
-  
-
-  
-  # # retrieve clusters / multiple clusters
-  # if(inherits(clustid, "formula")) {
-  #   clustid_tmp <- expand.model.frame(object, clustid, na.expand = FALSE)
-  #   clustid <- model.frame(clustid, clustid_tmp, na.action = na.pass)
-  # } else {
-  #   clustid <- as.data.frame(clustid, stringsAsFactors = FALSE)
-  # }
   
   if(!(param %in% c(names(object$coefficients)))){
     stop(paste("The parameter", param, "is not included in the estimated model. Maybe you are trying to test for an interaction parameter? To see all model parameter names, run names(coef(model))."))
