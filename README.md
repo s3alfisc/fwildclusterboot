@@ -74,7 +74,7 @@ set.seed(seed)
 voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
 
 # estimate the regression model
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = NULL, data = voters)
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
 
 # bootstrap estimation
 boot_lm = boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
@@ -126,16 +126,10 @@ tidy(boot_lm)
 ## Installation
 
 You can install the development version of `fwildclusterboot` from
-github by following the steps below. The installation process is
-currently complicated by the fact that a package dependency, the
-`collapse` package, has been temporarily removed from cran. Once
-`collapse` is back on cran, the last line will suffice.
+github by following the steps below.
 
 ``` r
-# 1) install the most recent version of devtools
-install.packages("devtools")
-# 2) restart your r session
-# 3) install Rtools if not already installed
-# 4) install the package
-devtools::install_github("s3alfisc/fwildclusterboot")
+# note: installation requires Rtools
+library(devtools)
+install_github("s3alfisc/fwildclusterboot")
 ```
