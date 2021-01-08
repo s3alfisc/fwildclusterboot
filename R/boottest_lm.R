@@ -47,6 +47,11 @@ boottest.lm <- function(object,
   #'\item Out of the 26 calculated p-values, find the two pairs of values x for which the corresponding p-values px cross the significance level alpha.
   #'\item Feed the two pairs of x into an numerical root finding procedure and solve for the root. boottest currently relies on \code{stats::uniroot} and sets an absolute tolerance of 1e-06 and stops the procedure after 10 iterations.
   #'}
+  #'Note that confidence intervals computed via \code{boottest.lm} sometimes slightly differ from confidence intervals calculated 
+  #'via \code{boottest.felm} or \code{boottest.fixest}. This is due to different initial guesses for starting values. \code{boottest.lm} uses inflated cluster robust
+  #'standard errors calculated via the \code{sandwich} package, while \code{boottest.felm} and \code{boottest.fixest} use different small-sample bias 
+  #'correction methods for calculating cluster standard errors internally. Slightly different starting values hence lead to slightly different 
+  #'confidence intervals. 
   #'@section Standard Errors: 
   #'\code{boottest} does not calculate standard errors.
   #'@references Roodman et al., 2019, "Fast and wild: Bootstrap inference in Stata using boottest", The Stata Journal. (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
