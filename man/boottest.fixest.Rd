@@ -2,7 +2,7 @@
 % Please edit documentation in R/boottest_fixest.R
 \name{boottest.fixest}
 \alias{boottest.fixest}
-\title{Computes wild cluster bootstrap for object of class fixest}
+\title{Conducts wild cluster bootstrap inference for object of class fixest.}
 \usage{
 \method{boottest}{fixest}(
   object,
@@ -42,11 +42,40 @@
 \item{...}{Further arguments passed to or from other methods.}
 }
 \value{
-An object of class boottest
+An object of class \code{boottest}
+\item{p_val}{The bootstrap p-value.}
+\item{t_stat}{The bootstrap t-statistic.}
+\item{conf_int}{The bootstrap confidence interval.}
+\item{param}{The tested parameter.}
+\item{N}{Sample size. Might differ from the regression sample size if the cluster variables contain NA values.}
+\item{B}{Number of Bootstrap Iterations.}
+\item{clustid}{Names of the cluster Variables.}
+\item{N_G}{Dimension of the cluster variables as used in boottest.}
+\item{alpha}{Significance level used in boottest.}
+\item{type}{Distribution of the bootstrap weights.}
+\item{p_test_vals}{All p-values calculated while calculating the confidence interval.}
+\item{test_vals}{All t-statistics calculated while calculating the confidence interval.}
+\item{regression}{The regression object used in boottest.}
+\item{call}{Function call of boottest.}
 }
 \description{
-Computes wild cluster bootstrap for object of class fixest
+Conducts wild cluster bootstrap inference for object of class fixest.
 }
+\section{Confidence Intervals}{
+
+\code{boottest} computes confidence intervals by inverting p-values. In practice, the following procedure is used:
+\itemize{
+\item Based on an initial guess for starting values, calculate p-values for 26 equal spaced points between the starting values.
+\item Out of the 26 calculated p-values, find the two pairs of values x for which the corresponding p-values px cross the significance level alpha.
+\item Feed the two pairs of x into an numerical root finding procedure and solve for the root. boottest currently relies on \code{stats::uniroot} and sets an absolute tolerance of 1e-06 and stops the procedure after 10 iterations.
+}
+}
+
+\section{Standard Errors}{
+
+\code{boottest} does not calculate standard errors.
+}
+
 \examples{
 library(fwildclusterboot)
 library(fixest)
@@ -59,4 +88,7 @@ boot4 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_
 summary(boot1)
 tidy(boot1)
 plot(boot1)
+}
+\references{
+Roodman et al., 2019, "Fast and wild: Bootstrap inference in Stata using boottest", The Stata Journal. (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
 }

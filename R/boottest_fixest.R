@@ -11,7 +11,7 @@ boottest.fixest  <- function(object,
                            ...){
   
   
-  #' Computes wild cluster bootstrap for object of class fixest
+  #'Conducts wild cluster bootstrap inference for object of class fixest.
   #'@param object An object of class fixest. Note: advanced formula tools in fixest or vectorized formulas are currently not supported.
   #'@param clustid A vector with the clusters
   #'@param param The univariate coefficients for which a hypothesis is to be tested
@@ -23,10 +23,34 @@ boottest.fixest  <- function(object,
   #'@param beta0 A numeric. Shifts the null hypothesis  
   #'@param type character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.
   #'@param ... Further arguments passed to or from other methods.
-  #'@return An object of class boottest
+  #'@return An object of class \code{boottest}
+  #'\item{p_val}{The bootstrap p-value.}
+  #'\item{t_stat}{The bootstrap t-statistic.}
+  #'\item{conf_int}{The bootstrap confidence interval.}
+  #'\item{param}{The tested parameter.}
+  #'\item{N}{Sample size. Might differ from the regression sample size if the cluster variables contain NA values.}
+  #'\item{B}{Number of Bootstrap Iterations.}
+  #'\item{clustid}{Names of the cluster Variables.}
+  #'\item{N_G}{Dimension of the cluster variables as used in boottest.}
+  #'\item{alpha}{Significance level used in boottest.}
+  #'\item{type}{Distribution of the bootstrap weights.}
+  #'\item{p_test_vals}{All p-values calculated while calculating the confidence interval.}
+  #'\item{test_vals}{All t-statistics calculated while calculating the confidence interval.}
+  #'\item{regression}{The regression object used in boottest.}
+  #'\item{call}{Function call of boottest.}  
   #'@import dreamerr
   #'@export
   #'@method boottest fixest
+  #'@section Confidence Intervals: 
+  #'\code{boottest} computes confidence intervals by inverting p-values. In practice, the following procedure is used: 
+  #'\itemize{
+  #'\item Based on an initial guess for starting values, calculate p-values for 26 equal spaced points between the starting values. 
+  #'\item Out of the 26 calculated p-values, find the two pairs of values x for which the corresponding p-values px cross the significance level alpha.
+  #'\item Feed the two pairs of x into an numerical root finding procedure and solve for the root. boottest currently relies on \code{stats::uniroot} and sets an absolute tolerance of 1e-06 and stops the procedure after 10 iterations.
+  #'}
+  #'@section Standard Errors: 
+  #'\code{boottest} does not calculate standard errors.
+  #'@references Roodman et al., 2019, "Fast and wild: Bootstrap inference in Stata using boottest", The Stata Journal. (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
   #'@examples
   #'library(fwildclusterboot)
   #'library(fixest)
