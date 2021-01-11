@@ -251,6 +251,15 @@ invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, cl
     setTxtProgressBar(pb,i)
   }
   close(pb)
+  # 
+  # for(i in 2:length(test_vals) - 1){
+  #   p <- p_val_null2_x_cmp(test_vals[i], alpha) 
+  #   #p <- p + alpha 
+  #   crossing[i] <- (p <= 0) - (p > 0))
+  #   if(crossing[i] + crossings[i + 1] == 0 || crossings[i] + crossings[i - 1] == 0){
+  #     
+  #   }   
+  # }
   # substract alpha in function so that I will not need to 
   # do it in root finding algorithm, but then I will need to add 
   # alpha here
@@ -264,6 +273,7 @@ invert_p_val2.algo_multclust <- function(object, B, point_estimate, se_guess, cl
   crossings <-  (p <= alpha) - (p > alpha)
   
   x_crossings <- rep(NA, length(test_vals))
+  # should this be 2:25?
   for(i in 1:26){
     x_crossings[i] <- ifelse(crossings[i] + crossings[i + 1] == 0 || crossings[i] + crossings[i - 1] == 0, 1, 0)
   }

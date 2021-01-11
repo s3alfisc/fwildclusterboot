@@ -33,7 +33,7 @@ create_data_2 <-
         ),
         income = exp(rlnorm(n = N, meanlog = 2.4 - (ideology1 * 0.1), sdlog = 0.12)),
         Q1_immigration = factor(sample(1:numb_fe1, N, TRUE)),
-        Q2_defence = factor(sample(1:numb_fe2, N, TRUE)),   
+        Q2_defence = factor(rep(1:5, N / 5)),   
         treatment = fabricatr::draw_binary(0.5, N = N),
         proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.1 * treatment, link = "probit")
       )
