@@ -8,7 +8,7 @@ boot_algo.oneclust <- function(preprocessed_object, B, wild_draw_fun, ...){
   #' @method boot_algo oneclust
   #' @export
   #' @return A list of ... 
-
+  
   # if(!inherits(preprocessed_object, "boottest_preprocessed")){
   #   stop("Estimation only works for inputs of class boottest_preprocessed.")
   # }
@@ -41,8 +41,9 @@ boot_algo.oneclust <- function(preprocessed_object, B, wild_draw_fun, ...){
   Yr <- Y - X[, which(R0 == 1)] * beta0
   
   # error under the null hypothesis
-  u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
-  invXX <- solve(t(X) %*% X) # k x k matrix
+  invXrXr <- solve(crossprod(Xr))
+  u_hat <- Yr - Xr %*% (invXrXr %*% (t(Xr) %*% Yr)) # N x 1 matrix 
+  invXX <- solve(crossprod(X)) # k x k matrix
   
   # print(N_G["clustid"])
   # print(B)
@@ -69,7 +70,7 @@ boot_algo.oneclust <- function(preprocessed_object, B, wild_draw_fun, ...){
   diag_SXinvXXRu <- Matrix::Diagonal(N_G, SXinvXXRu)
   
   numer <- SXinvXXRu %*% v 
-
+  
   # if(use_fixef == FALSE){
   
   # "old" code - if no fixed effects used in calculation
@@ -146,8 +147,8 @@ boot_algo.multclust <- function(preprocessed_object, B, wild_draw_fun, ...){
   #' @export
   #' @method boot_algo multclust
   #' @return A list of ... 
-
-
+  
+  
   
   # if(!inherits(preprocessed_object, "boottest_preprocessed")){
   #   stop("Estimation only works for inputs of class boottest_preprocessed.")
@@ -184,23 +185,25 @@ boot_algo.multclust <- function(preprocessed_object, B, wild_draw_fun, ...){
   v <- matrix(wild_draw_fun(n = N_G["clustid"] * (B + 1)), N_G["clustid"], B + 1)
   #v <- matrix(sample(c(1, -1), N_G["clustid"] * (B + 1), replace = TRUE), N_G["clustid"], B + 1) # rademacher weights for all replications
   v[,1] <- 1
-  invXX <- solve(t(X) %*% X) # k x k matrix
+  invXX <- solve(crossprod(X)) # k x k matrix
   #XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
   XinvXXr <- X %*% (invXX %*% R0) # N x 1 
-
+  
   # small sample correction for clusters 
   G <- sapply(clustid, function(x) length(unique(x)))
   small_sample_correction <- G / (G - 1)
   small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
   
-  Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
-  P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
+  invXrXr <- solve(crossprod(Xr))
+  
+  Q <- Y - Xr %*% (invXrXr %*% (t(Xr) %*% Y))
+  P <- Xr %*% (invXrXr %*% (t(Xr) %*% Xr0)) - Xr0
   
   
   p_val_null <- function(beta0, Q, P, R0, X, XinvXXr, clustid, 
                          v, B, small_sample_correction){
-   
-     # error under the null hypothesis
+    
+    # error under the null hypothesis
     #u_hat <- Yr - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Yr)) # N x 1 matrix 
     u_hat <- Q + P %*% matrix(beta0, 1, length(beta0))
     #uX <- as.vector(u_hat) * X
@@ -210,7 +213,7 @@ boot_algo.multclust <- function(preprocessed_object, B, wild_draw_fun, ...){
     #XinvXXRu <-as.vector(XinvXXr * u_hat)
     XinvXXRu <- as.vector(XinvXXr * matrix(rep(u_hat, 1), N, 1)) 
     #diag_XinvXXRuS <- t(collapse::fsum(diag(as.vector(XinvXXRu)), clustid$clustid))
-
+    
     
     tKK <- list()
     JJ <- list()
@@ -223,10 +226,10 @@ boot_algo.multclust <- function(preprocessed_object, B, wild_draw_fun, ...){
     
     diag_XinvXXRuS <- Matrix::t(Matrix.utils::aggregate.Matrix(Matrix::Diagonal(N, as.vector(XinvXXRu)), clustid$clustid))
     
-      
+    
     if(is.null(W)){
       
-
+      
       for(x in names(clustid)){
         #S_diag_XinvXXRu_S <- collapse::fsum(diag_XinvXXRuS, clustid[x])
         #SXinvXXRu <-collapse::fsum(XinvXXr , clustid[x])
@@ -256,7 +259,7 @@ boot_algo.multclust <- function(preprocessed_object, B, wild_draw_fun, ...){
         tKK[[x]] <- small_sample_correction[x] * Matrix::t(K) %*% K # here: add small sample df correction
       }
     }
- 
+    
     # JJ_sum <- Reduce("+", JJ)
     # denom_2 <- Matrix::colSums(JJ_sum)
     
@@ -291,16 +294,16 @@ boot_algo.multclust <- function(preprocessed_object, B, wild_draw_fun, ...){
     res
   }
   
-
+  
   
   p_val_res <- p_val_null(beta0 = beta0, Q =Q, P = P, R0 = R0, X = X, XinvXXr = XinvXXr, clustid = clustid, 
-                v = v, B = B, small_sample_correction = small_sample_correction)
+                          v = v, B = B, small_sample_correction = small_sample_correction)
   
   p_val <- p_val_res$p_val
   t <- p_val_res$t
   t_boot <- p_val_res$t_boot
   invalid_t <- p_val_res$delete_invalid_t_total
-    
+  
   res  <- list(p_val = p_val,
                t_stat = t[1],
                t_boot = t_boot,
@@ -341,211 +344,6 @@ boot_algo2.oneclust <- function(preprocessed_object, boot_iter, wild_draw_fun, .
   
   dreamerr::check_arg(preprocessed_object, "class(oneclust)")
   
-  X <- preprocessed_object$X
-  Y <- preprocessed_object$Y
-  R0 <- preprocessed_object$R0
-  data <- preprocessed_object$data
-  N <- preprocessed_object$N
-  k <- preprocessed_object$k
-  clustid <- preprocessed_object$clustid
-  fixed_effect <- preprocessed_object$fixed_effect
-  beta0 <- preprocessed_object$beta0
-  N_G <- preprocessed_object$N_G
-  alpha <- preprocessed_object$alpha
-  param <- preprocessed_object$param
-  W <- preprocessed_object$W
-  n_fe <- preprocessed_object$n_fe
-  seed <- preprocessed_object$seed
-  
-  # names(clustid) <- "clustid"
-  # names(N_G) <- "clustid"
-  
-  set.seed(seed)
-  
-  # bootstrap error 
-  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (boot_iter + 1)), N_G["clustid"], boot_iter + 1)
-  #v <- matrix(sample(c(1, -1), N_G["clustid"] * (boot_iter + 1), replace = TRUE), N_G["clustid"], boot_iter + 1) # rademacher weights for all replications
-  v[,1] <- 1
-  
-  G <- sapply(clustid, function(x) length(unique(x)))
-  small_sample_correction <- G / (G - 1)
-  #small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
-  
-  # error under the null hypothesis
-  Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
-  Xr0 <- matrix(X[, which(R0 == 1)], nrow(X), 1)
-  # Yr for constraint leas squares with beta0 = c
-  Yr <- Y - X[, which(R0 == 1)] * beta0
-  
-  Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
-  P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
-  
-  invXX <- solve(t(X) %*% X) # k x k matrix#
-  XinvXX <- X %*% invXX
-  XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
-  XinvXXrX <- XinvXXr * X
-  
-  SuXa <- collapse::fsum( as.vector(Q) * X, clustid$clustid)
-  XinvXXrQ <- XinvXXr * Q
-  XinvXXrP <- XinvXXr * P
-  
-  XinvXXRuS_a <- collapse::fsum(XinvXXrQ, clustid$clustid)
-  diag_XinvXXRuS_a <- Matrix::t(
-    Matrix.utils::aggregate.Matrix(
-      Matrix::Diagonal(N, 
-                       as.vector(XinvXXrQ)),
-      clustid$clustid)) # N x c*
-  
-  diag_XinvXXRuS_b <- Matrix::t(
-    Matrix.utils::aggregate.Matrix(
-      Matrix::Diagonal(N, 
-                       as.vector(XinvXXrP)),
-      clustid$clustid)) # N x c*  
-  
-  SXinvXXrX <- list()
-  SXinvXXrX_invXX <- list()
-  
-  S_XinvXXR_F <- list()
-  SXinvXXrX <- list()
-  J_a <- list()
-  K_b <- list()
-  K_a <- list()
-  C <- list()
-  D <- list()
-  CC <- list()
-  DD <- list()
-  CD <- list()
-  
-  #   # diag_XinvXXRuS_b <- Matrix::t(
-  #   #   Matrix.utils::aggregate.Matrix(
-  #   #     Matrix::Diagonal(N, 
-  #   #                      as.vector(XinvXXr * P %*% matrix(beta0, 1, length(beta0)))),
-  #   #     clustid$clustid)) # N x c*
-  
-  if(is.null(W)){
-    for(x in names(clustid)){
-      # all
-      SXinvXXrX[[x]] <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
-      SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% invXX
-      #S_XinvXXR_F <- crosstab2(XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
-      #SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
-      # a
-      #prod_a <- t(tcrossprod(S_Wu_F_a, S_XinvXXR_F))
-      S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
-      #S_diag_XinvXXRu_S_a <- S_diag_XinvXXRu_S_a 
-      K_a[[x]] <- S_diag_XinvXXRu_S_a  - tcrossprod(SXinvXXrX_invXX[[x]], SuXa) 
-      #J_a[[x]] <- K_a %*% v
-      # b
-      #prod_b <- t(tcrossprod(S_Wu_F_b, S_XinvXXR_F))
-      S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
-      #S_diag_XinvXXRu_S_b <- S_diag_XinvXXRu_S_b - prod_b
-      K_b[[x]] <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX[[x]], collapse::fsum(as.vector(P) * X, clustid$clustid)) 
-      #print(x)
-      #pracma::tic()
-      C[[x]] <- eigenMatMult(as.matrix(K_a[[x]]), v) 
-      D[[x]] <- eigenMatMult(as.matrix(K_b[[x]]), v) 
-      #pracma::toc()
-      #pracma::tic()
-      CC[[x]] <- C[[x]] * C[[x]]
-      DD[[x]] <- D[[x]] * D[[x]]
-      CD[[x]] <- C[[x]] * D[[x]]
-      #pracma::toc()
-      
-    }
-  } else if(!is.null(W)){
-    S_Wu_F_a <- crosstab2(as.matrix(W %*% Q), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
-    S_Wu_F_b <- crosstab2(as.matrix(W %*% P), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
-    
-    for(x in names(clustid)){
-      # all
-      SXinvXXrX[[x]] <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
-      SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% invXX
-      S_XinvXXR_F <- crosstab2(XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
-      #SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
-      # a
-      prod_a <- t(tcrossprod(S_Wu_F_a, S_XinvXXR_F))
-      S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
-      S_diag_XinvXXRu_S_a <- S_diag_XinvXXRu_S_a - prod_a
-      K_a[[x]] <- S_diag_XinvXXRu_S_a  - tcrossprod(SXinvXXrX_invXX[[x]], SuXa) 
-      #J_a[[x]] <- K_a %*% v
-      # b
-      prod_b <- t(tcrossprod(S_Wu_F_b, S_XinvXXR_F))
-      S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
-      S_diag_XinvXXRu_S_b <- S_diag_XinvXXRu_S_b - prod_b
-      K_b[[x]] <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX[[x]], collapse::fsum(as.vector(P) * X, clustid$clustid)) 
-      #print(x)
-      #pracma::tic()
-      C[[x]] <- eigenMatMult(as.matrix(K_a[[x]]), v) 
-      D[[x]] <- eigenMatMult(as.matrix(K_b[[x]]), v) 
-      #pracma::toc()
-      #pracma::tic()
-      CC[[x]] <- C[[x]] * C[[x]]
-      DD[[x]] <- D[[x]] * D[[x]]
-      CD[[x]] <- C[[x]] * D[[x]]
-      #pracma::toc()
-      
-    }
-  }
-  
-  numer_a <- collapse::fsum(XinvXXrQ, clustid$clustid)
-  numer_b <- collapse::fsum(as.vector(XinvXXr) * P, clustid$clustid)
-  A <- crossprod(numer_a, v)
-  B <- crossprod(numer_b, v)
-  
-  p_val_res <- p_val_null2(beta0 = beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction= small_sample_correction)
-  
-  p_val <- p_val_res$p_val
-  t <- p_val_res$t
-  t_boot <- p_val_res$t_boot
-  invalid_t <- p_val_res$delete_invalid_t_total
-  
-  ABCD <- list(A = A, B = B, CC = CC, CD = CD, DD = DD)
-  
-  res  <- list(p_val = p_val,
-               t_stat = t[1],
-               t_boot = t_boot,
-               X = X,
-               Y = Y, 
-               B = B, 
-               R0 = R0, 
-               param = param, 
-               clustid = clustid,
-               invXX = invXX,
-               v = v,
-               Xr = Xr,
-               XinvXXr = XinvXXr, 
-               invalid_t = NULL, 
-               ABCD = ABCD)
-  class(res) <- "algo_oneclust"
-  
-  invisible(res)
-  
-}
-
-boot_algo2.multclust <- function(preprocessed_object, boot_iter, wild_draw_fun, ...){
-  
-  #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
-  #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
-  #' @param boot_iter number of bootstrap iterations
-  #' @param ... Further arguments passed to or from other methods.
-  #' @param wild_draw_fun function. Specifies the type of bootstrap to use.
-  #' @import Matrix.utils
-  #' @import Matrix
-  #' @export
-  #' @method boot_algo2 multclust
-  #' @return A list of ... 
-  
-  
-  dreamerr::check_arg(preprocessed_object, "class(multclust)")
-  
-  # if(!inherits(preprocessed_object, "boottest_preprocessed")){
-  #   stop("Estimation only works for inputs of class boottest_preprocessed.")
-  # }
-  
-  #preprocess <- preprocess.fixest(object = preprocessed_object, param = param, clustid = clustid, beta0 = beta0, alpha = alpha, demean = demean)
-  
-  #preprocessed_object <- preprocess
-  
   # 1) preprocess
   X <- preprocessed_object$X
   Y <- preprocessed_object$Y
@@ -569,7 +367,7 @@ boot_algo2.multclust <- function(preprocessed_object, boot_iter, wild_draw_fun, 
   v <- matrix(wild_draw_fun(n = N_G["clustid"] * (boot_iter + 1)), N_G["clustid"], boot_iter + 1)
   #v <- matrix(sample(c(1, -1), N_G["clustid"] * (boot_iter + 1), replace = TRUE), N_G["clustid"], boot_iter + 1) # rademacher weights for all replications
   v[,1] <- 1
-  # invXX <- solve(t(X) %*% X) # k x k matrix
+  # invXX <- solve(crossprod(X)) # k x k matrix
   # XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
   
   # start inversion 
@@ -589,13 +387,16 @@ boot_algo2.multclust <- function(preprocessed_object, boot_iter, wild_draw_fun, 
   # small sample correction for clusters 
   G <- sapply(clustid, function(x) length(unique(x)))
   small_sample_correction <- G / (G - 1)
-  small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
+  # if(length(clustid) == 3){
+  #   #small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
+  # }
+  invXrXr <- solve(crossprod(Xr))
   
-  Q <- Y - Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Y))
-  P <- Xr %*% (solve(t(Xr) %*% Xr) %*% (t(Xr) %*% Xr0)) - Xr0
+  Q <- Y - Xr %*% (invXrXr %*% (t(Xr) %*% Y))
+  P <- Xr %*% (invXrXr %*% (t(Xr) %*% Xr0)) - Xr0
   
-  invXX <- solve(t(X) %*% X) # k x k matrix#
-  XinvXX <- X %*% invXX
+  invXX <- solve(crossprod(X)) # k x k matrix#
+  #XinvXX <- X %*% invXX
   XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
   XinvXXrX <- XinvXXr * X
   
@@ -660,9 +461,9 @@ boot_algo2.multclust <- function(preprocessed_object, boot_iter, wild_draw_fun, 
       D[[x]] <- eigenMatMult(as.matrix(K_b[[x]]), v) 
       #pracma::toc()
       #pracma::tic()
-      CC[[x]] <- C[[x]] * C[[x]]
-      DD[[x]] <- D[[x]] * D[[x]]
-      CD[[x]] <- C[[x]] * D[[x]]
+      CC[[x]] <- colSums(C[[x]] * C[[x]])
+      DD[[x]] <- colSums(D[[x]] * D[[x]])
+      CD[[x]] <- colSums(C[[x]] * D[[x]])
       #pracma::toc()
       
     }
@@ -694,9 +495,227 @@ boot_algo2.multclust <- function(preprocessed_object, boot_iter, wild_draw_fun, 
       D[[x]] <- eigenMatMult(as.matrix(K_b[[x]]), v) 
       #pracma::toc()
       #pracma::tic()
-      CC[[x]] <- C[[x]] * C[[x]]
-      DD[[x]] <- D[[x]] * D[[x]]
-      CD[[x]] <- C[[x]] * D[[x]]
+      CC[[x]] <- colSums(C[[x]] * C[[x]])
+      DD[[x]] <- colSums(D[[x]] * D[[x]])
+      CD[[x]] <- colSums(C[[x]] * D[[x]])
+      #pracma::toc()
+      
+    }
+    #pracma::toc()
+  }
+  
+  numer_a <- collapse::fsum(XinvXXrQ, clustid$clustid)
+  numer_b <- collapse::fsum(as.vector(XinvXXr) * P, clustid$clustid)
+  A <- crossprod(numer_a, v)
+  B <- crossprod(numer_b, v)
+  
+  p_val_res <- p_val_null2(beta0 = beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction= small_sample_correction)
+  
+  p_val <- p_val_res$p_val
+  t <- p_val_res$t
+  t_boot <- p_val_res$t_boot
+  invalid_t <- p_val_res$delete_invalid_t_total
+  
+  ABCD <- list(A = A, B = B, CC = CC, CD = CD, DD = DD)
+  
+  res  <- list(p_val = p_val,
+               t_stat = t[1],
+               t_boot = t_boot,
+               X = X,
+               Y = Y, 
+               B = B, 
+               R0 = R0, 
+               param = param, 
+               clustid = clustid,
+               invXX = invXX,
+               v = v,
+               Xr = Xr,
+               XinvXXr = XinvXXr, 
+               invalid_t = invalid_t, 
+               ABCD = ABCD)
+  class(res) <- "algo_oneclust"
+  
+  invisible(res)
+  
+}
+
+boot_algo2.multclust <- function(preprocessed_object, boot_iter, wild_draw_fun, ...){
+  
+  #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
+  #' @param preprocessed_object A preprocessed object of time preprocessed_boottest
+  #' @param boot_iter number of bootstrap iterations
+  #' @param ... Further arguments passed to or from other methods.
+  #' @param wild_draw_fun function. Specifies the type of bootstrap to use.
+  #' @import Matrix.utils
+  #' @import Matrix
+  #' @export
+  #' @method boot_algo2 multclust
+  #' @return A list of ... 
+  
+  
+  dreamerr::check_arg(preprocessed_object, "class(multclust)")
+  
+  # if(!inherits(preprocessed_object, "boottest_preprocessed")){
+  #   stop("Estimation only works for inputs of class boottest_preprocessed.")
+  # }
+  
+  #preprocess <- preprocess.fixest(object = preprocessed_object, param = param, clustid = clustid, beta0 = beta0, alpha = alpha, demean = demean)
+  
+  #preprocessed_object <- preprocess
+  
+  
+  # 1) preprocess
+  X <- preprocessed_object$X
+  Y <- preprocessed_object$Y
+  R0 <- preprocessed_object$R0
+  data <- preprocessed_object$data
+  N <- preprocessed_object$N
+  k <- preprocessed_object$k
+  clustid <- preprocessed_object$clustid
+  fixed_effect <- preprocessed_object$fixed_effect
+  beta0 <- preprocessed_object$beta0
+  N_G <- preprocessed_object$N_G
+  alpha <- preprocessed_object$alpha
+  param <- preprocessed_object$param
+  W <- preprocessed_object$W
+  n_fe <- preprocessed_object$n_fe
+  seed <- preprocessed_object$seed
+  
+  set.seed(seed)
+  
+  # bootstrap error 
+  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (boot_iter + 1)), N_G["clustid"], boot_iter + 1)
+  #v <- matrix(sample(c(1, -1), N_G["clustid"] * (boot_iter + 1), replace = TRUE), N_G["clustid"], boot_iter + 1) # rademacher weights for all replications
+  v[,1] <- 1
+  # invXX <- solve(crossprod(X)) # k x k matrix
+  # XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
+  
+  # start inversion 
+  # boot_iter <- B
+  # rm(B)
+  # 
+  # error under the null hypothesis
+  Xr <- X[, -which(R0 == 1)] # delete rows that will be tested
+  Xr0 <- matrix(X[, which(R0 == 1)], nrow(X), 1)
+  
+  # Yr for constraint leas squares with beta0 = c
+  Yr <- Y - X[, which(R0 == 1)] * beta0
+  
+  #Xr1 <- X
+  #Xr1[, which(R0 == 1)] <- beta0 + Xr1[, which(R0 == 1)]
+  
+  # small sample correction for clusters 
+  G <- sapply(clustid, function(x) length(unique(x)))
+  small_sample_correction <- G / (G - 1)
+  small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
+  
+  invXrXr <- solve(crossprod(Xr))
+  Q <- Y - Xr %*% (invXrXr %*% (t(Xr) %*% Y))
+  P <- Xr %*% (invXrXr %*% (t(Xr) %*% Xr0)) - Xr0
+  
+  invXX <- solve(crossprod(X)) # k x k matrix#
+  #XinvXX <- X %*% invXX
+  XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
+  XinvXXrX <- XinvXXr * X
+  
+  SuXa <- collapse::fsum( as.vector(Q) * X, clustid$clustid)
+  XinvXXrQ <- XinvXXr * Q
+  XinvXXrP <- XinvXXr * P
+  
+  XinvXXRuS_a <- collapse::fsum(XinvXXrQ, clustid$clustid)
+  diag_XinvXXRuS_a <- Matrix::t(
+    Matrix.utils::aggregate.Matrix(
+      Matrix::Diagonal(N, 
+                       as.vector(XinvXXrQ)),
+      clustid$clustid)) # N x c*
+  
+  diag_XinvXXRuS_b <- Matrix::t(
+    Matrix.utils::aggregate.Matrix(
+      Matrix::Diagonal(N, 
+                       as.vector(XinvXXrP)),
+      clustid$clustid)) # N x c*  
+  
+  SXinvXXrX <- list()
+  SXinvXXrX_invXX <- list()
+  
+  S_XinvXXR_F <- list()
+  SXinvXXrX <- list()
+  J_a <- list()
+  K_b <- list()
+  K_a <- list()
+  C <- list()
+  D <- list()
+  CC <- list()
+  DD <- list()
+  CD <- list()
+  
+  #   # diag_XinvXXRuS_b <- Matrix::t(
+  #   #   Matrix.utils::aggregate.Matrix(
+  #   #     Matrix::Diagonal(N, 
+  #   #                      as.vector(XinvXXr * P %*% matrix(beta0, 1, length(beta0)))),
+  #   #     clustid$clustid)) # N x c*
+  
+  if(is.null(W)){
+    for(x in names(clustid)){
+      # all
+      SXinvXXrX[[x]] <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
+      SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% invXX
+      #S_XinvXXR_F <- crosstab2(XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
+      #SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
+      # a
+      #prod_a <- t(tcrossprod(S_Wu_F_a, S_XinvXXR_F))
+      S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
+      #S_diag_XinvXXRu_S_a <- S_diag_XinvXXRu_S_a 
+      K_a[[x]] <- S_diag_XinvXXRu_S_a  - tcrossprod(SXinvXXrX_invXX[[x]], SuXa) 
+      #J_a[[x]] <- K_a %*% v
+      # b
+      #prod_b <- t(tcrossprod(S_Wu_F_b, S_XinvXXR_F))
+      S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
+      #S_diag_XinvXXRu_S_b <- S_diag_XinvXXRu_S_b - prod_b
+      K_b[[x]] <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX[[x]], collapse::fsum(as.vector(P) * X, clustid$clustid)) 
+      #print(x)
+      #pracma::tic()
+      C[[x]] <- eigenMatMult(as.matrix(K_a[[x]]), v) 
+      D[[x]] <- eigenMatMult(as.matrix(K_b[[x]]), v) 
+      #pracma::toc()
+      #pracma::tic()
+      CC[[x]] <- colSums(C[[x]] * C[[x]])
+      DD[[x]] <- colSums(D[[x]] * D[[x]])
+      CD[[x]] <- colSums(C[[x]] * D[[x]])
+      #pracma::toc()
+      
+    }
+  } else if(!is.null(W)){
+    S_Wu_F_a <- crosstab2(as.matrix(W %*% Q), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
+    S_Wu_F_b <- crosstab2(as.matrix(W %*% P), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
+    
+    #pracma::tic()
+    for(x in names(clustid)){
+      # all
+      SXinvXXrX[[x]] <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
+      SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% invXX
+      S_XinvXXR_F <- crosstab2(XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
+      #SXinvXXrX <-  collapse::fsum(XinvXXrX, clustid[x])
+      # a
+      prod_a <- t(tcrossprod(S_Wu_F_a, S_XinvXXR_F))
+      S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
+      S_diag_XinvXXRu_S_a <- S_diag_XinvXXRu_S_a - prod_a
+      K_a[[x]] <- S_diag_XinvXXRu_S_a  - tcrossprod(SXinvXXrX_invXX[[x]], SuXa) 
+      #J_a[[x]] <- K_a %*% v
+      # b
+      prod_b <- t(tcrossprod(S_Wu_F_b, S_XinvXXR_F))
+      S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
+      S_diag_XinvXXRu_S_b <- S_diag_XinvXXRu_S_b - prod_b
+      K_b[[x]] <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX[[x]], collapse::fsum(as.vector(P) * X, clustid$clustid)) 
+      #print(x)
+      #pracma::tic()
+      C[[x]] <- eigenMatMult(as.matrix(K_a[[x]]), v) 
+      D[[x]] <- eigenMatMult(as.matrix(K_b[[x]]), v) 
+      #pracma::toc()
+      #pracma::tic()
+      CC[[x]] <- colSums(C[[x]] * C[[x]])
+      DD[[x]] <- colSums(D[[x]] * D[[x]])
+      CD[[x]] <- colSums(C[[x]] * D[[x]])
       #pracma::toc()
       
     }
@@ -736,11 +755,3 @@ boot_algo2.multclust <- function(preprocessed_object, boot_iter, wild_draw_fun, 
   
   invisible(res)
 }
-
-
-
-
-
-
-
-
