@@ -22,7 +22,7 @@ expect_equal(sort(upper, decreasing = TRUE), upper)
 dists <- c("rademacher", "mammen", "norm","webb")
 res <- 
   lapply(dists, function(x){
-    tmp <- boottest(object = lm_fit, clustid =  "group_id1", B = 10000, seed = 911, param = "treatment", conf_int = TRUE, type = x)
+    tmp <- boottest(object = lm_fit, clustid =  "group_id1", B = 999999, seed = 911, param = "treatment", conf_int = TRUE, type = x)
     tidy(tmp)
   })
 
