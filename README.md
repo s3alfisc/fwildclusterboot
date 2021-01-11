@@ -93,10 +93,10 @@ summary(boot_lm)
 #>  Number of Clusters: 20
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.011    1.09    0.292    -0.01    0.032
+#> treatment    0.025   3.047    0.006    0.008    0.044
 tidy(boot_lm)
-#>             Estimate  t value Pr(>|t|)     CI Lower   CI Upper
-#> treatment 0.01080738 1.089841   0.2918 -0.009933565 0.03186458
+#>             Estimate  t value Pr(>|t|)    CI Lower   CI Upper
+#> treatment 0.02532767 3.046986   0.0056 0.008060003 0.04383268
 ```
 
 <!-- The `boottest` function always calculates p-values for a given univariate hypothesis test. -->

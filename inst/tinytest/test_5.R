@@ -4,7 +4,7 @@
 # -------------------------------------------------------------------------------------------------------------------------- # 
 # Test 1: oneway clustering
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 4, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 4, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 # felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 
 boot_lm1 <-  boottest(object = lm_fit, clustid = "group_id1", B = 99999, seed = 1, param = "treatment", conf_int = FALSE)

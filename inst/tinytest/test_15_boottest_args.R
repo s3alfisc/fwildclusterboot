@@ -7,7 +7,7 @@ lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigrat
 alphas <- c(0.01, 0.05, 0.1, 0.2, 0.5, 0.9)
 res <- 
 lapply(alphas, function(x){
-  tmp <- boottest(object = lm_fit, clustid =  "group_id1", B = 1000, seed = 911, param = "treatment", conf_int = TRUE, alpha = x)
+  tmp <- boottest(object = lm_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, alpha = x)
   tidy(tmp)
 })
 
@@ -22,13 +22,16 @@ expect_equal(sort(upper, decreasing = TRUE), upper)
 dists <- c("rademacher", "mammen", "norm","webb")
 res <- 
   lapply(dists, function(x){
-    tmp <- boottest(object = lm_fit, clustid =  "group_id1", B = 999999, seed = 911, param = "treatment", conf_int = TRUE, type = x)
+    tmp <- boottest(object = lm_fit, clustid =  "group_id1", B = 99999, seed = 911, param = "treatment", conf_int = TRUE, type = x)
     tidy(tmp)
   })
 
-p_vals <- round(data.table::rbindlist(res)$`Pr(>|t|)`, digits = 2)
+p_vals <- (data.table::rbindlist(res)$`Pr(>|t|)`)
 
-expect_true(p_vals[1] == p_vals[2] &  p_vals[2] == p_vals[3] &  p_vals[3] == p_vals[4])
+expect_equal(p_vals[1], p_vals[2], tol = 1e-1)
+expect_equal(p_vals[2], p_vals[3], tol = 1e-1)
+expect_equal(p_vals[3], p_vals[4], tol = 1e-1)
+
 
 
 # feols
@@ -38,7 +41,7 @@ feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income
 alphas <- c(0.01, 0.05, 0.1, 0.2, 0.5, 0.9)
 res <- 
   lapply(alphas, function(x){
-    tmp <- boottest(object = feols_fit, clustid =  "group_id1", B = 1000, seed = 911, param = "treatment", conf_int = TRUE, alpha = x)
+    tmp <- boottest(object = feols_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, alpha = x)
     tidy(tmp)
   })
 
@@ -53,10 +56,12 @@ expect_equal(sort(upper, decreasing = TRUE), upper)
 dists <- c("rademacher", "mammen", "norm","webb")
 res <- 
   lapply(dists, function(x){
-    tmp <- boottest(object = feols_fit, clustid =  "group_id1", B = 10000, seed = 911, param = "treatment", conf_int = TRUE, type = x)
+    tmp <- boottest(object = feols_fit, clustid =  "group_id1", B = 99999, seed = 911, param = "treatment", conf_int = TRUE, type = x)
     tidy(tmp)
   })
 
-p_vals <- round(data.table::rbindlist(res)$`Pr(>|t|)`, digits = 2)
+p_vals <- (data.table::rbindlist(res)$`Pr(>|t|)`)
 
-expect_true(p_vals[1] == p_vals[2] &  p_vals[2] == p_vals[3] &  p_vals[3] == p_vals[4])
+expect_equal(p_vals[1], p_vals[2], tol = 1e-1)
+expect_equal(p_vals[2], p_vals[3], tol = 1e-1)
+expect_equal(p_vals[3], p_vals[4], tol = 1e-1)
