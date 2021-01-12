@@ -182,13 +182,15 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
     # create covariates X and dependent variable Y
     if(numb_fe == 1){
       fml_design <- fml_wo_fe
+      # because fe is projected out, data matrix should not contain constant
+      model_frame <- model.frame(update(fml_design, . ~ . - 1), data_boot)
     } else if(numb_fe > 1){
       fe_update2 <- paste("~ . +",paste(model_fe_names[model_fe_names != fe], collapse = " + "))
       fml_design <- update(fml_wo_fe, fe_update2)
+      # don't drop constant
+      model_frame <- model.frame(fml_design, data_boot)
     }
 
-    # because fe is projected out, data matrix should not contain constant
-    model_frame <- model.frame(update(fml_design, . ~ . - 1), data_boot)
     X <- model.matrix(model_frame, data = data_boot)
     Y <- model.response(model_frame)
     
@@ -240,11 +242,11 @@ preprocess.felm <- function(object, param, clustid, beta0, alpha, fe, seed, ...)
                          W = W, 
                          seed = seed)
   
-  if(clustid_dims == 1){
-    class(res_preprocess) <- "oneclust"
-  } else if(clustid_dims > 1){
-    class(res_preprocess) <- "multclust"
-  }
+  # if(clustid_dims == 1){
+  class(res_preprocess) <- "preprocess"
+  # } else if(clustid_dims > 1){
+  #   class(res_preprocess) <- "multclust"
+  # }
   res_preprocess  
   
 }

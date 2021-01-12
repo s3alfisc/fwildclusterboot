@@ -130,7 +130,7 @@ expect_equal(preprocess_felm$n_fe, preprocess_fixest$n_fe) # error here!
 expect_equal(preprocess_felm$W, preprocess_fixest$W)
 expect_equal(preprocess_felm$seed, preprocess_fixest$seed)
 expect_equal(sort(names(preprocess_felm)), sort(names(preprocess_fixest)))
-expect_true(class(preprocess_felm) ==  "multclust")
-expect_true(class(preprocess_fixest) == "multclust")
+expect_true(class(preprocess_felm) ==  "preprocess")
+expect_true(class(preprocess_fixest) == "preprocess")
   
 

@@ -206,14 +206,17 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
       #fe_update2 <- paste("~ . -",paste(model_fe_names, collapse = " + "))
       # fml without fixed effect
       fml_design <- fml
+      # get rid of constant due to fe out-projection
     } else if(numb_fe > 1){
       # delete fe to be projected out from fml_design but keep other fe in formula
       fe_update2 <- paste("~ . +",paste(model_fe_names[model_fe_names != fe], collapse = " + "))
       fml_design <- update(fml, fe_update2)
+      # get not rid of constant
     }
     
-    # get rid of constant due to fe out-projection
     model_frame <- model.frame(update(fml_design, . ~ . - 1), data_boot)
+    #model_frame <- model.frame(fml_fe, data_boot)
+ 
     X <- model.matrix(model_frame, data = data_boot)
     Y <- model.response(model_frame)
     
@@ -222,9 +225,12 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
     
     
     fixed_effect <- as.data.frame(data_boot[, fe])
-
+    #names(fixed_effect) <- "fe"
+    
     # demean X and Y 
     X <- collapse::fwithin(X, fixed_effect[, 1])#
+    #X <- collapse::fwithin(model_frame[names(model_frame) != fe], fixed_effect$fe)
+    #X_fixest <- fixest::demean(X, fixed_effect[, 1])
     Y <- collapse::fwithin(Y, fixed_effect[, 1])
     fixed_effect_W <- fixed_effect[, 1]
     levels(fixed_effect_W) <- 1 / table(fixed_effect)
@@ -264,11 +270,11 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
                          W = W, 
                          seed = seed)
   
-  if(clustid_dims == 1){
-    class(res_preprocess) <- "oneclust"
-  } else if(clustid_dims > 1){
-    class(res_preprocess) <- "multclust"
-  }
+  # if(clustid_dims == 1){
+  class(res_preprocess) <- "preprocess"
+  # } else if(clustid_dims > 1){
+  #   class(res_preprocess) <- "multclust"
+  # }
   res_preprocess  
   
 }

@@ -195,11 +195,12 @@ preprocess.lm <- function(object, param, clustid, beta0, alpha, seed, ...){
                          W = NULL, 
                          n_fe = NULL, 
                          seed = seed)
-  if(clustid_dims == 1){
-    class(res_preprocess) <- "oneclust"
-  } else if(clustid_dims > 1){
-    class(res_preprocess) <- "multclust"
-  }
+  
+  # if(clustid_dims == 1){
+     class(res_preprocess) <- "preprocess"
+  # } else if(clustid_dims > 1){
+  #   class(res_preprocess) <- "multclust"
+  # }
   res_preprocess
   
 }
