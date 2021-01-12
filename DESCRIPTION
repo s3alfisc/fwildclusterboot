@@ -26,6 +26,7 @@ Imports:
     lmtest
 Suggests: 
     fixest,
+    lfe,
     tinytest,
     covr
 Encoding: UTF-8
