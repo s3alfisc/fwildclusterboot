@@ -141,7 +141,7 @@ boottest.fixest  <- function(object,
   
   N_G_2 <- 2^max(preprocess$N_G)
   if(type == "rademacher" & N_G_2 < B){
-    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", N_G, "clusters. Therefore, 
+    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", max(preprocess$N_G), "clusters. Therefore, 
                   B = ", N_G_2, "."), 
             call. = FALSE)
     B <- N_G_2
