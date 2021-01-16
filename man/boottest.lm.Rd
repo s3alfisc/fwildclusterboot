@@ -9,6 +9,7 @@
   clustid,
   param,
   B,
+  bootcluster = "max",
   conf_int = NULL,
   seed = NULL,
   beta0 = NULL,
@@ -25,6 +26,8 @@
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
 
 \item{B}{number of bootstrap iterations}
+
+\item{bootcluster}{A character vector. Sets the cluster used in the boottest. Chooses the largest cluster by default}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion}
 

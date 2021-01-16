@@ -9,6 +9,7 @@
   clustid,
   param,
   B,
+  bootcluster = "max",
   fe = NULL,
   alpha = NULL,
   conf_int = NULL,
@@ -26,6 +27,8 @@
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
 
 \item{B}{number of bootstrap iterations}
+
+\item{bootcluster}{A character vector. Sets the cluster used in the boottest. Chooses the largest cluster by default}
 
 \item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap}
 

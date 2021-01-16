@@ -23,7 +23,7 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
 
   len_names_clustid <- length(names_clustid)
   if(len_names_clustid == 1){
-    JJ_sum <- JJ[["clustid"]]
+    JJ_sum <- JJ[[1]]
   } else if(len_names_clustid > 1){
     JJ_sum <- Reduce("+", JJ)
   }

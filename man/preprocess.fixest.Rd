@@ -4,7 +4,7 @@
 \alias{preprocess.fixest}
 \title{function that pre-processes regression objects of type fixest}
 \usage{
-\method{preprocess}{fixest}(object, param, clustid, beta0, alpha, fe, seed, ...)
+\method{preprocess}{fixest}(object, param, clustid, bootcluster, beta0, alpha, fe, seed, ...)
 }
 \arguments{
 \item{object}{An object of class fixest}
@@ -12,6 +12,8 @@
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
 
 \item{clustid}{A vector with the clusters}
+
+\item{bootcluster}{The bootstrap sampling cluster.}
 
 \item{beta0}{A numeric. Shifts the null hypothesis}
 

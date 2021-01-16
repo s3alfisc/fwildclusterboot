@@ -1,5 +1,5 @@
 
-invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, alpha){
+invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, alpha, vcov_sign){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A  object of type boottest
@@ -8,6 +8,7 @@ invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, alpha){
   #'@param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion. 
   #'@param clustid A vector with the clusters
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
+  #'@param vcov_sign Controls addition / substraction of individual covariance matrices for multiway clustering
   #'@importFrom utils setTxtProgressBar txtProgressBar 
   #'@export
 
@@ -23,9 +24,8 @@ invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, alpha){
   small_sample_correction <- G / (G - 1)
   
   # prepare summation of individual terms for multiway clustering
-  if(length(G) == 3){
-    small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
-  }
+    small_sample_correction <- vcov_sign * small_sample_correction 
+  
   
   ABCD <- object$ABCD
   A <- ABCD$A

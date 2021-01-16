@@ -4,7 +4,7 @@
 \alias{invert_p_val2}
 \title{Inverts the bootstrap p-value and calculates confidence sets}
 \usage{
-invert_p_val2(object, B, point_estimate, se_guess, clustid, alpha)
+invert_p_val2(object, B, point_estimate, se_guess, clustid, alpha, vcov_sign)
 }
 \arguments{
 \item{object}{A  object of type boottest}
@@ -18,6 +18,8 @@ invert_p_val2(object, B, point_estimate, se_guess, clustid, alpha)
 \item{clustid}{A vector with the clusters}
 
 \item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+
+\item{vcov_sign}{Controls addition / substraction of individual covariance matrices for multiway clustering}
 }
 \description{
 Inverts the bootstrap p-value and calculates confidence sets

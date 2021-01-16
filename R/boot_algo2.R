@@ -26,11 +26,20 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun){
   W <- preprocessed_object$W
   n_fe <- preprocessed_object$n_fe
   seed <- preprocessed_object$seed
+  bootcluster <- preprocessed_object$bootcluster
+  vcov_sign <- preprocessed_object$vcov_sign
+  
+  if(!is.data.frame(bootcluster)){
+    stop("bootcluster is not a data.frame. fix this in pre-processing.")
+  }
+  
   
   set.seed(seed)
   
+  N_G_bootcluster <- length(unique(bootcluster[[1]]))
+  
   # bootstrap error 
-  v <- matrix(wild_draw_fun(n = N_G["clustid"] * (boot_iter + 1)), N_G["clustid"], boot_iter + 1)
+  v <- matrix(wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1)), N_G_bootcluster, boot_iter + 1)
   v[,1] <- 1
 
   # error under the null hypothesis
@@ -45,9 +54,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun){
   small_sample_correction <- G / (G - 1)
   
   # prepare summation of individual terms for multiway clustering
-  if(length(G) == 3){
-    small_sample_correction <- small_sample_correction * c(rep(1, length(clustid) - 1), - 1)
-  }
+  small_sample_correction <- vcov_sign * small_sample_correction
+
   
   invXrXr <- solve(crossprod(Xr))
   
@@ -60,26 +68,24 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun){
   
   # pre-calculate several objects used in for loop below: 
   # splits: a + br
-  SuXa <- collapse::fsum( as.vector(Q) * X, clustid$clustid)
-  SuXb <- collapse::fsum(as.vector(P) * X, clustid$clustid)
+  SuXa <- collapse::fsum( as.vector(Q) * X, bootcluster[[1]])
+  SuXb <- collapse::fsum(as.vector(P) * X, bootcluster[[1]])
   
   XinvXXrQ <- XinvXXr * Q
   XinvXXrP <- XinvXXr * P
   
-  #XinvXXRuS_a <- collapse::fsum(XinvXXrQ, clustid$clustid)
-  #XinvXXRuS_a <- 
   
   diag_XinvXXRuS_a <- Matrix::t(
     Matrix.utils::aggregate.Matrix(
       Matrix::Diagonal(N, 
                        as.vector(XinvXXrQ)),
-      clustid$clustid)) # N x c*
+      bootcluster[[1]])) # N x c*
   
   diag_XinvXXRuS_b <- Matrix::t(
     Matrix.utils::aggregate.Matrix(
       Matrix::Diagonal(N, 
                        as.vector(XinvXXrP)),
-      clustid$clustid)) # N x c*  
+      bootcluster[[1]])) # N x c*  
   
   # prepare list containers for results
   SXinvXXrX <- list()
@@ -117,8 +123,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun){
     }
   } else if(!is.null(W)){
     # project out fe
-    S_Wu_F_a <- crosstab2(as.matrix(W %*% Q), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
-    S_Wu_F_b <- crosstab2(as.matrix(W %*% P), var1 = clustid["clustid"], var2 = fixed_effect) # f x c*
+    S_Wu_F_a <- crosstab2(as.matrix(W %*% Q), var1 = bootcluster, var2 = fixed_effect) # f x c*
+    S_Wu_F_b <- crosstab2(as.matrix(W %*% P), var1 = bootcluster, var2 = fixed_effect) # f x c*
     
     for(x in names(clustid)){
 
@@ -146,8 +152,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun){
   }
   
   # calculate part a and b of numerator
-  numer_a <- collapse::fsum(XinvXXrQ, clustid$clustid)
-  numer_b <- collapse::fsum(XinvXXrP, clustid$clustid)
+  numer_a <- collapse::fsum(XinvXXrQ, bootcluster[[1]])
+  numer_b <- collapse::fsum(XinvXXrP, bootcluster[[1]])
   # calculate A, B
   A <- crossprod(numer_a, v)
   B <- crossprod(numer_b, v)

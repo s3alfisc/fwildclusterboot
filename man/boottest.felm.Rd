@@ -9,6 +9,7 @@
   param,
   B,
   clustid,
+  bootcluster = "max",
   fe = NULL,
   conf_int = NULL,
   seed = NULL,

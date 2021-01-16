@@ -4,7 +4,7 @@
 \alias{preprocess.lm}
 \title{function that pre-processes regression objects of type lm}
 \usage{
-\method{preprocess}{lm}(object, param, clustid, beta0, alpha, seed, ...)
+\method{preprocess}{lm}(object, param, clustid, bootcluster, beta0, alpha, seed, ...)
 }
 \arguments{
 \item{object}{An object of class lm}
@@ -12,6 +12,8 @@
 \item{param}{A scalar character. The coefficient for which a hypothesis is to be tested}
 
 \item{clustid}{A character vector containing the names of the cluster variables}
+
+\item{bootcluster}{The bootstrap sampling cluster.}
 
 \item{beta0}{A numeric scalar. Shifts the null hypothesis}
 

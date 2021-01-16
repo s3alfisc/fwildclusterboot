@@ -1,8 +1,9 @@
-preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ...){
+preprocess.fixest <- function(object, param, clustid, bootcluster, beta0, alpha, fe, seed, ...){
   
   #' function that pre-processes regression objects of type fixest
   #'@param object An object of class fixest
   #'@param clustid A vector with the clusters
+  #'@param bootcluster The bootstrap sampling cluster. 
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param beta0 A numeric. Shifts the null hypothesis  
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
@@ -38,6 +39,10 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
   if(!(param %in% c(names(object$coefficients)))){
     stop(paste("The parameter", param, "is not included in the estimated model. Maybe you are trying to test for an interaction parameter? To see all model parameter names, run names(coef(model))."))
   }
+  
+  # if(!(bootcluster %in% c(names(object$coefficients), clustid))){
+  #   stop(paste("The parameter", param, "is not included in the estimated model. Maybe you are trying to test for an interaction parameter? To see all model parameter names, run names(coef(model))."))
+  # }
   
   if(is.null(beta0)){
     beta0 <- 0
@@ -165,40 +170,57 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
   }
   
 
+  # ---------------------------------------------------------------------------- # 
+  # preprocess clusters
+  # ---------------------------------------------------------------------------- #
   
-  
-  # now create clusters 
-  clustid <- as.data.frame(data_boot[, clustid])
+  cluster_names <- clustid
+  clustid <- as.data.frame(data_boot[, clustid], stringsAsFactors = FALSE)
   clustid_dims <- ncol(clustid)
   
 
   i <- !sapply(clustid, is.numeric)
   clustid[i] <- lapply(clustid[i], as.character)
   
-  if(is.null(clustid_dims) | clustid_dims == 1){
-    clustid_dims <- 1
-    names(clustid) <- "clustid"
-  } else if(clustid_dims == 2){
-    names(clustid) <- c("clustid_1", "clustid_2")
-    clustid$clustid <- paste0(clustid$clustid_1, "-", clustid$clustid_2)
-    clustid_dims <- 3
+  # taken from multiwayvcov::cluster.boot
+  acc <- list()
+  for (i in 1:clustid_dims) {
+   acc <- append(acc, combn(1:clustid_dims, i, simplify = FALSE))
+  }
+  
+  vcov_sign <- sapply(acc, function(i) (-1)^(length(i) + 1))
+  acc <- acc[-1:-clustid_dims]
+  
+  if (clustid_dims > 1) {
+   for (i in acc) {
+     clustid <- cbind(clustid, Reduce(paste0, clustid[,i]))
+     names(clustid)[length(names(clustid))] <- Reduce(paste0, names(clustid[, i]))
+     #cluster_names <- cbind(cluster_names, Reduce(paste0, clustid[,i]))
+   }
   }
   
   N_G <- sapply(clustid, function(x) length(unique(x)))
   
-  # if(clustid_dims == 1){
-  #   if(max(N_G) > 200){
-  #     warning(paste("You are estimating a model with more than 200 clusters. Are you sure you want to proceed with bootstrap standard errors instead of asymptotic sandwich standard errors? The more clusters in the data, the longer the estimation process."))
-  #   }
-  # } else if(clustid_dims > 1){
-  #   if(max(N_G) > 200){
-  #     warning(paste("You are estimating a model with more than 200 clusters. The more clusters in the data, the longer the estimation process."))
-  #   }
+  # create a bootcluster vector
+  if(bootcluster == "max"){
+    bootcluster <- clustid[which.max(N_G)]
+  } else if(bootcluster == "min"){
+    bootcluster <- clustid[which.min(N_G)]
+  } else if(length(bootcluster == 1) && bootcluster %in% c(model_param_names, cluster_names)){
+    bootcluster <- clustid[which(names(clustid) == bootcluster)] 
+  } else if(length(bootcluster) > 1 ){
+    bootcluster <- Reduce(paste0, data_boot[, bootcluster])
+  }
+  
+  # if(!(is.null(clustid_dims) || clustid_dims == 1 || clustid_dims == 2)){
+  #   stop("boottest() currently only works for two-dimensional clustering.")
   # }
+
   
+  # ---------------------------------------------------------------------------- # 
+  # preprocess design matrix X and dependent variable y
+  # ---------------------------------------------------------------------------- #
   
-  
-  # now create fixed effects
   if(!is.null(fe)){
     
     if(numb_fe == 1){
@@ -250,6 +272,11 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
   
   R0 <- as.numeric(param == colnames(X))
   
+  # ---------------------------------------------------------------------------- # 
+  # collect everything
+  # ---------------------------------------------------------------------------- # 
+  
+  
   res_preprocess <- list(fixed_effect = fixed_effect, 
                          param = param, 
                          data = data, 
@@ -268,13 +295,11 @@ preprocess.fixest <- function(object, param, clustid, beta0, alpha, fe, seed, ..
                          alpha = alpha, 
                          n_fe = n_fe, 
                          W = W, 
-                         seed = seed)
+                         seed = seed, 
+                         bootcluster = bootcluster, 
+                         vcov_sign = vcov_sign)
   
-  # if(clustid_dims == 1){
   class(res_preprocess) <- "preprocess"
-  # } else if(clustid_dims > 1){
-  #   class(res_preprocess) <- "multclust"
-  # }
   res_preprocess  
   
 }

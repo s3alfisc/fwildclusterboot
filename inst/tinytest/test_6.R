@@ -10,7 +10,8 @@ preprocess1 <- suppressWarnings(fwildclusterboot::preprocess.fixest(object = feo
                                           beta0 = 0,
                                           alpha = 0.05, 
                                           fe = NULL, 
-                                          seed = 1))
+                                          seed = 1, 
+                                          bootcluster = "min"))
 
 preprocess2 <- suppressWarnings(fwildclusterboot::preprocess.fixest(object = feols_fit, 
                                            param = "treatment",
@@ -18,7 +19,8 @@ preprocess2 <- suppressWarnings(fwildclusterboot::preprocess.fixest(object = feo
                                            beta0 = 0,
                                            alpha = 0.05, 
                                            fe = "Q1_immigration", 
-                                           seed = 1))
+                                           seed = 1, 
+                                           bootcluster = "min"))
 # 
 expect_equal(preprocess1$data, preprocess2$data)
 expect_equal(preprocess1$clustid, preprocess2$clustid)
@@ -43,20 +45,23 @@ preprocess_fixest <- suppressWarnings(fwildclusterboot::preprocess.fixest(object
                                                   beta0 = 0,
                                                   alpha = 0.05, 
                                                   fe = NULL, 
-                                                  seed = 1))
+                                                  seed = 1, 
+                                                  bootcluster = "min"))
 preprocess_felm <- suppressWarnings(fwildclusterboot::preprocess.felm(object = felm_fit, 
                                                        param = "treatment",
                                                        clustid = c("group_id1", "group_id2"),
                                                        beta0 = 0,
                                                        alpha = 0.05, 
                                                        fe = NULL, 
-                                                       seed = 1))
+                                                       seed = 1, 
+                                                       bootcluster = "min"))
 preprocess_lm <- suppressWarnings(fwildclusterboot::preprocess.lm(object = lm_fit, 
                                                         param = "treatment",
                                                         clustid = c("group_id1", "group_id2"),
                                                         beta0 = 0,
                                                         alpha = 0.05, 
-                                                        seed = 1))
+                                                        seed = 1, 
+                                                        bootcluster = "min"))
 
 expect_equal(preprocess_lm$fixed_effect, preprocess_felm$fixed_effect)
 expect_equal(preprocess_lm$fixed_effect, preprocess_fixest$fixed_effect)
@@ -103,14 +108,16 @@ preprocess_fixest <- suppressWarnings(fwildclusterboot::preprocess.fixest(object
                                                         beta0 = 0,
                                                         alpha = 0.05, 
                                                         fe = "Q1_immigration", 
-                                                        seed = 1))
+                                                        seed = 1, 
+                                                        bootcluster = "min"))
 preprocess_felm <- suppressWarnings(fwildclusterboot::preprocess.felm(object = felm_fit, 
                                                    param = "treatment",
                                                    clustid = c("group_id1", "group_id2"),
                                                    beta0 = 0,
                                                    alpha = 0.05, 
                                                    fe = "Q1_immigration", 
-                                                   seed = 1))
+                                                   seed = 1, 
+                                                   bootcluster = "min"))
 
 names(preprocess_felm$fixed_effect) <- "fe"
 names(preprocess_fixest$fixed_effect) <- "fe"

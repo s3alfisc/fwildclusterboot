@@ -2,6 +2,7 @@ boottest.fixest  <- function(object,
                            clustid, 
                            param, 
                            B,
+                           bootcluster = "max",
                            fe = NULL, 
                            alpha = NULL, 
                            conf_int = NULL, 
@@ -83,6 +84,8 @@ boottest.fixest  <- function(object,
    check_arg(seed, "scalar integer | NULL")
    check_arg(beta0, "numeric scalar | NULL")
    check_arg(fe, "character scalar | NULL")
+   check_arg(bootcluster, "character vector")
+   
   
    if((conf_int == TRUE || is.null(conf_int)) & B <= 100){
      stop("The function argument B is smaller than 100. The number of bootstrap iterations needs to be 100 or higher in order to guarantee that the root
@@ -125,7 +128,8 @@ boottest.fixest  <- function(object,
                                   beta0 = beta0,
                                   alpha = alpha, 
                                   fe = fe, 
-                                  seed = seed)
+                                  seed = seed, 
+                                  bootcluster = bootcluster)
   
   
   clustid_dims <- preprocess$clustid_dims
@@ -139,10 +143,10 @@ boottest.fixest  <- function(object,
     message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - preprocess$alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."))
   }
   
-  N_G_2 <- 2^max(preprocess$N_G)
+  N_G_2 <- 2^length(unique(preprocess$bootcluster))
   if(type == "rademacher" & N_G_2 < B){
-    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", max(preprocess$N_G), "clusters. Therefore, 
-                  B = ", N_G_2, "."), 
+    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster)), "clusters. Therefore, 
+                  B = ", N_G_2, ". Consider using webb weights instead."), 
             call. = FALSE)
     B <- N_G_2
   }
@@ -157,8 +161,10 @@ boottest.fixest  <- function(object,
                           webb = function(n) sample(c(-sqrt((3:1)/2), sqrt((1:3)/2)), n, replace = TRUE), 
                           wild_draw_fun)
   
-  res <- boot_algo2(preprocess, boot_iter = B, wild_draw_fun = wild_draw_fun)
-
+  res <- boot_algo2(preprocess, 
+                    boot_iter = B,
+                    wild_draw_fun = wild_draw_fun)
+  
   # compute confidence sets
   if(is.null(conf_int) || conf_int == TRUE){
     # calculate guess for covariance matrix and standard errors
@@ -168,7 +174,13 @@ boottest.fixest  <- function(object,
     
     se_guess <- object$se[param]
     
-    res_p_val <- invert_p_val2(object = res, B = B, point_estimate = point_estimate, se_guess = se_guess, clustid = preprocess$clustid, alpha = preprocess$alpha)
+    res_p_val <- invert_p_val2(object = res, 
+                               B = B,
+                               point_estimate = point_estimate,
+                               se_guess = se_guess, 
+                               clustid = preprocess$clustid, 
+                               alpha = preprocess$alpha, 
+                               vcov_sign = preprocess$vcov_sign)
     
   } else {
     res_p_val <- list( conf_int = NA, 
