@@ -17,6 +17,7 @@ boottest.fixest  <- function(object,
   #'@param clustid A vector with the clusters
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param B number of bootstrap iterations
+  #'@param bootcluster A character vector. Sets the cluster used in the boottest. Chooses the largest cluster by default
   #'@param fe A character scalar. Fixed effect to be projected out in the bootstrap
   #'@param alpha A numeric between 0 and 1. E.g. alpha = 0.05 returns 0.95% confidence intervals. By default, alpha = 0.05.
   #'@param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
@@ -143,9 +144,9 @@ boottest.fixest  <- function(object,
     message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - preprocess$alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."))
   }
   
-  N_G_2 <- 2^length(unique(preprocess$bootcluster))
+  N_G_2 <- 2^length(unique(preprocess$bootcluster[, 1]))
   if(type == "rademacher" & N_G_2 < B){
-    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster)), "clusters. Therefore, 
+    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, 
                   B = ", N_G_2, ". Consider using webb weights instead."), 
             call. = FALSE)
     B <- N_G_2

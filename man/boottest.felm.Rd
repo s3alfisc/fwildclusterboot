@@ -28,6 +28,8 @@
 
 \item{clustid}{A vector with the clusters}
 
+\item{bootcluster}{A character vector. Sets the cluster used in the boottest. Chooses the largest cluster by default}
+
 \item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion}
