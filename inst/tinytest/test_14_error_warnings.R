@@ -8,7 +8,7 @@ res <-
   feols(proposition_vote ~ treatment + ideology1 + log_income |Q1_immigration + Q2_defence,
       weights = NULL,
       cluster = c("group_id1"), 
-      data = create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
+      data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
 )
 
 # when B < 100
@@ -31,7 +31,7 @@ res <-
   feols(proposition_vote ~ treatment + ideology1 + log_income |Q1_immigration^Q2_defence,
         weights = NULL,
         cluster = c("group_id1"), 
-        data = create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
+        data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
 )
 expect_error(boottest(res, B = 200, clustid = c("group_id1", "group_id2"), weights = "group_id1", param = "treatment"))
 
@@ -40,7 +40,7 @@ res <-
   feols(proposition_vote ~ treatment + ideology1 + i(log_income, Q1_immigration) |Q2_defence,
         weights = NULL,
         cluster = c("group_id1"), 
-        data = create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
+        data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
   )
 expect_error(boottest(res, B = 200, clustid = c("group_id1", "group_id2"), weights = "group_id1", param = "treatment"))
 # error because of [] ...
@@ -49,7 +49,7 @@ res <-
   feols(c(proposition_vote,log_income) ~ treatment + ideology1 |Q2_defence,
         weights = NULL,
         cluster = c("group_id1"), 
-        data = create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
+        data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
 )
 expect_error(boottest(res, B = 200, clustid = c("group_id1", "group_id2"), weights = "group_id1", param = "treatment"))
 
@@ -58,7 +58,7 @@ res <-
   feols(proposition_vote ~ treatment + ideology1 |Q2_defence,
         weights = NULL,
         cluster = c("group_id1"), 
-        data = create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1), 
+        data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1), 
         subset = 1:100
 )
 expect_error(boottest(res, B = 200, clustid = c("group_id1", "group_id2"), weights = "group_id1", param = "treatment"))
@@ -82,7 +82,7 @@ library(fwildclusterboot)
 res <- 
   lm(proposition_vote ~ treatment + ideology1 + log_income  +Q1_immigration + Q2_defence,
         weights = NULL,
-        data = create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
+        data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
   )
 
 # when B < 100
