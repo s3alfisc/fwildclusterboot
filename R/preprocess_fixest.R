@@ -48,6 +48,7 @@ preprocess.fixest <- function(object, param, clustid, bootcluster, beta0, alpha,
     beta0 <- 0
   }
   
+  
 
   # Part 3) preprocess the covariates, depvar and fixed effects
   # 4 different cases for fixed effect:
@@ -75,7 +76,7 @@ preprocess.fixest <- function(object, param, clustid, bootcluster, beta0, alpha,
          call. = FALSE)
   }
   
-  # add fixed effect to formula 
+  # fml_fe: formula from feols including fixed effects 
   fml <- object$fml
   if(is.null(model_fe_names)){
     fml_fe <- fml
@@ -86,6 +87,7 @@ preprocess.fixest <- function(object, param, clustid, bootcluster, beta0, alpha,
   
   # this is needed for fixest as if cluster = NULL, this is not output of the feols object
   model_clustid_names <- eval(object$call$cluster)
+  # fml_all: add cluster variables specified in feols() call to fml_fe
   if(!is.null(model_clustid_names)){
     update_model_cluster <- paste("~ . +",paste(model_clustid_names, collapse = " + "))
     fml_all <- update(fml_fe, update_model_cluster)
@@ -93,16 +95,21 @@ preprocess.fixest <- function(object, param, clustid, bootcluster, beta0, alpha,
     fml_all <- fml_fe
   }
   
+  # model_names: all covariates, fixed effects, clusters
+  # model_names == boot_names? is one redundant?
   model_names <- c(model_clustid_names, model_param_names)
   boot_names <- c(clustid, model_param_names)
   
+  # are clusters added to call in feols() via boottest, or are clusters deleted?
   add_clusters <- setdiff(clustid, model_names)
   drop_clusters <- setdiff(model_clustid_names, boot_names)
   
+  # if any clusters are added or dropped: 1, else 0
   add_any_clusters <- ifelse(length(add_clusters) > 0, 1, 0)
   drop_any_clusters <- ifelse(length(drop_clusters) > 0, 1, 0)
   
-  
+  # data_boot: data.frame employed in boottest() - hence the model.frame 
+  # from fixest with additional cluster variables; or with cluster variables dropped
   if(add_any_clusters == 0 & drop_any_clusters == 0){
     data_boot <- model.frame(formula = fml_all, 
                              data = eval(object$call$data, envir =  attr(object$terms, ".Environment")),
@@ -221,6 +228,12 @@ preprocess.fixest <- function(object, param, clustid, bootcluster, beta0, alpha,
   # preprocess design matrix X and dependent variable y
   # ---------------------------------------------------------------------------- #
   
+  # which fixed effects are not factor variables? - set them to factors
+  # else, preprocessing of X (model.matrix) fails
+  i <- !sapply(data_boot[, model_fe_names], is.factor)
+  data_boot[, model_fe_names][i] <- lapply(data_boot[, model_fe_names][i], as.factor)
+  
+  
   if(!is.null(fe)){
     
     if(numb_fe == 1){
@@ -237,9 +250,10 @@ preprocess.fixest <- function(object, param, clustid, bootcluster, beta0, alpha,
     }
     
     model_frame <- model.frame(update(fml_design, . ~ . - 1), data_boot)
-    #model_frame <- model.frame(fml_fe, data_boot)
+    #model_frame <- model.frame(fml_design, data_boot)
  
     X <- model.matrix(model_frame, data = data_boot)
+    # det(crossprod(X))
     Y <- model.response(model_frame)
     
     N <- nrow(X)
@@ -251,6 +265,7 @@ preprocess.fixest <- function(object, param, clustid, bootcluster, beta0, alpha,
     
     # demean X and Y 
     X <- collapse::fwithin(X, fixed_effect[, 1])#
+    # det(crossprod(X))
     #X <- collapse::fwithin(model_frame[names(model_frame) != fe], fixed_effect$fe)
     #X_fixest <- fixest::demean(X, fixed_effect[, 1])
     Y <- collapse::fwithin(Y, fixed_effect[, 1])
@@ -259,12 +274,16 @@ preprocess.fixest <- function(object, param, clustid, bootcluster, beta0, alpha,
     W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effect_W)))
     n_fe <- length(unique(fixed_effect[, 1]))
   } else{
+    # model_frame: data.frame with dependent variable, covariates and fixed effects
+    # not projected out in boottest()
     model_frame <- model.frame(fml_fe, data_boot)
+    # X has intercept, but for each factor variable, one group is dropped
     X <- model.matrix(model_frame, data = data_boot)
     Y <- model.response(model_frame)
     
     N <- nrow(X)
     k <- ncol(X)
+    # W NULL because no fixed effects used
     W <- NULL
     n_fe <- NULL
     fixed_effect <- NULL

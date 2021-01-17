@@ -79,7 +79,9 @@ preprocess.felm <- function(object, param, clustid, bootcluster, beta0, alpha, f
   fml_cluster <- suppressWarnings(formula(fml_felm, lhs = 0, rhs = 4))
   fml_iv <-  suppressWarnings(formula(fml_felm, lhs = 0, rhs = 3))
   
+  # fml_fe: formula with dependent variable, covariates and fixed effects
   fml_fe <- suppressWarnings(formula(fml_felm, lhs = 1, rhs = c(1, 2), collapse = TRUE))
+  #fml_al: formula with dependent variable, covariates, fixed effects and cluster variables
   fml_all <- suppressWarnings(formula(fml_felm, lhs = 1, rhs = c(1, 2, 4), collapse = TRUE))
   
   model_names <- c(model_clustid_names, model_param_names)
@@ -158,6 +160,7 @@ preprocess.felm <- function(object, param, clustid, bootcluster, beta0, alpha, f
   }
   
   
+  
   # ---------------------------------------------------------------------------- # 
   # preprocess clusters
   # ---------------------------------------------------------------------------- #
@@ -209,9 +212,11 @@ preprocess.felm <- function(object, param, clustid, bootcluster, beta0, alpha, f
   # preprocess design matrix X and dependent variable y
   # ---------------------------------------------------------------------------- #
   
+  # which fixed effects are not factor variables? - set them to factors
+  # else, preprocessing of X (model.matrix) fails
+  i <- !sapply(data_boot[, model_fe_names], is.factor)
+  data_boot[, model_fe_names][i] <- lapply(data_boot[, model_fe_names][i], as.factor)
   
-  
-  numb_fe <- length(fe)
   # now create fixed effects
   if(!is.null(fe)){
     
@@ -224,7 +229,7 @@ preprocess.felm <- function(object, param, clustid, bootcluster, beta0, alpha, f
       fe_update2 <- paste("~ . +",paste(model_fe_names[model_fe_names != fe], collapse = " + "))
       fml_design <- update(fml_wo_fe, fe_update2)
       # don't drop constant
-      model_frame <- model.frame(fml_design, data_boot)
+      model_frame <- model.frame(update(fml_design, . ~ . - 1), data_boot)
     }
 
     X <- model.matrix(model_frame, data = data_boot)

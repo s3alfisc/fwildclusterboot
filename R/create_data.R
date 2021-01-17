@@ -14,7 +14,7 @@ create_data_2 <-
     #' @param seed An integer. Set the random seed
     #' @importFrom stats rlnorm
     #' @export
-    
+
     set.seed(seed)
     voters <- 
       fabricatr::fabricate(
@@ -32,14 +32,22 @@ create_data_2 <-
           )
         ),
         income = exp(rlnorm(n = N, meanlog = 2.4 - (ideology1 * 0.1), sdlog = 0.12)),
-        Q1_immigration = factor(sample(1:numb_fe1, N, TRUE)),
-        Q2_defence = factor(rep(1:5, N / 5)),   
+        Q1_immigration_latent = rnorm(N),
+        Q1_immigration = ifelse(Q1_immigration_latent > 0.5, 1, 
+                                ifelse(Q1_immigration_latent <= 0.5 & Q1_immigration_latent > 0, 2, 3)),
+        Q2_defense_latent = rnorm(N, 0, 3),
+        Q2_defense = ifelse(Q2_defense_latent > 0.5, 1, 
+                                ifelse(Q2_defense_latent <= 0.5 & Q2_defense_latent > 0, 2, 3)),
         treatment = fabricatr::draw_binary(0.5, N = N),
-        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.1 * treatment, link = "probit")
+        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.1 * treatment + 2*Q1_immigration, link = "probit")
       )
     
-    setDT(voters)
-    voters[, log_income := log(income)]
-    voters[, Q1_immigration := as.factor(Q1_immigration) ]
-    #voters[, Q2_defence := as.factor(Q2_defence)]
+    voters$Q1_immigration <- as.factor(voters$Q1_immigration)
+    voters$Q2_defense <- as.factor(voters$Q2_defense)
+    
+    
+    voters$log_income <- log(voters$income)
+    voters$Q1_immigration <- as.factor(voters$Q1_immigration)
+    
+    voters
   }
