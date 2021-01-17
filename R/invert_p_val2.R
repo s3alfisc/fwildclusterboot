@@ -76,13 +76,13 @@ invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, alpha, v
   p <- rep(NaN, length(test_vals))
   
   
-  pb = txtProgressBar(min = 0, max = (length(test_vals) - 2), initial = 0, style = 3, char = "-") 
+  #pb = txtProgressBar(min = 0, max = (length(test_vals) - 2), initial = 0, style = 3, char = "-") 
   
   for(i in 2:(length(test_vals) - 1)){
     p[i] <- p_val_null2_x_cmp(test_vals[i], alpha) 
-    setTxtProgressBar(pb,i)
+    #setTxtProgressBar(pb,i)
   }
-  close(pb)
+  #close(pb)
 
   # substract alpha in function so that I will not need to 
   # do it in root finding algorithm, but then I will need to add 

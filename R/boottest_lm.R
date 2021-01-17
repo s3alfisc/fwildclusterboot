@@ -41,6 +41,7 @@ boottest.lm <- function(object,
   
   #'@importFrom sandwich vcovCL 
   #'@importFrom lmtest coeftest
+  #'@importFrom stats rnorm
   #'@export
   #'@section Confidence Intervals: 
   #'\code{boottest} computes confidence intervals by inverting p-values. In practice, the following procedure is used: 
@@ -59,11 +60,16 @@ boottest.lm <- function(object,
   #'@references Roodman et al., 2019, "Fast and wild: Bootstrap inference in Stata using boottest", The Stata Journal. (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
   #'@examples
   #'library(fwildclusterboot)
-  #'voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
-  #'lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, data = voters)
+  #'voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, 
+  #'                        icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
+  #'lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
+  #'         data = voters)
   #'boot1 <- boottest(lm_fit, B = 10000, param = "treatment", clustid = "group_id1")
-  #'boot2 <- boottest(lm_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"))
-  #'boot3 <- boottest(lm_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), alpha = 0.2, seed = 8, beta0 = 2)
+  #'boot2 <- boottest(lm_fit, B = 10000, param = "treatment",
+  #'                  clustid = c("group_id1", "group_id2"))
+  #'boot3 <- boottest(lm_fit, B = 10000, param = "treatment", 
+  #'                  clustid = c("group_id1", "group_id2"), 
+  #'                  alpha = 0.2, seed = 8, beta0 = 2)
   #'summary(boot1)
   #'tidy(boot1)
   #'plot(boot1)
@@ -74,7 +80,6 @@ boottest.lm <- function(object,
   check_arg(param, "scalar character")
   check_arg(B, "scalar integer") 
   check_arg(alpha, "scalar numeric")
-  check_arg(weights, "NULL")
   check_arg(conf_int, "logical scalar | NULL")
   check_arg(seed, "scalar integer | NULL")
   check_arg(beta0, "numeric scalar | NULL")

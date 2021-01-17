@@ -61,12 +61,16 @@ boottest.fixest  <- function(object,
   #'@examples
   #'library(fwildclusterboot)
   #'library(fixest)
-  #'voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
-  #'feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  "Q1_immigration", data = voters)
+  #'voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, 
+  #'                        icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
+  #'feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income, 
+  #'            fixef =  "Q1_immigration", data = voters)
   #'boot1 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = "group_id1")
   #'boot2 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"))
-  #'boot3 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), fe = "Q1_immigration")
-  #'boot4 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), fe = "Q1_immigration", alpha = 0.2, seed = 8, beta0 = 2)
+  #'boot3 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), 
+  #'                  fe = "Q1_immigration")
+  #'boot4 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"),
+  #' fe = "Q1_immigration", alpha = 0.2, seed = 8, beta0 = 2)
   #'summary(boot1)
   #'tidy(boot1)
   #'plot(boot1)
@@ -80,7 +84,6 @@ boottest.fixest  <- function(object,
    check_arg(param, "scalar character")
    check_arg(B, "scalar integer ") 
    check_arg(alpha, "scalar numeric | NULL")
-   check_arg(weights, "NULL")
    check_arg(conf_int, "logical scalar | NULL")
    check_arg(seed, "scalar integer | NULL")
    check_arg(beta0, "numeric scalar | NULL")
@@ -131,7 +134,7 @@ boottest.fixest  <- function(object,
                                   fe = fe, 
                                   seed = seed, 
                                   bootcluster = bootcluster)
-  
+  # solve(crossprod(preprocess$X))
   
   clustid_dims <- preprocess$clustid_dims
   # Invert p-value
