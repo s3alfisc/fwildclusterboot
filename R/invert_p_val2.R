@@ -1,5 +1,10 @@
+# invert_p_val_wcu <- function(){
+#   
+# }
 
-invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, alpha, vcov_sign){
+
+
+invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, alpha, vcov_sign, impose_null){
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #'@param object A  object of type boottest
@@ -9,6 +14,7 @@ invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, alpha, v
   #'@param clustid A vector with the clusters
   #'@param alpha A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95% confidence intervals
   #'@param vcov_sign Controls addition / substraction of individual covariance matrices for multiway clustering
+  #'@param impose_null Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU
   #'@importFrom utils setTxtProgressBar txtProgressBar 
   #'@export
 
@@ -35,7 +41,7 @@ invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, alpha, v
   DD <- ABCD$DD
   
   p_val_null2_x <- function(beta0, alpha){
-    p_val_null2(beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction)$p_val - alpha
+    p_val_null2(beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, point_estimate = point_estimate,impose_null = impose_null)$p_val - alpha
   }
   
   p_val_null2_x_cmp <- compiler::cmpfun(p_val_null2_x)
