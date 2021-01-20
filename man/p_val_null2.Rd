@@ -13,7 +13,9 @@ p_val_null2(
   DD,
   clustid,
   boot_iter,
-  small_sample_correction
+  small_sample_correction,
+  impose_null,
+  point_estimate
 )
 }
 \arguments{
@@ -34,6 +36,10 @@ p_val_null2(
 \item{boot_iter}{An integer. Number of bootstrap iterations.}
 
 \item{small_sample_correction}{A vector of the dimension of ncol(clustid)}
+
+\item{impose_null}{If TRUE, no null hypothesis if imposed on the bootstrap}
+
+\item{point_estimate}{The point estimate of the test parameter from the regression model.}
 }
 \description{
 Calculate p-values based on A, B, CC, CD, DD and other inputs

@@ -1,5 +1,5 @@
 
-p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sample_correction){
+p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sample_correction, impose_null, point_estimate){
   
   
   #' Calculate p-values based on A, B, CC, CD, DD and other inputs
@@ -12,6 +12,16 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
   #' @param clustid A data.frame containing the cluster variables. 
   #' @param boot_iter An integer. Number of bootstrap iterations. 
   #' @param small_sample_correction A vector of the dimension of ncol(clustid)
+  #' @param impose_null If TRUE, no null hypothesis if imposed on the bootstrap
+  #' @param point_estimate The point estimate of the test parameter from the regression model.
+  
+
+
+  # Roodman et al on WCU: "Therefore, as we vary βj0, the bootstrap samples
+  # do not change, and hence, only one set of bootstrap samples needs to be constructed."
+  # here, note that if impose_null = FALSE -> WCU: B = 0, CD = 0, DD = 0 and hence numer and 
+  # JJ do not vary in beta0
+  
   numer <- A + B * beta0
   names_clustid <- names(clustid)
   
@@ -29,26 +39,34 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
   }
   
   denom <- suppressWarnings(sqrt(JJ_sum))
+  
+  if(impose_null == TRUE){
+    t <- numer / denom
+  } else if(impose_null == FALSE){
+    t <- (numer )/ denom
+    # reinterpretation of eq (17) in Roodman et al
+    t[1] <- t[1] - ((point_estimate  - beta0) / denom[1])
+  }
 
-  t <- abs(numer) / denom
   delete_invalid_t_total <- sum(is.na(t))
   t <- t[!is.na(t)]
   
   t_boot <- t[2:(boot_iter + 1 - delete_invalid_t_total)]
   
-  #if(p_val == "two-tailed symmetric"){
-    p_val <- mean(abs(t[1] - beta0) < (t_boot))
-  # } else if(p_val == "equal-tailed"){
-  #   p_l <- mean((t[1] - beta0) < t_boot)
-  #   p_h <- mean((t[1] - beta0) > t_boot)
-  #   p_val <- 2*min(p_l, p_h)
-  # } else if(p_val == "<"){
-  #   p_l <- mean((t[1] - beta0) < t_boot)
-  #   p_val <- p_l
-  # } else if(p_val == ">"){
-  #   p_h <- mean((t[1] - beta0) > t_boot)
-  #   p_val <- p_h
-  # }
+  p_val <- "two-tailed symmetric"
+  if(p_val == "two-tailed symmetric"){
+      p_val <- mean(abs(t[1]) < abs(t_boot))
+    } else if(p_val == "equal-tailed"){
+      p_l <- mean((t[1]) < t_boot)
+      p_h <- mean((t[1]) > t_boot)
+      p_val <- 2*min(p_l, p_h)
+    } else if(p_val == "<"){
+      p_l <- mean((t[1]) < t_boot)
+      p_val <- p_l
+    } else if(p_val == ">"){
+      p_h <- mean((t[1]) > t_boot)
+      p_val <- p_h
+  }
 
   res <- list(p_val = p_val, 
               t = t, 

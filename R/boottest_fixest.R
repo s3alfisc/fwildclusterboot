@@ -9,6 +9,7 @@ boottest.fixest  <- function(object,
                            seed = NULL, 
                            beta0 = 0,
                            type = "rademacher",
+                           impose_null = TRUE,
                            ...){
   
   
@@ -24,6 +25,7 @@ boottest.fixest  <- function(object,
   #'@param seed An integer. Allows the user to set a random seed
   #'@param beta0 A numeric. Shifts the null hypothesis  
   #'@param type character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.
+  #'@param impose_null Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU
   #'@param ... Further arguments passed to or from other methods.
   #'@return An object of class \code{boottest}
   #'\item{p_val}{The bootstrap p-value.}
@@ -167,7 +169,9 @@ boottest.fixest  <- function(object,
   
   res <- boot_algo2(preprocess, 
                     boot_iter = B,
-                    wild_draw_fun = wild_draw_fun)
+                    wild_draw_fun = wild_draw_fun, 
+                    point_estimate = point_estimate, 
+                    impose_null = impose_null)
   
   # compute confidence sets
   if(is.null(conf_int) || conf_int == TRUE){
@@ -184,7 +188,8 @@ boottest.fixest  <- function(object,
                                se_guess = se_guess, 
                                clustid = preprocess$clustid, 
                                alpha = preprocess$alpha, 
-                               vcov_sign = preprocess$vcov_sign)
+                               vcov_sign = preprocess$vcov_sign, 
+                               impose_null = impose_null)
     
   } else {
     res_p_val <- list( conf_int = NA, 
@@ -192,45 +197,25 @@ boottest.fixest  <- function(object,
                        test_vals = NA)
     }
   
-  if(clustid_dims == 1){
-    res_final <- list(point_estimate = point_estimate, 
-                      p_val = res[["p_val"]], 
-                      conf_int = res_p_val$conf_int, 
-                      p_test_vals = res_p_val$p_test_vals, 
-                      test_vals = res_p_val$test_vals,
-                      t_stat = res$t_stat, 
-                      regression = res$object, 
-                      param = param, 
-                      N = preprocess$N, 
-                      B = B, 
-                      clustid = clustid, 
-                      #depvar = depvar, 
-                      N_G = preprocess$N_G, 
-                      alpha = preprocess$alpha,
-                      call = call, 
-                      type = type)
-  } else if(clustid_dims > 1){
-    res_final <- list(point_estimate = point_estimate, 
-                      p_val = res[["p_val"]], 
-                      conf_int = res_p_val$conf_int, 
-                      p_test_vals = res_p_val$p_test_vals, 
-                      test_vals = res_p_val$test_vals,
-                      t_stat = res$t_stat, 
-                      regression = res$object, 
-                      param = param, 
-                      N = preprocess$N, 
-                      B = B, 
-                      clustid = clustid, 
-                      #depvar = depvar, 
-                      N_G = preprocess$N_G, 
-                      alpha = preprocess$alpha,
-                      call = call, 
-                      type = type)
-  }
-  
+  res_final <- list(point_estimate = point_estimate, 
+                    p_val = res[["p_val"]], 
+                    conf_int = res_p_val$conf_int, 
+                    p_test_vals = res_p_val$p_test_vals, 
+                    test_vals = res_p_val$test_vals,
+                    t_stat = res$t_stat, 
+                    regression = res$object, 
+                    param = param, 
+                    N = preprocess$N, 
+                    B = B, 
+                    clustid = clustid, 
+                    #depvar = depvar, 
+                    N_G = preprocess$N_G, 
+                    alpha = preprocess$alpha,
+                    call = call, 
+                    type = type, 
+                    impose_null = impose_null)
   
   class(res_final) <- "boottest"
-  
   invisible(res_final)
 
 } 
