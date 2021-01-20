@@ -5,7 +5,7 @@
 # Errors
 library(fwildclusterboot)
 res <- 
-  feols(proposition_vote ~ treatment + ideology1 + log_income |Q1_immigration + Q2_defence,
+  feols(proposition_vote ~ treatment + ideology1 + log_income |Q1_immigration + Q2_defense,
       weights = NULL,
       cluster = c("group_id1"), 
       data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
@@ -28,7 +28,7 @@ expect_error(boottest(res, B = 200, clustid = c("group_id1", "group_id2"), param
 
 # error because ^ in formula
 res <- 
-  feols(proposition_vote ~ treatment + ideology1 + log_income |Q1_immigration^Q2_defence,
+  feols(proposition_vote ~ treatment + ideology1 + log_income |Q1_immigration^Q2_defense,
         weights = NULL,
         cluster = c("group_id1"), 
         data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
@@ -37,7 +37,7 @@ expect_error(boottest(res, B = 200, clustid = c("group_id1", "group_id2"), weigh
 
 # error because i() in formula
 res <- 
-  feols(proposition_vote ~ treatment + ideology1 + i(log_income, Q1_immigration) |Q2_defence,
+  feols(proposition_vote ~ treatment + ideology1 + i(log_income, Q1_immigration) |Q2_defense,
         weights = NULL,
         cluster = c("group_id1"), 
         data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
@@ -46,7 +46,7 @@ expect_error(boottest(res, B = 200, clustid = c("group_id1", "group_id2"), weigh
 # error because of [] ...
 # error because of c()
 res <- 
-  feols(c(proposition_vote,log_income) ~ treatment + ideology1 |Q2_defence,
+  feols(c(proposition_vote,log_income) ~ treatment + ideology1 |Q2_defense,
         weights = NULL,
         cluster = c("group_id1"), 
         data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
@@ -55,7 +55,7 @@ expect_error(boottest(res, B = 200, clustid = c("group_id1", "group_id2"), weigh
 
 # error due to other function arguments in feols
 res <- 
-  feols(proposition_vote ~ treatment + ideology1 |Q2_defence,
+  feols(proposition_vote ~ treatment + ideology1 |Q2_defense,
         weights = NULL,
         cluster = c("group_id1"), 
         data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1), 
@@ -80,7 +80,7 @@ expect_error(boottest(res, B = 200, clustid = c("group_id1", "group_id2"), weigh
 # Errors
 library(fwildclusterboot)
 res <- 
-  lm(proposition_vote ~ treatment + ideology1 + log_income  +Q1_immigration + Q2_defence,
+  lm(proposition_vote ~ treatment + ideology1 + log_income  +Q1_immigration + Q2_defense,
         weights = NULL,
         data = fwildclusterboot:::create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 200, numb_fe2 = 100, seed = 1)
   )

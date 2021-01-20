@@ -26,11 +26,11 @@ expect_equal(preprocess1$data, preprocess2$data)
 expect_equal(preprocess1$clustid, preprocess2$clustid)
 expect_equal(preprocess1$clustid_dims, preprocess2$clustid_dims)
 expect_equal(preprocess1$N, preprocess2$N)
-expect_equal(preprocess1$k, preprocess2$k + 10)
+expect_equal(preprocess1$k, preprocess2$k + 3)
 #expect_equal(preprocess1$Y, preprocess2$Y)
 #expect_equal(preprocess1$X, preprocess2$X)
 expect_equal(preprocess1$N_G, preprocess2$N_G)
-expect_equal(10, preprocess2$n_fe)
+expect_equal(3, preprocess2$n_fe)
 expect_equal(preprocess1$seed, preprocess2$seed)
 
 

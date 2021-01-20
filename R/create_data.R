@@ -39,7 +39,7 @@ create_data_2 <-
         Q2_defense = ifelse(Q2_defense_latent > 0.5, 1, 
                                 ifelse(Q2_defense_latent <= 0.5 & Q2_defense_latent > 0, 2, 3)),
         treatment = fabricatr::draw_binary(0.5, N = N),
-        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.1 * treatment + 2*Q1_immigration, link = "probit")
+        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.8 * treatment + 2*Q1_immigration + rnorm(N, 0, 3), link = "probit")
       )
     
     voters$Q1_immigration <- as.factor(voters$Q1_immigration)
