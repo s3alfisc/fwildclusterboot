@@ -34,7 +34,16 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
     
     # create formula objects by adding fixed effects and clusters from call
     # add potential other cluster variables from cluster argument
-    formula <- update(eval(of$fml), paste("~ . +",paste(c(eval(of$cluster), eval(of$fixef)), collapse = " + ")))
+    formula <- eval(of$fml)
+    
+    formula_coef_fe <- formula(Formula::as.Formula(formula), lhs = 1, rhs = c(1, 2), collapse = TRUE)
+    formula <- formula_coef_fe
+    if(!is.null(eval(of$fixef))){
+      formula <- update(formula_coef_fe, paste("~ . +",paste(eval(of$fixef), collapse = "+")))
+    }
+    if(!is.null(eval(of$cluster))){
+      formula <- update(formula, paste("~ . +",paste(eval(of$cluster), collapse = "+")))
+    }
     if(!is.null(cluster)){
       formula <- update(formula, paste("~ . +",paste(cluster, collapse = "+")))
     }
@@ -42,11 +51,14 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
     # add fixed effects to formula - needed for model.matrix
     # note: contains cluster variable if cluster variable are also a covariate of fixed effects
     # further: gets rid of fixed effect specified as fe
+  
+    # if(!is.null(eval(of$fixef))){
+    #   formula_coef_fe <- update(formula_coef_fe, paste("~ . +",paste(eval(of$fixef), collapse = "+")))
+    # }
     if(!is.null(fe)){
-      formula_coef_fe <- update(eval(of$fml), paste("~ . +",paste(eval(of$fixef), collapse = " + "), "-", fe))
-    } else if(is.null(fe)){
-      formula_coef_fe <- update(eval(of$fml), paste("~ . +",paste(eval(of$fixef), collapse = " + ")))
+      formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
     }
+    
     
     # if there is at least one fixed effect, get rid of intercept
     # note: length(NULL) == 0
@@ -185,14 +197,20 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
   Y <- model.response(model_frame)
   
   # check if there are no factor variables in the covariates and fixed effects after deletion of fe variable
-  no_factor <- sum(sapply(model_frame[, !(names(model_frame) %in% c(cluster, names(Y), fe))], is.factor)) == 0
-  if(no_factor == TRUE){
-    # if there is not a single factor variable in covs and fe's then delete intercept
-    formula_coef_fe <- update(formula_coef_fe, "~. -1")
-  }
   
+
+  # no_factor <- sum(sapply(model_frame[, !(names(model_frame) %in% c(cluster, names(Y), fe))], is.factor)) == 0
+  # if(no_factor == TRUE){
+  #   # if there is not a single factor variable in covs and fe's then delete intercept
+  #   formula_coef_fe <- update(formula_coef_fe, "~. -1")
+  # }
+  # 
   # X: need to delete clusters
   X <- model.matrix(formula_coef_fe, model_frame)
+  if(!is.null(fe)){
+    # note: simply update(..., -1) does not work - intercept is dropped, but all levels of other fe are kept
+    X <- X[,-which(colnames(X) == "(Intercept)")]
+  }
   k <- dim(X)[2]
   weights <- as.vector(model.weights(of))
   if(is.null(weights)){
