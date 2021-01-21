@@ -9,11 +9,15 @@ boot_algo2(
   boot_iter,
   wild_draw_fun,
   point_estimate,
-  impose_null
+  impose_null,
+  beta0,
+  alpha,
+  param,
+  seed
 )
 }
 \arguments{
-\item{preprocessed_object}{A preprocessed object of type preprocessed}
+\item{preprocessed_object}{A list: output of the preprocess2 function.}
 
 \item{boot_iter}{number of bootstrap iterations}
 
@@ -24,6 +28,14 @@ boot_algo2(
 \item{impose_null}{If TRUE, the null is not imposed on the bootstrap distribution.
 This is what Roodmal et al call the "WCU" bootstrap. With impose_null = FALSE, the
 null is imposed ("WCR").}
+
+\item{beta0}{Shifts the null hypothesis.}
+
+\item{alpha}{The significance level.}
+
+\item{param}{name of the test parameter.}
+
+\item{seed}{the random seed. controls draw of bootstrap weights.}
 }
 \value{
 A list of ...

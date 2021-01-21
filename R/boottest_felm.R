@@ -79,22 +79,36 @@ boottest.felm  <- function(object,
   check_arg(bootcluster, "character vector")
   
   
- 
-  
   if((conf_int == TRUE || is.null(conf_int)) & B <= 100){
     stop("The function argument B is smaller than 100. The number of bootstrap iterations needs to be 100 or higher in order to guarantee that the root
          finding procudure used to find the confidence set works properly.", 
          call. = FALSE)
   }
-  
   if(!is.null(alpha) & (alpha <= 0 || alpha >= 1)){
     stop("The function argument alpha is outside of the unit interval (0, 1). Please specify alpha so that it is within the unit interval.", 
          call. = FALSE)
   }
   
+  if(is.null(alpha)){
+    alpha <- 0.05
+  }
+  
+  if(!(param %in% c(rownames(object$coefficients)))){
+    stop(paste("The parameter", param, "is not included in the estimated model. Maybe you are trying to test for an interaction parameter? To see all model parameter names, run names(coef(model))."))
+  }
+  # repeat the same: check if fe is in the data.frame
+  
+  if(is.null(beta0)){
+    beta0 <- 0
+  }
+  
   if(!is.null(fe) && fe %in% clustid){
     stop(paste("The function argument fe =", fe, "is contained in the clustering variables. This is not allowed. Please set fe to another factor variable or NULL."), 
          call. = FALSE)
+  }
+  
+  if(((1 - alpha) * (B + 1)) %% 1 != 0){
+    message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."))
   }
   
   # throw error if specific function arguments are used in felm() call
@@ -106,22 +120,21 @@ boottest.felm  <- function(object,
          call. = FALSE)
   }
   
-  preprocess <- preprocess(object = object,
-                           param = param,
-                           clustid = clustid,
-                           beta0 = beta0,
-                           alpha = alpha, 
-                           fe = fe, 
-                           seed = seed, 
-                           bootcluster = bootcluster)
+  # returns function
+  # function taken from the sandwich package' vcovBS.lm function
+  wild_draw_fun <- switch(type, 
+                          rademacher = function(n) sample(c(-1,1), n, replace = TRUE), 
+                          mammen = function(n) sample(c(-1,1) * (sqrt(5) + c(-1, 1))/2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1))/(2 * sqrt(5))),
+                          norm = function(n) rnorm(n), 
+                          webb = function(n) sample(c(-sqrt((3:1)/2), sqrt((1:3)/2)), n, replace = TRUE), 
+                          wild_draw_fun)
+  
+  # preprocess data: X, Y, weights, fixed effects
+  preprocess <- preprocess2(object = object, cluster = clustid, fe = fe, param = param, bootcluster = bootcluster)
 
   clustid_dims <- preprocess$clustid_dims
   # Invert p-value
   point_estimate <- object$coefficients[param, ]
-  
-  if(((1 - preprocess$alpha) * (B + 1)) %% 1 != 0){
-    message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - preprocess$alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."))
-  }
   
   N_G_2 <- 2^length(unique(preprocess$bootcluster[, 1]))
   if(type == "rademacher" & N_G_2 < B){
@@ -132,29 +145,20 @@ boottest.felm  <- function(object,
   }
   
   
-  # returns function
-  # function taken from the sandwich package' vcovBS.lm function
-  wild_draw_fun <- switch(type, 
-                          rademacher = function(n) sample(c(-1,1), n, replace = TRUE), 
-                          mammen = function(n) sample(c(-1,1) * (sqrt(5) + c(-1, 1))/2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1))/(2 * sqrt(5))),
-                          norm = function(n) rnorm(n), 
-                          webb = function(n) sample(c(-sqrt((3:1)/2), sqrt((1:3)/2)), n, replace = TRUE), 
-                          wild_draw_fun)
-  
   res <- boot_algo2(preprocess, 
                     boot_iter = B,
                     wild_draw_fun = wild_draw_fun, 
                     point_estimate = point_estimate, 
-                    impose_null = impose_null)
+                    impose_null = impose_null, 
+                    beta0 = beta0,
+                    alpha = alpha,
+                    param = param,
+                    seed = seed)
+  
   
   # compute confidence sets
   if(is.null(conf_int) || conf_int == TRUE){
-    # calculate guess for covariance matrix and standard errors
-    #vcov <- sandwich::vcovCL(object, cluster = preprocess$clustid)
-    #coefs <- lmtest::coeftest(object, vcov)
-    #se_guess <- coefs[param, "Std. Error"]
-    #vcov <- object$robustvcv
-    #coefs <- object$coefficients[param]
+
     se_guess <- object$se[param]
     
     res_p_val <- invert_p_val2(object = res, 
@@ -162,7 +166,7 @@ boottest.felm  <- function(object,
                                point_estimate = point_estimate,
                                se_guess = se_guess, 
                                clustid = preprocess$clustid, 
-                               alpha = preprocess$alpha, 
+                               alpha = alpha, 
                                vcov_sign = preprocess$vcov_sign, 
                                impose_null = impose_null)
     
@@ -186,7 +190,7 @@ boottest.felm  <- function(object,
                       clustid = clustid, 
                       #depvar = depvar, 
                       N_G = preprocess$N_G, 
-                      alpha = preprocess$alpha,
+                      alpha = alpha,
                       call = call, 
                       type = type, 
                       impose_null = impose_null)

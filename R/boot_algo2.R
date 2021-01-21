@@ -1,13 +1,17 @@
-boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_estimate, impose_null){
+boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_estimate, impose_null, beta0, alpha, param, seed){
   
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
-  #' @param preprocessed_object A preprocessed object of type preprocessed
+  #' @param preprocessed_object A list: output of the preprocess2 function.
   #' @param boot_iter number of bootstrap iterations
   #' @param wild_draw_fun function. Specifies the type of bootstrap to use.
   #' @param point_estimate The point estimate of the test parameter from the regression model.
   #' @param impose_null If TRUE, the null is not imposed on the bootstrap distribution. 
   #'        This is what Roodmal et al call the "WCU" bootstrap. With impose_null = FALSE, the 
   #'        null is imposed ("WCR").
+  #' @param beta0 Shifts the null hypothesis.        
+  #' @param alpha The significance level.
+  #' @param param name of the test parameter.
+  #' @param seed the random seed. controls draw of bootstrap weights.
   #' @import Matrix.utils
   #' @import Matrix
   #' @export
@@ -16,24 +20,26 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   
   # 1) preprocess
   #preprocessed_object = preprocess
+
   X <- preprocessed_object$X
   Y <- preprocessed_object$Y
   R0 <- preprocessed_object$R0
-  data <- preprocessed_object$data
+  # data <- preprocessed_object$data
   N <- preprocessed_object$N
   k <- preprocessed_object$k
   clustid <- preprocessed_object$clustid
   fixed_effect <- preprocessed_object$fixed_effect
-  beta0 <- preprocessed_object$beta0
+  # beta0 <- preprocessed_object$beta0
   #beta0 = 0.005
   N_G <- preprocessed_object$N_G
-  alpha <- preprocessed_object$alpha
-  param <- preprocessed_object$param
+  # alpha <- preprocessed_object$alpha
+  # param <- preprocessed_object$param
   W <- preprocessed_object$W
   n_fe <- preprocessed_object$n_fe
-  seed <- preprocessed_object$seed
+  # seed <- preprocessed_object$seed
   bootcluster <- preprocessed_object$bootcluster
   vcov_sign <- preprocessed_object$vcov_sign
+  weights <- preprocessed_object$weights
   
   #beta0 <- 0.005
   if(!is.data.frame(bootcluster)){
@@ -102,19 +108,19 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   diag_XinvXXRuS_a <- Matrix::t(
     Matrix.utils::aggregate.Matrix(
       Matrix::Diagonal(N, 
-                       as.vector(XinvXXrQ)),
+                       as.vector(weights * XinvXXrQ)),
       bootcluster[[1]])) # N x c*
   
   diag_XinvXXRuS_b <- Matrix::t(
     Matrix.utils::aggregate.Matrix(
       Matrix::Diagonal(N, 
-                       as.vector(XinvXXrP)),
+                       as.vector(weights * XinvXXrP)),
       bootcluster[[1]])) # N x c*  
   
   # calculate numerator: 
   
-  numer_a <- collapse::fsum(as.vector(XinvXXrQ), bootcluster[[1]])
-  numer_b <- collapse::fsum(XinvXXrP, bootcluster[[1]])
+  numer_a <- collapse::fsum(as.vector(weights * XinvXXrQ), bootcluster[[1]])
+  numer_b <- collapse::fsum(weights * XinvXXrP, bootcluster[[1]])
   # calculate A, B
   A <- crossprod(numer_a, v)
   B <- crossprod(numer_b, v)
@@ -138,7 +144,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   if(is.null(W)){
     for(x in names(clustid)){
       
-      SXinvXXrX[[x]] <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
+      SXinvXXrX[[x]] <-  collapse::fsum(weights * XinvXXrX, clustid[x]) #c* x f
       SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% invXX
       # a
       S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
@@ -161,9 +167,9 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
     
     for(x in names(clustid)){
       
-      SXinvXXrX[[x]] <-  collapse::fsum(XinvXXrX, clustid[x]) #c* x f
+      SXinvXXrX[[x]] <-  collapse::fsum(weights * XinvXXrX, clustid[x]) #c* x f
       SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% invXX
-      S_XinvXXR_F <- crosstab2(XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
+      S_XinvXXR_F <- crosstab2(weights * XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
       # a
       prod_a <- t(tcrossprod(S_Wu_F_a, S_XinvXXR_F))
       S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c

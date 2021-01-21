@@ -6,13 +6,13 @@ boottest <- function(object, ...){
   UseMethod("boottest")
 }
 
-preprocess <- function(object, ...){
-  #' S3 Method preprocess
-  #'@export 
-  #'@param object An object of type lm, fixest of felm
-  #'@param ... other arguments
-  UseMethod("preprocess")
-}
+#' preprocess <- function(object, ...){
+#'   #' S3 Method preprocess
+#'   #'@export 
+#'   #'@param object An object of type lm, fixest of felm
+#'   #'@param ... other arguments
+#'   UseMethod("preprocess")
+#' }
 
 
 #' boot_algo <- function(preprocessed_object, ...){

@@ -97,6 +97,23 @@ boottest.lm <- function(object,
          call. = FALSE)
   }
   
+  if(is.null(alpha)){
+    alpha <- 0.05
+  }
+  
+  if(!(param %in% c(names(object$coefficients)))){
+    stop(paste("The parameter", param, "is not included in the estimated model. Maybe you are trying to test for an interaction parameter? To see all model parameter names, run names(coef(model))."))
+  }
+  
+  if(is.null(beta0)){
+    beta0 <- 0
+  }
+  
+  
+  if(((1 - alpha) * (B + 1)) %% 1 != 0){
+    message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."))
+  }
+  
   
   # throw error if specific function arguments are used in lm() call
   call_object <- names(object$call)[names(object$call) != ""]
@@ -107,35 +124,6 @@ boottest.lm <- function(object,
          call. = FALSE)
   }
 
-  
-  preprocess <- preprocess(object = object, 
-                           param = param, 
-                           clustid = clustid, 
-                           beta0 = beta0,
-                           alpha = alpha, 
-                           seed = seed, 
-                           bootcluster = bootcluster)
-
-  clustid_dims <- preprocess$clustid_dims
-  # Invert p-value
-  point_estimate <- object$coefficients[param]
-  
-  clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
-  
-  
-  if(((1 - preprocess$alpha) * (B + 1)) %% 1 != 0){
-    message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - preprocess$alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."))
-  }
-  
-  N_G_2 <- 2^length(unique(preprocess$bootcluster[, 1]))
-  if(type == "rademacher" & N_G_2 < B){
-    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, 
-                  B = ", N_G_2, ". Consider using webb weights instead."), 
-            call. = FALSE)
-    B <- N_G_2
-  }
-  
-  
   # returns function
   # function taken from the sandwich package' vcovBS.lm function
   wild_draw_fun <- switch(type, 
@@ -145,12 +133,33 @@ boottest.lm <- function(object,
                           webb = function(n) sample(c(-sqrt((3:1)/2), sqrt((1:3)/2)), n, replace = TRUE), 
                           wild_draw_fun)
   
+  # preprocess data: X, Y, weights, fixed effects
+  preprocess <- preprocess2(object = object, cluster = clustid, fe = NULL, param = param, bootcluster = bootcluster)
   
+
+  clustid_dims <- preprocess$clustid_dims
+  point_estimate <- object$coefficients[param]
+  
+  clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
+
+  N_G_2 <- 2^length(unique(preprocess$bootcluster[, 1]))
+  if(type == "rademacher" & N_G_2 < B){
+    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, 
+                  B = ", N_G_2, ". Consider using webb weights instead."), 
+            call. = FALSE)
+    B <- N_G_2
+  }
+  
+  # conduct inference: calculate p-value
   res <- boot_algo2(preprocess, 
                     boot_iter = B,
                     wild_draw_fun = wild_draw_fun, 
                     point_estimate = point_estimate, 
-                    impose_null = impose_null)
+                    impose_null = impose_null, 
+                    beta0 = beta0,
+                    alpha = alpha,
+                    param = param,
+                    seed = seed)
   
     # compute confidence sets
   
@@ -169,7 +178,7 @@ boottest.lm <- function(object,
                                  point_estimate = point_estimate,
                                  se_guess = se_guess, 
                                  clustid = preprocess$clustid, 
-                                 alpha = preprocess$alpha, 
+                                 alpha = alpha, 
                                  vcov_sign = preprocess$vcov_sign, 
                                  impose_null = impose_null)
       
@@ -192,7 +201,7 @@ boottest.lm <- function(object,
                     clustid = clustid, 
                     #depvar = depvar, 
                     N_G = preprocess$N_G, 
-                    alpha = preprocess$alpha,
+                    alpha = alpha,
                     call = call, 
                     type = type, 
                     impose_null = impose_null)

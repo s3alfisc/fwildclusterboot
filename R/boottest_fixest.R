@@ -103,9 +103,27 @@ boottest.fixest  <- function(object,
           call. = FALSE)
    }
    
+   if(is.null(alpha)){
+     alpha <- 0.05
+   }
+   
+   if(!(param %in% c(names(object$coefficients)))){
+     stop(paste("The parameter", param, "is not included in the estimated model. Maybe you are trying to test for an interaction parameter? To see all model parameter names, run names(coef(model))."))
+   }
+   # repeat the same: check if fe is in the data.frame
+   
+   
+   if(is.null(beta0)){
+     beta0 <- 0
+   }
+   
    if(!is.null(fe) && fe %in% clustid){
      stop(paste("The function argument fe =", fe, "is contained in the clustering variables. This is not allowed. Please set fe to another factor variable or NULL."), 
           call. = FALSE)
+   }
+   
+   if(((1 - alpha) * (B + 1)) %% 1 != 0){
+     message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."))
    }
    
    # throw error if specific function arguments are used in feols() call
@@ -116,9 +134,7 @@ boottest.fixest  <- function(object,
           offset, subset, split, fsplit, panel.id & demeaned.", 
           call. = FALSE)
    }
-   
-
-   
+  
    deparse_fml <- paste(deparse(object$fml_all, width.cutoff = 500), collapse="")
    #deparse_fml <- deparse(object$fml)
    if(grepl("[",deparse_fml, fixed = TRUE) || 
@@ -127,28 +143,14 @@ boottest.fixest  <- function(object,
       grepl("^", deparse_fml, fixed = TRUE)){
      stop("Advanced formula notation in fixest / fixest (i(), ^, [x] and vectorized formulas via c(),) is currently not supported in boottest.")
    }
-   
-  preprocess <- preprocess(object = object, 
-                                  param = param,
-                                  clustid = clustid,
-                                  beta0 = beta0,
-                                  alpha = alpha, 
-                                  fe = fe, 
-                                  seed = seed, 
-                                  bootcluster = bootcluster)
-  # solve(crossprod(preprocess$X))
+  
+  # preprocess the data: Y, X, weights, fixed_effect 
+  preprocess <- preprocess2(object = object, cluster = clustid, fe = fe, param = param, bootcluster = bootcluster)
   
   clustid_dims <- preprocess$clustid_dims
-  # Invert p-value
   point_estimate <- object$coefficients[param]
-  
-  # if(clustid_dims == 1){
-  #   # boot algoritm
-  
-  if(((1 - preprocess$alpha) * (B + 1)) %% 1 != 0){
-    message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - preprocess$alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ",B + 1,") is an integer."))
-  }
-  
+
+
   N_G_2 <- 2^length(unique(preprocess$bootcluster[, 1]))
   if(type == "rademacher" & N_G_2 < B){
     warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, 
@@ -171,7 +173,11 @@ boottest.fixest  <- function(object,
                     boot_iter = B,
                     wild_draw_fun = wild_draw_fun, 
                     point_estimate = point_estimate, 
-                    impose_null = impose_null)
+                    impose_null = impose_null, 
+                    beta0 = beta0,
+                    alpha = alpha,
+                    param = param,
+                    seed = seed)
   
   # compute confidence sets
   if(is.null(conf_int) || conf_int == TRUE){
@@ -187,7 +193,7 @@ boottest.fixest  <- function(object,
                                point_estimate = point_estimate,
                                se_guess = se_guess, 
                                clustid = preprocess$clustid, 
-                               alpha = preprocess$alpha, 
+                               alpha = alpha, 
                                vcov_sign = preprocess$vcov_sign, 
                                impose_null = impose_null)
     
@@ -210,7 +216,7 @@ boottest.fixest  <- function(object,
                     clustid = clustid, 
                     #depvar = depvar, 
                     N_G = preprocess$N_G, 
-                    alpha = preprocess$alpha,
+                    alpha = alpha,
                     call = call, 
                     type = type, 
                     impose_null = impose_null)
