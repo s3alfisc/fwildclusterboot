@@ -177,14 +177,14 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
     }
   } else if(!is.null(W)){
     # project out fe
-    S_Wu_F_a <- crosstab2(as.matrix(W %*% Q), var1 = bootcluster, var2 = fixed_effect) # f x c*
-    S_Wu_F_b <- crosstab2(as.matrix(W %*% P), var1 = bootcluster, var2 = fixed_effect) # f x c*
+    S_Wu_F_a <- crosstab2(as.matrix(weights * W %*% Q), var1 = bootcluster, var2 = fixed_effect) # f x c*
+    S_Wu_F_b <- crosstab2(as.matrix(weights * W %*% P), var1 = bootcluster, var2 = fixed_effect) # f x c*
     
     for(x in names(clustid)){
       
-      SXinvXXrX[[x]] <-  collapse::fsum(weights * SArX, clustid[x]) #c* x f
+      SXinvXXrX[[x]] <-  collapse::fsum(WXArX, clustid[x]) #c* x f
       SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% A0
-      S_XinvXXR_F <- crosstab2(weights * XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
+      S_XinvXXR_F <- crosstab2(WXAr, var1 = clustid[x], var2 = fixed_effect) # c x f
       # a
       prod_a <- t(tcrossprod(S_Wu_F_a, S_XinvXXR_F))
       S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
