@@ -7,7 +7,8 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
   #'@param fe A character scalar - fixed effect to be projected out, or NULL
   #'@param param The univariate coefficients for which a hypothesis is to be tested
   #'@param bootcluster The bootstrap sampling cluster. 
-  #'@importFrom stats formula model.frame coef as.formula model.matrix model.response model.weights
+  #'@importFrom stats residuals formula model.frame coef as.formula model.matrix model.response model.weights
+  #'@importFrom utils combn
   #'@export
   #'@return List containing preprocessed data for boottest estimation
   

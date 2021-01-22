@@ -1,6 +1,7 @@
 Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap for Linear Models
-Version: 0.1
+Version: 0.2
+Date: 2021-01-22
 Authors@R: 
     c(person(given = "Alexander",
            family = "Fischer",
@@ -10,7 +11,7 @@ Authors@R:
            family = "Roodman", 
            role = "ctb"))
 Description: Fast wild cluster bootstrap inference for linear regression models.
-License: GPL (>= 3)
+License: GPL-3 + file LICENSE 
 Depends: 
     R (>= 4.0.0)
 Imports: 
@@ -26,7 +27,7 @@ Imports:
     lmtest
 Suggests: 
     fixest,
-    lfe (>= 2.8),
+    lfe,
     tinytest,
     covr,
     knitr,
@@ -36,4 +37,3 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 LinkingTo: Rcpp, RcppEigen
-VignetteBuilder: knitr

@@ -136,11 +136,15 @@ boottest.fixest  <- function(object,
    }
   
    deparse_fml <- paste(deparse(object$fml_all, width.cutoff = 500), collapse="")
-   #deparse_fml <- deparse(object$fml)
+   #deparse_fml <- suppressWarnings(formula(Formula::as.Formula(object$fml_all$linear), lhs = 0, rhs = c(1, 2), collapse = TRUE))
+   #deparse_fml <- Reduce(paste, deparse_fml)
    if(grepl("[",deparse_fml, fixed = TRUE) || 
       grepl("i(", deparse_fml, fixed = TRUE) ||
       grepl("c(", deparse_fml, fixed = TRUE) ||
-      grepl("^", deparse_fml, fixed = TRUE)){
+      grepl("^", deparse_fml, fixed = TRUE)  
+      # note: whitespace ~ - for IV
+      #grepl("~", deparse_fml, fixed = TRUE)
+    ){
      stop("Advanced formula notation in fixest / fixest (i(), ^, [x] and vectorized formulas via c(),) is currently not supported in boottest.")
    }
   
