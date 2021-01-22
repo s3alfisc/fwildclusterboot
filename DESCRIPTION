@@ -18,11 +18,11 @@ Imports:
     collapse, 
     data.table,
     Formula,
-    fabricatr,
     Rcpp,
     dreamerr,
     Matrix,
     Matrix.utils,
+    fabricatr,
     sandwich,
     lmtest
 Suggests: 

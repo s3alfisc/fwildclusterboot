@@ -3,7 +3,7 @@ create_data_2 <-
     
     #' Function creates data for tests and examples
     #' @import data.table
-    #' @import fabricatr
+    #' @importFrom  fabricatr fabricate
     #' @param N number of observations
     #' @param N_G1 A scalar. number of clusters for clustering variable 1
     #' @param icc1 A scalar between 0 and 1. intra-cluster correlation for clustering variable 1
