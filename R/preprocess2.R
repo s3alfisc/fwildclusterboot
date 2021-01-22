@@ -221,10 +221,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
   }
   k <- dim(X)[2]
   weights <- as.vector(model.weights(of))
-  if(is.null(weights)){
-    weights <- rep(1, N)
-  }
-  
+
   # all null if fe = NULL
   fixed_effect <- NULL
   W <- NULL 
@@ -240,13 +237,17 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
     if(is.null(weights)){
       levels(fixed_effect_W) <- 1 / table(fixed_effect)
     } else if(!is.null(weights)){
-      stop("Currently, boottest() does not support regression weights / WLS and fixed effects.")
+      stop("Currently, boottest() does not jointly support regression weights / WLS and fixed effects. If you want to use
+           boottest() for inference based on WLS, please set fe = NULL.")
       #levels(fixed_effect_W) <- 1 / table(fixed_effect) 
     }
     W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effect_W)))
     n_fe <- length(unique(fixed_effect[, 1]))
   }
   
+  if(is.null(weights)){
+    weights <- rep(1, N)
+  }
   
   # ---------------------------------------------------------------------------- # 
   # Step 4: preprocess clusters
@@ -287,7 +288,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
   } else if(length(bootcluster == 1) && bootcluster %in% c(model_param_names, cluster_names)){
     bootcluster <- clustid[which(names(clustid) == bootcluster)] 
   } else if(length(bootcluster) > 1 ){
-    bootcluster <- Reduce(paste0, data_boot[, bootcluster])
+    bootcluster <- Reduce(paste0, model_frame[, bootcluster])
   }
   
   
