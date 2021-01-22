@@ -36,11 +36,18 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
     # add potential other cluster variables from cluster argument
     formula <- eval(of$fml)
     
-    formula_coef_fe <- formula(Formula::as.Formula(formula), lhs = 1, rhs = c(1, 2), collapse = TRUE)
+    # combine fixed effects in formula with main formula
+    # note: you get a warning here if rhs = 2 is empty (no fixed effect specified via fml)
+    formula_coef_fe <- suppressWarnings(formula(Formula::as.Formula(formula), lhs = 1, rhs = c(1, 2), collapse = TRUE))
+
     formula <- formula_coef_fe
+    
     if(!is.null(eval(of$fixef))){
-      formula <- update(formula_coef_fe, paste("~ . +",paste(eval(of$fixef), collapse = "+")))
+      # add additional fixed effects specified in fixef argument of feols()
+      formula_coef_fe <- update(formula_coef_fe, paste("~ . + ", eval(of$fixef)))
+      formula <- formula_coef_fe
     }
+    # add cluster variables specified in feols-cluster and boottest-cluster arguments
     if(!is.null(eval(of$cluster))){
       formula <- update(formula, paste("~ . +",paste(eval(of$cluster), collapse = "+")))
     }
