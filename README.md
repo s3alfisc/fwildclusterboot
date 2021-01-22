@@ -20,9 +20,11 @@ The `fwildclusterboot` package is an R port of Stata’s
 [boottest](https://github.com/droodman/boottest) package.
 
 It implements the fast wild cluster bootstrap algorithm developed in
-Roodman et al (2019) for regression objects in R. It currently works for
-regression objects of type `lm`, `felm` and `fixest` from base R and the
-`lfe` and `fixest` packages.
+[Roodman et al
+(2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for
+regression objects in R. It currently works for regression objects of
+type `lm`, `felm` and `fixest` from base R and the `lfe` and `fixest`
+packages.
 
 The package’s central function is `boottest()`. It allows the user to
 test two-sided, univariate hypotheses using a wild cluster bootstrap.
@@ -31,11 +33,12 @@ which makes it feasible to calculate test statistics based on a large
 number of bootstrap draws even for large samples–as long as the number
 of bootstrapping clusters is not too large.
 
-The `fwildclusterboot` package currently supports one- and
-two-dimensional clustering and one-dimensional hypotheses.
+The `fwildclusterboot` package currently supports multi-dimensional
+clustering and one-dimensional hypotheses.
 
 The package is currently in an experimental testing phase and still
-lacks sufficient unit tests.
+lacks sufficient unit tests. Support for regression weights and the
+unrestricted cluster bootstrap (WCU) will be added in the near future.
 
 <!-- The following features will be added in the future:  -->
 
@@ -68,7 +71,7 @@ for linear models based on
 ``` r
 library(fwildclusterboot)
 
-B <- 10000
+B <- 99999
 seed <- 942413
 set.seed(seed)
 voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
@@ -77,8 +80,7 @@ voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.0
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
 
 # bootstrap estimation
-boot_lm = boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
-#>   |                                                                              |                                                                      |   0%  |                                                                              |------                                                                |   8%  |                                                                              |---------                                                             |  12%  |                                                                              |------------                                                          |  17%  |                                                                              |---------------                                                       |  21%  |                                                                              |------------------                                                    |  25%  |                                                                              |--------------------                                                  |  29%  |                                                                              |-----------------------                                               |  33%  |                                                                              |--------------------------                                            |  38%  |                                                                              |-----------------------------                                         |  42%  |                                                                              |--------------------------------                                      |  46%  |                                                                              |-----------------------------------                                   |  50%  |                                                                              |--------------------------------------                                |  54%  |                                                                              |-----------------------------------------                             |  58%  |                                                                              |--------------------------------------------                          |  62%  |                                                                              |-----------------------------------------------                       |  67%  |                                                                              |--------------------------------------------------                    |  71%  |                                                                              |----------------------------------------------------                  |  75%  |                                                                              |-------------------------------------------------------               |  79%  |                                                                              |----------------------------------------------------------            |  83%  |                                                                              |-------------------------------------------------------------         |  88%  |                                                                              |----------------------------------------------------------------      |  92%  |                                                                              |-------------------------------------------------------------------   |  96%  |                                                                              |----------------------------------------------------------------------| 100%
+boot_lm <- boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE)
 
 # summarize the results
 summary(boot_lm)
@@ -86,17 +88,17 @@ summary(boot_lm)
 #>     B = B, conf_int = TRUE, seed = seed)
 #>  
 #>  Observations: 10000
-#>  Bootstr. Iter: 10000
+#>  Bootstr. Iter: 99999
 #>  Bootstr. Type: rademacher
 #>  Clustering: oneway
 #>  Confidence Sets: 95%
 #>  Number of Clusters: 20
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.025   3.047    0.006    0.008    0.044
+#> treatment    0.004   1.105    0.282   -0.003     0.01
 tidy(boot_lm)
-#>             Estimate  t value Pr(>|t|)    CI Lower   CI Upper
-#> treatment 0.02532767 3.046986   0.0056 0.008060003 0.04383268
+#>              Estimate  t value  Pr(>|t|)     CI Lower   CI Upper
+#> treatment 0.003591152 1.104589 0.2816328 -0.003235567 0.01049849
 ```
 
 <!-- The `boottest` function always calculates p-values for a given univariate hypothesis test. -->
