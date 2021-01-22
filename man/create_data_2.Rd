@@ -4,7 +4,7 @@
 \alias{create_data_2}
 \title{Function creates data for tests and examples}
 \usage{
-create_data_2(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed)
+create_data_2(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed, weights)
 }
 \arguments{
 \item{N}{number of observations}
@@ -22,6 +22,8 @@ create_data_2(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed)
 \item{numb_fe2}{A scalar. Number of fixed effect for second factor variable}
 
 \item{seed}{An integer. Set the random seed}
+
+\item{weights}{Possible regression weights to be used in estimation}
 }
 \description{
 Function creates data for tests and examples
