@@ -128,7 +128,7 @@ boottest.fixest  <- function(object,
    
    # throw error if specific function arguments are used in feols() call
    call_object <- names(object$call)[names(object$call) != ""]
-   banned_fun_args <- c("offset", "subset", "split", "fsplit", "panel.id", "demeaned", "weights")
+   banned_fun_args <- c("offset", "subset", "split", "fsplit", "panel.id", "demeaned")
    if(sum(call_object %in% banned_fun_args) > 0){
      stop("boottest.fixest currently does not accept objects of type fixest with function arguments 
           offset, subset, split, fsplit, panel.id & demeaned.", 

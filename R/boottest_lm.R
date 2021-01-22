@@ -117,7 +117,7 @@ boottest.lm <- function(object,
   
   # throw error if specific function arguments are used in lm() call
   call_object <- names(object$call)[names(object$call) != ""]
-  banned_fun_args <- c("contrasts", "subset", "offset", "x", "y", "weights")
+  banned_fun_args <- c("contrasts", "subset", "offset", "x", "y")
   if(sum(call_object %in% banned_fun_args) > 0){
     stop(paste("boottest.lm currently does not accept objects of type fixest with function arguments", 
                paste0(banned_fun_args[1:(length(banned_fun_args) - 1)], collapse = ", "), "and", banned_fun_args[length(banned_fun_args)], "."), 

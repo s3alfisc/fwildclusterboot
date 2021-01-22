@@ -1,5 +1,5 @@
 create_data_2 <- 
-  function(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed){
+  function(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed, weights){
     
     #' Function creates data for tests and examples
     #' @import data.table
@@ -12,6 +12,7 @@ create_data_2 <-
     #' @param numb_fe1 A scalar. Number of fixed effect for first factor variable
     #' @param numb_fe2 A scalar. Number of fixed effect for second factor variable
     #' @param seed An integer. Set the random seed
+    #' @param weights Possible regression weights to be used in estimation
     #' @importFrom stats rlnorm
     #' @export
 
@@ -39,7 +40,7 @@ create_data_2 <-
         Q2_defense = ifelse(Q2_defense_latent > 0.5, 1, 
                                 ifelse(Q2_defense_latent <= 0.5 & Q2_defense_latent > 0, 2, 3)),
         treatment = fabricatr::draw_binary(0.5, N = N),
-        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.8 * treatment + 2*Q1_immigration + rnorm(N, 0, 3), link = "probit")
+        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.3 * treatment + 2*Q1_immigration + rnorm(N, 0, 3), link = "probit")
       )
     
     voters$Q1_immigration <- as.factor(voters$Q1_immigration)
@@ -48,6 +49,9 @@ create_data_2 <-
     
     voters$log_income <- log(voters$income)
     voters$Q1_immigration <- as.factor(voters$Q1_immigration)
+    
+    # add weights
+    voters$weights <- sample(1:10, N, replace = TRUE) / 10
     
     voters
   }

@@ -20,7 +20,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   
   # 1) preprocess
   #preprocessed_object = preprocess
-
+  
   X <- preprocessed_object$X
   Y <- preprocessed_object$Y
   R0 <- preprocessed_object$R0
@@ -56,7 +56,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   v <- matrix(wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1)), N_G_bootcluster, boot_iter + 1)
   v[,1] <- 1
   
-
+  
   #impose_null = FALSE
   if(impose_null == TRUE){
     # error under the null hypothesis. note the Xr is only used to pre-compute
@@ -80,7 +80,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
     #         - K_b, C, D, CD, DD also only contain zeros. Note: CC non-zero
     #         - numer_b contains only zeros, B as well
   }
-
+  
   # small sample correction for clusters 
   G <- sapply(clustid, function(x) length(unique(x)))
   small_sample_correction <- G / (G - 1)
@@ -88,39 +88,54 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   small_sample_correction <- vcov_sign * small_sample_correction
   
   # Xr is only used here: 
-  invXrXr <- solve(crossprod(Xr))
-  Q <- Y - Xr %*% (invXrXr %*% (t(Xr) %*% Y)) # u_hat
-  P <- Xr %*% (invXrXr %*% (t(Xr) %*% Xr0)) - Xr0
+  weights_mat <- Matrix::Diagonal(N, weights)
+  Ar <- as.matrix(solve(t(Xr) %*% weights_mat %*% Xr))
+  # if(sum(weights) == length(weights)){
+  #   mean(Ar - solve(crossprod(Xr))) 
+  # }
+  Q <- Y - Xr %*% (Ar %*% (t(Xr) %*% weights_mat %*% Y))
+  P <- -Xr0 + Xr %*% (Ar %*% (t(Xr) %*% weights_mat %*% Xr0))
+  ##invXrXr <- solve(crossprod(Xr))
+  # Q <- Y - Xr %*% (Ar %*% (t(Xr) %*% Y)) # u_hat
+  # P <- Xr %*% (Ar %*% (t(Xr) %*% Xr0)) - Xr0
   if(impose_null == FALSE && any(P != 0) == TRUE){stop("P contains non-0 values even though impose_null = FALSE.")}
   
-  invXX <- solve(crossprod(X)) # k x k matrix#
-  XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
-  XinvXXrX <- XinvXXr * X
+  rm(list = c("Ar", "Xr", "Xr0"))
+  
+  A0 <- as.matrix(solve(t(X) %*% weights_mat %*% X))
+  WXAr <- weights * as.vector(X %*% (A0 %*% R0))
+  WXArX <- WXAr * X
+  #invXX <- solve(crossprod(X)) # k x k matrix#
+  # XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
+  # XinvXXrX <- XinvXXr * X
   
   # pre-calculate several objects used in for loop below: 
   # splits: a + br
-  SuXa <- collapse::fsum( as.vector(Q) * X, bootcluster[[1]])
-  SuXb <- collapse::fsum(as.vector(P) * X, bootcluster[[1]])
+  SuXa <- collapse::fsum(weights *  as.vector(Q) * X, bootcluster[[1]])
+  SuXb <- collapse::fsum(weights * as.vector(P) * X, bootcluster[[1]])
   
-  XinvXXrQ <- XinvXXr * Q
-  XinvXXrP <- XinvXXr * P 
+  # XinvXXrQ <- XinvXXr * Q
+  # XinvXXrP <- XinvXXr * P 
+  
+  WXArQ <- WXAr * Q
+  WXArP <- WXAr * P 
   
   diag_XinvXXRuS_a <- Matrix::t(
     Matrix.utils::aggregate.Matrix(
       Matrix::Diagonal(N, 
-                       as.vector(weights * XinvXXrQ)),
+                       as.vector(WXArQ)),
       bootcluster[[1]])) # N x c*
   
   diag_XinvXXRuS_b <- Matrix::t(
     Matrix.utils::aggregate.Matrix(
       Matrix::Diagonal(N, 
-                       as.vector(weights * XinvXXrP)),
+                       as.vector(WXArP)),
       bootcluster[[1]])) # N x c*  
   
   # calculate numerator: 
   
-  numer_a <- collapse::fsum(as.vector(weights * XinvXXrQ), bootcluster[[1]])
-  numer_b <- collapse::fsum(weights * XinvXXrP, bootcluster[[1]])
+  numer_a <- collapse::fsum(as.vector(WXArQ), bootcluster[[1]])
+  numer_b <- collapse::fsum(as.vector(WXArP), bootcluster[[1]])
   # calculate A, B
   A <- crossprod(numer_a, v)
   B <- crossprod(numer_b, v)
@@ -144,8 +159,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   if(is.null(W)){
     for(x in names(clustid)){
       
-      SXinvXXrX[[x]] <-  collapse::fsum(weights * XinvXXrX, clustid[x]) #c* x f
-      SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% invXX
+      SXinvXXrX[[x]] <-  collapse::fsum(WXArX, clustid[x]) #c* x f
+      SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% A0
       # a
       S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
       K_a[[x]] <- S_diag_XinvXXRu_S_a  - tcrossprod(SXinvXXrX_invXX[[x]], SuXa) 
@@ -167,8 +182,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
     
     for(x in names(clustid)){
       
-      SXinvXXrX[[x]] <-  collapse::fsum(weights * XinvXXrX, clustid[x]) #c* x f
-      SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% invXX
+      SXinvXXrX[[x]] <-  collapse::fsum(weights * SArX, clustid[x]) #c* x f
+      SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% A0
       S_XinvXXR_F <- crosstab2(weights * XinvXXr, var1 = clustid[x], var2 = fixed_effect) # c x f
       # a
       prod_a <- t(tcrossprod(S_Wu_F_a, S_XinvXXR_F))
@@ -204,16 +219,16 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   res  <- list(p_val = p_val,
                t_stat = t[1],
                t_boot = t_boot,
-               X = X,
-               Y = Y, 
+               #X = X,
+               #Y = Y, 
                B = B, 
                R0 = R0, 
                param = param, 
                clustid = clustid,
-               invXX = invXX,
+               #invXX = invXX,
                v = v,
-               Xr = Xr,
-               XinvXXr = XinvXXr, 
+               #Xr = Xr,
+               #XinvXXr = XinvXXr, 
                invalid_t = invalid_t, 
                ABCD = ABCD)
   class(res) <- "boot_algo"

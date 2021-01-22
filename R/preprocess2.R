@@ -148,13 +148,12 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
     # add potential other cluster variables from cluster argument
     formula_coef_fe <- eval(of$formula)
     
+    # add cluster variables to formula
     if(!is.null(cluster)){
       formula <- update(formula_coef_fe, paste("~ . +",paste(cluster, collapse = "+")))
       #formula <- update(formula, paste("~ . -",fe))
     }
     
-    #formula_coef_fe <- update(eval(of$formula), paste(". -", fe))
-
     of$formula <- as.call(formula)
 
     o <- match(c("formula","data", "weights"), names(of), 0L)
@@ -165,6 +164,8 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
     # print(of)
     
     N_model <- length(residuals(object))
+    # fe argument not allowed with boottest.lm
+    fe <- NULL
   }
  
 
@@ -239,7 +240,8 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
     if(is.null(weights)){
       levels(fixed_effect_W) <- 1 / table(fixed_effect)
     } else if(!is.null(weights)){
-      levels(fixed_effect_W) <- 1 / table(fixed_effect)
+      stop("Currently, boottest() does not support regression weights / WLS and fixed effects.")
+      #levels(fixed_effect_W) <- 1 / table(fixed_effect) 
     }
     W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effect_W)))
     n_fe <- length(unique(fixed_effect[, 1]))
