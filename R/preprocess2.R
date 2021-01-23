@@ -276,6 +276,10 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
   vcov_sign <- sapply(acc, function(i) (-1)^(length(i) + 1))
   acc <- acc[-1:-clustid_dims]
   
+  if(clustid_dims == 1){
+    names(clustid) <- cluster_names
+  }
+  
   if (clustid_dims > 1) {
     for (i in acc) {
       clustid <- cbind(clustid, Reduce(paste0, clustid[,i]))
@@ -287,15 +291,21 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
   N_G <- sapply(clustid, function(x) length(unique(x)))
   
   # create a bootcluster vector
-  if(bootcluster == "max"){
-    bootcluster <- clustid[which.max(N_G)]
-  } else if(bootcluster == "min"){
-    bootcluster <- clustid[which.min(N_G)]
-  } else if(length(bootcluster == 1) && bootcluster %in% c(model_param_names, cluster_names)){
-    bootcluster <- clustid[which(names(clustid) == bootcluster)] 
-  } else if(length(bootcluster) > 1 ){
-    bootcluster <- Reduce(paste0, model_frame[, bootcluster])
+  if(length(bootcluster) == 1){
+    if(bootcluster == "max"){
+      bootcluster <- clustid[which.max(N_G)]
+    } else if(bootcluster == "min"){
+      bootcluster <- clustid[which.min(N_G)]
+    } else if(length(bootcluster) == 1 && bootcluster %in% c(model_param_names, cluster_names)){
+      # no comma - then bootcluster is a data.frame. this is required later.
+      bootcluster <- clustid[which(names(clustid) == bootcluster)] 
+    }
+  } else if(length(bootcluster) > 1){
+    # if a character vector of length > 1 is used to specify the bootcluster
+    # same as above: model_frame[bootcluster] -> bootcluster will be a data.frame
+    bootcluster <- as.data.frame(Reduce(paste0, model_frame[bootcluster]))
   }
+ 
   
   
   # --------------------------------------------------------------------------------------- #
