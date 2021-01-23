@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 0.3, 2020, 10, 10, 79318, R, R version 4.0.3 (2020-10-10), Bunny-Wunnies Freak Out-orange.svg?style=flat-square)](commits/master) -->
+
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![CRAN
@@ -14,6 +16,7 @@ status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-p
 coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
 [![minimal R
 version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/)
+
 <!-- badges: end -->
 
 The `fwildclusterboot` package is an R port of Stata’s
@@ -34,11 +37,11 @@ number of bootstrap draws even for large samples–as long as the number
 of bootstrapping clusters is not too large.
 
 The `fwildclusterboot` package currently supports multi-dimensional
-clustering and one-dimensional hypotheses.
-
-The package is currently in an experimental testing phase and still
-lacks sufficient unit tests. Support for regression weights and the
-unrestricted cluster bootstrap (WCU) will be added in the near future.
+clustering and one-dimensional hypotheses. It supports regression
+weights, multiple distributions of bootstrap weights, fixed effects,
+restricted (WCR) and unrestricted (WCU) bootstrap inference and
+subcluster bootstrapping for few treated clusters [(MacKinnon & Webb,
+(2018))](https://academic.oup.com/ectj/article-abstract/21/2/114/5078969).
 
 <!-- The following features will be added in the future:  -->
 
@@ -95,10 +98,10 @@ summary(boot_lm)
 #>  Number of Clusters: 20
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.004   1.105    0.282   -0.003     0.01
+#> treatment    0.021   2.678    0.013    0.005    0.038
 tidy(boot_lm)
-#>              Estimate  t value  Pr(>|t|)     CI Lower   CI Upper
-#> treatment 0.003591152 1.104589 0.2816328 -0.003235567 0.01049849
+#>             Estimate  t value   Pr(>|t|)   CI Lower   CI Upper
+#> treatment 0.02116693 2.677971 0.01255013 0.00474623 0.03791271
 ```
 
 <!-- The `boottest` function always calculates p-values for a given univariate hypothesis test. -->
