@@ -1,3 +1,14 @@
+*.Rproj.user
+*.Rhistory
+*.RData
+*.RDataTmp
+*.Ruserdata
+*.Rproj
+*vignette.pdf
+*.o
+*.so
+*.dll
 .Rproj.user
-man/figures
-^README\.Rmd$
+inst/doc
+doc
+Meta
