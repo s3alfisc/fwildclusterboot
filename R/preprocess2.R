@@ -84,6 +84,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
     of <- eval(of, parent.frame())
     
     N_model <- object$nobs
+    model_param_names <- c(names(coef(object)), object$fixef)
     
   } else if(class(object) == "felm"){
     
@@ -134,6 +135,8 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
     of <- eval(of, parent.frame())
     
     N_model <- object$N
+    model_param_names <- rownames(coef(object))
+    
     
   } else if(class(object) == "lm"){
     
@@ -165,6 +168,8 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
     # print(of)
     
     N_model <- length(residuals(object))
+    model_param_names <- names(coef(object))
+                           
     # fe argument not allowed with boottest.lm
     fe <- NULL
   }
@@ -190,7 +195,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
                     "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."),
               call. = FALSE)
     }
-  } else if(no_omit == FALSE){
+  } else if(na_omit == FALSE){
     if(N_diff >= 1){
       stop(paste(N_diff, 
                  "NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest(). If you are fine with deleting missing values, set na_omit = TRUE."),

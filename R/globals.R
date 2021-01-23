@@ -5,9 +5,7 @@ utils::globalVariables(c("Q1_immigration",
                          "group_id2",
                          "ideology1",
                          "ideology2",
-                         "treatment"#,
-                         # "model_param_names",
-                         # "no_omit",
-                         # "y"
+                         "treatment",
+                         "y" # y is used in crosstab2
                          
 ))
