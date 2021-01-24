@@ -1,6 +1,6 @@
-create_data_2 <- 
-  function(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed, weights){
-    
+create_data_2 <-
+  function(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed, weights) {
+
     #' Function creates data for tests and examples
     #' @import data.table
     #' @importFrom  fabricatr fabricate
@@ -17,14 +17,14 @@ create_data_2 <-
     #' @export
 
     set.seed(seed)
-    voters <- 
+    voters <-
       fabricatr::fabricate(
         N = N,
         group_id1 = sample(1:N_G1, N, replace = TRUE),
-        group_id2 = sample(1:N_G2, N , replace = TRUE),
+        group_id2 = sample(1:N_G2, N, replace = TRUE),
         ideology1 = fabricatr::draw_normal_icc(mean = 0, N = N, clusters = group_id1, ICC = icc1),
         ideology2 = fabricatr::draw_normal_icc(mean = 0, N = N, clusters = group_id2, ICC = icc2),
-        
+
         ideological_label = fabricatr::draw_ordered(
           x = ideology1,
           break_labels = c(
@@ -34,24 +34,26 @@ create_data_2 <-
         ),
         income = exp(rlnorm(n = N, meanlog = 2.4 - (ideology1 * 0.1), sdlog = 0.12)),
         Q1_immigration_latent = rnorm(N),
-        Q1_immigration = ifelse(Q1_immigration_latent > 0.5, 1, 
-                                ifelse(Q1_immigration_latent <= 0.5 & Q1_immigration_latent > 0, 2, 3)),
+        Q1_immigration = ifelse(Q1_immigration_latent > 0.5, 1,
+          ifelse(Q1_immigration_latent <= 0.5 & Q1_immigration_latent > 0, 2, 3)
+        ),
         Q2_defense_latent = rnorm(N, 0, 3),
-        Q2_defense = ifelse(Q2_defense_latent > 0.5, 1, 
-                                ifelse(Q2_defense_latent <= 0.5 & Q2_defense_latent > 0, 2, 3)),
+        Q2_defense = ifelse(Q2_defense_latent > 0.5, 1,
+          ifelse(Q2_defense_latent <= 0.5 & Q2_defense_latent > 0, 2, 3)
+        ),
         treatment = fabricatr::draw_binary(0.5, N = N),
-        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.3 * treatment + 2*Q1_immigration + rnorm(N, 0, 3), link = "probit")
+        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.3 * treatment + 2 * Q1_immigration + rnorm(N, 0, 3), link = "probit")
       )
-    
+
     voters$Q1_immigration <- as.factor(voters$Q1_immigration)
     voters$Q2_defense <- as.factor(voters$Q2_defense)
-    
-    
+
+
     voters$log_income <- log(voters$income)
     voters$Q1_immigration <- as.factor(voters$Q1_immigration)
-    
+
     # add weights
     voters$weights <- sample(1:10, N, replace = TRUE) / 10
-    
+
     voters
   }
