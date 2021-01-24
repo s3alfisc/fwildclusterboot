@@ -23,9 +23,7 @@ Imports:
     dreamerr,
     Matrix,
     Matrix.utils,
-    fabricatr,
-    sandwich,
-    lmtest
+    fabricatr
 Suggests: 
     fixest,
     lfe,
