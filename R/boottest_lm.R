@@ -174,11 +174,14 @@ boottest.lm <- function(object,
 
 
   if (is.null(conf_int) || conf_int == TRUE) {
-    # calculate guess for covariance matrix and standard errors
-    #vcov <- suppressWarnings(vcovCL(object, cluster = clustid_fml))
-    #coefs <- suppressWarnings(coeftest(object, vcov))
     
-    se_guess <- point_estimate / res$t_stat
+    # guess for standard errors
+    if(impose_null == TRUE){
+      # should always be positive, point_estimate and t_stat need to have same sign
+      se_guess <- abs(point_estimate / res$t_stat)
+    } else if(impose_null == FALSE){
+      se_guess <- abs((point_estimate - beta0) / res$t_stat)
+    }
     
     if (is.na(se_guess)) {
       se_guess <- object$se[param]

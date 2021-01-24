@@ -195,13 +195,16 @@ boottest.fixest <- function(object,
 
   # compute confidence sets
   if (is.null(conf_int) || conf_int == TRUE) {
-    # calculate guess for covariance matrix and standard errors
-    # vcov <- sandwich::vcovCL(object, cluster = clustid)
-    # coefs <- lmtest::coeftest(object, vcov)
-    # se_guess <- coefs[param, "Std. Error"]
-
-    se_guess <- point_estimate / res$t_stat
-  
+   
+     # guess for standard errors
+    if(impose_null == TRUE){
+      # should always be positive, point_estimate and t_stat need to have same
+      # sign, abs for security
+      se_guess <- abs(point_estimate / res$t_stat)
+    } else if(impose_null == FALSE){
+      se_guess <- abs((point_estimate - beta0) / res$t_stat)
+    }
+    
     res_p_val <- invert_p_val2(
       object = res,
       B = B,
