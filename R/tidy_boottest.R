@@ -6,21 +6,7 @@ tidy <- function(object, ...) {
   UseMethod("tidy", object)
 }
 
-#'  summary <- function(object,...){
-#'    #' S3 method to summarize objects of class boottest
-#'    #'@export
-#'    #'@param object object of type boottest
-#'    #'@param ... other arguments
-#'    UseMethod("summary", object)
-#'  }
-#'
-#' plot <- function(object,...){
-#'    #' S3 generic to plot bootstrap t statistics
-#'    #'@export
-#'    #'@param object object of type boottest
-#'    #'@param ... other arguments
-#'    UseMethod("plot", object)
-#' }
+
 
 tidy.boottest <- function(object, ...) {
   #' S3 method to summarize objects of class boottest into tidy data.frame
@@ -65,8 +51,8 @@ summary.boottest <- function(object, digits = 3, ...) {
 
   N <- object$N
   B <- object$B
-  alpha <- object$alpha
-  signif_level <- paste0((1 - alpha) * 100, "%")
+  sign_level <- object$sign_level
+  signif_level <- paste0((1 - sign_level) * 100, "%")
   call <- object$call
   N_G <- object$N_G
   B <- object$B
@@ -101,7 +87,7 @@ summary.boottest <- function(object, digits = 3, ...) {
     sprintf("Bootstr. Type: %s\n", type),
     sprintf("Clustering: %s\n", clustering_type),
     sprintf("Confidence Sets: %s\n", signif_level),
-    sprintf("Number of Clusters: %s\n", numb_clusters),
+    sprintf("Number of Clusters: %s\n", Reduce(paste, numb_clusters)),
 
     # sprintf("Adj. R-Squared: %s\n", round(adj_r_squared,6)),
     sprintf("%s\n", "")
@@ -123,11 +109,12 @@ plot.boottest <- function(x, ...) {
   test_vals <- x$test_vals
   p_test_vals <- x$p_test_vals
   conf_int <- x$conf_int
-  alpha <- x$alpha
+  sign_level <- x$sign_level
 
   graphics::plot(x = test_vals, y = p_test_vals, type = "b", pch = 20, lty = 2, xlab = "Constraint", ylab = "p-value")
   lines(test_vals, p_test_vals, type = "l", lty = 1)
   abline(v = conf_int[1], col = "blue")
   abline(v = conf_int[2], col = "blue")
-  abline(h = alpha, col = "red")
+  abline(h = sign_level, col = "red")
 }
+
