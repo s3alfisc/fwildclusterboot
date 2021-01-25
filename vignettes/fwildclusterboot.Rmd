@@ -95,7 +95,7 @@ A `plot()` method allows the user to inspect the bootstrap t-statistics:
 plot(boot_lm)
 ```
 
-A note on the output in `tidy()` and `summary()`:
+<!-- A note on the output in `tidy()` and `summary()`: -->
 
 ## Multiway Clustering 
 
@@ -168,7 +168,7 @@ summary(boot_lm)
 
 ## Fixed Effects
 
-Last, `boottest()` supports out-projection of fixed effects in the estimation stage via `felm()` and `fixest`. 
+Last, `boottest()` supports out-projection of fixed effects in the estimation stage via `lfe::felm()` and `fixest::feols()`. 
 Within the bootstrap, the user can choose to project out *only one* fixed effect, which can be set via the `fe` function argument. All other fixed effects specified in either `felm()` or `feols()` are treated as sets of binary regressors.
 
 ```{r}
@@ -195,7 +195,7 @@ boot_felm <- boottest(felm_fit,
 
 ## The Subcluster Bootstrap 
 
-In the case of few treated clusters, MacKinnon and Webb suggest to use subclusters to form the bootstrap distribution. `boottest()` allows the user to specify subclusters via the `bootcluster` argument. 
+In the case of few treated clusters, [MacKinnon and Webb (2018)]((https://academic.oup.com/ectj/article-abstract/21/2/114/5078969))  suggest to use subclusters to form the bootstrap distribution. `boottest()` allows the user to specify subclusters via the `bootcluster` argument. 
 
 ```{r}
 boot_min <- boottest(lm_fit,
@@ -370,13 +370,13 @@ boot_feols <- boottest(feols_fit,
 
 ## Treatment of Invalid Test Statistics for multiway clustering
 
-In case of multiway clustering, it is not guaranteed that the covariance matrix is positive definite, in which case the resulting bootstrap test statistics are invalid. `boottest()` follows the implementation in STATA and deletes invalid tests statistics, and informs the user with a note.
+In case of multi-way clustering, it is not guaranteed that the covariance matrix is positive definite, in which case the resulting bootstrap test statistics are invalid. `boottest()` follows the implementation in STATA and deletes invalid tests statistics, and informs the user with a note.
 
 ## On the handling of missing values 
 
 `boottest()` retrieves both the design matrix X, the dependent variable y and the cluster variables from the input object of type `lm`, `fixest` or `felm`. Because `boottest()` allows to add or delete clustering variables that are not employed in `lm()`, `feols()` and `felm()`, it may occurs that 
 a cluster variable is added in `boottest()` that is not included in the regression model, either as a cluster variable or covariate. 
-In this case, boottest deletes the respective rows in the dependent variable, design matrix and in the cluster variables.  In consequence, estimation (in the modeling step) and inference (via `boottest()`) are done on a different sample. In this case, `boottest()` returns a warning. 
+In this case, boottest deletes the respective rows in the dependent variable, design matrix and in the cluster variables.  In consequence, estimation (in the modeling step) and inference (via `boottest()`) are done on a different sample. `boottest()` returns a warning. 
 
 ## A note of caution
 

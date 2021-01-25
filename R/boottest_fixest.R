@@ -54,24 +54,21 @@ boottest.fixest <- function(object,
   #' \item Out of the 26 calculated p-values, find the two pairs of values x for which the corresponding p-values px cross the significance sign_level sign_level.
   #' \item Feed the two pairs of x into an numerical root finding procedure and solve for the root. boottest currently relies on \code{stats::uniroot} and sets an absolute tolerance of 1e-06 and stops the procedure after 10 iterations.
   #' }
-  #' Note that confidence intervals computed via \code{boottest.fixest} sometimes slightly differ from confidence intervals calculated
-  #' via \code{boottest.lm} or \code{boottest.felm}. This is due to different initial guesses for starting values. \code{boottest.lm} uses inflated cluster robust
-  #' standard errors calculated via the \code{sandwich} package, while \code{boottest.felm} and \code{boottest.fixest} use different small-sample bias
-  #' correction methods for calculating cluster standard errors internally. Slightly different starting values hence lead to slightly different
-  #' confidence intervals.
   #' @section Standard Errors:
   #' \code{boottest} does not calculate standard errors.
   #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in Stata using boottest", The Stata Journal. (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
   #' @examples
   #' library(fwildclusterboot)
   #' library(fixest)
-  #' voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10,
-  #'                        icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
+  #' # voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10,
+  #' #                        icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
   #' feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income,
-  #'            fixef =  "Q1_immigration", data = voters)
-  #' boot1 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = "group_id1")
-  #' boot2 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"))
-  #' boot3 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"),
+  #'            fixef =  "Q1_immigration", 
+  #'            data = create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10,
+  #'                    icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
+  #' boot1 <- boottest(feols_fit, B = 9999, param = "treatment", clustid = "group_id1")
+  #' boot2 <- boottest(feols_fit, B = 9999, param = "treatment", clustid = c("group_id1", "group_id2"))
+  #' boot3 <- boottest(feols_fit, B = 9999, param = "treatment", clustid = c("group_id1", "group_id2"),
   #'                  fe = "Q1_immigration")
   #' boot4 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"),
   #' fe = "Q1_immigration", sign_level = 0.2, seed = 8, beta0 = 2)
