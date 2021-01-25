@@ -10,9 +10,10 @@ invert_p_val2(
   point_estimate,
   se_guess,
   clustid,
-  alpha,
+  sign_level,
   vcov_sign,
-  impose_null
+  impose_null,
+  p_val_type
 )
 }
 \arguments{
@@ -26,11 +27,13 @@ invert_p_val2(
 
 \item{clustid}{A vector with the clusters}
 
-\item{alpha}{A numeric between 0 and 1. Sets to confidence level: alpha = 0.05 returns 0.95\% confidence intervals}
+\item{sign_level}{A numeric between 0 and 1. Sets to confidence level: sign_level = 0.05 returns 0.95\% confidence intervals}
 
 \item{vcov_sign}{Controls addition / substraction of individual covariance matrices for multiway clustering}
 
 \item{impose_null}{Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU}
+
+\item{p_val_type}{type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"}
 }
 \description{
 Inverts the bootstrap p-value and calculates confidence sets

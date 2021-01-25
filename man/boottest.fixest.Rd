@@ -11,12 +11,13 @@
   B,
   bootcluster = "max",
   fe = NULL,
-  alpha = NULL,
+  sign_level = NULL,
   conf_int = NULL,
   seed = NULL,
   beta0 = 0,
   type = "rademacher",
   impose_null = TRUE,
+  p_val_type = "two-tailed",
   ...
 )
 }
@@ -33,7 +34,7 @@
 
 \item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap}
 
-\item{alpha}{A numeric between 0 and 1. E.g. alpha = 0.05 returns 0.95\% confidence intervals. By default, alpha = 0.05.}
+\item{sign_level}{A numeric between 0 and 1. E.g. sign_level = 0.05 returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion}
 
@@ -44,6 +45,8 @@
 \item{type}{character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.}
 
 \item{impose_null}{Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU}
+
+\item{p_val_type}{type Type of p-value. By default "two-tailed". Other options: "equal-tailed"}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
@@ -57,7 +60,7 @@ An object of class \code{boottest}
 \item{B}{Number of Bootstrap Iterations.}
 \item{clustid}{Names of the cluster Variables.}
 \item{N_G}{Dimension of the cluster variables as used in boottest.}
-\item{alpha}{Significance level used in boottest.}
+\item{sign_level}{Significance sign_level used in boottest.}
 \item{type}{Distribution of the bootstrap weights.}
 \item{p_test_vals}{All p-values calculated while calculating the confidence interval.}
 \item{test_vals}{All t-statistics calculated while calculating the confidence interval.}
@@ -72,7 +75,7 @@ Conducts wild cluster bootstrap inference for object of class fixest.
 \code{boottest} computes confidence intervals by inverting p-values. In practice, the following procedure is used:
 \itemize{
 \item Based on an initial guess for starting values, calculate p-values for 26 equal spaced points between the starting values.
-\item Out of the 26 calculated p-values, find the two pairs of values x for which the corresponding p-values px cross the significance level alpha.
+\item Out of the 26 calculated p-values, find the two pairs of values x for which the corresponding p-values px cross the significance sign_level sign_level.
 \item Feed the two pairs of x into an numerical root finding procedure and solve for the root. boottest currently relies on \code{stats::uniroot} and sets an absolute tolerance of 1e-06 and stops the procedure after 10 iterations.
 }
 Note that confidence intervals computed via \code{boottest.fixest} sometimes slightly differ from confidence intervals calculated
@@ -90,16 +93,16 @@ confidence intervals.
 \examples{
 library(fwildclusterboot)
 library(fixest)
-voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10, 
+voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10,
                        icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
-feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income, 
+feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income,
            fixef =  "Q1_immigration", data = voters)
 boot1 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = "group_id1")
 boot2 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"))
-boot3 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"), 
+boot3 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"),
                  fe = "Q1_immigration")
 boot4 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"),
-fe = "Q1_immigration", alpha = 0.2, seed = 8, beta0 = 2)
+fe = "Q1_immigration", sign_level = 0.2, seed = 8, beta0 = 2)
 summary(boot1)
 tidy(boot1)
 plot(boot1)

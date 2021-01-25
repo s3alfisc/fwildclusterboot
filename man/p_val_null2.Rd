@@ -15,7 +15,8 @@ p_val_null2(
   boot_iter,
   small_sample_correction,
   impose_null,
-  point_estimate
+  point_estimate,
+  p_val_type
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ p_val_null2(
 \item{impose_null}{If TRUE, no null hypothesis if imposed on the bootstrap}
 
 \item{point_estimate}{The point estimate of the test parameter from the regression model.}
+
+\item{p_val_type}{type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"}
 }
 \description{
 Calculate p-values based on A, B, CC, CD, DD and other inputs

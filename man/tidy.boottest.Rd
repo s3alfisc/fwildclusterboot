@@ -2,13 +2,7 @@
 % Please edit documentation in R/tidy_boottest.R
 \name{tidy.boottest}
 \alias{tidy.boottest}
-\title{summary <- function(object,...){
-#' S3 method to summarize objects of class boottest
-#'@export
-#'@param object object of type boottest
-#'@param ... other arguments
-UseMethod("summary", object)
-}}
+\title{S3 method to summarize objects of class boottest into tidy data.frame}
 \usage{
 \method{tidy}{boottest}(object, ...)
 }
@@ -18,12 +12,5 @@ UseMethod("summary", object)
 \item{...}{Further arguments passed to or from other methods.}
 }
 \description{
-plot <- function(object,...){
-#' S3 generic to plot bootstrap t statistics
-#'@export
-#'@param object object of type boottest
-#'@param ... other arguments
-UseMethod("plot", object)
-}
 S3 method to summarize objects of class boottest into tidy data.frame
 }

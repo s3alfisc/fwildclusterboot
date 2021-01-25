@@ -2,7 +2,7 @@
 % Please edit documentation in R/boot_algo2.R
 \name{boot_algo2}
 \alias{boot_algo2}
-\title{function that implements the fast bootstrap algorithm as described in Roodman et al (2009)}
+\title{function that implements the fast bootstrap algorithm as described in Roodman et al (2019)}
 \usage{
 boot_algo2(
   preprocessed_object,
@@ -11,9 +11,10 @@ boot_algo2(
   point_estimate,
   impose_null,
   beta0,
-  alpha,
+  sign_level,
   param,
-  seed
+  seed,
+  p_val_type
 )
 }
 \arguments{
@@ -26,20 +27,22 @@ boot_algo2(
 \item{point_estimate}{The point estimate of the test parameter from the regression model.}
 
 \item{impose_null}{If TRUE, the null is not imposed on the bootstrap distribution.
-This is what Roodmal et al call the "WCU" bootstrap. With impose_null = FALSE, the
+This is what Roodman et al call the "WCU" bootstrap. With impose_null = FALSE, the
 null is imposed ("WCR").}
 
 \item{beta0}{Shifts the null hypothesis.}
 
-\item{alpha}{The significance level.}
+\item{sign_level}{The significance level.}
 
 \item{param}{name of the test parameter.}
 
 \item{seed}{the random seed. controls draw of bootstrap weights.}
+
+\item{p_val_type}{type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"}
 }
 \value{
 A list of ...
 }
 \description{
-function that implements the fast bootstrap algorithm as described in Roodman et al (2009)
+function that implements the fast bootstrap algorithm as described in Roodman et al (2019)
 }
