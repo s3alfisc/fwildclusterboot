@@ -1,0 +1,64 @@
+template:
+  params:
+    bootswatch: flatly
+    
+navbar:
+  structure:
+    left:
+    - home
+    - intro
+    - reference
+    - articles
+    - tutorials
+    - news
+    right: github
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    news:
+      text: Changelog
+      href: news/index.html
+    intro:
+      text: Get started
+      href: articles/fwildclusterboot.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/s3alfisc/fwildclusterboot/
+
+reference:
+- title: Main Methods
+  desc: >
+    Tools to conduct inference for regression models via the wild cluster bootstrap
+  contents:
+  - '`boottest`'
+  - '`boottest.lm`'
+  - '`boottest.felm`'
+  - '`boottest.fixest`'
+- title: Internal functions
+  desc: > 
+    Functions to compute p-values, confidence intervals and preprocess the data 
+  contents: 
+  - '`boot_algo2`'
+  - '`crosstab2`'
+  - '`crosstab4`'
+  - '`eigenMatMult`'  
+  - '`p_val_null2`'
+  - '`invert_p_val2`'
+  - '`preprocess2`'
+- title: Methods to inspect results
+  desc: > 
+    Functions and methods to inspect results
+  contents: 
+  - '`plot.boottest`'
+  - '`summary.boottest`'
+  - '`tidy.boottest`'
+  - '`tidy`'
+- title: Other  
+  contents: 
+  - '`create_data_2`'
+
+
