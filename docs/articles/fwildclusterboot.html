@@ -85,7 +85,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/s3alfisc/fwildclusterboot">fwildclusterboot</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot">fwildclusterboot</a></span><span class="op">)</span></code></pre></div>
 <p>The <code>fwildclusterboot</code> package is an R port of Stata’s <a href="https://github.com/droodman/boottest">boottest</a> package.</p>
 <p>It implements the “fast” wild cluster bootstrap algorithm developed in Roodman et al (2019) for regression objects in R. The “fast” algorithm makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples - as long as the number of bootstrapping clusters is not too large.</p>
 <p>A description of the algorithm is beyond the scope of this vignette. It is very clearly presented in <a href="https://econpapers.repec.org/paper/qedwpaper/1406.htm">Roodman et al. (2019)</a>. For technical details of the implementation in <code>fwildclusterboot</code>, have a look at the <code>technical vignette</code>.</p>
@@ -163,7 +163,7 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
 <span class="co">#&gt;     Estimate  t value   Pr(&gt;|t|)    CI Lower   CI Upper</span>
-<span class="co">#&gt; 1 0.02220441 3.290536 0.00360036 0.008090894 0.03644913</span>
+<span class="co">#&gt; 1 0.02220441 3.290536 0.00260026 0.008093642 0.03645063</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
 <span class="co">#&gt; boottest.felm(object = felm_fit, param = "treatment", B = 9999, </span>
 <span class="co">#&gt;     clustid = "group_id1")</span>
@@ -176,7 +176,7 @@
 <span class="co">#&gt;  Number of Clusters: 20</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;   Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; 1    0.022   3.291    0.004    0.008    0.036</span></code></pre></div>
+<span class="co">#&gt; 1    0.022   3.291    0.003    0.008    0.036</span></code></pre></div>
 <p>A <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> method allows the user to inspect the bootstrap t-statistics:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span></code></pre></div>
@@ -200,7 +200,7 @@
 <span class="co">#&gt;  Number of Clusters: 20 10 200</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   2.801    0.037    0.002    0.042</span></code></pre></div>
+<span class="co">#&gt; treatment    0.022   2.801    0.033    0.003    0.042</span></code></pre></div>
 </div>
 <div id="choice-of-bootstrap-weights" class="section level2">
 <h2 class="hasAnchor">
@@ -230,7 +230,7 @@
 <span class="co">#&gt;  Number of Clusters: 20 10 200</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   2.801    0.035    0.003    0.042</span>
+<span class="co">#&gt; treatment    0.022   2.801     0.03    0.003    0.041</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm_webb</span><span class="op">)</span>
 <span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1", "group_id2"), </span>
 <span class="co">#&gt;     param = "treatment", B = 9999, type = "webb")</span>
@@ -243,7 +243,7 @@
 <span class="co">#&gt;  Number of Clusters: 20 10 200</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   2.801    0.035    0.003    0.042</span></code></pre></div>
+<span class="co">#&gt; treatment    0.022   2.801     0.03    0.003    0.041</span></code></pre></div>
 </div>
 <div id="other-function-arguments" class="section level2">
 <h2 class="hasAnchor">
@@ -283,7 +283,7 @@
 <span class="co">#&gt;  Number of Clusters: 20</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   3.291    0.005     0.01    0.034</span></code></pre></div>
+<span class="co">#&gt; treatment    0.022   3.291    0.003     0.01    0.034</span></code></pre></div>
 <p>In the case of multiway clustering, the user might want to specify the bootstrap clustering level. By default, boottest chooses the clustering level with the highest number of clusters as <code>bootcluster = "max"</code>. Other choices are the minimum cluster, or independent clustering variables.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
@@ -305,7 +305,7 @@
 <span class="co">#&gt;  Number of Clusters: 20 10 200</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   2.801    0.019    0.004    0.041</span>
+<span class="co">#&gt; treatment    0.022   2.801    0.015    0.004    0.041</span>
 
 <span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, 
@@ -324,7 +324,7 @@
 <span class="co">#&gt;  Number of Clusters: 20 10 200</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   2.801    0.012    0.005     0.04</span></code></pre></div>
+<span class="co">#&gt; treatment    0.022   2.801    0.013    0.005     0.04</span></code></pre></div>
 </div>
 <div id="fixed-effects" class="section level2">
 <h2 class="hasAnchor">
@@ -372,11 +372,11 @@
                     B <span class="op">=</span> <span class="fl">9999</span>, 
                     bootcluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"Q1_immigration"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_min</span><span class="op">)</span>
-<span class="co">#&gt;             Estimate  t value   Pr(&gt;|t|)    CI Lower   CI Upper</span>
-<span class="co">#&gt; treatment 0.02220441 2.801186 0.02246094 0.003541313 0.04111393</span>
+<span class="co">#&gt;             Estimate  t value   Pr(&gt;|t|)    CI Lower  CI Upper</span>
+<span class="co">#&gt; treatment 0.02220441 2.801186 0.01660156 0.004447919 0.0408541</span>
 <span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_2var</span><span class="op">)</span>
-<span class="co">#&gt;             Estimate  t value   Pr(&gt;|t|)    CI Lower   CI Upper</span>
-<span class="co">#&gt; treatment 0.02220441 2.801186 0.02502503 0.003452404 0.04077591</span></code></pre></div>
+<span class="co">#&gt;             Estimate  t value   Pr(&gt;|t|)   CI Lower   CI Upper</span>
+<span class="co">#&gt; treatment 0.02220441 2.801186 0.02642114 0.00347318 0.04054797</span></code></pre></div>
 </div>
 <div id="regression-weights-weighted-least-squares-wls" class="section level2">
 <h2 class="hasAnchor">
