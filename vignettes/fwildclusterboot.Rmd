@@ -1,0 +1,384 @@
+---
+title: "fwildclusterboot"
+author: Alexander Fischer
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{fwildclusterboot}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(fwildclusterboot)
+```
+
+The `fwildclusterboot` package is an R port of Stata's [boottest](https://github.com/droodman/boottest) package. 
+
+It implements the "fast" wild cluster bootstrap algorithm developed in Roodman et al (2019) for regression objects in R. The "fast" algorithm makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples - as long as the number of bootstrapping clusters is not too large.
+
+A description of the algorithm is beyond the scope of this vignette. It is very clearly presented in [Roodman et al. (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm).
+For technical details of the implementation in `fwildclusterboot`, have a look at the `technical vignette`.
+
+For linear regression models, `fwildclusterboot` supports almost all features of `boottest`. This means that a set of different bootstrap distributions, regression weights, fixed effects, and both restricted (WCR) and unrestricted (WCU) boostrap inference are supported. The main difference is that it currently only supports univariate hypothesis tests of regression paramters of the form $H_{0}: \beta_{k} = \beta_{k}^{0}$ vs $H_{1}: \beta_{k} \neq \beta_{k}^{0}$.
+
+In contrast to `boottest`, `fwildclusterboot` does not support methods for instrumental variable estimation and the score bootstrap for non-linear models.
+
+
+# The `boottest()` function
+
+The `fwildclusterboot` package consists of one key function, `boottest()`. It implements the fast wild bootstrap and works with regression objects of type `lm`, `felm` and `fixest` from base R and the `lfe` and `fixest` packages. 
+
+To start, we create a random data set with two cluster variables (group_id1 \& group_id2), two fixed effects and a set of covariates. The `icc_` arguments control the cluster variable's intra-cluster correlation.
+
+```{r}
+library(fixest)
+library(lfe)
+
+# create a random data set
+voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 2)
+head(voters)
+
+# estimate the regression model via lm
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+
+# estimate the regression model via feols
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+
+# estimate the regression model via felm
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+
+# model with interaction
+lm_fit_interact <- lm(proposition_vote ~ treatment + ideology1 + log_income:Q1_immigration , data = voters)
+
+```
+
+The `boottest()` function has 4 required and several optional arguments. The required objects are
+
++ object: a regression object of type `lm`, `fixest` or `felm`
++ clustid: a character vector that defines the clustering variables
++ param: a character vector of length one - the model parameter to be tested
++ B: the number of bootstrap iterations
+
+```{r}
+# boottest on an object of type lm
+boot_lm <- boottest(lm_fit, clustid = "group_id1", param = "treatment", B = 9999)
+# boottest on an object of type fixest
+boot_feols <- boottest(feols_fit, clustid = "group_id1", param = "treatment", B = 9999)
+# boottest on an object of type felm
+boot_lm <- boottest(felm_fit, clustid = "group_id1", param = "treatment", B = 9999)
+```
+
+To tests for an interaction, it is important to use the coefficient names that are internally created by the modeling function.
+
+```{r}
+names(coef(lm_fit_interact))
+boot_lm_interact <- boottest(lm_fit_interact, clustid = "group_id1", param = "log_income:Q1_immigration1", B = 9999)
+```
+
+To access the estimation results, `boottest()` comes with `summary()` and `tidy()` methods. The `tidy` method returns the estimation results in a data.frame. `summary()` returns some additional information on top of the test statistics reported by `tidy()`.
+
+```{r}
+tidy(boot_lm)
+summary(boot_lm)
+```
+
+A `plot()` method allows the user to inspect the bootstrap t-statistics: 
+
+```{r}
+plot(boot_lm)
+```
+
+A note on the output in `tidy()` and `summary()`:
+
+## Multiway Clustering 
+
+The `boottest()` function supports clustering of any dimension. E.g. for two-way clustering, one simply needs to specify the names of the cluster variables in a character vector.
+
+```{r}
+boot_lm <- boottest(lm_fit, clustid = c("group_id1", "group_id2"), param = "treatment", B = 9999)
+summary(boot_lm)
+```
+
+
+
+## Choice of Bootstrap Weights
+
+Furthermore, the user can choose among four different weighting distribution via the `type` argument: Rademacher, Mammen, Normal and Webb. By default, `boottest()` uses the Rademacher distribution.
+
+
+```{r}
+boot_lm_rade <- boottest(lm_fit, 
+                    clustid = c("group_id1", "group_id2"), 
+                    param = "treatment", 
+                    B = 9999,
+                    type = "rademacher")
+boot_lm_webb <- boottest(lm_fit, 
+                    clustid = c("group_id1", "group_id2"), 
+                    param = "treatment", 
+                    B = 9999,
+                    type = "webb")
+
+summary(boot_lm_rade)
+summary(boot_lm_webb)
+
+```
+
+## Other function arguments 
+
+Via the function argument `sign_level`, the user can control the significance level of the test. The default value is sign_level = 0.05, which corresponds to a 95\% confindence interval.
+
+```{r}
+boot_lm_5 <- boottest(lm_fit, 
+                    clustid = c("group_id1"),
+                    param = "treatment", B = 9999, 
+                    sign_level = 0.05)
+boot_lm_10 <- boottest(lm_fit, 
+                    clustid = c("group_id1"),
+                    param = "treatment", B = 9999, 
+                    sign_level = 0.10)
+summary(boot_lm_5)
+summary(boot_lm_10)
+```
+
+In the case of multiway clustering, the user might want to specify the bootstrap clustering level. By default, boottest chooses the clustering level with the highest number of clusters as `bootcluster = "max"`. Other choices are the minimum cluster, or independent clustering variables.  
+
+```{r}
+boot_lm <- boottest(lm_fit, 
+                    clustid = c("group_id1", "group_id2"), 
+                    param = "treatment",
+                    B = 9999, 
+                    bootcluster = "min")
+summary(boot_lm)
+
+boot_lm <- boottest(lm_fit, 
+                    clustid = c("group_id1", "group_id2"), 
+                    param = "treatment",
+                    B = 9999, 
+                    bootcluster = "group_id1")
+summary(boot_lm)
+
+```
+
+## Fixed Effects
+
+Last, `boottest()` supports out-projection of fixed effects in the estimation stage via `felm()` and `fixest`. 
+Within the bootstrap, the user can choose to project out *only one* fixed effect, which can be set via the `fe` function argument. All other fixed effects specified in either `felm()` or `feols()` are treated as sets of binary regressors.
+
+```{r}
+# estimate the regression model via feols
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , data = voters)
+
+# estimate the regression model via felm
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , data = voters)
+
+boot_feols <- boottest(feols_fit, 
+                       clustid = "group_id1", 
+                       param = "treatment", 
+                       B = 9999, 
+                       fe = "Q1_immigration")
+
+boot_felm <- boottest(felm_fit, 
+                      clustid = "group_id1",
+                      param = "treatment", 
+                      B = 9999, 
+                      fe = "Q1_immigration")
+
+```
+
+
+## The Subcluster Bootstrap 
+
+In the case of few treated clusters, MacKinnon and Webb suggest to use subclusters to form the bootstrap distribution. `boottest()` allows the user to specify subclusters via the `bootcluster` argument. 
+
+```{r}
+boot_min <- boottest(lm_fit,
+                    clustid = c("group_id1", "group_id2"), 
+                    param = "treatment", 
+                    B = 9999, 
+                    bootcluster = "min")
+boot_var <- boottest(lm_fit,
+                    clustid = c("group_id1", "group_id2"), 
+                    param = "treatment", 
+                    B = 9999, 
+                    bootcluster = "group_id1")
+boot_2var <- boottest(lm_fit,
+                    clustid = c("group_id1", "group_id2"), 
+                    param = "treatment", 
+                    B = 9999, 
+                    bootcluster = c("group_id1", "Q1_immigration"))
+tidy(boot_min)
+tidy(boot_2var)
+
+
+
+```
+
+
+## Regression Weights / Weighted Least Squares (WLS)
+
+If regression weights are specified in the estimation stage via `lm()`, `feols()` or `felm()`, `boottest()` incorporates the weights into the bootstrap inference: 
+
+```{r}
+# regression with weights / WLS
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income, weights = voters$weights, data = voters)
+
+boot_feols <- boottest(feols_fit, 
+                       clustid = "group_id1", 
+                       param = "treatment", 
+                       B = 9999)
+
+```
+
+
+
+# Miscellanea
+
+<!-- ## Why does `boottest()` not compute standard errors? -->
+
+<!-- ## A note on performance -->
+
+<!-- ## Inversion of p-values -->
+
+<!-- ### How it works: make use of linearity of both the numerator and J -->
+
+<!-- The starting point of this section are equations (56, 58 and 62) in Roodman et al. They show that once can write the numerator as (eq. 56) -->
+
+<!-- $$ -->
+<!--   R(\hat{\beta}^{*} - \tilde{\beta}) = \{S_{c_{*}} [WDXAR' :* \tilde{u}] \}' v^{*}. -->
+<!-- $$ -->
+<!-- The denominator can be written as (eq. 60) -->
+
+<!-- $$ -->
+
+<!-- $$ -->
+
+<!-- where the object $K$ can be computed as  -->
+
+<!-- $$ -->
+
+<!-- $$ -->
+
+<!-- For univariate hypotheses, both numerator and J are linear in $beta0$.  -->
+<!-- Note that several objects used in the computation of both numerator and J can be written as $\ü :* A$ or $\ü * A$, where $A$ is and $ü$ is .... All derivations are shown for the first case, while the main conclusions apply to the second as well.  -->
+<!-- First, for the WCU, it holds that  -->
+
+<!-- \begin{align} -->
+<!--     \ü :* A &= (Y - X'\beta) :* A \\ -->
+<!--       &= Y :* A - X'\beta :* A \\ -->
+<!--       &= Y :* A - X'(X'X)^{-1}X Y :* A \\ -->
+<!--       &=  ((1 :- P_{x}) Y) :* A  -->
+<!-- \end{align} -->
+
+<!-- For the WCR, the analogous derivation are slightly more complicated:  -->
+
+<!-- \begin{align} -->
+<!--   \tilde{u} :* A &= (Y_{r} - X_{r}'\beta_{r}) :* A \\ -->
+<!--           &= Y_{r} :* A - X_{r}'\beta_{r} :* A \\ -->
+<!--           &= Y_{r} :* A - X_{r}'(X_{r}'X_{r})^{-1}X_{r} Y_{r} :* A \\ -->
+<!--           &= Y_{r} :* A - P_{xr} Y_{r} :* A \\ -->
+<!-- \end{align} -->
+
+<!-- Now, note that $Y_r = Y - X_0 r$, it follows that  -->
+
+<!-- \begin{align} -->
+<!--   \tilde{u} :* A &= Y_{r} :* A - P_{xr} Y_{r} :* A \\  -->
+<!--             &= (Y - X_{0} r) :* A - P_{xr} (Y - X_{0} r) :* A \\ -->
+<!--             &= Y :* A - X_{0} r :* A - (P_{xr} Y) :* A +  P_{xr}  X_{0} r :*A \\  -->
+<!--             &=  Y :* A  - (P_{xr} Y) :* A - P_{xr}  X_{0} r :* A + X_{0} r :* A \\ -->
+<!--             &= (Y - P_{xr} Y) :* A + (X_{0} r -P_{xr}  X_{0} r) :* A \\  -->
+<!--             &= (1 :- P_{xr})Y :* A + ((1 :- P_{xr})  X_{0}) :* A * r \\ -->
+<!--             &= P + Q r -->
+<!-- \end{align} -->
+
+<!-- where  -->
+
+<!-- $$ -->
+<!--   P = (1 :- P_{xr})Y -->
+<!-- $$ -->
+<!-- and  -->
+
+<!-- $$ -->
+<!--   Q = ((1 :- P_{xr})  X_{0}). -->
+<!-- $$ -->
+<!-- Both quantities, $P$ and $Q$, are explicitely computed as such in the boot_algo2 function. Q summarizes all terms that vary in $r$, while P summarizes constant terms.  -->
+
+<!-- Note that in the case of the WCU, $X_r = X$, $P_{xr} = P_{x}$, and $X_0$ is a vector of length N, containing zeros.  -->
+
+<!-- Therefore, the following quantities need to be computed:  -->
+
+<!-- + $X_r$ -->
+<!-- + $P_{xr}$ -->
+<!-- + $X_0$ -->
+<!-- + several different object for $A$ -->
+
+<!-- Based on these objects, one can e.g. compute -->
+
+<!-- \begin{align} -->
+<!-- S_{c, c*}[\tilde{u} :* A] &= S_{c, c*}[(1 :- P_{xr})Y :* A] + S_{c, c*}[((1 :- P_{xr})  X_{0}) :* A]  r \\ -->
+<!-- &= P_{1} + Q_{1} r -->
+<!-- \end{align} -->
+
+<!-- For K, one can then write an expression of the form  -->
+
+<!-- \begin{align} -->
+<!--   K &= (P_1 + P_2 + P_3) + (Q_1 + Q_2 +   Q_3) r  -->
+<!-- \end{align} -->
+
+<!-- For $J$, it follows that  -->
+
+<!-- \begin{align} -->
+<!--   J = K v & = (P_1 + P_2 + P_3) v + (Q_1 + Q_2 +   Q_3) v \times r \\ -->
+<!--   &= C + D \times r -->
+<!-- \end{align} -->
+
+
+
+<!-- For $J :* J$, it hence follows  -->
+
+<!-- $$ -->
+<!--   J :* J = C :* C  + 2 C :* D \times r + D :* D \times r^{2} -->
+<!-- $$ -->
+
+<!-- So, in short: one can simply compute C, D, CC, CD and DD once and then invert the p-value by searching over beta0.  -->
+
+<!-- Again, note that for for the WCU, $X_0 = 0$, which implies that in the equations above, all elements in $Q$, $Q1$, $Q2$, $Q3$, $D$, $CD$ and $DD$ are zero. In consequence, for the WCU, the numerator can be computed as  -->
+
+<!-- $$ -->
+
+
+<!-- $$ -->
+<!-- and the denominator is  -->
+
+<!-- $$ -->
+
+<!-- $$ -->
+
+<!-- For the WCU, both numerator and denominator do not depend on $r$. -->
+
+<!-- + why might confidence intervals differ for estimates based on `lm()`, `feols()` and `felm()`? -->
+
+## Small Sample Corrections
+
+`boottest()` adjust standard errors in case of multiway clustering via the formula $N_{g} / (N_{g} - 1)$, where $N_g$ is the dimension of cluster g.  
+
+## Treatment of Invalid Test Statistics for multiway clustering
+
+In case of multiway clustering, it is not guaranteed that the covariance matrix is positive definite, in which case the resulting bootstrap test statistics are invalid. `boottest()` follows the implementation in STATA and deletes invalid tests statistics, and informs the user with a note.
+
+## On the handling of missing values 
+
+`boottest()` retrieves both the design matrix X, the dependent variable y and the cluster variables from the input object of type `lm`, `fixest` or `felm`. Because `boottest()` allows to add or delete clustering variables that are not employed in `lm()`, `feols()` and `felm()`, it may occurs that 
+a cluster variable is added in `boottest()` that is not included in the regression model, either as a cluster variable or covariate. 
+In this case, boottest deletes the respective rows in the dependent variable, design matrix and in the cluster variables.  In consequence, estimation (in the modeling step) and inference (via `boottest()`) are done on a different sample. In this case, `boottest()` returns a warning. 
+
+## A note of caution
+
+The `feols()` function from `fixest` introduces several useful formula shortcuts. E.g. one can fit several regressions at once. All these advanced formula tools are not supported in `boottest()`. `boottest()` tries to catch any use of advanced formulas, but might fail to return errors in some cases. 
+
