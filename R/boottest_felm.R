@@ -8,7 +8,7 @@ boottest.felm <- function(object,
                           conf_int = NULL,
                           seed = NULL,
                           beta0 = 0,
-                          alpha = NULL,
+                          sign_level = NULL,
                           type = "rademacher",
                           impose_null = TRUE,
                           p_val_type = "two-tailed",
@@ -23,13 +23,13 @@ boottest.felm <- function(object,
   #' @param B number of bootstrap iterations
   #' @param bootcluster A character vector. Sets the cluster used in the boottest. Chooses the largest cluster by default
   #' @param fe A character scalar. Fixed effect to be projected out in the bootstrap
-  #' @param alpha A numeric between 0 and 1. E.g. alpha = 0.05 returns 0.95% confidence intervals. By default, alpha = 0.05.
+  #' @param sign_level A numeric between 0 and 1. E.g. sign_level = 0.05 returns 0.95% confidence intervals. By default, sign_level = 0.05.
   #' @param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #' @param seed An integer. Allows the user to set a random seed
   #' @param beta0 A numeric. Shifts the null hypothesis
   #' @param type character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.
   #' @param impose_null Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU
-  #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"
+  #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed"
   #' @param ... Further arguments passed to or from other methods.
   #' @return An object of class \code{boottest}
   #' \item{p_val}{The bootstrap p-value.}
@@ -40,7 +40,7 @@ boottest.felm <- function(object,
   #' \item{B}{Number of Bootstrap Iterations.}
   #' \item{clustid}{Names of the cluster Variables.}
   #' \item{N_G}{Dimension of the cluster variables as used in boottest.}
-  #' \item{alpha}{Significance level used in boottest.}
+  #' \item{sign_level}{Significance level used in boottest.}
   #' \item{type}{Distribution of the bootstrap weights.}
   #' \item{p_test_vals}{All p-values calculated while calculating the confidence interval.}
   #' \item{test_vals}{All t-statistics calculated while calculating the confidence interval.}
@@ -52,7 +52,7 @@ boottest.felm <- function(object,
   #' \code{boottest} computes confidence intervals by inverting p-values. In practice, the following procedure is used:
   #' \itemize{
   #' \item Based on an initial guess for starting values, calculate p-values for 26 equal spaced points between the starting values.
-  #' \item Out of the 26 calculated p-values, find the two pairs of values x for which the corresponding p-values px cross the significance level alpha.
+  #' \item Out of the 26 calculated p-values, find the two pairs of values x for which the corresponding p-values px cross the significance level sign_level.
   #' \item Feed the two pairs of x into an numerical root finding procedure and solve for the root. boottest currently relies on \code{stats::uniroot} and sets an absolute tolerance of 1e-06 and stops the procedure after 10 iterations.
   #' }
   #' Note that confidence intervals computed via \code{boottest.felm} sometimes slightly differ from confidence intervals calculated
@@ -60,11 +60,25 @@ boottest.felm <- function(object,
   #' standard errors calculated via the \code{sandwich} package, while \code{boottest.felm} and \code{boottest.fixest} use different small-sample bias
   #' correction methods for calculating cluster standard errors internally. Slightly different starting values hence lead to slightly different
   #' confidence intervals.
-
   #' @section Standard Errors:
   #' \code{boottest} does not calculate standard errors.
   #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in Stata using boottest", The Stata Journal. (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
-
+  #' @examples 
+  #' library(fwildclusterboot)
+  #' library(lfe)
+  #' voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10,
+  #'                        icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
+  #' felm_fit <-felm(proposition_vote ~ treatment + ideology1 + log_income
+  #'            | Q1_immigration, data = voters)
+  #' boot1 <- boottest(felm_fit, B = 999, param = "treatment", clustid = "group_id1")
+  #' boot2 <- boottest(felm_fit, B = 999, param = "treatment", clustid = c("group_id1", "group_id2"))
+  #' boot3 <- boottest(felm_fit, B = 999, param = "treatment", clustid = c("group_id1", "group_id2"),
+  #'                  fe = "Q1_immigration")
+  #' boot4 <- boottest(felm_fit, B = 999, param = "treatment", clustid = c("group_id1", "group_id2"),
+  #' fe = "Q1_immigration", sign_level = 0.2, seed = 8, beta0 = 2)
+  #' summary(boot1)
+  #' tidy(boot1)
+  #' plot(boot1)
 
 
   call <- match.call()
@@ -73,7 +87,7 @@ boottest.felm <- function(object,
   # check_arg(clustid, "os formula | data.frame | named list")
   check_arg(param, "scalar character")
   check_arg(B, "scalar integer ")
-  check_arg(alpha, "scalar numeric | NULL")
+  check_arg(sign_level, "scalar numeric | NULL")
   check_arg(conf_int, "logical scalar | NULL")
   check_arg(seed, "scalar integer | NULL")
   check_arg(beta0, "numeric scalar | NULL")
@@ -81,20 +95,24 @@ boottest.felm <- function(object,
   check_arg(bootcluster, "character vector")
 
 
+  if(!(p_val_type %in% c("two-tailed", "equal-tailed"))){
+    stop("The function argument p_val_type must be either two-tailed or equal-tailed.")
+  }
+  
   if ((conf_int == TRUE || is.null(conf_int)) & B <= 100) {
     stop("The function argument B is smaller than 100. The number of bootstrap iterations needs to be 100 or higher in order to guarantee that the root
          finding procudure used to find the confidence set works properly.",
       call. = FALSE
     )
   }
-  if (!is.null(alpha) & (alpha <= 0 || alpha >= 1)) {
-    stop("The function argument alpha is outside of the unit interval (0, 1). Please specify alpha so that it is within the unit interval.",
+  if (!is.null(sign_level) & (sign_level <= 0 || sign_level >= 1)) {
+    stop("The function argument sign_level is outside of the unit interval (0, 1). Please specify sign_level so that it is within the unit interval.",
       call. = FALSE
     )
   }
 
-  if (is.null(alpha)) {
-    alpha <- 0.05
+  if (is.null(sign_level)) {
+    sign_level <- 0.05
   }
 
   if (!(param %in% c(rownames(object$coefficients)))) {
@@ -112,8 +130,8 @@ boottest.felm <- function(object,
     )
   }
 
-  if (((1 - alpha) * (B + 1)) %% 1 != 0) {
-    message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - alpha, "%) times the number of replications plus 1 (", B, "+ 1 = ", B + 1, ") is an integer."))
+  if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
+    message(paste("Note: The bootstrap usually performs best when the confidence level (here,", 1 - sign_level, "%) times the number of replications plus 1 (", B, "+ 1 = ", B + 1, ") is an integer."))
   }
 
   # throw error if specific function arguments are used in felm() call
@@ -161,7 +179,7 @@ boottest.felm <- function(object,
     point_estimate = point_estimate,
     impose_null = impose_null,
     beta0 = beta0,
-    alpha = alpha,
+    sign_level = sign_level,
     param = param,
     seed = seed,
     p_val_type = p_val_type
@@ -185,7 +203,7 @@ boottest.felm <- function(object,
       point_estimate = point_estimate,
       se_guess = se_guess,
       clustid = preprocess$clustid,
-      alpha = alpha,
+      sign_level = sign_level,
       vcov_sign = preprocess$vcov_sign,
       impose_null = impose_null,
       p_val_type = p_val_type
@@ -213,7 +231,7 @@ boottest.felm <- function(object,
     clustid = clustid,
     # depvar = depvar,
     N_G = preprocess$N_G,
-    alpha = alpha,
+    sign_level = sign_level,
     call = call,
     type = type,
     impose_null = impose_null
