@@ -1,5 +1,5 @@
 # ------------------------------------------------------------------ # 
-# test 1: vary alpha and beta0 
+# test 1: vary sign_level and beta0 
 # - Tests .1 - one fixed effect, 
 # - Tests .2 - two fixed effects
 # - Part A1: no fixed effect
@@ -41,11 +41,11 @@ feols_fit_c <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_inco
 felm_fit_c <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | 0 | 0 | group_id1,
                         data = fwildclusterboot:::create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 
-boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, alpha = 0.1, beta0 = 0.1))
-boot_fixest <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, alpha = 0.1, beta0 = 0.1))
-boot_felm <- suppressWarnings(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, alpha = 0.1, beta0 = 0.1))
-boot_fixest_c <- suppressWarnings(boottest(object = feols_fit_c, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, alpha = 0.1, beta0 = 0.1))
-boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, alpha = 0.1, beta0 = 0.1))
+boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, sign_level = 0.1, beta0 = 0.1))
+boot_fixest <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, sign_level = 0.1, beta0 = 0.1))
+boot_felm <- suppressWarnings(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, sign_level = 0.1, beta0 = 0.1))
+boot_fixest_c <- suppressWarnings(boottest(object = feols_fit_c, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, sign_level = 0.1, beta0 = 0.1))
+boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, sign_level = 0.1, beta0 = 0.1))
 
 # point estimates
 expect_equivalent(boot_lm$point_estimate, boot_fixest$point_estimate)
