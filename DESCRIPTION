@@ -10,7 +10,8 @@ Authors@R:
            family = "Roodman", 
            role = "ctb"))
 Description: Fast wild cluster bootstrap inference for linear regression models.
-URL: https://github.com/s3alfisc/fwildclusterboot
+URL: https://s3alfisc.github.io/fwildclusterboot
+SourceCode: https://github.com/s3alfisc/fwildclusterboot
 BugReports: https://github.com/s3alfisc/fwildclusterboot/issues
 License: GPL-3 + file LICENSE 
 Depends: 
