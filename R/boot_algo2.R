@@ -1,4 +1,4 @@
-boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_estimate, impose_null, beta0, alpha, param, seed, p_val_type) {
+boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_estimate, impose_null, beta0, sign_level, param, seed, p_val_type) {
 
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2019)
   #' @param preprocessed_object A list: output of the preprocess2 function.
@@ -9,7 +9,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   #'        This is what Roodman et al call the "WCU" bootstrap. With impose_null = FALSE, the
   #'        null is imposed ("WCR").
   #' @param beta0 Shifts the null hypothesis.
-  #' @param alpha The significance level.
+  #' @param sign_level The significance level.
   #' @param param name of the test parameter.
   #' @param seed the random seed. controls draw of bootstrap weights.
   #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"
@@ -77,7 +77,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   }
 
   # small sample correction for clusters
-  G <- sapply(clustid, function(x) length(unique(x)))
+  G <- vapply(clustid, function(x) length(unique(x)), 1)
   small_sample_correction <- G / (G - 1)
   # prepare summation of individual terms for multiway clustering
   small_sample_correction <- vcov_sign * small_sample_correction
