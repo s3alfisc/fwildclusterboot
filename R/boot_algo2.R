@@ -84,7 +84,10 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
 
   # Xr is only used here:
   weights_mat <- Matrix::Diagonal(N, weights)
-  Ar <- as.matrix(solve(t(Xr) %*% weights_mat %*% Xr))
+  weights_sq <- sqrt(weights) 
+
+  Ar <- solve(crossprod(weights_sq * Xr))
+  #Ar <- as.matrix(solve(t(Xr) %*% weights_mat %*% Xr))
   # if(sum(weights) == length(weights)){
   #   mean(Ar - solve(crossprod(Xr)))
   # }
@@ -99,7 +102,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
 
   rm(list = c("Ar", "Xr", "Xr0"))
 
-  A0 <- as.matrix(solve(t(X) %*% weights_mat %*% X))
+  A0 <- solve(crossprod(weights_sq * X))
+  #A0 <- as.matrix(solve(t(X) %*% weights_mat %*% X))
   WXAr <- weights * as.vector(X %*% (A0 %*% R0))
   WXArX <- WXAr * X
   # invXX <- solve(crossprod(X)) # k x k matrix#
