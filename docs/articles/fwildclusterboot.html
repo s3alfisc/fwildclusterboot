@@ -97,7 +97,7 @@
 <p>The <code>fwildclusterboot</code> package consists of one key function, <code><a href="../reference/boottest.html">boottest()</a></code>. It implements the fast wild bootstrap and works with regression objects of type <code>lm</code>, <code>felm</code> and <code>fixest</code> from base R and the <code>lfe</code> and <code>fixest</code> packages.</p>
 <p>To start, we create a random data set with two cluster variables (group_id1 &amp; group_id2), two fixed effects and a set of covariates. The <code>icc_</code> arguments control the cluster variable’s intra-cluster correlation.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">fixest</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/">fixest</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sgaure/lfe">lfe</a></span><span class="op">)</span>
 <span class="co">#&gt; Loading required package: Matrix</span>
 
@@ -130,7 +130,7 @@
 <span class="va">lm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
 
 <span class="co"># estimate the regression model via feols</span>
-<span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/fixest/man/feols.html">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
+<span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
 
 <span class="co"># estimate the regression model via felm</span>
 <span class="va">felm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
@@ -163,7 +163,7 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
 <span class="co">#&gt;     Estimate  t value   Pr(&gt;|t|)    CI Lower   CI Upper</span>
-<span class="co">#&gt; 1 0.02220441 3.290536 0.00260026 0.008093642 0.03645063</span>
+<span class="co">#&gt; 1 0.02220441 3.290536 0.00260026 0.008203683 0.03627259</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
 <span class="co">#&gt; boottest.felm(object = felm_fit, param = "treatment", B = 9999, </span>
 <span class="co">#&gt;     clustid = "group_id1")</span>
@@ -200,7 +200,7 @@
 <span class="co">#&gt;  Number of Clusters: 20 10 200</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   2.801    0.033    0.003    0.042</span></code></pre></div>
+<span class="co">#&gt; treatment    0.022   2.801    0.035    0.003    0.042</span></code></pre></div>
 </div>
 <div id="choice-of-bootstrap-weights" class="section level2">
 <h2 class="hasAnchor">
@@ -230,7 +230,7 @@
 <span class="co">#&gt;  Number of Clusters: 20 10 200</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   2.801     0.03    0.003    0.041</span>
+<span class="co">#&gt; treatment    0.022   2.801    0.031    0.003    0.042</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm_webb</span><span class="op">)</span>
 <span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1", "group_id2"), </span>
 <span class="co">#&gt;     param = "treatment", B = 9999, type = "webb")</span>
@@ -243,7 +243,7 @@
 <span class="co">#&gt;  Number of Clusters: 20 10 200</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   2.801     0.03    0.003    0.041</span></code></pre></div>
+<span class="co">#&gt; treatment    0.022   2.801    0.032    0.003    0.041</span></code></pre></div>
 </div>
 <div id="other-function-arguments" class="section level2">
 <h2 class="hasAnchor">
@@ -270,7 +270,7 @@
 <span class="co">#&gt;  Number of Clusters: 20</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   3.291    0.004    0.008    0.036</span>
+<span class="co">#&gt; treatment    0.022   3.291    0.003    0.008    0.036</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm_10</span><span class="op">)</span>
 <span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1"), param = "treatment", </span>
 <span class="co">#&gt;     B = 9999, sign_level = 0.1)</span>
@@ -283,7 +283,7 @@
 <span class="co">#&gt;  Number of Clusters: 20</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   3.291    0.003     0.01    0.034</span></code></pre></div>
+<span class="co">#&gt; treatment    0.022   3.291    0.004    0.011    0.034</span></code></pre></div>
 <p>In the case of multiway clustering, the user might want to specify the bootstrap clustering level. By default, boottest chooses the clustering level with the highest number of clusters as <code>bootcluster = "max"</code>. Other choices are the minimum cluster, or independent clustering variables.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
@@ -305,7 +305,7 @@
 <span class="co">#&gt;  Number of Clusters: 20 10 200</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   2.801    0.015    0.004    0.041</span>
+<span class="co">#&gt; treatment    0.022   2.801    0.016    0.005    0.041</span>
 
 <span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, 
@@ -324,15 +324,15 @@
 <span class="co">#&gt;  Number of Clusters: 20 10 200</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.022   2.801    0.013    0.005     0.04</span></code></pre></div>
+<span class="co">#&gt; treatment    0.022   2.801    0.014    0.005     0.04</span></code></pre></div>
 </div>
 <div id="fixed-effects" class="section level2">
 <h2 class="hasAnchor">
 <a href="#fixed-effects" class="anchor"></a>Fixed Effects</h2>
-<p>Last, <code><a href="../reference/boottest.html">boottest()</a></code> supports out-projection of fixed effects in the estimation stage via <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">lfe::felm()</a></code> and <code><a href="https://rdrr.io/pkg/fixest/man/feols.html">fixest::feols()</a></code>. Within the bootstrap, the user can choose to project out <em>only one</em> fixed effect, which can be set via the <code>fe</code> function argument. All other fixed effects specified in either <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code> or <code><a href="https://rdrr.io/pkg/fixest/man/feols.html">feols()</a></code> are treated as sets of binary regressors.</p>
+<p>Last, <code><a href="../reference/boottest.html">boottest()</a></code> supports out-projection of fixed effects in the estimation stage via <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">lfe::felm()</a></code> and <code><a href="https://lrberge.github.io/fixest/reference/feols.html">fixest::feols()</a></code>. Within the bootstrap, the user can choose to project out <em>only one</em> fixed effect, which can be set via the <code>fe</code> function argument. All other fixed effects specified in either <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code> or <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> are treated as sets of binary regressors.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># estimate the regression model via feols</span>
-<span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/fixest/man/feols.html">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">|</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
+<span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">|</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
 
 <span class="co"># estimate the regression model via felm</span>
 <span class="va">felm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">|</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
@@ -373,18 +373,18 @@
                     bootcluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"Q1_immigration"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_min</span><span class="op">)</span>
 <span class="co">#&gt;             Estimate  t value   Pr(&gt;|t|)    CI Lower  CI Upper</span>
-<span class="co">#&gt; treatment 0.02220441 2.801186 0.01660156 0.004447919 0.0408541</span>
+<span class="co">#&gt; treatment 0.02220441 2.801186 0.01660156 0.003886276 0.0408771</span>
 <span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_2var</span><span class="op">)</span>
-<span class="co">#&gt;             Estimate  t value   Pr(&gt;|t|)   CI Lower   CI Upper</span>
-<span class="co">#&gt; treatment 0.02220441 2.801186 0.02642114 0.00347318 0.04054797</span></code></pre></div>
+<span class="co">#&gt;             Estimate  t value   Pr(&gt;|t|)  CI Lower   CI Upper</span>
+<span class="co">#&gt; treatment 0.02220441 2.801186 0.02311618 0.0036342 0.04041998</span></code></pre></div>
 </div>
 <div id="regression-weights-weighted-least-squares-wls" class="section level2">
 <h2 class="hasAnchor">
 <a href="#regression-weights-weighted-least-squares-wls" class="anchor"></a>Regression Weights / Weighted Least Squares (WLS)</h2>
-<p>If regression weights are specified in the estimation stage via <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code>, <code><a href="https://rdrr.io/pkg/fixest/man/feols.html">feols()</a></code> or <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code>, <code><a href="../reference/boottest.html">boottest()</a></code> incorporates the weights into the bootstrap inference:</p>
+<p>If regression weights are specified in the estimation stage via <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code>, <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> or <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code>, <code><a href="../reference/boottest.html">boottest()</a></code> incorporates the weights into the bootstrap inference:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># regression with weights / WLS</span>
-<span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/fixest/man/feols.html">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span>, weights <span class="op">=</span> <span class="va">voters</span><span class="op">$</span><span class="va">weights</span>, data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
+<span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span>, weights <span class="op">=</span> <span class="va">voters</span><span class="op">$</span><span class="va">weights</span>, data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
 
 <span class="va">boot_feols</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">feols_fit</span>, 
                        clustid <span class="op">=</span> <span class="st">"group_id1"</span>, 
@@ -490,12 +490,12 @@
 <div id="on-the-handling-of-missing-values" class="section level2">
 <h2 class="hasAnchor">
 <a href="#on-the-handling-of-missing-values" class="anchor"></a>On the handling of missing values</h2>
-<p><code><a href="../reference/boottest.html">boottest()</a></code> retrieves both the design matrix X, the dependent variable y and the cluster variables from the input object of type <code>lm</code>, <code>fixest</code> or <code>felm</code>. Because <code><a href="../reference/boottest.html">boottest()</a></code> allows to add or delete clustering variables that are not employed in <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code>, <code><a href="https://rdrr.io/pkg/fixest/man/feols.html">feols()</a></code> and <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code>, it may occurs that a cluster variable is added in <code><a href="../reference/boottest.html">boottest()</a></code> that is not included in the regression model, either as a cluster variable or covariate. In this case, boottest deletes the respective rows in the dependent variable, design matrix and in the cluster variables. In consequence, estimation (in the modeling step) and inference (via <code><a href="../reference/boottest.html">boottest()</a></code>) are done on a different sample. <code><a href="../reference/boottest.html">boottest()</a></code> returns a warning.</p>
+<p><code><a href="../reference/boottest.html">boottest()</a></code> retrieves both the design matrix X, the dependent variable y and the cluster variables from the input object of type <code>lm</code>, <code>fixest</code> or <code>felm</code>. Because <code><a href="../reference/boottest.html">boottest()</a></code> allows to add or delete clustering variables that are not employed in <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code>, <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> and <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code>, it may occurs that a cluster variable is added in <code><a href="../reference/boottest.html">boottest()</a></code> that is not included in the regression model, either as a cluster variable or covariate. In this case, boottest deletes the respective rows in the dependent variable, design matrix and in the cluster variables. In consequence, estimation (in the modeling step) and inference (via <code><a href="../reference/boottest.html">boottest()</a></code>) are done on a different sample. <code><a href="../reference/boottest.html">boottest()</a></code> returns a warning.</p>
 </div>
 <div id="a-note-of-caution" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-note-of-caution" class="anchor"></a>A note of caution</h2>
-<p>The <code><a href="https://rdrr.io/pkg/fixest/man/feols.html">feols()</a></code> function from <code>fixest</code> introduces several useful formula shortcuts. E.g. one can fit several regressions at once. All these advanced formula tools are not supported in <code><a href="../reference/boottest.html">boottest()</a></code>. <code><a href="../reference/boottest.html">boottest()</a></code> tries to catch any use of advanced formulas, but might fail to return errors in some cases.</p>
+<p>The <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> function from <code>fixest</code> introduces several useful formula shortcuts. E.g. one can fit several regressions at once. All these advanced formula tools are not supported in <code><a href="../reference/boottest.html">boottest()</a></code>. <code><a href="../reference/boottest.html">boottest()</a></code> tries to catch any use of advanced formulas, but might fail to return errors in some cases.</p>
 </div>
 </div>
   </div>
