@@ -1,4 +1,4 @@
-invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, sign_level, vcov_sign, impose_null, p_val_type) {
+invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, sign_level, vcov_sign, impose_null, p_val_type, tol, maxiter) {
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #' @param object A  object of type boottest
@@ -10,6 +10,8 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
   #' @param vcov_sign Controls addition / substraction of individual covariance matrices for multiway clustering
   #' @param impose_null Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU
   #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"
+  #' @param tol the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.
+  #' @param maxiter maximum number of iterations for confidence interval inversion. 10 by default.
   #' @importFrom utils setTxtProgressBar txtProgressBar
   #' @export
   
@@ -135,7 +137,11 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
     p_val_null2_x_sign_level <- function(x) {
       p_val_null2_x_cmp(x, sign_level = sign_level)
     }
-    tmp <- suppressWarnings(stats::uniroot(f = p_val_null2_x_sign_level, lower = min(x), upper = max(x), tol = 1e-6, maxiter = 10))
+    tmp <- suppressWarnings(stats::uniroot(f = p_val_null2_x_sign_level, 
+                                           lower = min(x), 
+                                           upper = max(x), 
+                                           tol = tol,
+                                           maxiter = maxiter))
     
     tmp$root
   })

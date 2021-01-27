@@ -17,6 +17,8 @@
   type = "rademacher",
   impose_null = TRUE,
   p_val_type = "two-tailed",
+  tol = 1e-06,
+  maxiter = 10,
   ...
 )
 }
@@ -44,6 +46,10 @@
 \item{impose_null}{Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU}
 
 \item{p_val_type}{type Type of p-value. By default "two-tailed". Other options: "equal-tailed"}
+
+\item{tol}{the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.}
+
+\item{maxiter}{maximum number of iterations for confidence interval inversion. 10 by default.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }

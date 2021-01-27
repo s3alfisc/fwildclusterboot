@@ -11,6 +11,8 @@ boottest.fixest <- function(object,
                             type = "rademacher",
                             impose_null = TRUE,
                             p_val_type = "two-tailed",
+                            tol = 1e-6, 
+                            maxiter = 10,
                             ...) {
 
 
@@ -28,6 +30,8 @@ boottest.fixest <- function(object,
   #' @param type character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.
   #' @param impose_null Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU
   #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed"
+  #' @param tol the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.
+  #' @param maxiter maximum number of iterations for confidence interval inversion. 10 by default.
   #' @param ... Further arguments passed to or from other methods.
   #' @return An object of class \code{boottest}
   #' \item{p_val}{The bootstrap p-value.}
@@ -88,7 +92,19 @@ boottest.fixest <- function(object,
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL")
   check_arg(bootcluster, "character vector")
-
+  check_arg(tol, "numeric scalar")
+  check_arg(maxiter, "scalar integer")
+  
+  if(maxiter < 1){
+    stop("The function argument maxiter needs to be larger than 1.", 
+         call. = FALSE)
+  }
+  
+  if(tol < 0){
+    stop("The function argument tol needs to be positive.", 
+         call. = FALSE)
+  }
+  
   if(!(p_val_type %in% c("two-tailed", "equal-tailed"))){
     stop("The function argument p_val_type must be either two-tailed or equal-tailed.")
   }
@@ -213,7 +229,9 @@ boottest.fixest <- function(object,
       sign_level = sign_level,
       vcov_sign = preprocess$vcov_sign,
       impose_null = impose_null,
-      p_val_type = p_val_type
+      p_val_type = p_val_type, 
+      maxiter = maxiter, 
+      tol = tol
     )
   } else {
     res_p_val <- list(
