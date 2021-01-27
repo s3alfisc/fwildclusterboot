@@ -6,7 +6,7 @@
 \usage{
 invert_p_val2(
   object,
-  B,
+  boot_iter,
   point_estimate,
   se_guess,
   clustid,
@@ -19,7 +19,7 @@ invert_p_val2(
 \arguments{
 \item{object}{A  object of type boottest}
 
-\item{B}{An integer. Number of bootstrap iterations}
+\item{boot_iter}{An integer. Number of bootstrap iterations}
 
 \item{point_estimate}{A scalar. Point estimate of the coefficient of interest from the regression model}
 
