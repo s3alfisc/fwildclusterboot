@@ -1,8 +1,8 @@
-invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, sign_level, vcov_sign, impose_null, p_val_type) {
+invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, sign_level, vcov_sign, impose_null, p_val_type) {
   
   #' Inverts the bootstrap p-value and calculates confidence sets
   #' @param object A  object of type boottest
-  #' @param B An integer. Number of bootstrap iterations
+  #' @param boot_iter An integer. Number of bootstrap iterations
   #' @param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
   #' @param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion.
   #' @param clustid A vector with the clusters
@@ -22,14 +22,14 @@ invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, sign_lev
          call. = FALSE
     )
   }
-  boot_iter <- B
-  rm(B)
+  # boot_iter <- B
+  # rm(B)
   
-  G <- sapply(clustid, function(x) length(unique(x)))
-  small_sample_correction <- G / (G - 1)
+  # G <- sapply(clustid, function(x) length(unique(x)))
+  # small_sample_correction <- G / (G - 1)
   
   # prepare summation of individual terms for multiway clustering
-  small_sample_correction <- vcov_sign * small_sample_correction
+  # small_sample_correction <- vcov_sign * small_sample_correction
   
   
   ABCD <- object$ABCD
@@ -38,6 +38,8 @@ invert_p_val2 <- function(object, B, point_estimate, se_guess, clustid, sign_lev
   CC <- ABCD$CC
   CD <- ABCD$CD
   DD <- ABCD$DD
+  
+  small_sample_correction <- object$small_sample_correction
   
   p_val_null2_x <- function(beta0, sign_level) {
     p_val_null2(beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, point_estimate = point_estimate, impose_null = impose_null, p_val_type = p_val_type)$p_val - sign_level

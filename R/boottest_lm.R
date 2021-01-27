@@ -189,7 +189,7 @@ boottest.lm <- function(object,
 
     res_p_val <- invert_p_val2(
       object = res,
-      B = B,
+      boot_iter = B,
       point_estimate = point_estimate,
       se_guess = se_guess,
       clustid = preprocess$clustid,

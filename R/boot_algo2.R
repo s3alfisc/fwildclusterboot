@@ -231,7 +231,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
     clustid = clustid,
     v = v,
     invalid_t = invalid_t,
-    ABCD = ABCD
+    ABCD = ABCD, 
+    small_sample_correction = small_sample_correction
   )
   class(res) <- "boot_algo"
 
