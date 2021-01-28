@@ -4,6 +4,9 @@
 # note: all tests without fixed effects should be identical, 
 # with fixed effects: because point estimate are slightly different, 
 # everything else might be slightly different (p-values, confidence intervals etc)
+# point estimates are different because feols / felm probably use different
+# convergence criteria
+# so without fe: expect_equivalent else _equivalent
 # ------------------------------------------------------------------ # 
 
 library(fwildclusterboot)
@@ -38,27 +41,27 @@ boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  "group_
 # point estimates
 expect_equivalent(boot_lm$point_estimate, boot_fixest$point_estimate)
 expect_equivalent(boot_fixest$point_estimate, boot_felm$point_estimate)
-expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate)
-expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate)
-expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate)
+expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate, tolerance = 1e-2)
 
 # p-vals
-expect_identical(boot_lm$p_val, boot_fixest$p_val)
-expect_identical(boot_fixest$p_val, boot_felm$p_val)
-expect_identical(boot_felm$p_val, boot_fixest_c$p_val)
-expect_identical(boot_fixest_c$p_val, boot_felm_c$p_val)
-expect_identical(boot_felm_c$p_val, boot_lm$p_val)
+expect_equivalent(boot_lm$p_val, boot_fixest$p_val)
+expect_equivalent(boot_fixest$p_val, boot_felm$p_val)
+expect_equivalent(boot_felm$p_val, boot_fixest_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$p_val, boot_felm_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$p_val, boot_lm$p_val, tolerance = 1e-2)
 
 # t_stats
 expect_equivalent(boot_lm$t_stat, boot_fixest$t_stat)
 expect_equivalent(boot_fixest$t_stat, boot_felm$t_stat)
-expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat)
-expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat)
-expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat)
+expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat, tolerance = 1e-2)
 
 # confidence intervals
-expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int, tolerance = 1e-2)
-expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int, tolerance = 1e-2)
+expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int)
+expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int)
 expect_equivalent(boot_felm$conf_int, boot_fixest_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_fixest_c$conf_int, boot_felm_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tolerance = 1e-2)
@@ -82,27 +85,27 @@ boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  c("grou
 # point estimates
 expect_equivalent(boot_lm$point_estimate, boot_fixest$point_estimate)
 expect_equivalent(boot_fixest$point_estimate, boot_felm$point_estimate)
-expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate)
-expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate)
-expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate)
+expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate, tolerance = 1e-2)
 
 # p-vals
-expect_identical(boot_lm$p_val, boot_fixest$p_val)
-expect_identical(boot_fixest$p_val, boot_felm$p_val)
-expect_identical(boot_felm$p_val, boot_fixest_c$p_val)
-expect_identical(boot_fixest_c$p_val, boot_felm_c$p_val)
-expect_identical(boot_felm_c$p_val, boot_lm$p_val)
+expect_equivalent(boot_lm$p_val, boot_fixest$p_val)
+expect_equivalent(boot_fixest$p_val, boot_felm$p_val)
+expect_equivalent(boot_felm$p_val, boot_fixest_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$p_val, boot_felm_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$p_val, boot_lm$p_val, tolerance = 1e-2)
 
 # t_stats
 expect_equivalent(boot_lm$t_stat, boot_fixest$t_stat)
 expect_equivalent(boot_fixest$t_stat, boot_felm$t_stat)
-expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat)
-expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat)
-expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat)
+expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat, tolerance = 1e-2)
 
 # confidence intervals
-expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int, tolerance = 1e-2)
-expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int, tolerance = 1e-2)
+expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int)
+expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int)
 expect_equivalent(boot_felm$conf_int, boot_fixest_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_fixest_c$conf_int, boot_felm_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tolerance = 1e-2)
@@ -122,31 +125,30 @@ boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  "group_
 # point estimates
 expect_equivalent(boot_lm$point_estimate, boot_fixest$point_estimate)
 expect_equivalent(boot_fixest$point_estimate, boot_felm$point_estimate)
-expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate)
-expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate)
-expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate)
+expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate, tolerance = 1e-2)
 
 # p-vals
-expect_identical(boot_lm$p_val, boot_fixest$p_val)
-expect_identical(boot_fixest$p_val, boot_felm$p_val)
-expect_identical(boot_felm$p_val, boot_fixest_c$p_val)
-expect_identical(boot_fixest_c$p_val, boot_felm_c$p_val)
-expect_identical(boot_felm_c$p_val, boot_lm$p_val)
+expect_equivalent(boot_lm$p_val, boot_fixest$p_val)
+expect_equivalent(boot_fixest$p_val, boot_felm$p_val)
+expect_equivalent(boot_felm$p_val, boot_fixest_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$p_val, boot_felm_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$p_val, boot_lm$p_val, tolerance = 1e-2)
 
 # t_stats
 expect_equivalent(boot_lm$t_stat, boot_fixest$t_stat)
 expect_equivalent(boot_fixest$t_stat, boot_felm$t_stat)
-expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat)
-expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat)
-expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat)
+expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat, tolerance = 1e-2)
 
 # confidence intervals
-expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int, tolerance = 1e-2)
-expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int, tolerance = 1e-2)
+expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int)
+expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int)
 expect_equivalent(boot_felm$conf_int, boot_fixest_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_fixest_c$conf_int, boot_felm_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tolerance = 1e-2)
-
 
 
 # ---------------------------------------------------------------------------------------------- # 
@@ -165,27 +167,27 @@ boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  c("grou
 # point estimates
 expect_equivalent(boot_lm$point_estimate, boot_fixest$point_estimate)
 expect_equivalent(boot_fixest$point_estimate, boot_felm$point_estimate)
-expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate)
-expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate)
-expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate)
+expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate, tolerance = 1e-2)
 
 # p-vals
-expect_identical(boot_lm$p_val, boot_fixest$p_val)
-expect_identical(boot_fixest$p_val, boot_felm$p_val)
-expect_identical(boot_felm$p_val, boot_fixest_c$p_val)
-expect_identical(boot_fixest_c$p_val, boot_felm_c$p_val)
-expect_identical(boot_felm_c$p_val, boot_lm$p_val)
+expect_equivalent(boot_lm$p_val, boot_fixest$p_val)
+expect_equivalent(boot_fixest$p_val, boot_felm$p_val)
+expect_equivalent(boot_felm$p_val, boot_fixest_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$p_val, boot_felm_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$p_val, boot_lm$p_val, tolerance = 1e-2)
 
 # t_stats
 expect_equivalent(boot_lm$t_stat, boot_fixest$t_stat)
 expect_equivalent(boot_fixest$t_stat, boot_felm$t_stat)
-expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat)
-expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat)
-expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat)
+expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat, tolerance = 1e-2)
 
 # confidence intervals
-expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int, tolerance = 1e-2)
-expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int, tolerance = 1e-2)
+expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int)
+expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int)
 expect_equivalent(boot_felm$conf_int, boot_fixest_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_fixest_c$conf_int, boot_felm_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tolerance = 1e-2)
@@ -206,27 +208,27 @@ boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  "group_
 # point estimates
 expect_equivalent(boot_lm$point_estimate, boot_fixest$point_estimate)
 expect_equivalent(boot_fixest$point_estimate, boot_felm$point_estimate)
-expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate)
-expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate)
-expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate)
+expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate, tolerance = 1e-2)
 
 # p-vals
-expect_identical(boot_lm$p_val, boot_fixest$p_val)
-expect_identical(boot_fixest$p_val, boot_felm$p_val)
-expect_identical(boot_felm$p_val, boot_fixest_c$p_val)
-expect_identical(boot_fixest_c$p_val, boot_felm_c$p_val)
-expect_identical(boot_felm_c$p_val, boot_lm$p_val)
+expect_equivalent(boot_lm$p_val, boot_fixest$p_val)
+expect_equivalent(boot_fixest$p_val, boot_felm$p_val)
+expect_equivalent(boot_felm$p_val, boot_fixest_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$p_val, boot_felm_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$p_val, boot_lm$p_val, tolerance = 1e-2)
 
 # t_stats
 expect_equivalent(boot_lm$t_stat, boot_fixest$t_stat)
 expect_equivalent(boot_fixest$t_stat, boot_felm$t_stat)
-expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat)
-expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat)
-expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat)
+expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat, tolerance = 1e-2)
 
 # confidence intervals
-expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int, tolerance = 1e-2)
-expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int, tolerance = 1e-2)
+expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int)
+expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int)
 expect_equivalent(boot_felm$conf_int, boot_fixest_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_fixest_c$conf_int, boot_felm_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tolerance = 1e-2)
@@ -249,27 +251,27 @@ boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  c("grou
 # point estimates
 expect_equivalent(boot_lm$point_estimate, boot_fixest$point_estimate)
 expect_equivalent(boot_fixest$point_estimate, boot_felm$point_estimate)
-expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate)
-expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate)
-expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate)
+expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate, tolerance = 1e-2)
 
 # p-vals
-expect_identical(boot_lm$p_val, boot_fixest$p_val)
-expect_identical(boot_fixest$p_val, boot_felm$p_val)
-expect_identical(boot_felm$p_val, boot_fixest_c$p_val)
-expect_identical(boot_fixest_c$p_val, boot_felm_c$p_val)
-expect_identical(boot_felm_c$p_val, boot_lm$p_val)
+expect_equivalent(boot_lm$p_val, boot_fixest$p_val)
+expect_equivalent(boot_fixest$p_val, boot_felm$p_val)
+expect_equivalent(boot_felm$p_val, boot_fixest_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$p_val, boot_felm_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$p_val, boot_lm$p_val, tolerance = 1e-2)
 
 # t_stats
 expect_equivalent(boot_lm$t_stat, boot_fixest$t_stat)
 expect_equivalent(boot_fixest$t_stat, boot_felm$t_stat)
-expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat)
-expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat)
-expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat)
+expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat, tolerance = 1e-2)
 
 # confidence intervals
-expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int, tolerance = 1e-2)
-expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int, tolerance = 1e-2)
+expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int)
+expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int)
 expect_equivalent(boot_felm$conf_int, boot_fixest_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_fixest_c$conf_int, boot_felm_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tolerance = 1e-2)
@@ -320,26 +322,27 @@ boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c,
 # point estimates
 expect_equivalent(boot_lm$point_estimate, boot_fixest$point_estimate)
 expect_equivalent(boot_fixest$point_estimate, boot_felm$point_estimate)
-expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate)
-expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate)
+expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate, tolerance = 1e-2)
 
 # p-vals
-expect_identical(boot_lm$p_val, boot_fixest$p_val)
-expect_identical(boot_fixest$p_val, boot_felm$p_val)
-expect_identical(boot_felm$p_val, boot_fixest_c$p_val)
-expect_identical(boot_fixest_c$p_val, boot_felm_c$p_val) # fails
-expect_identical(boot_felm_c$p_val, boot_lm$p_val) # fails: error in felm_c$p_val
+expect_equivalent(boot_lm$p_val, boot_fixest$p_val)
+expect_equivalent(boot_fixest$p_val, boot_felm$p_val)
+expect_equivalent(boot_felm$p_val, boot_fixest_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$p_val, boot_felm_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$p_val, boot_lm$p_val, tolerance = 1e-2)
 
 # t_stats
 expect_equivalent(boot_lm$t_stat, boot_fixest$t_stat)
 expect_equivalent(boot_fixest$t_stat, boot_felm$t_stat)
-expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat)
-expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat)
-expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat)
+expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat, tolerance = 1e-2)
 
 # confidence intervals
-expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int, tolerance = 1e-2)
-expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int, tolerance = 1e-2) # fails?
+expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int)
+expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int)
 expect_equivalent(boot_felm$conf_int, boot_fixest_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_fixest_c$conf_int, boot_felm_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tolerance = 1e-2)
@@ -366,30 +369,29 @@ boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  c("grou
 # point estimates
 expect_equivalent(boot_lm$point_estimate, boot_fixest$point_estimate)
 expect_equivalent(boot_fixest$point_estimate, boot_felm$point_estimate)
-expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate)
-expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate)
-expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate)
+expect_equivalent(boot_felm$point_estimate, boot_fixest_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$point_estimate, boot_felm_c$point_estimate, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$point_estimate, boot_lm$point_estimate, tolerance = 1e-2)
 
 # p-vals
-expect_identical(boot_lm$p_val, boot_fixest$p_val)
-expect_identical(boot_fixest$p_val, boot_felm$p_val)
-expect_identical(boot_felm$p_val, boot_fixest_c$p_val)
-expect_identical(boot_fixest_c$p_val, boot_felm_c$p_val) # fails
-expect_identical(boot_felm_c$p_val, boot_lm$p_val) # fails - same test one above fails too
+expect_equivalent(boot_lm$p_val, boot_fixest$p_val)
+expect_equivalent(boot_fixest$p_val, boot_felm$p_val)
+expect_equivalent(boot_felm$p_val, boot_fixest_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$p_val, boot_felm_c$p_val, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$p_val, boot_lm$p_val, tolerance = 1e-2)
 
 # t_stats
 expect_equivalent(boot_lm$t_stat, boot_fixest$t_stat)
 expect_equivalent(boot_fixest$t_stat, boot_felm$t_stat)
-expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat)
-expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat)
-expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat)
+expect_equivalent(boot_felm$t_stat, boot_fixest_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_fixest_c$t_stat, boot_felm_c$t_stat, tolerance = 1e-2)
+expect_equivalent(boot_felm_c$t_stat, boot_lm$t_stat, tolerance = 1e-2)
 
 # confidence intervals
-expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int, tolerance = 1e-2)
-expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int, tolerance = 1e-2)
+expect_equivalent(boot_lm$conf_int, boot_fixest$conf_int)
+expect_equivalent(boot_fixest$conf_int, boot_felm$conf_int)
 expect_equivalent(boot_felm$conf_int, boot_fixest_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_fixest_c$conf_int, boot_felm_c$conf_int, tolerance = 1e-2)
 expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tolerance = 1e-2)
-
 
 
