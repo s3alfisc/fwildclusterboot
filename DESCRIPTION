@@ -1,5 +1,5 @@
 Package: fwildclusterboot
-Title: Fast Wild Cluster Bootstrap for Linear Models
+Title: Fast Wild Cluster Bootstrap Inference for Linear Regression Models
 Version: 0.2.0
 Authors@R: 
     c(person(given = "Alexander",
@@ -9,13 +9,12 @@ Authors@R:
     person(given = "David", 
            family = "Roodman", 
            role = "ctb"))
-Description: Fast wild cluster bootstrap inference for linear regression models.
+Description: Implementation of the fast algorithm for wild cluster bootstrap inference
+             developed in Roodman et al (2019, Stata Journal) for linear regression models.
 URL: https://s3alfisc.github.io/fwildclusterboot
 SourceCode: https://github.com/s3alfisc/fwildclusterboot
 BugReports: https://github.com/s3alfisc/fwildclusterboot/issues
 License: GPL-3 + file LICENSE 
-Depends: 
-    R (>= 4.0.0)
 Imports: 
     collapse, 
     data.table,
@@ -31,10 +30,12 @@ Suggests:
     tinytest,
     covr,
     knitr,
-    rmarkdown
+    rmarkdown,
+    spelling
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 LinkingTo: Rcpp, RcppEigen
 VignetteBuilder: knitr
+Language: en-US

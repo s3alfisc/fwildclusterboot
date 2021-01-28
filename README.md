@@ -14,8 +14,7 @@ status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-p
 [![R-CMD-check](https://github.com/s3alfisc/fwildclusterboot/workflows/R-CMD-check/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
-[![minimal R
-version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/)
+<!-- [![minimal R version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/) -->
 
 <!-- badges: end -->
 
@@ -59,8 +58,8 @@ Results of timing benchmarks of `fwildclusterboot` with
 `sandwich::vcovBS` (one replication):
 
   - Benchmark 1: one cluster with dimension \(N_G = 40\)
-  - Benchmark 2: two closters with dimensions \(N_G1= 40\),
-    \(N_G2 = 20\), \(N_G12 = 800\)
+  - Benchmark 2: two clusters with dimensions \(N_{G1}= 40\),
+    \(N_{G2} = 20\), \(N_{G12} = 800\)
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 

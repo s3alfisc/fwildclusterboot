@@ -34,7 +34,8 @@
 
 \item{bootcluster}{A character vector. Sets the cluster used in the boottest. Chooses the largest cluster by default}
 
-\item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap}
+\item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap. Note: if regression weights
+are used, fe needs to be NULL.}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion}
 

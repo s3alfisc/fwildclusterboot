@@ -22,7 +22,8 @@ boottest.fixest <- function(object,
   #' @param param The univariate coefficients for which a hypothesis is to be tested
   #' @param B number of bootstrap iterations
   #' @param bootcluster A character vector. Sets the cluster used in the boottest. Chooses the largest cluster by default
-  #' @param fe A character scalar. Fixed effect to be projected out in the bootstrap
+  #' @param fe A character scalar. Fixed effect to be projected out in the bootstrap. Note: if regression weights 
+  #'        are used, fe needs to be NULL.
   #' @param sign_level A numeric between 0 and 1. E.g. sign_level = 0.05 returns 0.95% confidence intervals. By default, sign_level = 0.05.
   #' @param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
   #' @param seed An integer. Allows the user to set a random seed
@@ -155,9 +156,10 @@ boottest.fixest <- function(object,
     )
   }
 
-  deparse_fml <- paste(deparse(object$fml_all, width.cutoff = 500), collapse = "")
-  # deparse_fml <- suppressWarnings(formula(Formula::as.Formula(object$fml_all$linear), lhs = 0, rhs = c(1, 2), collapse = TRUE))
-  # deparse_fml <- Reduce(paste, deparse_fml)
+  
+  #deparse_fml <- paste(deparse(object$fml_all, width.cutoff = 500), collapse = "")
+  #Formula::as.Formula(eval(object$fml_all))
+  deparse_fml <- Reduce(paste, as.character(as.formula(object$fml_all$linear)))
   if (grepl("[", deparse_fml, fixed = TRUE) ||
     grepl("i(", deparse_fml, fixed = TRUE) ||
     grepl("c(", deparse_fml, fixed = TRUE) ||

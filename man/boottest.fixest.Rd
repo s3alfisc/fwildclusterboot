@@ -34,7 +34,8 @@
 
 \item{bootcluster}{A character vector. Sets the cluster used in the boottest. Chooses the largest cluster by default}
 
-\item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap}
+\item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap. Note: if regression weights
+are used, fe needs to be NULL.}
 
 \item{sign_level}{A numeric between 0 and 1. E.g. sign_level = 0.05 returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
 
