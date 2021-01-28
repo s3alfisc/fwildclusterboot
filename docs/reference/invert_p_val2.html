@@ -125,14 +125,16 @@
 
     <pre class="usage"><span class='fu'>invert_p_val2</span><span class='op'>(</span>
   <span class='va'>object</span>,
-  <span class='va'>B</span>,
+  <span class='va'>boot_iter</span>,
   <span class='va'>point_estimate</span>,
   <span class='va'>se_guess</span>,
   <span class='va'>clustid</span>,
   <span class='va'>sign_level</span>,
   <span class='va'>vcov_sign</span>,
   <span class='va'>impose_null</span>,
-  <span class='va'>p_val_type</span>
+  <span class='va'>p_val_type</span>,
+  <span class='va'>tol</span>,
+  <span class='va'>maxiter</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -143,7 +145,7 @@
       <td><p>A  object of type boottest</p></td>
     </tr>
     <tr>
-      <th>B</th>
+      <th>boot_iter</th>
       <td><p>An integer. Number of bootstrap iterations</p></td>
     </tr>
     <tr>
@@ -173,6 +175,14 @@
     <tr>
       <th>p_val_type</th>
       <td><p>type Type of p-value. By default "two-tailed". Other options: "equal-tailed", "&gt;", "&lt;"</p></td>
+    </tr>
+    <tr>
+      <th>tol</th>
+      <td><p>the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.</p></td>
+    </tr>
+    <tr>
+      <th>maxiter</th>
+      <td><p>maximum number of iterations for confidence interval inversion. 10 by default.</p></td>
     </tr>
     </table>
 
