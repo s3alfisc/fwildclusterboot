@@ -238,9 +238,12 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
   n_fe <- NULL
 
   if (!is.null(fe)) {
+    
     fixed_effect <- as.data.frame(model_frame[, fe])
-    X <- collapse::fwithin(X, fixed_effect[, 1])
-    Y <- collapse::fwithin(Y, fixed_effect[, 1])
+    # set use.g.names to FALSE?
+    g <- collapse::GRP(fixed_effect, call = FALSE)
+    X <- collapse::fwithin(X, g)
+    Y <- collapse::fwithin(Y, g)
 
     fixed_effect_W <- fixed_effect[, 1]
     if (is.null(weights)) {

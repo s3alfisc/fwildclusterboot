@@ -56,7 +56,7 @@ crosstab4 <- function(data, var1, var2) {
 }
 
 
-crosstab <- function(data, var1, var2){
+crosstab3 <- function(data, var1, var2){
   
   #' collapse way to calculate crosstabs
   #' @param data A matrix to collapse by two dimensions var1 var2
@@ -79,3 +79,24 @@ crosstab <- function(data, var1, var2){
   res
 }
 
+crosstab <- function(data, var1, var2) {
+  
+  #' optimized collapse way to calculate crosstabs
+  #' @param data A matrix to collapse by two dimensions var1 var2
+  #' @param var1 a data.frame containing a single variable
+  #' @param var2 a data.frame containing a single variable
+  #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
+  
+  f1 <- collapse::qF(.subset2(var1, 1L), na.exclude = FALSE)
+  f2 <- collapse::qF(.subset2(var2, 1L), na.exclude = FALSE)
+  intact <- f1:f2
+  class(intact) <- c(class(intact), "na.included")
+  # See https://sebkrantz.github.io/collapse/articles/collapse_intro.html#factors-grouping-objects-and-grouped-data-frames
+  res <- collapse::fsum(data, intact, use.g.names = FALSE)
+  lev1 <- attr(f1, "levels")
+  lev2 <- attr(f2, "levels")
+  res <- matrix(res, length(lev1), length(lev2), byrow = TRUE, dimnames = list(lev1, lev2))
+  res[is.na(res)] <- 0
+  res
+  
+}

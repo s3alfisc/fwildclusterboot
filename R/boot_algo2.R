@@ -46,6 +46,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
 
   N_G_bootcluster <- length(unique(bootcluster[[1]]))
 
+  # prepare "key" for use with collapse::fsum()
+  g <- collapse::GRP(bootcluster[[1]], call = FALSE)
 
   # bootstrap error
   v <- matrix(wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1)), N_G_bootcluster, boot_iter + 1)
@@ -88,14 +90,10 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
 
   Ar <- solve(crossprod(weights_sq * Xr))
   #Ar <- as.matrix(solve(t(Xr) %*% weights_mat %*% Xr))
-  # if(sum(weights) == length(weights)){
-  #   mean(Ar - solve(crossprod(Xr)))
-  # }
+
   Q <- Y - Xr %*% (Ar %*% (t(Xr) %*% weights_mat %*% Y))
   P <- -Xr0 + Xr %*% (Ar %*% (t(Xr) %*% weights_mat %*% Xr0))
-  ## invXrXr <- solve(crossprod(Xr))
-  # Q <- Y - Xr %*% (Ar %*% (t(Xr) %*% Y)) # u_hat
-  # P <- Xr %*% (Ar %*% (t(Xr) %*% Xr0)) - Xr0
+
   if (impose_null == FALSE && any(P != 0) == TRUE) {
     stop("P contains non-0 values even though impose_null = FALSE.")
   }
@@ -106,18 +104,14 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   #A0 <- as.matrix(solve(t(X) %*% weights_mat %*% X))
   WXAr <- weights * as.vector(X %*% (A0 %*% R0))
   WXArX <- WXAr * X
-  # invXX <- solve(crossprod(X)) # k x k matrix#
-  # XinvXXr <- as.vector(X %*% (invXX %*% R0)) # N x 1
-  # XinvXXrX <- XinvXXr * X
 
   # pre-calculate several objects used in for loop below:
   # splits: a + br
-  SuXa <- collapse::fsum(weights * as.vector(Q) * X, bootcluster[[1]])
-  SuXb <- collapse::fsum(weights * as.vector(P) * X, bootcluster[[1]])
-
-  # XinvXXrQ <- XinvXXr * Q
-  # XinvXXrP <- XinvXXr * P
-
+  # SuXa <- collapse::fsum(weights * as.vector(Q) * X, bootcluster[[1]])
+  # SuXb <- collapse::fsum(weights * as.vector(P) * X, bootcluster[[1]])
+  SuXa <- collapse::fsum(weights * as.vector(Q) * X, g)
+  SuXb <- collapse::fsum(weights * as.vector(P) * X, g)
+  
   WXArQ <- WXAr * Q
   WXArP <- WXAr * P
 
@@ -143,8 +137,11 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
 
   # calculate numerator:
 
-  numer_a <- collapse::fsum(as.vector(WXArQ), bootcluster[[1]])
-  numer_b <- collapse::fsum(as.vector(WXArP), bootcluster[[1]])
+  #numer_a <- collapse::fsum(as.vector(WXArQ), bootcluster[[1]])
+  #numer_b <- collapse::fsum(as.vector(WXArP), bootcluster[[1]])
+  numer_a <- collapse::fsum(as.vector(WXArQ), g)
+  numer_b <- collapse::fsum(as.vector(WXArP), g)
+  
   # calculate A, B
   A <- crossprod(numer_a, v)
   B <- crossprod(numer_b, v)
