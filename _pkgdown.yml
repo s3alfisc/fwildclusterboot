@@ -43,8 +43,7 @@ reference:
     Functions to compute p-values, confidence intervals and preprocess the data 
   contents: 
   - '`boot_algo2`'
-  - '`crosstab2`'
-  - '`crosstab4`'
+  - '`crosstab`'
   - '`eigenMatMult`'  
   - '`p_val_null2`'
   - '`invert_p_val2`'
