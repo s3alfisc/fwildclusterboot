@@ -14,21 +14,21 @@ boottest.lm <- function(object,
                         maxiter = 10,
                         ...) {
 
-  #' Conducts wild cluster bootstrap inference for object of class lm.
-  #' @param object An object of class lm
+  #' Fast wild cluster bootstrap inference for object of class lm
+  #' @param object An object of class fixest
   #' @param clustid A vector with the clusters
-  #' @param param The univariate coefficients for which a hypothesis is to be tested
-  #' @param B number of bootstrap iterations
-  #' @param bootcluster A character vector. Sets the cluster used in the boottest. Chooses the largest cluster by default
+  #' @param param Character vector of length one. The name of the regression coefficient for which the hypothesis is to be tested
+  #' @param B Integer. number of bootstrap iterations
+  #' @param bootcluster A character vector. Sets the cluster used in the bootstrap dgp. Chooses the largest cluster by default
   #' @param sign_level A numeric between 0 and 1. E.g. sign_level = 0.05 returns 0.95% confidence intervals. By default, sign_level = 0.05.
-  #' @param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion
+  #' @param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion. If FALSE, only the p-value is returned.
   #' @param seed An integer. Allows the user to set a random seed
-  #' @param beta0 A numeric. Shifts the null hypothesis
+  #' @param beta0 A numeric. Shifts the null hypothesis H0: param = beta0 vs H1: param != beta0
   #' @param type character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.
-  #' @param impose_null Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU
-  #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed"
-  #' @param tol the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.
-  #' @param maxiter maximum number of iterations for confidence interval inversion. 10 by default.
+  #' @param impose_null Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed `(WCR)` by default. If FALSE, the null is not imposed `(WCU)`
+  #' @param p_val_type Character vector of length 1. Type of p-value. By default "two-tailed". Other options: "equal-tailed"
+  #' @param tol Numeric vector of length 1. The desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.
+  #' @param maxiter Integer. Maximum number of iterations for confidence interval inversion. 10 by default.
   #' @param ... Further arguments passed to or from other methods.
   #' @method boottest lm
   #' @return An object of class \code{boottest}

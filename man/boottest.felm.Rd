@@ -2,7 +2,7 @@
 % Please edit documentation in R/boottest_felm.R
 \name{boottest.felm}
 \alias{boottest.felm}
-\title{Conducts wild cluster bootstrap inference for object of class felm.}
+\title{Fast wild cluster bootstrap inference for object of class felm}
 \usage{
 \method{boottest}{felm}(
   object,
@@ -26,34 +26,34 @@
 \arguments{
 \item{object}{An object of class fixest}
 
-\item{param}{The univariate coefficients for which a hypothesis is to be tested}
+\item{param}{Character vector of length one. The name of the regression coefficient for which the hypothesis is to be tested}
 
-\item{B}{number of bootstrap iterations}
+\item{B}{Integer. number of bootstrap iterations}
 
 \item{clustid}{A vector with the clusters}
 
-\item{bootcluster}{A character vector. Sets the cluster used in the boottest. Chooses the largest cluster by default}
+\item{bootcluster}{A character vector. Sets the cluster used in the bootstrap dgp. Chooses the largest cluster by default}
 
-\item{fe}{A character scalar. Fixed effect to be projected out in the bootstrap. Note: if regression weights
+\item{fe}{A character vector of length one. Fixed effect to be projected out in the bootstrap. Note: if regression weights
 are used, fe needs to be NULL.}
 
-\item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion}
+\item{conf_int}{A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion. If FALSE, only the p-value is returned.}
 
 \item{seed}{An integer. Allows the user to set a random seed}
 
-\item{beta0}{A numeric. Shifts the null hypothesis}
+\item{beta0}{A numeric. Shifts the null hypothesis H0: param = beta0 vs H1: param != beta0}
 
 \item{sign_level}{A numeric between 0 and 1. E.g. sign_level = 0.05 returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
 
 \item{type}{character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.}
 
-\item{impose_null}{Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU}
+\item{impose_null}{Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed \code{(WCR)} by default. If FALSE, the null is not imposed \code{(WCU)}}
 
-\item{p_val_type}{type Type of p-value. By default "two-tailed". Other options: "equal-tailed"}
+\item{p_val_type}{Character vector of length 1. Type of p-value. By default "two-tailed". Other options: "equal-tailed"}
 
-\item{tol}{the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.}
+\item{tol}{Numeric vector of length 1. The desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.}
 
-\item{maxiter}{maximum number of iterations for confidence interval inversion. 10 by default.}
+\item{maxiter}{Integer. Maximum number of iterations for confidence interval inversion. 10 by default.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
@@ -75,7 +75,7 @@ An object of class \code{boottest}
 \item{call}{Function call of boottest.}
 }
 \description{
-Conducts wild cluster bootstrap inference for object of class felm.
+Fast wild cluster bootstrap inference for object of class felm
 }
 \section{Confidence Intervals}{
 
