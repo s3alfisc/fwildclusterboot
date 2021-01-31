@@ -4,8 +4,22 @@
 #' Matrix Multiplication via Eigen
 #' @param A A matrix. 
 #' @param B A matrix.
+#' @param n_cores Number of cores to be used for parallel matrix multiplication
 #' @return A matrix
 eigenMatMult <- function(A, B) {
     .Call('_fwildclusterboot_eigenMatMult', PACKAGE = 'fwildclusterboot', A, B)
+}
+
+#' Matrix Multiplication via Eigen
+#' @param A A matrix. 
+#' @param B A matrix.
+#' @param n_cores Number of cores to be used for parallel matrix multiplication
+#' @return A matrix
+eigenMapMatMult <- function(A, B) {
+    .Call('_fwildclusterboot_eigenMapMatMult', PACKAGE = 'fwildclusterboot', A, B)
+}
+
+cpp_get_nb_threads <- function() {
+    .Call('_fwildclusterboot_cpp_get_nb_threads', PACKAGE = 'fwildclusterboot')
 }
 

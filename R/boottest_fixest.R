@@ -13,26 +13,55 @@ boottest.fixest <- function(object,
                             p_val_type = "two-tailed",
                             tol = 1e-6, 
                             maxiter = 10,
+                            na_omit = TRUE,
+                            #nthreads = getBoottest_nthreads(), 
+                            nthreads = NULL, 
                             ...) {
 
 
   #' Fast wild cluster bootstrap inference for object of class fixest
   #' @param object An object of class fixest
   #' @param clustid A vector with the clusters
-  #' @param param Character vector of length one. The name of the regression coefficient for which the hypothesis is to be tested
+  #' @param param Character vector of length one. The name of the regression
+  #'        coefficient for which the hypothesis is to be tested
   #' @param B Integer. number of bootstrap iterations
-  #' @param bootcluster A character vector. Sets the cluster used in the bootstrap dgp. Chooses the largest cluster by default
-  #' @param fe A character vector of length one. Fixed effect to be projected out in the bootstrap. Note: if regression weights 
+  #' @param bootcluster A character vector. Sets the cluster used in the
+  #'        bootstrap dgp. Chooses the largest cluster by default
+  #' @param fe A character vector of length one. Fixed effect to be projected 
+  #'        out in the bootstrap. Note: if regression weights 
   #'        are used, fe needs to be NULL.
-  #' @param sign_level A numeric between 0 and 1. E.g. sign_level = 0.05 returns 0.95% confidence intervals. By default, sign_level = 0.05.
-  #' @param conf_int A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion. If FALSE, only the p-value is returned.
+  #' @param sign_level A numeric between 0 and 1. E.g. sign_level = 0.05 
+  #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
+  #' @param conf_int A logical vector. If TRUE, boottest computes confidence 
+  #'        intervals by p-value inversion. If FALSE, only the p-value
+  #'        is returned.
   #' @param seed An integer. Allows the user to set a random seed
-  #' @param beta0 A numeric. Shifts the null hypothesis H0: param = beta0 vs H1: param != beta0
-  #' @param type character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.
-  #' @param impose_null Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed `(WCR)` by default. If FALSE, the null is not imposed `(WCU)`
-  #' @param p_val_type Character vector of length 1. Type of p-value. By default "two-tailed". Other options: "equal-tailed"
-  #' @param tol Numeric vector of length 1. The desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.
-  #' @param maxiter Integer. Maximum number of iterations for confidence interval inversion. 10 by default.
+  #' @param beta0 A numeric. Shifts the null hypothesis
+  #'        H0: param = beta0 vs H1: param != beta0
+  #' @param type character or function. The character string specifies the type
+  #'        of boostrap to use: One of "rademacher", "mammen", "norm" and
+  #'        "webb". Alternatively, type can be a function(n) for drawing 
+  #'        wild bootstrap factors. "rademacher" by default.
+  #' @param impose_null Logical. Controls if the null hypothesis is imposed 
+  #'        on the bootstrap dgp or not. Null imposed `(WCR)` by default. 
+  #'        If FALSE, the null is not imposed `(WCU)`
+  #' @param p_val_type Character vector of length 1. Type of p-value. 
+  #'        By default "two-tailed". Other options: "equal-tailed"
+  #' @param tol Numeric vector of length 1. The desired accuracy
+  #'        (convergence tolerance) for confidence interval inversion. 
+  #'        1e-6 by default.
+  #' @param maxiter Integer. Maximum number of iterations for confidence 
+  #'        interval inversion. 10 by default.
+  #' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing
+  #'        variables that are added to the model via the `cluster` argument 
+  #'        in `boottest()`
+  #' @param nthreads The number of threads. Can be: a) an integer lower than, 
+  #'                 or equal to, the maximum number of threads; b) 0: meaning 
+  #'                 all available threads will be used; c) a number strictly
+  #'                 etween 0 and 1 which represents the fraction of all threads 
+  #'                 to use. The default is to use 50\% of all threads. You can
+  #'                 set permanently the number of threads used within this 
+  #'                 package using the function ...
   #' @param ... Further arguments passed to or from other methods.
   
   #' @return An object of class \code{boottest}
@@ -40,44 +69,69 @@ boottest.fixest <- function(object,
   #' \item{t_stat}{The bootstrap t-statistic.}
   #' \item{conf_int}{The bootstrap confidence interval.}
   #' \item{param}{The tested parameter.}
-  #' \item{N}{Sample size. Might differ from the regression sample size if the cluster variables contain NA values.}
+  #' \item{N}{Sample size. Might differ from the regression sample size if
+  #'      the cluster variables contain NA values.}
   #' \item{B}{Number of Bootstrap Iterations.}
   #' \item{clustid}{Names of the cluster Variables.}
   #' \item{N_G}{Dimension of the cluster variables as used in boottest.}
   #' \item{sign_level}{Significance sign_level used in boottest.}
   #' \item{type}{Distribution of the bootstrap weights.}
-  #' \item{p_test_vals}{All p-values calculated while calculating the confidence interval.}
-  #' \item{test_vals}{All t-statistics calculated while calculating the confidence interval.}
+  #' \item{p_test_vals}{All p-values calculated while calculating the 
+  #'       confidence interval.}
+  #' \item{test_vals}{All t-statistics calculated while calculating the 
+  #'       confidence interval.}
   #' \item{regression}{The regression object used in boottest.}
   #' \item{call}{Function call of boottest.}
   #' @import dreamerr
   #' @export
   #' @method boottest fixest
   #' @section Confidence Intervals:
-  #' \code{boottest} computes confidence intervals by inverting p-values. In practice, the following procedure is used:
+  #' \code{boottest} computes confidence intervals by inverting p-values. 
+  #'       In practice, the following procedure is used:
   #' \itemize{
-  #' \item Based on an initial guess for starting values, calculate p-values for 26 equal spaced points between the starting values.
-  #' \item Out of the 26 calculated p-values, find the two pairs of values x for which the corresponding p-values px cross the significance sign_level sign_level.
-  #' \item Feed the two pairs of x into an numerical root finding procedure and solve for the root. boottest currently relies on \code{stats::uniroot} and sets an absolute tolerance of 1e-06 and stops the procedure after 10 iterations.
+  #' \item Based on an initial guess for starting values, calculate p-values 
+  #'       for 26 equal spaced points between the starting values.
+  #' \item Out of the 26 calculated p-values, find the two pairs of values x 
+  #'       for which the corresponding p-values px cross the significance 
+  #'       sign_level sign_level.
+  #' \item Feed the two pairs of x into an numerical root finding procedure 
+  #'       and solve for the root. boottest currently relies on
+  #'       \code{stats::uniroot} and sets an absolute tolerance of 1e-06 and
+  #'       stops the procedure after 10 iterations.
   #' }
   #' @section Standard Errors:
   #' \code{boottest} does not calculate standard errors.
-  #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in Stata using boottest", The Stata Journal. (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+  #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in 
+  #'             Stata using boottest", The Stata Journal.
+  #'             (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
   #' @examples
   #' library(fwildclusterboot)
   #' library(fixest)
-  #' # voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10,
-  #' #                        icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)
   #' feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income,
   #'            fixef =  "Q1_immigration", 
   #'            data = create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10,
   #'                    icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
-  #' boot1 <- boottest(feols_fit, B = 9999, param = "treatment", clustid = "group_id1")
-  #' boot2 <- boottest(feols_fit, B = 9999, param = "treatment", clustid = c("group_id1", "group_id2"))
-  #' boot3 <- boottest(feols_fit, B = 9999, param = "treatment", clustid = c("group_id1", "group_id2"),
-  #'                  fe = "Q1_immigration")
-  #' boot4 <- boottest(feols_fit, B = 10000, param = "treatment", clustid = c("group_id1", "group_id2"),
-  #' fe = "Q1_immigration", sign_level = 0.2, seed = 8, beta0 = 2)
+  #' boot1 <- boottest(feols_fit, 
+  #'                   B = 9999, 
+  #'                   param = "treatment",
+  #'                   clustid = "group_id1")
+  #' boot2 <- boottest(feols_fit, 
+  #'                   B = 9999, 
+  #'                   param = "treatment", 
+  #'                   clustid = c("group_id1", "group_id2"))
+  #' boot3 <- boottest(feols_fit,
+  #'                   B = 9999,
+  #'                   param = "treatment", 
+  #'                   clustid = c("group_id1", "group_id2"),
+  #'                   fe = "Q1_immigration")
+  #' boot4 <- boottest(feols_fit, 
+  #'                   B = 10000, 
+  #'                   param = "treatment", 
+  #'                   clustid = c("group_id1", "group_id2"),
+  #'                   fe = "Q1_immigration", 
+  #'                   sign_level = 0.2, 
+  #'                   seed = 8,
+  #'                   beta0 = 2)
   #' summary(boot1)
   #' tidy(boot1)
   #' plot(boot1)
@@ -108,17 +162,21 @@ boottest.fixest <- function(object,
   }
   
   if(!(p_val_type %in% c("two-tailed", "equal-tailed"))){
-    stop("The function argument p_val_type must be either two-tailed or equal-tailed.")
+    stop("The function argument p_val_type must be either two-tailed or 
+         equal-tailed.")
   }
   
   if ((conf_int == TRUE || is.null(conf_int)) & B <= 100) {
-    stop("The function argument B is smaller than 100. The number of bootstrap iterations needs to be 100 or higher in order to guarantee that the root
-         finding procudure used to find the confidence set works properly.",
+    stop("The function argument B is smaller than 100. The number of bootstrap 
+          iterations needs to be 100 or higher in order to guarantee that the root
+          finding procudure used to find the confidence set works properly.",
       call. = FALSE
     )
   }
   if (!is.null(sign_level) & (sign_level <= 0 || sign_level >= 1)) {
-    stop("The function argument sign_level is outside of the unit interval (0, 1). Please specify sign_level so that it is within the unit interval.",
+    stop("The function argument sign_level is outside of the unit interval
+         (0, 1). Please specify sign_level so that it is within the 
+         unit interval.",
       call. = FALSE
     )
   }
@@ -128,7 +186,9 @@ boottest.fixest <- function(object,
   }
 
   if (!(param %in% c(names(object$coefficients)))) {
-    stop(paste("The parameter", param, "is not included in the estimated model. Maybe you are trying to test for an interaction parameter? To see all model parameter names, run names(coef(model))."))
+    stop(paste("The parameter", param, "is not included in the estimated model.
+               Maybe you are trying to test for an interaction parameter? 
+               To see all model parameter names, run names(coef(model))."))
   }
   # repeat the same: check if fe is in the data.frame
 
@@ -138,20 +198,27 @@ boottest.fixest <- function(object,
   }
 
   if (!is.null(fe) && fe %in% clustid) {
-    stop(paste("The function argument fe =", fe, "is contained in the clustering variables. This is not allowed. Please set fe to another factor variable or NULL."),
+    stop(paste("The function argument fe =", fe, "is contained in the 
+               clustering variables. This is not allowed. Please set fe
+               to another factor variable or NULL."),
       call. = FALSE
     )
   }
 
   if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
-    message(paste("Note: The bootstrap usually performs best when the confidence sign_level (here,", 1 - sign_level, "%) times the number of replications plus 1 (", B, "+ 1 = ", B + 1, ") is an integer."))
+    message(paste("Note: The bootstrap usually performs best when the
+                  confidence sign_level (here,", 1 - sign_level, "%) 
+                  times the number of replications plus 1 
+                  (", B, "+ 1 = ", B + 1, ") is an integer."))
   }
 
   # throw error if specific function arguments are used in feols() call
   call_object <- names(object$call)[names(object$call) != ""]
-  banned_fun_args <- c("offset", "subset", "split", "fsplit", "panel.id", "demeaned")
+  banned_fun_args <- c("offset", "subset", "split", "fsplit", "panel.id",
+                       "demeaned")
   if (sum(call_object %in% banned_fun_args) > 0) {
-    stop("boottest.fixest currently does not accept objects of type fixest with function arguments 
+    stop("boottest.fixest currently does not accept objects of type 
+          fixest with function arguments 
           offset, subset, split, fsplit, panel.id & demeaned.",
       call. = FALSE
     )
@@ -168,11 +235,18 @@ boottest.fixest <- function(object,
   # note: whitespace ~ - for IV
   # grepl("~", deparse_fml, fixed = TRUE)
   ) {
-    stop("Advanced formula notation in fixest / fixest (i(), ^, [x] and vectorized formulas via c(),) is currently not supported in boottest.")
+    stop("Advanced formula notation in fixest / fixest (i(), ^, [x] 
+         and vectorized formulas via c(),) is currently not supported
+         in boottest().")
   }
 
   # preprocess the data: Y, X, weights, fixed_effect
-  preprocess <- preprocess2(object = object, cluster = clustid, fe = fe, param = param, bootcluster = bootcluster)
+  preprocess <- preprocess2(object = object, 
+                            cluster = clustid,
+                            fe = fe, 
+                            param = param,
+                            bootcluster = bootcluster, 
+                            na_omit = na_omit)
 
   clustid_dims <- preprocess$clustid_dims
   point_estimate <- object$coefficients[param]
@@ -180,7 +254,10 @@ boottest.fixest <- function(object,
 
   N_G_2 <- 2^length(unique(preprocess$bootcluster[, 1]))
   if (type == "rademacher" & N_G_2 < B) {
-    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, 
+    warning(paste("There are only", N_G_2, "unique draws from the rademacher
+                  distribution for", 
+                  length(unique(preprocess$bootcluster[, 1])), 
+                  "clusters. Therefore, 
                   B = ", N_G_2, ". Consider using webb weights instead."),
       call. = FALSE
     )

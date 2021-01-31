@@ -41,32 +41,30 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
     stop("bootcluster is not a data.frame. fix this in pre-processing.")
   }
 
-
+  # bootstrap error
   set.seed(seed)
-
   N_G_bootcluster <- length(unique(bootcluster[[1]]))
-
+  v <- matrix(wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1)), N_G_bootcluster, boot_iter + 1)
+  v[, 1] <- 1
+  
   # prepare "key" for use with collapse::fsum()
   g <- collapse::GRP(bootcluster[[1]], call = FALSE)
 
-  # bootstrap error
-  v <- matrix(wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1)), N_G_bootcluster, boot_iter + 1)
-  v[, 1] <- 1
-
+  # loop over all independent hypotheses: 
+  # lapply(param, function(x){
+  #  R0 <- ... 
+  # })
 
   # impose_null = FALSE
   if (impose_null == TRUE) {
     # error under the null hypothesis. note the Xr is only used to pre-compute
     # P and Q
     Xr <- X[, -which(colnames(X) == param)] # delete rows that will be tested
-    # R1 <- 1 - R0
     # note: R0 always a vector of zeros and ones - multiplication with beta0 only later
     # (notation in paper different for R = c(2, 0, 0) if hypothesis e.g. 2 x param1 = c)
     # R != R0
     Xr0 <- X %*% R0
   } else if (impose_null == FALSE) {
-    # Xr <- X[, -which(colnames(X) == param)]
-    # Xr <- X[, -which(colnames(X) == param)] # delete rows that will be tested
     Xr <- X
     Xr0 <- rep(0, N)
     # note: if impose_null, all the parts that end with b contain only 0's
@@ -79,7 +77,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   }
 
   # small sample correction for clusters
-  G <- vapply(clustid, function(x) length(unique(x)), 1)
+  G <- vapply(clustid, function(x) length(unique(x)), numeric(1))
   small_sample_correction <- G / (G - 1)
   # prepare summation of individual terms for multiway clustering
   small_sample_correction <- vcov_sign * small_sample_correction
@@ -98,7 +96,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
     stop("P contains non-0 values even though impose_null = FALSE.")
   }
 
-  rm(list = c("Ar", "Xr", "Xr0"))
+  #rm(list = c("Ar", "Xr", "Xr0"))
 
   A0 <- solve(crossprod(weights_sq * X))
   #A0 <- as.matrix(solve(t(X) %*% weights_mat %*% X))
@@ -173,8 +171,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
       S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
       K_b[[x]] <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX[[x]], SuXb)
 
-      C[[x]] <- eigenMatMult(as.matrix(K_a[[x]]), v)
-      D[[x]] <- eigenMatMult(as.matrix(K_b[[x]]), v)
+      C[[x]] <- eigenMapMatMult(as.matrix(K_a[[x]]), v)
+      D[[x]] <- eigenMapMatMult(as.matrix(K_b[[x]]), v)
       CC[[x]] <- colSums(C[[x]] * C[[x]])
       DD[[x]] <- colSums(D[[x]] * D[[x]])
       CD[[x]] <- colSums(C[[x]] * D[[x]])
@@ -199,8 +197,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
       S_diag_XinvXXRu_S_b <- S_diag_XinvXXRu_S_b - prod_b
       K_b[[x]] <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX[[x]], SuXb)
 
-      C[[x]] <- eigenMatMult(as.matrix(K_a[[x]]), v)
-      D[[x]] <- eigenMatMult(as.matrix(K_b[[x]]), v)
+      C[[x]] <- eigenMapMatMult(as.matrix(K_a[[x]]), v)
+      D[[x]] <- eigenMapMatMult(as.matrix(K_b[[x]]), v)
       CC[[x]] <- colSums(C[[x]] * C[[x]])
       DD[[x]] <- colSums(D[[x]] * D[[x]])
       CD[[x]] <- colSums(C[[x]] * D[[x]])
