@@ -1,4 +1,4 @@
-preprocess2 <- function(object, cluster, fe, param, bootcluster) {
+preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
 
 
   #' function that pre-processes regression objects of type lm, fixest and feols
@@ -7,6 +7,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
   #' @param fe A character scalar - fixed effect to be projected out, or NULL
   #' @param param The univariate coefficients for which a hypothesis is to be tested
   #' @param bootcluster The bootstrap sampling cluster.
+  #' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing variables that are added to the model via the `cluster` argument in `boottest()`
   #' @importFrom stats residuals formula model.frame coef as.formula model.matrix model.response model.weights
   #' @importFrom utils combn
   #' @export
@@ -178,8 +179,17 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster) {
   N <- dim(of)[1]
   N_diff <- (N - N_model)
 
+  if(na_omit == FALSE && N_diff != 0){
+    stop("One or more cluster variables set in boottest() contain 
+         NA values. This is not allowed if na_omit == FALSE.
+         Please either delete the missing values from your model prior
+         to estimating the regression model and conducting inference with 
+         boottest(), or set the boottest() argument na_omit = TRUE. Note that in
+         the second case, parameter estimation and 
+         bootstrap inference will be conducted on two different samples.")
+  }
   # add a warning if missing values are deleted due to NA values in cluster variables
-  na_omit <- TRUE
+  
   if (na_omit == TRUE) {
     if (N_diff == 1) {
       warning(paste(
