@@ -10,6 +10,8 @@ eigenMatMult(A, B, nthreads)
 \item{A}{A matrix.}
 
 \item{B}{A matrix.}
+
+\item{nthreads}{Integer. Number of threads to use for matrix multiplication.}
 }
 \value{
 A matrix

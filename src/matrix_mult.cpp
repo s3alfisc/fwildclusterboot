@@ -1,7 +1,6 @@
 // [[Rcpp::depends(RcppEigen)]]
 
 #include <RcppEigen.h>
-#include <RcppEigen.h>
 #ifdef _OPENMP
   #include <omp.h>
 #else
@@ -12,6 +11,7 @@
 //' Matrix Multiplication via Eigen
 //' @param A A matrix. 
 //' @param B A matrix.
+//' @param nthreads Integer. Number of threads to use for matrix multiplication.
 //' @return A matrix
 // [[Rcpp::export]]
 SEXP eigenMatMult(Eigen::MatrixXd A, 
@@ -27,6 +27,7 @@ SEXP eigenMatMult(Eigen::MatrixXd A,
 //' Matrix Multiplication via Eigen
 //' @param A A matrix. 
 //' @param B A matrix.
+//' @param nthreads Integer. Number of threads to use for matrix multiplication.
 //' @return A matrix
 // [[Rcpp::export]]
 SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A,

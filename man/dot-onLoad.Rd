@@ -6,6 +6,11 @@
 \usage{
 .onLoad(libname, pkgname)
 }
+\arguments{
+\item{libname}{library name}
+
+\item{pkgname}{package name}
+}
 \description{
 setting options for nthreads when package is loaded
 }

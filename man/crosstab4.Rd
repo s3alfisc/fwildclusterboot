@@ -2,7 +2,7 @@
 % Please edit documentation in R/crosstab.R
 \name{crosstab4}
 \alias{crosstab4}
-\title{Function 4 to calculate crosstabs}
+\title{crosstab2 <- function(data, var1, var2) {}
 \usage{
 crosstab4(data, var1, var2)
 }
@@ -17,5 +17,42 @@ crosstab4(data, var1, var2)
 A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
 }
 \description{
-Function 4 to calculate crosstabs
+#' Function 2 to calculate crosstabs
+#' @param data A matrix to collapse by two dimensions var1 var2
+#' @param var1 a data.frame containing a single variable
+#' @param var2 a data.frame containing a single variable
+#' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
 }
+\section{data = XinvXXr}{
+
+}
+
+\section{var1 = clustid}{
+
+}
+
+\section{var2 = fixed_effect}{
+dreamerr::check_arg(var1, "data.frame")
+dreamerr::check_arg(var2, "data.frame")
+
+dt <- data.table(var1 = var1, var2 = var2, y = data)
+setnames(dt, names(dt), c("var1", "var2", "y"))
+setkeyv(dt, c("var1", "var2"))
+
+dt <- dt\link{CJ(var1, var2, unique = TRUE), lapply(.SD, sum), by = .EACHI}
+dt\link{is.na(y), y := 0}
+
+unique_var1 <- as.vector(unique(var1\link{, names(var1)}))
+}
+
+\section{unique_var2 <- unique(var2)}{
+unique_var2 <- as.vector(unique(var2\link{, names(var2)}))
+
+unique_var1_len <- length(unique_var1)
+unique_var2_len <- length(unique_var2)
+}
+
+\section{dt$y}{
+
+}
+
