@@ -1,6 +1,7 @@
 # Test 12: test crosstab 
 
 library(fwildclusterboot)
+library(data.table)
 
 a <- sample(1:10, 10, replace = TRUE)
 b <- sample(1:4, 10, replace = TRUE)

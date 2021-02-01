@@ -24,17 +24,19 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-project.org/package=fwildclusterboot)
 [![R-CMD-check](https://github.com/s3alfisc/fwildclusterboot/workflows/R-CMD-check/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions)
 [![Codecov test coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
-[![minimal R version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/)
+<!-- [![minimal R version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/) -->
 
 <!-- badges: end -->
 
-The `fwildclusterboot` package is an R port of Stata's [boottest](https://github.com/droodman/boottest) package. 
+The `fwildclusterboot` package is an R port of STATA's [boottest](https://github.com/droodman/boottest) package. 
 
 It implements the fast wild cluster bootstrap algorithm developed in [Roodman et al (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for regression objects in R. It currently works for regression objects of type `lm`, `felm` and `fixest` from base R and the `lfe` and `fixest` packages. 
 
 The package's central function is `boottest()`. It allows the user to test two-sided, univariate hypotheses using a wild cluster bootstrap. Importantly, it uses the "fast" algorithm developed in Roodman et al, which makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples -- as long as the number of bootstrapping clusters is not too large.
 
 The `fwildclusterboot` package currently supports multi-dimensional clustering and one-dimensional, two-sided hypotheses. It supports regression weights, multiple distributions of bootstrap weights, fixed effects, restricted (WCR) and unrestricted (WCU) bootstrap inference and subcluster bootstrapping for few treated clusters [(MacKinnon & Webb, (2018))](https://academic.oup.com/ectj/article-abstract/21/2/114/5078969).
+
+For a quick introduction to the package's key function, `boottest()`, please follow this [link](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
 <!-- The following features will be added in the future:  -->
 
@@ -83,7 +85,7 @@ The `fwildclusterboot` package currently supports multi-dimensional clustering a
 Results of timing benchmarks of `fwildclusterboot` with `sandwich::vcovBS` (one replication):
 
 * Benchmark 1: one cluster with dimension $N_G = 40$
-* Benchmark 2: two closters with dimensions $N_G1= 40$, $N_G2 = 20$, $N_G12 = 800$
+* Benchmark 2: two clusters with dimensions $N_{G1}= 40$, $N_{G2} = 20$, $N_{G12} = 800$
 
 ```{r,echo=FALSE, warning = FALSE, message = FALSE}
 
