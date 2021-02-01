@@ -14,7 +14,6 @@ boottest.lm <- function(object,
                         maxiter = 10,
                         na_omit = TRUE, 
                         nthreads = getBoottest_nthreads(), 
-                        #nthreads = NULL, 
                         ...) {
 
   #' Fast wild cluster bootstrap inference for object of class lm

@@ -196,14 +196,16 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
         N_diff,
         "observation deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."
       ),
-      call. = FALSE
+      call. = FALSE, 
+      noBreaks. = TRUE
       )
     } else if (N_diff > 1) {
       warning(paste(
         N_diff,
         "observations deleted due to NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest()."
       ),
-      call. = FALSE
+      call. = FALSE, 
+      noBreaks. = TRUE
       )
     }
   } else if (na_omit == FALSE) {
@@ -212,7 +214,8 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
         N_diff,
         "NA values in the cluster variables. In consequence, the bootstrap is estimated on a different sample than the regression model. If you want to guarantee that both bootstrap and model are estimated on the same sample, please delete missing values from the cluster variables prior to using boottest(). If you are fine with deleting missing values, set na_omit = TRUE."
       ),
-      call. = FALSE
+      call. = FALSE, 
+      noBreaks. = TRUE
       )
     }
   }

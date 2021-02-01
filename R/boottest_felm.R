@@ -16,12 +16,10 @@ boottest.felm <- function(object,
                           maxiter = 10,
                           na_omit = TRUE,
                           nthreads = getBoottest_nthreads(), 
-                          #nthreads = NULL, 
                           ...) {
 
 
   #' Fast wild cluster bootstrap inference for object of class felm
-  #' @import data.table
   #' @param object An object of class fixest
   #' @param clustid A vector with the clusters
   #' @param param Character vector of length one. The name of the regression 

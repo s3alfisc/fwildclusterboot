@@ -15,7 +15,6 @@ boottest.fixest <- function(object,
                             maxiter = 10,
                             na_omit = TRUE,
                             nthreads = getBoottest_nthreads(), 
-                            #nthreads = NULL, 
                             ...) {
 
 

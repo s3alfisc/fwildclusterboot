@@ -51,7 +51,18 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   # bootstrap error
   set.seed(seed)
   N_G_bootcluster <- length(unique(bootcluster[[1]]))
-  v <- matrix(wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1)), N_G_bootcluster, boot_iter + 1)
+  
+  # tryCatch({v <- wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1))}, 
+  #           error = function(e){stop("Bootstrap weights cannot be allocated due 
+  #                                    to memory limit, implement bigstatsr solution")}
+  # implement all further operations with v via bigstatsr
+  #   -       C <- eigenMapMatMult(as.matrix(K_a), v, nthreads)
+  #   -       D <- eigenMapMatMult(as.matrix(K_b), v, nthreads)
+  #   -       A <- crossprod(numer_a, v)
+  #   -       B <- crossprod(numer_b, v)
+  
+  v <- wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1))
+  dim(v) <- c(N_G_bootcluster, boot_iter + 1)
   v[, 1] <- 1
   
   # prepare "key" for use with collapse::fsum()
@@ -103,7 +114,6 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
     stop("P contains non-0 values even though impose_null = FALSE.")
   }
 
-  #rm(list = c("Ar", "Xr", "Xr0"))
 
   A0 <- solve(crossprod(weights_sq * X))
   #A0 <- as.matrix(solve(t(X) %*% weights_mat %*% X))
@@ -140,49 +150,27 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
     )
   ) # N x c*
 
-  # calculate numerator:
-
-  #numer_a <- collapse::fsum(as.vector(WXArQ), bootcluster[[1]])
-  #numer_b <- collapse::fsum(as.vector(WXArP), bootcluster[[1]])
-  numer_a <- collapse::fsum(as.vector(WXArQ), g)
-  numer_b <- collapse::fsum(as.vector(WXArP), g)
-  
-  # calculate A, B
-  A <- crossprod(numer_a, v)
-  B <- crossprod(numer_b, v)
-
-
-  # prepare list containers for results
-  SXinvXXrX <- list()
-  SXinvXXrX_invXX <- list()
-
-  S_XinvXXR_F <- list()
-  SXinvXXrX <- list()
-  J_a <- list()
-  K_b <- list()
-  K_a <- list()
-  C <- list()
-  D <- list()
-  CC <- list()
-  DD <- list()
-  CD <- list()
+  # preallocate lists
+  CC <- vector(mode = "list", length = length(N_G))
+  DD <- vector(mode = "list", length = length(N_G))
+  CD <- vector(mode = "list", length = length(N_G))
 
   if (is.null(W)) {
     for (x in names(clustid)) {
-      SXinvXXrX[[x]] <- collapse::fsum(WXArX, clustid[x]) # c* x f
-      SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% A0
+      SXinvXXrX <- collapse::fsum(WXArX, clustid[x]) # c* x f
+      SXinvXXrX_invXX <- SXinvXXrX %*% A0
       # a
       S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
-      K_a[[x]] <- S_diag_XinvXXRu_S_a - tcrossprod(SXinvXXrX_invXX[[x]], SuXa)
+      K_a <- S_diag_XinvXXRu_S_a - tcrossprod(SXinvXXrX_invXX, SuXa)
       # b: note that from here, if impose_null = TRUE, _b suffix objects and D, DD, CD need not be computed, they are always objects of 0's only
       S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
-      K_b[[x]] <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX[[x]], SuXb)
+      K_b <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX, SuXb)
 
-      C[[x]] <- eigenMapMatMult(as.matrix(K_a[[x]]), v, nthreads)
-      D[[x]] <- eigenMapMatMult(as.matrix(K_b[[x]]), v, nthreads)
-      CC[[x]] <- colSums(C[[x]] * C[[x]])
-      DD[[x]] <- colSums(D[[x]] * D[[x]])
-      CD[[x]] <- colSums(C[[x]] * D[[x]])
+      C <- eigenMapMatMult(as.matrix(K_a), v, nthreads)
+      D <- eigenMapMatMult(as.matrix(K_b), v, nthreads)
+      CC[[x]] <- colSums(C * C)
+      DD[[x]] <- colSums(D * D)
+      CD[[x]] <- colSums(C * D)
     }
   } else if (!is.null(W)) {
     # project out fe
@@ -190,28 +178,35 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
     S_Wu_F_b <- crosstab(as.matrix(weights * W %*% P), var1 = bootcluster, var2 = fixed_effect) # f x c*
 
     for (x in names(clustid)) {
-      SXinvXXrX[[x]] <- collapse::fsum(WXArX, clustid[x]) # c* x f
-      SXinvXXrX_invXX[[x]] <- SXinvXXrX[[x]] %*% A0
+      SXinvXXrX <- collapse::fsum(WXArX, clustid[x]) # c* x f
+      SXinvXXrX_invXX <- SXinvXXrX %*% A0
       S_XinvXXR_F <- crosstab(WXAr, var1 = clustid[x], var2 = fixed_effect) # c x f
       # a
       prod_a <- t(tcrossprod(S_Wu_F_a, S_XinvXXR_F))
       S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
       S_diag_XinvXXRu_S_a <- S_diag_XinvXXRu_S_a - prod_a
-      K_a[[x]] <- S_diag_XinvXXRu_S_a - tcrossprod(SXinvXXrX_invXX[[x]], SuXa)
+      K_a <- S_diag_XinvXXRu_S_a - tcrossprod(SXinvXXrX_invXX, SuXa)
       # b: note that from here, if impose_null = TRUE, _b suffix objects and D, DD, CD need not be computed, they are always objects of 0's only
       prod_b <- t(tcrossprod(S_Wu_F_b, S_XinvXXR_F))
       S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
       S_diag_XinvXXRu_S_b <- S_diag_XinvXXRu_S_b - prod_b
-      K_b[[x]] <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX[[x]], SuXb)
+      K_b <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX, SuXb)
 
-      C[[x]] <- eigenMapMatMult(as.matrix(K_a[[x]]), v, nthreads)
-      D[[x]] <- eigenMapMatMult(as.matrix(K_b[[x]]), v, nthreads)
-      CC[[x]] <- colSums(C[[x]] * C[[x]])
-      DD[[x]] <- colSums(D[[x]] * D[[x]])
-      CD[[x]] <- colSums(C[[x]] * D[[x]])
+      C <- eigenMapMatMult(as.matrix(K_a), v, nthreads)
+      D <- eigenMapMatMult(as.matrix(K_b), v, nthreads)
+      CC[[x]] <- colSums(C * C)
+      DD[[x]] <- colSums(D * D)
+      CD[[x]] <- colSums(C * D)
     }
   }
 
+  # calculate numerator:
+  numer_a <- collapse::fsum(as.vector(WXArQ), g)
+  numer_b <- collapse::fsum(as.vector(WXArP), g)
+  # calculate A, B
+  A <- crossprod(numer_a, v)
+  B <- crossprod(numer_b, v)
+  
 
   # calculate p-val based on A, B, CC, CD, DD
   p_val_res <- p_val_null2(beta0 = beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, impose_null = impose_null, point_estimate = point_estimate, p_val_type = p_val_type)

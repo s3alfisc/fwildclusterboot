@@ -2,7 +2,6 @@ create_data_2 <-
   function(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed, weights) {
 
     #' Function creates data for tests and examples
-    #' @import data.table
     #' @importFrom  fabricatr fabricate
     #' @param N number of observations
     #' @param N_G1 A scalar. number of clusters for clustering variable 1

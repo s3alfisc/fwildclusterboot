@@ -4,7 +4,7 @@
 \alias{preprocess2}
 \title{function that pre-processes regression objects of type lm, fixest and feols}
 \usage{
-preprocess2(object, cluster, fe, param, bootcluster)
+preprocess2(object, cluster, fe, param, bootcluster, na_omit)
 }
 \arguments{
 \item{object}{An object of class fixest}
@@ -16,6 +16,8 @@ preprocess2(object, cluster, fe, param, bootcluster)
 \item{param}{The univariate coefficients for which a hypothesis is to be tested}
 
 \item{bootcluster}{The bootstrap sampling cluster.}
+
+\item{na_omit}{Logical. If TRUE, \code{boottest()} omits rows with missing variables that are added to the model via the \code{cluster} argument in \code{boottest()}}
 }
 \value{
 List containing preprocessed data for boottest estimation
