@@ -8,8 +8,9 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   #' @param param The univariate coefficients for which a hypothesis is to be tested
   #' @param bootcluster The bootstrap sampling cluster.
   #' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing variables that are added to the model via the `cluster` argument in `boottest()`
-  #' @importFrom stats residuals formula model.frame coef as.formula model.matrix model.response model.weights
+  #' @importFrom stats residuals formula model.frame coef as.formula model.matrix model.response model.weights update
   #' @importFrom utils combn
+  #' @importFrom collapse fwithin
   #' @export
   #' @return List containing preprocessed data for boottest estimation
 
@@ -331,8 +332,6 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   # collect output
 
   R0 <- as.numeric(param == colnames(X))
-
-
 
   res <- list(
     Y = Y,
