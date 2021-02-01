@@ -1,6 +1,8 @@
 # Functions in this script are written by Laurent Berge, 
-# and stem originally from the fixest R package. They 
+# and stem originally from the fixest R-package. They 
 # are slightly adapted to fit the needs of boottest.
+# The fixest homepage and source code can be found at 
+# https://lrberge.github.io/fixest/, https://github.com/lrberge/fixest
 
 
 setBoottest_nthreads = function(nthreads){
