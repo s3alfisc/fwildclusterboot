@@ -1,4 +1,4 @@
-boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_estimate, impose_null, beta0, sign_level, param, seed, p_val_type) {
+boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_estimate, impose_null, beta0, sign_level, param, seed, p_val_type, nthreads) {
 
   #' function that implements the fast bootstrap algorithm as described in Roodman et al (2019)
   #' @param preprocessed_object A list: output of the preprocess2 function.
@@ -13,6 +13,13 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   #' @param param name of the test parameter.
   #' @param seed the random seed. controls draw of bootstrap weights.
   #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"
+  #' @param nthreads The number of threads. Can be: a) an integer lower than, 
+  #'                 or equal to, the maximum number of threads; b) 0: meaning 
+  #'                 all available threads will be used; c) a number strictly
+  #'                 between 0 and 1 which represents the fraction of all threads 
+  #'                 to use. The default is to use 50\% of all threads. You can
+  #'                 set permanently the number of threads used within this 
+  #'                 package using the function ...
   #' @import Matrix.utils
   #' @import Matrix
   #' @export
@@ -171,8 +178,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
       S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
       K_b[[x]] <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX[[x]], SuXb)
 
-      C[[x]] <- eigenMapMatMult(as.matrix(K_a[[x]]), v)
-      D[[x]] <- eigenMapMatMult(as.matrix(K_b[[x]]), v)
+      C[[x]] <- eigenMapMatMult(as.matrix(K_a[[x]]), v, nthreads)
+      D[[x]] <- eigenMapMatMult(as.matrix(K_b[[x]]), v, nthreads)
       CC[[x]] <- colSums(C[[x]] * C[[x]])
       DD[[x]] <- colSums(D[[x]] * D[[x]])
       CD[[x]] <- colSums(C[[x]] * D[[x]])
@@ -197,8 +204,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
       S_diag_XinvXXRu_S_b <- S_diag_XinvXXRu_S_b - prod_b
       K_b[[x]] <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX[[x]], SuXb)
 
-      C[[x]] <- eigenMapMatMult(as.matrix(K_a[[x]]), v)
-      D[[x]] <- eigenMapMatMult(as.matrix(K_b[[x]]), v)
+      C[[x]] <- eigenMapMatMult(as.matrix(K_a[[x]]), v, nthreads)
+      D[[x]] <- eigenMapMatMult(as.matrix(K_b[[x]]), v, nthreads)
       CC[[x]] <- colSums(C[[x]] * C[[x]])
       DD[[x]] <- colSums(D[[x]] * D[[x]])
       CD[[x]] <- colSums(C[[x]] * D[[x]])

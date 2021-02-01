@@ -14,7 +14,8 @@ boot_algo2(
   sign_level,
   param,
   seed,
-  p_val_type
+  p_val_type,
+  nthreads
 )
 }
 \arguments{
@@ -39,6 +40,14 @@ null is imposed ("WCR").}
 \item{seed}{the random seed. controls draw of bootstrap weights.}
 
 \item{p_val_type}{type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"}
+
+\item{nthreads}{The number of threads. Can be: a) an integer lower than,
+or equal to, the maximum number of threads; b) 0: meaning
+all available threads will be used; c) a number strictly
+between 0 and 1 which represents the fraction of all threads
+to use. The default is to use 50\\% of all threads. You can
+set permanently the number of threads used within this
+package using the function ...}
 }
 \value{
 A list of ...

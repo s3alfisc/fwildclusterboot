@@ -7,26 +7,28 @@
 using namespace Rcpp;
 
 // eigenMatMult
-SEXP eigenMatMult(Eigen::MatrixXd A, Eigen::MatrixXd B);
-RcppExport SEXP _fwildclusterboot_eigenMatMult(SEXP ASEXP, SEXP BSEXP) {
+SEXP eigenMatMult(Eigen::MatrixXd A, Eigen::MatrixXd B, int nthreads);
+RcppExport SEXP _fwildclusterboot_eigenMatMult(SEXP ASEXP, SEXP BSEXP, SEXP nthreadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type A(ASEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type B(BSEXP);
-    rcpp_result_gen = Rcpp::wrap(eigenMatMult(A, B));
+    Rcpp::traits::input_parameter< int >::type nthreads(nthreadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(eigenMatMult(A, B, nthreads));
     return rcpp_result_gen;
 END_RCPP
 }
 // eigenMapMatMult
-SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A, Eigen::Map<Eigen::MatrixXd> B);
-RcppExport SEXP _fwildclusterboot_eigenMapMatMult(SEXP ASEXP, SEXP BSEXP) {
+SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A, Eigen::Map<Eigen::MatrixXd> B, int nthreads);
+RcppExport SEXP _fwildclusterboot_eigenMapMatMult(SEXP ASEXP, SEXP BSEXP, SEXP nthreadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::MatrixXd> >::type A(ASEXP);
     Rcpp::traits::input_parameter< Eigen::Map<Eigen::MatrixXd> >::type B(BSEXP);
-    rcpp_result_gen = Rcpp::wrap(eigenMapMatMult(A, B));
+    Rcpp::traits::input_parameter< int >::type nthreads(nthreadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(eigenMapMatMult(A, B, nthreads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -42,8 +44,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_fwildclusterboot_eigenMatMult", (DL_FUNC) &_fwildclusterboot_eigenMatMult, 2},
-    {"_fwildclusterboot_eigenMapMatMult", (DL_FUNC) &_fwildclusterboot_eigenMapMatMult, 2},
+    {"_fwildclusterboot_eigenMatMult", (DL_FUNC) &_fwildclusterboot_eigenMatMult, 3},
+    {"_fwildclusterboot_eigenMapMatMult", (DL_FUNC) &_fwildclusterboot_eigenMapMatMult, 3},
     {"_fwildclusterboot_cpp_get_nb_threads", (DL_FUNC) &_fwildclusterboot_cpp_get_nb_threads, 0},
     {NULL, NULL, 0}
 };

@@ -15,8 +15,8 @@ boottest.felm <- function(object,
                           tol = 1e-6, 
                           maxiter = 10,
                           na_omit = TRUE,
-                          #nthreads = getBoottest_nthreads(), 
-                          nthreads = NULL, 
+                          nthreads = getBoottest_nthreads(), 
+                          #nthreads = NULL, 
                           ...) {
 
 
@@ -60,7 +60,7 @@ boottest.felm <- function(object,
   #' @param nthreads The number of threads. Can be: a) an integer lower than, 
   #'                 or equal to, the maximum number of threads; b) 0: meaning 
   #'                 all available threads will be used; c) a number strictly
-  #'                 etween 0 and 1 which represents the fraction of all threads 
+  #'                 between 0 and 1 which represents the fraction of all threads 
   #'                 to use. The default is to use 50\% of all threads. You can
   #'                 set permanently the number of threads used within this 
   #'                 package using the function ...
@@ -102,7 +102,7 @@ boottest.felm <- function(object,
   #' @section Standard Errors:
   #' \code{boottest} does not calculate standard errors.
   #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference 
-  #'             in Stata using boottest", The Stata Journal. 
+  #'             in STATA using boottest", The STATA Journal. 
   #'             (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
   #' @examples 
   #' library(fwildclusterboot)
@@ -151,6 +151,9 @@ boottest.felm <- function(object,
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar")
   check_arg(maxiter, "scalar integer")
+  
+  # check appropriateness and assign nthreads
+  nthreads <- check_set_nthreads(nthreads)
   
   if(maxiter < 1){
     stop("The function argument maxiter needs to be larger than 1.", 
@@ -256,7 +259,8 @@ boottest.felm <- function(object,
                   distribution for", length(unique(preprocess$bootcluster[, 1])),
                   "clusters. Therefore, B = ", N_G_2, ". Consider using webb
                   weights instead."),
-      call. = FALSE
+      call. = FALSE, 
+      noBreaks. = TRUE
     )
     B <- N_G_2
   }
@@ -271,7 +275,8 @@ boottest.felm <- function(object,
     sign_level = sign_level,
     param = param,
     seed = seed,
-    p_val_type = p_val_type
+    p_val_type = p_val_type, 
+    nthreads = nthreads
   )
 
 

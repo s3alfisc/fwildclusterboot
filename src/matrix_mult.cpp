@@ -3,21 +3,22 @@
 #include <RcppEigen.h>
 #include <RcppEigen.h>
 #ifdef _OPENMP
-#include <omp.h>
+  #include <omp.h>
 #else
-#define omp_get_thread_num() 0
+  #define omp_get_thread_num() 0
 #endif
 
 
 //' Matrix Multiplication via Eigen
 //' @param A A matrix. 
 //' @param B A matrix.
-//' @param n_cores Number of cores to be used for parallel matrix multiplication
 //' @return A matrix
 // [[Rcpp::export]]
 SEXP eigenMatMult(Eigen::MatrixXd A, 
-                  Eigen::MatrixXd B){
+                  Eigen::MatrixXd B, 
+                  int nthreads){
   
+    omp_set_num_threads(nthreads);
     Eigen::MatrixXd C = A * B;
     return Rcpp::wrap(C);
 }
@@ -26,18 +27,22 @@ SEXP eigenMatMult(Eigen::MatrixXd A,
 //' Matrix Multiplication via Eigen
 //' @param A A matrix. 
 //' @param B A matrix.
-//' @param n_cores Number of cores to be used for parallel matrix multiplication
 //' @return A matrix
 // [[Rcpp::export]]
 SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A,
-                     Eigen::Map<Eigen::MatrixXd> B){
+                     Eigen::Map<Eigen::MatrixXd> B, 
+                     int nthreads){
   
   //Eigen::setNbThreads(n_cores);
+  omp_set_num_threads(nthreads);
   Eigen::MatrixXd C = A * B;
   return Rcpp::wrap(C);
 }
 
+//' Get maximum number of threads on hardware for open mp support
 // [[Rcpp::export]]
 int cpp_get_nb_threads(){
   return omp_get_max_threads();
 }
+
+
