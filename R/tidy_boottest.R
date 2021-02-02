@@ -29,15 +29,12 @@ tidy.boottest <- function(object, ...) {
 
 summary.boottest <- function(object, digits = 3, ...) {
   #' S3 method to summarize objects of class boottest
-  #' @export
   #' @param object object of type boottest
   #' @param digits rounding of output
   #' @param ... Further arguments passed to or from other methods.
   #' @method summary boottest
 
-
   stopifnot(inherits(object, "boottest"))
-
 
   N <- object$N
   B <- object$B
@@ -91,9 +88,8 @@ plot.boottest <- function(x, ...) {
   #' Plot the bootstrap distribution of t-statistics
   #' @param x An object of type boottest
   #' @param ... Further arguments passed to or from other methods.
-  #' @importFrom graphics abline grid lines
   #' @method plot boottest
-  #' @export
+
   stopifnot(inherits(x, "boottest"))
 
   test_vals <- x$test_vals
@@ -102,9 +98,9 @@ plot.boottest <- function(x, ...) {
   sign_level <- x$sign_level
 
   graphics::plot(x = test_vals, y = p_test_vals, type = "b", pch = 20, lty = 2, xlab = "Constraint", ylab = "p-value")
-  lines(test_vals, p_test_vals, type = "l", lty = 1)
-  abline(v = conf_int[1], col = "blue")
-  abline(v = conf_int[2], col = "blue")
-  abline(h = sign_level, col = "red")
+  graphics::lines(test_vals, p_test_vals, type = "l", lty = 1)
+  graphics::abline(v = conf_int[1], col = "blue")
+  graphics::abline(v = conf_int[2], col = "blue")
+  graphics::abline(h = sign_level, col = "red")
 }
 

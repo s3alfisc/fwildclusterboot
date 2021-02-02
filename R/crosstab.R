@@ -38,7 +38,6 @@ crosstab4 <- function(data, var1, var2) {
   #' @param data A matrix to collapse by two dimensions var1 var2
   #' @param var1 a data.frame containing a single variable
   #' @param var2 a data.frame containing a single variable
-  #' @importFrom stats aggregate
   #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
 
   dreamerr::check_arg(var1, "data.frame")
@@ -47,7 +46,7 @@ crosstab4 <- function(data, var1, var2) {
 
   length_var1 <- nrow(unique(var1))
   length_var2 <- nrow(unique(var2))
-  res <- aggregate(data, data.frame(var1, var2), sum, drop = FALSE)
+  res <- stats::aggregate(data, data.frame(var1, var2), sum, drop = FALSE)
   # res <- Matrix.utils::aggregate.Matrix(data, list(var1, var2), sum, drop = FALSE)
   res <- res[, 3]
   res[is.na(res)] <- 0
@@ -86,6 +85,9 @@ crosstab <- function(data, var1, var2) {
   #' @param var1 a data.frame containing a single variable
   #' @param var2 a data.frame containing a single variable
   #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
+  
+  dreamerr::check_arg(var1, "data.frame")
+  dreamerr::check_arg(var2, "data.frame")
   
   f1 <- collapse::qF(.subset2(var1, 1L), na.exclude = FALSE)
   f2 <- collapse::qF(.subset2(var2, 1L), na.exclude = FALSE)

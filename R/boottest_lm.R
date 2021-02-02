@@ -57,7 +57,11 @@ boottest.lm <- function(object,
   #'                 package using the function ...
   #' @param ... Further arguments passed to or from other methods.
   #' @method boottest lm
+  #' 
+  #' @import dreamerr
+  #' 
   #' @return An object of class \code{boottest}
+  #' 
   #' \item{p_val}{The bootstrap p-value.}
   #' \item{t_stat}{The bootstrap t-statistic.}
   #' \item{conf_int}{The bootstrap confidence interval.}
@@ -75,9 +79,9 @@ boottest.lm <- function(object,
   #'       confidence interval.}
   #' \item{regression}{The regression object used in boottest.}
   #' \item{call}{Function call of boottest.}
-
-  #' @importFrom stats rnorm
+  #' 
   #' @export
+  #' 
   #' @section Confidence Intervals:
   #' \code{boottest} computes confidence intervals by inverting p-values. 
   #'       In practice, the following procedure is used:

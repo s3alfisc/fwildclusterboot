@@ -8,9 +8,6 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   #' @param param The univariate coefficients for which a hypothesis is to be tested
   #' @param bootcluster The bootstrap sampling cluster.
   #' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing variables that are added to the model via the `cluster` argument in `boottest()`
-  #' @importFrom stats residuals formula model.frame coef as.formula model.matrix model.response model.weights update
-  #' @importFrom utils combn
-  #' @importFrom collapse fwithin
   #' @return List containing preprocessed data for boottest estimation
 
   # ---------------------------------------------------------------------------- #
@@ -289,7 +286,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   # taken from multiwayvcov::cluster.boot
   acc <- list()
   for (i in 1:clustid_dims) {
-    acc <- append(acc, combn(1:clustid_dims, i, simplify = FALSE))
+    acc <- append(acc, utils::combn(1:clustid_dims, i, simplify = FALSE))
   }
 
   vcov_sign <- sapply(acc, function(i) (-1)^(length(i) + 1))

@@ -83,6 +83,7 @@ package using the function ...}
 }
 \value{
 An object of class \code{boottest}
+
 \item{p_val}{The bootstrap p-value.}
 \item{t_stat}{The bootstrap t-statistic.}
 \item{conf_int}{The bootstrap confidence interval.}

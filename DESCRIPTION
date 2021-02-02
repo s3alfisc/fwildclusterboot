@@ -32,8 +32,7 @@ Imports:
     Rcpp,
     dreamerr,
     Matrix,
-    Matrix.utils,
-    fabricatr
+    Matrix.utils
 Suggests: 
     fixest,
     lfe,
@@ -42,7 +41,8 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-    spelling
+    spelling, 
+    fabricatr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

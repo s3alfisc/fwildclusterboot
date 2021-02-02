@@ -12,7 +12,6 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
   #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"
   #' @param tol the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.
   #' @param maxiter maximum number of iterations for confidence interval inversion. 10 by default.
-  #' @importFrom utils setTxtProgressBar txtProgressBar
 
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")

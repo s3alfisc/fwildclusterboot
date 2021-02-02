@@ -20,9 +20,6 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   #'                 to use. The default is to use 50\% of all threads. You can
   #'                 set permanently the number of threads used within this 
   #'                 package using the function ...
-  #' @importFrom Matrix.utils aggregate.Matrix
-  #' @importFrom Matrix Diagonal t
-  #' @importFrom collapse GRP fsum
   #' @return A list of ...
 
 

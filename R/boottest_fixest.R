@@ -81,7 +81,6 @@ boottest.fixest <- function(object,
   #'       confidence interval.}
   #' \item{regression}{The regression object used in boottest.}
   #' \item{call}{Function call of boottest.}
-  #' @import dreamerr
   #' @export
   #' @method boottest fixest
   #' @section Confidence Intervals:
