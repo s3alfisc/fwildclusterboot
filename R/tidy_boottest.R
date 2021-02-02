@@ -1,18 +1,8 @@
-tidy <- function(object, ...) {
-  #' S3 method to summarize objects of class boottest into tidy data.frame
-  #' @export
-  #' @param object object of type boottest
-  #' @param ... other arguments
-  UseMethod("tidy", object)
-}
-
-
-
 tidy.boottest <- function(object, ...) {
   #' S3 method to summarize objects of class boottest into tidy data.frame
-  #' @export
   #' @param object object of type boottest
   #' @param ... Further arguments passed to or from other methods.
+  #' @export
   #' @method tidy boottest
 
 

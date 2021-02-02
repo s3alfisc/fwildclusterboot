@@ -11,7 +11,6 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   #' @importFrom stats residuals formula model.frame coef as.formula model.matrix model.response model.weights update
   #' @importFrom utils combn
   #' @importFrom collapse fwithin
-  #' @export
   #' @return List containing preprocessed data for boottest estimation
 
   # ---------------------------------------------------------------------------- #

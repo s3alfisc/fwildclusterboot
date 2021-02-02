@@ -23,7 +23,6 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   #' @importFrom Matrix.utils aggregate.Matrix
   #' @importFrom Matrix Diagonal t
   #' @importFrom collapse GRP fsum
-  #' @export
   #' @return A list of ...
 
 
