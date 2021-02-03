@@ -77,7 +77,7 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.079   4.123        0    0.039    0.119
+#> treatment    0.079   4.123    0.001    0.038    0.119
 ```
 
 ### Benchmarks
