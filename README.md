@@ -58,11 +58,10 @@ please follow this
 library(fixest)
 library(fwildclusterboot)
 
-# create a data set with fwildclusterboot's create_data_2 function
-df <- create_data_2(N = 2000, N_G1 = 40, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 25, numb_fe2 = 25, seed = 5)
+data(voters)
 
 # fit the model via fixest::feols(), lfe::felm() or stats::lm()
-feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = df)
+feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters)
 
 # bootstrap inference via boottest()
 feols_boot <- boottest(feols_fit, clustid = c("group_id1"), B = 9999, param = "treatment")
@@ -71,14 +70,14 @@ summary(feols_boot)
 #> boottest.fixest(object = feols_fit, clustid = c("group_id1"), 
 #>     param = "treatment", B = 9999)
 #>  
-#>  Observations: 2000
+#>  Observations: 300
 #>   Bootstr. Type: rademacher
 #>  Clustering: oneway
 #>  Confidence Sets: 95%
 #>  Number of Clusters: 40
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.003   0.551    0.591   -0.009    0.015
+#> treatment    0.079   4.123    0.001    0.039    0.118
 ```
 
 ## Benchmarks

@@ -39,6 +39,8 @@ crosstab4 <- function(data, var1, var2) {
   #' @param var1 a data.frame containing a single variable
   #' @param var2 a data.frame containing a single variable
   #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
+  #' @importFrom stats aggregate
+  #' @importFrom dreamerr check_arg
 
   dreamerr::check_arg(var1, "data.frame")
   dreamerr::check_arg(var2, "data.frame")
@@ -62,6 +64,9 @@ crosstab3 <- function(data, var1, var2){
   #' @param var1 a data.frame containing a single variable
   #' @param var2 a data.frame containing a single variable
   #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
+  #' @importFrom dreamerr check_arg
+  #' @importFrom collapse fsum qF
+  
   
   
   dreamerr::check_arg(var1, "data.frame")
@@ -85,6 +90,8 @@ crosstab <- function(data, var1, var2) {
   #' @param var1 a data.frame containing a single variable
   #' @param var2 a data.frame containing a single variable
   #' @return A collapsed matrix of dimension length(unique(var1)) x length(unique(var2)). If...
+  #' @importFrom dreamerr check_arg
+  #' @importFrom collapse fsum qF
   
   dreamerr::check_arg(var1, "data.frame")
   dreamerr::check_arg(var2, "data.frame")

@@ -32,12 +32,12 @@ Imports:
     Rcpp,
     dreamerr,
     Matrix,
-    Matrix.utils, 
-    fabricatr
+    Matrix.utils
 Suggests: 
     fixest,
     lfe,
     data.table,
+    fabricatr,
     tinytest,
     covr,
     knitr,

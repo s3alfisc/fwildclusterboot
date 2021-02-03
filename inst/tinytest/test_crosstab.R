@@ -17,8 +17,3 @@ ct4 <- fwildclusterboot:::crosstab4(data = data, var1 = var1, var2 = var2)
 
 expect_equivalent(ct1, ct4)
 # expect_equivalent(ct2, ct4)
-
-
-
-
-  

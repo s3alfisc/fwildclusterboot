@@ -21,6 +21,10 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   #'                 set permanently the number of threads used within this 
   #'                 package using the function ...
   #' @return A list of ...
+  #' @importFrom Matrix t Diagonal
+  #' @importFrom Matrix.utils aggregate.Matrix
+  #' @importFrom collapse fsum GRP
+  #' @importFrom stats as.formula coef model.matrix model.response model.weights residuals rlnorm rnorm update
 
 
   # 1) preprocess

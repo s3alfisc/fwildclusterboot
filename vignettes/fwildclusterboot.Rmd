@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 library(fwildclusterboot)
 ```
 
-The `fwildclusterboot` package is an R port of Stata's [boottest](https://github.com/droodman/boottest) package. 
+The `fwildclusterboot` package is an R port of STATA's [boottest](https://github.com/droodman/boottest) package. 
 
 It implements the "fast" wild cluster bootstrap algorithm developed in Roodman et al (2019) for regression objects in R. The "fast" algorithm makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples - as long as the number of bootstrapping clusters is not too large.
 
@@ -41,9 +41,8 @@ To start, we create a random data set with two cluster variables (group_id1 \& g
 library(fixest)
 library(lfe)
 
-# create a random data set
-voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 2)
-head(voters)
+# load data set voters included in fwildclusterboot
+data(voters)
 
 # estimate the regression model via lm
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
@@ -236,6 +235,19 @@ boot_feols <- boottest(feols_fit,
 
 ```
 
+## Parallel Execution 
+
+A major bottleneck for the performance of `boottest()` is a large matrix multiplication, which includes the bootstrap weights matrix on the right. In order to speed up the computation, this multiplication calls the c++ Eigen library, which allows for parallelization of dense matrix products. By default, `boottest()` uses half of the available threads.
+
+Otherwise, one can specify the number of clusters directly in `boottest()` via the `nthreads` argument:
+
+```{r}
+boot_feols <- boottest(feols_fit, 
+                       clustid = "group_id1", 
+                       param = "treatment", 
+                       B = 9999, 
+                       nthreads = 2)
+```
 
 
 # Miscellanea

@@ -9,6 +9,9 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   #' @param bootcluster The bootstrap sampling cluster.
   #' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing variables that are added to the model via the `cluster` argument in `boottest()`
   #' @return List containing preprocessed data for boottest estimation
+  #' @importFrom dreamerr check_arg
+  #' @importFrom Formula as.Formula
+  #' @importFrom collapse fwithin
 
   # ---------------------------------------------------------------------------- #
   # Step 1: preprocessing of call
