@@ -4,7 +4,8 @@
 #ifdef _OPENMP
   #include <omp.h>
 #else
-  #define omp_get_thread_num() 0
+  #define omp_get_max_threads() 0
+  #define omp_set_num_threads() 0
 #endif
 
 
@@ -18,7 +19,8 @@ SEXP eigenMatMult(Eigen::MatrixXd A,
                   Eigen::MatrixXd B, 
                   int nthreads){
   
-    omp_set_num_threads(nthreads);
+    Eigen::setNbThreads(nthreads);
+    //omp_set_num_threads(nthreads);
     Eigen::MatrixXd C = A * B;
     return Rcpp::wrap(C);
 }
@@ -34,8 +36,8 @@ SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A,
                      Eigen::Map<Eigen::MatrixXd> B, 
                      int nthreads){
   
-  //Eigen::setNbThreads(n_cores);
-  omp_set_num_threads(nthreads);
+  Eigen::setNbThreads(nthreads);
+  //omp_set_num_threads(nthreads);
   Eigen::MatrixXd C = A * B;
   return Rcpp::wrap(C);
 }
@@ -45,5 +47,4 @@ SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A,
 int cpp_get_nb_threads(){
   return omp_get_max_threads();
 }
-
 

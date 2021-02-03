@@ -33,6 +33,8 @@ summary.boottest <- function(object, digits = 3, ...) {
   #' @param digits rounding of output
   #' @param ... Further arguments passed to or from other methods.
   #' @method summary boottest
+  #' @export
+  
 
   stopifnot(inherits(object, "boottest"))
 
@@ -89,6 +91,7 @@ plot.boottest <- function(x, ...) {
   #' @param x An object of type boottest
   #' @param ... Further arguments passed to or from other methods.
   #' @method plot boottest
+  #' @export
 
   stopifnot(inherits(x, "boottest"))
 

@@ -9,6 +9,8 @@ setBoottest_nthreads = function(nthreads){
   #' Set the number of threads for use with open m 
   #' By default, we use only 50% of threads (never use all)
   #' @param nthreads Integer. Number of threads to be used
+  #' @export
+
   
   
   max_CRAN = as.numeric(Sys.getenv("OMP_THREAD_LIMIT"))
@@ -35,7 +37,8 @@ getBoottest_nthreads = function(){
   if(length(x) != 1 || !is.numeric(x) || is.na(x) || x %% 1 != 0 || x < 0){
     stop("The value of getOption(\"boottest_nthreads\") is currently not legal. Please use function setBoottest_nthreads to set it to an appropriate value. ")
   }
-  
+  #cat("getBoottest nr threads \n")
+  #print(x)
   x
 }
 
@@ -48,6 +51,8 @@ check_set_nthreads = function(nthreads){
   dreamerr::check_value(nthreads, "integer scalar GE{0} | numeric scalar GT{0} LT{1}", .message = paste0("The argument 'nthreads' must be an integer lower or equal to the number of threads available (", max(cpp_get_nb_threads(), 1), "). It can be equal to 0 which means all threads. Alternatively, if equal to a number strictly between 0 and 1, it represents the fraction of all threads to be used."))
   
   max_threads = cpp_get_nb_threads()
+  #cat("max_threads \n")
+  #print(max_threads)
   
   # # To add later
   # if(cpp_is_in_fork()) return(1)
@@ -68,6 +73,9 @@ check_set_nthreads = function(nthreads){
     }
     
   }
-  
+  #cat("nthreads set_get \n")
+  #print(nthreads)
   nthreads
 }
+
+

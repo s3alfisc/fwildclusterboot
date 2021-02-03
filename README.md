@@ -18,7 +18,7 @@ coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/ba
 
 <!-- badges: end -->
 
-The `fwildclusterboot` package is an R port of Stata’s
+The `fwildclusterboot` package is an R port of STATA’s
 [boottest](https://github.com/droodman/boottest) package.
 
 It implements the fast wild cluster bootstrap algorithm developed in
@@ -52,16 +52,45 @@ please follow this
 
 <!-- * bootstrap distributions beyond the rademacher distribution -->
 
+## The `boottest()` function
+
+``` r
+library(fixest)
+library(fwildclusterboot)
+
+# create a data set with fwildclusterboot's create_data_2 function
+df <- create_data_2(N = 2000, N_G1 = 40, icc1 = 0.01, N_G2 = 20, icc2 = 0.01, numb_fe1 = 25, numb_fe2 = 25, seed = 5)
+
+# fit the model via fixest::feols(), lfe::felm() or stats::lm()
+feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = df)
+
+# bootstrap inference via boottest()
+feols_boot <- boottest(feols_fit, clustid = c("group_id1"), B = 9999, param = "treatment")
+
+summary(feols_boot)
+#> boottest.fixest(object = feols_fit, clustid = c("group_id1"), 
+#>     param = "treatment", B = 9999)
+#>  
+#>  Observations: 2000
+#>   Bootstr. Type: rademacher
+#>  Clustering: oneway
+#>  Confidence Sets: 95%
+#>  Number of Clusters: 40
+#> 
+#>           Estimate t value Pr(>|t|) CI Lower CI Upper
+#> treatment    0.003   0.551    0.591   -0.009    0.015
+```
+
 ## Benchmarks
 
-Results of timing benchmarks of `fwildclusterboot` with
-`sandwich::vcovBS` (one replication):
+Results of timing benchmarks of `fwildclusterboot` (10 iterations each):
 
-  - Benchmark 1: one cluster with dimension \(N_G = 40\)
-  - Benchmark 2: two clusters with dimensions \(N_{G1}= 40\),
-    \(N_{G2} = 20\), \(N_{G12} = 800\)
+  - \(N = 50000\), \(k = 27\) and one fixed effect of 25 groups
+      - Benchmark 1: one cluster with dimension \(N_G = 40\)
+      - Benchmark 2: two clusters with dimensions \(N_{G1}= 40\),
+        \(N_{G2} = 20\), \(N_{G12} = 800\)
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-benchmark-1.png" width="100%" />
 
 <!-- ## The `boottest` function  -->
 

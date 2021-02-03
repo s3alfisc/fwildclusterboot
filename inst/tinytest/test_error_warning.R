@@ -1,7 +1,9 @@
 # ------------------------------------------------------------------ # 
 # test for warnings and errors
 # ------------------------------------------------------------------ # 
-options(warn=-1)
+
+library(fixest)
+library(felm)
 
 # test boottest function arguments for errors 
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
@@ -90,6 +92,7 @@ expect_error(boottest(object = felm_fit,
                       param = "treatment",
                       conf_int = TRUE, 
                       nthreads = -1))
+
 expect_warning(boottest(object = felm_fit,
                       clustid =  "group_id1",
                       B = 999, seed = 911, 
