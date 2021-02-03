@@ -16,7 +16,7 @@ Description: Implementation of the fast algorithm for wild cluster bootstrap
              <https://journals.sagepub.com/doi/full/10.1177/1536867X19830877>, 
              which makes it feasible to quickly calculate bootstrap test 
              statistics based on a large number of bootstrap draws even for 
-             large samples – as long as the number of bootstrapping clusters 
+             large samples - as long as the number of bootstrapping clusters 
              is not too large. Multiway clustering, regression weights, 
              bootstrap weights, fixed effects and subcluster bootstrapping
              are supported. Further, both restricted (WCR) and unrestricted

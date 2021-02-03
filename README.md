@@ -77,7 +77,7 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.079   4.123    0.001    0.039    0.118
+#> treatment    0.079   4.123        0    0.038    0.119
 ```
 
 ### Benchmarks
@@ -90,45 +90,7 @@ iterations each).
   - Benchmark two clusters of dimensions \(N_{G1}= 40\),
     \(N_{G2} = 20\), \(N_{G12} = 800\)
 
-<img src="man/figures/README-benchmark-1.png" width="80%" style="display: block; margin: auto;" />
-
-<!-- ### The `boottest` function  -->
-
-<!-- The `fwildclusterboot` package supports wild cluster bootstrap inference for linear models based on  -->
-
-<!-- - `lm()` from `base` R -->
-
-<!-- - `felm()` from `lfe` -->
-
-<!-- - `feols()` from `fixest` -->
-
-<!-- ```{r, warning = FALSE, message = FALSE} -->
-
-<!-- library(fwildclusterboot) -->
-
-<!-- B <- 99999 -->
-
-<!-- seed <- 942413 -->
-
-<!-- set.seed(seed) -->
-
-<!-- voters <- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed) -->
-
-<!-- # estimate the regression model -->
-
-<!-- lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters) -->
-
-<!-- # bootstrap estimation -->
-
-<!-- boot_lm <- boottest(lm_fit, clustid = "group_id1", B = B, seed = seed, param = "treatment", conf_int = TRUE) -->
-
-<!-- # summarize the results -->
-
-<!-- summary(boot_lm) -->
-
-<!-- tidy(boot_lm) -->
-
-<!-- ``` -->
+![Benchmark](man/figures/bench_ggplot.png)
 
 ### Installation
 
