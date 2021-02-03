@@ -56,9 +56,10 @@ boottest.lm <- function(object,
   #'                 set permanently the number of threads used within this 
   #'                 package using the function ...
   #' @param ... Further arguments passed to or from other methods.
-  #' @method boottest lm
   #' 
-  #' @import dreamerr
+  #' @importFrom dreamerr check_arg
+  #' 
+  #' @method boottest lm
   #' 
   #' @return An object of class \code{boottest}
   #' 
@@ -213,7 +214,8 @@ boottest.lm <- function(object,
   # returns function
   # function taken from the sandwich package' vcovBS.lm function
   wild_draw_fun <- switch(type,
-    rademacher = function(n) sample(c(-1, 1), n, replace = TRUE),
+    # note: for randemacher, create integer matrix (uses less memory than numeric)                      
+    rademacher = function(n) sample(c(-1L, 1L), n, replace = TRUE),
     mammen = function(n) sample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
     norm = function(n) rnorm(n),
     webb = function(n) sample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),

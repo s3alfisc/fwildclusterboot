@@ -17,7 +17,6 @@ boottest.fixest <- function(object,
                             nthreads = getBoottest_nthreads(), 
                             ...) {
 
-
   #' Fast wild cluster bootstrap inference for object of class fixest
   #' @param object An object of class fixest
   #' @param clustid A vector with the clusters
@@ -62,8 +61,10 @@ boottest.fixest <- function(object,
   #'                 set permanently the number of threads used within this 
   #'                 package using the function ...
   #' @param ... Further arguments passed to or from other methods.
+  #' @importFrom dreamerr check_arg
   
   #' @return An object of class \code{boottest}
+  #' 
   #' \item{p_val}{The bootstrap p-value.}
   #' \item{t_stat}{The bootstrap t-statistic.}
   #' \item{conf_int}{The bootstrap confidence interval.}
@@ -151,6 +152,8 @@ boottest.fixest <- function(object,
   
   # check appropriateness of nthreads
   nthreads <- check_set_nthreads(nthreads)
+  #cat("nthreads boottest \n")
+  #print(nthreads)
   
   if(maxiter < 1){
     stop("The function argument maxiter needs to be larger than 1.", 
@@ -270,7 +273,7 @@ boottest.fixest <- function(object,
   # returns function
   # function taken from the sandwich package' vcovBS.lm function
   wild_draw_fun <- switch(type,
-    rademacher = function(n) sample(c(-1, 1), n, replace = TRUE),
+    rademacher = function(n) sample(c(-1L, 1L), n, replace = TRUE),
     mammen = function(n) sample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
     norm = function(n) rnorm(n),
     webb = function(n) sample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),
