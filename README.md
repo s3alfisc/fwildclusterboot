@@ -77,16 +77,18 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.079   4.123    0.001    0.039    0.119
+#> treatment    0.079   4.123        0    0.039    0.119
 ```
 
 ### Benchmarks
 
-Results of timing benchmarks of `boottest()` (10 iterations each), with
-a sample of \(N = 50000\), \(k = 27\) and one fixed effect of 25 groups.
-+ Benchmark with one cluster of dimension \(N_G = 40\) + Benchmark two
-clusters of dimensions \(N_{G1}= 40\), \(N_{G2} = 20\),
-\(N_{G12} = 800\)
+Results of timing benchmarks of `boottest()`, with a sample of
+\(N = 50000\), \(k = 27\) and one fixed effect of 25 groups (10
+iterations each).
+
+  - Benchmark with one cluster of dimension \(N_G = 40\)
+  - Benchmark two clusters of dimensions \(N_{G1}= 40\),
+    \(N_{G2} = 20\), \(N_{G12} = 800\)
 
 <img src="man/figures/README-benchmark-1.png" width="100%" />
 

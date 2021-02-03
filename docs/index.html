@@ -125,14 +125,16 @@
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.079   4.123    0.001    0.039    0.119</span></code></pre></div>
+<span class="co">#&gt; treatment    0.079   4.123        0    0.039    0.119</span></code></pre></div>
 </div>
 <div id="benchmarks" class="section level3">
 <h3 class="hasAnchor">
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h3>
-<p>Results of timing benchmarks of <code><a href="reference/boottest.html">boottest()</a></code> (10 iterations each), with a sample of <span class="math inline"><em>N</em> = 50000</span>, <span class="math inline"><em>k</em> = 27</span> and one fixed effect of 25 groups.</p>
+<p>Results of timing benchmarks of <code><a href="reference/boottest.html">boottest()</a></code>, with a sample of <span class="math inline"><em>N</em> = 50000</span>, <span class="math inline"><em>k</em> = 27</span> and one fixed effect of 25 groups (10 iterations each).</p>
 <ul>
-<li>Benchmark with one cluster of dimension <span class="math inline"><em>N</em><sub><em>G</em></sub> = 40</span> + Benchmark two clusters of dimensions <span class="math inline"><em>N</em><sub><em>G</em>1</sub> = 40</span>, <span class="math inline"><em>N</em><sub><em>G</em>2</sub> = 20</span>, <span class="math inline"><em>N</em><sub><em>G</em>12</sub> = 800</span>
+<li>Benchmark with one cluster of dimension <span class="math inline"><em>N</em><sub><em>G</em></sub> = 40</span>
+</li>
+<li>Benchmark two clusters of dimensions <span class="math inline"><em>N</em><sub><em>G</em>1</sub> = 40</span>, <span class="math inline"><em>N</em><sub><em>G</em>2</sub> = 20</span>, <span class="math inline"><em>N</em><sub><em>G</em>12</sub> = 800</span>
 </li>
 </ul>
 <p><img src="reference/figures/README-benchmark-1.png" width="100%"></p>
