@@ -77,7 +77,7 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.079   4.123    0.001    0.038    0.119
+#> treatment    0.079   4.123    0.001    0.039    0.118
 ```
 
 ### Benchmarks
@@ -90,7 +90,7 @@ iterations each).
   - Benchmark two clusters of dimensions \(N_{G1}= 40\),
     \(N_{G2} = 20\), \(N_{G12} = 800\)
 
-<img src="man/figures/README-benchmark-1.png" width="100%" />
+<img src="man/figures/README-benchmark-1.png" width="80%" style="display: block; margin: auto;" />
 
 <!-- ### The `boottest` function  -->
 
