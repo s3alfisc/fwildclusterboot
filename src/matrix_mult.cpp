@@ -5,6 +5,7 @@
   #include <omp.h>
 #else
   #define omp_get_max_threads() 0
+#define Eigen::setNbThreads() 0
 #endif
 
 
