@@ -386,7 +386,7 @@ In case of multi-way clustering, it is not guaranteed that the covariance matrix
 
 ## On the handling of missing values 
 
-`boottest()` retrieves both the design matrix X, the dependent variable y and the cluster variables from the input object of type `lm`, `fixest` or `felm`. Because `boottest()` allows to add or delete clustering variables that are not employed in `lm()`, `feols()` and `felm()`, it may occurs that 
+`boottest()` retrieves both the design matrix $X$, the dependent variable $y$ and the cluster variables from the input object of type `lm`, `fixest` or `felm`. Because `boottest()` allows to add or delete clustering variables that are not employed in `lm()`, `feols()` and `felm()`, it may occurs that 
 a cluster variable is added in `boottest()` that is not included in the regression model, either as a cluster variable or covariate. 
 In this case, boottest deletes the respective rows in the dependent variable, design matrix and in the cluster variables.  In consequence, estimation (in the modeling step) and inference (via `boottest()`) are done on a different sample. `boottest()` returns a warning. 
 

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -123,7 +123,7 @@
     <p>function that pre-processes regression objects of type lm, fixest and feols</p>
     </div>
 
-    <pre class="usage"><span class='fu'>preprocess2</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>cluster</span>, <span class='va'>fe</span>, <span class='va'>param</span>, <span class='va'>bootcluster</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>preprocess2</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>cluster</span>, <span class='va'>fe</span>, <span class='va'>param</span>, <span class='va'>bootcluster</span>, <span class='va'>na_omit</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,6 +147,10 @@
     <tr>
       <th>bootcluster</th>
       <td><p>The bootstrap sampling cluster.</p></td>
+    </tr>
+    <tr>
+      <th>na_omit</th>
+      <td><p>Logical. If TRUE, <code><a href='boottest.html'>boottest()</a></code> omits rows with missing variables that are added to the model via the <code>cluster</code> argument in <code><a href='boottest.html'>boottest()</a></code></p></td>
     </tr>
     </table>
 

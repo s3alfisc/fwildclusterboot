@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -133,7 +133,8 @@
   <span class='va'>sign_level</span>,
   <span class='va'>param</span>,
   <span class='va'>seed</span>,
-  <span class='va'>p_val_type</span>
+  <span class='va'>p_val_type</span>,
+  <span class='va'>nthreads</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -180,6 +181,16 @@ null is imposed ("WCR").</p></td>
     <tr>
       <th>p_val_type</th>
       <td><p>type Type of p-value. By default "two-tailed". Other options: "equal-tailed", "&gt;", "&lt;"</p></td>
+    </tr>
+    <tr>
+      <th>nthreads</th>
+      <td><p>The number of threads. Can be: a) an integer lower than,
+or equal to, the maximum number of threads; b) 0: meaning
+all available threads will be used; c) a number strictly
+between 0 and 1 which represents the fraction of all threads
+to use. The default is to use 50\<!-- % of all threads. You can -->
+set permanently the number of threads used within this
+package using the function ...</p></td>
     </tr>
     </table>
 

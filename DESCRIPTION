@@ -1,6 +1,6 @@
 Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap Inference for Linear Regression Models
-Version: 0.2.0
+Version: 0.3.0
 Date: 2021-01-12
 Authors@R: 
     c(person(given = "Alexander",

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -123,7 +123,7 @@
     <p>Matrix Multiplication via Eigen</p>
     </div>
 
-    <pre class="usage"><span class='fu'>eigenMatMult</span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>B</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>eigenMatMult</span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>B</span>, <span class='va'>nthreads</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -135,6 +135,10 @@
     <tr>
       <th>B</th>
       <td><p>A matrix.</p></td>
+    </tr>
+    <tr>
+      <th>nthreads</th>
+      <td><p>Integer. Number of threads to use for matrix multiplication.</p></td>
     </tr>
     </table>
 

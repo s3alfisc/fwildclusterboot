@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -140,6 +140,8 @@
   p_val_type <span class='op'>=</span> <span class='st'>"two-tailed"</span>,
   tol <span class='op'>=</span> <span class='fl'>1e-06</span>,
   maxiter <span class='op'>=</span> <span class='fl'>10</span>,
+  na_omit <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  nthreads <span class='op'>=</span> <span class='fu'><a href='getBoottest_nthreads.html'>getBoottest_nthreads</a></span><span class='op'>(</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -156,7 +158,8 @@
     </tr>
     <tr>
       <th>param</th>
-      <td><p>Character vector of length one. The name of the regression coefficient for which the hypothesis is to be tested</p></td>
+      <td><p>Character vector of length one. The name of the regression
+coefficient for which the hypothesis is to be tested</p></td>
     </tr>
     <tr>
       <th>B</th>
@@ -164,20 +167,25 @@
     </tr>
     <tr>
       <th>bootcluster</th>
-      <td><p>A character vector. Sets the cluster used in the bootstrap dgp. Chooses the largest cluster by default</p></td>
+      <td><p>A character vector. Sets the cluster used in the
+bootstrap dgp. Chooses the largest cluster by default</p></td>
     </tr>
     <tr>
       <th>fe</th>
-      <td><p>A character vector of length one. Fixed effect to be projected out in the bootstrap. Note: if regression weights
+      <td><p>A character vector of length one. Fixed effect to be projected
+out in the bootstrap. Note: if regression weights
 are used, fe needs to be NULL.</p></td>
     </tr>
     <tr>
       <th>sign_level</th>
-      <td><p>A numeric between 0 and 1. E.g. sign_level = 0.05 returns 0.95% confidence intervals. By default, sign_level = 0.05.</p></td>
+      <td><p>A numeric between 0 and 1. E.g. sign_level = 0.05
+returns 0.95% confidence intervals. By default, sign_level = 0.05.</p></td>
     </tr>
     <tr>
       <th>conf_int</th>
-      <td><p>A logical vector. If TRUE, boottest computes confidence intervals by p-value inversion. If FALSE, only the p-value is returned.</p></td>
+      <td><p>A logical vector. If TRUE, boottest computes confidence
+intervals by p-value inversion. If FALSE, only the p-value
+is returned.</p></td>
     </tr>
     <tr>
       <th>seed</th>
@@ -185,27 +193,53 @@ are used, fe needs to be NULL.</p></td>
     </tr>
     <tr>
       <th>beta0</th>
-      <td><p>A numeric. Shifts the null hypothesis H0: param = beta0 vs H1: param != beta0</p></td>
+      <td><p>A numeric. Shifts the null hypothesis
+H0: param = beta0 vs H1: param != beta0</p></td>
     </tr>
     <tr>
       <th>type</th>
-      <td><p>character or function. The character string specifies the type of boostrap to use: One of "rademacher", "mammen", "norm" and "webb". Alternatively, type can be a function(n) for drawing wild bootstrap factors. "rademacher" by default.</p></td>
+      <td><p>character or function. The character string specifies the type
+of boostrap to use: One of "rademacher", "mammen", "norm" and
+"webb". Alternatively, type can be a function(n) for drawing
+wild bootstrap factors. "rademacher" by default.</p></td>
     </tr>
     <tr>
       <th>impose_null</th>
-      <td><p>Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed <code>(WCR)</code> by default. If FALSE, the null is not imposed <code>(WCU)</code></p></td>
+      <td><p>Logical. Controls if the null hypothesis is imposed
+on the bootstrap dgp or not. Null imposed <code>(WCR)</code> by default.
+If FALSE, the null is not imposed <code>(WCU)</code></p></td>
     </tr>
     <tr>
       <th>p_val_type</th>
-      <td><p>Character vector of length 1. Type of p-value. By default "two-tailed". Other options: "equal-tailed"</p></td>
+      <td><p>Character vector of length 1. Type of p-value.
+By default "two-tailed". Other options: "equal-tailed"</p></td>
     </tr>
     <tr>
       <th>tol</th>
-      <td><p>Numeric vector of length 1. The desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.</p></td>
+      <td><p>Numeric vector of length 1. The desired accuracy
+(convergence tolerance) for confidence interval inversion.
+1e-6 by default.</p></td>
     </tr>
     <tr>
       <th>maxiter</th>
-      <td><p>Integer. Maximum number of iterations for confidence interval inversion. 10 by default.</p></td>
+      <td><p>Integer. Maximum number of iterations for confidence
+interval inversion. 10 by default.</p></td>
+    </tr>
+    <tr>
+      <th>na_omit</th>
+      <td><p>Logical. If TRUE, <code><a href='boottest.html'>boottest()</a></code> omits rows with missing
+variables that are added to the model via the <code>cluster</code> argument
+in <code><a href='boottest.html'>boottest()</a></code></p></td>
+    </tr>
+    <tr>
+      <th>nthreads</th>
+      <td><p>The number of threads. Can be: a) an integer lower than,
+or equal to, the maximum number of threads; b) 0: meaning
+all available threads will be used; c) a number strictly
+between 0 and 1 which represents the fraction of all threads
+to use. The default is to use 50\<!-- % of all threads. You can -->
+set permanently the number of threads used within this
+package using the function ...</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -220,14 +254,17 @@ are used, fe needs to be NULL.</p></td>
 <dt>t_stat</dt><dd><p>The bootstrap t-statistic.</p></dd>
 <dt>conf_int</dt><dd><p>The bootstrap confidence interval.</p></dd>
 <dt>param</dt><dd><p>The tested parameter.</p></dd>
-<dt>N</dt><dd><p>Sample size. Might differ from the regression sample size if the cluster variables contain NA values.</p></dd>
+<dt>N</dt><dd><p>Sample size. Might differ from the regression sample size if
+the cluster variables contain NA values.</p></dd>
 <dt>B</dt><dd><p>Number of Bootstrap Iterations.</p></dd>
 <dt>clustid</dt><dd><p>Names of the cluster Variables.</p></dd>
 <dt>N_G</dt><dd><p>Dimension of the cluster variables as used in boottest.</p></dd>
 <dt>sign_level</dt><dd><p>Significance sign_level used in boottest.</p></dd>
 <dt>type</dt><dd><p>Distribution of the bootstrap weights.</p></dd>
-<dt>p_test_vals</dt><dd><p>All p-values calculated while calculating the confidence interval.</p></dd>
-<dt>test_vals</dt><dd><p>All t-statistics calculated while calculating the confidence interval.</p></dd>
+<dt>p_test_vals</dt><dd><p>All p-values calculated while calculating the
+confidence interval.</p></dd>
+<dt>test_vals</dt><dd><p>All t-statistics calculated while calculating the
+confidence interval.</p></dd>
 <dt>regression</dt><dd><p>The regression object used in boottest.</p></dd>
 <dt>call</dt><dd><p>Function call of boottest.</p></dd>
 
@@ -235,10 +272,17 @@ are used, fe needs to be NULL.</p></td>
 
     
 
-<p><code>boottest</code> computes confidence intervals by inverting p-values. In practice, the following procedure is used:</p><ul>
-<li><p>Based on an initial guess for starting values, calculate p-values for 26 equal spaced points between the starting values.</p></li>
-<li><p>Out of the 26 calculated p-values, find the two pairs of values x for which the corresponding p-values px cross the significance sign_level sign_level.</p></li>
-<li><p>Feed the two pairs of x into an numerical root finding procedure and solve for the root. boottest currently relies on <code><a href='https://rdrr.io/r/stats/uniroot.html'>stats::uniroot</a></code> and sets an absolute tolerance of 1e-06 and stops the procedure after 10 iterations.</p></li>
+<p><code>boottest</code> computes confidence intervals by inverting p-values.
+In practice, the following procedure is used:</p><ul>
+<li><p>Based on an initial guess for starting values, calculate p-values
+for 26 equal spaced points between the starting values.</p></li>
+<li><p>Out of the 26 calculated p-values, find the two pairs of values x
+for which the corresponding p-values px cross the significance
+sign_level sign_level.</p></li>
+<li><p>Feed the two pairs of x into an numerical root finding procedure
+and solve for the root. boottest currently relies on
+<code><a href='https://rdrr.io/r/stats/uniroot.html'>stats::uniroot</a></code> and sets an absolute tolerance of 1e-06 and
+stops the procedure after 10 iterations.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="standard-errors"><a class="anchor" href="#standard-errors"></a>Standard Errors</h2>
@@ -248,24 +292,42 @@ are used, fe needs to be NULL.</p></td>
 <p><code>boottest</code> does not calculate standard errors.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Roodman et al., 2019, "Fast and wild: Bootstrap inference in Stata using boottest", The Stata Journal. (<a href='https://journals.sagepub.com/doi/full/10.1177/1536867X19830877'>https://journals.sagepub.com/doi/full/10.1177/1536867X19830877</a>)</p>
+    <p>Roodman et al., 2019, "Fast and wild: Bootstrap inference in
+STATA using boottest", The STATA Journal.
+(<a href='https://journals.sagepub.com/doi/full/10.1177/1536867X19830877'>https://journals.sagepub.com/doi/full/10.1177/1536867X19830877</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://s3alfisc.github.io/fwildclusterboot'>fwildclusterboot</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://lrberge.github.io/fixest/'>fixest</a></span><span class='op'>)</span>
-<span class='co'># voters &lt;- create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10,</span>
-<span class='co'>#                        icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345)</span>
 <span class='va'>feols_fit</span> <span class='op'>&lt;-</span><span class='fu'><a href='https://lrberge.github.io/fixest/reference/feols.html'>feols</a></span><span class='op'>(</span><span class='va'>proposition_vote</span> <span class='op'>~</span> <span class='va'>treatment</span> <span class='op'>+</span> <span class='va'>ideology1</span> <span class='op'>+</span> <span class='va'>log_income</span>,
            fixef <span class='op'>=</span>  <span class='st'>"Q1_immigration"</span>, 
            data <span class='op'>=</span> <span class='fu'><a href='create_data_2.html'>create_data_2</a></span><span class='op'>(</span>N <span class='op'>=</span> <span class='fl'>10000</span>, N_G1 <span class='op'>=</span> <span class='fl'>20</span>, icc1 <span class='op'>=</span> <span class='fl'>0.91</span>, N_G2 <span class='op'>=</span> <span class='fl'>10</span>,
                    icc2 <span class='op'>=</span> <span class='fl'>0.51</span>, numb_fe1 <span class='op'>=</span> <span class='fl'>10</span>, numb_fe2 <span class='op'>=</span> <span class='fl'>10</span>, seed <span class='op'>=</span> <span class='fl'>12345</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>boot1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='boottest.html'>boottest</a></span><span class='op'>(</span><span class='va'>feols_fit</span>, B <span class='op'>=</span> <span class='fl'>9999</span>, param <span class='op'>=</span> <span class='st'>"treatment"</span>, clustid <span class='op'>=</span> <span class='st'>"group_id1"</span><span class='op'>)</span>
-<span class='va'>boot2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='boottest.html'>boottest</a></span><span class='op'>(</span><span class='va'>feols_fit</span>, B <span class='op'>=</span> <span class='fl'>9999</span>, param <span class='op'>=</span> <span class='st'>"treatment"</span>, clustid <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"group_id1"</span>, <span class='st'>"group_id2"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>boot3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='boottest.html'>boottest</a></span><span class='op'>(</span><span class='va'>feols_fit</span>, B <span class='op'>=</span> <span class='fl'>9999</span>, param <span class='op'>=</span> <span class='st'>"treatment"</span>, clustid <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"group_id1"</span>, <span class='st'>"group_id2"</span><span class='op'>)</span>,
-                 fe <span class='op'>=</span> <span class='st'>"Q1_immigration"</span><span class='op'>)</span>
-<span class='va'>boot4</span> <span class='op'>&lt;-</span> <span class='fu'><a href='boottest.html'>boottest</a></span><span class='op'>(</span><span class='va'>feols_fit</span>, B <span class='op'>=</span> <span class='fl'>10000</span>, param <span class='op'>=</span> <span class='st'>"treatment"</span>, clustid <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"group_id1"</span>, <span class='st'>"group_id2"</span><span class='op'>)</span>,
-fe <span class='op'>=</span> <span class='st'>"Q1_immigration"</span>, sign_level <span class='op'>=</span> <span class='fl'>0.2</span>, seed <span class='op'>=</span> <span class='fl'>8</span>, beta0 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Note: The bootstrap usually performs best when the confidence sign_level (here, 0.8 %) times the number of replications plus 1 ( 10000 + 1 =  10001 ) is an integer.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
+<span class='va'>boot1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='boottest.html'>boottest</a></span><span class='op'>(</span><span class='va'>feols_fit</span>, 
+                  B <span class='op'>=</span> <span class='fl'>9999</span>, 
+                  param <span class='op'>=</span> <span class='st'>"treatment"</span>,
+                  clustid <span class='op'>=</span> <span class='st'>"group_id1"</span><span class='op'>)</span>
+<span class='va'>boot2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='boottest.html'>boottest</a></span><span class='op'>(</span><span class='va'>feols_fit</span>, 
+                  B <span class='op'>=</span> <span class='fl'>9999</span>, 
+                  param <span class='op'>=</span> <span class='st'>"treatment"</span>, 
+                  clustid <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"group_id1"</span>, <span class='st'>"group_id2"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>boot3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='boottest.html'>boottest</a></span><span class='op'>(</span><span class='va'>feols_fit</span>,
+                  B <span class='op'>=</span> <span class='fl'>9999</span>,
+                  param <span class='op'>=</span> <span class='st'>"treatment"</span>, 
+                  clustid <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"group_id1"</span>, <span class='st'>"group_id2"</span><span class='op'>)</span>,
+                  fe <span class='op'>=</span> <span class='st'>"Q1_immigration"</span><span class='op'>)</span>
+<span class='va'>boot4</span> <span class='op'>&lt;-</span> <span class='fu'><a href='boottest.html'>boottest</a></span><span class='op'>(</span><span class='va'>feols_fit</span>, 
+                  B <span class='op'>=</span> <span class='fl'>10000</span>, 
+                  param <span class='op'>=</span> <span class='st'>"treatment"</span>, 
+                  clustid <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"group_id1"</span>, <span class='st'>"group_id2"</span><span class='op'>)</span>,
+                  fe <span class='op'>=</span> <span class='st'>"Q1_immigration"</span>, 
+                  sign_level <span class='op'>=</span> <span class='fl'>0.2</span>, 
+                  seed <span class='op'>=</span> <span class='fl'>8</span>,
+                  beta0 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Note: The bootstrap usually performs best when the</span>
+#&gt; <span class='message'>                  confidence sign_level (here, 0.8 %) </span>
+#&gt; <span class='message'>                  times the number of replications plus 1 </span>
+#&gt; <span class='message'>                  ( 10000 + 1 =  10001 ) is an integer.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; boottest.fixest(object = feols_fit, clustid = "group_id1", param = "treatment", 
 #&gt;     B = 9999)
 #&gt; 	
@@ -275,9 +337,9 @@ fe <span class='op'>=</span> <span class='st'>"Q1_immigration"</span>, sign_leve
 #&gt;  Confidence Sets: 95%
 #&gt;  Number of Clusters: 20
 #&gt;  </div><div class='output co'>#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper
-#&gt; treatment    0.013   1.534    0.148   -0.004     0.03</div><div class='input'><span class='fu'><a href='tidy.html'>tidy</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;             Estimate  t value  Pr(&gt;|t|)     CI Lower   CI Upper
-#&gt; treatment 0.01282926 1.534302 0.1483148 -0.004400106 0.03007871</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
+#&gt; treatment    0.005   1.075    0.307   -0.005    0.015</div><div class='input'><span class='fu'><a href='tidy.html'>tidy</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;              Estimate  t value  Pr(&gt;|t|)     CI Lower   CI Upper
+#&gt; treatment 0.005094672 1.075024 0.3072307 -0.005008089 0.01509467</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
 </div><div class='img'><img src='boottest.fixest-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

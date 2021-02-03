@@ -52,7 +52,7 @@ please follow this
 
 <!-- * bootstrap distributions beyond the rademacher distribution -->
 
-## The `boottest()` function
+### The `boottest()` function
 
 ``` r
 library(fixest)
@@ -77,21 +77,20 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.079   4.123    0.001    0.039    0.118
+#> treatment    0.079   4.123    0.001    0.039    0.119
 ```
 
-## Benchmarks
+### Benchmarks
 
-Results of timing benchmarks of `fwildclusterboot` (10 iterations each):
-
-  - \(N = 50000\), \(k = 27\) and one fixed effect of 25 groups
-      - Benchmark 1: one cluster with dimension \(N_G = 40\)
-      - Benchmark 2: two clusters with dimensions \(N_{G1}= 40\),
-        \(N_{G2} = 20\), \(N_{G12} = 800\)
+Results of timing benchmarks of `boottest()` (10 iterations each), with
+a sample of \(N = 50000\), \(k = 27\) and one fixed effect of 25 groups.
++ Benchmark with one cluster of dimension \(N_G = 40\) + Benchmark two
+clusters of dimensions \(N_{G1}= 40\), \(N_{G2} = 20\),
+\(N_{G12} = 800\)
 
 <img src="man/figures/README-benchmark-1.png" width="100%" />
 
-<!-- ## The `boottest` function  -->
+<!-- ### The `boottest` function  -->
 
 <!-- The `fwildclusterboot` package supports wild cluster bootstrap inference for linear models based on  -->
 
@@ -129,7 +128,7 @@ Results of timing benchmarks of `fwildclusterboot` (10 iterations each):
 
 <!-- ``` -->
 
-## Installation
+### Installation
 
 You can install the development version of `fwildclusterboot` from
 github by following the steps below.

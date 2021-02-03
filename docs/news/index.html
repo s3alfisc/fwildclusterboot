@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -117,6 +117,15 @@
       <small>Source: <a href='https://github.com/s3alfisc/fwildclusterboot/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fwildclusterboot-030" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.0">
+<a href="#fwildclusterboot-030" class="anchor"></a>fwildclusterboot 0.3.0</h1>
+<ul>
+<li>Additional performance improvements through parallelization. By default, <code><a href="../reference/boottest.html">boottest()</a></code> uses half the available threads for parallel execution. The number of threads can be set via the <code>nthreads</code> function argument.</li>
+<li>Additional function arguments for <code><a href="../reference/boottest.html">boottest()</a></code> - the user can now set the tolerance and maximum number of iterations for the calculation of confidence intervals. By default, <code>tol = 1e-6</code> and <code>maxiter = 10</code>.</li>
+<li>The package no longer depends on <code>data.table</code> and <code>fabricatr</code> - both are now only suggested. Further, the package now comes with an example data set ‘voters’.</li>
+</ul>
+</div>
     <div id="fwildclusterboot-020" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.0">
 <a href="#fwildclusterboot-020" class="anchor"></a>fwildclusterboot 0.2.0</h1>
