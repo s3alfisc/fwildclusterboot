@@ -2,7 +2,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
 
 
   #' function that pre-processes regression objects of type lm, fixest and feols
-  #' @param object An object of class fixest
+  #' @param object An object of class lm, fixest or felm
   #' @param cluster A vector with the names of the clusters
   #' @param fe A character scalar - fixed effect to be projected out, or NULL
   #' @param param The univariate coefficients for which a hypothesis is to be tested

@@ -7,7 +7,7 @@
 preprocess2(object, cluster, fe, param, bootcluster, na_omit)
 }
 \arguments{
-\item{object}{An object of class fixest}
+\item{object}{An object of class lm, fixest or felm}
 
 \item{cluster}{A vector with the names of the clusters}
 
