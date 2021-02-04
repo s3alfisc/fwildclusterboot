@@ -81,9 +81,7 @@ in \code{boottest()}}
 or equal to, the maximum number of threads; b) 0: meaning
 all available threads will be used; c) a number strictly
 between 0 and 1 which represents the fraction of all threads
-to use. The default is to use 50\\% of all threads. You can
-set permanently the number of threads used within this
-package using the function ...}
+to use. The default is to use 1 core.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }

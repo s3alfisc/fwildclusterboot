@@ -18,8 +18,8 @@ setBoottest_nthreads <-  function(nthreads){
   max_threads <-  min(cpp_get_nb_threads(), 1000, max_CRAN) # we cap at 1k nthreads
   
   if(missing(nthreads) || is.null(nthreads)){
-    # New default => 50% of all available threads (usually equiv to the nber of procs)
-    nthreads <-  check_set_nthreads(0.5)
+    # New default: one cores used 
+    nthreads <-  1
   }
   
   nthreads <-  check_set_nthreads(nthreads)

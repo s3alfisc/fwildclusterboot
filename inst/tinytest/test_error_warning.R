@@ -66,12 +66,16 @@ expect_error(boottest(object = lm_fit,
                       param = "treatment",
                       conf_int = TRUE, 
                       nthreads = -1))
-expect_warning(boottest(object = lm_fit,
-                      clustid =  "group_id1",
-                      B = 999, seed = 911, 
-                      param = "treatment",
-                      conf_int = TRUE, 
-                      nthreads = 20))
+
+# expect_warning(boottest(object = lm_fit,
+#                       clustid =  "group_id1",
+#                       B = 999, seed = 911, 
+#                       param = "treatment",
+#                       conf_int = TRUE, 
+#                       nthreads = 20))
+# Warning: In boottest.lm(object = lm_fit, clustid = "group_id1...:
+# Asked for 20 threads while the maximum is 8. Set to 8 threads instead.
+# will probably not run on cran, as max 2 cores
 
 expect_error(boottest(object = feols_fit,
                       clustid =  "group_id1",
@@ -79,12 +83,12 @@ expect_error(boottest(object = feols_fit,
                       param = "treatment",
                       conf_int = TRUE, 
                       nthreads = -1))
-expect_warning(boottest(object = feols_fit,
-                      clustid =  "group_id1",
-                      B = 999, seed = 911, 
-                      param = "treatment",
-                      conf_int = TRUE, 
-                      nthreads = 20))
+# expect_warning(boottest(object = feols_fit,
+#                       clustid =  "group_id1",
+#                       B = 999, seed = 911, 
+#                       param = "treatment",
+#                       conf_int = TRUE, 
+#                       nthreads = 20))
 
 expect_error(boottest(object = felm_fit,
                       clustid =  "group_id1",
@@ -93,12 +97,12 @@ expect_error(boottest(object = felm_fit,
                       conf_int = TRUE, 
                       nthreads = -1))
 
-expect_warning(boottest(object = felm_fit,
-                      clustid =  "group_id1",
-                      B = 999, seed = 911, 
-                      param = "treatment",
-                      conf_int = TRUE, 
-                      nthreads = 20))
+# expect_warning(boottest(object = felm_fit,
+#                       clustid =  "group_id1",
+#                       B = 999, seed = 911, 
+#                       param = "treatment",
+#                       conf_int = TRUE, 
+#                       nthreads = 20))
 
 # maxiter 
 expect_error(boottest(object = lm_fit,
