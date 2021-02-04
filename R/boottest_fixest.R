@@ -106,7 +106,7 @@ boottest.fixest <- function(object,
   #' library(fixest)
   #' feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income,
   #'            fixef =  "Q1_immigration", 
-  #'            data = create_data_2(N = 10000, N_G1 = 20, icc1 = 0.91, N_G2 = 10,
+  #'            data = fwildclusterboot:::create_data_2(N = 1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10,
   #'                    icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
   #' boot1 <- boottest(feols_fit, 
   #'                   B = 9999, 
