@@ -11,6 +11,8 @@
 inst/doc
 doc
 Meta
-Readme.Rmd
+README.Rmd
+inst/WORDLIST
+tests/spelling.R
 
 docs
