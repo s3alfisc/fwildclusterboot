@@ -3,13 +3,44 @@ Title: Fast Wild Cluster Bootstrap Inference for Linear Regression Models
 Version: 0.3.0
 Date: 2021-01-12
 Authors@R: 
-    c(person(given = "Alexander",
+    c(
+    person(given = "Alexander",
            family = "Fischer",
            role = c("aut", "cre"),
            email = "alexander-fischer1801@t-online.de"),
     person(given = "David", 
            family = "Roodman", 
-           role = "ctb"))
+           role = "ctb", 
+           email = ""), 
+    person(given = "Achim", 
+           family = "Zeileis",
+           role = c("ctb", "cph"),
+           email = "Achim.Zeileis@R-project.org",
+           comment = "author of library sandwich",
+    person(given = "Thomas", 
+           family = "Lumley", 
+           role = "c("ctb", "cph")", 
+           email = "t.lumley@auckland.ac.nz", 
+           comment = "author of library sandwich"),
+	  person(given = "Nathaniel",
+	         family = "Graham",
+	         role = c("ctb", "cph"), 
+	         email = "npgraham1@gmail.com", 
+	         comment = "contributor to library sandwich"),
+	  person(given = "Susanne",
+	         family = "Koell", 
+	         role = "ctb"), 
+	         comment = "contributor to library sandwich"), 
+	  person("Laurent", 
+	          "Berge",
+	          email = "laurent.berge@u-bordeaux.fr",
+	          role = "ctb", 
+	          comment = "author of library fixest")),
+	   person("Sebastian", 
+	          "Krantz", 
+	           role = "ctb"), 
+	           comment = "contributor to library fixest"))
+	  )
 Description: Implementation of the fast algorithm for wild cluster bootstrap 
              inference developed in Roodman et al (2019, STATA Journal) for 
              linear regression models 
