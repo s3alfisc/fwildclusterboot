@@ -11,7 +11,7 @@
 inst/doc
 doc
 Meta
-README.Rmd
+*README.Rmd
 inst/WORDLIST
 tests/spelling.R
 

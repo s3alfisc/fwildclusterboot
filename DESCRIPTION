@@ -10,7 +10,7 @@ Authors@R:
            email = "alexander-fischer1801@t-online.de"),
     person(given = "David", 
            family = "Roodman", 
-           role = "ctb"), 
+           role = "aut"), 
     person(given = "Achim", 
            family = "Zeileis",
            role = c("ctb", "cph"),
