@@ -237,9 +237,9 @@ boot_feols <- boottest(feols_fit,
 
 ## Parallel Execution 
 
-A major bottleneck for the performance of `boottest()` is a large matrix multiplication, which includes the bootstrap weights matrix on the right. In order to speed up the computation, this multiplication calls the c++ Eigen library, which allows for parallelization of dense matrix products. By default, `boottest()` uses one thread. Note that there is a cost of parallelization due to communication overhead. As a rule of thumb, if `boottest()` takes more than 10 seconds per execution, 
+A major bottleneck for the performance of `boottest()` is a large matrix multiplication, which includes the bootstrap weights matrix on the right. In order to speed up the computation, this multiplication calls the c++ Eigen library, which allows for parallelization of dense matrix products. By default, `boottest()` uses one thread. Note that there is a cost of parallelization due to communication overhead. As a rule of thumb, if `boottest()` takes more than 10 seconds per execution, using a second thread might speed up the bootstrap. 
 
-Otherwise, one can specify the number of clusters directly in `boottest()` via the `nthreads` argument:
+The number of threads can be specified via the `nthreads` argument of `boottest()`:
 
 ```{r}
 boot_feols <- boottest(feols_fit, 

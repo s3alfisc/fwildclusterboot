@@ -145,7 +145,7 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
 <span class="co">#&gt;     Estimate t value   Pr(&gt;|t|)   CI Lower  CI Upper</span>
-<span class="co">#&gt; 1 0.07290769 3.78619 0.00060006 0.03351467 0.1130473</span>
+<span class="co">#&gt; 1 0.07290769 3.78619 0.00040004 0.03338416 0.1126963</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
 <span class="co">#&gt; boottest.felm(object = felm_fit, param = "treatment", B = 9999, </span>
 <span class="co">#&gt;     clustid = "group_id1")</span>
@@ -158,7 +158,7 @@
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;   Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; 1    0.073   3.786    0.001    0.034    0.113</span></code></pre></div>
+<span class="co">#&gt; 1    0.073   3.786        0    0.033    0.113</span></code></pre></div>
 <p>A <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> method allows the user to inspect the bootstrap t-statistics:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span></code></pre></div>
@@ -182,7 +182,7 @@
 <span class="co">#&gt;  Number of Clusters: 40 20 251</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.925    0.003    0.031    0.114</span></code></pre></div>
+<span class="co">#&gt; treatment    0.073   3.925    0.003    0.032    0.115</span></code></pre></div>
 </div>
 <div id="choice-of-bootstrap-weights" class="section level2">
 <h2 class="hasAnchor">
@@ -212,7 +212,7 @@
 <span class="co">#&gt;  Number of Clusters: 40 20 251</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.925    0.003    0.032    0.114</span>
+<span class="co">#&gt; treatment    0.073   3.925    0.006     0.03    0.115</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm_webb</span><span class="op">)</span>
 <span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1", "group_id2"), </span>
 <span class="co">#&gt;     param = "treatment", B = 9999, type = "webb")</span>
@@ -252,7 +252,7 @@
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.786    0.001    0.033    0.112</span>
+<span class="co">#&gt; treatment    0.073   3.786    0.001    0.032    0.113</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm_10</span><span class="op">)</span>
 <span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1"), param = "treatment", </span>
 <span class="co">#&gt;     B = 9999, sign_level = 0.1)</span>
@@ -285,7 +285,7 @@
 <span class="co">#&gt;  Number of Clusters: 40 20 251</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.925    0.005    0.031     0.11</span>
+<span class="co">#&gt; treatment    0.073   3.925    0.004    0.032     0.11</span>
 
 <span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, 
@@ -350,11 +350,11 @@
                     B <span class="op">=</span> <span class="fl">9999</span>, 
                     bootcluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"Q1_immigration"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_min</span><span class="op">)</span>
-<span class="co">#&gt;             Estimate  t value   Pr(&gt;|t|)   CI Lower CI Upper</span>
-<span class="co">#&gt; treatment 0.07290769 3.924685 0.00420042 0.03152409 0.110296</span>
+<span class="co">#&gt;             Estimate  t value   Pr(&gt;|t|)   CI Lower  CI Upper</span>
+<span class="co">#&gt; treatment 0.07290769 3.924685 0.00470047 0.03166081 0.1110831</span>
 <span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_2var</span><span class="op">)</span>
 <span class="co">#&gt;             Estimate  t value    Pr(&gt;|t|)   CI Lower  CI Upper</span>
-<span class="co">#&gt; treatment 0.07290769 3.924685 0.008612057 0.02819284 0.1165966</span></code></pre></div>
+<span class="co">#&gt; treatment 0.07290769 3.924685 0.009625025 0.02894392 0.1170494</span></code></pre></div>
 </div>
 <div id="regression-weights-weighted-least-squares-wls" class="section level2">
 <h2 class="hasAnchor">
@@ -372,8 +372,8 @@
 <div id="parallel-execution" class="section level2">
 <h2 class="hasAnchor">
 <a href="#parallel-execution" class="anchor"></a>Parallel Execution</h2>
-<p>A major bottleneck for the performance of <code><a href="../reference/boottest.html">boottest()</a></code> is a large matrix multiplication, which includes the bootstrap weights matrix on the right. In order to speed up the computation, this multiplication calls the c++ Eigen library, which allows for parallelization of dense matrix products. By default, <code><a href="../reference/boottest.html">boottest()</a></code> uses half of the available threads.</p>
-<p>Otherwise, one can specify the number of clusters directly in <code><a href="../reference/boottest.html">boottest()</a></code> via the <code>nthreads</code> argument:</p>
+<p>A major bottleneck for the performance of <code><a href="../reference/boottest.html">boottest()</a></code> is a large matrix multiplication, which includes the bootstrap weights matrix on the right. In order to speed up the computation, this multiplication calls the c++ Eigen library, which allows for parallelization of dense matrix products. By default, <code><a href="../reference/boottest.html">boottest()</a></code> uses one thread. Note that there is a cost of parallelization due to communication overhead. As a rule of thumb, if <code><a href="../reference/boottest.html">boottest()</a></code> takes more than 10 seconds per execution, using a second thread might speed up the bootstrap.</p>
+<p>The number of threads can be specified via the <code>nthreads</code> argument of <code><a href="../reference/boottest.html">boottest()</a></code>:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">boot_feols</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">feols_fit</span>, 
                        clustid <span class="op">=</span> <span class="st">"group_id1"</span>, 
@@ -501,7 +501,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Alexander Fischer.</p>
+  <p>Developed by Alexander Fischer, David Roodman.</p>
 </div>
 
 <div class="pkgdown">
