@@ -18,7 +18,7 @@ Authors@R:
            comment = "Author of included sandwich fragments",
     person(given = "Thomas", 
            family = "Lumley", 
-           role =  c("ctb", "cph")", 
+           role =  c("ctb", "cph"), 
            comment = "Author of included sandwich fragments",
 	person(given = "Nathaniel",
 	       family = "Graham",
@@ -30,11 +30,11 @@ Authors@R:
            comment = "Contributor to included sandwich fragments",
 	person("Laurent", 
 	        "Berge",
-	        role = "ctb", 
+	        role = c("ctb", "cph"), 
            comment = "Author of included fixest fragments",
 	 person("Sebastian", 
 	        "Krantz", 
-	         role = "ctb"), 
+	         role = c("ctb", "cph")), 
            comment = "Contributor to included fixest fragments",
 	)
 Description: Implementation of the fast algorithm for wild cluster bootstrap 
