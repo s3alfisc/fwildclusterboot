@@ -1,9 +1,11 @@
-# Functions in this script were originally written by Laurent Berge, 
-# and stem originally from the fixest R-package. They 
-# are slightly adapted to fit the needs of boottest.
-# The fixest homepage and source code can be found at 
-# https://lrberge.github.io/fixest/, https://github.com/lrberge/fixest
+# The original source of all three included funcitons is Laurent Berge's fixest
+# code in https://github.com/lrberge/fixest
+# The original code was distributed under GPL-3 license
 
+ 
+# changes to these functions by Alexander Fischer
+# 1. functions are renamed to _Boottest_
+# 2. the default number of threads in check_set_nthreads is set to 1
 
 setBoottest_nthreads <-  function(nthreads){
   #' Set the number of threads for use with open m 

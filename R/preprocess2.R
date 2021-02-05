@@ -277,11 +277,18 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   # ---------------------------------------------------------------------------- #
   # Step 4: preprocess clusters
   # Note: a large part of the following code was taken and adapted from the 
-  # sandwich R package: 
+  # sandwich R package, which is distributed under GPL-2 | GPL-3
   # Zeileis A, Köll S, Graham N (2020). "Various Versatile Variances: An Object-Oriented
   # Implementation of Clustered Covariances in R." _Journal of Statistical Software_,
   # *95*(1), 1-36. doi: 10.18637/jss.v095.i01 (URL: https://doi.org/10.18637/jss.v095.i01).
+  
+  # changes by Alexander Fischer: 
+  # no essential changes, but slight reorganization of pieces of code
 
+  # ---------------------------------------------------------------------------- #
+  # Start Sandwich code 
+  # ---------------------------------------------------------------------------- #
+  
   clustid <- cluster
   cluster_names <- clustid
   clustid <- as.data.frame(model_frame[, clustid], stringsAsFactors = FALSE)
@@ -312,6 +319,11 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     }
   }
 
+  # ---------------------------------------------------------------------------- #
+  # End Sandwich code 
+  # ---------------------------------------------------------------------------- #
+  
+  
   N_G <- sapply(clustid, function(x) length(unique(x)))
 
   # create a bootcluster vector
