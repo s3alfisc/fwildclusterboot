@@ -53,7 +53,7 @@ boottest.felm <- function(object,
   #' @param maxiter Integer. Maximum number of iterations for confidence 
   #'        interval inversion. 10 by default.
   #' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing
-  #'        variables that are added to the model via the `cluster` argument 
+  #'        variables that are added to the model via the `clustid` argument 
   #'        in `boottest()`
   #' @param nthreads The number of threads. Can be: a) an integer lower than, 
   #'                 or equal to, the maximum number of threads; b) 0: meaning 

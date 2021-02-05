@@ -59,5 +59,8 @@ reference:
 - title: Other  
   contents: 
   - '`create_data_2`'
+  - 'setBoottest_nthreads'
+  - 'getBoottest_nthreads'
+  - 'check_set_nthreads'
 
 
