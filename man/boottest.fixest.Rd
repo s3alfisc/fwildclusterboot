@@ -74,7 +74,7 @@ By default "two-tailed". Other options: "equal-tailed"}
 interval inversion. 10 by default.}
 
 \item{na_omit}{Logical. If TRUE, \code{boottest()} omits rows with missing
-variables that are added to the model via the \code{cluster} argument
+variables that are added to the model via the \code{clustid} argument
 in \code{boottest()}}
 
 \item{nthreads}{The number of threads. Can be: a) an integer lower than,
