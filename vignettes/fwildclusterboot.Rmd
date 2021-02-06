@@ -194,7 +194,7 @@ boot_felm <- boottest(felm_fit,
 
 ## The Subcluster Bootstrap 
 
-In the case of few treated clusters, [MacKinnon and Webb (2018)]((https://academic.oup.com/ectj/article-abstract/21/2/114/5078969))  suggest to use subclusters to form the bootstrap distribution. `boottest()` allows the user to specify subclusters via the `bootcluster` argument. 
+In the case of few treated clusters, [MacKinnon and Webb (2018)](https://academic.oup.com/ectj/article-abstract/21/2/114/5078969)  suggest to use subclusters to form the bootstrap distribution. `boottest()` allows the user to specify subclusters via the `bootcluster` argument. 
 
 ```{r}
 boot_min <- boottest(lm_fit,

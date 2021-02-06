@@ -15,10 +15,6 @@ Authors@R:
            family = "Zeileis",
            role = c("ctb"),
            comment = "Author of included sandwich fragments"),
-    person(given = "Thomas", 
-           family = "Lumley", 
-           role =  c("ctb"), 
-           comment = "Author of included sandwich fragments"),
 	person(given = "Nathaniel",
 	       family = "Graham",
 	       role = c("ctb"), 
@@ -33,8 +29,7 @@ Authors@R:
             comment = "Author of included fixest fragments"),
 	 person("Sebastian", 
 	        "Krantz", 
-	         role = c("ctb"), 
-             comment = "Contributor to included fixest fragments")
+	         role = c("ctb"))
 	)
 Description: Implementation of the fast algorithm for wild cluster bootstrap 
              inference developed in Roodman et al (2019, STATA Journal) for 
@@ -49,8 +44,7 @@ Description: Implementation of the fast algorithm for wild cluster bootstrap
              (WCU) bootstrap are supported. Methods are provided for a variety 
              of fitted models, including 'lm()', 'feols()' 
              (from package 'fixest') and 'felm()' (from package 'lfe').
-URL: https://s3alfisc.github.io/fwildclusterboot
-SourceCode: https://github.com/s3alfisc/fwildclusterboot
+URL: https://s3alfisc.github.io/fwildclusterboot/
 BugReports: https://github.com/s3alfisc/fwildclusterboot/issues
 License: GPL-3 + file LICENSE 
 Imports: 
