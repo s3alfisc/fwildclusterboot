@@ -8,8 +8,8 @@
 # 2. the default number of threads in check_set_nthreads is set to 1
 
 setBoottest_nthreads <-  function(nthreads){
-  #' Set the number of threads for use with open m 
-  #' By default, we use only 50% of threads (never use all)
+  #' Set the number of threads for use with open mp
+  #' By default, only one thread is used
   #' @param nthreads Integer. Number of threads to be used
   #' @export
   
