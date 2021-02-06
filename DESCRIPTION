@@ -45,8 +45,8 @@ Description: Implementation of the fast algorithm for wild cluster bootstrap
              of fitted models, including 'lm()', 'feols()' 
              (from package 'fixest') and 'felm()' (from package 'lfe').
 URL: https://s3alfisc.github.io/fwildclusterboot/
-BugReports: https://github.com/s3alfisc/fwildclusterboot/issues
-License: GPL-3 + file LICENSE 
+BugReports: https://github.com/s3alfisc/fwildclusterboot/issues/
+License: GPL-3 
 Imports: 
     collapse, 
     Formula,
