@@ -2,8 +2,8 @@
 % Please edit documentation in R/set_get_nthreads.R
 \name{setBoottest_nthreads}
 \alias{setBoottest_nthreads}
-\title{Set the number of threads for use with open m
-By default, we use only 50\% of threads (never use all)}
+\title{Set the number of threads for use with open mp
+By default, only one thread is used}
 \usage{
 setBoottest_nthreads(nthreads)
 }
@@ -11,6 +11,6 @@ setBoottest_nthreads(nthreads)
 \item{nthreads}{Integer. Number of threads to be used}
 }
 \description{
-Set the number of threads for use with open m
-By default, we use only 50\% of threads (never use all)
+Set the number of threads for use with open mp
+By default, only one thread is used
 }

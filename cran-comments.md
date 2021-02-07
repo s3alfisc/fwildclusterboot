@@ -1,3 +1,22 @@
+## This is a second re-submission
+
+
+Thanks, we see:
+  + Found the following (possibly) invalid URLs:
+       URL: https://www.tidyverse.org/lifecycle/#experimental (moved to
+  https://lifecycle.r-lib.org/articles/stages.html)
+         From: README.md
+         Status: 200
+         Message: OK
+
+  Please change http --> https, add trailing slashes, or follow moved
+  content as appropriate.
+  
+  Moved URL https://www.tidyverse.org/lifecycle/#experimental to 
+            https://lifecycle.r-lib.org/articles/stages.html
+
+
+
 ## This is a re-submission
 
 
