@@ -2,28 +2,30 @@ tidy.boottest <- function(object, ...) {
   #' S3 method to summarize objects of class boottest into tidy data.frame
   #' @param object object of type boottest
   #' @param ... Further arguments passed to or from other methods.
+  #' @importFrom generics tidy
   #' @export
   #' @method tidy boottest
 
-
   stopifnot(inherits(object, "boottest"))
-
+  #dreamerr::validate_dots(stop = TRUE)
+  
   # if(class(object$regression) == "felm"){
   #   estimate <- object$regression$coefficients[rownames(object$regression$coefficients) == object$param]
   # } else{
   #   estimate <- object$regression$coefficients[names(object$regression$coefficients) == object$param]
   # }
 
+  term <- object$param
   estimate <- object$point_estimate
-  t_stat <- object$t_stat
-  p_val <- object$p_val
-  conf_int_lower <- min(object$conf_int)
-  conf_int_upper <- max(object$conf_int)
+  statistic <- object$t_stat
+  p.value <- object$p_val
+  #std.error <- 1
+  conf.low <- min(object$conf_int)
+  conf.high <- max(object$conf_int)
 
-  res <- data.frame(estimate, t_stat, p_val, conf_int_lower, conf_int_upper)
-  colnames(res) <- c("Estimate", "t value", "Pr(>|t|)", "CI Lower", "CI Upper")
-  # rownames(res) <- NA
-
+  res <- data.frame(term, estimate, statistic, p.value, conf.low, conf.high)
+  #res <- tibble::as_tibble(res)
+  #rownames(res) <- NULL
   return(res)
 }
 
@@ -37,7 +39,8 @@ summary.boottest <- function(object, digits = 3, ...) {
   
 
   stopifnot(inherits(object, "boottest"))
-
+  dreamerr::validate_dots(stop = TRUE)
+  
   N <- object$N
   B <- object$B
   sign_level <- object$sign_level
@@ -63,7 +66,19 @@ summary.boottest <- function(object, digits = 3, ...) {
   #  adj_r_squared <- NA
   # }
 
-  tidy_object <- round(tidy(object), digits)
+  tidy_names <- c("term","estimate", "statistic", "p.value", "conf.low", "conf.high")
+  tidy_object <- lapply(tidy_names, 
+                        function(x){
+                         if(is.numeric(tidy(object)[[x]])){
+                           round(tidy(object)[[x]], digits = digits)
+                         } else{
+                           tidy(object)[[x]]
+                         }
+                  })
+  
+  tidy_object <- as.data.frame(tidy_object)
+  names(tidy_object) <- tidy_names
+  
   # treatment_name <- rownames(tidy_object)
   # tidy_object <- as.data.frame(round(tidy_object, digits = 3))
   # rownames(tidy_object) <- treatment_name
@@ -94,7 +109,8 @@ plot.boottest <- function(x, ...) {
   #' @export
 
   stopifnot(inherits(x, "boottest"))
-
+  dreamerr::validate_dots(stop = TRUE)
+  
   test_vals <- x$test_vals
   p_test_vals <- x$p_test_vals
   conf_int <- x$conf_int
@@ -105,5 +121,19 @@ plot.boottest <- function(x, ...) {
   graphics::abline(v = conf_int[1], col = "blue")
   graphics::abline(v = conf_int[2], col = "blue")
   graphics::abline(h = sign_level, col = "red")
+}
+
+glance.boottest <- function(x, ...){
+  
+  #' S3 method to summarize objects of class boottest
+  #' @param x object of type boottest
+  #' @param ... Further arguments passed to or from other methods.
+  #' @importFrom generics glance
+  #' @method glance boottest
+  #' @export
+
+  stopifnot(inherits(x, "boottest"))
+  broom::glance(eval(x$call$object))
+
 }
 

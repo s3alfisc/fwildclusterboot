@@ -6,10 +6,20 @@ boottest <- function(object, ...) {
   UseMethod("boottest")
 }
 
-tidy <- function(object, ...) {
-  #' S3 method to summarize objects of class boottest into tidy data.frame
-  #' @export
-  #' @param object object of type boottest
-  #' @param ... other arguments
-  UseMethod("tidy")
-}
+#' tidy <- function(object, ...) {
+#'   #' S3 method to summarize objects of class boottest into tidy data.frame
+#'   #' @export
+#'   #' @param object object of type boottest
+#'   #' @param ... other arguments
+#'   UseMethod("tidy")
+#' }
+#' 
+#' glance <- function(object, ...) {
+#'   #' S3 method to summarize objects of class boottest
+#'   #' only needed for use with modelsummary package
+#'   #' broom needs to be imported
+#'   #' @export
+#'   #' @param object object of type boottest
+#'   #' @param ... other arguments
+#'   UseMethod("glance")
+#' }
