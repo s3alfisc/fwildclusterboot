@@ -176,7 +176,7 @@ boot_felm <- suppressWarnings(boottest(object = felm_fit, clustid =  "group_id1"
 boot_fixest_c <- suppressWarnings(boottest(object = feols_fit_c, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 
-boot_lm_fe <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
+boot_lm_fe <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_fixest_fe <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1"), fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_felm_fe <- suppressWarnings(boottest(object = felm_fit, clustid =  "group_id1", fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_fixest_c_fe <- suppressWarnings(boottest(object = feols_fit_c, clustid = c("group_id1"), fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
@@ -309,7 +309,7 @@ boot_felm <- suppressWarnings(boottest(object = felm_fit, clustid =  "group_id1"
 boot_fixest_c <- suppressWarnings(boottest(object = feols_fit_c, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 
-boot_lm_fe <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
+boot_lm_fe <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_fixest_fe <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1"), fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_felm_fe <- suppressWarnings(boottest(object = felm_fit, clustid =  "group_id1", fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_fixest_c_fe <- suppressWarnings(boottest(object = feols_fit_c, clustid = c("group_id1"), fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
@@ -386,7 +386,7 @@ boot_felm <- suppressWarnings(boottest(object = felm_fit, clustid =  "group_id1"
 boot_fixest_c <- suppressWarnings(boottest(object = feols_fit_c, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 
-boot_lm_fe <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
+boot_lm_fe <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_fixest_fe <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1"), fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_felm_fe <- suppressWarnings(boottest(object = felm_fit, clustid =  "group_id1", fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))
 boot_fixest_c_fe <- suppressWarnings(boottest(object = feols_fit_c, clustid = c("group_id1"), fe = "Q1_immigration", B = 999, seed = 911, param = "treatment", conf_int = TRUE))

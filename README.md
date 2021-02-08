@@ -76,8 +76,8 @@ summary(feols_boot)
 #>  Confidence Sets: 95%
 #>  Number of Clusters: 40
 #> 
-#>           Estimate t value Pr(>|t|) CI Lower CI Upper
-#> treatment    0.079   4.123    0.001    0.039    0.119
+#>        term estimate statistic p.value conf.low conf.high
+#> 1 treatment    0.079     4.123       0    0.039     0.118
 ```
 
 ### Benchmarks

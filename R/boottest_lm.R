@@ -55,7 +55,7 @@ boottest.lm <- function(object,
   #'                 to use. The default is to use 1 core.
   #' @param ... Further arguments passed to or from other methods.
   #' 
-  #' @importFrom dreamerr check_arg
+  #' @importFrom dreamerr check_arg validate_dots
   #' 
   #' @method boottest lm
   #' 
@@ -125,7 +125,8 @@ boottest.lm <- function(object,
   #' plot(boot1)
 
   call <- match.call()
-
+  dreamerr::validate_dots(stop = TRUE)
+  
   check_arg(clustid, "character scalar | character vector")
   check_arg(param, "scalar character")
   check_arg(B, "scalar integer")
@@ -200,7 +201,7 @@ boottest.lm <- function(object,
   banned_fun_args <- c("contrasts", "subset", "offset", "x", "y")
   if (sum(call_object %in% banned_fun_args) > 0) {
     stop(paste(
-      "boottest.lm currently does not accept objects of type fixest with 
+      "boottest.lm currently does not accept objects of type lm with 
       function arguments",
       paste0(banned_fun_args[1:(length(banned_fun_args) - 1)], collapse = ", "),
       "and", banned_fun_args[length(banned_fun_args)], "."

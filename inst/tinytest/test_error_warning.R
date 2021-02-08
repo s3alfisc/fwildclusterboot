@@ -248,3 +248,28 @@ expect_error(boottest(object = feols_fit,
                       param = "treatment",
                       conf_int = TRUE))
 
+
+# evalute dots ... in methods
+# write sig_level instead of sign_level
+expect_error(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
+                      sig_level = 0.1))
+expect_error(boottest(object = feols_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
+                        sig_level = 0.1))
+expect_error(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
+                        sig_level = 0.1))
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
+             data = fwildclusterboot:::create_data_2(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+
+res <- boottest(lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
+         sign_level = 0.1)
+
+expect_error(summary(res, a = 1))
+expect_error(tidy(res, a = 1))
+expect_error(plot(res, a = 1))
+
+
+
+
+
+

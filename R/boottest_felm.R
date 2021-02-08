@@ -62,7 +62,7 @@ boottest.felm <- function(object,
   #'                 to use. The default is to use 1 core.
   #' @param ... Further arguments passed to or from other methods.
   #'
-  #' @importFrom dreamerr check_arg
+  #' @importFrom dreamerr check_arg validate_dots
   #' @return An object of class \code{boottest}
   #' 
   #' \item{p_val}{The bootstrap p-value.}
@@ -140,7 +140,8 @@ boottest.felm <- function(object,
 
   call <- match.call()
 
-
+  dreamerr::validate_dots(stop = TRUE)
+  
   # check_arg(clustid, "os formula | data.frame | named list")
   check_arg(param, "scalar character")
   check_arg(B, "scalar integer ")

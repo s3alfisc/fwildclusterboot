@@ -59,7 +59,7 @@ boottest.fixest <- function(object,
   #'                 between 0 and 1 which represents the fraction of all threads 
   #'                 to use. The default is to use 1 core.
   #' @param ... Further arguments passed to or from other methods.
-  #' @importFrom dreamerr check_arg
+  #' @importFrom dreamerr check_arg validate_dots
   
   #' @return An object of class \code{boottest}
   #' 
@@ -135,6 +135,8 @@ boottest.fixest <- function(object,
 
   call <- match.call()
 
+  dreamerr::validate_dots(stop = TRUE)
+  
   # Step 1: check arguments of feols call
   check_arg(clustid, "character vector | scalar character")
   check_arg(param, "scalar character")

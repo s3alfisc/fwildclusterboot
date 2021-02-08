@@ -71,7 +71,7 @@ boot_lm <- boottest(lm_fit, clustid = "group_id1", param = "treatment", B = 9999
 # boottest on an object of type fixest
 boot_feols <- boottest(feols_fit, clustid = "group_id1", param = "treatment", B = 9999)
 # boottest on an object of type felm
-boot_lm <- boottest(felm_fit, clustid = "group_id1", param = "treatment", B = 9999)
+boot_felm <- boottest(felm_fit, clustid = "group_id1", param = "treatment", B = 9999)
 ```
 
 To tests for an interaction, it is important to use the coefficient names that are internally created by the modeling function.
@@ -81,11 +81,16 @@ names(coef(lm_fit_interact))
 boot_lm_interact <- boottest(lm_fit_interact, clustid = "group_id1", param = "log_income:Q1_immigration1", B = 9999)
 ```
 
-To access the estimation results, `boottest()` comes with `summary()` and `tidy()` methods. The `tidy` method returns the estimation results in a data.frame. `summary()` returns some additional information on top of the test statistics reported by `tidy()`.
+To access the estimation results, `boottest()` comes with `summary()` and `tidy()` methods. The `tidy` method returns the estimation results in a data.frame. `summary()` returns some additional information on top of the test statistics reported by `tidy()`. On top, a `glance()` method enables the use of output formatting via the `modelsummary` package.
 
 ```{r}
-tidy(boot_lm)
+library(modelsummary)
+
 summary(boot_lm)
+msummary(list(boot_lm, boot_feols), 
+          estimate = "{estimate} ({p.value})", 
+         statistic = "[{conf.low}, {conf.high}]")
+
 ```
 
 A `plot()` method allows the user to inspect the bootstrap t-statistics: 
@@ -124,8 +129,9 @@ boot_lm_webb <- boottest(lm_fit,
                     B = 9999,
                     type = "webb")
 
-summary(boot_lm_rade)
-summary(boot_lm_webb)
+msummary(list(boot_lm_rade, boot_lm_webb), 
+          estimate = "{estimate} ({p.value})", 
+         statistic = "[{conf.low}, {conf.high}]")
 
 ```
 
@@ -142,27 +148,30 @@ boot_lm_10 <- boottest(lm_fit,
                     clustid = c("group_id1"),
                     param = "treatment", B = 9999, 
                     sign_level = 0.10)
-summary(boot_lm_5)
-summary(boot_lm_10)
+
+msummary(list(boot_lm_5, boot_lm_10), 
+          estimate = "{estimate} ({p.value})", 
+         statistic = "[{conf.low}, {conf.high}]")
 ```
 
 In the case of multiway clustering, the user might want to specify the bootstrap clustering level. By default, boottest chooses the clustering level with the highest number of clusters as `bootcluster = "max"`. Other choices are the minimum cluster, or independent clustering variables.  
 
 ```{r}
-boot_lm <- boottest(lm_fit, 
+boot_lm1 <- boottest(lm_fit, 
                     clustid = c("group_id1", "group_id2"), 
                     param = "treatment",
                     B = 9999, 
                     bootcluster = "min")
-summary(boot_lm)
 
-boot_lm <- boottest(lm_fit, 
+boot_lm2 <- boottest(lm_fit, 
                     clustid = c("group_id1", "group_id2"), 
                     param = "treatment",
                     B = 9999, 
                     bootcluster = "group_id1")
-summary(boot_lm)
 
+msummary(list(boot_lm1, boot_lm2), 
+          estimate = "{estimate} ({p.value})", 
+         statistic = "[{conf.low}, {conf.high}]")
 ```
 
 ## Fixed Effects
@@ -212,8 +221,11 @@ boot_2var <- boottest(lm_fit,
                     param = "treatment", 
                     B = 9999, 
                     bootcluster = c("group_id1", "Q1_immigration"))
-tidy(boot_min)
-tidy(boot_2var)
+
+msummary(model = list(boot_min, boot_2var), 
+         estimate = "{estimate} ({p.value})", 
+         statistic = "[{conf.low}, {conf.high}]", 
+         conf_int = 0.05)
 
 
 
@@ -251,6 +263,8 @@ boot_feols <- boottest(feols_fit,
 
 
 # Miscellanea
+
+
 
 <!-- ## Why does `boottest()` not compute standard errors? -->
 
