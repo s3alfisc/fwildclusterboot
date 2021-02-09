@@ -70,7 +70,8 @@
 
       
 
-      </header><script src="fwildclusterboot_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="fwildclusterboot_files/accessible-code-block-0.0.1/empty-anchor.js"></script><script src="fwildclusterboot_files/kePrint-0.0.1/kePrint.js"></script><link href="fwildclusterboot_files/lightable-0.0.1/lightable.css" rel="stylesheet">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>fwildclusterboot</h1>
@@ -85,7 +86,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot">fwildclusterboot</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></code></pre></div>
 <p>The <code>fwildclusterboot</code> package is an R port of STATA’s <a href="https://github.com/droodman/boottest">boottest</a> package.</p>
 <p>It implements the “fast” wild cluster bootstrap algorithm developed in Roodman et al (2019) for regression objects in R. The “fast” algorithm makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples - as long as the number of bootstrapping clusters is not too large.</p>
 <p>A description of the algorithm is beyond the scope of this vignette. It is very clearly presented in <a href="https://econpapers.repec.org/paper/qedwpaper/1406.htm">Roodman et al. (2019)</a>. For technical details of the implementation in <code>fwildclusterboot</code>, have a look at the <code>technical vignette</code>.</p>
@@ -129,7 +130,7 @@
 <span class="co"># boottest on an object of type fixest</span>
 <span class="va">boot_feols</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">feols_fit</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span>
 <span class="co"># boottest on an object of type felm</span>
-<span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></code></pre></div>
+<span class="va">boot_felm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></code></pre></div>
 <p>To tests for an interaction, it is important to use the coefficient names that are internally created by the modeling function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html">coef</a></span><span class="op">(</span><span class="va">lm_fit_interact</span><span class="op">)</span><span class="op">)</span>
@@ -141,14 +142,13 @@
 <span class="co">#&gt; [11] "log_income:Q1_immigration8"  "log_income:Q1_immigration9" </span>
 <span class="co">#&gt; [13] "log_income:Q1_immigration10"</span>
 <span class="va">boot_lm_interact</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit_interact</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="st">"log_income:Q1_immigration1"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></code></pre></div>
-<p>To access the estimation results, <code><a href="../reference/boottest.html">boottest()</a></code> comes with <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> and <code><a href="../reference/tidy.html">tidy()</a></code> methods. The <code>tidy</code> method returns the estimation results in a data.frame. <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> returns some additional information on top of the test statistics reported by <code><a href="../reference/tidy.html">tidy()</a></code>.</p>
+<p>To access the estimation results, <code><a href="../reference/boottest.html">boottest()</a></code> comes with <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> and <code>tidy()</code> methods. The <code>tidy</code> method returns the estimation results in a data.frame. <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> returns some additional information on top of the test statistics reported by <code>tidy()</code>. On top, a <code>glance()</code> method enables the use of output formatting via the <code>modelsummary</code> package.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
-<span class="co">#&gt;     Estimate t value   Pr(&gt;|t|)   CI Lower  CI Upper</span>
-<span class="co">#&gt; 1 0.07290769 3.78619 0.00040004 0.03338416 0.1126963</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/modelsummary/">modelsummary</a></span><span class="op">)</span>
+
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
-<span class="co">#&gt; boottest.felm(object = felm_fit, param = "treatment", B = 9999, </span>
-<span class="co">#&gt;     clustid = "group_id1")</span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, clustid = "group_id1", param = "treatment", </span>
+<span class="co">#&gt;     B = 9999)</span>
 <span class="co">#&gt;  </span>
 <span class="co">#&gt;  Observations: 300</span>
 <span class="co">#&gt;  Bootstr. Iter: 9999</span>
@@ -157,8 +157,130 @@
 <span class="co">#&gt;  Confidence Sets: 95%</span>
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;   Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; 1    0.073   3.786        0    0.033    0.113</span></code></pre></div>
+<span class="co">#&gt;        term estimate statistic p.value conf.low conf.high</span>
+<span class="co">#&gt; 1 treatment    0.073     3.786       0    0.033     0.114</span>
+<span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html">msummary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">boot_lm</span>, <span class="va">boot_feols</span><span class="op">)</span>, 
+          estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
+         statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span></code></pre></div>
+<table class="table table">
+<thead><tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Model 1
+</th>
+<th style="text-align:center;">
+Model 2
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+treatment
+</td>
+<td style="text-align:center;">
+0.073 (0.000)
+</td>
+<td style="text-align:center;">
+0.073 (0.001)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;box-shadow: 0px 1px">
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+[0.033, 0.114]
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+[0.033, 0.112]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Num.Obs.
+</td>
+<td style="text-align:center;">
+300
+</td>
+<td style="text-align:center;">
+300
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2
+</td>
+<td style="text-align:center;">
+0.316
+</td>
+<td style="text-align:center;">
+0.316
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2 Adj.
+</td>
+<td style="text-align:center;">
+0.288
+</td>
+<td style="text-align:center;">
+0.288
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2 Within
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2 Pseudo
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AIC
+</td>
+<td style="text-align:center;">
+-82.1
+</td>
+<td style="text-align:center;">
+-84.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BIC
+</td>
+<td style="text-align:center;">
+-30.2
+</td>
+<td style="text-align:center;">
+-35.9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Log.Lik.
+</td>
+<td style="text-align:center;">
+55.025
+</td>
+<td style="text-align:center;">
+55.025
+</td>
+</tr>
+</tbody>
+</table>
 <p>A <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> method allows the user to inspect the bootstrap t-statistics:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span></code></pre></div>
@@ -181,8 +303,8 @@
 <span class="co">#&gt;  Confidence Sets: 95%</span>
 <span class="co">#&gt;  Number of Clusters: 40 20 251</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.925    0.003    0.032    0.115</span></code></pre></div>
+<span class="co">#&gt;        term estimate statistic p.value conf.low conf.high</span>
+<span class="co">#&gt; 1 treatment    0.073     3.925   0.004     0.03     0.116</span></code></pre></div>
 </div>
 <div id="choice-of-bootstrap-weights" class="section level2">
 <h2 class="hasAnchor">
@@ -200,32 +322,110 @@
                     B <span class="op">=</span> <span class="fl">9999</span>,
                     type <span class="op">=</span> <span class="st">"webb"</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm_rade</span><span class="op">)</span>
-<span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1", "group_id2"), </span>
-<span class="co">#&gt;     param = "treatment", B = 9999, type = "rademacher")</span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  Observations: 300</span>
-<span class="co">#&gt;  Bootstr. Iter: 9999</span>
-<span class="co">#&gt;  Bootstr. Type: rademacher</span>
-<span class="co">#&gt;  Clustering: twoway</span>
-<span class="co">#&gt;  Confidence Sets: 95%</span>
-<span class="co">#&gt;  Number of Clusters: 40 20 251</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.925    0.006     0.03    0.115</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm_webb</span><span class="op">)</span>
-<span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1", "group_id2"), </span>
-<span class="co">#&gt;     param = "treatment", B = 9999, type = "webb")</span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  Observations: 300</span>
-<span class="co">#&gt;  Bootstr. Iter: 9999</span>
-<span class="co">#&gt;  Bootstr. Type: webb</span>
-<span class="co">#&gt;  Clustering: twoway</span>
-<span class="co">#&gt;  Confidence Sets: 95%</span>
-<span class="co">#&gt;  Number of Clusters: 40 20 251</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.925    0.004    0.031    0.115</span></code></pre></div>
+<span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html">msummary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">boot_lm_rade</span>, <span class="va">boot_lm_webb</span><span class="op">)</span>, 
+          estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
+         statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span></code></pre></div>
+<table class="table table">
+<thead><tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Model 1
+</th>
+<th style="text-align:center;">
+Model 2
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+treatment
+</td>
+<td style="text-align:center;">
+0.073 (0.004)
+</td>
+<td style="text-align:center;">
+0.073 (0.004)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;box-shadow: 0px 1px">
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+[0.031, 0.116]
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+[0.030, 0.116]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Num.Obs.
+</td>
+<td style="text-align:center;">
+300
+</td>
+<td style="text-align:center;">
+300
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2
+</td>
+<td style="text-align:center;">
+0.316
+</td>
+<td style="text-align:center;">
+0.316
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2 Adj.
+</td>
+<td style="text-align:center;">
+0.288
+</td>
+<td style="text-align:center;">
+0.288
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AIC
+</td>
+<td style="text-align:center;">
+-82.1
+</td>
+<td style="text-align:center;">
+-82.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BIC
+</td>
+<td style="text-align:center;">
+-30.2
+</td>
+<td style="text-align:center;">
+-30.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Log.Lik.
+</td>
+<td style="text-align:center;">
+55.025
+</td>
+<td style="text-align:center;">
+55.025
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="other-function-arguments" class="section level2">
 <h2 class="hasAnchor">
@@ -240,71 +440,229 @@
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span><span class="op">)</span>,
                     param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span>, 
                     sign_level <span class="op">=</span> <span class="fl">0.10</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm_5</span><span class="op">)</span>
-<span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1"), param = "treatment", </span>
-<span class="co">#&gt;     B = 9999, sign_level = 0.05)</span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  Observations: 300</span>
-<span class="co">#&gt;  Bootstr. Iter: 9999</span>
-<span class="co">#&gt;  Bootstr. Type: rademacher</span>
-<span class="co">#&gt;  Clustering: oneway</span>
-<span class="co">#&gt;  Confidence Sets: 95%</span>
-<span class="co">#&gt;  Number of Clusters: 40</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.786    0.001    0.032    0.113</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm_10</span><span class="op">)</span>
-<span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1"), param = "treatment", </span>
-<span class="co">#&gt;     B = 9999, sign_level = 0.1)</span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  Observations: 300</span>
-<span class="co">#&gt;  Bootstr. Iter: 9999</span>
-<span class="co">#&gt;  Bootstr. Type: rademacher</span>
-<span class="co">#&gt;  Clustering: oneway</span>
-<span class="co">#&gt;  Confidence Sets: 90%</span>
-<span class="co">#&gt;  Number of Clusters: 40</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.786    0.001     0.04    0.106</span></code></pre></div>
+
+<span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html">msummary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">boot_lm_5</span>, <span class="va">boot_lm_10</span><span class="op">)</span>, 
+          estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
+         statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span></code></pre></div>
+<table class="table table">
+<thead><tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Model 1
+</th>
+<th style="text-align:center;">
+Model 2
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+treatment
+</td>
+<td style="text-align:center;">
+0.073 (0.001)
+</td>
+<td style="text-align:center;">
+0.073 (0.001)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;box-shadow: 0px 1px">
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+[0.033, 0.113]
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+[0.040, 0.107]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Num.Obs.
+</td>
+<td style="text-align:center;">
+300
+</td>
+<td style="text-align:center;">
+300
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2
+</td>
+<td style="text-align:center;">
+0.316
+</td>
+<td style="text-align:center;">
+0.316
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2 Adj.
+</td>
+<td style="text-align:center;">
+0.288
+</td>
+<td style="text-align:center;">
+0.288
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AIC
+</td>
+<td style="text-align:center;">
+-82.1
+</td>
+<td style="text-align:center;">
+-82.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BIC
+</td>
+<td style="text-align:center;">
+-30.2
+</td>
+<td style="text-align:center;">
+-30.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Log.Lik.
+</td>
+<td style="text-align:center;">
+55.025
+</td>
+<td style="text-align:center;">
+55.025
+</td>
+</tr>
+</tbody>
+</table>
 <p>In the case of multiway clustering, the user might want to specify the bootstrap clustering level. By default, boottest chooses the clustering level with the highest number of clusters as <code>bootcluster = "max"</code>. Other choices are the minimum cluster, or independent clustering variables.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
+<code class="sourceCode R"><span class="va">boot_lm1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, 
                     param <span class="op">=</span> <span class="st">"treatment"</span>,
                     B <span class="op">=</span> <span class="fl">9999</span>, 
                     bootcluster <span class="op">=</span> <span class="st">"min"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
-<span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1", "group_id2"), </span>
-<span class="co">#&gt;     param = "treatment", B = 9999, bootcluster = "min")</span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  Observations: 300</span>
-<span class="co">#&gt;  Bootstr. Iter: 9999</span>
-<span class="co">#&gt;  Bootstr. Type: rademacher</span>
-<span class="co">#&gt;  Clustering: twoway</span>
-<span class="co">#&gt;  Confidence Sets: 95%</span>
-<span class="co">#&gt;  Number of Clusters: 40 20 251</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.925    0.004    0.032     0.11</span>
 
-<span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
+<span class="va">boot_lm2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, 
                     param <span class="op">=</span> <span class="st">"treatment"</span>,
                     B <span class="op">=</span> <span class="fl">9999</span>, 
                     bootcluster <span class="op">=</span> <span class="st">"group_id1"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
-<span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1", "group_id2"), </span>
-<span class="co">#&gt;     param = "treatment", B = 9999, bootcluster = "group_id1")</span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt;  Observations: 300</span>
-<span class="co">#&gt;  Bootstr. Iter: 9999</span>
-<span class="co">#&gt;  Bootstr. Type: rademacher</span>
-<span class="co">#&gt;  Clustering: twoway</span>
-<span class="co">#&gt;  Confidence Sets: 95%</span>
-<span class="co">#&gt;  Number of Clusters: 40 20 251</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;           Estimate t value Pr(&gt;|t|) CI Lower CI Upper</span>
-<span class="co">#&gt; treatment    0.073   3.925    0.007    0.027    0.116</span></code></pre></div>
+
+<span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html">msummary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">boot_lm1</span>, <span class="va">boot_lm2</span><span class="op">)</span>, 
+          estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
+         statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span></code></pre></div>
+<table class="table table">
+<thead><tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Model 1
+</th>
+<th style="text-align:center;">
+Model 2
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+treatment
+</td>
+<td style="text-align:center;">
+0.073 (0.005)
+</td>
+<td style="text-align:center;">
+0.073 (0.008)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;box-shadow: 0px 1px">
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+[0.031, 0.111]
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+[0.027, 0.116]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Num.Obs.
+</td>
+<td style="text-align:center;">
+300
+</td>
+<td style="text-align:center;">
+300
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2
+</td>
+<td style="text-align:center;">
+0.316
+</td>
+<td style="text-align:center;">
+0.316
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2 Adj.
+</td>
+<td style="text-align:center;">
+0.288
+</td>
+<td style="text-align:center;">
+0.288
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AIC
+</td>
+<td style="text-align:center;">
+-82.1
+</td>
+<td style="text-align:center;">
+-82.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BIC
+</td>
+<td style="text-align:center;">
+-30.2
+</td>
+<td style="text-align:center;">
+-30.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Log.Lik.
+</td>
+<td style="text-align:center;">
+55.025
+</td>
+<td style="text-align:center;">
+55.025
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="fixed-effects" class="section level2">
 <h2 class="hasAnchor">
@@ -332,7 +690,7 @@
 <div id="the-subcluster-bootstrap" class="section level2">
 <h2 class="hasAnchor">
 <a href="#the-subcluster-bootstrap" class="anchor"></a>The Subcluster Bootstrap</h2>
-<p>In the case of few treated clusters, <a href="(https://academic.oup.com/ectj/article-abstract/21/2/114/5078969)">MacKinnon and Webb (2018)</a> suggest to use subclusters to form the bootstrap distribution. <code><a href="../reference/boottest.html">boottest()</a></code> allows the user to specify subclusters via the <code>bootcluster</code> argument.</p>
+<p>In the case of few treated clusters, <a href="https://academic.oup.com/ectj/article-abstract/21/2/114/5078969">MacKinnon and Webb (2018)</a> suggest to use subclusters to form the bootstrap distribution. <code><a href="../reference/boottest.html">boottest()</a></code> allows the user to specify subclusters via the <code>bootcluster</code> argument.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">boot_min</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>,
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, 
@@ -349,12 +707,112 @@
                     param <span class="op">=</span> <span class="st">"treatment"</span>, 
                     B <span class="op">=</span> <span class="fl">9999</span>, 
                     bootcluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"Q1_immigration"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_min</span><span class="op">)</span>
-<span class="co">#&gt;             Estimate  t value   Pr(&gt;|t|)   CI Lower  CI Upper</span>
-<span class="co">#&gt; treatment 0.07290769 3.924685 0.00470047 0.03166081 0.1110831</span>
-<span class="fu"><a href="../reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">boot_2var</span><span class="op">)</span>
-<span class="co">#&gt;             Estimate  t value    Pr(&gt;|t|)   CI Lower  CI Upper</span>
-<span class="co">#&gt; treatment 0.07290769 3.924685 0.009625025 0.02894392 0.1170494</span></code></pre></div>
+
+<span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html">msummary</a></span><span class="op">(</span>model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">boot_min</span>, <span class="va">boot_2var</span><span class="op">)</span>, 
+         estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
+         statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span>, 
+         conf_int <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></code></pre></div>
+<table class="table table">
+<thead><tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:center;">
+Model 1
+</th>
+<th style="text-align:center;">
+Model 2
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+treatment
+</td>
+<td style="text-align:center;">
+0.073 (0.004)
+</td>
+<td style="text-align:center;">
+0.073 (0.006)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;box-shadow: 0px 1px">
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+[0.031, 0.111]
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+[0.030, 0.116]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Num.Obs.
+</td>
+<td style="text-align:center;">
+300
+</td>
+<td style="text-align:center;">
+300
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2
+</td>
+<td style="text-align:center;">
+0.316
+</td>
+<td style="text-align:center;">
+0.316
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+R2 Adj.
+</td>
+<td style="text-align:center;">
+0.288
+</td>
+<td style="text-align:center;">
+0.288
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AIC
+</td>
+<td style="text-align:center;">
+-82.1
+</td>
+<td style="text-align:center;">
+-82.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BIC
+</td>
+<td style="text-align:center;">
+-30.2
+</td>
+<td style="text-align:center;">
+-30.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Log.Lik.
+</td>
+<td style="text-align:center;">
+55.025
+</td>
+<td style="text-align:center;">
+55.025
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="regression-weights-weighted-least-squares-wls" class="section level2">
 <h2 class="hasAnchor">
@@ -480,7 +938,10 @@
 <div id="on-the-handling-of-missing-values" class="section level2">
 <h2 class="hasAnchor">
 <a href="#on-the-handling-of-missing-values" class="anchor"></a>On the handling of missing values</h2>
-<p><code><a href="../reference/boottest.html">boottest()</a></code> retrieves both the design matrix <span class="math inline">\(X\)</span>, the dependent variable <span class="math inline">\(y\)</span> and the cluster variables from the input object of type <code>lm</code>, <code>fixest</code> or <code>felm</code>. Because <code><a href="../reference/boottest.html">boottest()</a></code> allows to add or delete clustering variables that are not employed in <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code>, <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> and <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code>, it may occurs that a cluster variable is added in <code><a href="../reference/boottest.html">boottest()</a></code> that is not included in the regression model, either as a cluster variable or covariate. In this case, boottest deletes the respective rows in the dependent variable, design matrix and in the cluster variables. In consequence, estimation (in the modeling step) and inference (via <code><a href="../reference/boottest.html">boottest()</a></code>) are done on a different sample. <code><a href="../reference/boottest.html">boottest()</a></code> returns a warning.</p>
+<p><code><a href="../reference/boottest.html">boottest()</a></code> retrieves both the design matrix <span class="math inline">\(X\)</span>, the dependent variable <span class="math inline">\(y\)</span> and the cluster variables from the input object of type <code>lm</code>, <code>fixest</code> or <code>felm</code>. Because <code><a href="../reference/boottest.html">boottest()</a></code> allows to add or delete clustering variables that are not employed in <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code>, <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> and <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code>, it may occur that a cluster variable is added in <code><a href="../reference/boottest.html">boottest()</a></code> that is not included in the regression model, either as a cluster variable or covariate.</p>
+<p>In this case, boottest by default deletes the respective rows in the dependent variable, design matrix and in the cluster variables. In consequence, estimation (in the modeling step) and inference (via <code><a href="../reference/boottest.html">boottest()</a></code>) are done on a different sample. <code><a href="../reference/boottest.html">boottest()</a></code> returns a warning.</p>
+<p>This in turn has a consequence for the use of <code><a href="../reference/boottest.html">boottest()</a></code> and <code>modelsummary</code>. <code><a href="../reference/boottest.html">boottest()</a></code> simply calls the <code>glance</code> methods for objects of types <code>fixest</code>, <code>felm</code> and <code>lm</code>, and therefore, the number of observations reported via <code><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html">msummary()</a></code> is the number of observations used in the modeling stage.</p>
+<p>The default behavior of <code><a href="../reference/boottest.html">boottest()</a></code> - to delete missings with a warning - can be set off via the <code>na_omit</code> function argument. If <code>na_omit</code> is set to FALSE, <code><a href="../reference/boottest.html">boottest()</a></code> will not allow for missing values and throw an error.</p>
 </div>
 <div id="a-note-of-caution" class="section level2">
 <h2 class="hasAnchor">

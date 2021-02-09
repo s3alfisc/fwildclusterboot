@@ -9,30 +9,22 @@ tidy.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
   #dreamerr::validate_dots(stop = TRUE)
   
-  # if(class(object$regression) == "felm"){
-  #   estimate <- object$regression$coefficients[rownames(object$regression$coefficients) == object$param]
-  # } else{
-  #   estimate <- object$regression$coefficients[names(object$regression$coefficients) == object$param]
-  # }
-
   term <- object$param
   estimate <- object$point_estimate
   statistic <- object$t_stat
   p.value <- object$p_val
-  #std.error <- 1
+  #std.error <- NA
   conf.low <- min(object$conf_int)
   conf.high <- max(object$conf_int)
 
   res <- data.frame(term, estimate, statistic, p.value, conf.low, conf.high)
-  #res <- tibble::as_tibble(res)
-  #rownames(res) <- NULL
   return(res)
 }
 
 summary.boottest <- function(object, digits = 3, ...) {
   #' S3 method to summarize objects of class boottest
   #' @param object object of type boottest
-  #' @param digits rounding of output
+  #' @param digits rounding of output. 3 by default
   #' @param ... Further arguments passed to or from other methods.
   #' @method summary boottest
   #' @export
@@ -51,22 +43,12 @@ summary.boottest <- function(object, digits = 3, ...) {
   type <- ifelse(object$type %in% c("rademacher", "mammen", "norm", "webb"), object$type, "custom")
   # clustid <-
   estim_function <- class(object$regression)
-  if (length(object$clustid) == 1) {
-    clustering_type <- "oneway"
-    numb_clusters <- N_G
-  } else if (length(object$clustid) == 2) {
-    clustering_type <- "twoway"
-    numb_clusters <- paste(N_G[1], "x", N_G[2])
-  }
+  
+  clustering_type <-  paste0(length(object$clustid), "-way")
   numb_clusters <- object$N_G
-
-  # if(class(object$regression) %in% c("lm", "lm_robust", "felm")){
-  #  adj_r_squared <- summary(object$regression)$adj.r.squared
-  # } else{
-  #  adj_r_squared <- NA
-  # }
-
+  
   tidy_names <- c("term","estimate", "statistic", "p.value", "conf.low", "conf.high")
+  
   tidy_object <- lapply(tidy_names, 
                         function(x){
                          if(is.numeric(tidy(object)[[x]])){
@@ -79,10 +61,6 @@ summary.boottest <- function(object, digits = 3, ...) {
   tidy_object <- as.data.frame(tidy_object)
   names(tidy_object) <- tidy_names
   
-  # treatment_name <- rownames(tidy_object)
-  # tidy_object <- as.data.frame(round(tidy_object, digits = 3))
-  # rownames(tidy_object) <- treatment_name
-
   print(call)
   cat(
     "\t\n",
