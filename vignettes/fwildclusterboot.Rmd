@@ -81,12 +81,15 @@ names(coef(lm_fit_interact))
 boot_lm_interact <- boottest(lm_fit_interact, clustid = "group_id1", param = "log_income:Q1_immigration1", B = 9999)
 ```
 
-To access the estimation results, `boottest()` comes with `summary()` and `tidy()` methods. The `tidy` method returns the estimation results in a data.frame. `summary()` returns some additional information on top of the test statistics reported by `tidy()`. On top, a `glance()` method enables the use of output formatting via the `modelsummary` package.
+To access the estimation results, `boottest()` comes with `summary()`, `tidy()` and `glance()` methods. The `tidy()` method returns the estimation results in a data.frame. `summary()` returns  additional information on top of the test statistics reported by `tidy()`. The`glance()` method enables the use of output formatting tools from the `modelsummary` package.
 
 ```{r}
 library(modelsummary)
 
+# fwildclusterboot's internal summary() method
 summary(boot_lm)
+
+# summary via the modelsummary package
 msummary(list(boot_lm, boot_feols), 
           estimate = "{estimate} ({p.value})", 
          statistic = "[{conf.low}, {conf.high}]")
@@ -121,12 +124,12 @@ Furthermore, the user can choose among four different weighting distribution via
 boot_lm_rade <- boottest(lm_fit, 
                     clustid = c("group_id1", "group_id2"), 
                     param = "treatment", 
-                    B = 9999,
+                    B = 999,
                     type = "rademacher")
 boot_lm_webb <- boottest(lm_fit, 
                     clustid = c("group_id1", "group_id2"), 
                     param = "treatment", 
-                    B = 9999,
+                    B = 999,
                     type = "webb")
 
 msummary(list(boot_lm_rade, boot_lm_webb), 
@@ -405,9 +408,9 @@ a cluster variable is added in `boottest()` that is not included in the regressi
 
 In this case, boottest by default deletes the respective rows in the dependent variable, design matrix and in the cluster variables.  In consequence, estimation (in the modeling step) and inference (via `boottest()`) are done on a different sample. `boottest()` returns a warning. 
 
-This in turn has a consequence for the use of `boottest()` and `modelsummary`. `boottest()` simply calls the `glance` methods for objects of types `fixest`, `felm` and `lm`, and therefore, the number of observations reported via `msummary()` is the number of observations used in the modeling stage. 
+This in turn has a consequence for the use of `boottest()` and `modelsummary`. `boottest()` simply calls the `glance()` methods for objects of types `fixest`, `felm` and `lm` from the `broom` package, and therefore, the number of observations reported via `msummary()` is the number of observations used in the modeling stage. 
 
-The default behavior of `boottest()` - to delete missings with a warning - can be set off via the `na_omit` function argument. If `na_omit` is set to FALSE, `boottest()` will not allow for missing values and throw an error. 
+The default behavior of `boottest()` - to delete missings with a warning - can be set off via the `na_omit` function argument. If `na_omit` is set to FALSE, `boottest()` will not allow for missing values in the added cluster variables and throw an error. 
 
 ## A note of caution
 

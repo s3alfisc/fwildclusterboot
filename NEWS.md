@@ -1,6 +1,6 @@
 # fwildclusterboot 0.3.1 (in development)
 
-+ A `glance.boottest` method was added, which enables to inspect results from `boottest()` via the `modelsummary` package. 
++ A `glance.boottest()` method was added, which enables the use of the `modelsummary` package with `fwildclusterboot`. 
 + The `tidy.boottest()` method is no longer exported. You can still access it via `fwildclusterboot:::tidy.boottest()` or by loading the `generics` package via `library(generics)`.
 
 # fwildclusterboot 0.3.0
