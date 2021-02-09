@@ -130,7 +130,6 @@ boottest.fixest <- function(object,
   #'                   seed = 8,
   #'                   beta0 = 2)
   #' summary(boot1)
-  #' tidy(boot1)
   #' plot(boot1)
 
   call <- match.call()
