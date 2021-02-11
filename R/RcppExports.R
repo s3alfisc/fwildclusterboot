@@ -20,6 +20,7 @@ eigenMapMatMult <- function(A, B, nthreads) {
 }
 
 #' Get maximum number of threads on hardware for open mp support
+#' @return The maximum number of threads supported.
 cpp_get_nb_threads <- function() {
     .Call('_fwildclusterboot_cpp_get_nb_threads', PACKAGE = 'fwildclusterboot')
 }

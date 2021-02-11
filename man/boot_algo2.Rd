@@ -2,7 +2,7 @@
 % Please edit documentation in R/boot_algo2.R
 \name{boot_algo2}
 \alias{boot_algo2}
-\title{function that implements the fast bootstrap algorithm as described in Roodman et al (2019)}
+\title{Fast wild cluster bootstrap algorithm}
 \usage{
 boot_algo2(
   preprocessed_object,

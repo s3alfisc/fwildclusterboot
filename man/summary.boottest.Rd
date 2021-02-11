@@ -9,9 +9,12 @@
 \arguments{
 \item{object}{object of type boottest}
 
-\item{digits}{rounding of output}
+\item{digits}{rounding of output. 3 by default}
 
 \item{...}{Further arguments passed to or from other methods.}
+}
+\value{
+Returns result summaries for objects of type boottest
 }
 \description{
 S3 method to summarize objects of class boottest

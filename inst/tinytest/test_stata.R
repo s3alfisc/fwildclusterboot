@@ -5,7 +5,7 @@ library(lfe)
 library(fixest)
 
 #run for stata: 
-#voters <- fwildclusterboot:::create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+#voters <- fwildclusterboot:::create_data(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
 #data.table::fwrite(voters, "C:/Users/alexa/Dropbox/fwildclusterboot/voters.csv")
 
 
@@ -16,7 +16,7 @@ library(fixest)
 set.seed(1234)
 
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
-             data = fwildclusterboot:::create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+             data = fwildclusterboot:::create_data(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 
 boot_lm1 <-  suppressWarnings(
   boottest(
@@ -225,7 +225,7 @@ expect_equal(boot_lm7$p_val,  0.6797, tol = 1e-2)
 #weights <- sample(1:10, 1000, replace = TRUE) / 10
 #all.equal(weights, voters$weights)
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
-             data = fwildclusterboot:::create_data_2(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234), 
+             data = fwildclusterboot:::create_data(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234), 
              weights = weights)
 
 boot_lm1 <-  suppressWarnings(

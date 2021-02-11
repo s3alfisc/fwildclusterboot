@@ -1,7 +1,11 @@
-create_data_2 <-
+create_data <-
   function(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed, weights) {
 
-    #' Function creates data for tests and examples
+    #' Simulate Data 
+    #' 
+    #' Function simulates data for tests and examples with clustering variables
+    #' and fixed-effects.
+    #' 
     #' @param N number of observations
     #' @param N_G1 A scalar. number of clusters for clustering variable 1
     #' @param icc1 A scalar between 0 and 1. intra-cluster correlation for clustering variable 1
@@ -11,8 +15,8 @@ create_data_2 <-
     #' @param numb_fe2 A scalar. Number of fixed effect for second factor variable
     #' @param seed An integer. Set the random seed
     #' @param weights Possible regression weights to be used in estimation
-    #' @export
-
+    #' @return A simulated \code{data.frame} with specified numbers of clusters, 
+    #'         intra-cluster correlations and dimensionality of fixed effects. 
     set.seed(seed)
     voters <-
       fabricatr::fabricate(

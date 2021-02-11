@@ -2,7 +2,7 @@
 % Please edit documentation in R/invert_p_val2.R
 \name{invert_p_val2}
 \alias{invert_p_val2}
-\title{Inverts the bootstrap p-value and calculates confidence sets}
+\title{Calculation of Confidence Sets}
 \usage{
 invert_p_val2(
   object,
@@ -40,6 +40,10 @@ invert_p_val2(
 \item{tol}{the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.}
 
 \item{maxiter}{maximum number of iterations for confidence interval inversion. 10 by default.}
+}
+\value{
+A list containing the calculated confidence interval, the t-statistics
+and corresponding p-values used in the grid search.
 }
 \description{
 Inverts the bootstrap p-value and calculates confidence sets

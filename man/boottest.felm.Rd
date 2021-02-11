@@ -107,7 +107,9 @@ confidence interval.}
 \item{call}{Function call of boottest.}
 }
 \description{
-Fast wild cluster bootstrap inference for object of class felm
+\code{boottest.felm} is a S3 method that allows for fast wild cluster
+bootstrap inference for objects of class felm by  implementing
+the fast wild bootstrap algorithm developed in Roodman et al., 2019.
 }
 \section{Confidence Intervals}{
 
@@ -134,10 +136,10 @@ stops the procedure after 10 iterations.
 \examples{
 library(fwildclusterboot)
 library(lfe)
+data(voters)
 felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income
            | Q1_immigration, 
-           data = fwildclusterboot:::create_data_2(N = 1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10,
-                   icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
+           data = voters)
 boot1 <- boottest(felm_fit, 
                   B = 9999, 
                   param = "treatment",

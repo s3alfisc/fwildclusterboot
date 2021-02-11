@@ -72,12 +72,12 @@ summary(feols_boot)
 #>  
 #>  Observations: 300
 #>   Bootstr. Type: rademacher
-#>  Clustering: oneway
+#>  Clustering: 1-way
 #>  Confidence Sets: 95%
 #>  Number of Clusters: 40
 #> 
 #>        term estimate statistic p.value conf.low conf.high
-#> 1 treatment    0.079     4.123       0    0.039     0.118
+#> 1 treatment    0.079     4.123       0    0.039     0.119
 ```
 
 ### Benchmarks

@@ -14,7 +14,9 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
   #' @param impose_null If TRUE, no null hypothesis if imposed on the bootstrap
   #' @param point_estimate The point estimate of the test parameter from the regression model.
   #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"
-
+  #' 
+  #' @return A list containing the bootstrapped p-value, the bootstrapped t-statistics, 
+  #'         and the number of invalid test statistics. 
 
 
   # Roodman et al on WCU: "Therefore, as we vary ßj0, the bootstrap samples

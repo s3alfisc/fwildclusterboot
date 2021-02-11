@@ -17,6 +17,11 @@ boottest.lm <- function(object,
                         ...) {
 
   #' Fast wild cluster bootstrap inference for object of class lm
+  #' 
+  #' `boottest.lm` is a S3 method that allows for fast wild cluster 
+  #' bootstrap inference for objects of class lm by  implementing
+  #' the fast wild bootstrap algorithm developed in Roodman et al., 2019.
+  #' 
   #' @param object An object of class fixest
   #' @param clustid A vector with the clusters
   #' @param param Character vector of length one. The name of the regression
@@ -102,9 +107,9 @@ boottest.lm <- function(object,
   #'             (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
   #' @examples
   #' library(fwildclusterboot)
+  #' data(voters)
   #' lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-  #'          data = fwildclusterboot:::create_data_2(N = 1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10,
-  #'                    icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
+  #'          data = voters)
   #' boot1 <- boottest(lm_fit, 
   #'                   B = 9999, 
   #'                   param = "treatment",

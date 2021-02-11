@@ -9,6 +9,9 @@ check_set_nthreads(nthreads)
 \arguments{
 \item{nthreads}{Integer. Number of threads to be used}
 }
+\value{
+Integer. The number of threads to be used.
+}
 \description{
 Simple function that checks that the nber of threads is valid
 }

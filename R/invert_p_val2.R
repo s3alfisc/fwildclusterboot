@@ -1,6 +1,9 @@
 invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, sign_level, vcov_sign, impose_null, p_val_type, tol, maxiter) {
   
+  #' Calculation of Confidence Sets
+  #' 
   #' Inverts the bootstrap p-value and calculates confidence sets
+  #' 
   #' @param object A  object of type boottest
   #' @param boot_iter An integer. Number of bootstrap iterations
   #' @param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
@@ -13,6 +16,9 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
   #' @param tol the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.
   #' @param maxiter maximum number of iterations for confidence interval inversion. 10 by default.
   #' @importFrom stats uniroot
+  #' 
+  #' @return A list containing the calculated confidence interval, the t-statistics
+  #'         and corresponding p-values used in the grid search. 
   
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")
@@ -78,14 +84,10 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
   p <- rep(NaN, length(test_vals))
   
   
-  # pb = txtProgressBar(min = 0, max = (length(test_vals) - 2), initial = 0, style = 3, char = "-")
-  
   for (i in 2:(length(test_vals) - 1)) {
     p[i] <- p_val_null2_x_cmp(test_vals[i], sign_level)
-    # setTxtProgressBar(pb,i)
   }
-  # close(pb)
-  
+
   # substract sign_level in function so that I will not need to
   # do it in root finding algorithm, but then I will need to add
   # sign_level here

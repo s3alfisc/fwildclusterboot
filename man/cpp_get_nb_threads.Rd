@@ -6,6 +6,9 @@
 \usage{
 cpp_get_nb_threads()
 }
+\value{
+The maximum number of threads supported.
+}
 \description{
 Get maximum number of threads on hardware for open mp support
 }

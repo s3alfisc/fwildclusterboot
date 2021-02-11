@@ -44,6 +44,10 @@ p_val_null2(
 
 \item{p_val_type}{type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"}
 }
+\value{
+A list containing the bootstrapped p-value, the bootstrapped t-statistics,
+and the number of invalid test statistics.
+}
 \description{
 Calculate p-values based on A, B, CC, CD, DD and other inputs
 }

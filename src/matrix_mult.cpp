@@ -43,6 +43,7 @@ SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A,
 }
 
 //' Get maximum number of threads on hardware for open mp support
+//' @return The maximum number of threads supported.
 // [[Rcpp::export]]
 int cpp_get_nb_threads(){
   return omp_get_max_threads();

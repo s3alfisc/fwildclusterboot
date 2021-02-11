@@ -2,7 +2,7 @@
 % Please edit documentation in R/tidy_boottest.R
 \name{glance.boottest}
 \alias{glance.boottest}
-\title{S3 method to summarize objects of class boottest}
+\title{S3 method to glance at objects of class boottest}
 \usage{
 \method{glance}{boottest}(x, ...)
 }
@@ -11,6 +11,10 @@
 
 \item{...}{Further arguments passed to or from other methods.}
 }
+\value{
+A single row summary "glance" of an object of type boottest
+- lists characteristics of the input regression model
+}
 \description{
-S3 method to summarize objects of class boottest
+S3 method to glance at objects of class boottest
 }

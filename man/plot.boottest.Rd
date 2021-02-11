@@ -11,6 +11,9 @@
 
 \item{...}{Further arguments passed to or from other methods.}
 }
+\value{
+A plot of bootstrap t-statistics under different null hypotheses
+}
 \description{
 Plot the bootstrap distribution of t-statistics
 }

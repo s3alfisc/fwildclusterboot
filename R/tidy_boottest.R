@@ -5,6 +5,8 @@ tidy.boottest <- function(object, ...) {
   #' @importFrom generics tidy
   #' @export
   #' @method tidy boottest
+  #' @return A tidy data.frame with estimation results for objects of type 
+  #'         boottest
 
   stopifnot(inherits(object, "boottest"))
   #dreamerr::validate_dots(stop = TRUE)
@@ -28,6 +30,8 @@ summary.boottest <- function(object, digits = 3, ...) {
   #' @param ... Further arguments passed to or from other methods.
   #' @method summary boottest
   #' @export
+  #' @return Returns result summaries for objects of type boottest
+
   
 
   stopifnot(inherits(object, "boottest"))
@@ -85,6 +89,8 @@ plot.boottest <- function(x, ...) {
   #' @param ... Further arguments passed to or from other methods.
   #' @method plot boottest
   #' @export
+  #' @return A plot of bootstrap t-statistics under different null hypotheses
+  
 
   stopifnot(inherits(x, "boottest"))
   dreamerr::validate_dots(stop = TRUE)
@@ -93,8 +99,9 @@ plot.boottest <- function(x, ...) {
   p_test_vals <- x$p_test_vals
   conf_int <- x$conf_int
   sign_level <- x$sign_level
+  xlab <- x$param
 
-  graphics::plot(x = test_vals, y = p_test_vals, type = "b", pch = 20, lty = 2, xlab = "Constraint", ylab = "p-value")
+  graphics::plot(x = test_vals, y = p_test_vals, type = "b", pch = 20, lty = 2, xlab = xlab, ylab = "p-value")
   graphics::lines(test_vals, p_test_vals, type = "l", lty = 1)
   graphics::abline(v = conf_int[1], col = "blue")
   graphics::abline(v = conf_int[2], col = "blue")
@@ -103,12 +110,14 @@ plot.boottest <- function(x, ...) {
 
 glance.boottest <- function(x, ...){
   
-  #' S3 method to summarize objects of class boottest
+  #' S3 method to glance at objects of class boottest
   #' @param x object of type boottest
   #' @param ... Further arguments passed to or from other methods.
   #' @importFrom generics glance
   #' @method glance boottest
   #' @export
+  #' @return A single row summary "glance" of an object of type boottest 
+  #'         - lists characteristics of the input regression model
 
   stopifnot(inherits(x, "boottest"))
   broom::glance(eval(x$call$object))

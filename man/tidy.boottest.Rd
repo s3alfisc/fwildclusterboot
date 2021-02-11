@@ -11,6 +11,10 @@
 
 \item{...}{Further arguments passed to or from other methods.}
 }
+\value{
+A tidy data.frame with estimation results for objects of type
+boottest
+}
 \description{
 S3 method to summarize objects of class boottest into tidy data.frame
 }

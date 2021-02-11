@@ -3,7 +3,7 @@
 \docType{data}
 \name{voters}
 \alias{voters}
-\title{Random example data set created via create_data_2 function}
+\title{Random example data set}
 \format{
 An object of class \code{data.frame} with 300 rows and 13 columns.
 }
@@ -11,7 +11,7 @@ An object of class \code{data.frame} with 300 rows and 13 columns.
 data(voters)
 }
 \description{
-Random example data set created via create_data_2 function
+Random example data set
 }
 \examples{
 data(voters)

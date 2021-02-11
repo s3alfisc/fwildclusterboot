@@ -11,6 +11,9 @@
 
 \item{pkgname}{package name}
 }
+\value{
+Changes number of threads used.
+}
 \description{
 setting options for nthreads when package is loaded
 }

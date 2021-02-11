@@ -6,6 +6,9 @@
 \usage{
 getBoottest_nthreads()
 }
+\value{
+The number of threads currently used by boottest as set in options
+}
 \description{
 get the number of threads for use with open mp
 }

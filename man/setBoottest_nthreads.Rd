@@ -2,7 +2,7 @@
 % Please edit documentation in R/set_get_nthreads.R
 \name{setBoottest_nthreads}
 \alias{setBoottest_nthreads}
-\title{Set the number of threads for use with open mp
+\title{Set the number of threads for use with open mp via options
 By default, only one thread is used}
 \usage{
 setBoottest_nthreads(nthreads)
@@ -10,7 +10,10 @@ setBoottest_nthreads(nthreads)
 \arguments{
 \item{nthreads}{Integer. Number of threads to be used}
 }
+\value{
+No return value
+}
 \description{
-Set the number of threads for use with open mp
+Set the number of threads for use with open mp via options
 By default, only one thread is used
 }
