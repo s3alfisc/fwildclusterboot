@@ -1,3 +1,51 @@
+## This is a third re-submission
+
+
++ Please remove the single quotes from function names in your description.
+e.g.: 'lm()' --> lm()
+
+DONE
+
+
++  Please add \value to .Rd files regarding exported methods and explain
+the functions results in the documentation. Please write about the
+structure of the output (class) and also what the output means. (If a
+function does not return a value, please document that too, e.g.
+\value{No return value, called for side effects} or similar)
+Missing Rd-tags:
+      boottest.Rd: \value
+      check_set_nthreads.Rd: \value
+      cpp_get_nb_threads.Rd: \value
+      create_data_2.Rd: \value
+      dot-onLoad.Rd: \value
+      getBoottest_nthreads.Rd: \value
+      invert_p_val2.Rd: \value
+      p_val_null2.Rd: \value
+
+DONE. Added return values to all functions OR functions are no longer exported.
+
++ You have examples for unexported functions.
+Please either omit these examples or export these functions.
+Used ::: in documentation:
+      man/boottest.felm.Rd:
+         felm_fit <- felm(proposition_vote ~ treatment + ideology1 +
+log_income | Q1_immigration, data = fwildclusterboot:::create_data_2(N =
+1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10,
+numb_fe2 = 10, seed = 12345))
+      man/boottest.fixest.Rd:
+         feols_fit <- feols(proposition_vote ~ treatment + ideology1 +
+log_income, fixef = "Q1_immigration", data =
+fwildclusterboot:::create_data_2(N = 1000, N_G1 = 10, icc1 = 0.91, N_G2
+= 10, icc2 = 0.51, numb_fe1 = 10, numb_fe2 = 10, seed = 12345))
+      man/boottest.lm.Rd:
+         lm_fit <- lm(proposition_vote ~ treatment + ideology1 +
+log_income + Q1_immigration, data = fwildclusterboot:::create_data_2(N =
+1000, N_G1 = 10, icc1 = 0.91, N_G2 = 10, icc2 = 0.51, numb_fe1 = 10,
+numb_fe2 = 10, seed = 12345))
+
+DONE. deleted fwildclusterboot::: call from examples
+
+
 ## This is a second re-submission
 
 
