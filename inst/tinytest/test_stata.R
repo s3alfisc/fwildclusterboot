@@ -1,3 +1,19 @@
+## force tests to be executed if in dev release which we define as
+## having a sub-release, eg 0.9.15.5 is one whereas 0.9.16 is not
+## code taken from https://stackoverflow.com/questions/36166288/skip-tests-on-cran-but-run-locally
+## answer provided by user Dirk Eddelbuettel & edited by Anirban166
+if (length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]]) > 3) { 
+  #Sys.setenv("RunAllfwildclusterbootTests"="yes")
+  runThisTest <- TRUE
+} else {
+  runThisTest <- FALSE
+}
+
+#.runThisTest <- Sys.getenv("RunAllfwildclusterbootTests") == "yes"
+
+if (runThisTest) {
+# skip data tests if not development version x.x.x.x
+
 # test output of stata::boottest vs output of fwildclusterboot::boottest()
 
 library(fwildclusterboot)
@@ -483,4 +499,6 @@ expect_equal(boot_lm7$p_val,   0.2648, tol = 1e-2)
 # boottest treatment, reps(99999) cluster(group_id1 group_id2) nograph level(90) weighttype("mammen")
 # boottest treatment, reps(99999) cluster(group_id1 group_id2) nograph level(90) weighttype("webb")
 # boottest treatment, reps(99999) cluster(group_id1 group_id2) nograph level(90) weighttype("webb") nonull
+
+}
 
