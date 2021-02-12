@@ -1,3 +1,18 @@
+## Another resubmission
+
++
+  ** running tests for arch 'i386' ... [296s] OK
+  ** running tests for arch 'x64' ... [239s] OK
+  
+  Please reduce the test timings by using
+    - small toy data only
+    - few iterations
+    - or by running less important tests only conditionally if some
+  environment variable is set that you only define on your machine?
+
+Long-running tests now only run on developing versions (4-digit) - this 
+submission is 3-digit (0.3.1)
+
 ## This is a third re-submission
 
 
