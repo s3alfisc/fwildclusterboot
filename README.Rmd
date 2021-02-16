@@ -111,10 +111,10 @@ sample of $N = 50000$, $k = 27$ and one fixed effect of 25 groups (10 iterations
 
 ### Installation
 
-You can install `fwildclusterboot` via CRAN or the development version from github by following the steps below:
+You can install `fwildclusterboot` from CRAN or the development version from github by following the steps below:
 
 ```{r, eval = FALSE}
-# from cran 
+# from CRAN 
 install.packages("fwildclusterboot")
 
 # dev version from github

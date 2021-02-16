@@ -77,7 +77,7 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>        term estimate statistic p.value conf.low conf.high
-#> 1 treatment    0.079     4.123       0     0.04     0.118
+#> 1 treatment    0.079     4.123       0    0.039     0.118
 ```
 
 ### Benchmarks
@@ -94,11 +94,11 @@ iterations each).
 
 ### Installation
 
-You can install `fwildclusterboot` via CRAN or the development version
+You can install `fwildclusterboot` from CRAN or the development version
 from github by following the steps below:
 
 ``` r
-# from cran 
+# from CRAN 
 install.packages("fwildclusterboot")
 
 # dev version from github
