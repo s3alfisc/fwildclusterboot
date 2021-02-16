@@ -111,9 +111,13 @@ sample of $N = 50000$, $k = 27$ and one fixed effect of 25 groups (10 iterations
 
 ### Installation
 
-You can install the development version of `fwildclusterboot` from github by following the steps below.  
+You can install `fwildclusterboot` via CRAN or the development version from github by following the steps below:
 
 ```{r, eval = FALSE}
+# from cran 
+install.packages("fwildclusterboot")
+
+# dev version from github
 # note: installation requires Rtools
 library(devtools)
 install_github("s3alfisc/fwildclusterboot")
