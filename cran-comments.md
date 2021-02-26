@@ -1,3 +1,8 @@
+## Version 0.3.2 submission 
+
++ Fixes a CRAN test error message for Oracle Solaris. 
+
+
 ## Another resubmission
 
 +
