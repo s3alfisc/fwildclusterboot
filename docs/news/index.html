@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -119,11 +119,21 @@
 
     <div id="fwildclusterboot-development-version" class="section level1">
 <h1 class="page-header" data-toc-text="development version">
-<a href="#fwildclusterboot-development-version" class="anchor"></a>fwildclusterboot (development version)</h1>
+<a href="#fwildclusterboot-development-version" class="anchor"></a>fwildclusterboot (development version)<small> Unreleased </small>
+</h1>
 </div>
-    <div id="fwildclusterboot-031-in-development" class="section level1">
+    <div id="fwildclusterboot-032" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.2">
+<a href="#fwildclusterboot-032" class="anchor"></a>fwildclusterboot 0.3.2<small> 2021-02-26 </small>
+</h1>
+<ul>
+<li>Fixes a CRAN test error message for Oracle Solaris.</li>
+</ul>
+</div>
+    <div id="fwildclusterboot-031" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.1">
-<a href="#fwildclusterboot-031-in-development" class="anchor"></a>fwildclusterboot 0.3.1 (in development)</h1>
+<a href="#fwildclusterboot-031" class="anchor"></a>fwildclusterboot 0.3.1<small> 2021-02-16 </small>
+</h1>
 <ul>
 <li>A <code><a href="../reference/glance.boottest.html">glance.boottest()</a></code> method was added, which enables the use of the <code>modelsummary</code> package with <code>fwildclusterboot</code>.</li>
 <li>The <code><a href="../reference/tidy.boottest.html">tidy.boottest()</a></code> method is no longer exported. You can still access it via <code>fwildclusterboot:::tidy.boottest()</code> or by loading the <code>generics</code> package via <code><a href="https://generics.r-lib.org">library(generics)</a></code>.</li>
@@ -131,7 +141,8 @@
 </div>
     <div id="fwildclusterboot-030" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.0">
-<a href="#fwildclusterboot-030" class="anchor"></a>fwildclusterboot 0.3.0</h1>
+<a href="#fwildclusterboot-030" class="anchor"></a>fwildclusterboot 0.3.0<small> Unreleased </small>
+</h1>
 <ul>
 <li>Additional performance improvements through parallelization. By default, <code><a href="../reference/boottest.html">boottest()</a></code> uses half the available threads for parallel execution. The number of threads can be set via the <code>nthreads</code> function argument.</li>
 <li>Additional function arguments for <code><a href="../reference/boottest.html">boottest()</a></code> - the user can now set the tolerance and maximum number of iterations for the calculation of confidence intervals. By default, <code>tol = 1e-6</code> and <code>maxiter = 10</code>.</li>
@@ -140,7 +151,8 @@
 </div>
     <div id="fwildclusterboot-020" class="section level1">
 <h1 class="page-header" data-toc-text="0.2.0">
-<a href="#fwildclusterboot-020" class="anchor"></a>fwildclusterboot 0.2.0</h1>
+<a href="#fwildclusterboot-020" class="anchor"></a>fwildclusterboot 0.2.0<small> Unreleased </small>
+</h1>
 <p>Add support for</p>
 <ul>
 <li>tests of two-sided, univariate hypotheses</li>

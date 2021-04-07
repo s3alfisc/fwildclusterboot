@@ -43,7 +43,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#fwildclusterboot" class="anchor"></a>fwildclusterboot</h1></div>
 <!-- badges: start -->
-<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 0.3, 2020, 10, 10, 79318, R, R version 4.0.3 (2020-10-10), Bunny-Wunnies Freak Out-orange.svg?style=flat-square)](commits/master) -->
+<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 0.4, 2021, 02, 15, 80002, R, R version 4.0.4 (2021-02-15), Lost Library Book-orange.svg?style=flat-square)](commits/master) -->
 
 <!-- badges: end -->
 <p>The <code>fwildclusterboot</code> package is an R port of STATA’s <a href="https://github.com/droodman/boottest">boottest</a> package.</p>
@@ -130,14 +130,9 @@
 <div id="benchmarks" class="section level3">
 <h3 class="hasAnchor">
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h3>
-<p>Results of timing benchmarks of <code><a href="reference/boottest.html">boottest()</a></code>, with a sample of <span class="math inline"><em>N</em> = 50000</span>, <span class="math inline"><em>k</em> = 27</span> and one fixed effect of 25 groups (10 iterations each).</p>
-<ul>
-<li>Benchmark with one cluster of dimension <span class="math inline"><em>N</em><sub><em>G</em></sub> = 40</span>
-</li>
-<li>Benchmark two clusters of dimensions <span class="math inline"><em>N</em><sub><em>G</em>1</sub> = 40</span>, <span class="math inline"><em>N</em><sub><em>G</em>2</sub> = 20</span>, <span class="math inline"><em>N</em><sub><em>G</em>12</sub> = 800</span>
-</li>
-</ul>
-<p><img src="reference/figures/bench_ggplot.png" alt="Benchmark"></p>
+<p>Results of timing benchmarks of <code><a href="reference/boottest.html">boottest()</a></code>, with a sample of N = 50000, k = 19 covariates and one cluster of dimension N_G (10 iterations each).</p>
+<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%"></p>
+<!-- ![Benchmark](man/figures/bench_ggplot.png) -->
 </div>
 <div id="installation" class="section level3">
 <h3 class="hasAnchor">
