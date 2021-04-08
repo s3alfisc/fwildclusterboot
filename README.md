@@ -42,10 +42,6 @@ effects, restricted (WCR) and unrestricted (WCU) bootstrap inference and
 subcluster bootstrapping for few treated clusters [(MacKinnon & Webb,
 (2018))](https://academic.oup.com/ectj/article-abstract/21/2/114/5078969).
 
-For a quick introduction to the package’s key function, `boottest()`,
-please follow this
-[link](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
-
 <!-- The following features will be added in the future:  -->
 
 <!-- * support for multivariate hypotheses  -->
@@ -77,8 +73,12 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>        term estimate statistic p.value conf.low conf.high
-#> 1 treatment    0.079     4.123       0    0.039     0.118
+#> 1 treatment    0.079     4.123   0.001    0.039      0.12
 ```
+
+For a longer introduction to the package’s key function, `boottest()`,
+please follow this
+[link](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
 ### Benchmarks
 

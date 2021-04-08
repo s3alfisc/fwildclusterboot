@@ -36,8 +36,6 @@ The package's central function is `boottest()`. It allows the user to test two-s
 
 The `fwildclusterboot` package currently supports multi-dimensional clustering and one-dimensional, two-sided hypotheses. It supports regression weights, multiple distributions of bootstrap weights, fixed effects, restricted (WCR) and unrestricted (WCU) bootstrap inference and subcluster bootstrapping for few treated clusters [(MacKinnon & Webb, (2018))](https://academic.oup.com/ectj/article-abstract/21/2/114/5078969).
 
-For a quick introduction to the package's key function, `boottest()`, please follow this [link](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
-
 <!-- The following features will be added in the future:  -->
 
 <!-- * support for multivariate hypotheses  -->
@@ -97,6 +95,7 @@ summary(feols_boot)
 
 ```
 
+For a longer introduction to the package's key function, `boottest()`, please follow this [link](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
 ### Benchmarks
 

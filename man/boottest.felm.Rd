@@ -26,7 +26,7 @@
 )
 }
 \arguments{
-\item{object}{An object of class fixest}
+\item{object}{An object of class felm}
 
 \item{param}{Character vector of length one. The name of the regression
 coefficient for which the hypothesis is to be tested}

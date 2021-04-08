@@ -22,7 +22,7 @@ boottest.lm <- function(object,
   #' bootstrap inference for objects of class lm by  implementing
   #' the fast wild bootstrap algorithm developed in Roodman et al., 2019.
   #' 
-  #' @param object An object of class fixest
+  #' @param object An object of class lm
   #' @param clustid A vector with the clusters
   #' @param param Character vector of length one. The name of the regression
   #'        coefficient for which the hypothesis is to be tested

@@ -25,7 +25,7 @@
 )
 }
 \arguments{
-\item{object}{An object of class fixest}
+\item{object}{An object of class lm}
 
 \item{clustid}{A vector with the clusters}
 
