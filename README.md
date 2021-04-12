@@ -73,7 +73,7 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>        term estimate statistic p.value conf.low conf.high
-#> 1 treatment    0.079     4.123   0.001    0.039      0.12
+#> 1 treatment    0.079     4.123       0    0.039     0.118
 ```
 
 For a longer introduction to the package’s key function, `boottest()`,

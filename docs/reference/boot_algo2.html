@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.3</span>
       </span>
     </div>
 
@@ -126,7 +126,6 @@
     <pre class="usage"><span class='fu'>boot_algo2</span><span class='op'>(</span>
   <span class='va'>preprocessed_object</span>,
   <span class='va'>boot_iter</span>,
-  <span class='va'>wild_draw_fun</span>,
   <span class='va'>point_estimate</span>,
   <span class='va'>impose_null</span>,
   <span class='va'>beta0</span>,
@@ -134,7 +133,8 @@
   <span class='va'>param</span>,
   <span class='va'>seed</span>,
   <span class='va'>p_val_type</span>,
-  <span class='va'>nthreads</span>
+  <span class='va'>nthreads</span>,
+  <span class='va'>type</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -147,10 +147,6 @@
     <tr>
       <th>boot_iter</th>
       <td><p>number of bootstrap iterations</p></td>
-    </tr>
-    <tr>
-      <th>wild_draw_fun</th>
-      <td><p>function. Specifies the type of bootstrap to use.</p></td>
     </tr>
     <tr>
       <th>point_estimate</th>
@@ -191,6 +187,13 @@ between 0 and 1 which represents the fraction of all threads
 to use. The default is to use 50\<!-- % of all threads. You can -->
 set permanently the number of threads used within this
 package using the function ...</p></td>
+    </tr>
+    <tr>
+      <th>type</th>
+      <td><p>character or function. The character string specifies the type
+of boostrap to use: One of "rademacher", "mammen", "norm"
+and "webb". Alternatively, type can be a function(n) for drawing
+wild bootstrap factors. "rademacher" by default.</p></td>
     </tr>
     </table>
 

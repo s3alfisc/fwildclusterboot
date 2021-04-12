@@ -214,17 +214,6 @@ boottest.lm <- function(object,
     )
   }
 
-  # returns function
-  # function taken from the sandwich package' vcovBS.lm function
-  # wild_draw_fun <- switch(type,
-  #   # note: for randemacher, create integer matrix (uses less memory than numeric)                      
-  #   rademacher = function(n) sample(c(-1L, 1L), n, replace = TRUE),
-  #   mammen = function(n) sample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
-  #   norm = function(n) rnorm(n),
-  #   webb = function(n) sample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),
-  #   wild_draw_fun
-  # )
-
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess2(object = object,
                             cluster = clustid,
@@ -255,7 +244,6 @@ boottest.lm <- function(object,
   # conduct inference: calculate p-value
   res <- boot_algo2(preprocess,
     boot_iter = B,
-    #wild_draw_fun = wild_draw_fun,
     point_estimate = point_estimate,
     impose_null = impose_null,
     beta0 = beta0,

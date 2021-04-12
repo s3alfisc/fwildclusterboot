@@ -1,4 +1,6 @@
-# fwildclusterboot (development version)
+# fwildclusterboot 0.3.3
+
++ implements full enumeration for Rademacher and Mammen Weights if $2^k<B$, where k is the number of clusters and B the number of bootstrap iterations
 
 # fwildclusterboot 0.3.2
 

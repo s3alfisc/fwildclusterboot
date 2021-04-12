@@ -1,0 +1,15 @@
+title <- sprintf("specr: Conducting and Visualizing Specification Curve Analyses (Version %s)", meta$Version)
+
+bibentry(
+    bibtype    = "misc",
+    title    = title,
+    author   = c(person("Alexander", "Fischer"), person("David", "Roodman")),
+    year     = "2021",
+    url      = "https://cran.r-project.org/web/packages/fwildclusterboot",
+    textVersion =
+  	paste("Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression
+Models.",
+		"Available from https://cran.r-project.org/web/packages/fwildclusterboot."
+		),
+	mheader = "To cite 'fwildclusterboot' in publications use:"
+)

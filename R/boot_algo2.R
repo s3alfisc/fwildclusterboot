@@ -104,12 +104,6 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
 
   # prepare "key" for use with collapse::fsum()
   g <- collapse::GRP(bootcluster[[1]], call = FALSE)
-
-  # loop over all independent hypotheses: 
-  # res_ind_hypotheses <- 
-  # lapply(param, function(x){
-  #     
-  # R0 <- as.numeric(x == colnames(X))
     
   
     # impose_null = FALSE

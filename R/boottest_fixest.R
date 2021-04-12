@@ -233,8 +233,6 @@ boottest.fixest <- function(object,
   }
 
   
-  #deparse_fml <- paste(deparse(object$fml_all, width.cutoff = 500), collapse = "")
-  #Formula::as.Formula(eval(object$fml_all))
   deparse_fml <- Reduce(paste, as.character(as.formula(object$fml_all$linear)))
   if (grepl("[", deparse_fml, fixed = TRUE) ||
     grepl("i(", deparse_fml, fixed = TRUE) ||
@@ -274,19 +272,8 @@ boottest.fixest <- function(object,
   }
 
 
-  # returns function
-  # function taken from the sandwich package' vcovBS.lm function
-  # wild_draw_fun <- switch(type,
-  #   rademacher = function(n) sample(c(-1L, 1L), n, replace = TRUE),
-  #   mammen = function(n) sample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
-  #   norm = function(n) rnorm(n),
-  #   webb = function(n) sample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),
-  #   wild_draw_fun
-  # )
-
   res <- boot_algo2(preprocess,
     boot_iter = B,
-    #wild_draw_fun = wild_draw_fun,
     point_estimate = point_estimate,
     impose_null = impose_null,
     beta0 = beta0,
