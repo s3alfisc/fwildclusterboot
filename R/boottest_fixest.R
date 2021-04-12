@@ -261,14 +261,14 @@ boottest.fixest <- function(object,
 
 
   N_G_2 <- 2^length(unique(preprocess$bootcluster[, 1]))
-  if (type == "rademacher" & N_G_2 < B) {
-    warning(paste("There are only", N_G_2, "unique draws from the rademacher
-                  distribution for", 
+  if (type %in% c("rademacher", "mammen") & N_G_2 < B) {
+    warning(paste("There are only", N_G_2, "unique draws from the rademacher 
+                  distribution for",
                   length(unique(preprocess$bootcluster[, 1])), 
                   "clusters. Therefore, 
-                  B = ", N_G_2, ". Consider using webb weights instead."),
-      call. = FALSE, 
-      noBreaks. = TRUE
+                  B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
+            call. = FALSE, 
+            noBreaks. = TRUE
     )
     B <- N_G_2
   }
@@ -276,17 +276,17 @@ boottest.fixest <- function(object,
 
   # returns function
   # function taken from the sandwich package' vcovBS.lm function
-  wild_draw_fun <- switch(type,
-    rademacher = function(n) sample(c(-1L, 1L), n, replace = TRUE),
-    mammen = function(n) sample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
-    norm = function(n) rnorm(n),
-    webb = function(n) sample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),
-    wild_draw_fun
-  )
+  # wild_draw_fun <- switch(type,
+  #   rademacher = function(n) sample(c(-1L, 1L), n, replace = TRUE),
+  #   mammen = function(n) sample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
+  #   norm = function(n) rnorm(n),
+  #   webb = function(n) sample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),
+  #   wild_draw_fun
+  # )
 
   res <- boot_algo2(preprocess,
     boot_iter = B,
-    wild_draw_fun = wild_draw_fun,
+    #wild_draw_fun = wild_draw_fun,
     point_estimate = point_estimate,
     impose_null = impose_null,
     beta0 = beta0,
@@ -294,7 +294,8 @@ boottest.fixest <- function(object,
     param = param,
     seed = seed,
     p_val_type = p_val_type, 
-    nthreads = nthreads
+    nthreads = nthreads, 
+    type = type
   )
 
   # compute confidence sets
@@ -308,6 +309,8 @@ boottest.fixest <- function(object,
     } else if(impose_null == FALSE){
       se_guess <- abs((point_estimate - beta0) / res$t_stat)
     }
+    
+    # is this line required for anything?
     names(se_guess) <- "se_guess"
     
     res_p_val <- invert_p_val2(

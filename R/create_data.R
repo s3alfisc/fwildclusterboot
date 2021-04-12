@@ -45,7 +45,7 @@ create_data <-
         Q1_immigration = sample(1:numb_fe1, N, TRUE),
         Q2_defense = sample(1:numb_fe2, N, TRUE),
         treatment = fabricatr::draw_binary(0.5, N = N),
-        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.3 * treatment + 2 * Q1_immigration + rnorm(N, 0, 3), link = "probit")
+        proposition_vote = fabricatr::draw_binary(latent = ideology1 + ideology2 + 0.2 * treatment + 2 * Q1_immigration + rnorm(N, 0, 3), link = "probit")
       )
 
     voters$Q1_immigration <- as.factor(voters$Q1_immigration)

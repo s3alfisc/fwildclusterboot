@@ -54,7 +54,8 @@ Imports:
     dreamerr,
     Matrix,
     Matrix.utils, 
-    generics
+    generics, 
+    gtools
 Suggests: 
     fixest,
     lfe,

@@ -38,10 +38,15 @@ expect_error(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 9
 expect_error(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment1", conf_int = TRUE))
 expect_error(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment1", conf_int = TRUE))
 
-# rademacher draws
+# rademacher & mammen draws (full enumeration case)
 expect_warning(boottest(object = lm_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE))
 expect_warning(boottest(object = feols_fit, clustid = c("group_id1"), B = 9999, seed = 911, param = "treatment", conf_int = TRUE))
 expect_warning(boottest(object = felm_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE))
+
+expect_warning(boottest(object = lm_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, type = "mammen"))
+expect_warning(boottest(object = feols_fit, clustid = c("group_id1"), B = 9999, seed = 911, param = "treatment", conf_int = TRUE, type = "mammen"))
+expect_warning(boottest(object = felm_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, type = "mammen"))
+
 
 # test for banned function arguments and syntax for fixest
 feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + i(log_income, Q1_immigration), 

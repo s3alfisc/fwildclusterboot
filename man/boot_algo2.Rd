@@ -7,7 +7,6 @@
 boot_algo2(
   preprocessed_object,
   boot_iter,
-  wild_draw_fun,
   point_estimate,
   impose_null,
   beta0,
@@ -15,15 +14,14 @@ boot_algo2(
   param,
   seed,
   p_val_type,
-  nthreads
+  nthreads,
+  type
 )
 }
 \arguments{
 \item{preprocessed_object}{A list: output of the preprocess2 function.}
 
 \item{boot_iter}{number of bootstrap iterations}
-
-\item{wild_draw_fun}{function. Specifies the type of bootstrap to use.}
 
 \item{point_estimate}{The point estimate of the test parameter from the regression model.}
 
@@ -48,6 +46,11 @@ between 0 and 1 which represents the fraction of all threads
 to use. The default is to use 50\\% of all threads. You can
 set permanently the number of threads used within this
 package using the function ...}
+
+\item{type}{character or function. The character string specifies the type
+of boostrap to use: One of "rademacher", "mammen", "norm"
+and "webb". Alternatively, type can be a function(n) for drawing
+wild bootstrap factors. "rademacher" by default.}
 }
 \value{
 A list of ...

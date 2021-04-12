@@ -32,6 +32,7 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
 
   
   ABCD <- object$ABCD
+  # note: A, B are matrices, CC, CD and DD are lists
   A <- ABCD$A
   B <- ABCD$B
   CC <- ABCD$CC
@@ -46,22 +47,28 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
   
   p_val_null2_x_cmp <- compiler::cmpfun(p_val_null2_x)
   
-  # p-value must cross sign_level
+  # Step 1: find two values x where p(x) crosses the sign_level
+  
   check <- FALSE
-  inflate_se <- c(2, 3, 5, 10, 15, 25, 50, 100, 500, 1000, 5000, 10000, 50000)
+  inflate_se <- c(1, 2, 3, 5, 10, 15, 25, 50, 100, 500, 1000, 5000, 10000, 50000, 500000, 1000000, 100000000)
+  #inflate_se <- 2^(0:10)
   len_inflate <- length(inflate_se)
   j <- 1
   
-  while (check == FALSE) {
+  # note: for more extreme test values, p-values should be weakly decreasing
+  # this is currently not the case for small numbers of clusters. why? 
+  while (check == FALSE & j <= len_inflate) {
     # print("check")
     if (j > len_inflate) {
       break("Boottest confidence set calculation fails because no p-value < sign_level could succesfully
             be guessed.",
             call. = FALSE
-            )
+      )
     }
+    #cat("j: ", j, "\n")
     # start guesses by taking sandwich cluster confidence intervals + inflation factor
-    starting_vals <- as.numeric(point_estimate + c(-inflate_se[j], inflate_se[j]) * se_guess)
+    starting_vals <- as.numeric(point_estimate + c(-1, 1) * inflate_se[j] * se_guess)
+    #cat("starting_vals: ",starting_vals, "\n")
     # take 25 starting values in between the guesses
     p_start <- rep(NaN, length(starting_vals))
     
@@ -69,12 +76,26 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
     for (i in 1:length(starting_vals)) {
       p_start[i] <- p_val_null2_x_cmp(starting_vals[i], sign_level = sign_level)
     }
+    #cat("p-val 1: ",p_start, "\n")
     p_start <- p_start + sign_level
-    
+    #cat("p-val 2",p_start, "\n")
     if (sum(p_start < sign_level) == 2) {
       check <- TRUE
     }
     j <- j + 1
+  }
+
+  # check if root finding was successful: find two confidence interval boundaries 
+  # x1 & x2 so that 0 < p(x) < sign_level for x = {x1, x2}
+  if(check == FALSE){
+    stop(("The inflation factor for initial guesses for standard errors was not large 
+         enough.
+         In consequence, the root-finding procedure to compute confidence intervals
+         via p-value inversion could not be initiated.\n
+         In a future release, it will be possible to specify a costum inflation factor 
+         as a function argument to boottest().
+         Until then, you can still use boottest() to calculate p-values by setting the
+         boottest() function argument conf_int to FALSE."))
   }
   
   test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1]) / 25)
@@ -113,8 +134,7 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
   
   # error if no proper starting vals found
   if (length(test_vals_higher_max) == 0 || length(test_vals_lower_max) == 0) {
-    stop("Non-technical note: The inflation factor for initial guesses for standard errors was not high 
-         enough. 
+    stop("
          Technical note: test_vals_lower or test_vals higher is logical(0). This means that no 
           starting value x with property |p(x1) < 0.05| has been found for one of the 
           confidence set boundary guesses. As a consequence, the numerical root finding

@@ -216,14 +216,14 @@ boottest.lm <- function(object,
 
   # returns function
   # function taken from the sandwich package' vcovBS.lm function
-  wild_draw_fun <- switch(type,
-    # note: for randemacher, create integer matrix (uses less memory than numeric)                      
-    rademacher = function(n) sample(c(-1L, 1L), n, replace = TRUE),
-    mammen = function(n) sample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
-    norm = function(n) rnorm(n),
-    webb = function(n) sample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),
-    wild_draw_fun
-  )
+  # wild_draw_fun <- switch(type,
+  #   # note: for randemacher, create integer matrix (uses less memory than numeric)                      
+  #   rademacher = function(n) sample(c(-1L, 1L), n, replace = TRUE),
+  #   mammen = function(n) sample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
+  #   norm = function(n) rnorm(n),
+  #   webb = function(n) sample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),
+  #   wild_draw_fun
+  # )
 
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess2(object = object,
@@ -240,12 +240,12 @@ boottest.lm <- function(object,
   clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
 
   N_G_2 <- 2^length(unique(preprocess$bootcluster[, 1]))
-  if (type == "rademacher" & N_G_2 < B) {
+  if (type %in% c("rademacher", "mammen") & N_G_2 < B) {
     warning(paste("There are only", N_G_2, "unique draws from the rademacher 
                   distribution for",
                   length(unique(preprocess$bootcluster[, 1])), 
                   "clusters. Therefore, 
-                  B = ", N_G_2, ". Consider using webb weights instead."),
+                  B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
       call. = FALSE, 
       noBreaks. = TRUE
     )
@@ -255,7 +255,7 @@ boottest.lm <- function(object,
   # conduct inference: calculate p-value
   res <- boot_algo2(preprocess,
     boot_iter = B,
-    wild_draw_fun = wild_draw_fun,
+    #wild_draw_fun = wild_draw_fun,
     point_estimate = point_estimate,
     impose_null = impose_null,
     beta0 = beta0,
@@ -263,7 +263,8 @@ boottest.lm <- function(object,
     param = param,
     seed = seed,
     p_val_type = p_val_type, 
-    nthreads = nthreads
+    nthreads = nthreads, 
+    type = type
   )
 
   # compute confidence sets
@@ -279,9 +280,9 @@ boottest.lm <- function(object,
       se_guess <- abs((point_estimate - beta0) / res$t_stat)
     }
     
-    if (is.na(se_guess)) {
-      se_guess <- object$se[param]
-    }
+    # if (is.na(se_guess)) {
+    #   se_guess <- object$se[param]
+    # }
 
     res_p_val <- invert_p_val2(
       object = res,

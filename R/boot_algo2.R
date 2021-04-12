@@ -1,4 +1,4 @@
-boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_estimate, impose_null, beta0, sign_level, param, seed, p_val_type, nthreads) {
+boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, seed, p_val_type, nthreads, type) {
 
   #' Fast wild cluster bootstrap algorithm 
   #' 
@@ -6,7 +6,6 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   #'
   #' @param preprocessed_object A list: output of the preprocess2 function.
   #' @param boot_iter number of bootstrap iterations
-  #' @param wild_draw_fun function. Specifies the type of bootstrap to use.
   #' @param point_estimate The point estimate of the test parameter from the regression model.
   #' @param impose_null If TRUE, the null is not imposed on the bootstrap distribution.
   #'        This is what Roodman et al call the "WCU" bootstrap. With impose_null = FALSE, the
@@ -23,12 +22,16 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   #'                 to use. The default is to use 50\% of all threads. You can
   #'                 set permanently the number of threads used within this 
   #'                 package using the function ...
+  #' @param type character or function. The character string specifies the type
+  #'        of boostrap to use: One of "rademacher", "mammen", "norm"
+  #'        and "webb". Alternatively, type can be a function(n) for drawing 
+  #'        wild bootstrap factors. "rademacher" by default.
   #' @return A list of ...
   #' @importFrom Matrix t Diagonal
   #' @importFrom Matrix.utils aggregate.Matrix
   #' @importFrom collapse fsum GRP
   #' @importFrom stats as.formula coef model.matrix model.response model.weights residuals rlnorm rnorm update
-
+  #' @importFrom gtools permutations
 
   # 1) preprocess
   # preprocessed_object = preprocess
@@ -65,10 +68,40 @@ boot_algo2 <- function(preprocessed_object, boot_iter, wild_draw_fun, point_esti
   #   -       A <- crossprod(numer_a, v)
   #   -       B <- crossprod(numer_b, v)
   
-  v <- wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1))
-  dim(v) <- c(N_G_bootcluster, boot_iter + 1)
-  v[, 1] <- 1
+  # here: enumeration 
+  # if type = "rademacher" || type == "mammen" 2^N_G_bootcluster < B then 
+  # gtools::permutations(n = 2, r = 12, v = c(1, -1), repeats.allowed = TRUE)
   
+  wild_draw_fun <- switch(type,
+                          # note: for randemacher, create integer matrix (uses less memory than numeric)                      
+                          rademacher = function(n) sample(c(-1L, 1L), n, replace = TRUE),
+                          mammen = function(n) sample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
+                          norm = function(n) rnorm(n),
+                          webb = function(n) sample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),
+                          wild_draw_fun
+  )
+  
+  # do full enumeration for rademacher and mammen weights if bootstrap iterations 
+  # B exceed number of possible permutations else random sampling
+  # should full enumeration be used for webb as well? 
+  
+  if(2^N_G_bootcluster < boot_iter){
+    if(type == "rademacher"){
+      v0 <- gtools::permutations(n = 2, r = N_G_bootcluster, v = c(1, -1), repeats.allowed = TRUE)
+      v <- cbind(1, v0)
+    } else if(type == "mammen"){
+      v0 <- gtools::permutations(n = 2, r = N_G_bootcluster, v = c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, repeats.allowed = TRUE)
+      v <- cbind(1, v0)
+    }
+  } else{
+    # else: just draw with replacement - by chance, some permutations 
+    # might occur more than once
+    v <- wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1))
+    dim(v) <- c(N_G_bootcluster, boot_iter + 1)
+    v[, 1] <- 1
+  }
+  
+
   # prepare "key" for use with collapse::fsum()
   g <- collapse::GRP(bootcluster[[1]], call = FALSE)
 
