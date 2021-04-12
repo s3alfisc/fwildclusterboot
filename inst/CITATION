@@ -1,4 +1,4 @@
-title <- sprintf("specr: Conducting and Visualizing Specification Curve Analyses (Version %s)", meta$Version)
+title <- sprintf("fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version %s)", meta$Version)
 
 bibentry(
     bibtype    = "misc",
