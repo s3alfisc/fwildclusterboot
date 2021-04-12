@@ -1,3 +1,7 @@
+## Version 0.3.3 re-submission 
+
++ updated date in description
+
 ## Version 0.3.3 submission 
 
 + implements full enumeration for rademacher and mammen weights if 2^k < B, where k is the number of clusters and B the number of bootstrap iterations
