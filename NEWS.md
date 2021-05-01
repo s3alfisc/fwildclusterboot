@@ -1,3 +1,7 @@
+# fwildclusterboot 0.3.4
+
++ Fix CRAN errors caused by a small bug in the vignette
+
 # fwildclusterboot 0.3.3
 
 + implements full enumeration for Rademacher and Mammen Weights if $2^k<B$, where k is the number of clusters and B the number of bootstrap iterations

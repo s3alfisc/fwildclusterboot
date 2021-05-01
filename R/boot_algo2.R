@@ -199,11 +199,35 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
         S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
         K_b <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX, SuXb)
   
-        C <- eigenMapMatMult(as.matrix(K_a), v, nthreads)
-        D <- eigenMapMatMult(as.matrix(K_b), v, nthreads)
+        bigstatsr <- FALSE
+        if(bigstatsr == FALSE){
+          C <- eigenMapMatMult(as.matrix(K_a), v, nthreads)
+          D <- eigenMapMatMult(as.matrix(K_b), v, nthreads)
+        } else if(bigstatr == TRUE){
+          
+          # matrix multiplication via bigstatsr
+          C_fbm <- FBM(dim(K_a)[1], B)
+          D_fbm <- FBM(dim(K_b)[1], B)
+          # C
+          big_apply(C, a.FUN = function(C_fbm, ind, K_a, v) {
+            C_fbm[, ind] <- tcrossprod(K_a, v[ind, ])
+            NULL  ## you don't want to return anything here
+          }, a.combine = 'c', ncores = nthreads, K_a = K_a, v = v)
+          # D
+          big_apply(D, a.FUN = function(D_fbm, ind, K_b, v) {
+            D_fbm[, ind] <- tcrossprod(K_b, v[ind, ])
+            NULL  ## you don't want to return anything here
+          }, a.combine = 'c', ncores = nthreads, K_b = K_b, v = v)
+          
+          C <- C_fbm[]
+          D <- D_fbm[]
+          
+        }
+        
         CC[[x]] <- colSums(C * C)
         DD[[x]] <- colSums(D * D)
         CD[[x]] <- colSums(C * D)
+        
       }
     } else if (!is.null(W)) {
       # project out fe
@@ -225,8 +249,32 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
         S_diag_XinvXXRu_S_b <- S_diag_XinvXXRu_S_b - prod_b
         K_b <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX, SuXb)
   
-        C <- eigenMapMatMult(as.matrix(K_a), v, nthreads)
-        D <- eigenMapMatMult(as.matrix(K_b), v, nthreads)
+        bigstatsr <- FALSE
+        if(bigstatsr == FALSE){
+          
+          C <- eigenMapMatMult(as.matrix(K_a), v, nthreads)
+          D <- eigenMapMatMult(as.matrix(K_b), v, nthreads)
+          
+        } else if(bigstatr == TRUE){
+          
+          # matrix multiplication via bigstatsr
+          C_fbm <- FBM(dim(K_a)[1], B)
+          D_fbm <- FBM(dim(K_b)[1], B)
+          # C
+          big_apply(C, a.FUN = function(C_fbm, ind, K_a, v) {
+            C_fbm[, ind] <- tcrossprod(K_a, v[ind, ])
+            NULL  ## you don't want to return anything here
+          }, a.combine = 'c', ncores = nthreads, K_a = K_a, v = v)
+          # D
+          big_apply(D, a.FUN = function(D_fbm, ind, K_b, v) {
+            D_fbm[, ind] <- tcrossprod(K_b, v[ind, ])
+            NULL  ## you don't want to return anything here
+          }, a.combine = 'c', ncores = nthreads, K_b = K_b, v = v)
+          
+          C <- C_fbm[]
+          D <- D_fbm[]
+          
+        }
         CC[[x]] <- colSums(C * C)
         DD[[x]] <- colSums(D * D)
         CD[[x]] <- colSums(C * D)

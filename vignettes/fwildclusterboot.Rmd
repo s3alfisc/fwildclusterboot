@@ -37,7 +37,7 @@ The `fwildclusterboot` package consists of one key function, `boottest()`. It im
 
 To start, we create a random data set with two cluster variables (group_id1 \& group_id2), two fixed effects and a set of covariates. The `icc_` arguments control the cluster variable's intra-cluster correlation.
 
-```{r}
+```{r, error = FALSE, warning = FALSE, message = FALSE}
 library(fixest)
 library(lfe)
 
@@ -227,8 +227,7 @@ boot_2var <- boottest(lm_fit,
 
 msummary(model = list(boot_min, boot_2var), 
          estimate = "{estimate} ({p.value})", 
-         statistic = "[{conf.low}, {conf.high}]", 
-         conf_int = 0.05)
+         statistic = "[{conf.low}, {conf.high}]")
 
 
 
@@ -256,7 +255,7 @@ A major bottleneck for the performance of `boottest()` is a large matrix multipl
 
 The number of threads can be specified via the `nthreads` argument of `boottest()`:
 
-```{r}
+```{r, eval = FALSE}
 boot_feols <- boottest(feols_fit, 
                        clustid = "group_id1", 
                        param = "treatment", 
