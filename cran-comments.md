@@ -1,3 +1,7 @@
+## Version 0.3.4 submission
+
++ fix an error in the vignette that caused multiple erros on CRAN
+
 ## Version 0.3.3 re-submission 
 
 + updated date in description
