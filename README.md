@@ -4,7 +4,7 @@
 # fwildclusterboot
 
 <!-- badges: start -->
-<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 0.5, 2021, 03, 31, 80133, R, R version 4.0.5 (2021-03-31), Shake and Throw-orange.svg?style=flat-square)](commits/master) -->
+<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 0.4, 2021, 02, 15, 80002, R, R version 4.0.4 (2021-02-15), Lost Library Book-orange.svg?style=flat-square)](commits/master) -->
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
@@ -13,8 +13,12 @@ status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-p
 [![R-CMD-check](https://github.com/s3alfisc/fwildclusterboot/workflows/R-CMD-check/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
-<!-- [![minimal R version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/) -->
 
+[![](http://cranlogs.r-pkg.org/badges/grand-total/fwildclusterboot?color=orange)](https://cran.r-project.org/package=fwildclusterboot)
+
+[![](http://cranlogs.r-pkg.org/badges/last-month/fwildclusterboot?color=green)](https://cran.r-project.org/package=fwildclusterboot)
+
+<!-- [![minimal R version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/) -->
 <!-- badges: end -->
 
 The `fwildclusterboot` package is an R port of STATA’s
@@ -50,6 +54,7 @@ subcluster bootstrapping for few treated clusters [(MacKinnon & Webb,
 ``` r
 library(fixest)
 library(fwildclusterboot)
+#> Warning: package 'fwildclusterboot' was built under R version 4.0.5
 
 data(voters)
 
