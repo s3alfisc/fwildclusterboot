@@ -17,6 +17,15 @@ create_data <-
     #' @param weights Possible regression weights to be used in estimation
     #' @return A simulated \code{data.frame} with specified numbers of clusters, 
     #'         intra-cluster correlations and dimensionality of fixed effects. 
+    #'         
+    
+    # This function very closely mirrors an example from the fabricatr package website
+    # which can be found under the following link: https://declaredesign.org/r/fabricatr/articles/getting_started.html
+    # https://declaredesign.org/r/fabricatr/articles/getting_started.html
+    # the fabricatr package can be downloaded from CRAN and is published under MIT license. 
+    # Graeme Blair [aut, cre], Jasper Cooper [aut], Alexander Coppock [aut], Macartan Humphreys [aut], Aaron Rudkin [aut], Neal Fultz [aut]
+    # are the authors of the fabricatr package
+    
     set.seed(seed)
     voters <-
       fabricatr::fabricate(
