@@ -15,7 +15,7 @@ boottest.lm <- function(object,
                         na_omit = TRUE, 
                         nthreads = getBoottest_nthreads(), 
                         ...) {
-
+  
   #' Fast wild cluster bootstrap inference for object of class lm
   #' 
   #' `boottest.lm` is a S3 method that allows for fast wild cluster 
@@ -33,7 +33,9 @@ boottest.lm <- function(object,
   #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
   #' @param conf_int A logical vector. If TRUE, boottest computes confidence 
   #'        intervals by p-value inversion. If FALSE, only the p-value is returned.
-  #' @param seed An integer. Allows the user to set a random seed
+  #' @param seed An integer. Allows the user to set a random seed. If NULL, seed is set to 1.
+  #'        Hence by default, calling `boottest()` multiple times on the same object will produce 
+  #'        the same test statistics.
   #' @param beta0 A numeric. Shifts the null hypothesis 
   #'        H0: param = beta0 vs H1: param != beta0
   #' @param type character or function. The character string specifies the type
@@ -127,7 +129,7 @@ boottest.lm <- function(object,
   #'                   beta0 = 2)
   #' summary(boot1)
   #' plot(boot1)
-
+  
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
   
@@ -145,6 +147,10 @@ boottest.lm <- function(object,
   # check appropriateness of nthreads
   nthreads <- check_set_nthreads(nthreads)
   
+  if(is.null(seed)){
+    seed <- 1
+  }
+  
   if(maxiter < 1){
     stop("The function argument maxiter needs to be larger than 1.", 
          call. = FALSE)
@@ -154,7 +160,7 @@ boottest.lm <- function(object,
     stop("The function argument tol needs to be positive.", 
          call. = FALSE)
   }
-
+  
   if(!(p_val_type %in% c("two-tailed", "equal-tailed"))){
     stop("The function argument p_val_type must be either two-tailed or 
          equal-tailed.", 
@@ -166,40 +172,40 @@ boottest.lm <- function(object,
           iterations needs to be 100 or higher in order to guarantee that the 
           root finding procudure used to find the confidence set 
           works properly.",
-      call. = FALSE
+         call. = FALSE
     )
   }
   if (!is.null(sign_level) & (sign_level <= 0 || sign_level >= 1)) {
     stop("The function argument sign_level is outside of the unit interval
          (0, 1). Please specify sign_level so that it is within the
          unit interval.",
-      call. = FALSE
+         call. = FALSE
     )
   }
-
+  
   if (is.null(sign_level)) {
     sign_level <- 0.05
   }
-
+  
   if (!(param %in% c(names(coef(object))))) {
     stop(paste("The parameter", param, "is not included in the estimated model.
                Maybe you are trying to test for an interaction parameter? 
                To see all model parameter names, run names(coef(model))."))
   }
-
+  
   if (is.null(beta0)) {
     beta0 <- 0
   }
-
-
+  
+  
   if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
     message(paste("Note: The bootstrap usually performs best when the
                   confidence level (here,", 1 - sign_level, "%) 
                   times the number of replications plus 1
                   (", B, "+ 1 = ", B + 1, ") is an integer."))
   }
-
-
+  
+  
   # throw error if specific function arguments are used in lm() call
   call_object <- names(object$call)[names(object$call) != ""]
   banned_fun_args <- c("contrasts", "subset", "offset", "x", "y")
@@ -213,7 +219,7 @@ boottest.lm <- function(object,
     call. = FALSE
     )
   }
-
+  
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess2(object = object,
                             cluster = clustid,
@@ -221,13 +227,13 @@ boottest.lm <- function(object,
                             param = param,
                             bootcluster = bootcluster, 
                             na_omit = na_omit)
-
-
+  
+  
   clustid_dims <- preprocess$clustid_dims
   point_estimate <- object$coefficients[param]
-
+  
   clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
-
+  
   N_G_2 <- 2^length(unique(preprocess$bootcluster[, 1]))
   if (type %in% c("rademacher", "mammen") & N_G_2 < B) {
     warning(paste("There are only", N_G_2, "unique draws from the rademacher 
@@ -235,29 +241,33 @@ boottest.lm <- function(object,
                   length(unique(preprocess$bootcluster[, 1])), 
                   "clusters. Therefore, 
                   B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-      call. = FALSE, 
-      noBreaks. = TRUE
+            call. = FALSE, 
+            noBreaks. = TRUE
     )
     B <- N_G_2
+    full_enumeration <- TRUE
+  } else{
+    full_enumeration <- FALSE
   }
-
+  
   # conduct inference: calculate p-value
   res <- boot_algo2(preprocess,
-    boot_iter = B,
-    point_estimate = point_estimate,
-    impose_null = impose_null,
-    beta0 = beta0,
-    sign_level = sign_level,
-    param = param,
-    seed = seed,
-    p_val_type = p_val_type, 
-    nthreads = nthreads, 
-    type = type
+                    boot_iter = B,
+                    point_estimate = point_estimate,
+                    impose_null = impose_null,
+                    beta0 = beta0,
+                    sign_level = sign_level,
+                    param = param,
+                    seed = seed,
+                    p_val_type = p_val_type, 
+                    nthreads = nthreads, 
+                    type = type, 
+                    full_enumeration = full_enumeration
   )
-
+  
   # compute confidence sets
-
-
+  
+  
   if (is.null(conf_int) || conf_int == TRUE) {
     
     # guess for standard errors
@@ -271,7 +281,7 @@ boottest.lm <- function(object,
     # if (is.na(se_guess)) {
     #   se_guess <- object$se[param]
     # }
-
+    
     res_p_val <- invert_p_val2(
       object = res,
       boot_iter = B,
@@ -292,7 +302,7 @@ boottest.lm <- function(object,
       test_vals = NA
     )
   }
-
+  
   res_final <- list(
     point_estimate = point_estimate,
     p_val = res[["p_val"]],
@@ -312,9 +322,9 @@ boottest.lm <- function(object,
     type = type,
     impose_null = impose_null
   )
-
-
+  
+  
   class(res_final) <- "boottest"
-
+  
   invisible(res_final)
 }

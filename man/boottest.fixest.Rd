@@ -49,7 +49,9 @@ returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
 intervals by p-value inversion. If FALSE, only the p-value
 is returned.}
 
-\item{seed}{An integer. Allows the user to set a random seed}
+\item{seed}{An integer. Allows the user to set a random seed. If NULL, seed is set to 1.
+Hence by default, calling \code{boottest()} multiple times on the same object will produce
+the same test statistics.}
 
 \item{beta0}{A numeric. Shifts the null hypothesis
 H0: param = beta0 vs H1: param != beta0}

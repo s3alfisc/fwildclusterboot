@@ -1,4 +1,4 @@
-boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, seed, p_val_type, nthreads, type) {
+boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, seed, p_val_type, nthreads, type, full_enumeration) {
 
   #' Fast wild cluster bootstrap algorithm 
   #' 
@@ -26,6 +26,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #'        of boostrap to use: One of "rademacher", "mammen", "norm"
   #'        and "webb". Alternatively, type can be a function(n) for drawing 
   #'        wild bootstrap factors. "rademacher" by default.
+  #' @param full_enumeration Is full enumeration employed? Full enum. is used if
+  #'        N_G^2 < boot_iter for Mammen and Rademacher weights
   #' @return A list of ...
   #' @importFrom Matrix t Diagonal
   #' @importFrom Matrix.utils aggregate.Matrix
@@ -85,13 +87,13 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   # B exceed number of possible permutations else random sampling
   # should full enumeration be used for webb as well? 
   
-  if(type %in% c("rademacher", "mammen") && 2^N_G_bootcluster < boot_iter){
+  if(type %in% c("rademacher", "mammen") && full_enumeration == TRUE){
     if(type == "rademacher"){
       v0 <- gtools::permutations(n = 2, r = N_G_bootcluster, v = c(1, -1), repeats.allowed = TRUE)
-      v <- cbind(1, v0)
+      v <- cbind(1, t(v0))
     } else if(type == "mammen"){
       v0 <- gtools::permutations(n = 2, r = N_G_bootcluster, v = c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, repeats.allowed = TRUE)
-      v <- cbind(1, v0)
+      v <- cbind(1, t(v0))
     }
   } else{
     # else: just draw with replacement - by chance, some permutations 
@@ -240,7 +242,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   numer_a <- collapse::fsum(as.vector(WXArQ), g)
   numer_b <- collapse::fsum(as.vector(WXArP), g)
   # calculate A, B
-  A <- crossprod(numer_a, v)
+  A <- crossprod(as.matrix(numer_a), v)
   B <- crossprod(numer_b, v)
   
   

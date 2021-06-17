@@ -1,6 +1,6 @@
 preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
-
-
+  
+  
   #' function that pre-processes regression objects of type lm, fixest and feols
   #' @param object An object of class lm, fixest or felm
   #' @param cluster A vector with the names of the clusters
@@ -12,38 +12,38 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   #' @importFrom dreamerr check_arg
   #' @importFrom Formula as.Formula
   #' @importFrom collapse fwithin
-
+  
   # ---------------------------------------------------------------------------- #
   # Step 1: preprocessing of call
-
+  
   check_arg(cluster, "character scalar | character vector")
   check_arg(fe, "character scalar | NULL")
   check_arg(param, "character scalar | NULL")
   check_arg(bootcluster, "character vector | NULL")
   check_arg(param, "character scalar")
-
-
-
-
+  
+  
+  
+  
   if (class(object) == "fixest") {
     of <- object$call
-
+    
     o <- match(c("fml", "data", "weights", "cluster", "fixef"), names(of), 0L)
     # keep only required arguments
     of <- of[c(1L, o)]
     # add argument to function
     of$drop.unused.levels <- TRUE
-
+    
     # create formula objects by adding fixed effects and clusters from call
     # add potential other cluster variables from cluster argument
     formula <- eval(of$fml)
-
+    
     # combine fixed effects in formula with main formula
     # note: you get a warning here if rhs = 2 is empty (no fixed effect specified via fml)
     formula_coef_fe <- suppressWarnings(formula(Formula::as.Formula(formula), lhs = 1, rhs = c(1, 2), collapse = TRUE))
-
+    
     formula <- formula_coef_fe
-
+    
     if (!is.null(eval(of$fixef))) {
       # add additional fixed effects specified in fixef argument of feols()
       formula_coef_fe <- update(formula_coef_fe, paste("~ . + ", eval(of$fixef)))
@@ -56,34 +56,34 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     if (!is.null(cluster)) {
       formula <- update(formula, paste("~ . +", paste(cluster, collapse = "+")))
     }
-
+    
     # add fixed effects to formula - needed for model.matrix
     # note: contains cluster variable if cluster variable are also a covariate of fixed effects
     # further: gets rid of fixed effect specified as fe
-
+    
     # if(!is.null(eval(of$fixef))){
     #   formula_coef_fe <- update(formula_coef_fe, paste("~ . +",paste(eval(of$fixef), collapse = "+")))
     # }
     if (!is.null(fe)) {
       formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
     }
-
-
+    
+    
     # if there is at least one fixed effect, get rid of intercept
     # note: length(NULL) == 0
     # if(length(object$fixef_vars) >= 1){
     #   formula_coef_fe <- update(formula_coef_fe, "~. - 1")
     # }
-
+    
     of$formula <- as.call(formula)
-
+    
     o <- match(c("formula", "data", "weights"), names(of), 0L)
     of <- of[c(1L, o)]
     of[[1L]] <- quote(stats::model.frame)
     # of is a data.frame that contains all variables: depvar, X, fixed effects and clusters specified
     # in feols and via fe argument
     of <- eval(of, parent.frame())
-
+    
     N_model <- object$nobs
     model_param_names <- c(names(coef(object)), object$fixef)
   } else if (class(object) == "felm") {
@@ -92,47 +92,47 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     # keep only required arguments
     of <- of[c(1L, o)]
     of$drop.unused.levels <- TRUE
-
+    
     # create formula objects by adding fixed effects and clusters from call
     # add potential other cluster variables from cluster argument
     if (suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 0, rhs = 3)) != "~0") {
       stop("IV estimation is currently not supported by boottest()")
     }
-
+    
     # formula: model formula plus additional additional cluster variables specified via boottest()
-
+    
     formula <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1, 2, 4), collapse = TRUE))
     # add a cluster to formula to get full model.frame
     if (!is.null(cluster)) {
       formula <- update(formula, paste("~ . +", paste(cluster, collapse = "+")))
       # formula <- update(formula, paste("~ . -",fe))
     }
-
+    
     # formula_coef_fe: model_formula specified in felm: depvar, covariates + fe
     formula_coef_fe <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1, 2), collapse = TRUE))
-
+    
     # of !is.null(fe), delte fe from formula_coef_fe
     if (!is.null(fe)) {
       formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
     }
-
+    
     # if there is no other factor in formula_coef_fe but fe specified, delete intercept
-
+    
     # if there is at least one fixed effect, get rid of intercept
     # note: length(NULL) == 0
     # if(length(names(object$fe)) >= 1){
     #   formula_coef_fe <- update(formula_coef_fe, "~. - 1")
     # }
-
+    
     of$formula <- as.call(formula)
-
+    
     o <- match(c("formula", "data", "weights"), names(of), 0L)
     of <- of[c(1L, o)]
-
+    
     of[[1L]] <- quote(stats::model.frame)
     # names(of$fml) <- "formula"
     of <- eval(of, parent.frame())
-
+    
     N_model <- object$N
     model_param_names <- rownames(coef(object))
   } else if (class(object) == "lm") {
@@ -143,42 +143,42 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     # add argument to function
     # of$formula <- of$fml
     of$drop.unused.levels <- TRUE
-
+    
     # create formula objects by adding fixed effects and clusters from call
     # add potential other cluster variables from cluster argument
     formula_coef_fe <- eval(of$formula)
-
+    
     # add cluster variables to formula
     if (!is.null(cluster)) {
       formula <- update(formula_coef_fe, paste("~ . +", paste(cluster, collapse = "+")))
       # formula <- update(formula, paste("~ . -",fe))
     }
-
+    
     of$formula <- as.call(formula)
-
+    
     o <- match(c("formula", "data", "weights"), names(of), 0L)
     of <- of[c(1L, o)]
-
+    
     of[[1L]] <- quote(stats::model.frame)
     of <- eval(of, parent.frame())
     # print(of)
-
+    
     N_model <- length(residuals(object))
     model_param_names <- names(coef(object))
-
+    
     # fe argument not allowed with boottest.lm
     fe <- NULL
   }
-
-
-
+  
+  
+  
   # ---------------------------------------------------------------------------- #
   # From here on: everything the same, independent of model class
   # Step 2: Add warning / error if cluster variables contain NAs
-
+  
   N <- dim(of)[1]
   N_diff <- (N - N_model)
-
+  
   if(na_omit == FALSE && N_diff != 0){
     stop("One or more cluster variables set in boottest() contain 
          NA values. This is not allowed if na_omit == FALSE.
@@ -219,17 +219,17 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
       )
     }
   }
-
-
+  
+  
   # ---------------------------------------------------------------------------- #
   # Step 3: assign Y, X, weights, fixed_effects, W etc.
-
+  
   model_frame <- of
   Y <- model.response(model_frame)
-
+  
   # check if there are no factor variables in the covariates and fixed effects after deletion of fe variable
-
-
+  
+  
   # no_factor <- sum(sapply(model_frame[, !(names(model_frame) %in% c(cluster, names(Y), fe))], is.factor)) == 0
   # if(no_factor == TRUE){
   #   # if there is not a single factor variable in covs and fe's then delete intercept
@@ -244,12 +244,12 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   }
   k <- dim(X)[2]
   weights <- as.vector(model.weights(of))
-
+  
   # all null if fe = NULL
   fixed_effect <- NULL
   W <- NULL
   n_fe <- NULL
-
+  
   if (!is.null(fe)) {
     
     fixed_effect <- as.data.frame(model_frame[, fe])
@@ -257,7 +257,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     g <- collapse::GRP(fixed_effect, call = FALSE)
     X <- collapse::fwithin(X, g)
     Y <- collapse::fwithin(Y, g)
-
+    
     fixed_effect_W <- fixed_effect[, 1]
     if (is.null(weights)) {
       levels(fixed_effect_W) <- 1 / table(fixed_effect)
@@ -269,11 +269,11 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effect_W)))
     n_fe <- length(unique(fixed_effect[, 1]))
   }
-
+  
   if (is.null(weights)) {
     weights <- rep(1, N)
   }
-
+  
   # ---------------------------------------------------------------------------- #
   # Step 4: preprocess clusters
   # Note: a large part of the following code was taken and adapted from the 
@@ -284,7 +284,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   
   # changes by Alexander Fischer: 
   # no essential changes, but slight reorganization of pieces of code
-
+  
   # ---------------------------------------------------------------------------- #
   # Start Sandwich code 
   # ---------------------------------------------------------------------------- #
@@ -293,24 +293,24 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   cluster_names <- clustid
   clustid <- as.data.frame(model_frame[, clustid], stringsAsFactors = FALSE)
   clustid_dims <- ncol(clustid)
-
-
+  
+  
   i <- !sapply(clustid, is.numeric)
   clustid[i] <- lapply(clustid[i], as.character)
-
+  
   # taken from multiwayvcov::cluster.boot
   acc <- list()
   for (i in 1:clustid_dims) {
     acc <- append(acc, utils::combn(1:clustid_dims, i, simplify = FALSE))
   }
-
+  
   vcov_sign <- sapply(acc, function(i) (-1)^(length(i) + 1))
   acc <- acc[-1:-clustid_dims]
-
+  
   if (clustid_dims == 1) {
     names(clustid) <- cluster_names
   }
-
+  
   if (clustid_dims > 1) {
     for (i in acc) {
       clustid <- cbind(clustid, Reduce(paste0, clustid[, i]))
@@ -318,14 +318,14 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
       # cluster_names <- cbind(cluster_names, Reduce(paste0, clustid[,i]))
     }
   }
-
+  
   # ---------------------------------------------------------------------------- #
   # End Sandwich code 
   # ---------------------------------------------------------------------------- #
   
   
   N_G <- sapply(clustid, function(x) length(unique(x)))
-
+  
   # create a bootcluster vector
   if (length(bootcluster) == 1) {
     if (bootcluster == "max") {
@@ -341,14 +341,14 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     # same as above: model_frame[bootcluster] -> bootcluster will be a data.frame
     bootcluster <- as.data.frame(Reduce(paste0, model_frame[bootcluster]))
   }
-
-
-
+  
+  
+  
   # --------------------------------------------------------------------------------------- #
   # collect output
-
+  
   R0 <- as.numeric(param == colnames(X))
-
+  
   res <- list(
     Y = Y,
     X = X,
@@ -365,8 +365,8 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     bootcluster = bootcluster,
     R0 = R0
   )
-
+  
   res
-
+  
   # extract_model_frame.fixest(object, cluster = "group_id2")
 }

@@ -38,7 +38,9 @@ boottest.fixest <- function(object,
   #' @param conf_int A logical vector. If TRUE, boottest computes confidence 
   #'        intervals by p-value inversion. If FALSE, only the p-value
   #'        is returned.
-  #' @param seed An integer. Allows the user to set a random seed
+  #' @param seed An integer. Allows the user to set a random seed. If NULL, seed is set to 1.
+  #'        Hence by default, calling `boottest()` multiple times on the same object will produce 
+  #'        the same test statistics.
   #' @param beta0 A numeric. Shifts the null hypothesis
   #'        H0: param = beta0 vs H1: param != beta0
   #' @param type character or function. The character string specifies the type
@@ -159,6 +161,10 @@ boottest.fixest <- function(object,
   #cat("nthreads boottest \n")
   #print(nthreads)
   
+  if(is.null(seed)){
+    seed <- 1
+  }
+  
   if(maxiter < 1){
     stop("The function argument maxiter needs to be larger than 1.", 
          call. = FALSE)
@@ -269,6 +275,9 @@ boottest.fixest <- function(object,
             noBreaks. = TRUE
     )
     B <- N_G_2
+    full_enumeration <- TRUE
+  } else{
+    full_enumeration <- FALSE
   }
 
 
@@ -282,7 +291,8 @@ boottest.fixest <- function(object,
     seed = seed,
     p_val_type = p_val_type, 
     nthreads = nthreads, 
-    type = type
+    type = type, 
+    full_enumeration = full_enumeration
   )
 
   # compute confidence sets

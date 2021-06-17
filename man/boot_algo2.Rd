@@ -15,7 +15,8 @@ boot_algo2(
   seed,
   p_val_type,
   nthreads,
-  type
+  type,
+  full_enumeration
 )
 }
 \arguments{
@@ -51,6 +52,9 @@ package using the function ...}
 of boostrap to use: One of "rademacher", "mammen", "norm"
 and "webb". Alternatively, type can be a function(n) for drawing
 wild bootstrap factors. "rademacher" by default.}
+
+\item{full_enumeration}{Is full enumeration employed? Full enum. is used if
+N_G^2 < boot_iter for Mammen and Rademacher weights}
 }
 \value{
 A list of ...
