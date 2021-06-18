@@ -276,5 +276,71 @@ expect_error(plot(res, a = 1))
 
 
 
+# if 2^(number of clusters) < B and rademacher or mammen weights are used, boottest() switches 
+# to full enumeration. In consequence, only 2^(number of clusters - 1) unique t statistics can be computed (see Webb, "Reworking wild bootstrap based inference for clustered errors", 2013)
+# This will cause trouble for the inversion of p-values, for two reasons: a) the p-value function will not 
+# be sufficiently smooth b) no appropriate starting value for the root finding procedure will be found
+# this set of tests checks if boottest() throws an error in the part of the code that is responsible for 
+# calculating p-values
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
+             data = fwildclusterboot:::create_data(N = 100, N_G1 = 4, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1))
+
+# no confidence intervals calculated: expect warning
+expect_warning(
+  boottest(
+    object = lm_fit, 
+    clustid =  "group_id1", 
+    # guarantees that full enumeration is employed
+    B = 2^4 + 1, 
+    seed = 1, 
+    param = "treatment", 
+    type = "rademacher",
+    conf_int = FALSE)
+)
+
+# no confidence intervals calculated: expect warning
+expect_warning(
+  boottest(
+    object = lm_fit, 
+    clustid =  "group_id1", 
+    # guarantees that full enumeration is employed
+    B = 2^4 + 1, 
+    seed = 1, 
+    param = "treatment", 
+    type = "mammen",
+    conf_int = FALSE)
+)
+
+# with confidence intervals: expect_error because B < 100
+expect_error(
+  boottest(
+    object = lm_fit, 
+    clustid =  "group_id1", 
+    # guarantees that full enumeration is employed
+    B = 2^4 + 1, 
+    seed = 1, 
+    param = "treatment", 
+    type = "rademacher",
+    conf_int = TRUE)
+)
+
+# with confidence intervals: expect_error because B < 100
+expect_error(
+  boottest(
+    object = lm_fit, 
+    clustid =  "group_id1", 
+    # guarantees that full enumeration is employed
+    B = 2^z + 1, 
+    seed = 1, 
+    param = "treatment", 
+    type = "mammen",
+    conf_int = TRUE)
+)
+
+
+
+
+
 
 
