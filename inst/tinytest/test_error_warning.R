@@ -341,6 +341,62 @@ expect_error(
 
 
 
+# ------------------------------------------------------------------------- #
+# NA values in the cluster variables 
+# ------------------------------------------------------------------------- #
 
+data <-  fwildclusterboot:::create_data(N = 100, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1)
+data[1, "group_id1"] <- NA
+data2 <<- data
 
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
+             data = data2)
+
+# expect error as na_omit = FALSE & missing variable in group_id1 (the cluster variable)
+expect_error(
+  boottest(
+    object = lm_fit, 
+    clustid =  "group_id1", 
+    # guarantees that full enumeration is employed
+    B = 999, 
+    seed = 1, 
+    param = "treatment", 
+    type = "rademacher",
+    conf_int = TRUE, 
+    na_omit = FALSE)
+)
+
+expect_warning(
+  res <- 
+    boottest(
+  object = lm_fit, 
+  clustid =  "group_id1", 
+  # guarantees that full enumeration is employed
+  B = 999, 
+  seed = 1, 
+  param = "treatment", 
+  type = "rademacher",
+  conf_int = TRUE, 
+  na_omit = TRUE)
+)
+expect_equal(res$N, 99)
+
+data[2, "group_id1"] <- NA
+data3 <<- data
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
+             data = data3)
+expect_warning(
+  res <- 
+    boottest(
+      object = lm_fit, 
+      clustid =  "group_id1", 
+      # guarantees that full enumeration is employed
+      B = 999, 
+      seed = 1, 
+      param = "treatment", 
+      type = "rademacher",
+      conf_int = TRUE, 
+      na_omit = TRUE)
+)
+expect_equal(res$N, 98)
 

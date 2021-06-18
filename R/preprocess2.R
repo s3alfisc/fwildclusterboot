@@ -177,7 +177,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   # Step 2: Add warning / error if cluster variables contain NAs
   
   N <- dim(of)[1]
-  N_diff <- (N - N_model)
+  N_diff <- abs(N - N_model)
   
   if(na_omit == FALSE && N_diff != 0){
     stop("One or more cluster variables set in boottest() contain 
@@ -208,6 +208,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
       noBreaks. = TRUE
       )
     }
+  # this part of the code is superfluous, right?  
   } else if (na_omit == FALSE) {
     if (N_diff >= 1) {
       stop(paste(

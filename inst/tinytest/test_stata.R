@@ -31,8 +31,11 @@ library(fixest)
 
 set.seed(1234)
 
+data1 <<- fwildclusterboot:::create_data(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+fwrite(data1, "c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv")
+
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
-             data = fwildclusterboot:::create_data(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+             data = data1)
 
 boot_lm1 <-  suppressWarnings(
   boottest(
@@ -125,13 +128,13 @@ boot_lm7 <-
     ))
         
 
-expect_equal(boot_lm1$p_val,   0.7121, tol = 1e-2)
-expect_equal(boot_lm2$p_val,    0.7111, tol = 1e-2)
-expect_equal(boot_lm3$p_val,   0.0003, tol = 1e-2)
-expect_equal(boot_lm4$p_val,   0.7376, tol = 1e-2)
-expect_equal(boot_lm5$p_val,  0.7162, tol = 1e-2)
-expect_equal(boot_lm6$p_val,  0.7125, tol = 1e-2)
-expect_equal(boot_lm7$p_val,  0.7163, tol = 1e-2)
+expect_equal(boot_lm1$p_val,   0.8498, tol = 1e-2)
+expect_equal(boot_lm2$p_val,     0.8506, tol = 1e-2)
+expect_equal(boot_lm3$p_val,   0.0002, tol = 1e-2)
+expect_equal(boot_lm4$p_val,    0.8616, tol = 1e-2)
+expect_equal(boot_lm5$p_val,   0.8555, tol = 1e-2)
+expect_equal(boot_lm6$p_val,  0.8541, tol = 1e-2)
+expect_equal(boot_lm7$p_val,  0.8509, tol = 1e-2)
 
 # no repeat, twoway
 
@@ -143,7 +146,8 @@ boot_lm1 <-  suppressWarnings(
     seed = 911,
     param = "treatment",
     conf_int = TRUE,
-    sign_level = 0.05
+    sign_level = 0.05, 
+    nthreads = 1
   )
 )
 
@@ -156,7 +160,8 @@ boot_lm2 <-
       seed = 911,
       param = "treatment",
       conf_int = TRUE,
-      sign_level = 0.10
+      sign_level = 0.10, 
+      nthreads = 1
     ))
 
 boot_lm3 <-
@@ -169,7 +174,8 @@ boot_lm3 <-
       param = "treatment",
       conf_int = TRUE,
       sign_level = 0.10, 
-      beta0 = 0.05
+      beta0 = 0.05, 
+      nthreads = 1
     ))
 
 boot_lm4 <-
@@ -182,7 +188,8 @@ boot_lm4 <-
       param = "treatment",
       conf_int = TRUE,
       sign_level = 0.10,
-      type = "norm"
+      type = "norm", 
+      nthreads = 1
     ))
 
 boot_lm5 <-
@@ -195,7 +202,8 @@ boot_lm5 <-
       param = "treatment",
       conf_int = TRUE,
       sign_level = 0.10,
-      type = "mammen"
+      type = "mammen", 
+      nthreads = 1
     ))
 
 boot_lm6 <-
@@ -208,7 +216,8 @@ boot_lm6 <-
       param = "treatment",
       conf_int = TRUE,
       sign_level = 0.10,
-      type = "webb"
+      type = "webb", 
+      nthreads = 1
     ))
 
 boot_lm7 <-
@@ -222,17 +231,18 @@ boot_lm7 <-
       conf_int = TRUE,
       sign_level = 0.10,
       type = "webb", 
-      impose_null = FALSE
+      impose_null = FALSE, 
+      nthreads = 1
     ))
 
 
-expect_equal(boot_lm1$p_val,    0.6799, tol = 1e-2)
-expect_equal(boot_lm2$p_val,    0.6815, tol = 1e-2)
-expect_equal(boot_lm3$p_val,   0.0087, tol = 1e-2)
-expect_equal(boot_lm4$p_val,   0.6852, tol = 1e-2)
-expect_equal(boot_lm5$p_val,   0.6856, tol = 1e-2)
-expect_equal(boot_lm6$p_val, 0.6840, tol = 1e-2)
-expect_equal(boot_lm7$p_val,  0.6797, tol = 1e-2)
+expect_equal(boot_lm1$p_val,    0.8112, tol = 1e-2)
+expect_equal(boot_lm2$p_val,     0.8079, tol = 1e-2)
+expect_equal(boot_lm3$p_val,   0.0046, tol = 1e-2)
+expect_equal(boot_lm4$p_val,   0.8125, tol = 1e-2)
+expect_equal(boot_lm5$p_val,    0.8119, tol = 1e-2)
+expect_equal(boot_lm6$p_val, 0.8091, tol = 1e-2)
+expect_equal(boot_lm7$p_val,  0.8107, tol = 1e-2)
 
 
 # ---------------------------------------------------------------------------------- # 
@@ -334,13 +344,13 @@ boot_lm7 <-
       impose_null = FALSE
     ))
 
-expect_equal(boot_lm1$p_val,  0.3970, tol = 1e-2)
-expect_equal(boot_lm2$p_val,   0.3965, tol = 1e-2)
-expect_equal(boot_lm3$p_val,   0.0086, tol = 1e-2)
-expect_equal(boot_lm4$p_val,  0.4249, tol = 1e-2)
-expect_equal(boot_lm5$p_val,   0.4014, tol = 1e-2)
-expect_equal(boot_lm6$p_val,    0.3997, tol = 1e-2)
-expect_equal(boot_lm7$p_val,   0.4063, tol = 1e-2)
+expect_equal(boot_lm1$p_val,     0.8272, tol = 1e-2)
+expect_equal(boot_lm2$p_val,   0.8272, tol = 1e-2)
+expect_equal(boot_lm3$p_val,   0.0007, tol = 1e-2)
+expect_equal(boot_lm4$p_val,   0.8406, tol = 1e-2)
+expect_equal(boot_lm5$p_val,    0.8332, tol = 1e-2)
+expect_equal(boot_lm6$p_val,     0.8299, tol = 1e-2)
+expect_equal(boot_lm7$p_val,    0.8302, tol = 1e-2)
 
 
 # weights, twoway
@@ -354,7 +364,8 @@ boot_lm1 <-  suppressWarnings(
     seed = 911,
     param = "treatment",
     conf_int = TRUE,
-    sign_level = 0.05
+    sign_level = 0.05, 
+    nthreads = 1
   )
 )
 
@@ -367,7 +378,8 @@ boot_lm2 <-
       seed = 911,
       param = "treatment",
       conf_int = TRUE,
-      sign_level = 0.10
+      sign_level = 0.10, 
+      nthreads = 1
     ))
 
 # increase B here to 299999, as results deviate
@@ -381,7 +393,8 @@ boot_lm3 <-
       param = "treatment",
       conf_int = TRUE,
       sign_level = 0.10, 
-      beta0 = 0.05
+      beta0 = 0.05, 
+      nthreads = 1
     ))
 
 boot_lm4 <-
@@ -394,7 +407,8 @@ boot_lm4 <-
       param = "treatment",
       conf_int = TRUE,
       sign_level = 0.10,
-      type = "norm"
+      type = "norm", 
+      nthreads = 1
     ))
 
 boot_lm5 <-
@@ -407,7 +421,8 @@ boot_lm5 <-
       param = "treatment",
       conf_int = TRUE,
       sign_level = 0.10,
-      type = "mammen"
+      type = "mammen", 
+      nthreads = 1
     ))
 
 boot_lm6 <-
@@ -420,7 +435,8 @@ boot_lm6 <-
       param = "treatment",
       conf_int = TRUE,
       sign_level = 0.10,
-      type = "webb"
+      type = "webb", 
+      nthreads = 1
     ))
 
 boot_lm7 <-
@@ -434,27 +450,28 @@ boot_lm7 <-
       conf_int = TRUE,
       sign_level = 0.10,
       type = "webb", 
-      impose_null = FALSE
+      impose_null = FALSE, 
+      nthreads = 1
     ))
 
 
-expect_equal(boot_lm1$p_val,   0.2656, tol = 1e-2)
-expect_equal(boot_lm2$p_val,    0.2682, tol = 1e-2)
+expect_equal(boot_lm1$p_val,    0.7948, tol = 1e-2)
+expect_equal(boot_lm2$p_val,     0.7947, tol = 1e-2)
 # decrease tol here
-expect_equal(boot_lm3$p_val,    0.0138, tol = 2 * 1e-2)
-expect_equal(boot_lm4$p_val,  0.2704, tol = 1e-2)
-expect_equal(boot_lm5$p_val,    0.2674, tol = 1e-2)
-expect_equal(boot_lm6$p_val,   0.2672, tol = 1e-2)
-expect_equal(boot_lm7$p_val,   0.2648, tol = 1e-2)
+expect_equal(boot_lm3$p_val,      0.0055, tol = 2 * 1e-2)
+expect_equal(boot_lm4$p_val,   0.7982, tol = 1e-2)
+expect_equal(boot_lm5$p_val,    0.7954, tol = 1e-2)
+expect_equal(boot_lm6$p_val,   0.7976, tol = 1e-2)
+expect_equal(boot_lm7$p_val,    0.7943, tol = 1e-2)
 
 
 
 
 # ---------------------------------------------------------------------------- # 
-# Stata code 
+# Stata code to replicate these results
 # /* no weights, one and twoway */ 
 #   
-#   clear 
+# clear 
 # import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
 # 
 # set seed 1 
