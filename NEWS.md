@@ -1,3 +1,19 @@
+# fwildclusterboot 0.3.5
+
++ Bug fix: For Rademacher and Mammen weights and cases where (2^ number of clusters) < # boostrap iterations,  (deterministic ) full enumeration should have been employed for sampling the bootstrap weights.
+Full enumeration means the following: for e.g. 6 numbers of clusters, only 
+2^6 = 64 unique draws from either the Rademacher or Mammen distributions exists. 
+Therefore, `boottest()` overwrites the user-provided number of bootstrap iterations 
+to $B = \text{(2^ number of clusters)}$  if a larger number is chosen. 
+The bug now occured because the bootstrap weights were drawn **randomly with 
+replacement** instead of using **full enumeration**.
+Note: full enumeration was introduced with version 0.3.3. Thanks to fschoner for finding the bug! [see github issue #11](https://github.com/s3alfisc/fwildclusterboot/issues/11)
+
++ Bug fix: A small bug has been fixed related to missing values in the cluster variables. 
+
++ Several improvements to the documentation. 
+
+
 # fwildclusterboot 0.3.4
 
 + Fix CRAN errors caused by a small bug in the vignette

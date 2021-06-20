@@ -465,8 +465,6 @@ expect_equal(boot_lm6$p_val,   0.7976, tol = 1e-2)
 expect_equal(boot_lm7$p_val,    0.7943, tol = 1e-2)
 
 
-
-
 # ---------------------------------------------------------------------------- # 
 # Stata code to replicate these results
 # /* no weights, one and twoway */ 
@@ -516,6 +514,116 @@ expect_equal(boot_lm7$p_val,    0.7943, tol = 1e-2)
 # boottest treatment, reps(99999) cluster(group_id1 group_id2) nograph level(90) weighttype("mammen")
 # boottest treatment, reps(99999) cluster(group_id1 group_id2) nograph level(90) weighttype("webb")
 # boottest treatment, reps(99999) cluster(group_id1 group_id2) nograph level(90) weighttype("webb") nonull
+
+
+# --------------------------------------------------------------------------------------- # 
+# compare R with stata for full enumeration cases: results should be exactly the same 
+# (at least for p-values)
+# --------------------------------------------------------------------------------------- #
+
+# test 1: 
+#create a data set with N_G1 = 10 clusters -> full enumeration reached with 2^10 = 1024 bootstrap iterations
+voters0 <<- fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 3)
+#data.table::fwrite(voters, "C:/Users/alexa/Dropbox/fwildclusterboot/voters.csv")
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
+             data = voters0)
+
+boot_lm1 <-  suppressWarnings(
+  boottest(
+    object = lm_fit,
+    clustid =  "group_id1",
+    B = 9999,
+    seed = 911,
+    param = "treatment",
+    conf_int = TRUE,
+    sign_level = 0.05
+  )
+)
+
+# equal on fourth digit (stata::boottest gives out results with 4 digits after 0)
+expect_equal(boot_lm1$p_val,  0.5117, 1e-4)
+
+
+# test 2: 
+#create a data set with N_G1 = 10 clusters -> full enumeration reached with 2^10 = 1024 bootstrap iterations
+voters1 <<- fwildclusterboot:::create_data(N = 1000, N_G1 = 8, icc1 = 0.2, N_G2 = 5, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 3)
+#data.table::fwrite(voters1, "C:/Users/alexa/Dropbox/fwildclusterboot/voters.csv")
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
+             data = voters1)
+
+boot_lm1 <-  suppressWarnings(
+  boottest(
+    object = lm_fit,
+    clustid =  "group_id1",
+    B = 9999,
+    seed = 911,
+    param = "treatment",
+    conf_int = TRUE,
+    sign_level = 0.05
+  )
+)
+
+# equal on fourth digit (stata::boottest gives out results with 4 digits after 0)
+expect_equal(boot_lm1$p_val,  0.1484, 1e-3)
+
+# test 3: twoway
+#create a data set with N_G1 = 10 clusters -> full enumeration reached with 2^10 = 1024 bootstrap iterations
+voters2 <<- fwildclusterboot:::create_data(N = 1000, N_G1 = 4, icc1 = 0.2, N_G2 = 4, icc2 = 0.41, numb_fe1 = 10, numb_fe2 = 10, seed = 3)
+#data.table::fwrite(voters2, "C:/Users/alexa/Dropbox/fwildclusterboot/voters.csv")
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
+             data = voters2)
+
+boot_lm1 <-  suppressWarnings(
+  boottest(
+    object = lm_fit,
+    clustid =  c("group_id1", "group_id2"), 
+    B = 99999,
+    seed = 911,
+    param = "treatment",
+    conf_int = TRUE,
+    sign_level = 0.05
+  )
+)
+
+# equal on fourth digit (stata::boottest gives out results with 4 digits after 0)
+expect_equal(boot_lm1$p_val,   0.8638, 1e-4)
+
+
+
+
+
+
+# compare multiple fixed effects with stata 
+voters4 <<- fwildclusterboot:::create_data(N = 1000, N_G1 = 20, icc1 = 0.2, N_G2 = 4, icc2 = 0.41, numb_fe1 = 10, numb_fe2 = 10, seed = 3)
+#data.table::fwrite(voters4, "C:/Users/alexa/Dropbox/fwildclusterboot/voters.csv")
+
+feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense, 
+             data = voters4)
+
+boot_feols <-  suppressWarnings(
+  boottest(
+    object = feols_fit,
+    clustid =  c("group_id1"), 
+    fe = "Q1_immigration",
+    B = 99999,
+    seed = 911,
+    param = "treatment",
+    conf_int = TRUE,
+    sign_level = 0.05
+  )
+)
+
+# stata p-value
+# clear 
+# import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
+# set seed 1 
+# quietly reg proposition_vote treatment ideology1 log_income i.q1_immigration i.q2_defense
+# boottest treatment, reps(99999) cluster(group_id1) nograph
+expect_equal(boot_feols$p_val,  0.4727, 1e-2)
+
 
 }
 

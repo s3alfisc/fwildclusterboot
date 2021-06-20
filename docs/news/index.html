@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.5</span>
       </span>
     </div>
 
@@ -117,9 +117,19 @@
       <small>Source: <a href='https://github.com/s3alfisc/fwildclusterboot/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fwildclusterboot-035" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.5">
+<a href="#fwildclusterboot-035" class="anchor"></a>fwildclusterboot 0.3.5<small> Unreleased </small>
+</h1>
+<ul>
+<li><p>Bug fix: For Rademacher and Mammen weights and cases where (2^ number of clusters) &lt; # boostrap iterations, (deterministic ) full enumeration should have been employed for sampling the bootstrap weights. Full enumeration means the following: for e.g. 6 numbers of clusters, only 2^6 = 64 unique draws from either the Rademacher or Mammen distributions exists. Therefore, <code><a href="../reference/boottest.html">boottest()</a></code> overwrites the user-provided number of bootstrap iterations to <span class="math inline"><em>B</em> = (2^ number of clusters)</span> if a larger number is chosen. The bug now occured because the bootstrap weights were drawn <strong>randomly with replacement</strong> instead of using <strong>full enumeration</strong>. Note: full enumeration was introduced with version 0.3.3. Thanks to fschoner for finding the bug! <a href="https://github.com/s3alfisc/fwildclusterboot/issues/11">see github issue <a href='https://github.com/s3alfisc/fwildclusterboot/issues/11'>#11</a></a></p></li>
+<li><p>Bug fix: A small bug has been fixed related to missing values in the cluster variables.</p></li>
+<li><p>Several improvements to the documentation.</p></li>
+</ul>
+</div>
     <div id="fwildclusterboot-034" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.4">
-<a href="#fwildclusterboot-034" class="anchor"></a>fwildclusterboot 0.3.4<small> Unreleased </small>
+<a href="#fwildclusterboot-034" class="anchor"></a>fwildclusterboot 0.3.4<small> 2021-05-01 </small>
 </h1>
 <ul>
 <li>Fix CRAN errors caused by a small bug in the vignette</li>

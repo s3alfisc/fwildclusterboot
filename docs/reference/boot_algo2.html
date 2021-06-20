@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.5</span>
       </span>
     </div>
 
@@ -134,7 +134,8 @@
   <span class='va'>seed</span>,
   <span class='va'>p_val_type</span>,
   <span class='va'>nthreads</span>,
-  <span class='va'>type</span>
+  <span class='va'>type</span>,
+  <span class='va'>full_enumeration</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -194,6 +195,11 @@ package using the function ...</p></td>
 of boostrap to use: One of "rademacher", "mammen", "norm"
 and "webb". Alternatively, type can be a function(n) for drawing
 wild bootstrap factors. "rademacher" by default.</p></td>
+    </tr>
+    <tr>
+      <th>full_enumeration</th>
+      <td><p>Is full enumeration employed? Full enum. is used if
+N_G^2 &lt; boot_iter for Mammen and Rademacher weights</p></td>
     </tr>
     </table>
 

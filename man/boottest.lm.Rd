@@ -27,51 +27,61 @@
 \arguments{
 \item{object}{An object of class lm}
 
-\item{clustid}{A vector with the clusters}
+\item{clustid}{A character vector containing the names of the cluster variables}
 
-\item{param}{Character vector of length one. The name of the regression
+\item{param}{A character vector of length one. The name of the regression
 coefficient for which the hypothesis is to be tested}
 
-\item{B}{Integer. number of bootstrap iterations}
+\item{B}{Integer. The number of bootstrap iterations. When the number of clusters is low,
+increasing B adds little additional runtime.}
 
-\item{bootcluster}{A character vector. Sets the cluster used in the
-bootstrap dgp. Chooses the largest cluster by default}
+\item{bootcluster}{A character vector. Specifies the bootstrap clustering variable or variables. If more
+than one variable is specified, then bootstrapping is clustered by the intersections of
+clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
+the default is to cluster by the intersection of all the variables specified via the \code{clustid} argument,
+even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
+Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence
 intervals by p-value inversion. If FALSE, only the p-value is returned.}
 
-\item{seed}{An integer. Allows the user to set a random seed. If NULL, seed is set to 1.
-Hence by default, calling \code{boottest()} multiple times on the same object will produce
+\item{seed}{An integer. Allows the user to set a random seed. If NULL, \code{boottest()} sets an
+internal seed. Hence by default, calling \code{boottest()} multiple times on the same object will produce
 the same test statistics.}
 
 \item{beta0}{A numeric. Shifts the null hypothesis
 H0: param = beta0 vs H1: param != beta0}
 
-\item{sign_level}{A numeric between 0 and 1. E.g. sign_level = 0.05
+\item{sign_level}{A numeric between 0 and 1 which sets the significance level
+of the inference procedure. E.g. sign_level = 0.05
 returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm"
 and "webb". Alternatively, type can be a function(n) for drawing
-wild bootstrap factors. "rademacher" by default.}
+wild bootstrap factors. "rademacher" by default.
+For the Rademacher and Mammen distribution, if the number of replications B exceeds
+the number of possible draw ombinations, 2^(#number of clusters), then \code{boottest()}
+will use each possible combination once (enumeration).}
 
 \item{impose_null}{Logical. Controls if the null hypothesis is imposed on
 the bootstrap dgp or not. Null imposed \code{(WCR)} by default.
 If FALSE, the null is not imposed \code{(WCU)}}
 
 \item{p_val_type}{Character vector of length 1. Type of p-value.
-By default "two-tailed". Other options: "equal-tailed"}
+By default "two-tailed".}
 
 \item{tol}{Numeric vector of length 1. The desired accuracy
-(convergence tolerance) for confidence interval inversion.
+(convergence tolerance) used in the root finding procedure to find the confidence interval.
 1e-6 by default.}
 
-\item{maxiter}{Integer. Maximum number of iterations for confidence
-interval inversion. 10 by default.}
+\item{maxiter}{Integer. Maximum number of iterations used in the root finding procedure to find the confidence interval.
+10 by default.}
 
 \item{na_omit}{Logical. If TRUE, \code{boottest()} omits rows with missing
-variables that are added to the model via the \code{clustid} argument
-in \code{boottest()}}
+variables in the cluster variable that have not previously been deleted
+when fitting the regression object (e.g. if the cluster variable was not used
+when fitting the regression model).}
 
 \item{nthreads}{The number of threads. Can be: a) an integer lower than,
 or equal to, the maximum number of threads; b) 0: meaning

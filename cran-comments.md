@@ -1,3 +1,7 @@
+## Version 0.3.5 submission 
+
++ fixes two bugs introduced with version 0.3.3
+
 ## Version 0.3.4 submission
 
 + fix an error in the vignette that caused multiple erros on CRAN

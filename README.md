@@ -4,7 +4,7 @@
 # fwildclusterboot
 
 <!-- badges: start -->
-<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 0.4, 2021, 02, 15, 80002, R, R version 4.0.4 (2021-02-15), Lost Library Book-orange.svg?style=flat-square)](commits/master) -->
+<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 0.5, 2021, 03, 31, 80133, R, R version 4.0.5 (2021-03-31), Shake and Throw-orange.svg?style=flat-square)](commits/master) -->
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
@@ -52,7 +52,6 @@ subcluster bootstrapping for few treated clusters [(MacKinnon & Webb,
 ``` r
 library(fixest)
 library(fwildclusterboot)
-#> Warning: package 'fwildclusterboot' was built under R version 4.0.5
 
 data(voters)
 
@@ -73,7 +72,7 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>        term estimate statistic p.value conf.low conf.high
-#> 1 treatment    0.079     4.123   0.001    0.039     0.118
+#> 1 treatment    0.079     4.123       0    0.039     0.118
 ```
 
 For a longer introduction to the package’s key function, `boottest()`,
