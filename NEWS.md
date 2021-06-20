@@ -11,6 +11,9 @@ Note: full enumeration was introduced with version 0.3.3. Thanks to fschoner for
 
 + Bug fix: A small bug has been fixed related to missing values in the cluster variables. 
 
++ By default, `boottest()` now sets an internal seed if no seed is provided by 
+  the user via the `seed` function argument.
+
 + Several improvements to the documentation. 
 
 
