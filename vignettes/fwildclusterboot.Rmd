@@ -394,7 +394,7 @@ boot_feols <- boottest(feols_fit,
 
 ## Small Sample Corrections
 
-`boottest()` adjust standard errors in case of multiway clustering via the formula $N_{g} / (N_{g} - 1)$, where $N_g$ is the dimension of cluster g.  
+`boottest()` applies the small-sample correction $N_{g} / (N_{g} - 1)$, where $N_g$ is the dimension of cluster g.  
 
 ## Treatment of Invalid Test Statistics for multiway clustering
 
