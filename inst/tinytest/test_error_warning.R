@@ -6,9 +6,9 @@ library(fwildclusterboot)
 # test boottest function arguments for errors 
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
              data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
                            data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
                       data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 
 # sign_level
@@ -47,15 +47,15 @@ expect_warning(boottest(object = felm_fit, clustid =  "group_id1", B = 9999, see
 
 
 # test for banned function arguments and syntax for fixest
-feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + i(log_income, Q1_immigration), 
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + i(log_income, Q1_immigration), 
                            data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 expect_error(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment1", conf_int = TRUE))
 
 # joint fe != NULL and weights = on
-feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
                            weights = 1:10000/ 10000, 
                            data = fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  
                       weights = 1:10000/ 10000, 
                       data = fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 expect_error(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, fe = "Q1_immigration"))
@@ -215,7 +215,7 @@ expect_message(boottest(object = felm_fit,
 
 
 # 1) felm 
-felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
                       data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234), 
                       subset = sample(c(TRUE, FALSE), 1000, TRUE))
 expect_error(boottest(object = felm_fit,
@@ -235,14 +235,14 @@ expect_error(boottest(object = lm_fit,
                       conf_int = TRUE))
 
 # fixest
-feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + i(log_income,Q1_immigration), 
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + i(log_income,Q1_immigration), 
                            data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 expect_error(boottest(object = feols_fit,
                       clustid =  "group_id1",
                       B = 999, seed = 911, 
                       param = "treatment",
                       conf_int = TRUE))
-feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1, 
+feols_fit <- feols(proposition_vote ~ treatment + ideology1, 
                            data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234), 
                            subset = sample(c(TRUE, FALSE), 1000, TRUE))
 expect_error(boottest(object = feols_fit,
