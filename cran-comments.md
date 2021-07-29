@@ -1,3 +1,8 @@
+## Version 0.3.6 submission, Resubmission
+
++ Fixed error on ubuntu devel described below (reason for error; unprotected library(lfe) statements in tests)
+
+
 ## Version 0.3.6 submission
 
 + "Please see the problems shown on
@@ -12,6 +17,8 @@ Solution: add if(requireNamespace("pkg")) for suggested packages in vignette, ex
 
 I have checked package installation via github actions on windows, mac, ubuntu & ubuntu devel - installation fails 
 on ubuntu devel because the "lfe" package cannot be installed.
+
+Further, the packages passes the checks via devtools::check_win_devel()
 
 ## Version 0.3.5 submission 
 

@@ -1,9 +1,7 @@
 # ------------------------------------------------------------------ # 
 # test for warnings and errors
 # ------------------------------------------------------------------ # 
-
-library(fixest)
-library(lfe)
+library(fwildclusterboot)
 
 # test boottest function arguments for errors 
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 

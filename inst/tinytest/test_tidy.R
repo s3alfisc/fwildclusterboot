@@ -1,8 +1,6 @@
 # test method for boottest objects
 
 library(fwildclusterboot)
-library(lfe)
-library(fixest)
 
 base::options(warn = 1)
 
