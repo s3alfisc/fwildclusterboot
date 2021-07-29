@@ -1,3 +1,15 @@
+## Version 0.3.6 submission
+
++ "Please see the problems shown on
+https://cran.r-project.org/web/checks/check_results_fwildclusterboot.html.
+
+Please correct before 2021-08-08 to safely retain your package on CRAN.
+
+Packages in Suggests should be used conditionally: see 'Writing R Extensions'.
+This needs to be corrected even if the missing package(s) become available."
+
+Solution: add if(requireNamespace("pkg")) for suggested packages in vignette, examples, tests 
+
 ## Version 0.3.5 submission 
 
 + fixes two bugs introduced with version 0.3.3

@@ -1,6 +1,6 @@
 # fwildclusterboot 0.3.6
   
-+ Bug fix regarding suggested packages and CRAN: [see github issue #12][https://github.com/s3alfisc/fwildclusterboot/issues/12]. 
++ Bug fix regarding suggested packages and CRAN: [see github issue #12](https://github.com/s3alfisc/fwildclusterboot/issues/12). 
 Added `if(requireNamespace("pkgname"))` statements for suggested packages in the vignettes,
 examples and tests. Note that unit tests will now only execute on CRAN if both `fixest` and `lfe` 
 can be installed on the OS.
