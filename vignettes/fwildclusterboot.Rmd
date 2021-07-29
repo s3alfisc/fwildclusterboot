@@ -73,11 +73,13 @@ The `boottest()` function has 4 required and several optional arguments. The req
 boot_lm <- boottest(lm_fit, clustid = "group_id1", param = "treatment", B = 9999)
 
 if(requireNamespace("fixest")){
+  library(fixest)
   # boottest on an object of type fixest
   boot_feols <- boottest(feols_fit, clustid = "group_id1", param = "treatment", B = 9999)
 }
 if(requireNamespace("lfe")){
   # boottest on an object of type felm
+  library(lfe)
   boot_felm <- boottest(felm_fit, clustid = "group_id1", param = "treatment", B = 9999)
 }
 ```
@@ -204,6 +206,7 @@ Within the bootstrap, the user can choose to project out *only one* fixed effect
 
 if(requireNamespace("fixest")){
   # estimate the regression model via feols
+  library(fixest)
   feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , data = voters)
   boot_feols <- boottest(feols_fit, 
                          clustid = "group_id1", 
@@ -214,6 +217,7 @@ if(requireNamespace("fixest")){
 
 if(requireNamespace("lfe")){
   # estimate the regression model via felm
+  library(lfe)
   felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , data = voters)
   boot_felm <- boottest(felm_fit, 
                         clustid = "group_id1",
