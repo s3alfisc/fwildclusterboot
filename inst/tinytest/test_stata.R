@@ -16,7 +16,7 @@ if (runThisTest) {
 
 # test output of stata::boottest vs output of fwildclusterboot::boottest()
 
-library(fwildclusterboot)
+# library(fwildclusterboot)
 
 #run for stata: 
 #voters <- fwildclusterboot:::create_data(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)

@@ -18,7 +18,7 @@ if (length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]])
 
 if(runThisTest){
 
-  library(fwildclusterboot)
+  # library(fwildclusterboot)
   # 
   # # test: for different small cluster sizes so that (number of clusters)^2 < boot_iter, is the 
   # # output of boottest() deterministic? It needs to be deterministic as full enumeration is used

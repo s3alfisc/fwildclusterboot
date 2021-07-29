@@ -1,6 +1,6 @@
 # test method for boottest objects
-
-library(fwildclusterboot)
+# 
+# library(fwildclusterboot)
 
 base::options(warn = 1)
 

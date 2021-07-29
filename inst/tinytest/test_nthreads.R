@@ -19,7 +19,7 @@ if (length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]])
 
 if (runThisTest) {
   # skip data tests if not development version x.x.x.x
-library(fwildclusterboot)
+# library(fwildclusterboot)
 
 
 

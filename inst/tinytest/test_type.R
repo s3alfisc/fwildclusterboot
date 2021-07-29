@@ -9,7 +9,7 @@
 # so without fe: expect_equivalent else _equivalent
 # ------------------------------------------------------------------ # 
 
-library(fwildclusterboot)
+# library(fwildclusterboot)
 
 # ---------------------------------------------------------------------------------------------- # 
 # Part 1: one cluster variable

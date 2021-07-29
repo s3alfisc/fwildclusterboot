@@ -2,7 +2,7 @@
 # test with different convergence criteria for confidence intervals
 # ------------------------------------------------------------------ # 
 
-library(fwildclusterboot)
+# library(fwildclusterboot)
 
 # ---------------------------------------------------------------------------------------------- # 
 # Part 1: one cluster variable
