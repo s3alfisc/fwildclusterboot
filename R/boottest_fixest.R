@@ -118,6 +118,7 @@ boottest.fixest <- function(object,
   #'             STATA using boottest", The STATA Journal.
   #'             (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
   #' @examples
+  #' if(requireNamespace("fixest")){
   #' library(fwildclusterboot)
   #' library(fixest)
   #' data(voters)
@@ -147,6 +148,7 @@ boottest.fixest <- function(object,
   #'                   beta0 = 2)
   #' summary(boot1)
   #' plot(boot1)
+  #' }
 
   call <- match.call()
 

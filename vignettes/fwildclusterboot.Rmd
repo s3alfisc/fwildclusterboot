@@ -38,8 +38,6 @@ The `fwildclusterboot` package consists of one key function, `boottest()`. It im
 To start, we create a random data set with two cluster variables (group_id1 \& group_id2), two fixed effects and a set of covariates. The `icc_` arguments control the cluster variable's intra-cluster correlation.
 
 ```{r, error = FALSE, warning = FALSE, message = FALSE}
-library(fixest)
-library(lfe)
 
 # load data set voters included in fwildclusterboot
 data(voters)
@@ -47,15 +45,20 @@ data(voters)
 # estimate the regression model via lm
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
 
-# estimate the regression model via feols
-feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
-
-# estimate the regression model via felm
-felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
-
 # model with interaction
 lm_fit_interact <- lm(proposition_vote ~ treatment + ideology1 + log_income:Q1_immigration , data = voters)
 
+if(requireNamespace("fixest")){
+  library(fixest)
+  # estimate the regression model via feols
+  feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+}
+
+if(requireNamespace("lfe")){
+  library(lfe)
+  # estimate the regression model via felm
+  felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+}
 ```
 
 The `boottest()` function has 4 required and several optional arguments. The required objects are
@@ -68,10 +71,15 @@ The `boottest()` function has 4 required and several optional arguments. The req
 ```{r}
 # boottest on an object of type lm
 boot_lm <- boottest(lm_fit, clustid = "group_id1", param = "treatment", B = 9999)
-# boottest on an object of type fixest
-boot_feols <- boottest(feols_fit, clustid = "group_id1", param = "treatment", B = 9999)
-# boottest on an object of type felm
-boot_felm <- boottest(felm_fit, clustid = "group_id1", param = "treatment", B = 9999)
+
+if(requireNamespace("fixest")){
+  # boottest on an object of type fixest
+  boot_feols <- boottest(feols_fit, clustid = "group_id1", param = "treatment", B = 9999)
+}
+if(requireNamespace("lfe")){
+  # boottest on an object of type felm
+  boot_felm <- boottest(felm_fit, clustid = "group_id1", param = "treatment", B = 9999)
+}
 ```
 
 To tests for an interaction, it is important to use the coefficient names that are internally created by the modeling function.
@@ -90,7 +98,7 @@ library(modelsummary)
 summary(boot_lm)
 
 # summary via the modelsummary package
-msummary(list(boot_lm, boot_feols), 
+msummary(list(boot_lm, boot_lm_interact), 
           estimate = "{estimate} ({p.value})", 
          statistic = "[{conf.low}, {conf.high}]")
 
@@ -183,23 +191,26 @@ Last, `boottest()` supports out-projection of fixed effects in the estimation st
 Within the bootstrap, the user can choose to project out *only one* fixed effect, which can be set via the `fe` function argument. All other fixed effects specified in either `felm()` or `feols()` are treated as sets of binary regressors.
 
 ```{r}
-# estimate the regression model via feols
-feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , data = voters)
 
-# estimate the regression model via felm
-felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , data = voters)
+if(requireNamespace("fixest")){
+  # estimate the regression model via feols
+  feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , data = voters)
+  boot_feols <- boottest(feols_fit, 
+                         clustid = "group_id1", 
+                         param = "treatment", 
+                         B = 9999, 
+                         fe = "Q1_immigration")
+}
 
-boot_feols <- boottest(feols_fit, 
-                       clustid = "group_id1", 
-                       param = "treatment", 
-                       B = 9999, 
-                       fe = "Q1_immigration")
-
-boot_felm <- boottest(felm_fit, 
-                      clustid = "group_id1",
-                      param = "treatment", 
-                      B = 9999, 
-                      fe = "Q1_immigration")
+if(requireNamespace("lfe")){
+  # estimate the regression model via felm
+  felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , data = voters)
+  boot_felm <- boottest(felm_fit, 
+                        clustid = "group_id1",
+                        param = "treatment", 
+                        B = 9999, 
+                        fe = "Q1_immigration")
+}
 
 ```
 
@@ -240,9 +251,9 @@ If regression weights are specified in the estimation stage via `lm()`, `feols()
 
 ```{r}
 # regression with weights / WLS
-feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income, weights = voters$weights, data = voters)
+lm_w_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income, weights = voters$weights, data = voters)
 
-boot_feols <- boottest(feols_fit, 
+boot_feols <- boottest(lm_w_fit, 
                        clustid = "group_id1", 
                        param = "treatment", 
                        B = 9999)
@@ -256,7 +267,7 @@ A major bottleneck for the performance of `boottest()` is a large matrix multipl
 The number of threads can be specified via the `nthreads` argument of `boottest()`:
 
 ```{r, eval = FALSE}
-boot_feols <- boottest(feols_fit, 
+boot_feols <- boottest(lm_fit, 
                        clustid = "group_id1", 
                        param = "treatment", 
                        B = 9999, 

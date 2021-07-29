@@ -145,6 +145,8 @@ stops the procedure after 10 iterations.
 }
 
 \examples{
+
+if(requireNamespace("lfe")){
 library(fwildclusterboot)
 library(lfe)
 data(voters)
@@ -174,6 +176,7 @@ boot4 <- boottest(felm_fit,
                   beta0 = 2)
 summary(boot1)
 plot(boot1)
+}
 }
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference
