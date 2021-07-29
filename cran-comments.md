@@ -10,6 +10,9 @@ This needs to be corrected even if the missing package(s) become available."
 
 Solution: add if(requireNamespace("pkg")) for suggested packages in vignette, examples, tests 
 
+I have checked package installation via github actions on windows, mac, ubuntu & ubuntu devel - installation fails 
+on ubuntu devel because the "lfe" package cannot be installed.
+
 ## Version 0.3.5 submission 
 
 + fixes two bugs introduced with version 0.3.3
