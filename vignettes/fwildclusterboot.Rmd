@@ -48,17 +48,6 @@ lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigrat
 # model with interaction
 lm_fit_interact <- lm(proposition_vote ~ treatment + ideology1 + log_income:Q1_immigration , data = voters)
 
-if(requireNamespace("fixest")){
-  library(fixest)
-  # estimate the regression model via feols
-  feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
-}
-
-if(requireNamespace("lfe")){
-  library(lfe)
-  # estimate the regression model via felm
-  felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
-}
 ```
 
 The `boottest()` function has 4 required and several optional arguments. The required objects are
@@ -71,23 +60,12 @@ The `boottest()` function has 4 required and several optional arguments. The req
 ```{r}
 # boottest on an object of type lm
 boot_lm <- boottest(lm_fit, clustid = "group_id1", param = "treatment", B = 9999)
-
-if(requireNamespace("fixest")){
-  library(fixest)
-  # boottest on an object of type fixest
-  boot_feols <- boottest(feols_fit, clustid = "group_id1", param = "treatment", B = 9999)
-}
-if(requireNamespace("lfe")){
-  # boottest on an object of type felm
-  library(lfe)
-  boot_felm <- boottest(felm_fit, clustid = "group_id1", param = "treatment", B = 9999)
-}
 ```
 
 To tests for an interaction, it is important to use the coefficient names that are internally created by the modeling function.
 
 ```{r}
-names(coef(lm_fit_interact))
+#names(coef(lm_fit_interact))
 boot_lm_interact <- boottest(lm_fit_interact, clustid = "group_id1", param = "log_income:Q1_immigration1", B = 9999)
 ```
 
@@ -213,17 +191,6 @@ if(requireNamespace("fixest")){
                          param = "treatment", 
                          B = 9999, 
                          fe = "Q1_immigration")
-}
-
-if(requireNamespace("lfe")){
-  # estimate the regression model via felm
-  library(lfe)
-  felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , data = voters)
-  boot_felm <- boottest(felm_fit, 
-                        clustid = "group_id1",
-                        param = "treatment", 
-                        B = 9999, 
-                        fe = "Q1_immigration")
 }
 
 ```
