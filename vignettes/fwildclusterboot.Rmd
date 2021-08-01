@@ -234,9 +234,9 @@ If regression weights are specified in the estimation stage via `lm()`, `feols()
 
 ```{r}
 # regression with weights / WLS
-lm_w_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income, weights = voters$weights, data = voters)
+lm_w_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income, weights = voters$weights, data = voters)
 
-boot_feols <- boottest(lm_w_fit, 
+boot_w_lm <- boottest(lm_w_fit, 
                        clustid = "group_id1", 
                        param = "treatment", 
                        B = 9999)
@@ -250,7 +250,7 @@ A major bottleneck for the performance of `boottest()` is a large matrix multipl
 The number of threads can be specified via the `nthreads` argument of `boottest()`:
 
 ```{r, eval = FALSE}
-boot_feols <- boottest(lm_fit, 
+boot_lm <- boottest(lm_fit, 
                        clustid = "group_id1", 
                        param = "treatment", 
                        B = 9999, 
