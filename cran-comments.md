@@ -1,7 +1,8 @@
 ## Version 0.3.6 submission, Resubmission
 
-+ Fixed error on ubuntu devel described below (reason for error; unprotected library(lfe) statements in tests)
++ Adressed errors related to suggestsdescribed below (reason for error; unprotected library(lfe) statements in tests)
 + noSuggests error due to missing library("pkg") statements in vignette
++ lfe now install on ubuntu dev
 
 ## Version 0.3.6 submission
 

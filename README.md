@@ -3,6 +3,7 @@
 
 # fwildclusterboot
 
+<!-- <img src="man/figures/logo.png" width="160px" align="right" /> -->
 <!-- badges: start -->
 <!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 0.5, 2021, 03, 31, 80133, R, R version 4.0.5 (2021-03-31), Shake and Throw-orange.svg?style=flat-square)](commits/master) -->
 
