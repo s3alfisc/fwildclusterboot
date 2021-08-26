@@ -59,6 +59,8 @@ Imports:
 Suggests: 
     fixest,
     lfe,
+    plm, 
+    clusterSEs,
     data.table,
     fabricatr,
     tinytest,
