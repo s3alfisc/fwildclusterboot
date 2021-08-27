@@ -388,7 +388,7 @@ boot_lm <- boottest(lm_fit,
 
 ## Small Sample Corrections
 
-`boottest()` applies the small-sample correction $N_{g} / (N_{g} - 1)$, where $N_g$ is the dimension of cluster g.  
+`boottest()` applies the small-sample correction $G / (G - 1)$, where $G$ is the number of unique clusters.
 
 ## Treatment of Invalid Test Statistics for multiway clustering
 

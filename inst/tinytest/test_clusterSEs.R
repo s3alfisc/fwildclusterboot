@@ -5,12 +5,16 @@
 # corrections in both packages are N / (N-1)
 
 
-if (length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]]) > 3) { 
-  #Sys.setenv("RunAllfwildclusterbootTests"="yes")
-  runThisTest <- TRUE
-} else {
-  runThisTest <- FALSE
-}
+# if (length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]]) > 3) { 
+#   #Sys.setenv("RunAllfwildclusterbootTests"="yes")
+#   runThisTest <- TRUE
+# } else {
+#   runThisTest <- FALSE
+# }
+
+# always set to false - test takes a super long time
+
+runThisTest <- FALSE
 
 if (runThisTest) {
  
