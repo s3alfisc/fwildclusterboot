@@ -3,6 +3,13 @@
 # sample adjustment" employed by fwildclusterboot::boottest
 # see fixest vignette: https://cran.r-project.org/web/packages/fixest/vignettes/standard_errors.html
 
+runThisTest <- FALSE
+
+if (runThisTest) {
+
+library(plm)
+library(fixest)
+  
 data(EmplUK)
 EmplUK$firm <- as.factor(EmplUK$firm)
 
@@ -35,3 +42,5 @@ boot3 <- boottest(lm_fit, clustid = c("firm"), B = B, param = "output", nthreads
 tinytest::expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]))
 tinytest::expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]))
 tinytest::expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]))
+
+}
