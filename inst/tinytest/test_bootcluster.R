@@ -13,6 +13,9 @@
 # ---------------------------------------------------------------------------------------------- # 
 # Part A1: no fixed effect in model
 
+library(lfe)
+library(fixest)
+
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + as.factor(Q1_immigration) , 
             data = fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
 feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + as.factor(Q1_immigration), 
