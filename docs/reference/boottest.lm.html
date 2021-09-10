@@ -74,7 +74,7 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6.1</span>
       </span>
     </div>
 
@@ -257,7 +257,7 @@ to use. The default is to use 1 core.</p></td>
 
     <p>An object of class <code>boottest</code></p>
 <dt>p_val</dt><dd><p>The bootstrap p-value.</p></dd>
-<dt>t_stat</dt><dd><p>The bootstrap t-statistic.</p></dd>
+<dt>t_stat</dt><dd><p>The regression t-statistic of interest, recalculated in the bootstrap. Applied small sample correction: G / (G-1).</p></dd>
 <dt>conf_int</dt><dd><p>The bootstrap confidence interval.</p></dd>
 <dt>param</dt><dd><p>The tested parameter.</p></dd>
 <dt>N</dt><dd><p>Sample size. Might differ from the regression sample size if the
