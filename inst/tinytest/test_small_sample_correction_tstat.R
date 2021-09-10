@@ -26,9 +26,9 @@ boot3 <- boottest(lm_fit, clustid = c("firm"), B = B, param = "output", nthreads
 
 # boottest returns absolute values of t-stats
 
-tinytest::expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]))
-tinytest::expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]))
-tinytest::expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]))
+expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]))
+expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]))
+expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]))
 
 # note that these results should be independent of the number of 
 # bootstrap draws - in the "first" ob B + 1 bootstrap draws, all weights are set to 1
@@ -39,8 +39,8 @@ boot1 <- boottest(lm_fit, clustid = c("firm"), B = B, param = "wage", nthreads =
 boot2 <- boottest(lm_fit, clustid = c("firm"), B = B, param = "capital", nthreads = 1, seed = y, impose_null = FALSE)
 boot3 <- boottest(lm_fit, clustid = c("firm"), B = B, param = "output", nthreads = 1, seed = y, impose_null = FALSE)
 
-tinytest::expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]))
-tinytest::expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]))
-tinytest::expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]))
+expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]))
+expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]))
+expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]))
 
 }

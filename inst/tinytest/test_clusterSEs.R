@@ -90,13 +90,13 @@ if (runThisTest) {
   ses <- res_all[[1]][["ses"]]
   
   # relative tolerance 2.5%
-  tinytest::expect_equal(p_vals[1], p_vals[4], 0.01)
-  tinytest::expect_equal(p_vals[2], p_vals[5], 0.01)
-  tinytest::expect_equal(p_vals[3], p_vals[6], 0.01)
+  expect_equal(p_vals[1], p_vals[4], 0.01)
+  expect_equal(p_vals[2], p_vals[5], 0.01)
+  expect_equal(p_vals[3], p_vals[6], 0.01)
   
   # note: expect_equal tests for relative 
-  tinytest::expect_equal(ses[1,1], ses[4,1], 0.01)
-  tinytest::expect_equal(ses[1,2], ses[4,2], 0.02)  # 4% tolerance
-  tinytest::expect_equal(ses[2,], ses[5,], 0.01)
-  tinytest::expect_equal(ses[3,], ses[6,], 0.01)  
+  expect_equal(ses[1,1], ses[4,1], 0.01)
+  expect_equal(ses[1,2], ses[4,2], 0.02)  # 4% tolerance
+  expect_equal(ses[2,], ses[5,], 0.01)
+  expect_equal(ses[3,], ses[6,], 0.01)  
 }
