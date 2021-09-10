@@ -80,7 +80,7 @@ boottest.fixest <- function(object,
   #' @return An object of class \code{boottest}
   #' 
   #' \item{p_val}{The bootstrap p-value.}
-  #' \item{t_stat}{The bootstrap t-statistic.}
+  #' \item{t_stat}{The regression t-statistic of interest, recalculated in the bootstrap.}
   #' \item{conf_int}{The bootstrap confidence interval.}
   #' \item{param}{The tested parameter.}
   #' \item{N}{Sample size. Might differ from the regression sample size if
@@ -166,6 +166,7 @@ boottest.fixest <- function(object,
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar")
   check_arg(maxiter, "scalar integer")
+  
   
   # check appropriateness of nthreads
   nthreads <- check_set_nthreads(nthreads)
