@@ -49,7 +49,6 @@ expect_equal(boot2$p_val, boot3$p_val)
 expect_equal(boot3$p_val, boot4$p_val)
 expect_equal(boot4$p_val, boot1$p_val)
 
-rm(list = ls())
 
 # Test 2: one fixed effect is numeric vs no fixed effect is numeric
 
@@ -96,7 +95,6 @@ expect_equal(boot2$p_val, boot3$p_val)
 expect_equal(boot3$p_val, boot4$p_val)
 expect_equal(boot4$p_val, boot1$p_val)
 
-rm(list = ls())
 
 # Test 3: all fixed effects and cluster variables are numeric vs factors
 
@@ -146,7 +144,6 @@ expect_equal(boot2$p_val, boot3$p_val)
 expect_equal(boot3$p_val, boot4$p_val)
 expect_equal(boot4$p_val, boot1$p_val)
 
-rm(list = ls())
 
 # Test 4: Test 3, but now with two fixed effects
 
@@ -198,7 +195,6 @@ expect_equal(boot2$p_val, boot3$p_val)
 expect_equal(boot3$p_val, boot4$p_val)
 expect_equal(boot4$p_val, boot1$p_val)
 
-rm(list = ls())
 
 
 # What if a fixed effect is a character? 
