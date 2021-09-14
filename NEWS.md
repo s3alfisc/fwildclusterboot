@@ -1,3 +1,13 @@
+# fwildclusterboot 0.3.7
+
++ Bug fix: the output of `boottest()` varied depending on the class of the 
+  input fixed effects for regressions both via `lfe::felm()` and `fixest::feols()`. 
+  This bug occurred because `boottest()` does not work with a pre-processed model.frame object from either `felm()` or `feols()` but works with the original input data. While both `felm()` and `feols()` change non-factor fixed effects variables to factors internally, `boottest()` did not check but implicitely assumed that all fixed effects used in the regression models are indeed factors in the original data set. As a consequence, if one or more fixed effects were e.g. numeric, `boottest()` would produce incorrect results without throwing an error. 
+  With version 0.3.7, `boottest()` checks internally if all variables in the original data set which are used as fixed effects are factor variables and if not, changes them to factors. 
+  Thanks for timotheedotc for raising the issue on github, which can be found here: https://github.com/s3alfisc/fwildclusterboot/issues/14. 
++ Some tests have been added that compare output from `boottest()` with the wild cluster bootstrap implemented via `clusterSEs`.
+
+
 # fwildclusterboot 0.3.6
   
 + Bug fix regarding suggested packages and CRAN: [see github issue #12](https://github.com/s3alfisc/fwildclusterboot/issues/12). 
