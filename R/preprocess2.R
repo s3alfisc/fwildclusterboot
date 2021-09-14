@@ -42,13 +42,11 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     # note: you get a warning here if rhs = 2 is empty (no fixed effect specified via fml)
     formula_coef_fe <- suppressWarnings(formula(Formula::as.Formula(formula), lhs = 1, rhs = c(1, 2), collapse = TRUE))
   
-    
-  
     formula <- formula_coef_fe
     
     if (!is.null(eval(of$fixef))) {
       # add additional fixed effects specified in fixef argument of feols()
-      formula_coef_fe <- update(formula_coef_fe, paste("~ . + ", eval(of$fixef)))
+      formula_coef_fe <- update(formula_coef_fe, paste("~ . +", paste(eval(of$fixef), collapse = " + ")))
       formula <- formula_coef_fe
     }
     # add cluster variables specified in feols-cluster and boottest-cluster arguments
@@ -89,10 +87,25 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     
     # check if one of the fixed effects or cluster variables is not of 
     # type character or factor
+    #sapply(of, class)
     fixedid <- object$fixef_vars
     #to_char <- union(fixedid, cluster)
     to_char <- fixedid
-    j <- !(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("character", "factor"))
+    # are fixed effects neither character nor factor?
+    j <- which(!(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("factor")))
+    # j <- (sapply(data.frame(of[,c(fixedid)]), class) %in%  c("character", "factor"))
+    
+    # if only one fixed effect & if it is not a factor, `of[,c(fixedid)]` is not a data.frame but a vector
+    if(length(j) == 1){
+      of[, c(fixedid)] <- factor(of[, c(fixedid)])
+    } else if(length(j) > 1) {
+      of[, c(fixedid)][,j] <- lapply(j, function(x) factor(of[, c(fixedid)][,x]))
+    }
+    #sapply(of, class)
+    
+    # are all integer/ numeric variables now characters? 
+    j <- !(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("factor"))
+    
     if(sum(j) > 0){
       stop(paste("The fixed effects variable(s)", paste(to_char[j], collapse = " & "), "is/are not factor variables.`feols()` changes the types of fixed effects internally, but this is currently not supported in `boottest()`, but will be implemented in the future. To run the bootstrap, you will have to change the type of all fixed effects variables to factor prior to estimation with `feols()`."))
     }
@@ -156,16 +169,17 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
     fixedid <- names(object$fe)
     #to_char <- union(fixedid, cluster)
     to_char <- fixedid
-    j <- !(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("character", "factor"))
-    if(sum(j) > 0){
-      stop(paste("The fixed effects variable(s)", paste(to_char[j], collapse = " & "), "is/are not factor variables.`lfe()` changes the types of fixed effects internally, but this is currently not supported in `boottest()`, but will be implemented in the future. To run the bootstrap, you will have to change the type of all fixed effects variables to factor prior to estimation with `felm()`."))
-    }
-    # # change fixed effects variables and cluster variables to character
-    # fixedid <- names(object$fe)
-    # to_char <- union(fixedid, cluster)
-    # of[,to_char] <- sapply(of[,to_char], as.character)
-    # # sapply(of, class)
     
+    #to_char <- union(fixedid, cluster)
+    to_char <- fixedid
+    # are fixed effects neither character nor factor?
+    j <- which(!(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("character", "factor")))
+    # if only one fixed effect & if it is not a factor, `of[,c(fixedid)]` is not a data.frame but a vector
+    if(length(j) == 1){
+      of[, c(fixedid)] <- factor(of[, c(fixedid)])
+    } else if(length(j) > 1) {
+      of[, c(fixedid)][,j] <- lapply(j, function(x) factor(of[, c(fixedid)][,x]))
+    }    
     N_model <- object$N
     model_param_names <- rownames(coef(object))
   } else if (class(object) == "lm") {

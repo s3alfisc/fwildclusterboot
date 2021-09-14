@@ -1,85 +1,251 @@
+# test invariance of boottest() results to type of fixed effect variable
+# (numeric vs factor vs character)
 # test issue https://github.com/s3alfisc/fwildclusterboot/issues/14
-# raised by Timoth?e
-# Test 1: one cluster variable is numeric
-# Test 2: one fixed effect is numeric
-# Test 3: both fixed effect and cluster variables are numeric
+# raised by Timothée
+
+
+# Test 1: one cluster variable is numeric vs no cluster variable is numeric
 
 data(voters)
 
 to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
 sapply(voters[, to_char], class)
 
+voters_1 <<- voters
+voters_1$Q1_immigration <- as.numeric(voters_1$Q1_immigration)
+sapply(voters_1[, to_char], class)
 
-# Test 1: one cluster variable is numeric
-voters_1 <- voters
+feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q2_defense , data = voters)
+feols_fit_2 <- feols(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters_1)
+lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters)
+lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters_1)
+
+boot1 <- 
+boottest(feols_fit,
+         clustid = c("Q1_immigration","Q2_defense"),
+         B = 9999,
+         param = "treatment",
+         bootcluster='min')
+boot2 <- 
+  boottest(feols_fit_2,
+           clustid = c("Q1_immigration","Q2_defense"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot3 <- 
+  boottest(feols_fit,
+           clustid = c("Q1_immigration","Q2_defense"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot4 <- 
+  boottest(feols_fit,
+           clustid = c("Q1_immigration","Q2_defense"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+expect_equal(boot1$p_val, boot2$p_val)
+expect_equal(boot2$p_val, boot3$p_val)
+expect_equal(boot3$p_val, boot4$p_val)
+expect_equal(boot4$p_val, boot1$p_val)
+
+rm(list = ls())
+
+# Test 2: one fixed effect is numeric vs no fixed effect is numeric
+
+data(voters)
+
+to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
+sapply(voters[, to_char], class)
+
+voters_1 <<- voters
 voters_1$Q2_defense <- as.numeric(voters_1$Q2_defense)
 sapply(voters_1[, to_char], class)
 
 feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q2_defense , data = voters)
 feols_fit_2 <- feols(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters_1)
-lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters_1)
+lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters)
+lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters_1)
 
-# bootstrap inference via boottest()
-# expect_no_error
-boottest(feols_fit,
-                       clustid = c("Q1_immigration","Q2_defense"),
-                       B = 9999,
-                       param = "treatment",
-                       bootcluster='min')
+boot1 <- 
+  boottest(feols_fit,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot2 <- 
+  boottest(feols_fit_2,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot3 <- 
+  boottest(lfe_fit,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot4 <- 
+  boottest(lfe_fit_2,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+expect_equal(boot1$p_val, boot2$p_val)
+expect_equal(boot2$p_val, boot3$p_val)
+expect_equal(boot3$p_val, boot4$p_val)
+expect_equal(boot4$p_val, boot1$p_val)
 
-expect_error(boottest(feols_fit_2,
-                         clustid = c("Q1_immigration","Q2_defense"),
-                         B = 9999,
-                         param = "treatment",
-                         bootcluster='min'))
+rm(list = ls())
 
-expect_error(boottest(lfe_fit,
-                         clustid = c("Q1_immigration","Q2_defense"),
-                         B = 9999,
-                         param = "treatment",
-                         bootcluster='min'))
+# Test 3: all fixed effects and cluster variables are numeric vs factors
+
+data(voters)
+
+to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
+voters$group_id1 <- as.factor(voters$group_id1)
+sapply(voters[, to_char], class)
+
+voters_1 <<- voters
+voters_1$Q1_immigration <- as.numeric(voters_1$Q1_immigration)
+voters_1$Q2_defense <- as.numeric(voters_1$Q2_defense)
+
+sapply(voters_1[, to_char], class)
+
+feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q2_defense , data = voters)
+feols_fit_2 <- feols(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters_1)
+lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters)
+lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters_1)
+
+boot1 <- 
+  boottest(feols_fit,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot2 <- 
+  boottest(feols_fit_2,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot3 <- 
+  boottest(lfe_fit,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot4 <- 
+  boottest(lfe_fit_2,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+expect_equal(boot1$p_val, boot2$p_val)
+expect_equal(boot2$p_val, boot3$p_val)
+expect_equal(boot3$p_val, boot4$p_val)
+expect_equal(boot4$p_val, boot1$p_val)
+
+rm(list = ls())
+
+# Test 4: Test 3, but now with two fixed effects
 
 
+data(voters)
 
-# are results the same no matter the type of the clustering variable?
+to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
+voters$group_id1 <- as.factor(voters$group_id1)
+sapply(voters[, to_char], class)
 
-run <- FALSE
-if(run){
-  voters_2 <- voters
-  voters_2$group_id1 <- as.numeric(voters_2$group_id1)
-  
-  feols_fit <- feols(proposition_vote ~ treatment  + log_income  , data = voters)
-  feols_fit_2 <- feols(proposition_vote ~ treatment  + log_income , data = voters_2)
-  lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income , data = voters)
-  lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income , data = voters_2)
-  
-  feols_boot <- 
-    boottest(feols_fit,
-             clustid = c("Q1_immigration","Q2_defense"),
-             B = 9999,
-             param = "treatment",
-             bootcluster='min')
-  feols_boot_2 <- 
-    boottest(feols_fit_2,
-             clustid = c("Q1_immigration","Q2_defense"),
-             B = 9999,
-             param = "treatment",
-             bootcluster='min')
-  lfe_boot <- 
-    boottest(lfe_fit,
-             clustid = c("Q1_immigration","Q2_defense"),
-             B = 9999,
-             param = "treatment",
-             bootcluster='min')
-  lfe_boot_2 <- 
-    boottest(lfe_fit_2,
-             clustid = c("Q1_immigration","Q2_defense"),
-             B = 9999,
-             param = "treatment",
-             bootcluster='min')
-  expect_equal(feols_boot$p_val, feols_boot_2$p_val)
-  expect_equal(feols_boot$p_val, lfe_boot$p_val)
-  expect_equal(lfe_boot$p_val, lfe_boot_2$p_val)
-  
-  
-}
+voters_1 <<- voters
+voters_1$Q1_immigration <- as.numeric(voters_1$Q1_immigration)
+voters_1$Q2_defense <- as.numeric(voters_1$Q2_defense)
+
+sapply(voters_1[, to_char], class)
+
+feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense , data = voters)
+feols_fit_2 <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters_1)
+lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters)
+lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters_1)
+
+boot1 <- 
+  boottest(feols_fit,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot2 <- 
+  boottest(feols_fit_2,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot3 <- 
+  boottest(lfe_fit,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot4 <- 
+  boottest(lfe_fit_2,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+
+expect_equal(boot1$p_val, boot2$p_val)
+expect_equal(boot2$p_val, boot3$p_val)
+expect_equal(boot3$p_val, boot4$p_val)
+expect_equal(boot4$p_val, boot1$p_val)
+
+rm(list = ls())
+
+
+# What if a fixed effect is a character? 
+
+
+data(voters)
+
+to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
+sapply(voters[, to_char], class)
+
+voters_1 <<- voters
+voters_1$Q1_immigration <- as.character(voters_1$Q1_immigration)
+voters_1$Q2_defense <- as.character(voters_1$Q2_defense)
+
+sapply(voters_1[, to_char], class)
+
+feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense , data = voters)
+feols_fit_2 <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters_1)
+lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters)
+lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters_1)
+
+boot1 <- 
+  boottest(feols_fit,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot2 <- 
+  boottest(feols_fit_2,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot3 <- 
+  boottest(lfe_fit,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+boot4 <- 
+  boottest(lfe_fit_2,
+           clustid = c("Q1_immigration"),
+           B = 9999,
+           param = "treatment",
+           bootcluster='min')
+
+expect_equal(boot1$p_val, boot2$p_val)
+expect_equal(boot2$p_val, boot3$p_val)
+expect_equal(boot3$p_val, boot4$p_val)
+expect_equal(boot4$p_val, boot1$p_val)
