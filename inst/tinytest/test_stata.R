@@ -139,6 +139,60 @@ gen p_val = r(p)
   stata_p_val <- unique(res$p_val)
   expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
   
+  # B 
+  test_3 <- "
+clear
+import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
+set seed 1
+quietly reg proposition_vote treatment ideology1 log_income i.q1_immigration, cluster(group_id1)
+boottest treatment = 0.005, reps(99999) cluster(group_id1 ) nograph level(90)
+gen p_val = r(p)
+//gen conf_int = r(CI)
+"
+  boot_lm3 <-
+    suppressWarnings(
+      boottest(
+        object = lm_fit,
+        clustid =  "group_id1",
+        B = 99999,
+        seed = 911,
+        param = "treatment",
+        conf_int = FALSE,
+        sign_level = 0.10,
+        beta0 = 0.005
+      ))
+  
+  res <- RStata::stata(test_3, data.out = TRUE)
+  stata_p_val <- unique(res$p_val)
+  expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
+  
+  # C
+  
+  test_3 <- "
+clear
+import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
+set seed 1
+quietly reg proposition_vote treatment ideology1 log_income i.q1_immigration, cluster(group_id1)
+boottest treatment = -0.005, reps(99999) cluster(group_id1 ) nograph level(90)
+gen p_val = r(p)
+//gen conf_int = r(CI)
+"
+  boot_lm3 <-
+    suppressWarnings(
+      boottest(
+        object = lm_fit,
+        clustid =  "group_id1",
+        B = 99999,
+        seed = 911,
+        param = "treatment",
+        conf_int = FALSE,
+        sign_level = 0.10,
+        beta0 = -0.005
+      ))
+  
+  res <- RStata::stata(test_3, data.out = TRUE)
+  stata_p_val <- unique(res$p_val)
+  expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
   
   # Test 4
   
