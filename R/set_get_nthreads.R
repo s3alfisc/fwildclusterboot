@@ -13,7 +13,7 @@ setBoottest_nthreads <-  function(nthreads){
   #' By default, only one thread is used
   #' @param nthreads Integer. Number of threads to be used
   #' @return No return value 
-
+  #' @noRd
   
   max_CRAN <-  as.numeric(Sys.getenv("OMP_THREAD_LIMIT"))
   max_CRAN[is.na(max_CRAN)] <-  1000
@@ -36,6 +36,7 @@ setBoottest_nthreads <-  function(nthreads){
 getBoottest_nthreads <-  function(){
   #' get the number of threads for use with open mp
   #' @return The number of threads currently used by boottest as set in options 
+  #' @noRd
   
   x <-  getOption("boottest_nthreads")
   if(length(x) != 1 || !is.numeric(x) || is.na(x) || x %% 1 != 0 || x < 0){
@@ -51,6 +52,7 @@ check_set_nthreads <-  function(nthreads){
   #' @param nthreads Integer. Number of threads to be used
   #' @importFrom dreamerr set_up check_value warn_up
   #' @return Integer. The number of threads to be used. 
+  #' @noRd
   
   
   dreamerr::set_up(1)

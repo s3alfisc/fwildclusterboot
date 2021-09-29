@@ -1,28 +1,32 @@
+#' Calculation of Confidence Sets
+#' 
+#' Inverts the bootstrap p-value and calculates confidence sets
+#' 
+#' @param object A  object of type boottest
+#' @param boot_iter An integer. Number of bootstrap iterations
+#' @param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
+#' @param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion.
+#' @param clustid A vector with the clusters
+#' @param sign_level A numeric between 0 and 1. Sets to confidence level: sign_level = 0.05 returns 0.95% confidence intervals
+#' @param vcov_sign Controls addition / substraction of individual covariance matrices for multiway clustering
+#' @param impose_null Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU
+#' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"
+#' @param tol the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.
+#' @param maxiter maximum number of iterations for confidence interval inversion. 10 by default.
+#' @importFrom stats uniroot
+#' 
+#' @return A list containing the calculated confidence interval, the t-statistics
+#'         and corresponding p-values used in the grid search.
+#' @noRd
+
 invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, sign_level, vcov_sign, impose_null, p_val_type, tol, maxiter) {
-  
-  #' Calculation of Confidence Sets
-  #' 
-  #' Inverts the bootstrap p-value and calculates confidence sets
-  #' 
-  #' @param object A  object of type boottest
-  #' @param boot_iter An integer. Number of bootstrap iterations
-  #' @param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
-  #' @param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion.
-  #' @param clustid A vector with the clusters
-  #' @param sign_level A numeric between 0 and 1. Sets to confidence level: sign_level = 0.05 returns 0.95% confidence intervals
-  #' @param vcov_sign Controls addition / substraction of individual covariance matrices for multiway clustering
-  #' @param impose_null Logical. Controls if the null hypothesis is imposed on the bootstrap dgp or not. Null imposed - WCR - by default. If FALSE, unrestricted WCU
-  #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"
-  #' @param tol the desired accuracy (convergence tolerance) for confidence interval inversion. 1e-6 by default.
-  #' @param maxiter maximum number of iterations for confidence interval inversion. 10 by default.
-  #' @importFrom stats uniroot
-  #' 
-  #' @return A list containing the calculated confidence interval, the t-statistics
-  #'         and corresponding p-values used in the grid search. 
-  
+
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")
   check_arg(clustid, "data.frame")
+  check_arg(sign_level, "numeric scalar")
+  #check_arg(vcov_sign)
+  #check_arg(...)
   
   if (sign_level > 1 | sign_level < 0) {
     stop("Significance level needs to be between 0 and 1.", 
@@ -50,8 +54,8 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
   # Step 1: find two values x where p(x) crosses the sign_level
   
   check <- FALSE
-  inflate_se <- c(1, 2, 3, 5, 10, 15, 25, 50, 100, 500, 1000, 5000, 10000, 50000, 500000, 1000000, 100000000)
-  #inflate_se <- 2^(0:10)
+  #inflate_se <- c(1, 2, 3, 5, 10, 15, 25, 50, 100, 500, 1000, 5000, 10000, 50000, 500000, 1000000, 100000000)
+  inflate_se <- 2^(0:10)
   len_inflate <- length(inflate_se)
   j <- 1
   
@@ -66,7 +70,7 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
       )
     }
     #cat("j: ", j, "\n")
-    # start guesses by taking sandwich cluster confidence intervals + inflation factor
+    # start guesses by taking confidence interval guess times inflation factor
     starting_vals <- as.numeric(point_estimate + c(-1, 1) * inflate_se[j] * se_guess)
     #cat("starting_vals: ",starting_vals, "\n")
     # take 25 starting values in between the guesses
@@ -79,6 +83,8 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
     #cat("p-val 1: ",p_start, "\n")
     p_start <- p_start + sign_level
     #cat("p-val 2",p_start, "\n")
+    
+    # this likely not optimal as always searching for both - can only search for one
     if (sum(p_start < sign_level) == 2) {
       check <- TRUE
     }
@@ -98,13 +104,14 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
          boottest() function argument conf_int to FALSE."))
   }
   
+  # create equal spaced grid between starting values
   test_vals <- seq(starting_vals[1], starting_vals[2], (starting_vals[2] - starting_vals[1]) / 25)
   
   # later: don't have to evaluate all guesses at all points - extreme points suffice - if < sign_level at both extreme points
   # then evaluate all 26 points
   p <- rep(NaN, length(test_vals))
   
-  
+  # evaluate all test values
   for (i in 2:(length(test_vals) - 1)) {
     p[i] <- p_val_null2_x_cmp(test_vals[i], sign_level)
   }
@@ -117,8 +124,8 @@ invert_p_val2 <- function(object, boot_iter, point_estimate, se_guess, clustid, 
   p[1] <- p_start[1]
   p[26] <- p_start[2]
   
+  # find spots where p crosses the significance level
   crossings <- (p <= sign_level) - (p > sign_level)
-  
   x_crossings <- rep(NA, length(test_vals))
   # should this be 2:25?
   for (i in 1:26) {

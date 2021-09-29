@@ -19,6 +19,11 @@ An object of class \code{boottest}.
 bootstrap inference for objects of class lm, fixest and felm by  implementing
 the fast wild bootstrap algorithm developed in Roodman et al., 2019.
 }
+\references{
+Roodman et al., 2019, "Fast and wild: Bootstrap inference in
+STATA using boottest", The STATA Journal.
+(\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+}
 \seealso{
 \code{\link{boottest.lm}}, \code{\link{boottest.fixest}} and \code{\link{boottest.felm}}
 }

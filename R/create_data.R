@@ -1,30 +1,30 @@
+#' Simulate Data 
+#' 
+#' Function simulates data for tests and examples with clustering variables
+#' and fixed-effects.
+#' 
+#' @param N number of observations
+#' @param N_G1 A scalar. number of clusters for clustering variable 1
+#' @param icc1 A scalar between 0 and 1. intra-cluster correlation for clustering variable 1
+#' @param N_G2 A scalar. number of clusters for clustering variable 2
+#' @param icc2 A scalar between 0 and 1. intra-cluster correlation for clustering variable 2
+#' @param numb_fe1 A scalar. Number of fixed effect for first factor variable
+#' @param numb_fe2 A scalar. Number of fixed effect for second factor variable
+#' @param seed An integer. Set the random seed
+#' @param weights Possible regression weights to be used in estimation
+#' @return A simulated \code{data.frame} with specified numbers of clusters, 
+#'         intra-cluster correlations and dimensionality of fixed effects. 
+#'         
+
+# This function very closely mirrors an example from the fabricatr package website
+# which can be found under the following link: https://declaredesign.org/r/fabricatr/articles/getting_started.html
+# https://declaredesign.org/r/fabricatr/articles/getting_started.html
+# the fabricatr package can be downloaded from CRAN and is published under MIT license. 
+# Graeme Blair [aut, cre], Jasper Cooper [aut], Alexander Coppock [aut], Macartan Humphreys [aut], Aaron Rudkin [aut], Neal Fultz [aut]
+# are the authors of the fabricatr package
+
 create_data <-
   function(N, N_G1, icc1, N_G2, icc2, numb_fe1, numb_fe2, seed, weights) {
-
-    #' Simulate Data 
-    #' 
-    #' Function simulates data for tests and examples with clustering variables
-    #' and fixed-effects.
-    #' 
-    #' @param N number of observations
-    #' @param N_G1 A scalar. number of clusters for clustering variable 1
-    #' @param icc1 A scalar between 0 and 1. intra-cluster correlation for clustering variable 1
-    #' @param N_G2 A scalar. number of clusters for clustering variable 2
-    #' @param icc2 A scalar between 0 and 1. intra-cluster correlation for clustering variable 2
-    #' @param numb_fe1 A scalar. Number of fixed effect for first factor variable
-    #' @param numb_fe2 A scalar. Number of fixed effect for second factor variable
-    #' @param seed An integer. Set the random seed
-    #' @param weights Possible regression weights to be used in estimation
-    #' @return A simulated \code{data.frame} with specified numbers of clusters, 
-    #'         intra-cluster correlations and dimensionality of fixed effects. 
-    #'         
-    
-    # This function very closely mirrors an example from the fabricatr package website
-    # which can be found under the following link: https://declaredesign.org/r/fabricatr/articles/getting_started.html
-    # https://declaredesign.org/r/fabricatr/articles/getting_started.html
-    # the fabricatr package can be downloaded from CRAN and is published under MIT license. 
-    # Graeme Blair [aut, cre], Jasper Cooper [aut], Alexander Coppock [aut], Macartan Humphreys [aut], Aaron Rudkin [aut], Neal Fultz [aut]
-    # are the authors of the fabricatr package
     
     set.seed(seed)
     voters <-

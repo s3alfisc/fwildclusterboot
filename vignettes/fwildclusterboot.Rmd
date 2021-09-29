@@ -24,9 +24,9 @@ The `fwildclusterboot` package is an R port of STATA's [boottest](https://github
 It implements the "fast" wild cluster bootstrap algorithm developed in Roodman et al (2019) for regression objects in R. The "fast" algorithm makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples - as long as the number of bootstrapping clusters is not too large.
 
 A description of the algorithm is beyond the scope of this vignette. It is very clearly presented in [Roodman et al. (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm).
-For technical details of the implementation in `fwildclusterboot`, have a look at the `technical vignette`.
+For technical details of the implementation in `fwildclusterboot`, have a look at the `technical vignette` (tba).
 
-For linear regression models, `fwildclusterboot` supports almost all features of `boottest`. This means that a set of different bootstrap distributions, regression weights, fixed effects, and both restricted (WCR) and unrestricted (WCU) boostrap inference are supported. The main difference is that it currently only supports univariate hypothesis tests of regression paramters of the form $H_{0}: \beta_{k} = \beta_{k}^{0}$ vs $H_{1}: \beta_{k} \neq \beta_{k}^{0}$.
+For linear regression models, `fwildclusterboot` supports almost all features of `boottest`. This means that a set of different bootstrap distributions, regression weights, fixed effects, and both restricted (WCR) and unrestricted (WCU) boostrap inference are supported. The main difference is that it currently only supports univariate hypothesis tests of regression paramters of the form $H_{0}: R\beta = R$ vs $H_{1}: R\beta \neq r$, where r is scalar.
 
 In contrast to `boottest`, `fwildclusterboot` does not support methods for instrumental variable estimation and the score bootstrap for non-linear models.
 
@@ -69,11 +69,20 @@ To tests for an interaction, it is important to use the coefficient names that a
 boot_lm_interact <- boottest(lm_fit_interact, clustid = "group_id1", param = "log_income:Q1_immigration1", B = 9999)
 ```
 
+`boottest()` further allows for multivariable tests. Suppose we're interested in 
+testing the null hypothesis $0.6*treatment + 0.2*ideology1 = 0.02$. To test such a hypothesis, one would have to specify the hypothesis via the `param`, `R` and `beta0` arguments: 
+
+```{r}
+boot_multi <- boottest(lm_fit, clustid = "group_id1", param = c("treatment", "ideology1"), R = c(0.6, 0.2), beta0 = 0.02, B = 9999)
+```
+
+
 To access the estimation results, `boottest()` comes with `summary()`, `tidy()` and `glance()` methods. The `tidy()` method returns the estimation results in a data.frame. `summary()` returns  additional information on top of the test statistics reported by `tidy()`. The`glance()` method enables the use of output formatting tools from the `modelsummary` package.
 
 ```{r}
 # fwildclusterboot's internal summary() method
 summary(boot_lm)
+summary(boot_multi)
 
 if(requireNamespace("modelsummary")){
   # summary via the modelsummary package

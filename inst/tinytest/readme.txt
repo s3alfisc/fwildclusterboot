@@ -18,12 +18,15 @@ These tests check if `boottest` produces equivalent results for equivalent regre
 - [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_tidy.R
 - [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_tol_maxiter.R
 - [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_type.R
+- [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_type.R tests 1) test if boottest() produces equivalent results no matter the order of the "param" input vector; 2) test if equivalent hypotheses produce the same results: e.g. var1 + var2 = 1 should be equivalent to 2*var1 + 2*var2 = 2
 
 *external consistency*:
 This suite of tests compares results from `fwildclusterboot::boottest()` with `stata::boottest`, `clusterSEs` & `fixest`.
 - [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_clusterSEs.R tests if results from `boottest()` align with the wild cluster bootstrap implementation in the`clusterSEs` package
 - [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_small_sample_correction_tstat.R: `boottest()` internally recomputes the regression t-statistic, using the small sample correction G / (G-1). This test checks if the t-statistics produced by `boottest()` are the same as those produced by `fixest::feols()` using the same small sample correction
+Comparison with stata via RStata package - currently not run on CRAN / github actions. Reason: stata can't be run on CRAN & github actions.
 - [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_stata.R. This tests checks if `fwildclusterboot::boottest()` produces equivalent results as `stata::boottest` for large B and large N. Note that for rademacher and mammen weights, if full enumeration is used, the resulting p-values from stata and R should be *almost* exactly identical because there is no sampling uncertainty, `r::boottest` tries to mimic (almost) all design choices of `stata::boottest`. All remaining differences should be *numerical errors*.
+- [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_stata_multivariable.R. These tests are equivalent to test_stata.R but check equivalence for multivariable hypotheses of form var1 + var2 = c.
 
 *expected errors & warnings*: 
 Test if `boottest()` thows errors and warnings when expected. 

@@ -17,8 +17,8 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
   #' 
   #' @return A list containing the bootstrapped p-value, the bootstrapped t-statistics, 
   #'         and the number of invalid test statistics. 
-
-
+  #' @noRd
+  
   # Roodman et al on WCU: "Therefore, as we vary ßj0, the bootstrap samples
   # do not change, and hence, only one set of bootstrap samples needs to be constructed."
   # here, note that if impose_null = FALSE -> WCU: B = 0, CD = 0, DD = 0 and hence numer and
@@ -59,8 +59,8 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
   if (p_val_type == "two-tailed") {
     p_val <- mean(abs(t[1]) < abs(t_boot), na.rm = TRUE)
   } else if (p_val_type == "equal-tailed") {
-    p_l <- mean((t[1]) < t_boot, na.rm = TRUE)
-    p_h <- mean((t[1]) > t_boot, na.rm = TRUE)
+    p_l <- mean(t[1] < t_boot, na.rm = TRUE)
+    p_h <- mean(t[1] > t_boot, na.rm = TRUE)
     p_val <- 2 * min(p_l, p_h, na.rm = TRUE)
   } else if (p_val_type == "<") {
     p_l <- mean((t[1]) < t_boot, na.rm = TRUE)

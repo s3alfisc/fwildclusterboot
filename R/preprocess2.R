@@ -1,29 +1,27 @@
-preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
-  
-  
-  #' function that pre-processes regression objects of type lm, fixest and feols
-  #' @param object An object of class lm, fixest or felm
-  #' @param cluster A vector with the names of the clusters
-  #' @param fe A character scalar - fixed effect to be projected out, or NULL
-  #' @param param The univariate coefficients for which a hypothesis is to be tested
-  #' @param bootcluster The bootstrap sampling cluster.
-  #' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing variables that are added to the model via the `cluster` argument in `boottest()`
-  #' @return List containing preprocessed data for boottest estimation
-  #' @importFrom dreamerr check_arg
-  #' @importFrom Formula as.Formula
-  #' @importFrom collapse fwithin
+#' function that pre-processes regression objects of type lm, fixest and feols
+#' @param object An object of class lm, fixest or felm
+#' @param cluster A vector with the names of the clusters
+#' @param fe A character scalar - fixed effect to be projected out, or NULL
+#' @param param The univariate coefficients for which a hypothesis is to be tested
+#' @param bootcluster The bootstrap sampling cluster.
+#' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing variables that are added to the model via the `cluster` argument in `boottest()`
+#' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
+#' @return List containing preprocessed data for boottest estimation
+#' @importFrom dreamerr check_arg
+#' @importFrom Formula as.Formula
+#' @importFrom collapse fwithin
+#' @noRd
+
+preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   
   # ---------------------------------------------------------------------------- #
   # Step 1: preprocessing of call
   
   check_arg(cluster, "character scalar | character vector")
   check_arg(fe, "character scalar | NULL")
-  check_arg(param, "character scalar | NULL")
+  check_arg(param, "character vector | character vector | NULL")
   check_arg(bootcluster, "character vector | NULL")
-  check_arg(param, "character scalar")
-  
-  
-  
+  check_arg(R, "numeric vector | numeric scalar")
   
   if (class(object) == "fixest") {
     of <- object$call
@@ -407,7 +405,13 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit) {
   # --------------------------------------------------------------------------------------- #
   # collect output
   
-  R0 <- as.numeric(param == colnames(X))
+  R0 <- rep(0, length(colnames(X)))
+  R0[match(param, colnames(X))] <- R
+  names(R0) <- colnames(X)
+  #R0 <- as.numeric(param == colnames(X))
+  # param = c("treatment", "ideology1")
+  #R0 <- rep(0, length(colnames(X)))
+  #R0[match(param, colnames(X))] <- q
   
   res <- list(
     Y = Y,
