@@ -200,7 +200,7 @@ boottest.lm <- function(object,
     sign_level <- 0.05
   }
   
-  if (!(param %in% c(names(coef(object))))) {
+  if (mean(param %in% c(names(coef(object)))) != 1) {
     stop(paste("The parameter", param, "is not included in the estimated model.
                Maybe you are trying to test for an interaction parameter? 
                To see all model parameter names, run names(coef(model))."))
@@ -332,8 +332,8 @@ boottest.lm <- function(object,
     point_estimate = point_estimate,
     p_val = res[["p_val"]],
     conf_int = res_p_val$conf_int,
-    p_test_vals = res_p_val$p_test_vals,
-    test_vals = res_p_val$test_vals,
+    p_test_vals = res_p_val$p_grid_vals,
+    test_vals = res_p_val$grid_vals,
     t_stat = res$t_stat,
     regression = res$object,
     param = param,
