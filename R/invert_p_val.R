@@ -81,7 +81,7 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
                              upper){
   
     check <- FALSE
-    inflate_se <- c(2^(0:10 / 2))
+    inflate_se <- c(2^(0:100 / 2))
     len_inflate <- length(inflate_se)
     j <- 1
     
@@ -107,6 +107,7 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
     
       # need to add sign_level
       p_candidate <- p_candidate + sign_level
+      cat(p_candidate, "\n")
       
       # smaller than: less "extreme" values -> higher p-values; 
       # -> sign. level will be crossed 
