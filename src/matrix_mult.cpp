@@ -9,21 +9,21 @@
 #endif
 
 
-//' Matrix Multiplication via Eigen
-//' @param A A matrix. 
-//' @param B A matrix.
-//' @param nthreads Integer. Number of threads to use for matrix multiplication.
-//' @return A matrix
-// [[Rcpp::export]]
-SEXP eigenMatMult(Eigen::MatrixXd A, 
-                  Eigen::MatrixXd B, 
-                  int nthreads){
-  
-    Eigen::setNbThreads(nthreads);
-    //omp_set_num_threads(nthreads);
-    Eigen::MatrixXd C = A * B;
-    return Rcpp::wrap(C);
-}
+// //' Matrix Multiplication via Eigen
+// //' @param A A matrix. 
+// //' @param B A matrix.
+// //' @param nthreads Integer. Number of threads to use for matrix multiplication.
+// //' @return A matrix
+// // [[Rcpp::export]]
+// SEXP eigenMatMult(Eigen::MatrixXd A, 
+//                   Eigen::MatrixXd B, 
+//                   int nthreads){
+//   
+//     Eigen::setNbThreads(nthreads);
+//     //omp_set_num_threads(nthreads);
+//     Eigen::MatrixXd C = A * B;
+//     return Rcpp::wrap(C);
+// }
 
 
 //' Matrix Multiplication via Eigen

@@ -239,10 +239,6 @@ boottest.felm <- function(object,
       stop("The constraints vector must either be NULL or a numeric of the same length as the `param` input vector.")
     }
   }
-  
-  if (is.null(beta0)) {
-    beta0 <- 0
-  }
 
   if (!is.null(fe) && fe %in% clustid) {
     stop(paste("The function argument fe =", fe, "is contained in 

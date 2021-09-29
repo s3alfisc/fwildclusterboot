@@ -238,10 +238,6 @@ boottest.fixest <- function(object,
     }
   }
   
-  if (is.null(beta0)) {
-    beta0 <- 0
-  }
-  
   if (!is.null(fe) && (fe %in% clustid | fe %in% param)) {
     stop(paste("The function argument fe =", fe, "is contained in either a) the 
                clustering variables or b) the parameters involved in the hypothesis test. This is not allowed. Please set fe

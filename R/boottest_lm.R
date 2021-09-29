@@ -221,11 +221,6 @@ boottest.lm <- function(object,
     }
   }
   
-  if (is.null(beta0)) {
-    beta0 <- 0
-  }
-  
-  
   if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
     message(paste("Note: The bootstrap usually performs best when the
                   confidence level (here,", 1 - sign_level, "%) 
