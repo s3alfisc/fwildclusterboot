@@ -13,7 +13,7 @@
   conf_int = NULL,
   seed = NULL,
   R = NULL,
-  beta0 = NULL,
+  beta0 = 0,
   sign_level = NULL,
   type = "rademacher",
   impose_null = TRUE,
