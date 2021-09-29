@@ -20,15 +20,15 @@ felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_im
 
 # equal-tailed
 boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
-                                      p_val_type = "equal-tailed"))
+                                      p_val_type = "two-tailed"))
 boot_fixest <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
-                                         p_val_type = "equal-tailed"))
+                                         p_val_type = "two-tailed"))
 boot_felm <- suppressWarnings(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
-                                       p_val_type = "equal-tailed"))
+                                       p_val_type = "two-tailed"))
 boot_fixest_c <- suppressWarnings(boottest(object = feols_fit_c, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
-                                           p_val_type = "equal-tailed"))
+                                           p_val_type = "two-tailed"))
 boot_felm_c <- suppressWarnings(boottest(object = felm_fit_c, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
-                                         p_val_type = "equal-tailed"))
+                                         p_val_type = "two-tailed"))
 
 # point estimates
 expect_equivalent(boot_lm$point_estimate, boot_fixest$point_estimate, tolerance = 0.1)

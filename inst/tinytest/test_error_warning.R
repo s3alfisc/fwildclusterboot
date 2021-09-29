@@ -329,7 +329,7 @@ expect_error(
     object = lm_fit, 
     clustid =  "group_id1", 
     # guarantees that full enumeration is employed
-    B = 2^z + 1, 
+    B = 2^4 + 1, 
     seed = 1, 
     param = "treatment", 
     type = "mammen",

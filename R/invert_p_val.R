@@ -107,7 +107,7 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
     
       # need to add sign_level
       p_candidate <- p_candidate + sign_level
-      cat(p_candidate, "\n")
+      # cat(p_candidate, "\n")
       
       # smaller than: less "extreme" values -> higher p-values; 
       # -> sign. level will be crossed 

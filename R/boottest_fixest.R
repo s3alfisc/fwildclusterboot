@@ -121,12 +121,19 @@
 #'                   clustid = c("group_id1", "group_id2"),
 #'                   fe = "Q1_immigration")
 #' boot4 <- boottest(feols_fit, 
-#'                   B = 10000, 
+#'                   B = 9999, 
 #'                   param = "treatment", 
 #'                   clustid = c("group_id1", "group_id2"),
 #'                   fe = "Q1_immigration", 
 #'                   sign_level = 0.2, 
 #'                   seed = 8,
+#'                   beta0 = 2)
+#' # test treatment + ideology1 = 2                   
+#' boot5 <- boottest(feols_fit, 
+#'                   B = 9999, 
+#'                   clustid = c("group_id1", "group_id2"),
+#'                   param = c("treatment", "ideology1"),
+#'                   R = c(1, 1), 
 #'                   beta0 = 2)
 #' summary(boot1)
 #' plot(boot1)

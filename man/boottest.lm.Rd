@@ -162,6 +162,13 @@ boot3 <- boottest(lm_fit,
                   sign_level = 0.2,
                   seed = 8,
                   beta0 = 2)
+# test treatment + ideology1 = 2                   
+boot4 <- boottest(lm_fit, 
+                  B = 9999, 
+                  clustid = c("group_id1", "group_id2"),
+                  param = c("treatment", "ideology1"),
+                  R = c(1, 1), 
+                  beta0 = 2)
 summary(boot1)
 plot(boot1)
 }

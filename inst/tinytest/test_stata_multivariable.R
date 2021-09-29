@@ -8,7 +8,7 @@
 # Therefore, these tests are only run locally and not on CRAN. 
 # To get the RStata package to run, see https://github.com/lbraglia/RStata.
 
-run_tests <- TRUE 
+run_tests <- FALSE 
 
 # to execute all tests, 
 # set run_tests <- TRUE & save the file & run 
