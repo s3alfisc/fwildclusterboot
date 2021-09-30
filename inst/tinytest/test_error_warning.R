@@ -176,21 +176,21 @@ expect_error(boottest(object = lm_fit,
                       B = 999, seed = 911, 
                       param = "treatment",
                       conf_int = TRUE, 
-                      p_val_type = ">"))
+                      p_val_type = "equaltail"))
 
 expect_error(boottest(object = feols_fit,
                       clustid =  "group_id1",
                       B = 999, seed = 911, 
                       param = "treatment",
                       conf_int = TRUE, 
-                      p_val_type = ">"))
+                      p_val_type = "equaltail"))
 
 expect_error(boottest(object = felm_fit,
                       clustid =  "group_id1",
                       B = 999, seed = 911, 
                       param = "treatment",
                       conf_int = TRUE, 
-                      p_val_type = ">"))
+                      p_val_type = "equaltail"))
 
 # B = 1000
 expect_message(boottest(object = lm_fit,
