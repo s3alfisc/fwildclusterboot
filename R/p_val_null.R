@@ -62,10 +62,10 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
     p_l <- mean(t[1] < t_boot, na.rm = FALSE)
     p_h <- mean(t[1] > t_boot, na.rm = FALSE)
     p_val <- 2 * min(p_l, p_h, na.rm = FALSE)
-  } else if (p_val_type == "<") {
+  } else if (p_val_type == ">") {
     p_l <- mean(t[1] < t_boot, na.rm = FALSE)
     p_val <- p_l
-  } else if (p_val_type == ">") {
+  } else if (p_val_type == "<") {
     p_h <- mean(t[1] > t_boot, na.rm = FALSE)
     p_val <- p_h
   }

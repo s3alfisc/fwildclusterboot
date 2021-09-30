@@ -77,7 +77,7 @@ the bootstrap dgp or not. Null imposed \code{(WCR)} by default.
 If FALSE, the null is not imposed \code{(WCU)}}
 
 \item{p_val_type}{Character vector of length 1. Type of p-value.
-By default "two-tailed".}
+By default "two-tailed". Other options include "equal-tailed", ">" and "<".}
 
 \item{tol}{Numeric vector of length 1. The desired accuracy
 (convergence tolerance) used in the root finding procedure to find the confidence interval.

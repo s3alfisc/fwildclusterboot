@@ -41,7 +41,7 @@
 #'        the bootstrap dgp or not. Null imposed `(WCR)` by default.
 #'        If FALSE, the null is not imposed `(WCU)`
 #' @param p_val_type Character vector of length 1. Type of p-value. 
-#'        By default "two-tailed".
+#'        By default "two-tailed". Other options include "equal-tailed", ">" and "<".
 #' @param tol Numeric vector of length 1. The desired accuracy 
 #'        (convergence tolerance) used in the root finding procedure to find the confidence interval.
 #'        1e-6 by default.
@@ -198,10 +198,15 @@ boottest.felm <- function(object,
          call. = FALSE)
   }
 
-  if(!(p_val_type %in% c("two-tailed"))){
+  if(!(p_val_type %in% c("two-tailed", "equal-tailed",">", "<"))){
     stop("The function argument p_val_type must be
-         two-tailed.", 
+         'two-tailed', 'equal-tailed','>' or '<'.", 
          call. = FALSE)
+  }
+  
+  if(p_val_type %in% c(">", "<") && conf_int == TRUE){
+    conf_int <- FALSE
+    warning(paste("Currently, boottest() does not calculate confidence intervals for one-sided hypotheses, but this will change in a future release."), call. = FALSE)
   }
   
   if ((conf_int == TRUE || is.null(conf_int)) & B <= 100) {

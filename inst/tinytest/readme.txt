@@ -27,7 +27,7 @@ This suite of tests compares results from `fwildclusterboot::boottest()` with `s
 Comparison with stata via RStata package - currently not run on CRAN / github actions. Reason: stata can't be run on CRAN & github actions.
 - [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_stata.R. This tests checks if `fwildclusterboot::boottest()` produces equivalent results as `stata::boottest` for large B and large N. Note that for rademacher and mammen weights, if full enumeration is used, the resulting p-values from stata and R should be *almost* exactly identical because there is no sampling uncertainty, `r::boottest` tries to mimic (almost) all design choices of `stata::boottest`. All remaining differences should be *numerical errors*.
 - [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_stata_multivariable.R. These tests are equivalent to test_stata.R but check equivalence for multivariable hypotheses of form var1 + var2 = c.
-
+- [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_stata_pvaltype.R. Tests for equivalence of STATA and R results for p-value types "equal-tailed", ">" & "<" (one-sided hypotheses)
 *expected errors & warnings*: 
 Test if `boottest()` thows errors and warnings when expected. 
 - [x] https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_error_warning.R test if the `boottest.felm`, `boottest.fixest` & `boottest.lm` methods produce errors and warnings when expected
