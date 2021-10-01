@@ -104,14 +104,11 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     # are all integer/ numeric variables now characters? 
     j <- !(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("factor"))
     
+    # if at least one j evaluates to "TRUE" 
+    # not covered by test coverage - case should never occur
     if(sum(j) > 0){
       stop(paste("The fixed effects variable(s)", paste(to_char[j], collapse = " & "), "is/are not factor variables.`feols()` changes the types of fixed effects internally, but this is currently not supported in `boottest()`, but will be implemented in the future. To run the bootstrap, you will have to change the type of all fixed effects variables to factor prior to estimation with `feols()`."))
     }
-    # # change fixed effects variables and cluster variables to character
-  
-    # of[,to_char] <- sapply(of[,to_char], as.character)
-    # # sapply(of, class)
-
     N_model <- object$nobs
     model_param_names <- c(names(coef(object)), object$fixef)
   } else if (class(object) == "felm") {
@@ -144,14 +141,6 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     if (!is.null(fe)) {
       formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
     }
-    
-    # if there is no other factor in formula_coef_fe but fe specified, delete intercept
-    
-    # if there is at least one fixed effect, get rid of intercept
-    # note: length(NULL) == 0
-    # if(length(names(object$fe)) >= 1){
-    #   formula_coef_fe <- update(formula_coef_fe, "~. - 1")
-    # }
     
     of$formula <- as.call(formula)
     
@@ -206,16 +195,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     
     of[[1L]] <- quote(stats::model.frame)
     of <- eval(of, parent.frame())
-    # print(of)
-    
-    # # set cluster variables to character
-    # to_char <- cluster
-    # of[,to_char] <- sapply(of[,to_char], as.character)
-    # # sapply(of, class)
-    
-    
-    
-    
+
     N_model <- length(residuals(object))
     model_param_names <- names(coef(object))
     
@@ -281,16 +261,6 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   model_frame <- of
 
   Y <- model.response(model_frame)
-  
-  # check if there are no factor variables in the covariates and fixed effects after deletion of fe variable
-  
-  
-  # no_factor <- sum(sapply(model_frame[, !(names(model_frame) %in% c(cluster, names(Y), fe))], is.factor)) == 0
-  # if(no_factor == TRUE){
-  #   # if there is not a single factor variable in covs and fe's then delete intercept
-  #   formula_coef_fe <- update(formula_coef_fe, "~. -1")
-  # }
-  #
   # X: need to delete clusters
   X <- model.matrix(formula_coef_fe, model_frame)
   
@@ -320,7 +290,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
       levels(fixed_effect_W) <- (1 / table(fixed_effect)) # because duplicate levels are forbidden
     } else if (!is.null(weights)) {
       stop("Currently, boottest() does not jointly support regression weights / WLS and fixed effects. If you want to use
-           boottest() for inference based on WLS, please set fe = NULL.")
+            boottest() for inference based on WLS, please set fe = NULL.")
       # levels(fixed_effect_W) <- 1 / table(fixed_effect)
     }
     
@@ -408,11 +378,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   R0 <- rep(0, length(colnames(X)))
   R0[match(param, colnames(X))] <- R
   names(R0) <- colnames(X)
-  #R0 <- as.numeric(param == colnames(X))
-  # param = c("treatment", "ideology1")
-  #R0 <- rep(0, length(colnames(X)))
-  #R0[match(param, colnames(X))] <- q
-  
+
   res <- list(
     Y = Y,
     X = X,
@@ -432,5 +398,4 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   
   res
   
-  # extract_model_frame.fixest(object, cluster = "group_id2")
 }

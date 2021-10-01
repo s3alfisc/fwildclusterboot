@@ -245,9 +245,9 @@ boottest.felm <- function(object,
     }
   }
 
-  if (!is.null(fe) && fe %in% clustid) {
-    stop(paste("The function argument fe =", fe, "is contained in 
-               the clustering variables. This is not allowed. Please 
+  if (!is.null(fe) && fe %in% c(clustid, param)) {
+    stop(paste("The function argument fe =", fe, "is included in either 
+               the clustering variables or the the hypothesis (via the `param` argument). This is not allowed. Please 
                set fe to another factor variable or NULL."),
       call. = FALSE
     )

@@ -31,14 +31,7 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
   #check_arg(tol)
   #check_arg(maxiter)
   
-  if (sign_level > 1 | sign_level < 0) {
-    stop("Significance level needs to be between 0 and 1.", 
-         call. = FALSE
-    )
-  }
-  
-  
-  
+
   # retain information from input "object"
   ABCD <- object$ABCD
   # note: A, B are matrices, CC, CD and DD are lists
@@ -63,12 +56,12 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
   # The inversion of p-values to obtain confidence sets is handled in 
   # multiple steps: 
   # 
-  # Step 1: find two spots (x1,x2;x3,x4) where p(x) crosses the
+  # - find two spots (x1,x2;x3,x4) where p(x) crosses the
   #         significance level
-  # Step 2: between the two starting values, create an equal spaced grid
+  # - between the two starting values, create an equal spaced grid
   #         of 26 points between the starting values
-  # Step 3: evaluate p(x) at all these points. 
-  # Step 4: from the two spots (upper and lower) where p(x) is closest 
+  # - evaluate p(x) at all these points. 
+  # - from the two spots (upper and lower) where p(x) is closest 
   #         to the significance level, start a root-finding alogorithm 
   #         with tolerance e=1e-06 and maxiter = 10 by default
   # --------------------------------------------------------------------- # 
@@ -136,14 +129,7 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
   # check if root finding was successful: find two confidence interval boundaries 
   # x1 & x2 so that 0 < p(x) < sign_level for x = {x1, x2}
   if(sum(p_start < sign_level) < 2){
-    stop(("The inflation factor for initial guesses for standard errors was not large 
-         enough.
-         In consequence, the root-finding procedure to compute confidence intervals
-         via p-value inversion could not be initiated.\n
-         In a future release, it will be possible to specify a costum inflation factor 
-         as a function argument to boottest().
-         Until then, you can still use boottest() to calculate p-values by setting the
-         boottest() function argument conf_int to FALSE."))
+    stop(("The inflation factor for initial guesses for standard errors was not large enough. In consequence, the root-finding procedure to compute confidence intervalsvia p-value inversion could not be initiated. In a future release, it will be possible to specify a costum inflation factor as a function argument to boottest(). Until then, you can still use boottest() to calculate p-values by setting the boottest() function argument conf_int to FALSE."))
   }
   
   # ---------------------------------------------------------------------------------------------------- # 
@@ -178,23 +164,8 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
 
   # find starting values: max of grid_vals_higher and min of grid_vals_lower
   grid_vals_lower <- grid_vals[which(x_crossings == 1)][1:2]
-  #grid_vals_lower_max <- grid_vals_lower[which.min(abs(grid_vals_lower))]
-  
   grid_vals_higher <- (grid_vals[which(x_crossings == 1)])[3:4]
-  #grid_vals_higher_max <- grid_vals_higher[which.min(abs(grid_vals_higher))]
-  
-  # # error if no proper starting vals found
-  # if (length(grid_vals_higher_max) == 0 || length(grid_vals_lower_max) == 0) {
-  #   stop("
-  #        Technical note: grid_vals_lower or grid_vals higher is logical(0). This means that no 
-  #         starting value x with property |p(x1) < 0.05| has been found for one of the 
-  #         confidence set boundary guesses. As a consequence, the numerical root finding
-  #        will not work.", 
-  #        call. = FALSE
-  #   )
-  # }
-  
-  
+
   # loop over higher and lower starting values
   # optimizer: stats::uniroot (secant method), max 10 iterations & abs tol 1e-6
   res <- lapply(list(grid_vals_lower, grid_vals_higher), function(x) {
