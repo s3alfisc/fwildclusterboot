@@ -21,29 +21,29 @@ lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, da
 lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters_1)
 
 boot1 <- 
-boottest(feols_fit,
+suppressWarnings(boottest(feols_fit,
          clustid = c("Q1_immigration","Q2_defense"),
          B = 9999,
          param = "treatment",
-         bootcluster='min')
+         bootcluster='min'))
 boot2 <- 
-  boottest(feols_fit_2,
+  suppressWarnings(boottest(feols_fit_2,
            clustid = c("Q1_immigration","Q2_defense"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot3 <- 
-  boottest(feols_fit,
+  suppressWarnings(boottest(feols_fit,
            clustid = c("Q1_immigration","Q2_defense"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot4 <- 
-  boottest(feols_fit,
+  suppressWarnings(boottest(feols_fit,
            clustid = c("Q1_immigration","Q2_defense"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 
 expect_equal(boot1$p_val, boot2$p_val)
 expect_equal(boot2$p_val, boot3$p_val)
@@ -68,29 +68,29 @@ lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, da
 lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters_1)
 
 boot1 <- 
-  boottest(feols_fit,
+  suppressWarnings(boottest(feols_fit,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot2 <- 
-  boottest(feols_fit_2,
+  suppressWarnings(boottest(feols_fit_2,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot3 <- 
-  boottest(lfe_fit,
+  suppressWarnings(boottest(lfe_fit,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot4 <- 
-  boottest(lfe_fit_2,
+  suppressWarnings(boottest(lfe_fit_2,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 expect_equal(boot1$p_val, boot2$p_val)
 expect_equal(boot2$p_val, boot3$p_val)
 expect_equal(boot3$p_val, boot4$p_val)
@@ -117,29 +117,29 @@ lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, da
 lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q2_defense, data = voters_1)
 
 boot1 <- 
-  boottest(feols_fit,
+  suppressWarnings(boottest(feols_fit,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot2 <- 
-  boottest(feols_fit_2,
+  suppressWarnings(boottest(feols_fit_2,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot3 <- 
-  boottest(lfe_fit,
+  suppressWarnings(boottest(lfe_fit,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot4 <- 
-  boottest(lfe_fit_2,
+  suppressWarnings(boottest(lfe_fit_2,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 expect_equal(boot1$p_val, boot2$p_val)
 expect_equal(boot2$p_val, boot3$p_val)
 expect_equal(boot3$p_val, boot4$p_val)
@@ -167,29 +167,29 @@ lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q1_immigration
 lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters_1)
 
 boot1 <- 
-  boottest(feols_fit,
+  suppressWarnings(boottest(feols_fit,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot2 <- 
-  boottest(feols_fit_2,
+  suppressWarnings(boottest(feols_fit_2,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot3 <- 
-  boottest(lfe_fit,
+  suppressWarnings(boottest(lfe_fit,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot4 <- 
-  boottest(lfe_fit_2,
+  suppressWarnings(boottest(lfe_fit_2,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 
 expect_equal(boot1$p_val, boot2$p_val)
 expect_equal(boot2$p_val, boot3$p_val)
@@ -218,29 +218,29 @@ lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q1_immigration
 lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters_1)
 
 boot1 <- 
-  boottest(feols_fit,
+  suppressWarnings(boottest(feols_fit,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot2 <- 
-  boottest(feols_fit_2,
+  suppressWarnings(boottest(feols_fit_2,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot3 <- 
-  boottest(lfe_fit,
+  suppressWarnings(boottest(lfe_fit,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot4 <- 
-  boottest(lfe_fit_2,
+  suppressWarnings(boottest(lfe_fit_2,
            clustid = c("Q1_immigration"),
            B = 9999,
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 
 expect_equal(boot1$p_val, boot2$p_val)
 expect_equal(boot2$p_val, boot3$p_val)
@@ -248,7 +248,7 @@ expect_equal(boot3$p_val, boot4$p_val)
 expect_equal(boot4$p_val, boot1$p_val)
 
 
-# Test 4 with fe = ON in boottest()
+# Test 4 with fe = ON in suppressWarnings(boottest()
 
 data(voters)
 
@@ -268,33 +268,33 @@ lfe_fit <- lfe::felm(proposition_vote ~ treatment  + log_income | Q1_immigration
 lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters_1)
 
 boot1 <- 
-  boottest(feols_fit,
+  suppressWarnings(boottest(feols_fit,
            clustid = c("Q1_immigration"),
            B = 9999,
            fe = "Q2_defense",
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot2 <- 
-  boottest(feols_fit_2,
+  suppressWarnings(boottest(feols_fit_2,
            clustid = c("Q1_immigration"),
            B = 9999,
            fe = "Q2_defense",
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot3 <- 
-  boottest(lfe_fit,
+  suppressWarnings(boottest(lfe_fit,
            clustid = c("Q1_immigration"),
            B = 9999,
            fe = "Q2_defense",
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 boot4 <- 
-  boottest(lfe_fit_2,
+  suppressWarnings(boottest(lfe_fit_2,
            clustid = c("Q1_immigration"),
            B = 9999,
            fe = "Q2_defense",
            param = "treatment",
-           bootcluster='min')
+           bootcluster='min'))
 
 expect_equal(boot1$p_val, boot2$p_val)
 expect_equal(boot2$p_val, boot3$p_val)

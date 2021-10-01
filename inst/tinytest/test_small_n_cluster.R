@@ -31,7 +31,7 @@ if(runThisTest){
   # 
   # boot_func <- function(fit, x, y){
   #   B <- 2^x + 1
-  #   suppressWarnings(
+  #   suppressMessages(
   #     boottest(
   #       object = fit, 
   #       clustid =  "group_id1", 
@@ -79,7 +79,7 @@ if(runThisTest){
       lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
                    data = fwildclusterboot:::create_data(N = 100, N_G1 = z, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed))
       
-      boot_lm <-  suppressWarnings(
+      boot_lm <-  suppressMessages(
         boottest(
           object = lm_fit, 
           clustid =  "group_id1", 

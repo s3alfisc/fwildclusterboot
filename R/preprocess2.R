@@ -87,8 +87,6 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     # type character or factor
     #sapply(of, class)
     fixedid <- object$fixef_vars
-    #to_char <- union(fixedid, cluster)
-    to_char <- fixedid
     # are fixed effects neither character nor factor?
     j <- which(!(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("factor")))
     # j <- (sapply(data.frame(of[,c(fixedid)]), class) %in%  c("character", "factor"))
@@ -107,7 +105,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     # if at least one j evaluates to "TRUE" 
     # not covered by test coverage - case should never occur
     if(sum(j) > 0){
-      stop(paste("The fixed effects variable(s)", paste(to_char[j], collapse = " & "), "is/are not factor variables.`feols()` changes the types of fixed effects internally, but this is currently not supported in `boottest()`, but will be implemented in the future. To run the bootstrap, you will have to change the type of all fixed effects variables to factor prior to estimation with `feols()`."))
+      stop(paste("The fixed effects variable(s)", paste(fixedid[j], collapse = " & "), "is/are not factor variables. This should have been fixed internally but apparently wasn't. Please report the bug!"))
     }
     N_model <- object$nobs
     model_param_names <- c(names(coef(object)), object$fixef)
@@ -154,11 +152,6 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     # check if one of the fixed effects or cluster variables is not of 
     # type character or factor
     fixedid <- names(object$fe)
-    #to_char <- union(fixedid, cluster)
-    to_char <- fixedid
-    
-    #to_char <- union(fixedid, cluster)
-    to_char <- fixedid
     # are fixed effects neither character nor factor?
     j <- which(!(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("character", "factor")))
     # if only one fixed effect & if it is not a factor, `of[,c(fixedid)]` is not a data.frame but a vector

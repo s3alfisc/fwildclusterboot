@@ -35,6 +35,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #' @importFrom stats as.formula coef model.matrix model.response model.weights residuals rlnorm rnorm update
   #' @importFrom gtools permutations
   
+
   # 1) preprocess
   # preprocessed_object = preprocess
   
@@ -52,28 +53,13 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   weights <- preprocessed_object$weights
   R <- t(as.matrix(preprocessed_object$R0))
 
-  #q <- dim(R)[1]
-  #if(q != 1){
-  #  stop("currently, hypothesis with q > 1 are not supported.")
-  #}
-  
-  # beta0 <- 0.005
-  if (!is.data.frame(bootcluster)) {
-    stop("bootcluster is not a data.frame. fix this in pre-processing.")
-  }
+  # if (!is.data.frame(bootcluster)) {
+  #   stop("bootcluster is not a data.frame. fix this in pre-processing.")
+  # }
   
   # bootstrap error
   set.seed(seed)
   N_G_bootcluster <- length(unique(bootcluster[[1]]))
-  
-  # tryCatch({v <- wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1))}, 
-  #           error = function(e){stop("Bootstrap weights cannot be allocated due 
-  #                                    to memory limit, implement bigstatsr solution")}
-  # implement all further operations with v via bigstatsr
-  #   -       C <- eigenMapMatMult(as.matrix(K_a), v, nthreads)
-  #   -       D <- eigenMapMatMult(as.matrix(K_b), v, nthreads)
-  #   -       A <- crossprod(numer_a, v)
-  #   -       B <- crossprod(numer_b, v)
   
   # here: enumeration 
   # if type = "rademacher" || type == "mammen" 2^N_G_bootcluster < B then 
@@ -117,288 +103,127 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   # prepare "key" for use with collapse::fsum()
   g <- collapse::GRP(bootcluster[[1]], call = FALSE)
   
-  # new_code <- TRUE
-  # if(new_code){
+  weights_mat <- Matrix::Diagonal(N, weights)           # if no weights - N x N identity matrix
+  weights_sq <- sqrt(weights)                           # sqrt fine because diagonal matrix
+  A <- solve(crossprod(weights_sq * X))                 # k x k
+  XXinv <- solve(crossprod(X))                          # k x k
+  #Px <- X %*% XXinv %*% t(X)                            # N x N projection matrix: dim N x N - computation should be avoided
     
-    weights_mat <- Matrix::Diagonal(N, weights)           # if no weights - N x N identity matrix
-    weights_sq <- sqrt(weights)                           # sqrt fine because diagonal matrix
-    A <- solve(crossprod(weights_sq * X))                 # k x k
-    XXinv <- solve(crossprod(X))                          # k x k
-    #Px <- X %*% XXinv %*% t(X)                            # N x N projection matrix: dim N x N - computation should be avoided
-    
-    if(impose_null == TRUE){
-      Q <- - X %*% XXinv %*% t(R) %*% solve(R %*% XXinv %*% t(R))        # N x 1
-      P <- Y - X %*% (XXinv %*% (t(X) %*% Y)) - Q %*% (R %*% XXinv %*% t(X)) %*% Y
-    } else if(impose_null == FALSE){
-      P <- Y - X %*% (XXinv %*% (t(X) %*% Y)) 
-      Q <- matrix(0, nrow(P), 1)
-    }
+  if(impose_null == TRUE){
+    Q <- - X %*% XXinv %*% t(R) %*% solve(R %*% XXinv %*% t(R))        # N x 1
+    P <- Y - X %*% (XXinv %*% (t(X) %*% Y)) - Q %*% (R %*% XXinv %*% t(X)) %*% Y
+  } else if(impose_null == FALSE){
+    P <- Y - X %*% (XXinv %*% (t(X) %*% Y)) 
+    Q <- matrix(0, nrow(P), 1)
+  }
 
-    # pre-compute objects used in for-loop below: 
-    WXAR <- weights * as.vector(X %*% (A %*% t(R)))             # N x 1
-    WXARX <- WXAR * X                                           # N x k
+  # pre-compute objects used in for-loop below: 
+  WXAR <- weights * as.vector(X %*% (A %*% t(R)))             # N x 1
+  WXARX <- WXAR * X                                           # N x k
+  
+  WXARP <- WXAR * as.vector(P)
+  WXARQ <- WXAR * as.vector(Q)
+  
+  P1 <- collapse::fsum(weights * as.vector(P) * X, g)         # P1 as in notes "Implementation details. Formerly called "SuXa". dim = N_G x k
+  Q1 <- collapse::fsum(weights * as.vector(Q) * X, g)         # Q1 as in notes "Implementation details. Formerly called "SuXa". dim = N_G x k
+  # "crosstab for vectors" via sparse matrices 
+  P2_bootcluster <- Matrix::t(                                        
+    Matrix.utils::aggregate.Matrix(                           # see notes; formerly diag_XinvXXRuS_a   
+      Matrix::Diagonal( 
+        N,
+        as.vector(WXARP)
+      ),
+      bootcluster[[1]]
+    )
+  ) # N x c*
+  Q2_bootcluster <- Matrix::t(                                            # see notes; formerly diag_XinvXXRuS_b   
+    Matrix.utils::aggregate.Matrix(
+      Matrix::Diagonal(
+        N,
+        as.vector(WXARQ)
+      ),
+      bootcluster[[1]]
+    )
+  ) # N x c*
+  
+  # preallocate lists
+  CC <- vector(mode = "list", length = length(N_G))
+  DD <- vector(mode = "list", length = length(N_G))
+  CD <- vector(mode = "list", length = length(N_G))
+  
+  if(is.null(W)){
+    # if there are no fixed effects - term (2) in equ. (62) fast & wild does not arise
+    # note - W refers to W_bar in fast & wild, not regression weights. If no fixed effects
+    # in the model / bootstrap, W is NULL
     
-    WXARP <- WXAR * as.vector(P)
-    WXARQ <- WXAR * as.vector(Q)
+    for (x in names(clustid)) {
+      
+      SXinvXXRX <- collapse::fsum(WXARX, clustid[x])             # c* x f
+      SXinvXXRXA <- SXinvXXRX %*% A                              # part of numerator independent of both bootstrap errors and r   
+      
+      # P2_bootcluster has been collapsed over "bootcluster", now collapse over cluster c
+      P2 <- Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
+      P_all <- P2 - tcrossprod(SXinvXXRXA, P1)                   # formerly _a
+      
+      Q2 <- Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
+      Q_all <- Q2 - tcrossprod(SXinvXXRXA, Q1)
+      
+      C <- eigenMapMatMult(as.matrix(P_all), v, nthreads)             # c* x (B + 1)
+      D <- eigenMapMatMult(as.matrix(Q_all), v, nthreads)             # c* x (B + 1)
+      
+      CC[[x]] <- colSums(C * C)
+      DD[[x]] <- colSums(D * D)
+      CD[[x]] <- colSums(C * D)
     
-    P1 <- collapse::fsum(weights * as.vector(P) * X, g)         # P1 as in notes "Implementation details. Formerly called "SuXa". dim = N_G x k
-    Q1 <- collapse::fsum(weights * as.vector(Q) * X, g)         # Q1 as in notes "Implementation details. Formerly called "SuXa". dim = N_G x k
-    # "crosstab for vectors" via sparse matrices 
-    P2_bootcluster <- Matrix::t(                                        
-      Matrix.utils::aggregate.Matrix(                           # see notes; formerly diag_XinvXXRuS_a   
-        Matrix::Diagonal( 
-          N,
-          as.vector(WXARP)
-        ),
-        bootcluster[[1]]
-      )
-    ) # N x c*
-    Q2_bootcluster <- Matrix::t(                                            # see notes; formerly diag_XinvXXRuS_b   
-      Matrix.utils::aggregate.Matrix(
-        Matrix::Diagonal(
-          N,
-          as.vector(WXARQ)
-        ),
-        bootcluster[[1]]
-      )
-    ) # N x c*
+    }
+  } else if(!is.null(W)){
     
-    # preallocate lists
-    CC <- vector(mode = "list", length = length(N_G))
-    DD <- vector(mode = "list", length = length(N_G))
-    CD <- vector(mode = "list", length = length(N_G))
-    
-    if(is.null(W)){
-      # if there are no fixed effects - term (2) in equ. (62) fast & wild does not arise
-      # note - W refers to W_bar in fast & wild, not regression weights. If no fixed effects
-      # in the model / bootstrap, W is NULL
+      # project out fe
+      Q3_2 <- crosstab(as.matrix(weights * W %*% Q), var1 = bootcluster, var2 = fixed_effect) # f x c*
+      P3_2 <- crosstab(as.matrix(weights * W %*% P), var1 = bootcluster, var2 = fixed_effect) # f x c*
       
       for (x in names(clustid)) {
         
         SXinvXXRX <- collapse::fsum(WXARX, clustid[x])             # c* x f
         SXinvXXRXA <- SXinvXXRX %*% A                              # part of numerator independent of both bootstrap errors and r   
         
-        # P2_bootcluster has been collapsed over "bootcluster", now collapse over cluster c
+        CT_cfe <- crosstab(WXAR, var1 = clustid[x], var2 = fixed_effect) # c x f, formerly S_XinvXXR_F
+        
+        # a
+        P3 <- t(tcrossprod(P3_2, CT_cfe))                       # formerly prod_a
         P2 <- Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
-        P_all <- P2 - tcrossprod(SXinvXXRXA, P1)                   # formerly _a
+        P_all <- P2 - tcrossprod(SXinvXXRXA, P1) - P3
         
+        # b: note that from here, if impose_null = TRUE, _b suffix objects and D, DD, CD need not be computed, they are always objects of 0's only
+        Q3 <- t(tcrossprod(Q3_2, CT_cfe))
         Q2 <- Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
-        Q_all <- Q2 - tcrossprod(SXinvXXRXA, Q1)
-        
-        C <- eigenMapMatMult(as.matrix(P_all), v, nthreads)             # c* x (B + 1)
-        D <- eigenMapMatMult(as.matrix(Q_all), v, nthreads)             # c* x (B + 1)
-        
+        Q_all <- Q2 - tcrossprod(SXinvXXRXA, Q1) - Q3
+        C <- eigenMapMatMult(as.matrix(P_all), v, nthreads)
+        D <- eigenMapMatMult(as.matrix(Q_all), v, nthreads)
+          
         CC[[x]] <- colSums(C * C)
         DD[[x]] <- colSums(D * D)
         CD[[x]] <- colSums(C * D)
-      
-      }
-    } else if(!is.null(W)){
-      
-        # project out fe
-        Q3_2 <- crosstab(as.matrix(weights * W %*% Q), var1 = bootcluster, var2 = fixed_effect) # f x c*
-        P3_2 <- crosstab(as.matrix(weights * W %*% P), var1 = bootcluster, var2 = fixed_effect) # f x c*
-        
-        for (x in names(clustid)) {
-          
-          SXinvXXRX <- collapse::fsum(WXARX, clustid[x])             # c* x f
-          SXinvXXRXA <- SXinvXXRX %*% A                              # part of numerator independent of both bootstrap errors and r   
-          
-          CT_cfe <- crosstab(WXAR, var1 = clustid[x], var2 = fixed_effect) # c x f, formerly S_XinvXXR_F
-          
-          # a
-          P3 <- t(tcrossprod(P3_2, CT_cfe))                       # formerly prod_a
-          P2 <- Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
-          P_all <- P2 - tcrossprod(SXinvXXRXA, P1) - P3
-          
-          # b: note that from here, if impose_null = TRUE, _b suffix objects and D, DD, CD need not be computed, they are always objects of 0's only
-          Q3 <- t(tcrossprod(Q3_2, CT_cfe))
-          Q2 <- Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
-          Q_all <- Q2 - tcrossprod(SXinvXXRXA, Q1) - Q3
-
-          C <- eigenMapMatMult(as.matrix(P_all), v, nthreads)
-          D <- eigenMapMatMult(as.matrix(Q_all), v, nthreads)
-          
-          CC[[x]] <- colSums(C * C)
-          DD[[x]] <- colSums(D * D)
-          CD[[x]] <- colSums(C * D)
-        }
-        
       }
       
-      # calculate numerator:
-      numer_a <- collapse::fsum(as.vector(WXARP), g)
-      numer_b <- collapse::fsum(as.vector(WXARQ), g)
-      # calculate A, B
-      A <- crossprod(as.matrix(numer_a), v)                        # q x (B+1) -> q = 1
-      B <- crossprod(numer_b, v)                                   # q x (B+1) -> q = 1
+    }
+      
+  # calculate numerator:
+  numer_a <- collapse::fsum(as.vector(WXARP), g)
+  numer_b <- collapse::fsum(as.vector(WXARQ), g)
+  # calculate A, B
+  A <- crossprod(as.matrix(numer_a), v)                        # q x (B+1) -> q = 1
+  B <- crossprod(numer_b, v)                                   # q x (B+1) -> q = 1
     
-      p_val_res <- p_val_null2(beta0 = beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, impose_null = impose_null, point_estimate = point_estimate, p_val_type = p_val_type)
-      # collect results from P-val_null2
-      p_val <- p_val_res$p_val
-      t <- p_val_res$t
-      t_boot <- p_val_res$t_boot
-      invalid_t <- p_val_res$delete_invalid_t_total
-      # collect pre-computed A, B, CC, CD, DD - will be needed for p-value inversion
-      ABCD <- list(A = A, B = B, CC = CC, CD = CD, DD = DD)
-  #   } else {
-  #   # impose_null = FALSE
-  #   if (impose_null == TRUE) {
-  #     # Z <- X %*% solve(crossprod(X)) %*% R %*% solve(R %*% solve(crossprod(X)) %*% t(R))
-  #     # K <- Z %*% t(R) solve(crossprod(X)) %*% t(X)
-  #     # P <- 
-  #     #K <- 
-  #     # error under the null hypothesis. note the Xr is only used to pre-compute
-  #     # P and Q
-  #     Xr <- X[, -which(colnames(X) == param)] # delete rows that will be tested
-  #     # note: R0 always a vector of zeros and ones - multiplication with beta0 only later
-  #     # (notation in paper different for R = c(2, 0, 0) if hypothesis e.g. 2 x param1 = c)
-  #     # R != R0
-  #     Xr0 <- X %*% R0
-  #   } else if (impose_null == FALSE) {
-  #     Xr <- X
-  #     Xr0 <- rep(0, N)
-  #     # note: if impose_null, all the parts that end with b contain only 0's
-  #     # hence   - SuXb matrix of c* x k with zeros ...
-  #     #         - P vector of length N with zeros
-  #     #         - XinvXXrP vector of length N with zeros
-  #     #         - diag_XinvXXRuS_b matrix N x c* with only zeros
-  #     #         - K_b, C, D, CD, DD also only contain zeros. Note: CC non-zero
-  #     #         - numer_b contains only zeros, B as well
-  #   }
-  #   
-  #   # Xr is only used here:
-  #   weights_mat <- Matrix::Diagonal(N, weights)
-  #   weights_sq <- sqrt(weights) 
-  #   
-  #   Ar <- solve(crossprod(weights_sq * Xr))
-  #   #Ar <- as.matrix(solve(t(Xr) %*% weights_mat %*% Xr))
-  #   
-  #   Q <- Y - Xr %*% (Ar %*% (t(Xr) %*% weights_mat %*% Y))
-  #   P <- -Xr0 + Xr %*% (Ar %*% (t(Xr) %*% weights_mat %*% Xr0))
-  #   
-  #   # o for "old"
-  #   # all.equal(Qo,P); cbind(Qo, P)
-  #   # cbind(Po, Q)
-  #   
-  #   if (impose_null == FALSE && any(P != 0) == TRUE) {
-  #     stop("P contains non-0 values even though impose_null = FALSE.")
-  #   }
-  #   
-  #   
-  #   A0 <- solve(crossprod(weights_sq * X))
-  #   #A0 <- as.matrix(solve(t(X) %*% weights_mat %*% X))
-  #   WXAr <- weights * as.vector(X %*% (A0 %*% R0))
-  #   WXArX <- WXAr * X
-  #   
-  #   # pre-calculate several objects used in for loop below:
-  #   # splits: a + br
-  #   # SuXa <- collapse::fsum(weights * as.vector(Q) * X, bootcluster[[1]])
-  #   # SuXb <- collapse::fsum(weights * as.vector(P) * X, bootcluster[[1]])
-  #   SuXa <- collapse::fsum(weights * as.vector(Q) * X, g)
-  #   SuXb <- collapse::fsum(weights * as.vector(P) * X, g)
-  #   
-  #   WXArQ <- WXAr * Q
-  #   WXArP <- WXAr * P
-  #   
-  #   # "crosstab for vectors" via sparse matrices
-  #   diag_XinvXXRuS_a <- Matrix::t(
-  #     Matrix.utils::aggregate.Matrix(
-  #       Matrix::Diagonal(
-  #         N,
-  #         as.vector(WXArQ)
-  #       ),
-  #       bootcluster[[1]]
-  #     )
-  #   ) # N x c*
-  #   
-  #   diag_XinvXXRuS_b <- Matrix::t(
-  #     Matrix.utils::aggregate.Matrix(
-  #       Matrix::Diagonal(
-  #         N,
-  #         as.vector(WXArP)
-  #       ),
-  #       bootcluster[[1]]
-  #     )
-  #   ) # N x c*
-  #   
-  #   # preallocate lists
-  #   CC <- vector(mode = "list", length = length(N_G))
-  #   DD <- vector(mode = "list", length = length(N_G))
-  #   CD <- vector(mode = "list", length = length(N_G))
-  #   
-  #   if (is.null(W)) {
-  #     # if there are no fixed effects - term (2) in equ. (62) fast & wild does not arise
-  #     # note - W refers to W_bar in fast & wild, not regression weights. If no fixed effects
-  #     # in the model / bootstrap, W is NULL
-  #     for (x in names(clustid)) {
-  #       SXinvXXrX <- collapse::fsum(WXArX, clustid[x]) # c* x f
-  #       SXinvXXrX_invXX <- SXinvXXrX %*% A0
-  #       # a
-  #       S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
-  #       K_a <- S_diag_XinvXXRu_S_a - tcrossprod(SXinvXXrX_invXX, SuXa)
-  #       # b: note that from here, if impose_null = TRUE, _b suffix objects and D, DD, CD need not be computed, they are always objects of 0's only
-  #       S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
-  #       K_b <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX, SuXb)
-  #       
-  #       C <- eigenMapMatMult(as.matrix(K_a), v, nthreads)
-  #       D <- eigenMapMatMult(as.matrix(K_b), v, nthreads)
-  #       
-  #       
-  #       CC[[x]] <- colSums(C * C)
-  #       DD[[x]] <- colSums(D * D)
-  #       CD[[x]] <- colSums(C * D)
-  #       
-  #     }
-  #   }
-  #   } else if (!is.null(W)) {
-  #     # project out fe
-  #     S_Wu_F_a <- crosstab(as.matrix(weights * W %*% Q), var1 = bootcluster, var2 = fixed_effect) # f x c*
-  #     S_Wu_F_b <- crosstab(as.matrix(weights * W %*% P), var1 = bootcluster, var2 = fixed_effect) # f x c*
-  #     
-  #     for (x in names(clustid)) {
-  #       SXinvXXrX <- collapse::fsum(WXArX, clustid[x]) # c* x f
-  #       SXinvXXrX_invXX <- SXinvXXrX %*% A0
-  #       S_XinvXXR_F <- crosstab(WXAr, var1 = clustid[x], var2 = fixed_effect) # c x f
-  #       # a
-  #       prod_a <- t(tcrossprod(S_Wu_F_a, S_XinvXXR_F))
-  #       S_diag_XinvXXRu_S_a <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_a, clustid[x]) # c* x c
-  #       S_diag_XinvXXRu_S_a <- S_diag_XinvXXRu_S_a - prod_a
-  #       K_a <- S_diag_XinvXXRu_S_a - tcrossprod(SXinvXXrX_invXX, SuXa)
-  #       # b: note that from here, if impose_null = TRUE, _b suffix objects and D, DD, CD need not be computed, they are always objects of 0's only
-  #       prod_b <- t(tcrossprod(S_Wu_F_b, S_XinvXXR_F))
-  #       S_diag_XinvXXRu_S_b <- Matrix.utils::aggregate.Matrix(diag_XinvXXRuS_b, clustid[x])
-  #       S_diag_XinvXXRu_S_b <- S_diag_XinvXXRu_S_b - prod_b
-  #       K_b <- S_diag_XinvXXRu_S_b - tcrossprod(SXinvXXrX_invXX, SuXb)
-  #       
-  #       C <- eigenMapMatMult(as.matrix(K_a), v, nthreads)
-  #       D <- eigenMapMatMult(as.matrix(K_b), v, nthreads)
-  #       
-  #       CC[[x]] <- colSums(C * C)
-  #       DD[[x]] <- colSums(D * D)
-  #       CD[[x]] <- colSums(C * D)
-  #     }
-  #   }
-  #   
-  #   # calculate numerator:
-  #   numer_a <- collapse::fsum(as.vector(WXArQ), g)
-  #   numer_b <- collapse::fsum(as.vector(WXArP), g)
-  #   # calculate A, B
-  #   A <- crossprod(as.matrix(numer_a), v)
-  #   B <- crossprod(numer_b, v)
-  #   
-  #   
-  #   # calculate p-val based on A, B, CC, CD, DD
-  #   p_val_res <- p_val_null2(beta0 = beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, impose_null = impose_null, point_estimate = point_estimate, p_val_type = p_val_type)
-  #   # collect results from P-val_null2
-  #   p_val <- p_val_res$p_val
-  #   t <- p_val_res$t
-  #   t_boot <- p_val_res$t_boot
-  #   invalid_t <- p_val_res$delete_invalid_t_total
-  #   # collect pre-computed A, B, CC, CD, DD - will be needed for p-value inversion
-  #   ABCD <- list(A = A, B = B, CC = CC, CD = CD, DD = DD) 
-  # }
-  
+  p_val_res <- p_val_null2(beta0 = beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, impose_null = impose_null, point_estimate = point_estimate, p_val_type = p_val_type)
+  # collect results from P-val_null2
+  p_val <- p_val_res$p_val
+  t <- p_val_res$t
+  t_boot <- p_val_res$t_boot
+  invalid_t <- p_val_res$delete_invalid_t_total
+  # collect pre-computed A, B, CC, CD, DD - will be needed for p-value inversion
+  ABCD <- list(A = A, B = B, CC = CC, CD = CD, DD = DD)
+ 
   res <- list(
     p_val = p_val,
     t_stat = t[1],
