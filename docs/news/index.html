@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
       </span>
     </div>
 
@@ -117,6 +117,26 @@
       <small>Source: <a href='https://github.com/s3alfisc/fwildclusterboot/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fwilclusterboot-04" class="section level1">
+<h1 class="page-header" data-toc-text="0.4">
+<a href="#fwilclusterboot-04" class="anchor"></a>fwilclusterboot 0.4<small> Unreleased </small>
+</h1>
+<ul>
+<li>New feature I: <code><a href="../reference/boottest.html">boottest()</a></code> now allows for univariate tests that involve multiple variables. E.g. one can now test hypothesis as ´var1 + var2 = c´ where c is a scalar. More details on the syntax can be found in the vignette. All methods of for objects of class <code>boottest</code> have been updated.</li>
+<li>New feature II: <code><a href="../reference/boottest.html">boottest()</a></code> now also supports “equal-tailed” p-values and one-sided hypotheses. For one-sided tests, confidence intervals are currently not supported.</li>
+<li>Internal changes: To allow for multivariable tests, the <code><a href="../reference/boot_algo2.html">boot_algo2()</a></code> function has slightly been modified. <code>invert_p_val2()</code> is superseded by <code>invert_p_val()</code>.</li>
+<li>Further, a CRAN error is fixed - some tests for exact equality failed with relative difference e-05 on openBLAS. In consequence, all exact tests are set to reltol = 1e-04.</li>
+</ul>
+</div>
+    <div id="fwildclusterboot-037" class="section level1">
+<h1 class="page-header" data-toc-text="0.3.7">
+<a href="#fwildclusterboot-037" class="anchor"></a>fwildclusterboot 0.3.7<small> 2021-09-14 </small>
+</h1>
+<ul>
+<li>Bug fix: the output of <code><a href="../reference/boottest.html">boottest()</a></code> varied depending on the class of the input fixed effects for regressions both via <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">lfe::felm()</a></code> and <code><a href="https://lrberge.github.io/fixest/reference/feols.html">fixest::feols()</a></code>. This bug occurred because <code><a href="../reference/boottest.html">boottest()</a></code> does not work with a pre-processed model.frame object from either <code>felm()</code> or <code>feols()</code> but works with the original input data. While both <code>felm()</code> and <code>feols()</code> change non-factor fixed effects variables to factors internally, <code><a href="../reference/boottest.html">boottest()</a></code> did not check but implicitely assumed that all fixed effects used in the regression models are indeed factors in the original data set. As a consequence, if one or more fixed effects were e.g. numeric, <code><a href="../reference/boottest.html">boottest()</a></code> would produce incorrect results without throwing an error. With version 0.3.7, <code><a href="../reference/boottest.html">boottest()</a></code> checks internally if all variables in the original data set which are used as fixed effects are factor variables and if not, changes them to factors. Thanks for timotheedotc for raising the issue on github, which can be found here: <a href="https://github.com/s3alfisc/fwildclusterboot/issues/14" class="uri">https://github.com/s3alfisc/fwildclusterboot/issues/14</a>.</li>
+<li>Some tests have been added that compare output from <code><a href="../reference/boottest.html">boottest()</a></code> with the wild cluster bootstrap implemented via <code>clusterSEs</code>.</li>
+</ul>
+</div>
     <div id="fwildclusterboot-036" class="section level1">
 <h1 class="page-header" data-toc-text="0.3.6">
 <a href="#fwildclusterboot-036" class="anchor"></a>fwildclusterboot 0.3.6<small> 2021-08-01 </small>

@@ -1,3 +1,9 @@
+## Version 0.4 re-submission 
+
+The openBLAS error on CRAN has been fixed (point for in version 0.4 submission.
+Some tests for exact equality failed with relative difference e-05 on openBLAS. In consequence, all exact tests are set to reltol = 1e-04. This should fix all CRAN errors.
+
+
 ## Version 0.4 submission 
 
 + New feature I: `boottest()` now allows for univariate tests that involve multiple 
@@ -5,7 +11,7 @@
   objects of class `boottest` have been updated.
 + New feature II: `boottest()` now also supports "equal-tailed" p-values and one-sided hypotheses. For one-sided tests, confidence intervals are currently not supported. 
 + Internal changes: To allow for multivariable tests, the `boot_algo2()` function has slightly been modified. `invert_p_val2()` is superseded by `invert_p_val()`. 
-+ Further, a CRAN error is fixed - some tests for exact equality failed with relative difference e-05 on openBLAS. In consequence, all exact tests are set to reltol = 1e-04. 
++ Further, a CRAN error is fixed - some tests for exact equality failed with relative difference e-05 on openBLAS. In consequence, all exact tests are set to reltol = 1e-04. This should fix all CRAN errors.
 
 ## Version 0.3.7 submission
 
