@@ -1,3 +1,17 @@
+## Version 0.4 submission 
+
++ New feature I: `boottest()` now allows for univariate tests that involve multiple 
+  variables. E.g. one can now test hypothesis as ´var1 + var2 = c´ where c is a scalar. More details on the syntax can be found in the vignette. All methods of for 
+  objects of class `boottest` have been updated.
++ New feature II: `boottest()` now also supports "equal-tailed" p-values and one-sided hypotheses. For one-sided tests, confidence intervals are currently not supported. 
++ Internal changes: To allow for multivariable tests, the `boot_algo2()` function has slightly been modified. `invert_p_val2()` is superseded by `invert_p_val()`. 
++ Further, a CRAN error is fixed - some tests for exact equality failed with relative difference e-05 on openBLAS. In consequence, all exact tests are set to reltol = 1e-04. 
+
+## Version 0.3.7 submission
+
++ fixes bug, see https://github.com/s3alfisc/fwildclusterboot/issues/14 
++ tested on R win-devel, github actions (windows, mac, ubuntu)
+
 ## Version 0.3.6 submission, Resubmission 2
 
 + Another error due to "noSuggests" / vignette - package fixest was used, but not loaded

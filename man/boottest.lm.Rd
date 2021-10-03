@@ -98,7 +98,6 @@ to use. The default is to use 1 core.}
 An object of class \code{boottest}
 
 \item{p_val}{The bootstrap p-value.}
-\item{t_stat}{The regression t-statistic of interest, recalculated in the bootstrap.}
 \item{conf_int}{The bootstrap confidence interval.}
 \item{param}{The tested parameter.}
 \item{N}{Sample size. Might differ from the regression sample size if the
@@ -108,10 +107,10 @@ cluster variables contain NA values.}
 \item{N_G}{Dimension of the cluster variables as used in boottest.}
 \item{sign_level}{Significance level used in boottest.}
 \item{type}{Distribution of the bootstrap weights.}
-\item{p_test_vals}{All p-values calculated while calculating the confidence
-interval.}
+\item{t_stat}{The original test statistics - either imposing the null or not - with small sample correction \code{G / (G-1)}.}
 \item{test_vals}{All t-statistics calculated while calculating the
 confidence interval.}
+\item{t_boot}{All bootstrap t-statistics.}
 \item{regression}{The regression object used in boottest.}
 \item{call}{Function call of boottest.}
 }

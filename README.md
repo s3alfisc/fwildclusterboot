@@ -66,14 +66,15 @@ summary(feols_boot)
 #> boottest.fixest(object = feols_fit, clustid = c("group_id1"), 
 #>     param = "treatment", B = 9999)
 #>  
+#>  Hypothesis: 1*treatment = 0
 #>  Observations: 300
 #>   Bootstr. Type: rademacher
 #>  Clustering: 1-way
 #>  Confidence Sets: 95%
 #>  Number of Clusters: 40
 #> 
-#>        term estimate statistic p.value conf.low conf.high
-#> 1 treatment    0.079     4.123       0    0.039     0.118
+#>              term estimate statistic p.value conf.low conf.high
+#> 1 1*treatment = 0    0.079     4.123       0    0.039     0.118
 ```
 
 For a longer introduction to the package’s key function, `boottest()`,
@@ -87,6 +88,10 @@ Results of timing benchmarks of `boottest()`, with a sample of N =
 iterations each).
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+
+For a small number of clusters, `fwildclusterboot` is in generally
+faster than implementations of the wild cluster bootstrap in the
+`sandwich` and `clusterSEs` packages.
 
 <!-- ![Benchmark](man/figures/bench_ggplot.png) -->
 

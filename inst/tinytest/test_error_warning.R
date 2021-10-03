@@ -418,6 +418,7 @@ expect_error(boottest(object = feols_fit_c, clustid = c("Q1_immigration"), B = 9
 expect_error(boottest(object = felm_fit_c, clustid =  "Q1_immigration", B = 999, seed = 911, param = c("Q1_immigration"), R = 1, conf_int = TRUE))
 
 
+# test for p-val type & conf_int == TRUE (tba)
 
 
 
