@@ -2,7 +2,8 @@
 #' 
 #' `boottest.lm` is a S3 method that allows for fast wild cluster 
 #' bootstrap inference for objects of class lm by  implementing
-#' the fast wild bootstrap algorithm developed in Roodman et al., 2019.
+#' the fast wild bootstrap algorithm developed in Roodman et al., 2019 & 
+#' which is implemented in the `boottest` STATA package. 
 #' 
 #' @param object An object of class lm
 #' @param clustid A character vector containing the names of the cluster variables
@@ -62,7 +63,6 @@
 #' @return An object of class \code{boottest}
 #' 
 #' \item{p_val}{The bootstrap p-value.}
-#' \item{t_stat}{The regression t-statistic of interest, recalculated in the bootstrap.}
 #' \item{conf_int}{The bootstrap confidence interval.}
 #' \item{param}{The tested parameter.}
 #' \item{N}{Sample size. Might differ from the regression sample size if the 
@@ -72,10 +72,10 @@
 #' \item{N_G}{Dimension of the cluster variables as used in boottest.}
 #' \item{sign_level}{Significance level used in boottest.}
 #' \item{type}{Distribution of the bootstrap weights.}
-#' \item{p_test_vals}{All p-values calculated while calculating the confidence
-#'       interval.}
-#' \item{test_vals}{All t-statistics calculated while calculating the
+#' \item{t_stat}{The original test statistics - either imposing the null or not - with small sample correction `G / (G-1)`.}
+#' \item{test_vals}{All t-statistics calculated while calculating the 
 #'       confidence interval.}
+#'  \item{t_boot}{All bootstrap t-statistics.}     
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
 #' 
@@ -98,8 +98,12 @@
 #' @section Standard Errors:
 #' \code{boottest} does not calculate standard errors.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in 
-#'             STATA using boottest", The STATA Journal. 
+#'             STATA using boottest", The STATA Journal.
 #'             (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+#' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller. "Bootstrap-based improvements for inference with clustered errors." The Review of Economics and Statistics 90.3 (2008): 414-427.
+#' @references MacKinnon, James G., and Matthew D. Webb. "The wild bootstrap for few (treated) clusters." The Econometrics Journal 21.2 (2018): 114-135.
+#' @references MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite economique 91.1-2 (2015): 11-33.             
+#' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
 #' library(fwildclusterboot)
 #' data(voters)
@@ -342,6 +346,7 @@ boottest.lm <- function(object,
     p_test_vals = res_p_val$p_grid_vals,
     test_vals = res_p_val$grid_vals,
     t_stat = res$t_stat,
+    t_boot = res$t_boot,
     regression = res$object,
     param = param,
     N = preprocess$N,
