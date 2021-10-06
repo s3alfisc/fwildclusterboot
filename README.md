@@ -97,12 +97,16 @@ faster than implementations of the wild cluster bootstrap in the
 
 ### Installation
 
-You can install `fwildclusterboot` from CRAN or the development version
-from github by following the steps below:
+You can install compiled versions of`fwildclusterboot` from CRAN and the
+development version from R-universe (compiled) or github by following
+one of the steps below:
 
 ``` r
 # from CRAN 
 install.packages("fwildclusterboot")
+
+# from r-universe (windows & mac, compiled R > 4.0 required)
+install.packages('fwildclusterboot', repos ='https://s3alfisc.r-universe.dev')
 
 # dev version from github
 # note: installation requires Rtools
