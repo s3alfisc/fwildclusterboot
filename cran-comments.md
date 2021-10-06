@@ -1,3 +1,64 @@
+## Version 0.4 first submission - re-submission 
+
+Apparently, I did not fix the openBLAS error appropriately.
+The test tolerance level has again been reduced, from 1e-04 to 1e-02. The relative test difference found in the openBLAS tests is 0.003568575, so the test should now pass. If this does not fix the issue, I will remote all tests in test_type from CRAN.
+
+The error stated 
+"
+test_type.R...................  139 tests 1 fails
+   test_type.R...................  140 tests 2 fails
+   test_type.R...................  140 tests 2 fails
+   test_type.R...................  140 tests 2 fails
+   test_type.R...................  140 tests 2 fails
+   test_type.R...................  140 tests 2 fails
+   test_type.R...................  140 tests 2 fails
+   test_type.R...................  141 tests 2 fails
+   test_type.R...................  142 tests 2 fails
+   test_type.R...................  143 tests 2 fails
+   test_type.R...................  144 tests 2 fails
+   test_type.R...................  145 tests 2 fails
+   test_type.R...................  146 tests 2 fails
+   test_type.R...................  147 tests 2 fails
+   test_type.R...................  148 tests 2 fails
+   test_type.R...................  149 tests 2 fails
+   test_type.R...................  150 tests 2 fails
+   test_type.R...................  151 tests 2 fails
+   test_type.R...................  152 tests 2 fails
+   test_type.R...................  153 tests 2 fails
+   test_type.R...................  154 tests 2 fails
+   test_type.R...................  155 tests 2 fails
+   test_type.R...................  156 tests 2 fails
+   test_type.R...................  157 tests 2 fails
+   test_type.R...................  158 tests 2 fails
+   test_type.R...................  159 tests 2 fails
+   test_type.R...................  160 tests 2 fails 4.6s
+   ----- FAILED[data]: test_type.R<345--345>
+    call| expect_equivalent(boot_fixest_c$conf_int, boot_felm_c$conf_int,
+    call| -->    tol = 1e-04)
+    diff| Mean relative difference: 0.003568575
+   ----- FAILED[data]: test_type.R<346--346>
+    call| expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tol
+= 1e-04)
+    diff| Mean relative difference: 0.00357477
+   Error: 2 out of 868 tests failed
+   In addition: Warning messages:
+   1: There are only 1024 unique draws from the rademacher distribution
+for 10 clusters. Therefore, B =  1024  with full enumeration. Consider
+using webb weights instead.
+   2: Further, note that under full enumeration and with B = 1024
+bootstrap draws, only 2^(#clusters - 1) =  512  distinct t-statistics
+and p-values can be computed. For a more thorough discussion, see Webb
+`Reworking wild bootstrap based inference for clustered errors` (2013).
+   3: There are only 1024 unique draws from the rademacher distribution
+for 10 clusters. Therefore, B =  1024  with full enumeration. Consider
+using webb weights instead.
+   4: Further, note that under full enumeration and with B = 1024
+bootstrap draws, only 2^(#clusters - 1) =  512  distinct t-statistics
+and p-values can be computed. For a more thorough discussion, see Webb
+`Reworking wild bootstrap based inference for clustered errors` (2013).
+   Execution halted
+"
+
 ## Version 0.4 re-submission 
 
 The openBLAS error on CRAN has been fixed (point for in version 0.4 submission.
