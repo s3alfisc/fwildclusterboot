@@ -26,7 +26,7 @@ It implements the "fast" wild cluster bootstrap algorithm developed in Roodman e
 A description of the algorithm is beyond the scope of this vignette. It is very clearly presented in [Roodman et al. (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm).
 For technical details of the implementation in `fwildclusterboot`, have a look at the `technical vignette` (tba).
 
-For linear regression models, `fwildclusterboot` supports almost all features of `boottest`. This means that a set of different bootstrap distributions, regression weights, fixed effects, and both restricted (WCR) and unrestricted (WCU) boostrap inference are supported. The main difference is that it currently only supports univariate hypothesis tests of regression paramters of the form $H_{0}: R\beta = R$ vs $H_{1}: R\beta \neq r$, where r is scalar.
+For linear regression models, `fwildclusterboot` supports almost all features of `boottest`. This means that a set of different bootstrap distributions, regression weights, fixed effects, and both restricted (WCR) and unrestricted (WCU) boostrap inference are supported. The main difference is that it currently only supports univariate hypothesis tests of regression paramters of the form $H_{0}: R\beta = r$ vs $H_{1}: R\beta \neq r$, where r is scalar.
 
 In contrast to `boottest`, `fwildclusterboot` does not support methods for instrumental variable estimation and the score bootstrap for non-linear models.
 
