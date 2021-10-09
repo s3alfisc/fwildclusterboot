@@ -43,7 +43,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
       </span>
     </div>
 
@@ -119,14 +119,15 @@
 <span class="co">#&gt; boottest.fixest(object = feols_fit, clustid = c("group_id1"), </span>
 <span class="co">#&gt;     param = "treatment", B = 9999)</span>
 <span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
 <span class="co">#&gt;  Observations: 300</span>
 <span class="co">#&gt;   Bootstr. Type: rademacher</span>
 <span class="co">#&gt;  Clustering: 1-way</span>
 <span class="co">#&gt;  Confidence Sets: 95%</span>
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;        term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 treatment    0.079     4.123       0    0.039     0.118</span></code></pre></div>
+<span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
+<span class="co">#&gt; 1 1*treatment = 0    0.079     4.123       0    0.039     0.118</span></code></pre></div>
 <p>For a longer introduction to the package’s key function, <code><a href="reference/boottest.html">boottest()</a></code>, please follow this <a href="https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html">link</a>.</p>
 </div>
 <div id="benchmarks" class="section level3">
@@ -134,15 +135,19 @@
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h3>
 <p>Results of timing benchmarks of <code><a href="reference/boottest.html">boottest()</a></code>, with a sample of N = 50000, k = 19 covariates and one cluster of dimension N_G (10 iterations each).</p>
 <p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%"></p>
+<p>For a small number of clusters, <code>fwildclusterboot</code> is in generally faster than implementations of the wild cluster bootstrap in the <code>sandwich</code> and <code>clusterSEs</code> packages.</p>
 <!-- ![Benchmark](man/figures/bench_ggplot.png) -->
 </div>
 <div id="installation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h3>
-<p>You can install <code>fwildclusterboot</code> from CRAN or the development version from github by following the steps below:</p>
+<p>You can install compiled versions of<code>fwildclusterboot</code> from CRAN and the development version from R-universe (compiled) or github by following one of the steps below:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># from CRAN </span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"fwildclusterboot"</span><span class="op">)</span>
+
+<span class="co"># from r-universe (windows &amp; mac, compiled R &gt; 4.0 required)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'fwildclusterboot'</span>, repos <span class="op">=</span><span class="st">'https://s3alfisc.r-universe.dev'</span><span class="op">)</span>
 
 <span class="co"># dev version from github</span>
 <span class="co"># note: installation requires Rtools</span>

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
       </span>
     </div>
 
@@ -89,8 +89,8 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></code></pre></div>
 <p>The <code>fwildclusterboot</code> package is an R port of STATA’s <a href="https://github.com/droodman/boottest">boottest</a> package.</p>
 <p>It implements the “fast” wild cluster bootstrap algorithm developed in Roodman et al (2019) for regression objects in R. The “fast” algorithm makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples - as long as the number of bootstrapping clusters is not too large.</p>
-<p>A description of the algorithm is beyond the scope of this vignette. It is very clearly presented in <a href="https://econpapers.repec.org/paper/qedwpaper/1406.htm">Roodman et al. (2019)</a>. For technical details of the implementation in <code>fwildclusterboot</code>, have a look at the <code>technical vignette</code>.</p>
-<p>For linear regression models, <code>fwildclusterboot</code> supports almost all features of <code>boottest</code>. This means that a set of different bootstrap distributions, regression weights, fixed effects, and both restricted (WCR) and unrestricted (WCU) boostrap inference are supported. The main difference is that it currently only supports univariate hypothesis tests of regression paramters of the form <span class="math inline">\(H_{0}: \beta_{k} = \beta_{k}^{0}\)</span> vs <span class="math inline">\(H_{1}: \beta_{k} \neq \beta_{k}^{0}\)</span>.</p>
+<p>A description of the algorithm is beyond the scope of this vignette. It is very clearly presented in <a href="https://econpapers.repec.org/paper/qedwpaper/1406.htm">Roodman et al. (2019)</a>. For technical details of the implementation in <code>fwildclusterboot</code>, have a look at the <code>technical vignette</code> (tba).</p>
+<p>For linear regression models, <code>fwildclusterboot</code> supports almost all features of <code>boottest</code>. This means that a set of different bootstrap distributions, regression weights, fixed effects, and both restricted (WCR) and unrestricted (WCU) boostrap inference are supported. The main difference is that it currently only supports univariate hypothesis tests of regression paramters of the form <span class="math inline">\(H_{0}: R\beta = R\)</span> vs <span class="math inline">\(H_{1}: R\beta \neq r\)</span>, where r is scalar.</p>
 <p>In contrast to <code>boottest</code>, <code>fwildclusterboot</code> does not support methods for instrumental variable estimation and the score bootstrap for non-linear models.</p>
 <div id="the-boottest-function" class="section level1">
 <h1 class="hasAnchor">
@@ -122,13 +122,17 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#names(coef(lm_fit_interact))</span>
 <span class="va">boot_lm_interact</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit_interact</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="st">"log_income:Q1_immigration1"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></code></pre></div>
-<p>To access the estimation results, <code><a href="../reference/boottest.html">boottest()</a></code> comes with <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, <code>tidy()</code> and <code>glance()</code> methods. The <code>tidy()</code> method returns the estimation results in a data.frame. <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> returns additional information on top of the test statistics reported by <code>tidy()</code>. The<code>glance()</code> method enables the use of output formatting tools from the <code>modelsummary</code> package.</p>
+<p><code><a href="../reference/boottest.html">boottest()</a></code> further allows for multivariable tests. Suppose we’re interested in testing the null hypothesis <span class="math inline">\(0.6*treatment + 0.2*ideology1 = 0.02\)</span>. To test such a hypothesis, one would have to specify the hypothesis via the <code>param</code>, <code>R</code> and <code>beta0</code> arguments:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">boot_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"treatment"</span>, <span class="st">"ideology1"</span><span class="op">)</span>, R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.2</span><span class="op">)</span>, beta0 <span class="op">=</span> <span class="fl">0.02</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></code></pre></div>
+<p>To access the estimation results, <code><a href="../reference/boottest.html">boottest()</a></code> comes with <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>, <code>tidy()</code> and <code>glance()</code> methods. The <code>tidy()</code> method returns the estimation results in a data.frame. <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> returns additional information on top of the test statistics reported by <code>tidy()</code>. The<code>glance()</code> method enables the use of output formatting tools from the <code>modelsummary</code> package.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># fwildclusterboot's internal summary() method</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
 <span class="co">#&gt; boottest.lm(object = lm_fit, clustid = "group_id1", param = "treatment", </span>
 <span class="co">#&gt;     B = 9999)</span>
 <span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
 <span class="co">#&gt;  Observations: 300</span>
 <span class="co">#&gt;  Bootstr. Iter: 9999</span>
 <span class="co">#&gt;  Bootstr. Type: rademacher</span>
@@ -136,8 +140,24 @@
 <span class="co">#&gt;  Confidence Sets: 95%</span>
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;        term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 treatment    0.073     3.786   0.001    0.033     0.112</span>
+<span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
+<span class="co">#&gt; 1 1*treatment = 0    0.073     3.786   0.001    0.033     0.112</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_multi</span><span class="op">)</span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, clustid = "group_id1", param = c("treatment", </span>
+<span class="co">#&gt;     "ideology1"), B = 9999, R = c(0.6, 0.2), beta0 = 0.02)</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 0.6*treatment+0.2*ideology1 = 0.02</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;  Bootstr. Iter: 9999</span>
+<span class="co">#&gt;  Bootstr. Type: rademacher</span>
+<span class="co">#&gt;  Clustering: 1-way</span>
+<span class="co">#&gt;  Confidence Sets: 95%</span>
+<span class="co">#&gt;  Number of Clusters: 40</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;                                 term estimate statistic p.value conf.low</span>
+<span class="co">#&gt; 1 0.6*treatment+0.2*ideology1 = 0.02    0.048     2.395   0.023    0.024</span>
+<span class="co">#&gt;   conf.high</span>
+<span class="co">#&gt; 1     0.072</span>
 
 <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"modelsummary"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
   <span class="co"># summary via the modelsummary package</span>
@@ -161,7 +181,7 @@ Model 2
 <tbody>
 <tr>
 <td style="text-align:left;">
-treatment
+1*treatment = 0
 </td>
 <td style="text-align:center;">
 0.073 (0.001)
@@ -180,7 +200,7 @@ treatment
 </tr>
 <tr>
 <td style="text-align:left;">
-log_income × Q1_immigration1
+1*log_income × Q1_immigration1 = 0
 </td>
 <td style="text-align:center;">
 </td>
@@ -266,20 +286,21 @@ Log.Lik.
 </tbody>
 </table>
 <p>A <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> method allows the user to inspect the bootstrap t-statistics:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span></code></pre></div>
-<p><img src="fwildclusterboot_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="fwildclusterboot_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <!-- A note on the output in `tidy()` and `summary()`: -->
 <div id="multiway-clustering" class="section level2">
 <h2 class="hasAnchor">
 <a href="#multiway-clustering" class="anchor"></a>Multiway Clustering</h2>
 <p>The <code><a href="../reference/boottest.html">boottest()</a></code> function supports clustering of any dimension. E.g. for two-way clustering, one simply needs to specify the names of the cluster variables in a character vector.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span>
 <span class="co">#&gt; boottest.lm(object = lm_fit, clustid = c("group_id1", "group_id2"), </span>
 <span class="co">#&gt;     param = "treatment", B = 9999)</span>
 <span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
 <span class="co">#&gt;  Observations: 300</span>
 <span class="co">#&gt;  Bootstr. Iter: 9999</span>
 <span class="co">#&gt;  Bootstr. Type: rademacher</span>
@@ -287,14 +308,14 @@ Log.Lik.
 <span class="co">#&gt;  Confidence Sets: 95%</span>
 <span class="co">#&gt;  Number of Clusters: 40 20 251</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;        term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 treatment    0.073     3.925   0.005     0.03     0.116</span></code></pre></div>
+<span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
+<span class="co">#&gt; 1 1*treatment = 0    0.073     3.925   0.005     0.03     0.116</span></code></pre></div>
 </div>
 <div id="choice-of-bootstrap-weights" class="section level2">
 <h2 class="hasAnchor">
 <a href="#choice-of-bootstrap-weights" class="anchor"></a>Choice of Bootstrap Weights</h2>
 <p>Furthermore, the user can choose among four different weighting distribution via the <code>type</code> argument: Rademacher, Mammen, Normal and Webb. By default, <code><a href="../reference/boottest.html">boottest()</a></code> uses the Rademacher distribution.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">boot_lm_rade</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, 
                     param <span class="op">=</span> <span class="st">"treatment"</span>, 
@@ -326,7 +347,7 @@ Model 2
 <tbody>
 <tr>
 <td style="text-align:left;">
-treatment
+1*treatment = 0
 </td>
 <td style="text-align:center;">
 0.073 (0.007)
@@ -418,7 +439,7 @@ Log.Lik.
 <h2 class="hasAnchor">
 <a href="#other-function-arguments" class="anchor"></a>Other function arguments</h2>
 <p>Via the function argument <code>sign_level</code>, the user can control the significance level of the test. The default value is sign_level = 0.05, which corresponds to a 95% confindence interval.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">boot_lm_5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span><span class="op">)</span>,
                     param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span>, 
@@ -448,7 +469,7 @@ Model 2
 <tbody>
 <tr>
 <td style="text-align:left;">
-treatment
+1*treatment = 0
 </td>
 <td style="text-align:center;">
 0.073 (0.001)
@@ -536,7 +557,7 @@ Log.Lik.
 </tbody>
 </table>
 <p>In the case of multiway clustering, the user might want to specify the bootstrap clustering level. By default, boottest chooses the clustering level with the highest number of clusters as <code>bootcluster = "max"</code>. Other choices are the minimum cluster, or independent clustering variables.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">boot_lm1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, 
                     param <span class="op">=</span> <span class="st">"treatment"</span>,
@@ -569,7 +590,7 @@ Model 2
 <tbody>
 <tr>
 <td style="text-align:left;">
-treatment
+1*treatment = 0
 </td>
 <td style="text-align:center;">
 0.073 (0.005)
@@ -661,7 +682,7 @@ Log.Lik.
 <h2 class="hasAnchor">
 <a href="#fixed-effects" class="anchor"></a>Fixed Effects</h2>
 <p>Last, <code><a href="../reference/boottest.html">boottest()</a></code> supports out-projection of fixed effects in the estimation stage via <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">lfe::felm()</a></code> and <code><a href="https://lrberge.github.io/fixest/reference/feols.html">fixest::feols()</a></code>. Within the bootstrap, the user can choose to project out <em>only one</em> fixed effect, which can be set via the <code>fe</code> function argument. All other fixed effects specified in either <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code> or <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> are treated as sets of binary regressors.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"fixest"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span>
   <span class="co"># estimate the regression model via feols</span>
@@ -678,7 +699,7 @@ Log.Lik.
 <h2 class="hasAnchor">
 <a href="#the-subcluster-bootstrap" class="anchor"></a>The Subcluster Bootstrap</h2>
 <p>In the case of few treated clusters, <a href="https://academic.oup.com/ectj/article-abstract/21/2/114/5078969">MacKinnon and Webb (2018)</a> suggest to use subclusters to form the bootstrap distribution. <code><a href="../reference/boottest.html">boottest()</a></code> allows the user to specify subclusters via the <code>bootcluster</code> argument.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">boot_min</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>,
                     clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, 
                     param <span class="op">=</span> <span class="st">"treatment"</span>, 
@@ -715,7 +736,7 @@ Model 2
 <tbody>
 <tr>
 <td style="text-align:left;">
-treatment
+1*treatment = 0
 </td>
 <td style="text-align:center;">
 0.073 (0.005)
@@ -807,7 +828,7 @@ Log.Lik.
 <h2 class="hasAnchor">
 <a href="#regression-weights-weighted-least-squares-wls" class="anchor"></a>Regression Weights / Weighted Least Squares (WLS)</h2>
 <p>If regression weights are specified in the estimation stage via <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code>, <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> or <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code>, <code><a href="../reference/boottest.html">boottest()</a></code> incorporates the weights into the bootstrap inference:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># regression with weights / WLS</span>
 <span class="va">lm_w_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span>, weights <span class="op">=</span> <span class="va">voters</span><span class="op">$</span><span class="va">weights</span>, data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
 
@@ -821,7 +842,7 @@ Log.Lik.
 <a href="#parallel-execution" class="anchor"></a>Parallel Execution</h2>
 <p>A major bottleneck for the performance of <code><a href="../reference/boottest.html">boottest()</a></code> is a large matrix multiplication, which includes the bootstrap weights matrix on the right. In order to speed up the computation, this multiplication calls the c++ Eigen library, which allows for parallelization of dense matrix products. By default, <code><a href="../reference/boottest.html">boottest()</a></code> uses one thread. Note that there is a cost of parallelization due to communication overhead. As a rule of thumb, if <code><a href="../reference/boottest.html">boottest()</a></code> takes more than 10 seconds per execution, using a second thread might speed up the bootstrap.</p>
 <p>The number of threads can be specified via the <code>nthreads</code> argument of <code><a href="../reference/boottest.html">boottest()</a></code>:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, 
                        clustid <span class="op">=</span> <span class="st">"group_id1"</span>, 
                        param <span class="op">=</span> <span class="st">"treatment"</span>, 

@@ -89,10 +89,7 @@ iterations each).
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
-For a small number of clusters, `fwildclusterboot` is in generally
-faster than implementations of the wild cluster bootstrap in the
-`sandwich` and `clusterSEs` packages.
-
+<!-- For a small number of clusters, `fwildclusterboot` is in generally faster than implementations of the wild cluster bootstrap in the `sandwich` and `clusterSEs` packages.  -->
 <!-- ![Benchmark](man/figures/bench_ggplot.png) -->
 
 ### Installation

@@ -74,7 +74,7 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
       </span>
     </div>
 
@@ -136,7 +136,8 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019.</p>
   bootcluster <span class='op'>=</span> <span class='st'>"max"</span>,
   conf_int <span class='op'>=</span> <span class='cn'>NULL</span>,
   seed <span class='op'>=</span> <span class='cn'>NULL</span>,
-  beta0 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  R <span class='op'>=</span> <span class='cn'>NULL</span>,
+  beta0 <span class='op'>=</span> <span class='fl'>0</span>,
   sign_level <span class='op'>=</span> <span class='cn'>NULL</span>,
   type <span class='op'>=</span> <span class='st'>"rademacher"</span>,
   impose_null <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -144,7 +145,7 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019.</p>
   tol <span class='op'>=</span> <span class='fl'>1e-06</span>,
   maxiter <span class='op'>=</span> <span class='fl'>10</span>,
   na_omit <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  nthreads <span class='op'>=</span> <span class='fu'><a href='getBoottest_nthreads.html'>getBoottest_nthreads</a></span><span class='op'>(</span><span class='op'>)</span>,
+  nthreads <span class='op'>=</span> <span class='fu'>getBoottest_nthreads</span><span class='op'>(</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -190,6 +191,10 @@ internal seed. Hence by default, calling <code><a href='boottest.html'>boottest(
 the same test statistics.</p></td>
     </tr>
     <tr>
+      <th>R</th>
+      <td><p>Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as <code>param</code>. If NULL, a vector of ones of length param.</p></td>
+    </tr>
+    <tr>
       <th>beta0</th>
       <td><p>A numeric. Shifts the null hypothesis
 H0: param = beta0 vs H1: param != beta0</p></td>
@@ -219,7 +224,7 @@ If FALSE, the null is not imposed <code>(WCU)</code></p></td>
     <tr>
       <th>p_val_type</th>
       <td><p>Character vector of length 1. Type of p-value.
-By default "two-tailed".</p></td>
+By default "two-tailed". Other options include "equal-tailed", "&gt;" and "&lt;".</p></td>
     </tr>
     <tr>
       <th>tol</th>
@@ -257,7 +262,6 @@ to use. The default is to use 1 core.</p></td>
 
     <p>An object of class <code>boottest</code></p>
 <dt>p_val</dt><dd><p>The bootstrap p-value.</p></dd>
-<dt>t_stat</dt><dd><p>The regression t-statistic of interest, recalculated in the bootstrap. Applied small sample correction: G / (G-1).</p></dd>
 <dt>conf_int</dt><dd><p>The bootstrap confidence interval.</p></dd>
 <dt>param</dt><dd><p>The tested parameter.</p></dd>
 <dt>N</dt><dd><p>Sample size. Might differ from the regression sample size if the
@@ -267,10 +271,10 @@ cluster variables contain NA values.</p></dd>
 <dt>N_G</dt><dd><p>Dimension of the cluster variables as used in boottest.</p></dd>
 <dt>sign_level</dt><dd><p>Significance level used in boottest.</p></dd>
 <dt>type</dt><dd><p>Distribution of the bootstrap weights.</p></dd>
-<dt>p_test_vals</dt><dd><p>All p-values calculated while calculating the confidence
-interval.</p></dd>
+<dt>t_stat</dt><dd><p>The original test statistics - either imposing the null or not - with small sample correction <code>G / (G-1)</code>.</p></dd>
 <dt>test_vals</dt><dd><p>All t-statistics calculated while calculating the
 confidence interval.</p></dd>
+<dt>t_boot</dt><dd><p>All bootstrap t-statistics.</p></dd>
 <dt>regression</dt><dd><p>The regression object used in boottest.</p></dd>
 <dt>call</dt><dd><p>Function call of boottest.</p></dd>
 
@@ -301,6 +305,10 @@ stops the procedure after 10 iterations.</p></li>
     <p>Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.
 (<a href='https://journals.sagepub.com/doi/full/10.1177/1536867X19830877'>https://journals.sagepub.com/doi/full/10.1177/1536867X19830877</a>)</p>
+<p>Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller. "Bootstrap-based improvements for inference with clustered errors." The Review of Economics and Statistics 90.3 (2008): 414-427.</p>
+<p>MacKinnon, James G., and Matthew D. Webb. "The wild bootstrap for few (treated) clusters." The Econometrics Journal 21.2 (2018): 114-135.</p>
+<p>MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite economique 91.1-2 (2015): 11-33.</p>
+<p>Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://s3alfisc.github.io/fwildclusterboot/'>fwildclusterboot</a></span><span class='op'>)</span>
@@ -322,18 +330,26 @@ STATA using boottest", The STATA Journal.
                   sign_level <span class='op'>=</span> <span class='fl'>0.2</span>,
                   seed <span class='op'>=</span> <span class='fl'>8</span>,
                   beta0 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+<span class='co'># test treatment + ideology1 = 2                   </span>
+<span class='va'>boot4</span> <span class='op'>&lt;-</span> <span class='fu'><a href='boottest.html'>boottest</a></span><span class='op'>(</span><span class='va'>lm_fit</span>, 
+                  B <span class='op'>=</span> <span class='fl'>9999</span>, 
+                  clustid <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"group_id1"</span>, <span class='st'>"group_id2"</span><span class='op'>)</span>,
+                  param <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"treatment"</span>, <span class='st'>"ideology1"</span><span class='op'>)</span>,
+                  R <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>1</span><span class='op'>)</span>, 
+                  beta0 <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; boottest.lm(object = lm_fit, clustid = "group_id1", param = "treatment", 
 #&gt;     B = 9999)
 #&gt; 	
+#&gt;  Hypothesis: 1*treatment = 0
 #&gt;  Observations: 300
 #&gt;  Bootstr. Iter: 9999
 #&gt;  Bootstr. Type: rademacher
 #&gt;  Clustering: 1-way
 #&gt;  Confidence Sets: 95%
 #&gt;  Number of Clusters: 40
-#&gt;  </div><div class='output co'>#&gt;        term estimate statistic p.value conf.low conf.high
-#&gt; 1 treatment    0.073     3.786   0.001    0.033     0.112</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
+#&gt;  </div><div class='output co'>#&gt;              term estimate statistic p.value conf.low conf.high
+#&gt; 1 1*treatment = 0    0.073     3.786   0.001    0.033     0.112</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
 </div><div class='img'><img src='boottest.lm-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

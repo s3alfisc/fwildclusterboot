@@ -131,7 +131,7 @@ ggplot(data = benchmarks_clean, aes(x = B, y = mean, group = factor(expr))) +
 
 ```
 
-For a small number of clusters, `fwildclusterboot` is in generally faster than implementations of the wild cluster bootstrap in the `sandwich` and `clusterSEs` packages. 
+<!-- For a small number of clusters, `fwildclusterboot` is in generally faster than implementations of the wild cluster bootstrap in the `sandwich` and `clusterSEs` packages.  -->
 
 ```{r, include = FALSE}
 # All defaults
