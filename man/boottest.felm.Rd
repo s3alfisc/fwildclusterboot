@@ -124,7 +124,8 @@ confidence interval.}
 \description{
 \code{boottest.felm} is a S3 method that allows for fast wild cluster
 bootstrap inference for objects of class felm by  implementing
-the fast wild bootstrap algorithm developed in Roodman et al., 2019.
+the fast wild bootstrap algorithm developed in Roodman et al., 2019 and
+implemented in the STATA package \code{boottest}.
 }
 \section{Confidence Intervals}{
 

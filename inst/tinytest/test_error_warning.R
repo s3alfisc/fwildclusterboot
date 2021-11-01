@@ -420,8 +420,20 @@ expect_error(boottest(object = felm_fit_c, clustid =  "Q1_immigration", B = 999,
 
 # test for p-val type & conf_int == TRUE (tba)
 
+# check fixest for deleted singletons. boottest() should throw an error
 
+base <- iris
+names(base) <- c("y", "x1", "x_endo_1", "x_inst_1", "fe")
+set.seed(2)
+base$x_inst_2 <- 0.2 * base$y + 0.2 * base$x_endo_1 + rnorm(150, sd = 0.5)
+base$x_endo_2 <- 0.2 * base$y - 0.2 * base$x_inst_1 + rnorm(150, sd = 0.5)
+base$clustid <- sample(1:10, nrow(base), TRUE)
+base$clustid[1] <- 11
+base$clustid[2] <- 12
+# unique singletons -> 11, 12
 
+feols_fit = feols(y ~ x1 | clustid , base, fixef.rm = "both")
+expect_error(boottest(feols_fit, param = "x1", B = 999, clustid = "clustid"))
 
 
 
