@@ -55,7 +55,8 @@ Imports:
     Matrix,
     Matrix.utils, 
     generics, 
-    gtools
+    gtools, 
+    dqrng
 Suggests: 
     fixest,
     lfe,

@@ -34,6 +34,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #' @importFrom collapse fsum GRP
   #' @importFrom stats as.formula coef model.matrix model.response model.weights residuals rlnorm rnorm update
   #' @importFrom gtools permutations
+  #' @importFrom dqrng dqsample dqset.seed
+
   
 
   # 1) preprocess
@@ -58,7 +60,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   # }
   
   # bootstrap error
-  set.seed(seed)
+  #set.seed(seed)
+  dqrng::dqset.seed(seed)
   N_G_bootcluster <- length(unique(bootcluster[[1]]))
   
   # here: enumeration 
@@ -67,10 +70,10 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   
   wild_draw_fun <- switch(type,
                           # note: for randemacher, create integer matrix (uses less memory than numeric)                      
-                          rademacher = function(n) sample(c(-1L, 1L), n, replace = TRUE),
-                          mammen = function(n) sample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
-                          norm = function(n) rnorm(n),
-                          webb = function(n) sample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),
+                          rademacher = function(n) dqrng::dqsample(c(-1L, 1L), n, replace = TRUE),
+                          mammen = function(n) dqrng::dqsample(c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, n, replace = TRUE, prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))),
+                          norm = function(n) dqrng::dqsample(n),
+                          webb = function(n) dqrng::dqsample(c(-sqrt((3:1) / 2), sqrt((1:3) / 2)), n, replace = TRUE),
                           wild_draw_fun
   )
   

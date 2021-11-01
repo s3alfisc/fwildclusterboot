@@ -187,7 +187,7 @@ boottest.fixest <- function(object,
   
   
   if(!is.null(object$fixef_removed)){
-    stop(paste("feols() removes fixed effects with the following values: ", object$fixef_removed, ". Currently, boottest()'s internal pre-processing does not account for this deletion. Therefore, please exclude such fixed effects prior to estimation with feols(). You can find them listed unter '$fixef_removed' of your fixest object."))
+    stop(paste("feols() removes fixed effects with the following values: ", object$fixef_removed, ". Currently, boottest()'s internal pre-processing does not account for this deletion. Therefore, please exclude such fixed effects prior to estimation with feols(). You can find them listed under '$fixef_removed' of your fixest object."))
   }
   
   # check appropriateness of nthreads
