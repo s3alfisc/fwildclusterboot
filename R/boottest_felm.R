@@ -35,7 +35,7 @@
 #'        of boostrap to use: One of "rademacher", "mammen", "norm"
 #'        and "webb". Alternatively, type can be a function(n) for drawing 
 #'        wild bootstrap factors. "rademacher" by default.  
-#'        For the Rademacher and Mammen distribution, if the number of replications B exceeds 
+#'        For the Rademacher distribution, if the number of replications B exceeds 
 #'        the number of possible draw ombinations, 2^(#number of clusters), then `boottest()` 
 #'        will use each possible combination once (enumeration).
 #' @param impose_null Logical. Controls if the null hypothesis is imposed on
@@ -294,7 +294,7 @@ boottest.felm <- function(object,
   # number of clusters used in bootstrap - always derived from bootcluster
   N_G <- length(unique(preprocess$bootcluster[, 1]))
   N_G_2 <- 2^N_G
-  if (type %in% c("rademacher", "mammen") & N_G_2 < B) {
+  if (type %in% c("rademacher") & N_G_2 < B) {
     warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
             call. = FALSE, 
             noBreaks. = TRUE

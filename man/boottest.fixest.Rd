@@ -68,7 +68,7 @@ H0: param = beta0 vs H1: param != beta0}
 of boostrap to use: One of "rademacher", "mammen", "norm"
 and "webb". Alternatively, type can be a function(n) for drawing
 wild bootstrap factors. "rademacher" by default.
-For the Rademacher and Mammen distribution, if the number of replications B exceeds
+For the Rademacher distribution, if the number of replications B exceeds
 the number of possible draw ombinations, 2^(#number of clusters), then \code{boottest()}
 will use each possible combination once (enumeration).}
 
