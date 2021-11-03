@@ -105,10 +105,10 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   # prepare "key" for use with collapse::fsum()
   g <- collapse::GRP(bootcluster[[1]], call = FALSE)
   
-  weights_mat <- Matrix::Diagonal(N, weights)           # if no weights - N x N identity matrix
+  #weights_mat <- Matrix::Diagonal(N, weights)           # if no weights - N x N identity matrix
   weights_sq <- sqrt(weights)                           # sqrt fine because diagonal matrix
   A <- solve(crossprod(weights_sq * X))                 # k x k
-  XXinv <- solve(crossprod(X))                          # k x k
+  #XXinv <- solve(crossprod(X))                          # k x k
   WX <- weights * X
   
   if(impose_null == TRUE){

@@ -52,6 +52,13 @@ subcluster bootstrapping for few treated clusters [(MacKinnon & Webb,
 ### The `boottest()` function
 
 ``` r
+# note: for performance reasons, the sampling of the bootstrap weights within
+# fwildclusterboot is handled via the dqrng package, which is installed with the
+# package as a dependency
+# to set a seed, you must use dqrng's dqset.seed() function
+library(dqrng)
+dqrng::dqset.seed(965326)
+
 library(fwildclusterboot)
 
 data(voters)
