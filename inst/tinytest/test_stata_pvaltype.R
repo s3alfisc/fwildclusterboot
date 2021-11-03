@@ -2,7 +2,7 @@
 # results in STATA and R
 
 
-run_tests <- FALSE
+run_tests <- length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]]) > 3
 
 if(run_tests){
   

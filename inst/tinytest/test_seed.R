@@ -90,5 +90,5 @@ boot_lm_s2 <-  suppressMessages(
     conf_int = FALSE)
 )
 
-expect_true(boot_lm_s1$p_val == boot_lm_s2$p_val)
+expect_true(boot_lm_s1$p_val != boot_lm_s2$p_val)
 

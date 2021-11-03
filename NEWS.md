@@ -1,7 +1,17 @@
+# fwildclusterboot 0.5
+
++ Version 0.5 fixes an error for the bootstrap with weighted least squares introduced with version 0.4. All unit tests 
+  that compare fwildclusterboot with weighted least squares results from boottest.stata pass. In particular, enumerated cases pass with exact equality (in such cases, the bootstrap weights matrices are exactly identical in both R and Stata).
++ `boottest()` now stops if `fixest::feols()` deletes non-NA values (e.g. singleton fixed effects deletion) and asks the user to delete such rows prior to estimation via `feols()` & `boottest()`. Currently, `boottest()'s` pre-processing cannot handle such deletions - this remains future work.
++ To align `fwildclusterboot` with Stata's boottest command (Roodman et al, 2019), Mammen weights are no longer enumerated in `fwildclusterboot::boottest()`.
++ `boottest()` no longer sets an internal seed (previously set.seed(1)) if no seed is provided as a function argument. 
++ Sampling of the bootstrap weights is now powered by the `dqrng` package, which speeds up the creation of the bootstrap weights matrix. To set a "global" seed, one now has use the `dqset.seed()` function from the `dqrng package`, which is added as a dependency.
+
+
 # fwilclusterboot 0.4
 
 + New feature I: `boottest()` now allows for univariate tests that involve multiple 
-  variables. E.g. one can now test hypothesis as ´var1 + var2 = c´ where c is a scalar. More details on the syntax can be found in the vignette. All methods of for 
+  variables. E.g. one can now test hypothesis as `var1 + var2 = c` where c is a scalar. More details on the syntax can be found in the vignette. All methods of for 
   objects of class `boottest` have been updated.
 + New feature II: `boottest()` now also supports "equal-tailed" p-values and one-sided hypotheses. For one-sided tests, confidence intervals are currently not supported. 
 + Internal changes: To allow for multivariable tests, the `boot_algo2()` function has slightly been modified. `invert_p_val2()` is superseded by `invert_p_val()`. 

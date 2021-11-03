@@ -12,7 +12,6 @@ boot_algo2(
   beta0,
   sign_level,
   param,
-  seed,
   p_val_type,
   nthreads,
   type,
@@ -35,8 +34,6 @@ null is imposed ("WCR").}
 \item{sign_level}{The significance level.}
 
 \item{param}{name of the test parameter.}
-
-\item{seed}{the random seed. controls draw of bootstrap weights.}
 
 \item{p_val_type}{type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"}
 

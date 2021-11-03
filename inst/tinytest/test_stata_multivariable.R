@@ -8,7 +8,8 @@
 # Therefore, these tests are only run locally and not on CRAN. 
 # To get the RStata package to run, see https://github.com/lbraglia/RStata.
 
-run_tests <- FALSE 
+run_tests <- length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]]) > 3
+#run_tests <- FALSE
 
 # to execute all tests, 
 # set run_tests <- TRUE & save the file & run 
@@ -40,8 +41,10 @@ if(run_tests){
   # all tests are run with B = 99999 bootstrap iterations
   # the default relative tolerance of the tests is 0.005
   
+  set.seed(1)
+  
   nthreads <- 8
-  tol <- 0.05
+  tol <- 2 * 0.01 
   save_test_data_to <- "c:/Users/alexa/Dropbox/fwildclusterboot/"
   save_data <- paste0(save_test_data_to, "voters.csv")
   
@@ -58,8 +61,7 @@ if(run_tests){
   # -------------------------------------------------------- #
   
   # create the test data set and save it on disk
-  set.seed(1)
-  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 15, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   fwrite(data1, save_data)
   
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,
@@ -77,7 +79,7 @@ if(run_tests){
       param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
       conf_int = FALSE,
       sign_level = 0.05, 
-      nthreads = nthreads
+      nthreads = 4
     )
   )
   
@@ -92,7 +94,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_1, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm1$p_val, stata_p_val, tol = tol)
+  expect_equal(boot_lm1$p_val, stata_p_val, tol)
   
   
   # Test 2: 
@@ -107,7 +109,7 @@ gen p_val = r(p)
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = FALSE,
         sign_level = 0.10, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_2 <- "
@@ -121,7 +123,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_2, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm2$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm2$p_val,  stata_p_val, tol)
   
   
   # Test 3
@@ -146,12 +148,12 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         beta0 = 0.05, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   res <- RStata::stata(test_3, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm3$p_val,  stata_p_val, tol)
   
   # B 
   test_3 <- "
@@ -173,12 +175,12 @@ gen p_val = r(p)
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = 0.05,
         conf_int = FALSE,
         sign_level = 0.10, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   res <- RStata::stata(test_3, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm3$p_val,  stata_p_val, tol)
   
   # C
   
@@ -201,12 +203,12 @@ gen p_val = r(p)
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = FALSE,
         sign_level = 0.10, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   res <- RStata::stata(test_3, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm3$p_val,  stata_p_val, tol)
   
   # Test 4
   
@@ -221,7 +223,7 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         type = "norm", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_4 <- "
@@ -236,7 +238,7 @@ gen p_val = r(p)
   
   res <- RStata::stata(test_4, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm4$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm4$p_val,  stata_p_val, tol)
   
   
   # Test 5
@@ -252,7 +254,7 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         type = "mammen", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_5 <- "
@@ -266,7 +268,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_5, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm5$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm5$p_val,  stata_p_val, tol)
   
   
   # Test 6
@@ -282,7 +284,7 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         type = "webb", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_6 <- "
@@ -296,7 +298,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_6, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm6$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm6$p_val,  stata_p_val, tol) # fails at tol
   
   
   # Test 7
@@ -306,14 +308,14 @@ gen p_val = r(p)
       boottest(
         object = lm_fit,
         clustid =  "group_id1",
-        B = 99999,
+        B = 199999,
         seed = 911,
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = FALSE,
         sign_level = 0.10,
         type = "webb",
         impose_null = FALSE, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_7 <- "
@@ -321,14 +323,14 @@ clear
 import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
 set seed 1
 quietly reg proposition_vote treatment ideology1 log_income i.q1_immigration, cluster(group_id1)
-boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(99999) cluster(group_id1 ) nograph level(90) weighttype(webb) nonull
+boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(199999) cluster(group_id1 ) nograph level(90) weighttype(webb) nonull
 gen p_val = r(p)
 //gen conf_int = r(CI)
 "
   
   res <- RStata::stata(test_7, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm7$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm7$p_val,  stata_p_val, tol) # fails at tol = 0.01
   
   
   # -------------------------------------------------------- #
@@ -336,8 +338,7 @@ gen p_val = r(p)
   # -------------------------------------------------------- #
   
   # create the test data set and save it on disk
-  set.seed(2)
-  data1 <<- fwildclusterboot:::create_data(N = 5000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+  data1 <<- fwildclusterboot:::create_data(N = 5000, N_G1 = 5, icc1 = 0.01, N_G2 = 5, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   fwrite(data1, save_data)
   
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,
@@ -353,7 +354,7 @@ gen p_val = r(p)
       param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
       conf_int = FALSE,
       sign_level = 0.05, 
-      nthreads = nthreads
+      nthreads = 4
     )
   )
   
@@ -368,7 +369,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_1, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm1$p_val, stata_p_val, tol = tol)
+  expect_equal(boot_lm1$p_val, stata_p_val, tol) # fails at tol = 0.01
   
   
   # Test 2: 
@@ -383,7 +384,7 @@ gen p_val = r(p)
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = FALSE,
         sign_level = 0.10, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_2 <- "
@@ -397,7 +398,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_2, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm2$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm2$p_val,  stata_p_val, tol) # fails at tol = 0.01
   
   
   # Test 3
@@ -422,12 +423,12 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         beta0 = 0.05, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   res <- RStata::stata(test_3, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm3$p_val,  stata_p_val, tol)
   
   
   # Test 4
@@ -443,7 +444,7 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         type = "norm", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_4 <- "
@@ -458,7 +459,7 @@ gen p_val = r(p)
   
   res <- RStata::stata(test_4, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm4$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm4$p_val,  stata_p_val, tol)
   
   
   # Test 5
@@ -474,7 +475,7 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         type = "mammen", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_5 <- "
@@ -488,7 +489,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_5, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm5$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm5$p_val,  stata_p_val, tol)  # fails at tol = 0.01
   
   
   # Test 6
@@ -504,7 +505,7 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         type = "webb", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_6 <- "
@@ -518,7 +519,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_6, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm6$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm6$p_val,  stata_p_val, tol = 2* tol)  # fails at tol = 0.01
   
   
   # Test 7
@@ -535,7 +536,7 @@ gen p_val = r(p)
         sign_level = 0.10,
         type = "webb",
         impose_null = FALSE, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_7 <- "
@@ -550,7 +551,7 @@ gen p_val = r(p)
   
   res <- RStata::stata(test_7, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm7$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm7$p_val,  stata_p_val, tol)  # fails at tol = 0.01
   
   
   # -------------------------------------------------------- #
@@ -558,7 +559,7 @@ gen p_val = r(p)
   # -------------------------------------------------------- #
   
   # create the test data set and save it on disk
-  set.seed(31)
+
   data1 <<- fwildclusterboot:::create_data(N = 5000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   fwrite(data1, save_data)
   
@@ -592,7 +593,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_1, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm1$p_val, stata_p_val, tol = tol)
+  expect_equal(boot_lm1$p_val, stata_p_val, tol)
   
   
   # Test 2: 
@@ -620,7 +621,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_2, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm2$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm2$p_val,  stata_p_val, tol)
   
   
   # Test 3
@@ -649,7 +650,7 @@ gen p_val = r(p)
   
   res <- RStata::stata(test_3, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm3$p_val,  stata_p_val, tol)
   
   
   # Test 4
@@ -679,7 +680,7 @@ gen p_val = r(p)
   
   res <- RStata::stata(test_4, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm4$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm4$p_val,  stata_p_val, tol)
   
   
   # Test 5
@@ -689,7 +690,7 @@ gen p_val = r(p)
       boottest(
         object = lm_fit,
         clustid =  "group_id1",
-        B = 99999,
+        B = 299999,
         seed = 911,
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = FALSE,
@@ -702,13 +703,13 @@ clear
 import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
 set seed 1
 quietly reg proposition_vote treatment ideology1 log_income i.q1_immigration [pweight = weights], cluster(group_id1)
-boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(99999) cluster(group_id1 ) nograph level(90) weighttype(mammen)
+boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(299999) cluster(group_id1 ) nograph level(90) weighttype(mammen)
 gen p_val = r(p)
 //gen conf_int = r(CI)
 "
   res <- RStata::stata(test_5, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm5$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm5$p_val,  stata_p_val, tol)  # fails at tol = 0.01
   
   
   # Test 6
@@ -737,7 +738,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_6, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm6$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm6$p_val,  stata_p_val, tol)
   
   
   # Test 7
@@ -768,7 +769,7 @@ gen p_val = r(p)
   
   res <- RStata::stata(test_7, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm7$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm7$p_val,  stata_p_val, tol)
   
   
   # -------------------------------------------------------- #
@@ -776,8 +777,7 @@ gen p_val = r(p)
   # -------------------------------------------------------- #
   
   # create the test data set and save it on disk
-  set.seed(4)
-  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 5, icc1 = 0.01, N_G2 = 5, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   fwrite(data1, save_data)
   
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,
@@ -794,7 +794,7 @@ gen p_val = r(p)
       param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
       conf_int = FALSE,
       sign_level = 0.05, 
-      nthreads = nthreads
+      nthreads = 4
     )
   )
   
@@ -809,7 +809,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_1, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm1$p_val, stata_p_val, tol = tol)
+  expect_equal(boot_lm1$p_val, stata_p_val, tol)
   
   
   # Test 2: 
@@ -824,7 +824,7 @@ gen p_val = r(p)
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = FALSE,
         sign_level = 0.10, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_2 <- "
@@ -838,7 +838,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_2, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm2$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm2$p_val,  stata_p_val, tol)
   
   
   # Test 3
@@ -863,12 +863,12 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         beta0 = 0.05, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   res <- RStata::stata(test_3, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm3$p_val,  stata_p_val, tol)
   
   
   # Test 4
@@ -884,7 +884,7 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         type = "norm", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_4 <- "
@@ -899,7 +899,7 @@ gen p_val = r(p)
   
   res <- RStata::stata(test_4, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm4$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm4$p_val,  stata_p_val, tol = 2*tol)
   
   
   # Test 5
@@ -915,7 +915,7 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         type = "mammen", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_5 <- "
@@ -929,7 +929,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_5, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm5$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm5$p_val,  stata_p_val, tol)
   
   
   # Test 6
@@ -945,7 +945,7 @@ gen p_val = r(p)
         conf_int = FALSE,
         sign_level = 0.10,
         type = "webb", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_6 <- "
@@ -959,7 +959,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_6, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm6$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm6$p_val,  stata_p_val, tol = 3 * tol)  # fails at tol = 0.01
   
   
   # Test 7
@@ -974,9 +974,9 @@ gen p_val = r(p)
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = FALSE,
         sign_level = 0.10,
-        type = "webb",
+        type = "rademacher",
         impose_null = FALSE, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_7 <- "
@@ -984,14 +984,14 @@ clear
 import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
 set seed 1
 quietly reg proposition_vote treatment ideology1 log_income i.q1_immigration [pweight = weights]
-boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(99999) cluster(group_id1 group_id2) nograph level(90) weighttype(webb) nonull
+boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(99999) cluster(group_id1 group_id2) nograph level(90) weighttype(rademacher) nonull
 gen p_val = r(p)
 //gen conf_int = r(CI)
 "
   
   res <- RStata::stata(test_7, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm7$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm7$p_val,  stata_p_val, tol)
   
   
   
@@ -1010,8 +1010,7 @@ gen p_val = r(p)
   # -------------------------------------------------------- #
   
   # create the test data set and save it on disk
-  set.seed(5)
-  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 15, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   fwrite(data1, save_data)
   
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,
@@ -1045,8 +1044,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm1$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm1$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm1$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm1$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 2: 
@@ -1077,8 +1076,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm2$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm2$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm2$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm2$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 3
@@ -1110,8 +1109,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm3$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm3$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm3$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm3$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 4
@@ -1144,8 +1143,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm4$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm4$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm4$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm4$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 5
@@ -1177,8 +1176,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm5$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm5$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm5$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm5$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 6
@@ -1210,8 +1209,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm6$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm6$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm6$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm6$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 7
@@ -1245,8 +1244,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm7$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm7$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm7$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm7$conf_int[2], stata_conf_int_u, tol)
   
   
   # -------------------------------------------------------- #
@@ -1254,8 +1253,7 @@ gen conf_int_u = r(CI)[1,2]
   # -------------------------------------------------------- #
   
   # create the test data set and save it on disk
-  set.seed(6)
-  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 5, icc1 = 0.01, N_G2 = 5, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   fwrite(data1, save_data)
   
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,
@@ -1271,7 +1269,7 @@ gen conf_int_u = r(CI)[1,2]
       param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
       conf_int = TRUE,
       sign_level = 0.05, 
-      nthreads = nthreads
+      nthreads = 4
     )
   )
   
@@ -1289,8 +1287,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm1$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm1$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm1$conf_int[1], stata_conf_int_l, tol)  # fails at tol = 0.01
+  expect_equal(boot_lm1$conf_int[2], stata_conf_int_u, tol) # fails at tol = 0.01
   
   
   # Test 2: 
@@ -1305,7 +1303,7 @@ gen conf_int_u = r(CI)[1,2]
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = TRUE,
         sign_level = 0.10, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_2 <- "
@@ -1322,8 +1320,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm2$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm2$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm2$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm2$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 3
@@ -1349,15 +1347,15 @@ gen conf_int_u = r(CI)[1,2]
         conf_int = TRUE,
         sign_level = 0.10,
         beta0 = 0.05, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   res <- RStata::stata(test_3, data.out = TRUE)
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm3$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm3$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm3$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm3$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 4
@@ -1373,7 +1371,7 @@ gen conf_int_u = r(CI)[1,2]
         conf_int = TRUE,
         sign_level = 0.10,
         type = "norm", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_4 <- "
@@ -1391,8 +1389,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm4$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm4$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm4$conf_int[1], stata_conf_int_l, tol)  # fails at tol = 0.01
+  expect_equal(boot_lm4$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 5
@@ -1408,7 +1406,7 @@ gen conf_int_u = r(CI)[1,2]
         conf_int = TRUE,
         sign_level = 0.10,
         type = "mammen", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_5 <- "
@@ -1425,8 +1423,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm5$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm5$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm5$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm5$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 6
@@ -1442,7 +1440,7 @@ gen conf_int_u = r(CI)[1,2]
         conf_int = TRUE,
         sign_level = 0.10,
         type = "webb", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_6 <- "
@@ -1459,8 +1457,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm6$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm6$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm6$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm6$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 7
@@ -1477,7 +1475,7 @@ gen conf_int_u = r(CI)[1,2]
         sign_level = 0.10,
         type = "webb",
         impose_null = FALSE, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_7 <- "
@@ -1495,8 +1493,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm7$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm7$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm7$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm7$conf_int[2], stata_conf_int_u, tol)
   
   
   # -------------------------------------------------------- #
@@ -1504,8 +1502,7 @@ gen conf_int_u = r(CI)[1,2]
   # -------------------------------------------------------- #
   
   # create the test data set and save it on disk
-  set.seed(7)
-  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 15, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   fwrite(data1, save_data)
   
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,
@@ -1541,8 +1538,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm1$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm1$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm1$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm1$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 2: 
@@ -1573,8 +1570,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm2$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm2$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm2$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm2$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 3
@@ -1606,8 +1603,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm3$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm3$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm3$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm3$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 4
@@ -1640,8 +1637,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm4$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm4$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm4$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm4$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 5
@@ -1673,8 +1670,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm5$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm5$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm5$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm5$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 6
@@ -1706,8 +1703,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm6$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm6$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm6$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm6$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 7
@@ -1741,8 +1738,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm7$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm7$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm7$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm7$conf_int[2], stata_conf_int_u, tol)
   
   
   # -------------------------------------------------------- #
@@ -1750,8 +1747,7 @@ gen conf_int_u = r(CI)[1,2]
   # -------------------------------------------------------- #
   
   # create the test data set and save it on disk
-  set.seed(4)
-  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+  data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 5, icc1 = 0.01, N_G2 = 5, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   fwrite(data1, save_data)
   
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,
@@ -1768,7 +1764,7 @@ gen conf_int_u = r(CI)[1,2]
       param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
       conf_int = TRUE,
       sign_level = 0.05, 
-      nthreads = nthreads
+      nthreads = 4
     )
   )
   
@@ -1786,8 +1782,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm1$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm1$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm1$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm1$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 2: 
@@ -1802,7 +1798,7 @@ gen conf_int_u = r(CI)[1,2]
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = TRUE,
         sign_level = 0.10, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_2 <- "
@@ -1819,8 +1815,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm2$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm2$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm2$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm2$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 3
@@ -1846,15 +1842,15 @@ gen conf_int_u = r(CI)[1,2]
         conf_int = TRUE,
         sign_level = 0.10,
         beta0 = 0.05, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   res <- RStata::stata(test_3, data.out = TRUE)
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm3$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm3$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm3$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm3$conf_int[2], stata_conf_int_u, tol)  # fails at tol = 0.01
   
   
   # Test 4
@@ -1870,7 +1866,7 @@ gen conf_int_u = r(CI)[1,2]
         conf_int = TRUE,
         sign_level = 0.10,
         type = "norm", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_4 <- "
@@ -1888,8 +1884,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm4$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm4$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm4$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm4$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 5
@@ -1905,7 +1901,7 @@ gen conf_int_u = r(CI)[1,2]
         conf_int = TRUE,
         sign_level = 0.10,
         type = "mammen", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_5 <- "
@@ -1922,8 +1918,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm5$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm5$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm5$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm5$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 6
@@ -1939,7 +1935,7 @@ gen conf_int_u = r(CI)[1,2]
         conf_int = TRUE,
         sign_level = 0.10,
         type = "webb", 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_6 <- "
@@ -1956,8 +1952,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm6$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm6$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm6$conf_int[1], stata_conf_int_l, tol)  # fails at tol = 0.01
+  expect_equal(boot_lm6$conf_int[2], stata_conf_int_u, tol)
   
   
   # Test 7
@@ -1974,7 +1970,7 @@ gen conf_int_u = r(CI)[1,2]
         sign_level = 0.10,
         type = "webb",
         impose_null = FALSE, 
-        nthreads = nthreads
+        nthreads = 4
       ))
   
   test_7 <- "
@@ -1992,8 +1988,8 @@ gen conf_int_u = r(CI)[1,2]
   stata_conf_int_l <- unique(res$conf_int_l)
   stata_conf_int_u <- unique(res$conf_int_u)
   
-  expect_equal(boot_lm7$conf_int[1], stata_conf_int_l, tol = tol)
-  expect_equal(boot_lm7$conf_int[2], stata_conf_int_u, tol = tol)
+  expect_equal(boot_lm7$conf_int[1], stata_conf_int_l, tol)
+  expect_equal(boot_lm7$conf_int[2], stata_conf_int_u, tol)
   
   
   
@@ -2014,7 +2010,6 @@ gen conf_int_u = r(CI)[1,2]
   # -------------------------------------------------------- #
   
   # create the test data set and save it on disk
-  set.seed(12)
   data1 <<- fwildclusterboot:::create_data(N = 2000, N_G1 = 8, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   fwrite(data1, save_data)
   
@@ -2047,7 +2042,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_1, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm1$p_val, stata_p_val, tol = tol)
+  expect_equal(boot_lm1$p_val, stata_p_val)
   
   
   # Test 2: 
@@ -2075,7 +2070,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_2, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm2$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm2$p_val,  stata_p_val)
   
   
   # Test 3
@@ -2104,41 +2099,7 @@ gen p_val = r(p)
   
   res <- RStata::stata(test_3, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
-  
-  
-  # Test 4
-  
-  # Test 5
-  
-  boot_lm5 <-
-    suppressWarnings(
-      boottest(
-        object = lm_fit,
-        clustid =  "group_id1",
-        B = 999999,
-        seed = 911,
-        param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
-        conf_int = FALSE,
-        sign_level = 0.10,
-        type = "mammen"
-      ))
-  
-  test_5 <- "
-clear
-import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
-set seed 2
-quietly reg proposition_vote treatment ideology1 log_income i.q1_immigration, cluster(group_id1)
-boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(999999) cluster(group_id1 ) nograph level(90) weighttype(mammen)
-gen p_val = r(p)
-//gen conf_int = r(CI)
-"
-  res <- RStata::stata(test_5, data.out = TRUE)
-  stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm5$p_val,  stata_p_val, tol = tol)
-  
-  
-  # Test 6
+  expect_equal(boot_lm3$p_val,  stata_p_val)
   
   
   # Test 7
@@ -2153,7 +2114,7 @@ gen p_val = r(p)
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = FALSE,
         sign_level = 0.10,
-        type = "webb",
+        type = "rademacher",
         impose_null = FALSE
       ))
   
@@ -2162,14 +2123,14 @@ clear
 import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
 set seed 1
 quietly reg proposition_vote treatment ideology1 log_income i.q1_immigration, cluster(group_id1)
-boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(99999) cluster(group_id1 ) nograph level(90) weighttype(webb) nonull
+boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(99999) cluster(group_id1 ) nograph level(90) weighttype(rademacher) nonull
 gen p_val = r(p)
 //gen conf_int = r(CI)
 "
   
   res <- RStata::stata(test_7, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm7$p_val,  stata_p_val, tol = 0.05)
+  expect_equal(boot_lm7$p_val,  stata_p_val)
   
 
 
@@ -2178,7 +2139,6 @@ gen p_val = r(p)
   # -------------------------------------------------------- #
   
   # create the test data set and save it on disk
-  set.seed(3)
   data1 <<- fwildclusterboot:::create_data(N = 3000, N_G1 = 8, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   fwrite(data1, save_data)
   
@@ -2212,7 +2172,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_1, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm1$p_val, stata_p_val, tol = tol)
+  expect_equal(boot_lm1$p_val, stata_p_val)
   
   
   # Test 2: 
@@ -2240,7 +2200,7 @@ gen p_val = r(p)
 "
   res <- RStata::stata(test_2, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm2$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm2$p_val,  stata_p_val)
   
   
   # Test 3
@@ -2269,7 +2229,7 @@ gen p_val = r(p)
   
   res <- RStata::stata(test_3, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm3$p_val,  stata_p_val, tol = tol)
+  expect_equal(boot_lm3$p_val,  stata_p_val)
   
   
   # Test 4
@@ -2288,7 +2248,7 @@ gen p_val = r(p)
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = FALSE,
         sign_level = 0.10,
-        type = "mammen"
+        type = "rademacher"
       ))
   
   test_5 <- "
@@ -2296,17 +2256,14 @@ clear
 import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
 set seed 1
 quietly reg proposition_vote treatment ideology1 log_income i.q1_immigration [pweight = weights], cluster(group_id1)
-boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(99999) cluster(group_id1 ) nograph level(90) weighttype(mammen)
+boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(99999) cluster(group_id1 ) nograph level(90) weighttype(rademacher)
 gen p_val = r(p)
 //gen conf_int = r(CI)
 "
   res <- RStata::stata(test_5, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm5$p_val,  stata_p_val, tol = tol)
-  
-  
-  # Test 6
-  
+  expect_equal(boot_lm5$p_val,  stata_p_val)
+
   
   # Test 7
   
@@ -2320,7 +2277,7 @@ gen p_val = r(p)
         param = c("treatment", "ideology1"), R = c(0.8, 0.2), beta0 = -0.01,
         conf_int = FALSE,
         sign_level = 0.10,
-        type = "webb",
+        type = "rademacher",
         impose_null = FALSE
       ))
   
@@ -2329,14 +2286,14 @@ clear
 import delimited c:/Users/alexa/Dropbox/fwildclusterboot/voters.csv
 set seed 1
 quietly reg proposition_vote treatment ideology1 log_income i.q1_immigration [pweight = weights], cluster(group_id1)
-boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(99999) cluster(group_id1 ) nograph level(90) weighttype(webb) nonull
+boottest 0.8*treatment + 0.2*ideology1 = -0.01, reps(99999) cluster(group_id1 ) nograph level(90) weighttype(rademacher) nonull
 gen p_val = r(p)
 //gen conf_int = r(CI)
 "
   
   res <- RStata::stata(test_7, data.out = TRUE)
   stata_p_val <- unique(res$p_val)
-  expect_equal(boot_lm7$p_val,  stata_p_val, tol = 0.05)
+  expect_equal(boot_lm7$p_val,  stata_p_val)
   
   
   

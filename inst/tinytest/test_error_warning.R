@@ -433,6 +433,12 @@ base$clustid[2] <- 12
 # unique singletons -> 11, 12
 
 feols_fit = feols(y ~ x1 | clustid , base, fixef.rm = "both")
+# lfe::felm - no such behavior
+#felm_fit = felm(y ~ x1 | clustid , base, keepX = TRUE, keepCX = TRUE)
+#dim(felm_fit$X)
+#dim(felm_fit$cX)
+#summary(felm_fit)
+
 expect_error(boottest(feols_fit, param = "x1", B = 999, clustid = "clustid"))
 
 

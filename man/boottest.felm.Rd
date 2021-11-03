@@ -51,9 +51,7 @@ needs to be NULL.}
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence
 intervals by p-value inversion. If FALSE, only the p-value is returned.}
 
-\item{seed}{An integer. Allows the user to set a random seed. If NULL, \code{boottest()} sets an
-internal seed. Hence by default, calling \code{boottest()} multiple times on the same object will produce
-the same test statistics.}
+\item{seed}{An integer. Allows the user to set a random seed. If you want to set a "global" seed, set it via \code{dqrng::dqset.seed()}.}
 
 \item{R}{Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as \code{param}. If NULL, a vector of ones of length param.}
 

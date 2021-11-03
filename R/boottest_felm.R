@@ -25,9 +25,7 @@
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
 #' @param conf_int A logical vector. If TRUE, boottest computes confidence 
 #'        intervals by p-value inversion. If FALSE, only the p-value is returned.
-#' @param seed An integer. Allows the user to set a random seed. If NULL, `boottest()` sets an
-#'        internal seed. Hence by default, calling `boottest()` multiple times on the same object will produce 
-#'        the same test statistics.
+#' @param seed An integer. Allows the user to set a random seed. If you want to set a "global" seed, set it via `dqrng::dqset.seed()`.
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param beta0 A numeric. Shifts the null hypothesis 
 #'        H0: param = beta0 vs H1: param != beta0
@@ -190,8 +188,8 @@ boottest.felm <- function(object,
   # check appropriateness and assign nthreads
   nthreads <- check_set_nthreads(nthreads)
   
-  if(is.null(seed)){
-    seed <- 1
+  if(!is.null(seed)){
+    dqrng::dqset.seed(seed)
   }
   
   if(maxiter < 1){
@@ -318,7 +316,7 @@ boottest.felm <- function(object,
     beta0 = beta0,
     sign_level = sign_level,
     param = param,
-    seed = seed,
+    # seed = seed,
     p_val_type = p_val_type, 
     nthreads = nthreads, 
     type = type, 
