@@ -14,7 +14,7 @@ status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-p
 ![runiverse-package](https://s3alfisc.r-universe.dev/badges/fwildclusterboot)
 [![R-CMD-check](https://github.com/s3alfisc/fwildclusterboot/workflows/R-CMD-check/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions)
 [![Codecov test
-coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
+coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/fwildclusterboot?color=blue)](https://cran.r-project.org/package=fwildclusterboot)
 [![](http://cranlogs.r-pkg.org/badges/last-month/fwildclusterboot?color=green)](https://cran.r-project.org/package=fwildclusterboot)
 <!-- [![minimal R version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/) -->
@@ -74,9 +74,22 @@ summary(lm_boot)
 #>  Number of Clusters: 40
 #> 
 #>              term estimate statistic p.value conf.low conf.high
-#> 1 1*treatment = 0    0.079     4.123       0    0.039     0.118
+#> 1 1*treatment = 0    0.079     4.123       0     0.04     0.118
 
 library(fixest)
+#> (Permanently remove the following message with fixest_startup_msg(FALSE).)
+#> fixest 0.10.0:
+#> - vcov: new argument 'vcov' that replaces 'se' and 'cluster' in all functions
+#> (retro compatibility is ensured).
+#> - function 'dof()' has been renamed into 'ssc()' (i.e. small sample correction).
+#> From fixest 0.9.0 onward: BREAKING changes! 
+#> - In i():
+#>     + the first two arguments have been swapped! Now it's i(factor_var,
+#> continuous_var) for interactions.
+#>     + argument 'drop' has been removed (put everything in 'ref' now).
+#> - In feglm(): 
+#>     + the default family becomes 'gaussian' to be in line with glm(). Hence, for
+#> Poisson estimations, please use fepois() instead.
 feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters)
 # bootstrap inference via boottest()
 feols_boot <- boottest(feols_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
@@ -92,7 +105,7 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>              term estimate statistic p.value conf.low conf.high
-#> 1 1*treatment = 0    0.079     4.123       0    0.039     0.118
+#> 1 1*treatment = 0    0.079     4.123       0     0.04     0.118
 ```
 
 For a longer introduction to the package’s key function, `boottest()`,
