@@ -267,7 +267,7 @@ boottest.lm <- function(object,
   # number of clusters used in bootstrap - always derived from bootcluster
   N_G <- length(unique(preprocess$bootcluster[, 1]))
   N_G_2 <- 2^N_G
-  if (type %in% c("rademacher") & N_G_2 < B) {
+  if (type %in% c("rademacher") & N_G_2 <= B) {
     warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
             call. = FALSE, 
             noBreaks. = TRUE
