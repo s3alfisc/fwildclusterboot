@@ -1,3 +1,11 @@
+# fwildclusterboot 0.5.1
+
++ Fixes a bug with Mammen weights introduced in version 0.5 -> switch back to `sample()` function. To guarantee reproducibilty with Mammen weights, either a seed 
+ needs to be specified in `boottest()` or a global seed needs to be set via `set.seed()`.
++ Deletes some unnecessary computations from boot_algo2() -> speed improvements
++ For B = 2^(#number of clusters), Rademacher weights should have been enumerated - 
+  instead, they were drawn randomly and enumeration only occured for B > 2^(#number of clusters). Now, enumeration occurs if B >= 2^(#number of clusters).
+
 # fwildclusterboot 0.5
 
 + Version 0.5 fixes an error for the bootstrap with weighted least squares introduced with version 0.4. All unit tests 

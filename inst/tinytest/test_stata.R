@@ -5,7 +5,6 @@
 # To get the RStata package to run, see https://github.com/lbraglia/RStata.
 
 run_tests <- length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]]) > 3
-run_tests <- FALSE
 
 # to execute all tests, 
 # set run_tests <- TRUE & save the file & run 
