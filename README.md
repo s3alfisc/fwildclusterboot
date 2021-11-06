@@ -52,12 +52,16 @@ subcluster bootstrapping for few treated clusters [(MacKinnon & Webb,
 ### The `boottest()` function
 
 ``` r
-# note: for performance reasons, the sampling of the bootstrap weights within
-# fwildclusterboot is handled via the dqrng package, which is installed with the
-# package as a dependency
-# to set a seed, you must use dqrng's dqset.seed() function
+# note: for performance reasons, the sampling of the bootstrap weights of types Rademacher, Webb and Normal within
+# fwildclusterboot are handled via the dqrng package, which is installed with the
+# package as a dependency. To set a global for boottest() seed for these weight types, you must use dqrng's dqset.seed() function
+# For Mammen weights, you need to set a global seed via the set.seed() function.
+
+# set global seed for Rademacher, Webb and Normal weights
 library(dqrng)
 dqrng::dqset.seed(965326)
+# set a global seed for Mammen weights
+set.seed(23325)
 
 library(fwildclusterboot)
 
@@ -84,19 +88,6 @@ summary(lm_boot)
 #> 1 1*treatment = 0    0.079     4.123       0     0.04     0.118
 
 library(fixest)
-#> (Permanently remove the following message with fixest_startup_msg(FALSE).)
-#> fixest 0.10.0:
-#> - vcov: new argument 'vcov' that replaces 'se' and 'cluster' in all functions
-#> (retro compatibility is ensured).
-#> - function 'dof()' has been renamed into 'ssc()' (i.e. small sample correction).
-#> From fixest 0.9.0 onward: BREAKING changes! 
-#> - In i():
-#>     + the first two arguments have been swapped! Now it's i(factor_var,
-#> continuous_var) for interactions.
-#>     + argument 'drop' has been removed (put everything in 'ref' now).
-#> - In feglm(): 
-#>     + the default family becomes 'gaussian' to be in line with glm(). Hence, for
-#> Poisson estimations, please use fepois() instead.
 feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters)
 # bootstrap inference via boottest()
 feols_boot <- boottest(feols_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
