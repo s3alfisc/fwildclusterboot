@@ -85,12 +85,16 @@ The `fwildclusterboot` package currently supports multi-dimensional clustering a
 ### The `boottest()` function
 
 ```{r}
-# note: for performance reasons, the sampling of the bootstrap weights within
-# fwildclusterboot is handled via the dqrng package, which is installed with the
-# package as a dependency
-# to set a seed, you must use dqrng's dqset.seed() function
+# note: for performance reasons, the sampling of the bootstrap weights of types Rademacher, Webb and Normal within
+# fwildclusterboot are handled via the dqrng package, which is installed with the
+# package as a dependency. To set a global seed for boottest() for these weight types, use dqrng's dqset.seed() function
+# For Mammen weights, one can set a global seed via the set.seed() function.
+
+# set global seed for Rademacher, Webb and Normal weights
 library(dqrng)
 dqrng::dqset.seed(965326)
+# set a global seed for Mammen weights
+set.seed(23325)
 
 library(fwildclusterboot)
 
