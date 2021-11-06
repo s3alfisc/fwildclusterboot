@@ -1,3 +1,13 @@
+## Version 0.5.1 
+
+Please apologize the quick re-submission. Version 0.5.1 fixes a bug introduced 
+in version 0.5.
+
+
+- checks pass on github actins
+- checks pass local cmd check
+- checks pass on r-develop - note regarding fast re-submission
+
 ## Version 0.5 
 
 - checks pass on github actins
