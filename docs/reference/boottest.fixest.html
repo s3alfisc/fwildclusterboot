@@ -42,7 +42,8 @@
 <meta property="og:title" content="Fast wild cluster bootstrap inference for object of class fixest — boottest.fixest" />
 <meta property="og:description" content="boottest.fixest is a S3 method that allows for fast wild cluster
 bootstrap inference for objects of class fixest by  implementing
-the fast wild bootstrap algorithm developed in Roodman et al., 2019." />
+the fast wild bootstrap algorithm developed in Roodman et al., 2019 and
+implemented in the STATA package boottest." />
 
 
 
@@ -74,7 +75,7 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -124,7 +125,8 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019." />
     <div class="ref-description">
     <p><code>boottest.fixest</code> is a S3 method that allows for fast wild cluster
 bootstrap inference for objects of class fixest by  implementing
-the fast wild bootstrap algorithm developed in Roodman et al., 2019.</p>
+the fast wild bootstrap algorithm developed in Roodman et al., 2019 and
+implemented in the STATA package <code>boottest</code>.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for fixest</span>
@@ -199,9 +201,7 @@ intervals by p-value inversion. If FALSE, only the p-value is returned.</p></td>
     </tr>
     <tr>
       <th>seed</th>
-      <td><p>An integer. Allows the user to set a random seed. If NULL, <code><a href='boottest.html'>boottest()</a></code> sets an
-internal seed. Hence by default, calling <code><a href='boottest.html'>boottest()</a></code> multiple times on the same object will produce
-the same test statistics.</p></td>
+      <td><p>An integer. Allows the user to set a random seed. If you want to set a "global" seed, set it via <code><a href='https://daqana.github.io/dqrng/reference/dqrng-functions.html'>dqrng::dqset.seed()</a></code>. For Mammen weights, you have to use <code><a href='https://rdrr.io/r/base/Random.html'>set.seed()</a></code> instead.</p></td>
     </tr>
     <tr>
       <th>R</th>
@@ -218,7 +218,7 @@ H0: param = beta0 vs H1: param != beta0</p></td>
 of boostrap to use: One of "rademacher", "mammen", "norm"
 and "webb". Alternatively, type can be a function(n) for drawing
 wild bootstrap factors. "rademacher" by default.
-For the Rademacher and Mammen distribution, if the number of replications B exceeds
+For the Rademacher distribution, if the number of replications B exceeds
 the number of possible draw ombinations, 2^(#number of clusters), then <code><a href='boottest.html'>boottest()</a></code>
 will use each possible combination once (enumeration).</p></td>
     </tr>

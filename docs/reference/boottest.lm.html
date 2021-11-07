@@ -74,7 +74,7 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -186,9 +186,7 @@ intervals by p-value inversion. If FALSE, only the p-value is returned.</p></td>
     </tr>
     <tr>
       <th>seed</th>
-      <td><p>An integer. Allows the user to set a random seed. If NULL, <code><a href='boottest.html'>boottest()</a></code> sets an
-internal seed. Hence by default, calling <code><a href='boottest.html'>boottest()</a></code> multiple times on the same object will produce
-the same test statistics.</p></td>
+      <td><p>An integer. Allows the user to set a random seed. If you want to set a "global" seed, set it via <code><a href='https://daqana.github.io/dqrng/reference/dqrng-functions.html'>dqrng::dqset.seed()</a></code>. For Mammen weights, you have to use <code><a href='https://rdrr.io/r/base/Random.html'>set.seed()</a></code> instead.</p></td>
     </tr>
     <tr>
       <th>R</th>
@@ -211,7 +209,7 @@ returns 0.95% confidence intervals. By default, sign_level = 0.05.</p></td>
 of boostrap to use: One of "rademacher", "mammen", "norm"
 and "webb". Alternatively, type can be a function(n) for drawing
 wild bootstrap factors. "rademacher" by default.
-For the Rademacher and Mammen distribution, if the number of replications B exceeds
+For the Rademacher distribution, if the number of replications B exceeds
 the number of possible draw ombinations, 2^(#number of clusters), then <code><a href='boottest.html'>boottest()</a></code>
 will use each possible combination once (enumeration).</p></td>
     </tr>
@@ -349,7 +347,7 @@ STATA using boottest", The STATA Journal.
 #&gt;  Confidence Sets: 95%
 #&gt;  Number of Clusters: 40
 #&gt;  </div><div class='output co'>#&gt;              term estimate statistic p.value conf.low conf.high
-#&gt; 1 1*treatment = 0    0.073     3.786   0.001    0.033     0.112</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
+#&gt; 1 1*treatment = 0    0.073     3.786   0.001    0.034     0.113</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
 </div><div class='img'><img src='boottest.lm-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

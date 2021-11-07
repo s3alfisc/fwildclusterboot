@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -117,12 +117,36 @@
       <small>Source: <a href='https://github.com/s3alfisc/fwildclusterboot/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fwildclusterboot-051" class="section level1">
+<h1 class="page-header" data-toc-text="0.5.1">
+<a href="#fwildclusterboot-051" class="anchor"></a>fwildclusterboot 0.5.1<small> 2021-11-06 </small>
+</h1>
+<ul>
+<li>Fixes a bug with Mammen weights introduced in version 0.5 -&gt; switch back to <code><a href="https://rdrr.io/r/base/sample.html">sample()</a></code> function. To guarantee reproducibilty with Mammen weights, either a seed needs to be specified in <code><a href="../reference/boottest.html">boottest()</a></code> or a global seed needs to be set via <code><a href="https://rdrr.io/r/base/Random.html">set.seed()</a></code>.</li>
+<li>Deletes some unnecessary computations from boot_algo2() -&gt; speed improvements</li>
+<li>For B = 2^(#number of clusters), Rademacher weights should have been enumerated - instead, they were drawn randomly and enumeration only occured for B &gt; 2^(#number of clusters). Now, enumeration occurs if B &gt;= 2^(#number of clusters).</li>
+</ul>
+</div>
+    <div id="fwildclusterboot-05" class="section level1">
+<h1 class="page-header" data-toc-text="0.5">
+<a href="#fwildclusterboot-05" class="anchor"></a>fwildclusterboot 0.5<small> 2021-11-03 </small>
+</h1>
+<ul>
+<li>Version 0.5 fixes an error for the bootstrap with weighted least squares introduced with version 0.4. All unit tests that compare fwildclusterboot with weighted least squares results from boottest.stata pass. In particular, enumerated cases pass with exact equality (in such cases, the bootstrap weights matrices are exactly identical in both R and Stata).</li>
+<li>
+<code><a href="../reference/boottest.html">boottest()</a></code> now stops if <code><a href="https://lrberge.github.io/fixest/reference/feols.html">fixest::feols()</a></code> deletes non-NA values (e.g. singleton fixed effects deletion) and asks the user to delete such rows prior to estimation via <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> &amp; <code><a href="../reference/boottest.html">boottest()</a></code>. Currently, <code>boottest()'s</code> pre-processing cannot handle such deletions - this remains future work.</li>
+<li>To align <code>fwildclusterboot</code> with Stata’s boottest command (Roodman et al, 2019), Mammen weights are no longer enumerated in <code><a href="../reference/boottest.html">fwildclusterboot::boottest()</a></code>.</li>
+<li>
+<code><a href="../reference/boottest.html">boottest()</a></code> no longer sets an internal seed (previously set.seed(1)) if no seed is provided as a function argument.</li>
+<li>Sampling of the bootstrap weights is now powered by the <code>dqrng</code> package, which speeds up the creation of the bootstrap weights matrix. To set a “global” seed, one now has use the <code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html">dqset.seed()</a></code> function from the <code>dqrng package</code>, which is added as a dependency.</li>
+</ul>
+</div>
     <div id="fwilclusterboot-04" class="section level1">
 <h1 class="page-header" data-toc-text="0.4">
 <a href="#fwilclusterboot-04" class="anchor"></a>fwilclusterboot 0.4<small> 2021-10-08 </small>
 </h1>
 <ul>
-<li>New feature I: <code><a href="../reference/boottest.html">boottest()</a></code> now allows for univariate tests that involve multiple variables. E.g. one can now test hypothesis as ´var1 + var2 = c´ where c is a scalar. More details on the syntax can be found in the vignette. All methods of for objects of class <code>boottest</code> have been updated.</li>
+<li>New feature I: <code><a href="../reference/boottest.html">boottest()</a></code> now allows for univariate tests that involve multiple variables. E.g. one can now test hypothesis as <code>var1 + var2 = c</code> where c is a scalar. More details on the syntax can be found in the vignette. All methods of for objects of class <code>boottest</code> have been updated.</li>
 <li>New feature II: <code><a href="../reference/boottest.html">boottest()</a></code> now also supports “equal-tailed” p-values and one-sided hypotheses. For one-sided tests, confidence intervals are currently not supported.</li>
 <li>Internal changes: To allow for multivariable tests, the <code><a href="../reference/boot_algo2.html">boot_algo2()</a></code> function has slightly been modified. <code>invert_p_val2()</code> is superseded by <code>invert_p_val()</code>.</li>
 <li>Further, a CRAN error is fixed - some tests for exact equality failed with relative difference e-05 on openBLAS. In consequence, all exact tests are set to reltol = 1e-04.</li>
