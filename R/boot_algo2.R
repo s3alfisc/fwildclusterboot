@@ -112,17 +112,22 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #XXinv <- solve(crossprod(X))                          # k x k
   WX <- weights * X
   
+  XAR <- X %*% (A %*% t(R))
+  AWXY <- (A %*% (t(WX) %*% Y))
+  
   if(impose_null == TRUE){
-    Q <- - X %*% A %*% t(R) %*% solve(R %*% A %*% t(R))        # N x 1
-    P <- Y - X %*% (A %*% (t(WX) %*% Y)) - Q %*% (R %*% A %*% t(WX)) %*% Y
+    Q <- - XAR %*% solve(R %*% A %*% t(R))        # N x 1
+    #P <- Y - X %*% (A %*% (t(WX) %*% Y)) - Q %*% (R %*% A %*% t(WX)) %*% Y
+    P <- Y - X %*% AWXY - Q %*% (R %*% AWXY)
   } else if(impose_null == FALSE){
-      P <- Y - X %*% (A %*% (t(WX) %*% Y)) 
+      #P <- Y - X %*% (A %*% (t(WX) %*% Y)) 
+      P <- Y - X %*% AWXY
       Q <- matrix(0, nrow(P), 1)
       #R[,1] <- 0
   }
 
   # pre-compute objects used in for-loop below: 
-  WXAR <- weights * as.vector(X %*% (A %*% t(R)))             # N x 1
+  WXAR <- weights * as.vector(XAR)             # N x 1
   WXARX <- WXAR * X                                           # N x k
   
   WXARP <- WXAR * as.vector(P)
