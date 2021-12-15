@@ -102,6 +102,46 @@ if(runThisTest){
     # test if calculated p-values are in the set of potential p-values
     expect_equal(mean(unique(res) %in% potential_p_values), 1)
   }
+  
+  
+  for(x in 2:10){
+    
+    iter <- 100
+    res <- vector(mode = "numeric", iter)
+    z <<- x
+    
+    for(i in 1:iter){
+      
+      seed <<- i
+      # estimate regression models with 2, 3, ..., 10 clusters
+      data <- fwildclusterboot:::create_data(N = 1000, N_G1 = z, icc1 = 0.01, N_G2 = 2, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = seed)
+      lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
+                   data = data)
+      
+      boot_lm <-  suppressMessages(
+        boottest(
+          object = lm_fit, 
+          clustid =  c("group_id1", "group_id2"), 
+          # guarantees that full enumeration is employed
+          B = 2^(z^2) + 1, 
+          seed = 1, 
+          param = "treatment", 
+          type = "rademacher",
+          conf_int = FALSE, 
+          nthreads = 4)
+      )
+      
+      res[i] <- boot_lm$p_val
+    }
+    
+    # check if all values in res are theoretically feasible 
+    potential_p_values <-  0:(2^(z-1+2)) / (2^(z-1+2))
+    
+    # test if the number of distinct p-values is smaller or equal than the number of theoretically feasible p-values
+    expect_true(length(unique(res)) <= length(potential_p_values))
+    # test if calculated p-values are in the set of potential p-values
+    expect_equal(mean(unique(res) %in% potential_p_values), 1)
+  }
 
 }
 

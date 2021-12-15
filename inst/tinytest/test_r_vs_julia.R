@@ -6,7 +6,7 @@
 run <- TRUE
 
 if(run){
-  library(wildboottestjlr)
+
   library(tinytest)
   # if not yet run: julia_setup()
   # wildboottestjlr::wildboottestjlr_setup("C:/Users/alexa/AppData/Local/Programs/Julia-1.6.3/bin")
