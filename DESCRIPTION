@@ -48,15 +48,16 @@ URL: https://s3alfisc.github.io/fwildclusterboot/
 BugReports: https://github.com/s3alfisc/fwildclusterboot/issues/
 License: GPL-3 
 Imports: 
-    collapse, 
+    collapse,
     Formula,
     Rcpp,
     dreamerr,
     Matrix,
-    Matrix.utils, 
-    generics, 
-    gtools, 
-    dqrng
+    Matrix.utils,
+    generics,
+    gtools,
+    dqrng,
+    wildboottestjlr
 Suggests: 
     fixest,
     lfe,
