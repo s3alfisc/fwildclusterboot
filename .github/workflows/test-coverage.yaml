@@ -42,6 +42,16 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("covr")
         shell: Rscript {0}
+        
+      # install julia
+      - uses: julia-actions/setup-julia@v1
+      # add julia to renviron
+      - name: Create and populate .Renviron file
+        run: echo JULIA_BINDIR= "${{ env.juliaLocation }}" >> ~/.Renviron
+      # install WildBootTests.jl
+      - name: install WildBootTests.jl
+        run: julia -e 'using Pkg; Pkg.add("WildBootTests")'
+
 
       - name: Test coverage
         run: covr::codecov()
