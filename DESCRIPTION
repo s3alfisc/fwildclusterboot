@@ -70,6 +70,7 @@ Suggests:
     broom, 
     modelsummary, 
     RStata
+Remotes: s3alfisc/wildboottestjlr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
