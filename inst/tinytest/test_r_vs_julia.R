@@ -7,10 +7,6 @@ run <- TRUE
 
 if(run){
 
-  library(tinytest)
-  # if not yet run: julia_setup()
-  # wildboottestjlr::wildboottestjlr_setup("C:/Users/alexa/AppData/Local/Programs/Julia-1.6.3/bin")
-  
   reltol <- 0.02
   
   N <- 1000
@@ -18,7 +14,7 @@ if(run){
   
   
   lm_fit <- lm(proposition_vote ~ treatment  + log_income  ,
-               data = wildboottestjlr:::create_data(N = 10000,
+               data = wildboottestjlr:::create_data(N = 1000,
                                                     N_G1 = 20,
                                                     icc1 = 0.5,
                                                     N_G2 = 20,
@@ -52,8 +48,8 @@ if(run){
     #fwildclusterboot:::set.fwildclusterboot.seed(12345)
     set.seed(12391786)
     dqrng::dqset.seed(8723467)
-    
-    for(type in c("rademacher", "webb", "mammen", "norm")){
+    type <- "rademacher"
+    #for(type in c("rademacher", "webb", "mammen", "norm")){
       
       for(impose_null in c(TRUE, FALSE)){
         
@@ -175,7 +171,7 @@ if(run){
         # boot_jl1 <- wildboottestjlr::boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"),B = 499999, param = "treatment")
         # expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol)
         
-      }
+  #    }
       
     }
     
@@ -197,11 +193,11 @@ if(run){
   # ------------------------------------------------------------------------------------------------------------------- #
   # Test Suite 3: test for exact equality of t_stat, t_boot, p_val under full enumeration (only for rademacher weights)
   
-  N <- 10000
+  N <- 1000
   
   lm_fit2 <- lm(proposition_vote ~ treatment + Q1_immigration + Q2_defense,
                 weights = weights,
-                data = fwildclusterboot:::create_data(N = 10000,
+                data = fwildclusterboot:::create_data(N = 1000,
                                                       N_G1 = 5,
                                                       icc1 = 0.5,
                                                       N_G2 = 2,
