@@ -48,9 +48,12 @@ jobs:
       # add julia to renviron
       - name: Create and populate .Renviron file
         run: echo JULIA_BINDIR= "${{ env.juliaLocation }}" >> ~/.Renviron
+        shell: bash
       # install WildBootTests.jl
       - name: install WildBootTests.jl
         run: julia -e 'using Pkg; Pkg.add("WildBootTests")'
+        shell: bash
+
 
 
       - name: Test coverage
