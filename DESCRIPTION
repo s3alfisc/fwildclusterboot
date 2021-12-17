@@ -67,7 +67,6 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-    spelling, 
     broom, 
     modelsummary, 
     RStata
