@@ -47,7 +47,8 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
   } else if (impose_null == FALSE) {
     t <- numer / denom
     # reinterpretation of eq (17) in Roodman et al
-    t[1] <- t[1] - ((point_estimate - beta0) / denom[1])
+    #t[1] <- t[1] - ((point_estimate - beta0) / denom[1])
+    t[1] <- ((point_estimate - beta0) / denom[1]) - t[1] 
   }
 
   delete_invalid_t_total <- sum(is.na(t))
