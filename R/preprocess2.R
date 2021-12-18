@@ -39,7 +39,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     # combine fixed effects in formula with main formula
     # note: you get a warning here if rhs = 2 is empty (no fixed effect specified via fml)
     formula_coef_fe <- suppressWarnings(formula(Formula::as.Formula(formula), lhs = 1, rhs = c(1, 2), collapse = TRUE))
-  
+    
     formula <- formula_coef_fe
     
     if (!is.null(eval(of$fixef))) {
@@ -188,7 +188,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     
     of[[1L]] <- quote(stats::model.frame)
     of <- eval(of, parent.frame())
-
+    
     N_model <- length(residuals(object))
     model_param_names <- names(coef(object))
     
@@ -234,7 +234,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
       noBreaks. = TRUE
       )
     }
-  # this part of the code is superfluous, right?  
+    # this part of the code is superfluous, right?  
   } else if (na_omit == FALSE) {
     if (N_diff >= 1) {
       stop(paste(
@@ -252,7 +252,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   # Step 3: assign Y, X, weights, fixed_effects, W etc.
   
   model_frame <- of
-
+  
   Y <- model.response(model_frame)
   # X: need to delete clusters
   X <- model.matrix(formula_coef_fe, model_frame)
@@ -371,7 +371,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   R0 <- rep(0, length(colnames(X)))
   R0[match(param, colnames(X))] <- R
   names(R0) <- colnames(X)
-
+  
   res <- list(
     Y = Y,
     X = X,
