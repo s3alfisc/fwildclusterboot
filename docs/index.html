@@ -43,7 +43,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.2</span>
       </span>
     </div>
 
@@ -60,6 +60,21 @@
 </li>
 <li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/technical_vignette.html">Technical vignette for fwildclusterboot</a>
+    </li>
+    <li>
+      <a href="articles/wildboottestjlr.html">wildboottestjlr</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="news/index.html">Changelog</a>
@@ -96,6 +111,7 @@
 <p>It implements the fast wild cluster bootstrap algorithm developed in <a href="https://econpapers.repec.org/paper/qedwpaper/1406.htm">Roodman et al (2019)</a> for regression objects in R. It currently works for regression objects of type <code>lm</code>, <code>felm</code> and <code>fixest</code> from base R and the <code>lfe</code> and <code>fixest</code> packages.</p>
 <p>The package’s central function is <code><a href="reference/boottest.html">boottest()</a></code>. It allows the user to test univariate hypotheses using a wild cluster bootstrap. The “fast” algorithm developed in Roodman et al makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples – as long as the number of bootstrapping clusters is not too large.</p>
 <p>The <code>fwildclusterboot</code> package currently supports multi-dimensional clustering and one-dimensional hypotheses. It supports regression weights, multiple distributions of bootstrap weights, fixed effects, restricted (WCR) and unrestricted (WCU) bootstrap inference and subcluster bootstrapping for few treated clusters <a href="https://academic.oup.com/ectj/article-abstract/21/2/114/5078969">(MacKinnon &amp; Webb, (2018))</a>.</p>
+<p>If you are interested in the wild cluster bootstrap for IV models <a href="https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221%5D">(Davidson &amp; MacKinnon, 2010)</a> or want to test multiple joint hypotheses, you can use the <a href="https://github.com/s3alfisc/wildboottestjlr">wildboottestjlr</a> package, which is an R wrapper of the <a href="https://github.com/droodman/WildBootTests.jl">WildBootTests.jl</a> Julia package. While <code>fwildclusterboot</code> is already quite fast (see the benchmarks below), the implementation of the wild bootstrap for OLS in <code>WildBootTests.jl</code> is - after compilation - orders of magnitudes faster, in particular for problems with a large number of clusters.</p>
 <!-- The following features will be added in the future:  -->
 <!-- * support for multivariate hypotheses  -->
 <!-- * bootstrap distributions beyond the rademacher distribution -->
@@ -105,8 +121,8 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># note: for performance reasons, the sampling of the bootstrap weights of types Rademacher, Webb and Normal within</span>
 <span class="co"># fwildclusterboot are handled via the dqrng package, which is installed with the</span>
-<span class="co"># package as a dependency. To set a global for boottest() seed for these weight types, you must use dqrng's dqset.seed() function</span>
-<span class="co"># For Mammen weights, you need to set a global seed via the set.seed() function.</span>
+<span class="co"># package as a dependency. To set a global seed for boottest() for these weight types, use dqrng's dqset.seed() function</span>
+<span class="co"># For Mammen weights, one can set a global seed via the set.seed() function.</span>
 
 <span class="co"># set global seed for Rademacher, Webb and Normal weights</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://daqana.github.io/dqrng/">dqrng</a></span><span class="op">)</span>
@@ -179,7 +195,7 @@
 <span class="co"># dev version from github</span>
 <span class="co"># note: installation requires Rtools</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/">devtools</a></span><span class="op">)</span>
-<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"s3alfisc/fwildclusterboot"</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"s3alfisc/fwildclusterboot"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
   </div>
