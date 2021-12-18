@@ -1,11 +1,10 @@
 # A: test of equivalence between fwildclusterboot and wildboottestjlr
 # testing via the tinytest package.
-# 1) test boot_lm
 
-# don't run tests automatically, else devtools::check() will fail
-run <- TRUE
+# don't run tests on CRAN 
+run_tests <- length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]]) > 3
 
-if(run){
+if(run_tests){
 
   reltol <- 0.02
   
@@ -42,9 +41,11 @@ if(run){
   # object = lm_fit
   # impose_null = FALSE
   # type = "rademacher"
-  # p_val_type = "equal-tailed"
+  # p_val_type = ">"
 
 
+  cat("Part 1: Large B Tests", "\n")
+  
   
   for(object in lm_fits){
 
@@ -215,26 +216,19 @@ if(run){
 
 }
 
-  # ------------------------------------------------------------------------------------------------ #
-  # Test Suite 2: test that same seeds as specified via rng produce equivalent results:
-  boot_jl1 <- wildboottestjlr::boottest(lm_fit, clustid = "group_id1", B = 99999, param = "treatment", type = type, rng = 1)
-  boot_jl2 <- wildboottestjlr::boottest(lm_fit, clustid = "group_id1", B = 99999, param = "treatment", type = type, rng = 1)
-  boot_jl3 <- wildboottestjlr::boottest(lm_fit, clustid = "group_id1", B = 99999, param = "treatment", type = type, rng = 2)
 
-  print(expect_equal(boot_jl1$p_val[1], boot_jl2$p_val[1])) # expect exact equality
-  print(expect_equal(boot_jl1$p_val[1], boot_jl3$p_val[1], tolerance = reltol))
-  # ------------------------------------------------------------------------------------------------ #
-
-
+  
+  
   # ------------------------------------------------------------------------------------------------------------------- #
   # Test Suite 3: test for exact equality of t_stat, t_boot, p_val under full enumeration (only for rademacher weights)
+  
+  cat("Part 2: Enumeration tests for exact equality", "\n")
   
   N <- 1000
   
   lm_fit2 <- lm(proposition_vote ~ treatment + Q1_immigration + Q2_defense,
-                weights = weights,
                 data = fwildclusterboot:::create_data(N = 1000,
-                                                      N_G1 = 5,
+                                                      N_G1 = 6,
                                                       icc1 = 0.5,
                                                       N_G2 = 2,
                                                       icc2 = 0.2,
@@ -243,66 +237,52 @@ if(run){
                                                       #seed = 41224,
                                                       seed = 1235107,
                                                       weights = 1:N / N))
-  k <- length(coef(lm_fit2))
   
-  # oneway clustering
-  boot_r <- fwildclusterboot::boottest(lm_fit2, clustid = "group_id1", B = 99999, param = "treatment", type = "rademacher", p_val_type = "two-tailed")
-  boot_jl_nosmall <- wildboottestjlr::boottest(lm_fit2, clustid = "group_id1", B = 99999, param = "treatment", type = "rademacher", p_val_type = "two-tailed", small_sample_adjustment = FALSE, floattype = "Float64", fweights = FALSE)
+  lm_fit_weights2 <- lm(proposition_vote ~ treatment + Q1_immigration + Q2_defense,
+                          weights = weights,
+                          data = fwildclusterboot:::create_data(N = 1000,
+                                                                N_G1 = 6,
+                                                                icc1 = 0.5,
+                                                                N_G2 = 2,
+                                                                icc2 = 0.2,
+                                                                numb_fe1 = 5,
+                                                                numb_fe2 = 5,
+                                                                #seed = 41224,
+                                                                seed = 1235107,
+                                                                weights = 1:N / N))
+  lm_fits <- list(lm_fit2, lm_fit_weights2)
   
-  expect_equivalent(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((boot_jl_nosmall$N_G-1) / (boot_jl_nosmall$N_G)))
-  print(expect_equal(sort(boot_r$t_boot), sort(c(boot_jl_nosmall$t_boot)) * sqrt((boot_jl_nosmall$N_G-1) / (boot_jl_nosmall$N_G))))
-  
-  boot_r <- fwildclusterboot::boottest(lm_fit2, clustid = "group_id1", B = 99999, param = "treatment", type = "rademacher", p_val_type = "equal-tailed")
-  boot_jl_nosmall <- wildboottestjlr::boottest(lm_fit2, clustid = "group_id1", B = 99999, param = "treatment", type = "rademacher", p_val_type = "equal-tailed",small_sample_adjustment = FALSE, floattype = "Float64")
-  
-  expect_equivalent(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((boot_jl_nosmall$N_G-1) / (boot_jl_nosmall$N_G)))
-  print(expect_equal(sort(boot_r$t_boot), sort(c(boot_jl_nosmall$t_boot)) * sqrt((boot_jl_nosmall$N_G-1) / (boot_jl_nosmall$N_G))))
-  
-  boot_r <- fwildclusterboot::boottest(lm_fit2, clustid = "group_id1", B = 199999, param = "treatment", type = "rademacher", p_val_type = ">", conf_int = FALSE)
-  boot_jl_nosmall <- wildboottestjlr::boottest(lm_fit2, clustid = "group_id1", B = 199999, param = "treatment", type = "rademacher", p_val_type = ">", conf_int = FALSE,small_sample_adjustment = FALSE, floattype = "Float64")
-  
-  expect_equivalent(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((boot_jl_nosmall$N_G-1) / (boot_jl_nosmall$N_G)))
-  print(expect_equal(sort(boot_r$t_boot), sort(c(boot_jl_nosmall$t_boot)) * sqrt((boot_jl_nosmall$N_G-1) / (boot_jl_nosmall$N_G))))
-  
-  boot_r <- fwildclusterboot::boottest(lm_fit2, clustid = "group_id1", B = 199999, param = "treatment", type = "rademacher", p_val_type = "<", conf_int = FALSE)
-  boot_jl_nosmall <- wildboottestjlr::boottest(lm_fit2, clustid = "group_id1", B = 199999, param = "treatment", type = "rademacher", p_val_type = "<", conf_int = FALSE,small_sample_adjustment = FALSE, floattype = "Float64")
-  
-  expect_equivalent(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((boot_jl_nosmall$N_G-1) / (boot_jl_nosmall$N_G)))
-  print(expect_equal(sort(boot_r$t_boot), sort(c(boot_jl_nosmall$t_boot)) * sqrt((boot_jl_nosmall$N_G-1) / (boot_jl_nosmall$N_G))))
-  
-  # twoway clustering
-  # boot_r <- fwildclusterboot::boottest(lm_fit2, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = "rademacher", p_val_type = "two-tailed")
-  # boot_jl_nosmall <- wildboottestjlr::boottest(lm_fit2, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = "rademacher", p_val_type = "two-tailed",small_sample_adjustment = TRUE, floattype = "Float64")
-  #
-  # expect_equivalent(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((N-1) / (N-k)))
-  # print(expect_equal(sort(boot_r$t_boot), sort(c(boot_jl_nosmall$t_boot[!is.na(boot_jl_nosmall$t_boot)])) *sqrt((N-1) / (N-k)))
-  #
-  # boot_r <- fwildclusterboot::boottest(lm_fit2, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type, bootcluster = "min")
-  # boot_jl_nosmall <- wildboottestjlr::boottest(lm_fit2, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type, bootcluster = "min",small_sample_adjustment = TRUE, floattype = "Float64")
-  #
-  # expect_equivalent(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((N-1) / (N-k)))
-  # print(expect_equal(sort(boot_r$t_boot), sort(c(boot_jl_nosmall$t_boot[!is.na(boot_jl_nosmall$t_boot)])) *sqrt((N-1) / (N-k)))
-  #
-  # #boot_r <- fwildclusterboot::boottest(lm_fit2, clustid = c("group_id1"), B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type, bootcluster = c("group_id1", "dummy"))
-  # #boot_jl_nosmall <- wildboottestjlr::boottest(lm_fit2, clustid = c("group_id1"), B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type, bootcluster = c("group_id1", "dummy"),small_sample_adjustment = TRUE, floattype = "Float64")
-  #
-  # #expect_equivalent(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((N-1) / (N-k)))
-  # #print(expect_equal(sort(boot_r$t_boot), sort(c(boot_jl_nosmall$t_boot[!is.na(boot_jl_nosmall$t_boot)])) *sqrt((N-1) / (N-k)))
-  #
-  # boot_r <- fwildclusterboot::boottest(lm_fit2, clustid = c("group_id1", "group_id2"), B = 199999, param = "treatment", type = "rademacher", p_val_type = ">", conf_int = FALSE)
-  # boot_jl_nosmall <- wildboottestjlr::boottest(lm_fit2, clustid = c("group_id1", "group_id2"), B = 199999, param = "treatment", type = "rademacher", p_val_type = ">", conf_int = FALSE,small_sample_adjustment = TRUE, floattype = "Float64")
-  #
-  # expect_equivalent(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((N-1) / (N-k)))
-  # print(expect_equal(sort(boot_r$t_boot), sort(c(boot_jl_nosmall$t_boot[!is.na(boot_jl_nosmall$t_boot)])) *sqrt((N-1) / (N-k)))
-  #
-  # boot_r <- fwildclusterboot::boottest(lm_fit2, clustid = c("group_id1", "group_id2"), B = 199999, param = "treatment", type = "rademacher", p_val_type = "<", conf_int = FALSE, bootcluster = "min")
-  # boot_jl_nosmall <- wildboottestjlr::boottest(lm_fit2, clustid = c("group_id1", "group_id2"), B = 199999, param = "treatment", type = "rademacher", p_val_type = "<", conf_int = FALSE, bootcluster = "min",small_sample_adjustment = TRUE, floattype = "Float64")
-  #
-  # expect_equivalent(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((N-1) / (N-k)))
-  # print(expect_equal(sort(boot_r$t_boot), sort(c(boot_jl_nosmall$t_boot[!is.na(boot_jl_nosmall$t_boot)])) *sqrt((N-1) / (N-k)))
-  
-  # ------------------------------------------------------------------------------------------------------------------- #
-  
+  for(object in lm_fits){
+    
+    k <- length(coef(object))
+    
+    cat("start ols/wls", "\n")
+
+      for(p_val_type in c("two-tailed", "equal-tailed", ">", "<")){
+        
+        
+        for(impose_null in c(TRUE, FALSE)){
+          
+          cat(paste("type:", "rademacher", "p-val:", p_val_type, "null imposed:", impose_null), "\n")    
+          
+          # oneway clustering
+          boot_r <- fwildclusterboot::boottest(object, clustid = "group_id1", B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE)
+          boot_jl_nosmall <- wildboottestjlr::boottest(object, clustid = "group_id1", B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type, impose_null = impose_null, small_sample_adjustment = TRUE, floattype = "Float64", conf_int = FALSE)
+          expect_equal(boot_r$p_val, boot_jl_nosmall$p_val)
+          expect_equal(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((N-1) / (N-k)))
+          
+          # twoway clustering
+          boot_r <- fwildclusterboot::boottest(object, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type, conf_int = FALSE, bootcluster = "min")
+          boot_jl_nosmall <- wildboottestjlr::boottest(object, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type,small_sample_adjustment = TRUE, floattype = "Float64", conf_int = FALSE, bootcluster = "min")
+        
+          expect_equal(boot_r$p_val, boot_jl_nosmall$p_val)
+          expect_equal(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((N-1) / (N-k)))
+          
+        }
+        
+      }
+  }
+ 
   
   
   
