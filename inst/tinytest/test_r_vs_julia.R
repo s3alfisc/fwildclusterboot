@@ -122,7 +122,7 @@ if(run){
         # and all with twoway clustering:
         cat("Check 3:", "\n")
         if(p_val_type %in% c("two-tailed", "equal-tailed")){
-          boot_r <- fwildclusterboot::boottest(object, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 4)
+          boot_r <- fwildclusterboot::boottest(object, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1)
           boot_jl <- wildboottestjlr::boottest(object, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null)
           res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol)
           if(res == FALSE){print(res)}
@@ -134,7 +134,7 @@ if(run){
           if(res == FALSE){print(res)}
           rm(res)
           } else {
-          boot_r <- fwildclusterboot::boottest(object, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 4, conf_int = FALSE)
+          boot_r <- fwildclusterboot::boottest(object, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1, conf_int = FALSE)
           boot_jl <- wildboottestjlr::boottest(object, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE)
           res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol)
           if(res == FALSE){print(res)}
@@ -150,7 +150,7 @@ if(run){
 
         cat("Check 4:", "\n")
         if(p_val_type %in% c("two-tailed", "equal-tailed")){
-          boot_r <- fwildclusterboot::boottest(object, clustid = c("group_id1", "group_id2"), B = 199999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 4)
+          boot_r <- fwildclusterboot::boottest(object, clustid = c("group_id1", "group_id2"), B = 199999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1)
           boot_jl <- wildboottestjlr::boottest(object, clustid = c("group_id1", "group_id2"), B = 199999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null)
           res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol)
           if(res == FALSE){print(res)}
@@ -162,7 +162,7 @@ if(run){
           if(res == FALSE){print(res)}
           rm(res)
         } else {
-          boot_r <- fwildclusterboot::boottest(object, clustid = c("group_id1", "group_id2"), B = 199999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 4, conf_int = FALSE)
+          boot_r <- fwildclusterboot::boottest(object, clustid = c("group_id1", "group_id2"), B = 199999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1, conf_int = FALSE)
           boot_jl <- wildboottestjlr::boottest(object, clustid = c("group_id1", "group_id2"), B = 199999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE)
           res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol)
           if(res == FALSE){print(res)}
@@ -193,16 +193,16 @@ if(run){
         # print(expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol))
         #
         # # clustid variale not in bootcluster & bootcluster variable not in clustid
-        # boot_r <- fwildclusterboot::boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1","group_id2", "Q1_immigration"), B = 99999, param = "treatment", nthreads = 4)
+        # boot_r <- fwildclusterboot::boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1","group_id2", "Q1_immigration"), B = 99999, param = "treatment", nthreads = 1)
         # boot_jl1 <- wildboottestjlr::boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1","group_id2", "Q1_immigration"),B = 99999, param = "treatment")
         # print(expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol))
         #
         # # clustid variale not in bootcluster & bootcluster variable not in clustid
-        # #boot_r <- fwildclusterboot::boottest(lm_fit, clustid = c("group_id1"), bootcluster = c("group_id1", "dummy"), B = 199999, param = "treatment", nthreads = 4)
+        # #boot_r <- fwildclusterboot::boottest(lm_fit, clustid = c("group_id1"), bootcluster = c("group_id1", "dummy"), B = 199999, param = "treatment", nthreads = 1)
         # #boot_jl1 <- wildboottestjlr::boottest(lm_fit, clustid = c("group_id1"), bootcluster = c("group_id1", "dummy"),B = 199999, param = "treatment")
         # #print(expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol))
         #
-        # boot_r <- fwildclusterboot::boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"), B = 499999, param = "treatment", nthreads = 4)
+        # boot_r <- fwildclusterboot::boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"), B = 499999, param = "treatment", nthreads = 1)
         # boot_jl1 <- wildboottestjlr::boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"),B = 499999, param = "treatment")
         # print(expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol))
 
