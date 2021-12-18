@@ -284,7 +284,7 @@ boottest.lm <- function(object,
   
   
   # conduct inference: calculate p-value
-  res <- boot_algo2(preprocess,
+  res <- boot_algo2(preprocessed_object = preprocess,
                     boot_iter = B,
                     point_estimate = point_estimate,
                     impose_null = impose_null,
@@ -298,6 +298,10 @@ boottest.lm <- function(object,
                     full_enumeration = full_enumeration
   )
   
+  if(!is.null(res$invalid_t)){
+    message(paste0(res$invalid_t), "test statistics deleted due to non-positive definite covariance matrix.")
+  }
+
   # compute confidence sets
   
   
