@@ -2,7 +2,7 @@
 # testing via the tinytest package.
 
 # don't run tests on CRAN 
-run_tests <- length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]]) > 3
+run_tests <- length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]]) > 2
 
 if(run_tests){
 
@@ -67,7 +67,9 @@ if(run_tests){
         cat("Check 1:", "\n")
         if(p_val_type %in% c("two-tailed", "equal-tailed")){
           boot_r <- fwildclusterboot::boottest(object, clustid = "group_id1", B = 99999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null)
+          pracma::tic()
           boot_jl <- wildboottestjlr::boottest(object, clustid = "group_id1", B = 99999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null)
+          pracma::toc()
           res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol)
           if(res == FALSE){print(res)}
           rm(res)
