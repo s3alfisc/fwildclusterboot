@@ -56,8 +56,7 @@ Imports:
     Matrix.utils,
     generics,
     gtools,
-    dqrng,
-    wildboottestjlr
+    dqrng
 Suggests: 
     fixest,
     lfe,
@@ -69,7 +68,8 @@ Suggests:
     rmarkdown,
     broom, 
     modelsummary, 
-    RStata
+    RStata,
+    wildboottestjlr
 Remotes: s3alfisc/wildboottestjlr
 Encoding: UTF-8
 LazyData: true
