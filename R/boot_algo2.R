@@ -82,14 +82,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   # should full enumeration be used for webb as well? 
   
   if(type %in% c("rademacher") && full_enumeration == TRUE){
-    #if(type == "rademacher"){
       v0 <- gtools::permutations(n = 2, r = N_G_bootcluster, v = c(1, -1), repeats.allowed = TRUE)
-      #v0 <- v0[-which(rowMeans(v0) == 1),] # drop vector of ones
       v <- cbind(1, t(v0))
-    #} else if(type == "mammen"){
-    #  v0 <- gtools::permutations(n = 2, r = N_G_bootcluster, v = c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2, repeats.allowed = TRUE)
-    #  v <- cbind(1, t(v0))
-    #}
   } else{
     # else: just draw with replacement - by chance, some permutations 
     # might occur more than once
