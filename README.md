@@ -97,7 +97,7 @@ summary(lm_boot)
 #>  Number of Clusters: 40
 #> 
 #>              term estimate statistic p.value conf.low conf.high
-#> 1 1*treatment = 0    0.079     4.123       0     0.04     0.118
+#> 1 1*treatment = 0    0.079     3.983       0     0.04     0.118
 
 library(fixest)
 feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters)
@@ -115,7 +115,7 @@ summary(feols_boot)
 #>  Number of Clusters: 40
 #> 
 #>              term estimate statistic p.value conf.low conf.high
-#> 1 1*treatment = 0    0.079     4.123       0     0.04     0.118
+#> 1 1*treatment = 0    0.079     4.117       0     0.04     0.118
 ```
 
 For a longer introduction to the package’s key function, `boottest()`,
@@ -125,8 +125,8 @@ please follow this
 ### Benchmarks
 
 Results of timing benchmarks of `boottest()`, with a sample of N =
-50000, k = 19 covariates and one cluster of dimension N\_G (10
-iterations each).
+10000, k = 20 covariates and one cluster of dimension N\_G (3 iterations
+each, median runtime is plotted).
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 

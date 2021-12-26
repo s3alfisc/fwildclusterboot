@@ -61,21 +61,6 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="articles/technical_vignette.html">Technical vignette for fwildclusterboot</a>
-    </li>
-    <li>
-      <a href="articles/wildboottestjlr.html">wildboottestjlr</a>
-    </li>
-  </ul>
-</li>
 <li>
   <a href="news/index.html">Changelog</a>
 </li>
@@ -152,7 +137,7 @@
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 1*treatment = 0    0.079     4.123       0     0.04     0.118</span>
+<span class="co">#&gt; 1 1*treatment = 0    0.079     3.983       0     0.04     0.118</span>
 
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/">fixest</a></span><span class="op">)</span>
 <span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span>  <span class="op">+</span> <span class="va">log_income</span> <span class="op">|</span> <span class="va">Q1_immigration</span> <span class="op">+</span> <span class="va">Q2_defense</span>, data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
@@ -170,13 +155,13 @@
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 1*treatment = 0    0.079     4.123       0     0.04     0.118</span></code></pre></div>
+<span class="co">#&gt; 1 1*treatment = 0    0.079     4.117       0     0.04     0.118</span></code></pre></div>
 <p>For a longer introduction to the package’s key function, <code><a href="reference/boottest.html">boottest()</a></code>, please follow this <a href="https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html">link</a>.</p>
 </div>
 <div id="benchmarks" class="section level3">
 <h3 class="hasAnchor">
 <a href="#benchmarks" class="anchor"></a>Benchmarks</h3>
-<p>Results of timing benchmarks of <code><a href="reference/boottest.html">boottest()</a></code>, with a sample of N = 50000, k = 19 covariates and one cluster of dimension N_G (10 iterations each).</p>
+<p>Results of timing benchmarks of <code><a href="reference/boottest.html">boottest()</a></code>, with a sample of N = 10000, k = 20 covariates and one cluster of dimension N_G (3 iterations each, median runtime is plotted).</p>
 <p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%"></p>
 <!-- For a small number of clusters, `fwildclusterboot` is in generally faster than implementations of the wild cluster bootstrap in the `sandwich` and `clusterSEs` packages.  -->
 <!-- ![Benchmark](man/figures/bench_ggplot.png) -->

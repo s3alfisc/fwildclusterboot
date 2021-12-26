@@ -3,7 +3,5 @@ pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   fwildclusterboot: fwildclusterboot.html
-  technical_vignette: technical_vignette.html
-  wildboottestjlr: wildboottestjlr.html
-last_built: 2021-12-03T21:32Z
+last_built: 2021-12-26T13:47Z
 

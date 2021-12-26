@@ -123,29 +123,48 @@ For a longer introduction to the package's key function, `boottest()`, please fo
 ### Benchmarks
 
 Results of timing benchmarks of `boottest()`, with a 
-sample of N = 50000, k = 19 covariates and one cluster of dimension N_G (10 iterations each).
+sample of N = 10000, k = 20 covariates and one cluster of dimension N_G (3 iterations each, median runtime is plotted).
   
 
 ```{r, fig.width=10, fig.height=3, echo = FALSE, warning = FALSE, message = FALSE}
 library(ggplot2)
 library(scales)
+library(data.table)
 
-benchmarks_clean <- 
-readRDS("C:/Users/alexa/Dropbox/fwildclusterboot develop/benchmarks_clean.rds")
+benchmarks_clean2 <- fread("C:/Users/alexa/Dropbox/R package development/wildboottestjlr/benchmarks_df")
+benchmarks_clean2 <- benchmarks_clean2[type != "wildboottestjlr"]
 
-ggplot(data = benchmarks_clean, aes(x = B, y = mean, group = factor(expr))) +
-  facet_wrap(~N_G, nrow = 1) +
-  geom_point(aes(colour = factor(expr)), size = 2) +
-  geom_line(aes(colour = factor(expr))) +
-  #geom_bar(stat = "identity", position = position_dodge()) +
-  #scale_y_continuous(labels = comma) +
+benchmarks_clean2[, N_G := factor(N_G, levels = c("N_G = 20", "N_G = 50", "N_G = 100", "N_G = 500", "N_G = 1000"))]
+benchmarks_clean2[, B := factor(B, levels = c("10K", "100K"))]
+
+ggplot(data = benchmarks_clean2, aes(x = B, y = time, group = factor(type))) + 
+  facet_wrap(~N_G, nrow = 1) + 
+  geom_point(aes(colour = factor(type)), size = 2) + 
+  geom_line(aes(colour = factor(type))) + 
   scale_y_continuous(labels = comma, trans = 'log10') +
-  scale_x_continuous(labels = label_number(scale = 1/1000, suffix = "K"), breaks = breaks_width(50000))  +
+  # scale_x_continuous(labels = label_number(scale = 1/1000, suffix = "K"), breaks = breaks_width(50000))  +
   ylab("time in seconds (log scale)") +
   xlab("number of bootstrap iterations") +
   theme_bw()+
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
         legend.title = element_blank())
+
+# benchmarks_clean <- 
+# readRDS("C:/Users/alexa/Dropbox/fwildclusterboot develop/benchmarks_clean.rds")
+# 
+# ggplot(data = benchmarks_clean, aes(x = B, y = mean, group = factor(expr))) +
+#   facet_wrap(~N_G, nrow = 1) +
+#   geom_point(aes(colour = factor(expr)), size = 2) +
+#   geom_line(aes(colour = factor(expr))) +
+#   #geom_bar(stat = "identity", position = position_dodge()) +
+#   #scale_y_continuous(labels = comma) +
+#   scale_y_continuous(labels = comma, trans = 'log10') +
+#   scale_x_continuous(labels = label_number(scale = 1/1000, suffix = "K"), breaks = breaks_width(50000))  +
+#   ylab("time in seconds (log scale)") +
+#   xlab("number of bootstrap iterations") +
+#   theme_bw()+
+#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
+#         legend.title = element_blank())
 
 ```
 
