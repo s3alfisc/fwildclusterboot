@@ -28,7 +28,7 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
   names_clustid <- names(clustid)
 
   JJ <- list()
-  for (x in names_clustid) {
+  for (x in seq_along(names_clustid)) {
     # JJ[[x]] <- colSums(small_sample_correction[x] * (CC[[x]] + 2* CD[[x]]*beta0+ DD[[x]]* beta0^2))
     JJ[[x]] <- (small_sample_correction[x] * (CC[[x]] + 2 * CD[[x]] * beta0 + DD[[x]] * beta0^2))
   }
@@ -44,18 +44,29 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
 
   if (impose_null == TRUE) {
     t <- numer / denom
+    t_stat <- t[1]
+    t_boot <- t[2:boot_iter]
+    
+    # delete invalid test statistics
+    delete_invalid_t_total <- sum(is.na(t_boot))
+    t_boot <- t_boot[!is.na(t_boot)]
+    
   } else if (impose_null == FALSE) {
     t <- numer / denom
-    # reinterpretation of eq (17) in Roodman et al
-    #t[1] <- t[1] - ((point_estimate - beta0) / denom[1])
     t[1] <- ((point_estimate - beta0) / denom[1]) #- t[1] 
-
+    t_stat <- t[1]
+    t_boot <- t[2:boot_iter]
+    
+    # delete invalid test statistics
+    delete_invalid_t_total <- sum(is.na(t_boot))
+    t_boot <- t_boot[!is.na(t_boot)]
+    
   }
 
-  delete_invalid_t_total <- sum(is.na(t))
-  t <- t[!is.na(t)]
-
-  t_boot <- t[2:(boot_iter + 1 - delete_invalid_t_total)]
+  # delete_invalid_t_total <- sum(is.na(t))
+  # t <- t[!is.na(t)]
+  # 
+  # t_boot <- t[2:(boot_iter + 1 - delete_invalid_t_total)]
 
   # p_val_type <- "two-tailed symmetric"
   if (p_val_type == "two-tailed") {
@@ -74,7 +85,7 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
 
   res <- list(
     p_val = p_val,
-    t = t,
+    t_stat = t_stat,
     t_boot = t_boot,
     invalid_t = delete_invalid_t_total
   )

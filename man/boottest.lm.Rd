@@ -22,6 +22,8 @@
   maxiter = 10,
   na_omit = TRUE,
   nthreads = getBoottest_nthreads(),
+  ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
+    "conventional"),
   ...
 )
 }
@@ -91,6 +93,9 @@ between 0 and 1 which represents the fraction of all threads
 to use. The default is to use 1 core.}
 
 \item{...}{Further arguments passed to or from other methods.}
+
+\item{ssc.}{An object of class boot_ssc.type obtained with the function boot_ssc(). Represents how the small sample adjustments are computed. The defaults are \verb{adj = FALSE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "min"}.
+You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{ssc()} function.}
 }
 \value{
 An object of class \code{boottest}

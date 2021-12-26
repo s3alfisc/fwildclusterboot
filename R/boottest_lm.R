@@ -51,6 +51,8 @@
 #'                 all available threads will be used; c) a number strictly
 #'                 between 0 and 1 which represents the fraction of all threads 
 #'                 to use. The default is to use 1 core.
+#' @param ssc. An object of class boot_ssc.type obtained with the function boot_ssc(). Represents how the small sample adjustments are computed. The defaults are `adj = FALSE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "min"`. 
+#'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's `ssc()` function. 
 #' @param ... Further arguments passed to or from other methods.
 #' 
 #' @importFrom dreamerr check_arg validate_dots
@@ -148,7 +150,12 @@ boottest.lm <- function(object,
                         maxiter = 10,
                         na_omit = TRUE, 
                         nthreads = getBoottest_nthreads(), 
+                        ssc = boot_ssc(adj = TRUE, 
+                                       fixef.K = "none", 
+                                       cluster.adj = TRUE, 
+                                       cluster.df = "conventional"),
                         ...) {
+
 
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
@@ -164,6 +171,7 @@ boottest.lm <- function(object,
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar")
   check_arg(maxiter, "scalar integer")
+  check_arg(boot_ssc, "class(boot_ssc.type)")
   
   # check appropriateness of nthreads
   nthreads <- check_set_nthreads(nthreads)
@@ -188,7 +196,7 @@ boottest.lm <- function(object,
          call. = FALSE)
   }
   
-  if(p_val_type %in% c(">", "<") && conf_int == TRUE){
+  if(p_val_type %in% c(">", "<") && (is.null(conf_int) || conf_int == TRUE)){
     conf_int <- FALSE
     warning(paste("Currently, boottest() does not calculate confidence intervals for one-sided hypotheses, but this will change in a future release."), call. = FALSE)
   }
@@ -258,8 +266,17 @@ boottest.lm <- function(object,
                             na_omit = na_omit, 
                             R = R)
   
+  N <- preprocess$N
+  k <- length(coef(object))
+  G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
+  vcov_sign <- preprocess$vcov_sign
+
   
-  clustid_dims <- preprocess$clustid_dims
+  small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign)
+  
+
+  
+  #clustid_dims <- preprocess$clustid_dims
   point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
   
   clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
@@ -282,7 +299,6 @@ boottest.lm <- function(object,
     full_enumeration <- FALSE
   }
   
-  
   # conduct inference: calculate p-value
   res <- boot_algo2(preprocessed_object = preprocess,
                     boot_iter = B,
@@ -295,7 +311,8 @@ boottest.lm <- function(object,
                     p_val_type = p_val_type, 
                     nthreads = nthreads, 
                     type = type, 
-                    full_enumeration = full_enumeration
+                    full_enumeration = full_enumeration, 
+                    small_sample_correction = small_sample_correction
   )
   
   if(!is.null(res$invalid_t)){

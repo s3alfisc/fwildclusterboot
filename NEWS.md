@@ -1,3 +1,12 @@
+# fwildclusterboot 0.6
+
++ bug fix: for one-sided hypotheses for the WRU bootstrap (if impose_null = FALSE), the returned p-values were incorrect - they were reported as 'p', but should have been '1-p'. E.g. if the reported p-values was reported as 0.4, it should have been reported as 0.6. 
++ New function argument `boot_ssc()` gives more control over the small sample adjustments made within `boottest()`. It closely mirrors the `ssc()` function in `fixest`. The only difference is that `fwildclusterboot::boot_ssc()'s` `fixef.K` argument does not account for fixed effects nested in the clusters, hence there is no `nested` option. 
+The default argument of `boot_ssc()` are `adj = TRUE, fixef.K = "none", cluster.adj = TRUE` and `cluster.df = "conventional"`. In fixest, the `cluster.df` argument is `"min"` by default. Prior to v 0.6, by default, no small sample adjustments regarding the sample size N and the number of estimated parameters k were applied. Note that k always refers to the number of estimated parameters in the regression model. For exact reproducibility of previous results, set `adj = FALSE`. Setting `adj = TRUE` will not affect p-values and confidence intervals for *oneway clustering*, but the internally calculated t-stat, which is divided by $\sqrt{(N-k)/(N-1)}$. For *twoway* clustering, it might affect the number and order of invalid bootstrapped t-statistics (due to non-positive definite covariance matrices) and, through this channel, affect bootstrapped inferential parameters.
+
++ testing: unit tests are now run on [github actions](https://github.com/s3alfisc/fwildclusterboot/actions/workflows/R-CMD-check.yaml) against [wildboottestjlr](https://github.com/s3alfisc/wildboottestjlr), which is a [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR) based wrapper around [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl), a Julia implementation of the fast wild cluster bootstrap algorithm. 
++ additionally, minor speed tweaks. 
+
 # fwildclusterboot 0.5.1
 
 + Fixes a bug with Mammen weights introduced in version 0.5 -> switch back to `sample()` function. To guarantee reproducibilty with Mammen weights, either a seed 

@@ -55,6 +55,8 @@
 #'                 all available threads will be used; c) a number strictly
 #'                 between 0 and 1 which represents the fraction of all threads 
 #'                 to use. The default is to use 1 core.
+#' @param ssc. An object of class boot_ssc.type obtained with the function boot_ssc(). Represents how the small sample adjustments are computed. The defaults are `adj = FALSE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "min"`. 
+#'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's `ssc()` function. 
 #' @param ... Further arguments passed to or from other methods.
 #' @importFrom dreamerr check_arg validate_dots
 
@@ -162,6 +164,10 @@ boottest.fixest <- function(object,
                             maxiter = 10,
                             na_omit = TRUE,
                             nthreads = getBoottest_nthreads(), 
+                            ssc = boot_ssc(adj = TRUE, 
+                                           fixef.K = "none", 
+                                           cluster.adj = TRUE, 
+                                           cluster.df = "conventional"),
                             ...) {
   
   
@@ -182,6 +188,7 @@ boottest.fixest <- function(object,
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar")
   check_arg(maxiter, "scalar integer")
+  check_arg(boot_ssc, "class(boot_ssc.type)")
   
   
   if(!is.null(object$fixef_removed)){
@@ -302,6 +309,13 @@ boottest.fixest <- function(object,
                             na_omit = na_omit, 
                             R = R)
   
+  N <- preprocess$N
+  k <- length(coef(object))
+  G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
+  vcov_sign <- preprocess$vcov_sign
+  
+  small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign)
+  
   clustid_dims <- preprocess$clustid_dims
   # R*beta; 
   point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
@@ -335,7 +349,8 @@ boottest.fixest <- function(object,
                     p_val_type = p_val_type, 
                     nthreads = nthreads, 
                     type = type, 
-                    full_enumeration = full_enumeration
+                    full_enumeration = full_enumeration, 
+                    small_sample_correction = small_sample_correction
   )
   
   # compute confidence sets

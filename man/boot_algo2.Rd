@@ -15,7 +15,8 @@ boot_algo2(
   p_val_type,
   nthreads,
   type,
-  full_enumeration
+  full_enumeration,
+  small_sample_correction
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ wild bootstrap factors. "rademacher" by default.}
 
 \item{full_enumeration}{Is full enumeration employed? Full enum. is used if
 N_G^2 < boot_iter for Mammen and Rademacher weights}
+
+\item{small_sample_correction}{The small sample correction to be applied. See ssc().}
 }
 \value{
 A list of ...

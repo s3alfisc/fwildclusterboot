@@ -1,4 +1,4 @@
-boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, p_val_type, nthreads, type, full_enumeration) {
+boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction) {
   
   #' Fast wild cluster bootstrap algorithm 
   #' 
@@ -27,6 +27,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #'        wild bootstrap factors. "rademacher" by default.
   #' @param full_enumeration Is full enumeration employed? Full enum. is used if
   #'        N_G^2 < boot_iter for Mammen and Rademacher weights
+  #' @param small_sample_correction The small sample correction to be applied. See ssc().
   #' @return A list of ...
   #' @importFrom Matrix t Diagonal
   #' @importFrom Matrix.utils aggregate.Matrix
@@ -43,17 +44,18 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   X <- preprocessed_object$X
   Y <- preprocessed_object$Y
   N <- preprocessed_object$N
-  k <- preprocessed_object$k
+  # k <- preprocessed_object$k
   clustid <- preprocessed_object$clustid
   fixed_effect <- preprocessed_object$fixed_effect
   N_G <- preprocessed_object$N_G
   W <- preprocessed_object$W
-  n_fe <- preprocessed_object$n_fe
+  # n_fe <- preprocessed_object$n_fe
   bootcluster <- preprocessed_object$bootcluster
-  vcov_sign <- preprocessed_object$vcov_sign
+  # vcov_sign <- preprocessed_object$vcov_sign
   weights <- preprocessed_object$weights
   R <- t(as.matrix(preprocessed_object$R0))
 
+  
   # if (!is.data.frame(bootcluster)) {
   #   stop("bootcluster is not a data.frame. fix this in pre-processing.")
   # }
@@ -92,11 +94,11 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
     v[, 1] <- 1
   }
   
-  # small sample correction for clusters
-  G <- vapply(clustid, function(x) length(unique(x)), numeric(1))
-  #small_sample_correction <- G / (G - 1)
-  # prepare summation of individual terms for multiway clustering
-  small_sample_correction <- G / (G - 1) * vcov_sign 
+  # # small sample correction for clusters
+  # G <- vapply(clustid, function(x) length(unique(x)), numeric(1))
+  # #small_sample_correction <- G / (G - 1)
+  # # prepare summation of individual terms for multiway clustering
+  # small_sample_correction <- G / (G - 1) * vcov_sign 
   
   # prepare "key" for use with collapse::fsum()
   g <- collapse::GRP(bootcluster[[1]], call = FALSE)
@@ -151,16 +153,16 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   ) # N x c*
   
   # preallocate lists
-  CC <- vector(mode = "list", length = length(N_G))
-  DD <- vector(mode = "list", length = length(N_G))
-  CD <- vector(mode = "list", length = length(N_G))
+  CC <- vector(mode = "list", length = length(names(clustid)))
+  DD <- vector(mode = "list", length = length(names(clustid)))
+  CD <- vector(mode = "list", length = length(names(clustid)))
   
   if(is.null(W)){
     # if there are no fixed effects - term (2) in equ. (62) fast & wild does not arise
     # note - W refers to W_bar in fast & wild, not regression weights. If no fixed effects
     # in the model / bootstrap, W is NULL
     
-    for (x in names(clustid)) {
+    for (x in seq_along(names(clustid))) {
       
       SXinvXXRX <- collapse::fsum(WXARX, clustid[x])             # c* x f
       SXinvXXRXA <- SXinvXXRX %*% A                              # part of numerator independent of both bootstrap errors and r   
@@ -186,7 +188,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
       Q3_2 <- crosstab(as.matrix(weights * W %*% Q), var1 = bootcluster, var2 = fixed_effect) # f x c*
       P3_2 <- crosstab(as.matrix(weights * W %*% P), var1 = bootcluster, var2 = fixed_effect) # f x c*
       
-      for (x in names(clustid)) {
+      for (x in seq_along(names(clustid))) {
         
         SXinvXXRX <- collapse::fsum(WXARX, clustid[x])             # c* x f
         SXinvXXRXA <- SXinvXXRX %*% A                              # part of numerator independent of both bootstrap errors and r   
@@ -222,7 +224,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   p_val_res <- p_val_null2(beta0 = beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, impose_null = impose_null, point_estimate = point_estimate, p_val_type = p_val_type)
   # collect results from P-val_null2
   p_val <- p_val_res$p_val
-  t <- p_val_res$t
+  t_stat <- p_val_res$t_stat
   t_boot <- p_val_res$t_boot
   invalid_t <- p_val_res$delete_invalid_t_total
   # collect pre-computed A, B, CC, CD, DD - will be needed for p-value inversion
@@ -230,7 +232,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
  
   res <- list(
     p_val = p_val,
-    t_stat = t[1],
+    t_stat = t_stat,
     t_boot = t_boot,
     B = B,
     R0 = R,

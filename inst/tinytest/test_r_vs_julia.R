@@ -268,17 +268,54 @@ if(run_tests){
           cat(paste("type:", "rademacher", "p-val:", p_val_type, "null imposed:", impose_null), "\n")    
           
           # oneway clustering
-          boot_r <- fwildclusterboot::boottest(object, clustid = "group_id1", B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE)
-          boot_jl_nosmall <- wildboottestjlr::boottest(object, clustid = "group_id1", B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type, impose_null = impose_null, small_sample_adjustment = TRUE, floattype = "Float64", conf_int = FALSE)
+          boot_r <- fwildclusterboot::boottest(object, 
+                                               clustid = "group_id1",
+                                               B = 99999, 
+                                               param = "treatment", 
+                                               type = "rademacher",
+                                               p_val_type = p_val_type, 
+                                               impose_null = impose_null,
+                                               conf_int = FALSE, 
+                                               ssc = boot_ssc(adj = TRUE))
+          
+          boot_jl_nosmall <- wildboottestjlr::boottest(object,
+                                                       clustid = "group_id1",
+                                                       B = 99999, 
+                                                       param = "treatment",
+                                                       type = "rademacher", 
+                                                       p_val_type = p_val_type,
+                                                       impose_null = impose_null, 
+                                                       small_sample_adjustment = TRUE,
+                                                       floattype = "Float64", 
+                                                       conf_int = FALSE)
+          
           expect_equal(boot_r$p_val, boot_jl_nosmall$p_val)
-          expect_equal(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((N-1) / (N-k)))
+          expect_equal(boot_r$t_stat, boot_jl_nosmall$t_stat)
           
           # twoway clustering
-          boot_r <- fwildclusterboot::boottest(object, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type, conf_int = FALSE, bootcluster = "min")
-          boot_jl_nosmall <- wildboottestjlr::boottest(object, clustid = c("group_id1", "group_id2"), B = 99999, param = "treatment", type = "rademacher", p_val_type = p_val_type,small_sample_adjustment = TRUE, floattype = "Float64", conf_int = FALSE, bootcluster = "min")
+          boot_r <- fwildclusterboot::boottest(object,
+                                               clustid = c("group_id1", "group_id2"),
+                                               B = 99999,
+                                               param = "treatment",
+                                               type = "rademacher", 
+                                               p_val_type = p_val_type, 
+                                               conf_int = FALSE,
+                                               bootcluster = "min", 
+                                               ssc = boot_ssc(adj = TRUE))
+          
+          boot_jl_nosmall <- wildboottestjlr::boottest(object,
+                                                       clustid = c("group_id1", "group_id2"), 
+                                                       B = 99999,
+                                                       param = "treatment",
+                                                       type = "rademacher", 
+                                                       p_val_type = p_val_type,
+                                                       small_sample_adjustment = TRUE, 
+                                                       floattype = "Float64", 
+                                                       conf_int = FALSE,
+                                                       bootcluster = "min")
         
           expect_equal(boot_r$p_val, boot_jl_nosmall$p_val)
-          expect_equal(boot_r$t_stat, boot_jl_nosmall$t_stat  * sqrt((N-1) / (N-k)))
+          expect_equal(boot_r$t_stat, boot_jl_nosmall$t_stat)
           
         }
         
