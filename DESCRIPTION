@@ -1,7 +1,7 @@
 Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap Inference for Linear Regression Models
-Version: 0.5.2
-Date: 2021-11-06
+Version: 0.6
+Date: 2021-12-27
 Authors@R: 
     c(
     person(given = "Alexander",
@@ -68,9 +68,7 @@ Suggests:
     rmarkdown,
     broom, 
     modelsummary, 
-    RStata,
-    wildboottestjlr
-Remotes: s3alfisc/wildboottestjlr
+    RStata
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
