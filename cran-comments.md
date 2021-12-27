@@ -1,3 +1,9 @@
+## Version 0.6
+
+- checks pass on github actions: windows, mac, ubuntu
+- checks pass local cmd check
+- checks pass on r-develop
+
 ## Version 0.5.1 
 
 Please apologize the quick re-submission. Version 0.5.1 fixes a bug introduced 

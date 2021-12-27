@@ -34,7 +34,7 @@ Authors@R:
 Description: Implementation of the fast algorithm for wild cluster bootstrap 
              inference developed in Roodman et al (2019, STATA Journal) for 
              linear regression models 
-             <https://journals.sagepub.com/doi/full/10.1177/1536867X19830877>, 
+             https://journals.sagepub.com/doi/abs/10.1177/1536867X19830877?journalCode=stja, 
              which makes it feasible to quickly calculate bootstrap test 
              statistics based on a large number of bootstrap draws even for 
              large samples - as long as the number of bootstrapping clusters 
