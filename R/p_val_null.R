@@ -41,45 +41,33 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
   }
 
   denom <- suppressWarnings(sqrt(JJ_sum))
-
+  
+  t <- numer / denom
+  t_boot <- t[2:(boot_iter + 1)]
+  
+  # delete invalid test statistics
+  delete_invalid_t_total <- sum(is.na(t_boot))
+  t_boot <- t_boot[!is.na(t_boot)]
+  
   if (impose_null == TRUE) {
-    t <- numer / denom
     t_stat <- t[1]
-    t_boot <- t[2:boot_iter]
-    
-    # delete invalid test statistics
-    delete_invalid_t_total <- sum(is.na(t_boot))
-    t_boot <- t_boot[!is.na(t_boot)]
-    
   } else if (impose_null == FALSE) {
-    t <- numer / denom
-    t[1] <- ((point_estimate - beta0) / denom[1]) #- t[1] 
-    t_stat <- t[1]
-    t_boot <- t[2:boot_iter]
-    
-    # delete invalid test statistics
-    delete_invalid_t_total <- sum(is.na(t_boot))
-    t_boot <- t_boot[!is.na(t_boot)]
-    
+    t_stat <- ((point_estimate - beta0) / denom[1])
   }
 
-  # delete_invalid_t_total <- sum(is.na(t))
-  # t <- t[!is.na(t)]
-  # 
-  # t_boot <- t[2:(boot_iter + 1 - delete_invalid_t_total)]
 
   # p_val_type <- "two-tailed symmetric"
   if (p_val_type == "two-tailed") {
-    p_val <- mean(abs(t[1]) < abs(t_boot), na.rm = FALSE)
+    p_val <- mean(abs(t_stat) < abs(t_boot), na.rm = FALSE)
   } else if (p_val_type == "equal-tailed") {
-    p_l <- mean(t[1] < t_boot, na.rm = FALSE)
-    p_h <- mean(t[1] > t_boot, na.rm = FALSE)
+    p_l <- mean(t_stat < t_boot, na.rm = FALSE)
+    p_h <- mean(t_stat > t_boot, na.rm = FALSE)
     p_val <- 2 * min(p_l, p_h, na.rm = FALSE)
   } else if (p_val_type == ">") {
-    p_l <- mean(t[1] < t_boot, na.rm = FALSE)
+    p_l <- mean(t_stat < t_boot, na.rm = FALSE)
     p_val <- p_l
   } else if (p_val_type == "<") {
-    p_h <- mean(t[1] > t_boot, na.rm = FALSE)
+    p_h <- mean(t_stat > t_boot, na.rm = FALSE)
     p_val <- p_h
   }
 

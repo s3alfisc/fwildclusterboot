@@ -321,7 +321,6 @@ boottest.lm <- function(object,
 
   # compute confidence sets
   
-  
   if (is.null(conf_int) || conf_int == TRUE) {
     
     # guess for standard errors
@@ -332,10 +331,7 @@ boottest.lm <- function(object,
       se_guess <- abs((point_estimate - beta0) / res$t_stat)
     }
     
-    # if (is.na(se_guess)) {
-    #   se_guess <- object$se[param]
-    # }
-    
+
     res_p_val <- invert_p_val(
       object = res,
       boot_iter = B,
@@ -359,7 +355,7 @@ boottest.lm <- function(object,
   
   res_final <- list(
     point_estimate = point_estimate,
-    p_val = res[["p_val"]],
+    p_val = res$p_val,
     conf_int = res_p_val$conf_int,
     p_test_vals = res_p_val$p_grid_vals,
     test_vals = res_p_val$grid_vals,

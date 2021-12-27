@@ -1,11 +1,11 @@
-boot_ssc <- function(adj = FALSE, fixef.K = "none", cluster.adj = TRUE, cluster.df = "conventional"){
+boot_ssc <- function(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df = "conventional"){
   
   #' boot_ssc() handles the small sample correction factor applied in boottest() in 
   #' analogy to fixest::ssc()
-  #' @param adj. Logical scalar, defaults
-  #' @param fixef.k
-  #' @param cluster.adj
-  #' @param cluster.df
+  #' @param adj. Logical scalar, defaults to TRUE. If TRUE, applies a small sample correction of (N-1) / (N-k) where N is the number of observations and k is the number of estimated coefficients excluding any fixed effects projected out in either fixest::feols() or lfe::felm().
+  #' @param fixef.k Character scalar, equal to 'none': the fixed effects parameters are discarded when calculating k in (N-1) / (N-k).
+  #' @param cluster.adj Logical scalar, defaults to TRUE. If TRUE, a cluster correction G/(G-1) is performed, with G the number of clusters. 
+  #' @param cluster.df Either "conventional" or "min" default. Controls how "G" is computed for multiway clustering if cluster.adj = TRUE. Note that the covariance matrix in the multiway clustering case is of the form V = V_1 + V_2 - V_12. If "conventional", then each summand G_i is multiplied with a small sample adjustment G_i / (G_i - 1). If "min", all summands are multiplied with the same value, min(G) / (min(G) - 1)
   #' @export
 
   dreamerr::check_arg_plus(adj, "loose logical scalar conv")
@@ -28,10 +28,13 @@ boot_ssc <- function(adj = FALSE, fixef.K = "none", cluster.adj = TRUE, cluster.
 
 get_ssc <- function(boot_ssc_object, N, k, G, vcov_sign){
   
-  #' @param N
-  #' @param k
-  #' @param G
-  #' @param vcov_sign
+  #' Compute small sample adjustment factors 
+  #' @param boot_ssc_object An object of type 'boot_ssc.type'
+  #' @param N The number of observations
+  #' @param k The number of estimated parameters
+  #' @param G The number of clusters
+  #' @param vcov_sign A vector that helps create the covariance matrix
+  #' @return A small sample adjustment factor
   
   adj <- boot_ssc_object$adj
   fixef.K <- boot_ssc_object$fixef.K

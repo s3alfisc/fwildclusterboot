@@ -55,19 +55,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   weights <- preprocessed_object$weights
   R <- t(as.matrix(preprocessed_object$R0))
 
-  
-  # if (!is.data.frame(bootcluster)) {
-  #   stop("bootcluster is not a data.frame. fix this in pre-processing.")
-  # }
-  
-  # bootstrap error
-  #set.seed(seed)
-  # dqrng::dqset.seed(seed)
   N_G_bootcluster <- length(unique(bootcluster[[1]]))
-  
-  # here: enumeration 
-  # if type = "rademacher" || type == "mammen" 2^N_G_bootcluster < B then 
-  # gtools::permutations(n = 2, r = 12, v = c(1, -1), repeats.allowed = TRUE)
   
   wild_draw_fun <- switch(type,
                           # note: for randemacher, create integer matrix (uses less memory than numeric)                      
@@ -79,10 +67,9 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
                           wild_draw_fun
   )
   
-  # do full enumeration for rademacher and mammen weights if bootstrap iterations 
+  # do full enumeration for rademacher weights if bootstrap iterations 
   # B exceed number of possible permutations else random sampling
-  # should full enumeration be used for webb as well? 
-  
+
   if(type %in% c("rademacher") && full_enumeration == TRUE){
       v0 <- gtools::permutations(n = 2, r = N_G_bootcluster, v = c(1, -1), repeats.allowed = TRUE)
       v <- cbind(1, t(v0))
@@ -93,12 +80,6 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
     dim(v) <- c(N_G_bootcluster, boot_iter + 1)
     v[, 1] <- 1
   }
-  
-  # # small sample correction for clusters
-  # G <- vapply(clustid, function(x) length(unique(x)), numeric(1))
-  # #small_sample_correction <- G / (G - 1)
-  # # prepare summation of individual terms for multiway clustering
-  # small_sample_correction <- G / (G - 1) * vcov_sign 
   
   # prepare "key" for use with collapse::fsum()
   g <- collapse::GRP(bootcluster[[1]], call = FALSE)

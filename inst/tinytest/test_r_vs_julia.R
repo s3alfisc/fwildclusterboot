@@ -229,7 +229,7 @@ if(run_tests){
   N <- 1000
   
   lm_fit2 <- lm(proposition_vote ~ treatment + Q1_immigration + Q2_defense,
-                data = fwildclusterboot:::create_data(N = 1000,
+                data = fwildclusterboot:::create_data(N = N,
                                                       N_G1 = 6,
                                                       icc1 = 0.5,
                                                       N_G2 = 2,
@@ -242,7 +242,7 @@ if(run_tests){
   
   lm_fit_weights2 <- lm(proposition_vote ~ treatment + Q1_immigration + Q2_defense,
                           weights = weights,
-                          data = fwildclusterboot:::create_data(N = 1000,
+                          data = fwildclusterboot:::create_data(N = N,
                                                                 N_G1 = 6,
                                                                 icc1 = 0.5,
                                                                 N_G2 = 2,
@@ -253,11 +253,13 @@ if(run_tests){
                                                                 seed = 1235107,
                                                                 weights = 1:N / N))
   lm_fits <- list(lm_fit2, lm_fit_weights2)
+  ssc <- fwildclusterboot::boot_ssc(adj = FALSE,
+                                    cluster.adj = FALSE)
   
   for(object in lm_fits){
     
-    k <- length(coef(object))
-    
+
+        
     cat("start ols/wls", "\n")
 
       for(p_val_type in c("two-tailed", "equal-tailed", ">", "<")){
@@ -276,7 +278,9 @@ if(run_tests){
                                                p_val_type = p_val_type, 
                                                impose_null = impose_null,
                                                conf_int = FALSE, 
-                                               ssc = boot_ssc(adj = TRUE))
+                                               ssc = fwildclusterboot::boot_ssc(
+                                                 adj = TRUE, 
+                                                 cluster.adj = TRUE))
           
           boot_jl_nosmall <- wildboottestjlr::boottest(object,
                                                        clustid = "group_id1",
@@ -301,7 +305,7 @@ if(run_tests){
                                                p_val_type = p_val_type, 
                                                conf_int = FALSE,
                                                bootcluster = "min", 
-                                               ssc = boot_ssc(adj = TRUE))
+                                               ssc = fwildclusterboot::boot_ssc(adj = TRUE))
           
           boot_jl_nosmall <- wildboottestjlr::boottest(object,
                                                        clustid = c("group_id1", "group_id2"), 
