@@ -83,8 +83,6 @@
 #'  \item{t_boot}{All bootstrap t-statistics.}     
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
-
-#' 
 #' @export
 #' 
 #' @section Confidence Intervals:
