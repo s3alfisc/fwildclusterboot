@@ -97,10 +97,10 @@ all available threads will be used; c) a number strictly
 between 0 and 1 which represents the fraction of all threads
 to use. The default is to use 1 core.}
 
-\item{...}{Further arguments passed to or from other methods.}
+\item{ssc}{An object of class \code{boot_ssc.type} obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are \verb{adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"}.
+You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.}
 
-\item{ssc.}{An object of class boot_ssc.type obtained with the function boot_ssc(). Represents how the small sample adjustments are computed. The defaults are \verb{adj = FALSE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "min"}.
-You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{ssc()} function.}
+\item{...}{Further arguments passed to or from other methods.}
 }
 \value{
 An object of class \code{boottest}
@@ -113,11 +113,15 @@ the cluster variables contain NA values.}
 \item{B}{Number of Bootstrap Iterations.}
 \item{clustid}{Names of the cluster Variables.}
 \item{N_G}{Dimension of the cluster variables as used in boottest.}
-\item{sign_level}{Significance sign_level used in boottest.}
+\item{sign_level}{Significance level used in boottest.}
 \item{type}{Distribution of the bootstrap weights.}
-\item{p_test_vals}{All p-values calculated while calculating the
-confidence interval.}
-\item{t_stat}{The original test statistics - either imposing the null or not - with small sample correction \code{G / (G-1)}.}
+\item{impose_null}{Whether the null was imposed on the bootstrap dgp or not.}
+\item{R}{The vector "R" in the null hypothesis of interest Rbeta = beta0.}
+\item{beta0}{The scalar "beta0" in the null hypothesis of interest Rbeta = beta0.}
+\item{point_estimate}{R'beta. A scalar: the constraints vector times the regression coefficients.}
+\item{p_test_vals}{All p-values calculated while calculating the confidence
+interval.}
+\item{t_stat}{The 'original' regression test statistics.}
 \item{test_vals}{All t-statistics calculated while calculating the
 confidence interval.}
 \item{t_boot}{All bootstrap t-statistics.}

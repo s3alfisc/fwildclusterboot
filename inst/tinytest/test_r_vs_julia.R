@@ -13,7 +13,7 @@ if(run_tests){
   seed <- 875784
 
   lm_fit <- lm(proposition_vote ~ treatment  + log_income  ,
-               data = wildboottestjlr:::create_data(N = 10000,
+               data = wildboottestjlr:::create_data(N = 1000,
                                                     N_G1 = 20,
                                                     icc1 = 0.5,
                                                     N_G2 = 20,
@@ -26,7 +26,7 @@ if(run_tests){
                ))
   lm_fit_weights <- lm(proposition_vote ~ treatment  + log_income  ,
                        weights = weights,
-                       data = wildboottestjlr:::create_data(N = 10000,
+                       data = wildboottestjlr:::create_data(N = 1000,
                                                             N_G1 = 20,
                                                             icc1 = 0.5,
                                                             N_G2 = 20,
