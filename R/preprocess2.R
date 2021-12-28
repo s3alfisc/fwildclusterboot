@@ -6,14 +6,13 @@
 #' @param bootcluster The bootstrap sampling cluster.
 #' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing variables that are added to the model via the `cluster` argument in `boottest()`
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
-#' @param fweights Should the regression weights be treated as frequency or probability weights?
 #' @return List containing preprocessed data for boottest estimation
 #' @importFrom dreamerr check_arg
 #' @importFrom Formula as.Formula
 #' @importFrom collapse fwithin
 #' @noRd
 
-preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R, fweights) {
+preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   
   # ---------------------------------------------------------------------------- #
   # Step 1: preprocessing of call
@@ -23,7 +22,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R, fwe
   check_arg(param, "character vector | character vector | NULL")
   check_arg(bootcluster, "character vector | NULL")
   check_arg(R, "numeric vector | numeric scalar")
-  check_arg(fweights, "logical scalar")
+  #check_arg(fweights, "logical scalar")
   
   if (class(object) == "fixest") {
     of <- object$call
@@ -297,13 +296,13 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R, fwe
     weights <- rep(1, N)
   }
   
-  if(fweights == TRUE){
-    # this does not work if weights is not a matrix of integers
-    if(!is.integer(weights)){
-      stop(paste("When fweights == TRUE, the weights column needs to be of type 'integer', but it is", class(weights), "."))
-    }
-    N <- sum(weights)
-  }
+  # if(fweights == TRUE){
+  #   # this does not work if weights is not a matrix of integers
+  #   if(!is.integer(weights)){
+  #     stop(paste("When fweights == TRUE, the weights column needs to be of type 'integer', but it is", class(weights), "."))
+  #   }
+  #   N <- sum(weights)
+  # }
   
   # ---------------------------------------------------------------------------- #
   # Step 4: preprocess clusters
