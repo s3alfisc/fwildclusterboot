@@ -55,7 +55,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   weights <- preprocessed_object$weights
   R <- t(as.matrix(preprocessed_object$R0))
 
-  N_G_bootcluster <- length(unique(bootcluster[[1]]))
+  N_G_bootcluster <- length(unique(bootcluster[,1]))
   
   wild_draw_fun <- switch(type,
                           # note: for randemacher, create integer matrix (uses less memory than numeric)                      
@@ -82,7 +82,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   }
   
   # prepare "key" for use with collapse::fsum()
-  g <- collapse::GRP(bootcluster[[1]], call = FALSE)
+  g <- collapse::GRP(bootcluster[,1], call = FALSE)
   
   #weights_mat <- Matrix::Diagonal(N, weights)           # if no weights - N x N identity matrix
   weights_sq <- sqrt(weights)                           # sqrt fine because diagonal matrix
@@ -120,7 +120,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
         N,
         as.vector(WXARP)
       ),
-      bootcluster[[1]]
+      bootcluster[,1]
     )
   ) # N x c*
   Q2_bootcluster <- Matrix::t(                                            # see notes; formerly diag_XinvXXRuS_b   
@@ -129,7 +129,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
         N,
         as.vector(WXARQ)
       ),
-      bootcluster[[1]]
+      bootcluster[,1]
     )
   ) # N x c*
   

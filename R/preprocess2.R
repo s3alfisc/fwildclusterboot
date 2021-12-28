@@ -6,13 +6,14 @@
 #' @param bootcluster The bootstrap sampling cluster.
 #' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing variables that are added to the model via the `cluster` argument in `boottest()`
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
+#' @param fweights Should the regression weights be treated as frequency or probability weights?
 #' @return List containing preprocessed data for boottest estimation
 #' @importFrom dreamerr check_arg
 #' @importFrom Formula as.Formula
 #' @importFrom collapse fwithin
 #' @noRd
 
-preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
+preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R, fweights) {
   
   # ---------------------------------------------------------------------------- #
   # Step 1: preprocessing of call
@@ -22,6 +23,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   check_arg(param, "character vector | character vector | NULL")
   check_arg(bootcluster, "character vector | NULL")
   check_arg(R, "numeric vector | numeric scalar")
+  check_arg(fweights, "logical scalar")
   
   if (class(object) == "fixest") {
     of <- object$call
@@ -295,6 +297,14 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     weights <- rep(1, N)
   }
   
+  if(fweights == TRUE){
+    # this does not work if weights is not a matrix of integers
+    if(!is.integer(weights)){
+      stop(paste("When fweights == TRUE, the weights column needs to be of type 'integer', but it is", class(weights), "."))
+    }
+    N <- sum(weights)
+  }
+  
   # ---------------------------------------------------------------------------- #
   # Step 4: preprocess clusters
   # Note: a large part of the following code was taken and adapted from the 
@@ -350,17 +360,17 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   # create a bootcluster vector
   if (length(bootcluster) == 1) {
     if (bootcluster == "max") {
-      bootcluster <- clustid[which.max(N_G)]
+      bootcluster <- as.matrix(clustid[which.max(N_G)])
     } else if (bootcluster == "min") {
-      bootcluster <- clustid[which.min(N_G)]
+      bootcluster <- as.matrix(clustid[which.min(N_G)])
     } else if (length(bootcluster) == 1 && bootcluster %in% c(model_param_names, cluster_names)) {
       # no comma - then bootcluster is a data.frame. this is required later.
-      bootcluster <- clustid[which(names(clustid) == bootcluster)]
+      bootcluster <- as.matrix(clustid[which(names(clustid) == bootcluster)])
     }
   } else if (length(bootcluster) > 1) {
     # if a character vector of length > 1 is used to specify the bootcluster
     # same as above: model_frame[bootcluster] -> bootcluster will be a data.frame
-    bootcluster <- as.data.frame(Reduce(paste0, model_frame[bootcluster]))
+    bootcluster <- as.matrix(Reduce(paste0, model_frame[bootcluster]))
   }
   
   
