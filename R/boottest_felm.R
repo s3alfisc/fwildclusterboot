@@ -176,6 +176,7 @@ boottest.felm <- function(object,
                                          fixef.K = "none", 
                                          cluster.adj = TRUE, 
                                          cluster.df = "conventional"),
+                          #fweights = FALSE,
                           ...) {
 
   call <- match.call()
@@ -195,6 +196,8 @@ boottest.felm <- function(object,
   check_arg(tol, "numeric scalar")
   check_arg(maxiter, "scalar integer")
   check_arg(boot_ssc, "class(boot_ssc.type)")
+  #check_arg(fweights, "logical scalar")
+  
   
   # check appropriateness and assign nthreads
   nthreads <- check_set_nthreads(nthreads)
@@ -294,7 +297,9 @@ boottest.felm <- function(object,
                             param = param,
                             bootcluster = bootcluster, 
                             na_omit = na_omit, 
-                            R = R)
+                            R = R#, 
+                            #fweights = fweights
+                            )
   
   N <- preprocess$N
   k <- length(coef(object))

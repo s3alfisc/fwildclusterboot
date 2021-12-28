@@ -173,6 +173,7 @@ boottest.fixest <- function(object,
                                            fixef.K = "none", 
                                            cluster.adj = TRUE, 
                                            cluster.df = "conventional"),
+                           # fweights = FALSE,
                             ...) {
   
   
@@ -194,6 +195,8 @@ boottest.fixest <- function(object,
   check_arg(tol, "numeric scalar")
   check_arg(maxiter, "scalar integer")
   check_arg(boot_ssc, "class(boot_ssc.type)")
+  #check_arg(fweights, "logical scalar")
+  
   
   
   if(!is.null(object$fixef_removed)){
@@ -312,7 +315,9 @@ boottest.fixest <- function(object,
                             param = param,
                             bootcluster = bootcluster, 
                             na_omit = na_omit, 
-                            R = R)
+                            R = R#, 
+                            #fweights = fweights
+                            )
   
   N <- preprocess$N
   k <- length(coef(object))

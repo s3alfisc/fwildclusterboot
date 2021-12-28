@@ -22,7 +22,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   check_arg(param, "character vector | character vector | NULL")
   check_arg(bootcluster, "character vector | NULL")
   check_arg(R, "numeric vector | numeric scalar")
-  #check_arg(fweights, "logical scalar")
+  # check_arg(fweights, "logical scalar")
   
   if (class(object) == "fixest") {
     of <- object$call
@@ -359,17 +359,17 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   # create a bootcluster vector
   if (length(bootcluster) == 1) {
     if (bootcluster == "max") {
-      bootcluster <- as.matrix(clustid[which.max(N_G)])
+      bootcluster <- clustid[which.max(N_G)]
     } else if (bootcluster == "min") {
-      bootcluster <- as.matrix(clustid[which.min(N_G)])
+      bootcluster <- clustid[which.min(N_G)]
     } else if (length(bootcluster) == 1 && bootcluster %in% c(model_param_names, cluster_names)) {
       # no comma - then bootcluster is a data.frame. this is required later.
-      bootcluster <- as.matrix(clustid[which(names(clustid) == bootcluster)])
+      bootcluster <- clustid[which(names(clustid) == bootcluster)]
     }
   } else if (length(bootcluster) > 1) {
     # if a character vector of length > 1 is used to specify the bootcluster
     # same as above: model_frame[bootcluster] -> bootcluster will be a data.frame
-    bootcluster <- as.matrix(Reduce(paste0, model_frame[bootcluster]))
+    bootcluster <- as.data.frame(Reduce(paste0, model_frame[bootcluster]))
   }
   
   
