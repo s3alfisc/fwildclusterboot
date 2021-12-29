@@ -27,23 +27,24 @@ tol <- 1e-04
 
 # ---------------------------------------------------------------------------------------------- # 
 # Part A1: no fixed effect in model
+data1 <<-  fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
 
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
-             weights = 1:500/ 500, 
-             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+             weights = data1$weights, 
+             data = data1)
 feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
-                           weights = 1:500/ 500, 
-                           data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                           weights = data1$weights, 
+                           data = data1)
 felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  
-                      weights = 1:500/ 500, 
-                      data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                      weights = data1$weights, 
+                      data = data1)
 feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
-                             weights = 1:500/ 500, 
+                             weights = data1$weights, 
                              cluster = "group_id1",
-                             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                             data = data1)
 felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | 0 | 0 | group_id1,
-                        weights = 1:500/ 500, 
-                        data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                        weights = data1$weights, 
+                        data = data1)
 
 boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
 boot_fixest <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
@@ -86,17 +87,17 @@ expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tol = tol)
 # ---------------------------------------------------------------------------------------------- # 
 # Part B1: one fixed effect in model
 
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,  weights = 1:500/ 500, 
-             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = 1:500/ 500, 
-                           data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = 1:500/ 500, 
-                      data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = 1:500/ 500, 
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,  weights = data1$weights, 
+             data = data1)
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = data1$weights, 
+                           data = data1)
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = data1$weights, 
+                      data = data1)
+feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = data1$weights, 
                              cluster = "group_id1",
-                             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration  | 0 | group_id1, weights = 1:500/ 500, 
-                        data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                             data = data1)
+felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration  | 0 | group_id1, weights = data1$weights, 
+                        data = data1)
 
 boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
 boot_fixest <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
@@ -162,17 +163,17 @@ expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tol = tol)
 # ---------------------------------------------------------------------------------------------- # 
 # Part C1: two fixed effects in model
 
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration + Q2_defense, weights = 1:500/ 500, 
-             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = 1:500/ 500, 
-                           data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = 1:500/ 500, 
-                      data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = 1:500/ 500, 
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration + Q2_defense, weights = data1$weights, 
+             data = data1)
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = data1$weights, 
+                           data = data1)
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = data1$weights, 
+                      data = data1)
+feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = data1$weights, 
                              cluster = "group_id1",
-                             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense | 0 | group_id1, weights = 1:500/ 500, 
-                        data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                             data = data1)
+felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense | 0 | group_id1, weights = data1$weights, 
+                        data = data1)
 
 boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
 boot_fixest <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
@@ -243,17 +244,17 @@ expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tol = tol)
 # ---------------------------------------------------------------------------------------------- # 
 # Part A2: no fixed effect in model
 
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,  weights = 1:500/ 500, 
-             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  weights = 1:500/ 500, 
-                           data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  weights = 1:500/ 500, 
-                      data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  weights = 1:500/ 500, 
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,  weights = data1$weights, 
+             data = data1)
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  weights = data1$weights, 
+                           data = data1)
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  weights = data1$weights, 
+                      data = data1)
+feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  weights = data1$weights, 
                              cluster = "group_id1",
-                             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | 0 | 0 | group_id1, weights = 1:500/ 500, 
-                        data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                             data = data1)
+felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | 0 | 0 | group_id1, weights = data1$weights, 
+                        data = data1)
 
 boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid = c("group_id1", "group_id2"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
 boot_fixest <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1", "group_id2"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
@@ -295,17 +296,17 @@ expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tol = tol)
 # ---------------------------------------------------------------------------------------------- # 
 # Part B2: one fixed effect in model
 
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,  weights = 1:500/ 500, 
-             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = 1:500/ 500, 
-                           data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = 1:500/ 500, 
-                      data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = 1:500/ 500, 
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,  weights = data1$weights, 
+             data = data1)
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = data1$weights, 
+                           data = data1)
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = data1$weights, 
+                      data = data1)
+feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,  weights = data1$weights, 
                              cluster = "group_id1",
-                             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration  | 0 | group_id1, weights = 1:500/ 500, 
-                        data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                             data = data1)
+felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration  | 0 | group_id1, weights = data1$weights, 
+                        data = data1)
 
 boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid = c("group_id1", "group_id2"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
 boot_fixest <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1", "group_id2"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
@@ -372,17 +373,17 @@ expect_equivalent(boot_felm_c$conf_int, boot_lm$conf_int, tol = tol)
 # ---------------------------------------------------------------------------------------------- # 
 # Part C2: two fixed effects in model
 
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration + Q2_defense,  weights = 1:500/ 500, 
-             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = 1:500/ 500, 
-                           data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = 1:500/ 500, 
-                      data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = 1:500/ 500, 
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration + Q2_defense,  weights = data1$weights, 
+             data = data1)
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = data1$weights, 
+                           data = data1)
+felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = data1$weights, 
+                      data = data1)
+feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense,  weights = data1$weights, 
                              cluster = "group_id1",
-                             data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense | 0 | group_id1, weights = 1:500/ 500, 
-                        data = fwildclusterboot:::create_data(N = 500, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                             data = data1)
+felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration + Q2_defense | 0 | group_id1, weights = data1$weights, 
+                        data = data1)
 
 boot_lm <-  suppressWarnings(boottest(object = lm_fit, clustid = c("group_id1", "group_id2"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
 boot_fixest <- suppressWarnings(boottest(object = feols_fit, clustid = c("group_id1", "group_id2"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE)))
