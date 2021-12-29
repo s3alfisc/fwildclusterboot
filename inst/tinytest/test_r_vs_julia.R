@@ -12,30 +12,24 @@ if(run_tests){
   #seed <- 871239345
   seed <- 875784
 
-  lm_fit <- lm(proposition_vote ~ treatment  + log_income  ,
-               data = wildboottestjlr:::create_data(N = 10000,
-                                                    N_G1 = 20,
-                                                    icc1 = 0.5,
-                                                    N_G2 = 20,
-                                                    icc2 = 0.2,
-                                                    numb_fe1 = 10,
-                                                    numb_fe2 = 10,
-                                                    seed = 90864369,
-                                                    #seed = 89761297,
-                                                    weights = 1:N / N
-               ))
+  data1 <<- wildboottestjlr:::create_data(N = 10000,
+                                         N_G1 = 20,
+                                         icc1 = 0.5,
+                                         N_G2 = 20,
+                                         icc2 = 0.2,
+                                         numb_fe1 = 10,
+                                         numb_fe2 = 10,
+                                         seed = 90864369,
+                                         weights = 1:N / N)
+  
+  lm_fit <- lm(proposition_vote ~ treatment  + log_income ,
+               data = data1)
+  
+
+  
   lm_fit_weights <- lm(proposition_vote ~ treatment  + log_income  ,
-                       weights = weights,
-                       data = wildboottestjlr:::create_data(N = 10000,
-                                                            N_G1 = 20,
-                                                            icc1 = 0.5,
-                                                            N_G2 = 20,
-                                                            icc2 = 0.2,
-                                                            numb_fe1 = 10,
-                                                            numb_fe2 = 10,
-                                                            seed = 90864369,
-                                                            weights = 1:N / N
-                       ))
+                       weights = data1$weights,
+                       data = data1)
   lm_fits <- list(ols = lm_fit, wls = lm_fit_weights)
 
   # object = lm_fit
@@ -228,30 +222,24 @@ if(run_tests){
   
   N <- 1000
   
+  data2 <<- fwildclusterboot:::create_data(N = 1000,
+                                           N_G1 = 6,
+                                           icc1 = 0.5,
+                                           N_G2 = 2,
+                                           icc2 = 0.2,
+                                           numb_fe1 = 5,
+                                           numb_fe2 = 5,
+                                           #seed = 41224,
+                                           seed = 1235107,
+                                           weights = 1:N / N)
+  
   lm_fit2 <- lm(proposition_vote ~ treatment + Q1_immigration + Q2_defense,
-                data = fwildclusterboot:::create_data(N = 1000,
-                                                      N_G1 = 6,
-                                                      icc1 = 0.5,
-                                                      N_G2 = 2,
-                                                      icc2 = 0.2,
-                                                      numb_fe1 = 5,
-                                                      numb_fe2 = 5,
-                                                      #seed = 41224,
-                                                      seed = 1235107,
-                                                      weights = 1:N / N))
+                data = data2)
   
   lm_fit_weights2 <- lm(proposition_vote ~ treatment + Q1_immigration + Q2_defense,
-                          weights = weights,
-                          data = fwildclusterboot:::create_data(N = 1000,
-                                                                N_G1 = 6,
-                                                                icc1 = 0.5,
-                                                                N_G2 = 2,
-                                                                icc2 = 0.2,
-                                                                numb_fe1 = 5,
-                                                                numb_fe2 = 5,
-                                                                #seed = 41224,
-                                                                seed = 1235107,
-                                                                weights = 1:N / N))
+                          weights = data2$weights,
+                          data = data2)
+  
   lm_fits <- list(lm_fit2, lm_fit_weights2)
   ssc <- fwildclusterboot::boot_ssc(adj = FALSE,
                                     cluster.adj = FALSE)
