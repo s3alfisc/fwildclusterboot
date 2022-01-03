@@ -1,4 +1,4 @@
-## Version 0.6
+## Version 0.7
 
 - checks pass on github actions: windows, mac, ubuntu
 - checks pass local cmd check

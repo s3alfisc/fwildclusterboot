@@ -1,3 +1,8 @@
+# fwildclusterboot 0.7
+
++ Bug fixes, see issues (#26)[https://github.com/s3alfisc/fwildclusterboot/issues/26] and (#27)[https://github.com/s3alfisc/fwildclusterboot/issues/27] regarding preprocessing for fixest when weights are passed to feols() as a formula or when cluster is specified in fixest as a column vector. 
+
+
 # fwildclusterboot 0.6
 
 + Bug fix: for one-sided hypotheses for the WRU bootstrap (if impose_null = FALSE), the returned p-values were incorrect - they were reported as 'p', but should have been '1-p'. E.g. if the reported p-values was reported as 0.4, it should have been reported as 0.6. 
