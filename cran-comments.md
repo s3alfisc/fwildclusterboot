@@ -1,3 +1,24 @@
+## Re-submission of 0.7
+
+Fixed both issues below:
+
++   Found the following (possibly) invalid URLs:
+     URL: https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221%5D
+       From: README.md
+       Status: 404
+       Message: Not Found
+
+The closing %5D = "]" should likely be removed.
+
+
+
++   The Description field contains
+ 
+https://journals.sagepub.com/doi/abs/10.1177/1536867X19830877?journalCode=stja,
+
+Please write DOIs as <doi:10.1177/1536867X19830877> in the Description
+field without the rest of the URL.
+
 ## Version 0.7
 
 - checks pass on github actions: windows, mac, ubuntu

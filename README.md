@@ -47,8 +47,8 @@ subcluster bootstrapping for few treated clusters [(MacKinnon & Webb,
 
 If you are interested in the wild cluster bootstrap for IV models
 [(Davidson & MacKinnon,
-2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221%5D)
-or want to test multiple joint hypotheses, you can use the
+2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221) or
+want to test multiple joint hypotheses, you can use the
 [wildboottestjlr](https://github.com/s3alfisc/wildboottestjlr) package,
 which is an R wrapper of the
 [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) Julia
