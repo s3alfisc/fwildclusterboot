@@ -15,7 +15,7 @@
 <meta property="og:description" content="Implementation of the fast algorithm for wild cluster bootstrap 
              inference developed in Roodman et al (2019, STATA Journal) for 
              linear regression models 
-             &lt;https://journals.sagepub.com/doi/full/10.1177/1536867X19830877&gt;, 
+             &lt;doi:10.1177/1536867X19830877&gt;, 
              which makes it feasible to quickly calculate bootstrap test 
              statistics based on a large number of bootstrap draws even for 
              large samples - as long as the number of bootstrapping clusters 
@@ -43,7 +43,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@
 <p>It implements the fast wild cluster bootstrap algorithm developed in <a href="https://econpapers.repec.org/paper/qedwpaper/1406.htm">Roodman et al (2019)</a> for regression objects in R. It currently works for regression objects of type <code>lm</code>, <code>felm</code> and <code>fixest</code> from base R and the <code>lfe</code> and <code>fixest</code> packages.</p>
 <p>The package’s central function is <code><a href="reference/boottest.html">boottest()</a></code>. It allows the user to test univariate hypotheses using a wild cluster bootstrap. The “fast” algorithm developed in Roodman et al makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples – as long as the number of bootstrapping clusters is not too large.</p>
 <p>The <code>fwildclusterboot</code> package currently supports multi-dimensional clustering and one-dimensional hypotheses. It supports regression weights, multiple distributions of bootstrap weights, fixed effects, restricted (WCR) and unrestricted (WCU) bootstrap inference and subcluster bootstrapping for few treated clusters <a href="https://academic.oup.com/ectj/article-abstract/21/2/114/5078969">(MacKinnon &amp; Webb, (2018))</a>.</p>
-<p>If you are interested in the wild cluster bootstrap for IV models <a href="https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221%5D">(Davidson &amp; MacKinnon, 2010)</a> or want to test multiple joint hypotheses, you can use the <a href="https://github.com/s3alfisc/wildboottestjlr">wildboottestjlr</a> package, which is an R wrapper of the <a href="https://github.com/droodman/WildBootTests.jl">WildBootTests.jl</a> Julia package. While <code>fwildclusterboot</code> is already quite fast (see the benchmarks below), the implementation of the wild bootstrap for OLS in <code>WildBootTests.jl</code> is - after compilation - orders of magnitudes faster, in particular for problems with a large number of clusters.</p>
+<p>If you are interested in the wild cluster bootstrap for IV models <a href="https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221">(Davidson &amp; MacKinnon, 2010)</a> or want to test multiple joint hypotheses, you can use the <a href="https://github.com/s3alfisc/wildboottestjlr">wildboottestjlr</a> package, which is an R wrapper of the <a href="https://github.com/droodman/WildBootTests.jl">WildBootTests.jl</a> Julia package. While <code>fwildclusterboot</code> is already quite fast (see the benchmarks below), the implementation of the wild bootstrap for OLS in <code>WildBootTests.jl</code> is - after compilation - orders of magnitudes faster, in particular for problems with a large number of clusters.</p>
 <!-- The following features will be added in the future:  -->
 <!-- * support for multivariate hypotheses  -->
 <!-- * bootstrap distributions beyond the rademacher distribution -->

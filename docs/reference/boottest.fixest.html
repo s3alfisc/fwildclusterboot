@@ -75,7 +75,7 @@ implemented in the STATA package boottest." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7</span>
       </span>
     </div>
 
@@ -262,13 +262,13 @@ between 0 and 1 which represents the fraction of all threads
 to use. The default is to use 1 core.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Further arguments passed to or from other methods.</p></td>
+      <th>ssc</th>
+      <td><p>An object of class <code>boot_ssc.type</code> obtained with the function <code><a href='boot_ssc.html'>boot_ssc</a></code>. Represents how the small sample adjustments are computed. The defaults are <code>adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"</code>.
+You can find more details in the help file for <code><a href='boot_ssc.html'>boot_ssc()</a></code>. The function is purposefully designed to mimic fixest's <code><a href='https://lrberge.github.io/fixest/reference/ssc.html'>ssc</a></code> function.</p></td>
     </tr>
     <tr>
-      <th>ssc.</th>
-      <td><p>An object of class boot_ssc.type obtained with the function boot_ssc(). Represents how the small sample adjustments are computed. The defaults are <code>adj = FALSE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "min"</code>.
-You can find more details in the help file for <code><a href='boot_ssc.html'>boot_ssc()</a></code>. The function is purposefully designed to mimic fixest's <code><a href='https://lrberge.github.io/fixest/reference/ssc.html'>ssc()</a></code> function.</p></td>
+      <th>...</th>
+      <td><p>Further arguments passed to or from other methods.</p></td>
     </tr>
     </table>
 
@@ -283,11 +283,15 @@ the cluster variables contain NA values.</p></dd>
 <dt>B</dt><dd><p>Number of Bootstrap Iterations.</p></dd>
 <dt>clustid</dt><dd><p>Names of the cluster Variables.</p></dd>
 <dt>N_G</dt><dd><p>Dimension of the cluster variables as used in boottest.</p></dd>
-<dt>sign_level</dt><dd><p>Significance sign_level used in boottest.</p></dd>
+<dt>sign_level</dt><dd><p>Significance level used in boottest.</p></dd>
 <dt>type</dt><dd><p>Distribution of the bootstrap weights.</p></dd>
-<dt>p_test_vals</dt><dd><p>All p-values calculated while calculating the
-confidence interval.</p></dd>
-<dt>t_stat</dt><dd><p>The original test statistics - either imposing the null or not - with small sample correction <code>G / (G-1)</code>.</p></dd>
+<dt>impose_null</dt><dd><p>Whether the null was imposed on the bootstrap dgp or not.</p></dd>
+<dt>R</dt><dd><p>The vector "R" in the null hypothesis of interest Rbeta = beta0.</p></dd>
+<dt>beta0</dt><dd><p>The scalar "beta0" in the null hypothesis of interest Rbeta = beta0.</p></dd>
+<dt>point_estimate</dt><dd><p>R'beta. A scalar: the constraints vector times the regression coefficients.</p></dd>
+<dt>p_test_vals</dt><dd><p>All p-values calculated while calculating the confidence
+interval.</p></dd>
+<dt>t_stat</dt><dd><p>The 'original' regression test statistics.</p></dd>
 <dt>test_vals</dt><dd><p>All t-statistics calculated while calculating the
 confidence interval.</p></dd>
 <dt>t_boot</dt><dd><p>All bootstrap t-statistics.</p></dd>
