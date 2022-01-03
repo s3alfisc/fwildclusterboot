@@ -397,7 +397,9 @@ boot_lm <- boottest(lm_fit,
 
 ## Small Sample Corrections
 
-`boottest()` applies the small-sample correction $G / (G - 1)$, where $G$ is the number of unique clusters.
+`boottest()` offers several options for small sample adjustments via the `ssc` function argument which need to be specified via the `boot_ssc()` function. `boot_ssc()` has 4 arguments and is intentionally designed to mimic `fixest's` `ssc()` function. For more information on the default choices and alternative options, see `?fwildclusterboot::boot_ssc()`.
+
+
 
 ## Treatment of Invalid Test Statistics for multiway clustering
 
