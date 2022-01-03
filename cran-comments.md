@@ -1,5 +1,13 @@
 ## Re-submission of 0.7
 
+
+* checking top-level files ... NOTE
+Non-standard file/directory found at top level:
+  'cran-comments.html'
+* File deleted  
+
+## Re-submission of 0.7
+
 Fixed both issues below:
 
 +   Found the following (possibly) invalid URLs:
