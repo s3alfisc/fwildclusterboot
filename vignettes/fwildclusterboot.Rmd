@@ -395,6 +395,51 @@ boot_lm <- boottest(lm_fit,
 
 <!-- + why might confidence intervals differ for estimates based on `lm()`, `feols()` and `felm()`? -->
 
+## Can I check if `fwildclusterboot::boottest()` works as intended?
+
+One sanity check to see if `fwildclusterboot::boottest()` works as intended is to look at its `t_stat` return value. For both the WCR and WCU bootstrap, `boottest()` re-calculates the "original" - hence non-bootstrapped - t-statistic from its input regression model. The t-stat computed in `boottest()` and the t-stats reported by either `lm()`, `feols()` and `lfe()` should be *identical*. If you find that they differ, please report a bug [on github](https://github.com/s3alfisc/fwildclusterboot/issues). Note that `fwildclusterboot` explicitly tests for t-stat equality against `fixest::feols()` [here](https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_small_sample_correction_tstat.R).
+
+```{r}
+data <- 
+fwildclusterboot:::create_data(N = 1000, 
+                               N_G1 = 20, 
+                               icc1 = 0.81,
+                               N_G2 = 10,
+                               icc2 = 0.01, 
+                               numb_fe1 = 10,
+                               numb_fe2 = 10, 
+                               seed = 8769)
+
+# oneway clustering 
+feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income,
+                           data = data, 
+                           cluster = ~group_id1, 
+                           ssc = fixest::ssc(adj = TRUE, 
+                                             cluster.adj = TRUE, 
+                                             cluster.df = 'conventional')
+                           )
+        
+feols_tstats <- fixest::coeftable(feols_fit)[c("treatment", "log_income", "ideology1"), 3]
+
+boot_tstats <- 
+lapply(c("treatment", "log_income", "ideology1"), function(x){
+  boot1 <- fwildclusterboot::boottest(feols_fit, 
+                                    clustid = c("group_id1"),
+                                    B = 999, 
+                                    param = x, 
+                                    ssc = fwildclusterboot::boot_ssc(adj = TRUE, 
+                                                               cluster.adj = TRUE, 
+                                                               cluster.df = 'conventional'),  
+                                    impose_null = TRUE)$t_stat
+})        
+
+df <- cbind(feols_tstats, unlist(boot_tstats))
+colnames(df) <- c("feols tstat", "boottest tstat")
+df
+
+```
+
+
 ## Small Sample Corrections
 
 `boottest()` offers several options for small sample adjustments via the `ssc` function argument which need to be specified via the `boot_ssc()` function. `boot_ssc()` has 4 arguments and is intentionally designed to mimic `fixest's` `ssc()` function. For more information on the default choices and alternative options, see `?fwildclusterboot::boot_ssc()`.
