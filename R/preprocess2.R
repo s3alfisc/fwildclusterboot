@@ -92,7 +92,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
         deparse_weights <- unlist(strsplit(deparse(of$weights), "[$]"))
         add_weights <-  deparse_weights[-(which(deparse_weights %in% deparse_data))]
         if(length(add_weights) == 0){
-          stop(paste("Currently, boottest() accepts regression weights for feols() only if they are specified as a formula as weights =", paste0("~", deparse_weights), "or in reference to the input data.frame as as weights = ", paste0(deparse_data, "$", deparse_weights), "."))
+          stop(paste0("Currently, boottest() accepts regression weights for feols() only if they are specified as a formula as weights = ", paste0("~", deparse_weights), " or in reference to the input data.frame as as weights = ", paste0(deparse_data, "$", deparse_weights), "."))
         }
         formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
         weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
@@ -186,7 +186,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
         deparse_weights <- unlist(strsplit(deparse(of$weights), "[$]"))
         add_weights <-  deparse_weights[-(which(deparse_weights %in% deparse_data))]
         if(length(add_weights) == 0){
-          stop(paste("Currently, boottest() accepts regression weights for felm() only if they are specified in reference to the input data.frame as as weights =", paste0(deparse_data, "$", deparse_weights), "."))
+          stop(paste0("Currently, boottest() accepts regression weights for felm() only if they are specified in reference to the input data.frame as as weights = ", paste0(deparse_data, "$", deparse_weights), "."))
         }
         formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
         weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
@@ -247,7 +247,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
         deparse_weights <- unlist(strsplit(deparse(of$weights), "[$]"))
         add_weights <-  deparse_weights[-(which(deparse_weights %in% deparse_data))]
         if(length(add_weights) == 0){
-          stop(paste("Currently, boottest() accepts regression weights for felm() only if they are specified in reference to the input data.frame as as weights =", paste0(deparse_data, "$", deparse_weights), "."))
+          stop(paste0("Currently, boottest() accepts regression weights for lm() only if they are specified in reference to the input data.frame as weights = ", paste0(deparse_data, "$", deparse_weights), "."))
         }
         formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
         weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
