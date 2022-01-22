@@ -11,17 +11,17 @@ tidy.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
   #dreamerr::validate_dots(stop = TRUE)
   
-    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$beta0)
+  hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$beta0)
   
-    term <- hypothesis
-    estimate <- object$point_estimate
-    statistic <- object$t_stat
-    p.value <- object$p_val
-    #std.error <- NA
-    conf.low <- min(object$conf_int)
-    conf.high <- max(object$conf_int)
-    
-    res <- data.frame(term, estimate, statistic, p.value, conf.low, conf.high)
+  term <- hypothesis
+  estimate <- object$point_estimate
+  statistic <- object$t_stat
+  p.value <- object$p_val
+  #std.error <- NA
+  conf.low <- min(object$conf_int)
+  conf.high <- max(object$conf_int)
+  
+  res <- data.frame(term, estimate, statistic, p.value, conf.low, conf.high)
  
   return(res)
 }
@@ -58,10 +58,10 @@ summary.boottest <- function(object, digits = 3, ...) {
   
   tidy_object <- lapply(tidy_names, 
                         function(x){
-                         if(is.numeric(tidy(object)[[x]])){
-                           round(tidy(object)[[x]], digits = digits)
+                         if(is.numeric(tidy.boottest(object)[[x]])){
+                           round(tidy.boottest(object)[[x]], digits = digits)
                          } else{
-                           tidy(object)[[x]]
+                           tidy.boottest(object)[[x]]
                          }
                   })
   
