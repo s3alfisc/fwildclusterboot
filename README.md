@@ -3,7 +3,8 @@
 
 # fwildclusterboot
 
-<!-- <img src="man/figures/logo.png" width="160px" align="right" /> -->
+<img src="man/figures/logo.png" width="200px" align="right" />
+
 <!-- badges: start -->
 <!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 0.5, 2021, 03, 31, 80133, R, R version 4.0.5 (2021-03-31), Shake and Throw-orange.svg?style=flat-square)](commits/master) -->
 
@@ -125,7 +126,7 @@ please follow this
 ### Benchmarks
 
 Results of timing benchmarks of `boottest()`, with a sample of N =
-10000, k = 20 covariates and one cluster of dimension N\_G (3 iterations
+10000, k = 20 covariates and one cluster of dimension N_G (3 iterations
 each, median runtime is plotted).
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />

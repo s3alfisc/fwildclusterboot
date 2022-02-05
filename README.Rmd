@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 # fwildclusterboot 
 
-<!-- <img src="man/figures/logo.png" width="160px" align="right" /> -->
+<img src="man/figures/logo.png" width="200px" align="right" />
 
 
 <!-- badges: start -->
