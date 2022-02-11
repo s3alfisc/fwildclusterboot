@@ -29,7 +29,7 @@
 )
 }
 \arguments{
-\item{object}{An object of class fixest}
+\item{object}{An object of class fixest and estimated via \code{fixest::feols()}. Non-linear models are not supported.}
 
 \item{clustid}{A character vector containing the names of the cluster variables}
 
