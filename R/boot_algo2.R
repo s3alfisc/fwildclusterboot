@@ -138,6 +138,11 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   DD <- vector(mode = "list", length = length(names(clustid)))
   CD <- vector(mode = "list", length = length(names(clustid)))
   
+  # CC <- matrix(NA, length(names(clustid)), B + 1)
+  # CD <- matrix(NA, length(names(clustid)), B + 1)
+  # DD <- matrix(NA, length(names(clustid)), B + 1)
+  
+  
   if(is.null(W)){
     # if there are no fixed effects - term (2) in equ. (62) fast & wild does not arise
     # note - W refers to W_bar in fast & wild, not regression weights. If no fixed effects

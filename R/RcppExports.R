@@ -2,7 +2,7 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' Matrix Multiplication via Eigen
-#' @param A A matrix. 
+#' @param A A matrix.
 #' @param B A matrix.
 #' @param nthreads Integer. Number of threads to use for matrix multiplication.
 #' @return A matrix
@@ -14,5 +14,25 @@ eigenMapMatMult <- function(A, B, nthreads) {
 #' @return The maximum number of threads supported.
 cpp_get_nb_threads <- function() {
     .Call('_fwildclusterboot_cpp_get_nb_threads', PACKAGE = 'fwildclusterboot')
+}
+
+#' Implementation of the heteroskedastic wild bootstrap. Computes
+#' HC robust variance estimators. For use in fwildclusterboot when no
+#' cluster variable is provided
+#' @param y A vector - the dependent variable
+#' @param X A matrix - the design matrix
+#' @param R A matrix - the constraints matrix for a hypothesis test R'beta = r.
+#' @param r A vector - r in hypothesis test R'beta = r.
+#' @param B An integer - controls the number of bootstrap iterations.
+#' @param N_G_bootcluster - The number of bootstrap clusters. For heteroskesdatic wild bootstrap, N_G_bootcluster = N, where N is the number of observations.
+#' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
+NULL
+
+sample_weights <- function(G, type) {
+    .Call('_fwildclusterboot_sample_weights', PACKAGE = 'fwildclusterboot', G, type)
+}
+
+wildboottest <- function(y, X, R, r, B, N_G_bootcluster, cores, type) {
+    .Call('_fwildclusterboot_wildboottest', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type)
 }
 

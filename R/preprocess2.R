@@ -17,7 +17,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   # ---------------------------------------------------------------------------- #
   # Step 1: preprocessing of call
   
-  check_arg(cluster, "character scalar | character vector")
+  check_arg(cluster, "NULL | character scalar | character vector")
   check_arg(fe, "character scalar | NULL")
   check_arg(param, "character vector | character vector | NULL")
   check_arg(bootcluster, "character vector | NULL")

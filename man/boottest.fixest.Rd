@@ -25,6 +25,7 @@
   nthreads = getBoottest_nthreads(),
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
+  boot_algo = "algo2",
   ...
 )
 }
