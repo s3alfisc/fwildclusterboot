@@ -57,6 +57,12 @@
 #'                 to use. The default is to use 1 core.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`. 
 #'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function. 
+#' @param boot_algo Character scalar. Either "fast_n_wild" or "lean". Controls the algorithm employed by boottest.
+#'                  "fast_n_wild" is the default and implements the cluster bootstrap as in Roodman (2019). 
+#'                  The "fast and wild" algorithm is extremely fast for small number of clusters, but because it is fully vectorized, very memory-demanding.
+#'                  For large number of clusters and large number of bootstrap iterations, the fast and wild algorithm becomes infeasible. If a out-of-memory error #
+#'                  occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap. 
+#'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm.               
 #' @param ... Further arguments passed to or from other methods.
 #' @importFrom dreamerr check_arg validate_dots
 
@@ -173,6 +179,7 @@ boottest.fixest <- function(object,
                                            fixef.K = "none", 
                                            cluster.adj = TRUE, 
                                            cluster.df = "conventional"),
+                            boot_algo = "fast_n_wild",
                            # fweights = FALSE,
                             ...) {
   
@@ -195,6 +202,7 @@ boottest.fixest <- function(object,
   check_arg(tol, "numeric scalar")
   check_arg(maxiter, "scalar integer")
   check_arg(boot_ssc, "class(boot_ssc.type)")
+  check_arg(boot_algo, "charin(fast_n_wild, lean")
   #check_arg(fweights, "logical scalar")
   
   
@@ -337,6 +345,8 @@ boottest.fixest <- function(object,
   # number of clusters used in bootstrap - always derived from bootcluster
   if(is.null(clustid)){
     N_G <- preprocess$N
+    # also, override algo to lean
+    boot_algo <- "lean"
   } else {
     N_G <- length(unique(preprocess$bootcluster[, 1]))
   }
@@ -357,7 +367,7 @@ boottest.fixest <- function(object,
     full_enumeration <- FALSE
   }
   
-  if(!is.null(clustid)){
+  if(boot_algo == "fast_n_wild"){
     res <- boot_algo2(preprocessed_object = preprocess,
                       boot_iter = B,
                       point_estimate = point_estimate,

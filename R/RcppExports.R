@@ -31,8 +31,8 @@ cpp_get_nb_threads <- function() {
 NULL
 
 #' Implementation of the wild  cluster bootstrap. Computes
-#' cluster robust variance estimators. For use in fwildclusterboot when no
-#' cluster variable is provided
+#' cluster robust variance estimators. For use in fwildclusterboot when 
+#' the memory demands of the fast and wild algorithm are infeasible
 #' @param y A vector - the dependent variable
 #' @param X A matrix - the design matrix
 #' @param R A matrix - the constraints matrix for a hypothesis test R'beta = r.

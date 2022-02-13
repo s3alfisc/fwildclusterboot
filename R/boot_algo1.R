@@ -53,7 +53,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   # vcov_sign <- preprocessed_object$vcov_sign
   weights <- preprocessed_object$weights
   R <- t(as.matrix(preprocessed_object$R0))
-  
+
   N_G_bootcluster <- N_G
   
   if(type == "rademacher"){
@@ -61,26 +61,47 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   } else if(type == "webb"){
     type <- 1
   } else {
-    stop("For the heteroskedastic wild cluster bootstrap, only webb and rademacher weights are supported.")
+    stop("For the 'lean' bootstrap algorithm, only webb and rademacher weights are supported.")
   }
   
   if(impose_null == FALSE){
-    stop("The heteroskedastic bootstrap is currently not supported without imposing the null on the bootstrap dgp.")
+    stop("The 'lean' bootstrap algorithm is currently not supported without imposing the null on the bootstrap dgp.")
   }
   
   if(sum(R) > 1){
-    stop("The heteroskedastic bootstrap is currently not supported for hypotheses about more than one parameter.")
+    stop("The 'lean' bootstrap algorithm is currently not supported for hypotheses about more than one parameter.")
   }
   
-  boot_res <- 
-  wildboottestHC(y = Y, 
-                 X = X, 
-                 R = t(R),
-                 r = beta0, 
-                 B = boot_iter, 
-                 N_G_bootcluster = N, 
-                 cores = nthreads, 
-                 type = 0)[[1]]
+  if(is.null(preprocessed_object$clustid)){
+    boot_res <- 
+      wildboottestHC(y = Y, 
+                     X = X, 
+                     R = t(R),
+                     r = beta0, 
+                     B = boot_iter, 
+                     N_G_bootcluster = N, 
+                     cores = nthreads, 
+                     type = type)[[1]]    
+  } else {
+    bootcluster <- preprocessed_object$bootcluster[, 1]
+    # is bootcluster a vector of integers that starts at 0? 
+    if(!class(bootcluster) == "integer"){
+      stop("bootcluster needs to be an integer vector")
+    }
+    bootcluster <- bootcluster - min(bootcluster)
+    
+    boot_res <- 
+      wildboottestCL(y = Y, 
+                     X = X, 
+                     R = t(R),
+                     r = beta0, 
+                     B = boot_iter, 
+                     N_G_bootcluster = N_G_bootcluster, 
+                     cores = nthreads, 
+                     type = type, 
+                     cluster = bootcluster)[[1]]
+  }
+
   
   selector <- which(R == 1)
   t_stat <- boot_res[selector,1] 

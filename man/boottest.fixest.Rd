@@ -25,6 +25,7 @@
   nthreads = getBoottest_nthreads(),
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
+  boot_algo = "fast_n_wild",
   ...
 )
 }
@@ -99,6 +100,13 @@ to use. The default is to use 1 core.}
 
 \item{ssc}{An object of class \code{boot_ssc.type} obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are \verb{adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"}.
 You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.}
+
+\item{boot_algo}{Character scalar. Either "fast_n_wild" or "lean". Controls the algorithm employed by boottest.
+"fast_n_wild" is the default and implements the cluster bootstrap as in Roodman (2019).
+The "fast and wild" algorithm is extremely fast for small number of clusters, but because it is fully vectorized, very memory-demanding.
+For large number of clusters and large number of bootstrap iterations, the fast and wild algorithm becomes infeasible. If a out-of-memory error #
+occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
+Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }

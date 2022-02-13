@@ -1,8 +1,14 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
+// [[Rcpp::plugins(openmp)]]
+
 #include <RcppArmadillo.h>
 #include <cstdlib>
-#include <omp.h>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
+
+
 using namespace Rcpp;
 
 // [[Rcpp::export]]
@@ -105,7 +111,7 @@ List wildboottestHC(const arma::vec & y,
     arma::vec resid_boot = y_boot - X * coef_boot;
     // because resid_boot is diagonal
     arma::mat meat = X.t() * arma::diagmat(pow(resid_boot,2)) * X;
-    arma::mat sigma_boot =  XXinv * meat * XXinv;
+    arma::mat sigma_boot =   (XXinv * meat * XXinv);
     
     // calculate t-stats
     t_boot.col(b) = coef_boot / arma::sqrt(arma::diagvec(sigma_boot));
@@ -118,7 +124,7 @@ List wildboottestHC(const arma::vec & y,
   arma::vec resid_boot = y_boot - X * coef_boot;
   // because resid_boot is diagonal
   arma::mat meat = X.t() * arma::diagmat(pow(resid_boot,2)) * X;
-  arma::mat sigma_boot =  XXinv * meat * XXinv;
+  arma::mat sigma_boot =   (XXinv * meat * XXinv);
   
   // calculate t-stats
   t_boot.col(0) = coef_boot / arma::sqrt(arma::diagvec(sigma_boot));
@@ -131,8 +137,8 @@ List wildboottestHC(const arma::vec & y,
 }
 
 //' Implementation of the wild  cluster bootstrap. Computes
-//' cluster robust variance estimators. For use in fwildclusterboot when no
-//' cluster variable is provided
+//' cluster robust variance estimators. For use in fwildclusterboot when 
+//' the memory demands of the fast and wild algorithm are infeasible
 //' @param y A vector - the dependent variable
 //' @param X A matrix - the design matrix
 //' @param R A matrix - the constraints matrix for a hypothesis test R'beta = r.
@@ -192,9 +198,9 @@ List wildboottestCL(const arma::vec & y,
     for(int g = 0; g < N_G_bootcluster; g++){
       arma::mat X_g = X.rows(find(cluster == g)); 
       arma::mat resid_boot_g = resid_boot(find(cluster == g));
-      meat += X_g.t() * resid_boot_g * resid_boot_g.t() * X_g;
+      meat +=  X_g.t() * resid_boot_g * resid_boot_g.t() * X_g;
     }
-    arma::mat sigma_boot =  XXinv * meat * XXinv;
+    arma::mat sigma_boot =  (XXinv * meat * XXinv);
     
     // calculate t-stats
     t_boot.col(b) = coef_boot / arma::sqrt(arma::diagvec(sigma_boot));
@@ -219,7 +225,7 @@ List wildboottestCL(const arma::vec & y,
     arma::mat resid_boot_g = resid_boot(find(cluster == g));
     meat += X_g.t() * resid_boot_g * resid_boot_g.t() * X_g;
   }
-  arma::mat sigma_boot =  XXinv * meat * XXinv;
+  arma::mat sigma_boot =   (XXinv * meat * XXinv);
   
   // calculate t-stats
   t_boot.col(0) = coef_boot / arma::sqrt(arma::diagvec(sigma_boot));
