@@ -73,14 +73,14 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   }
   
   boot_res <- 
-  wildboottest(y = Y, 
-               X = X, 
-               R = t(R),
-               r = beta0, 
-               B = boot_iter, 
-               N_G_bootcluster = N, 
-               cores = nthreads, 
-               type = 0)[[1]]
+  wildboottestHC(y = Y, 
+                 X = X, 
+                 R = t(R),
+                 r = beta0, 
+                 B = boot_iter, 
+                 N_G_bootcluster = N, 
+                 cores = nthreads, 
+                 type = 0)[[1]]
   
   selector <- which(R == 1)
   t_stat <- boot_res[selector,1] 

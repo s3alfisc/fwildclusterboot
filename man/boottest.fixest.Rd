@@ -6,9 +6,9 @@
 \usage{
 \method{boottest}{fixest}(
   object,
-  clustid,
   param,
   B,
+  clustid = NULL,
   bootcluster = "max",
   fe = NULL,
   sign_level = NULL,
@@ -25,20 +25,19 @@
   nthreads = getBoottest_nthreads(),
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
-  boot_algo = "algo2",
   ...
 )
 }
 \arguments{
 \item{object}{An object of class fixest and estimated via \code{fixest::feols()}. Non-linear models are not supported.}
 
-\item{clustid}{A character vector containing the names of the cluster variables}
-
 \item{param}{A character vector. The name of the regression
 coefficients for which the hypothesis is to be tested}
 
 \item{B}{Integer. The number of bootstrap iterations. When the number of clusters is low,
 increasing B adds little additional runtime.}
+
+\item{clustid}{A character vector containing the names of the cluster variables}
 
 \item{bootcluster}{A character vector. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
