@@ -7,8 +7,8 @@
 #' 
 #' @param object An object of class felm
 #' @param clustid A character vector containing the names of the cluster variables
-#' @param param A character vector of length one. The name of the regression
-#'        coefficient for which the hypothesis is to be tested
+#' @param param A character vector. The name of the regression
+#'        coefficient(s) for which the hypothesis is to be tested
 #' @param B Integer. The number of bootstrap iterations. When the number of clusters is low, 
 #'        increasing B adds little additional runtime. 
 #' @param bootcluster A character vector. Specifies the bootstrap clustering variable or variables. If more
@@ -57,7 +57,21 @@
 #'                 to use. The default is to use 1 core.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`. 
 #'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function. 
+#' @param boot_algo Character scalar. Either "R", "R-lean" or "WildBootTests.jl". Controls the algorithm employed by boottest.
+#'                  "R" is the default and implements the cluster bootstrap as in Roodman (2019). "WildBootTests.jl" executes the wild cluster bootstrap by via the WildBootTests.jl
+#'                  package. For it to run, Julia and WildBootTests.jl need to be installed. Check out the set_up_ ... functions
+#'                  The "fast and wild" algorithm is extremely fast for small number of clusters, but because it is fully vectorized, very memory-demanding.
+#'                  For large number of clusters and large number of bootstrap iterations, the fast and wild algorithm becomes infeasible. If a out-of-memory error #
+#'                  occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap. 
+#'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm.               
+#' @param floattype Character scalar. Only relevant when "boot_algo" is set to "WildBootTests.jl". Determines if Julia computes with 32- or 64-bit values. Options are "Float32" (default) and "Float64".
+#' @param turbo Logical. Only relevant when "boot_algo" is set to "WildBootTests.jl". Controls if "WildBootTests.jl" utilizes the 'turbo' package, which can increase runtime at the cost of increased compilation time. 
+#' @param maxmatsize ... Only relevant when "boot_algo" is set to "WildBootTests.jl".
+#' @param bootstrapc ... Only relevant when "boot_algo" is set to "WildBootTests.jl". Runs the boostrap-c as advertised by Young (2019).
+#' @param t_boot ... 
+#' @param getauxweights ... 
 #' @param ... Further arguments passed to or from other methods.
+#' @import JuliaConnectoR
 #'
 #' @importFrom dreamerr check_arg validate_dots
 #' @return An object of class \code{boottest}
@@ -160,11 +174,11 @@ boottest.felm <- function(object,
                           clustid,
                           bootcluster = "max",
                           fe = NULL,
-                          conf_int = NULL,
+                          conf_int = TRUE,
                           seed = NULL,
                           R = NULL,
                           beta0 = 0,
-                          sign_level = NULL,
+                          sign_level = 0.05,
                           type = "rademacher",
                           impose_null = TRUE,
                           p_val_type = "two-tailed",
@@ -176,27 +190,43 @@ boottest.felm <- function(object,
                                          fixef.K = "none", 
                                          cluster.adj = TRUE, 
                                          cluster.df = "conventional"),
-                          #fweights = FALSE,
+                          boot_algo = "R",
+                          floattype = "Float32", 
+                          turbo = FALSE, 
+                          maxmatsize = FALSE, 
+                          bootstrapc = FALSE, 
+                          t_boot = FALSE, 
+                          getauxweights = FALSE,
                           ...) {
 
   call <- match.call()
 
   dreamerr::validate_dots(stop = TRUE)
   
-  # check_arg(clustid, "os formula | data.frame | named list")
-  check_arg(param, "scalar character | character vector")
-  check_arg(B, "scalar integer ")
-  check_arg(sign_level, "scalar numeric | NULL")
-  check_arg(conf_int, "logical scalar | NULL")
+  # Step 1: check arguments of felm call
+  check_arg(object, "MBT class(felm)")
+  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(param, "MBT scalar character | character vector")
+  check_arg(B, "MBT scalar integer")  
+  check_arg(sign_level, "scalar numeric GT{0} LT{1}")
+  check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
+  check_arg(p_val_type, 'charin(two-tailed, equal-tailed,>, <)')
+  
+  check_arg(conf_int, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL")
   check_arg(bootcluster, "character vector")
-  check_arg(tol, "numeric scalar")
+  check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer")
-  check_arg(boot_ssc, "class(boot_ssc.type)")
-  #check_arg(fweights, "logical scalar")
+  check_arg(boot_ssc, 'class(ssc) | class(boot_ssc)')
+  check_arg(boot_algo, "charin(R, WildBootTests.jl)")
+  
+  check_arg(floattype, "charin(Float32, Float64)")
+  check_arg(turbo, "scalar logical")
+  check_arg(maxmatsize, "scalar integer | NULL")
+  check_arg(bootstrapc, "scalar logical")
   
   
   # check appropriateness and assign nthreads
@@ -211,42 +241,26 @@ boottest.felm <- function(object,
          call. = FALSE)
   }
   
-  if(tol < 0){
-    stop("The function argument tol needs to be positive.", 
-         call. = FALSE)
-  }
-
-  if(!(p_val_type %in% c("two-tailed", "equal-tailed",">", "<"))){
-    stop("The function argument p_val_type must be
-         'two-tailed', 'equal-tailed','>' or '<'.", 
-         call. = FALSE)
+  if(boot_algo != "WildBootTests.jl"){
+    
+    if(!is.null(R) && length(nrow(R)) != 0){
+      stop("Hypotheses with q>1 are currently only supported via WildBootTests.jl. Please set the function argument 'boot_algo = WildBootTests.jl'.")
+    }
+    
+    if(p_val_type %in% c(">", "<") && conf_int == TRUE){
+      conf_int <- FALSE
+      warning(paste("Currently, boottest() calculates confidence intervals for one-sided hypotheses only for boot_algo = 'WildBootTests.jl'."), call. = FALSE)
+    }
+    if ((conf_int == TRUE || is.null(conf_int)) & B <= 100) {
+      stop("The function argument B is smaller than 100. The number of bootstrap 
+          iterations needs to be 100 or higher in order to guarantee that the root
+          finding procudure used to find the confidence set works properly.",
+           call. = FALSE
+      )
+    }
   }
   
-  if(p_val_type %in% c(">", "<") && conf_int == TRUE){
-    conf_int <- FALSE
-    warning(paste("Currently, boottest() does not calculate confidence intervals for one-sided hypotheses, but this will change in a future release."), call. = FALSE)
-  }
-  
-  if ((conf_int == TRUE || is.null(conf_int)) & B <= 100) {
-    stop("The function argument B is smaller than 100. The number
-          of bootstrap iterations needs to be 100 or higher in order
-          to guarantee that the root finding procudure used to find
-          the confidence set works properly.",
-      call. = FALSE
-    )
-  }
-  if (!is.null(sign_level) & (sign_level <= 0 || sign_level >= 1)) {
-    stop("The function argument sign_level is outside of the 
-         unit interval (0, 1). Please specify sign_level so that
-         it is within the unit interval.",
-      call. = FALSE
-    )
-  }
-
-  if (is.null(sign_level)) {
-    sign_level <- 0.05
-  }
-
+  # check if param(s) is (are) in model
   if (mean(param %in% c(rownames(object$coefficients))) != 1) {
     stop(paste("The parameter", param, "is not included 
                in the estimated model. Maybe you are trying to 
@@ -290,124 +304,351 @@ boottest.felm <- function(object,
     )
   }
 
-  # preprocess data: X, Y, weights, fixed effects
-  preprocess <- preprocess2(object = object, 
-                            cluster = clustid,
-                            fe = fe,
-                            param = param,
-                            bootcluster = bootcluster, 
-                            na_omit = na_omit, 
-                            R = R#, 
-                            #fweights = fweights
-                            )
   
-  N <- preprocess$N
-  k <- length(coef(object))
-  G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
-  vcov_sign <- preprocess$vcov_sign
+  # now split into R, R-lean and WildBootTests.jl algos
+  # different pre-processing and different algo-functions
   
-  
-  small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign)
-  
-
-  clustid_dims <- preprocess$clustid_dims
-  # Invert p-value
-  point_estimate <- as.vector(object$coefficients[param,] %*% preprocess$R0[param])
-  
-  # number of clusters used in bootstrap - always derived from bootcluster
-  N_G <- length(unique(preprocess$bootcluster[, 1]))
-  N_G_2 <- 2^N_G
-  if (type %in% c("rademacher") & N_G_2 <= B) {
-    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-            call. = FALSE, 
-            noBreaks. = TRUE
+  if(boot_algo %in% c("R", "R-lean")){
+    # preprocess the data: Y, X, weights, fixed_effect
+    preprocess <- preprocess2(object = object, 
+                              cluster = clustid,
+                              fe = fe, 
+                              param = param,
+                              bootcluster = bootcluster, 
+                              na_omit = na_omit, 
+                              R = R#, 
+                              #fweights = fweights
     )
-    warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-            call. = FALSE, 
-            noBreaks. = TRUE
-    )
-    B <- N_G_2
-    full_enumeration <- TRUE
-  } else{
-    full_enumeration <- FALSE
-  }
-  
-
-
-  res <- boot_algo2(preprocess,
-    boot_iter = B,
-    point_estimate = point_estimate,
-    impose_null = impose_null,
-    beta0 = beta0,
-    sign_level = sign_level,
-    param = param,
-    # seed = seed,
-    p_val_type = p_val_type, 
-    nthreads = nthreads, 
-    type = type, 
-    full_enumeration = full_enumeration, 
-    small_sample_correction = small_sample_correction
-  )
-
-
-
-  # compute confidence sets
-  if (is.null(conf_int) || conf_int == TRUE) {
     
-    if(impose_null == TRUE){
-      # should always be positive, point_estimate and t_stat need to have same sign
-      se_guess <- abs(point_estimate / res$t_stat)
-    } else if(impose_null == FALSE){
-      se_guess <- abs((point_estimate - beta0) / res$t_stat)
+    
+    N <- preprocess$N
+    k <- length(coef(object))
+    G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
+    vcov_sign <- preprocess$vcov_sign
+    
+    small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign)
+    #small_sample_correction <- ifelse(length(small_sample_correction) == 0, NULL, small_sample_correction)
+    
+    clustid_dims <- preprocess$clustid_dims
+    # R*beta; 
+    point_estimate <- as.vector(object$coefficients[param,] %*% preprocess$R0[param])
+
+    # number of clusters used in bootstrap - always derived from bootcluster
+    if(is.null(clustid)){
+      N_G <- preprocess$N
+      # also, override algo to lean
+      boot_algo <- "R-lean"
+    } else {
+      N_G <- length(unique(preprocess$bootcluster[, 1]))
     }
-
-    res_p_val <- invert_p_val(
-      object = res,
-      boot_iter = B,
+    
+    #N_G <- preprocess$N_G
+    N_G_2 <- 2^N_G
+    if (type %in% c("rademacher") & N_G_2 <= B) {
+      warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
+              call. = FALSE, 
+              noBreaks. = TRUE
+      )
+      warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
+              call. = FALSE, 
+              noBreaks. = TRUE
+      )
+      B <- N_G_2
+      full_enumeration <- TRUE
+    } else{
+      full_enumeration <- FALSE
+    }
+    
+    if(boot_algo == "R"){
+      res <- boot_algo2(preprocessed_object = preprocess,
+                        boot_iter = B,
+                        point_estimate = point_estimate,
+                        impose_null = impose_null,
+                        beta0 = beta0,
+                        sign_level = sign_level,
+                        param = param,
+                        # seed = seed,
+                        p_val_type = p_val_type, 
+                        nthreads = nthreads, 
+                        type = type, 
+                        full_enumeration = full_enumeration, 
+                        small_sample_correction = small_sample_correction
+      )
+    } else if(boot_algo == "R-lean") {
+      res <- boot_algo1(preprocessed_object = preprocess,
+                        boot_iter = B,
+                        point_estimate = point_estimate,
+                        impose_null = impose_null,
+                        beta0 = beta0,
+                        sign_level = sign_level,
+                        param = param,
+                        # seed = seed,
+                        p_val_type = p_val_type, 
+                        nthreads = nthreads, 
+                        type = type, 
+                        full_enumeration = full_enumeration, 
+                        small_sample_correction = small_sample_correction
+      )
+    }
+    
+    # compute confidence sets
+    if(class(res) == "boot_algo1"){
+      conf_int <-  FALSE
+    }
+    
+    if (is.null(conf_int) || conf_int == TRUE) {
+      
+      # guess for standard errors
+      if(impose_null == TRUE){
+        # should always be positive, point_estimate and t_stat need to have same
+        # sign, abs for security
+        se_guess <- abs(point_estimate / res$t_stat)
+      } else if(impose_null == FALSE){
+        se_guess <- abs((point_estimate - beta0) / res$t_stat)
+      }
+      
+      
+      res_p_val <- invert_p_val(
+        object = res,
+        boot_iter = B,
+        point_estimate = point_estimate,
+        se_guess = se_guess,
+        clustid = preprocess$clustid,
+        sign_level = sign_level,
+        vcov_sign = preprocess$vcov_sign,
+        impose_null = impose_null,
+        p_val_type = p_val_type, 
+        maxiter = maxiter, 
+        tol = tol
+      )
+    } else {
+      res_p_val <- list(
+        conf_int = NA,
+        p_test_vals = NA,
+        test_vals = NA
+      )
+    }
+    
+    res_final <- list(
       point_estimate = point_estimate,
-      se_guess = se_guess,
-      clustid = preprocess$clustid,
+      p_val = res[["p_val"]],
+      conf_int = res_p_val$conf_int,
+      p_test_vals = res_p_val$p_grid_vals,
+      test_vals = res_p_val$grid_vals,
+      t_stat = res$t_stat,
+      t_boot = res$t_boot,
+      # regression = res$object,
+      param = param,
+      N = preprocess$N,
+      boot_iter = B,
+      clustid = clustid,
+      # depvar = depvar,
+      N_G = preprocess$N_G,
       sign_level = sign_level,
-      vcov_sign = preprocess$vcov_sign,
+      call = call,
+      type = type,
+      impose_null = impose_null, 
+      R = R, 
+      beta0 = beta0
+    )
+    
+  } else if(boot_algo == "WildBootTests.jl"){
+    
+    fedfadj <- FALSE
+    
+    preprocess <- preprocess_julia(object = object,
+                                   cluster = clustid,
+                                   fe = fe,
+                                   param = param,
+                                   bootcluster = bootcluster,
+                                   na_omit = na_omit,
+                                   R = R)
+    
+    clustid_dims <- preprocess$clustid_dims
+    # R*beta;
+    point_estimate <- as.vector(object$coefficients[param,] %*% preprocess$R0[param])
+    
+    # number of clusters used in bootstrap - always derived from bootcluster
+    N_G <- length(unique(preprocess$bootcluster[, 1]))
+    N_G_2 <- 2^N_G
+    if (type %in% c("rademacher") & N_G_2 < B) {
+      warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
+              call. = FALSE,
+              noBreaks. = TRUE
+      )
+      warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
+              call. = FALSE,
+              noBreaks. = TRUE
+      )
+    }
+    
+    # translate ssc into small_sample_adjustment
+    if(ssc[['adj']] == TRUE && ssc[['cluster.adj']] == TRUE){
+      small_sample_adjustment <- small <- TRUE
+    } else {
+      small_sample_adjustment <- small <- FALSE
+    }
+    
+    if(ssc[['fixef.K']] != "none" || ssc[['cluster.df']] != "conventional"){
+      message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional' when 'boot_algo = WildBootTests.jl'."))
+    }
+    
+    # send R objects to Julia
+    # assign all values needed in WildBootTests.jl
+    
+    resp <- as.numeric(preprocess$Y)
+    predexog <- preprocess$X
+    if(is.matrix(preprocess$R)){
+      R <- preprocess$R
+    } else {
+      R <- matrix(preprocess$R, 1, length(preprocess$R))
+    }
+    r <- beta0
+    reps <- as.integer(B) # WildBootTests.jl demands integer
+    
+    # Order the columns of `clustid` this way:
+    # 1. Variables only used to define bootstrapping clusters, as in the subcluster bootstrap.
+    # 2. Variables used to define both bootstrapping and error clusters.
+    # 3. Variables only used to define error clusters.
+    # In the most common case, `clustid` is a single column of type 2.
+    
+    if(length(bootcluster == 1) && bootcluster == "max"){
+      bootcluster_n <- clustid
+    } else if(length(bootcluster == 1) && bootcluster == "min"){
+      bootcluster_n <- names(preprocess$N_G[which.min(preprocess$N_G)])
+    }
+    
+    # only bootstrapping cluster: in bootcluster and not in clustid
+    c1 <- bootcluster_n[which(!(bootcluster_n %in% clustid))]
+    # both bootstrapping and error cluster: all variables in clustid that are also in bootcluster
+    c2 <- clustid[which(clustid %in% bootcluster_n)]
+    # only error cluster: variables in clustid not in c1, c2
+    c3 <- clustid[which(!(clustid %in% c(c1, c2)))]
+    all_c <- c(c1, c2, c3)
+    #all_c <- lapply(all_c , function(x) ifelse(length(x) == 0, NULL, x))
+    
+    # note that c("group_id1", NULL) == "group_id1"
+    clustid_mat <- (preprocess$model_frame[, all_c])
+    clustid_df <- base::as.matrix(sapply(clustid_mat, as.integer))
+    
+    # `nbootclustvar::Integer=1`: number of bootstrap-clustering variables
+    # `nerrclustvar::Integer=nbootclustvar`: number of error-clustering variables
+    nbootclustvar <- ifelse(bootcluster == "max", length(clustid), length(bootcluster))
+    nerrclustvar <- length(clustid)
+    
+    obswt <-  preprocess$weights
+    feid <- as.integer(preprocess$fixed_effect[,1])
+    level <-  1 - sign_level
+    getCI <- ifelse(is.null(conf_int) || conf_int == TRUE, TRUE, FALSE)
+    imposenull <- ifelse(is.null(impose_null) || impose_null == TRUE, TRUE, FALSE)
+    rtol <- tol
+    
+    JuliaConnectoR::juliaEval('using WildBootTests')
+    JuliaConnectoR::juliaEval('using Random')
+    
+    WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
+    rng <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(seed), ")"))
+    
+    ptype <- switch(p_val_type,
+                    "two-tailed" = "symmetric",
+                    "equal-tailed" = "equaltail",
+                    "<" = "lower",
+                    ">" = "upper",
+                    ptype
+    )
+    
+    auxwttype <- switch(type,
+                        "rademacher" = "rademacher",
+                        "mammen" = "mammen",
+                        "norm" = "normal",
+                        "webb" = "webb",
+                        "gamma" = "gamma",
+                        auxwttype
+    )
+    
+    eval_list <- list(floattype,
+                      R,
+                      r,
+                      resp = resp,
+                      predexog = predexog,
+                      clustid = clustid_df,
+                      nbootclustvar = nbootclustvar,
+                      nerrclustvar = nerrclustvar,
+                      nbootclustvar = nbootclustvar,
+                      nerrclustvar = nerrclustvar,
+                      obswt = obswt,
+                      level = level,
+                      getCI = getCI,
+                      imposenull = imposenull,
+                      rtol = rtol,
+                      small = small,
+                      rng = rng,
+                      auxwttype = auxwttype,
+                      ptype = ptype,
+                      reps = reps,
+                      fweights = FALSE,
+                      turbo = turbo,
+                      bootstrapc = bootstrapc
+    )
+    
+    if(!is.null(fe)){
+      eval_list[["feid"]] <- feid
+      eval_list[["fedfadj"]] <- fedfadj
+    }
+    
+    if(!is.null(maxmatsize)){
+      eval_list[["maxmatsize"]] <- maxmatsize
+    }
+    
+    wildboottest_res <- do.call(WildBootTests$wildboottest, eval_list)
+    
+    # collect results:
+    p_val <- WildBootTests$p(wildboottest_res)
+    if(getCI == TRUE){
+      conf_int <- WildBootTests$CI(wildboottest_res)
+    } else{
+      conf_int <- NA
+    }
+    t_stat <- WildBootTests$teststat(wildboottest_res)
+    t_boot <- FALSE
+    if(t_boot == TRUE){
+      t_boot <- WildBootTests$dist(wildboottest_res)
+    }
+    
+    if(getauxweights == TRUE){
+      getauxweights <- WildBootTests$auxweights(wildboottest_res)
+    }
+    
+    plotpoints <- WildBootTests$plotpoints(wildboottest_res)
+    plotpoints <- cbind(plotpoints$X[[1]], plotpoints$p)
+    
+    res_final <- list(
+      point_estimate = point_estimate,
+      p_val = p_val,
+      conf_int = conf_int,
+      # p_test_vals = res_p_val$p_grid_vals,
+      # test_vals = res_p_val$grid_vals,
+      t_stat = t_stat,
+      t_boot = t_boot,
+      auxweights = getauxweights,
+      #regression = res$object,
+      param = param,
+      N = preprocess$N,
+      B = B,
+      clustid = clustid,
+      # depvar = depvar,
+      N_G = preprocess$N_G,
+      sign_level = sign_level,
+      call = call,
+      type = type,
       impose_null = impose_null,
-      p_val_type = p_val_type, 
-      maxiter = maxiter, 
-      tol = tol
+      R = R,
+      beta0 = beta0,
+      plotpoints = plotpoints
     )
-  } else {
-    res_p_val <- list(
-      conf_int = NA,
-      p_test_vals = NA,
-      test_vals = NA
-    )
+    
   }
-
-
-  res_final <- list(
-    point_estimate = point_estimate,
-    p_val = res[["p_val"]],
-    conf_int = res_p_val$conf_int,
-    p_test_vals = res_p_val$p_grid_vals,
-    test_vals = res_p_val$grid_vals,
-    t_stat = res$t_stat,
-    t_boot = res$t_boot,
-    regression = res$object,
-    param = param,
-    N = preprocess$N,
-    B = B,
-    clustid = clustid,
-    # depvar = depvar,
-    N_G = preprocess$N_G,
-    sign_level = sign_level,
-    call = call,
-    type = type,
-    impose_null = impose_null,
-    R = R, 
-    beta0 = beta0
-  )
-
-
-
+  
   class(res_final) <- "boottest"
 
   invisible(res_final)
