@@ -55,7 +55,7 @@
 #' @param LIML Logical scalar. False by default. TRUE for LIML or Fuller LIML
 #' @param Fuller NULL by default. Numeric scalar. Fuller LIML factor
 #' @param kappa Null by default. fixed κ for k-class estimation
-#' @param ARubin. False by default. Logical scalar. TRUE for Anderson-Rubin Test.
+#' @param ARubin False by default. Logical scalar. TRUE for Anderson-Rubin Test.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.
 #' @param ... Further arguments passed to or from other methods.

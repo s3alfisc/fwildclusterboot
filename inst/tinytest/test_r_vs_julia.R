@@ -3,7 +3,6 @@
 
 # don't run tests on CRAN
 run_tests <- length(strsplit(packageDescription("fwildclusterboot")$Version, "\\.")[[1]]) > 2
-run_tests <- FALSE
 
 if(run_tests){
 

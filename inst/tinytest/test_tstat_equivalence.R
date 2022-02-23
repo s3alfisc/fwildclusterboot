@@ -1,5 +1,5 @@
-# test for equivalence of non-bootstrapped t-stats for 
-# single-equation (q=1), multi-equation (q>1) and WRE tests 
+# test for equivalence of non-bootstrapped t-stats for
+# single-equation (q=1), multi-equation (q>1) and WRE tests
 # all against fixest::feols()
 
 
@@ -9,8 +9,6 @@ library(sandwich)
 library(lmtest)
 library(data.table)
 library(fwildclusterboot)
-
-run_this_test <- TRUE
 
 ols_test <- function(run_this_test){
 
@@ -363,58 +361,59 @@ wald_test <- function(run_this_test){
 iv_test <- function(run_this_test){
 
   # Note: Test with Float64 for exact match
-
-  fwildclusterboot::set_julia_seed(123)
-
-  data("SchoolingReturns", package = "ivreg")
-
-  data1 <- SchoolingReturns
-  setDT(data1)
-  data1 <- na.omit(data1)
-
-  ivreg_fit <- ivreg(log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
-                       nearcollege + age  + ethnicity + smsa + south + parents14,
-                     data = data1)
-  vcov1 <- sandwich::vcovCL(ivreg_fit,
-                            cluster = ~ kww,
-                            cadjust = TRUE,
-                            type = "HC1")
-  vcov2 <- sandwich::vcovCL(ivreg_fit,
-                            cluster = ~ smsa + kww,
-                            cadjust = TRUE,
-                            type = "HC1")
-
-  res1 <- coeftest(ivreg_fit, vcov1)
-  res_df1 <- broom::tidy(res1)
-
-  res2 <- coeftest(ivreg_fit, vcov2)
-  res_df2 <- broom::tidy(res2)
-
-  boot_ivreg1 <- boottest(floattype = "Float64",
-                          object = ivreg_fit,
-                          B = 999,
-                          param = "education",
-                          clustid = "kww",
-                          type = "mammen",
-                          impose_null = TRUE)
-
-
-  expect_equivalent(boot_ivreg1$t_stat, res_df1[res_df1$term == "education",'statistic'])
-
-
-  # two-way clustering currently fails
-  # boot_ivreg2 <- boottest(floattype = "Float64",
-  #                         object = ivreg_fit,
-  #                         B = 999,
-  #                         param = "education",
-  #                         clustid = c("kww", "age"),
-  #                         type = "rademacher")
-  # 
-  # 
-  # expect_equivalent(boot_ivreg2$t_stat, res_df1[res_df2$term == "education",'statistic'])
-
-
+  if(run_this_test){
+    fwildclusterboot::set_julia_seed(123)
+    
+    data("SchoolingReturns", package = "ivreg")
+    
+    data1 <- SchoolingReturns
+    setDT(data1)
+    data1 <<- na.omit(data1)
+    
+    ivreg_fit <- ivreg(log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
+                         nearcollege + age  + ethnicity + smsa + south + parents14,
+                       data = data1)
+    vcov1 <- sandwich::vcovCL(ivreg_fit,
+                              cluster = ~ kww,
+                              cadjust = TRUE,
+                              type = "HC1")
+    vcov2 <- sandwich::vcovCL(ivreg_fit,
+                              cluster = ~ smsa + kww,
+                              cadjust = TRUE,
+                              type = "HC1")
+    
+    res1 <- coeftest(ivreg_fit, vcov1)
+    res_df1 <- broom::tidy(res1)
+    
+    res2 <- coeftest(ivreg_fit, vcov2)
+    res_df2 <- broom::tidy(res2)
+    
+    boot_ivreg1 <- boottest(floattype = "Float64",
+                            object = ivreg_fit,
+                            B = 999,
+                            param = "education",
+                            clustid = "kww",
+                            type = "mammen",
+                            impose_null = TRUE)
+    
+    
+    expect_equivalent(boot_ivreg1$t_stat, res_df1[res_df1$term == "education",'statistic'])
+    
+    
+    # two-way clustering currently fails
+    # boot_ivreg2 <- boottest(floattype = "Float64",
+    #                         object = ivreg_fit,
+    #                         B = 999,
+    #                         param = "education",
+    #                         clustid = c("kww", "age"),
+    #                         type = "rademacher")
+    #
+    #
+    # expect_equivalent(boot_ivreg2$t_stat, res_df1[res_df2$term == "education",'statistic'])
+    
+  }
 }
 
 ols_test(run_this_test = FALSE)
 iv_test(run_this_test = FALSE)
+wald_test(run_this_test = FALSE)

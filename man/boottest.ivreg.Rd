@@ -112,12 +112,12 @@ when fitting the regression model).}
 
 \item{kappa}{Null by default. fixed κ for k-class estimation}
 
+\item{ARubin}{False by default. Logical scalar. TRUE for Anderson-Rubin Test.}
+
 \item{ssc}{An object of class \code{boot_ssc.type} obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are \verb{adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"}.
 You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.}
 
 \item{...}{Further arguments passed to or from other methods.}
-
-\item{ARubin.}{False by default. Logical scalar. TRUE for Anderson-Rubin Test.}
 }
 \value{
 An object of class \code{boottest}

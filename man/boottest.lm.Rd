@@ -102,7 +102,7 @@ to use. The default is to use 1 core.}
 \item{ssc}{An object of class \code{boot_ssc.type} obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are \verb{adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"}.
 You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.}
 
-\item{boot_algo}{Character scalar. Either "R", "R-lean" or "WildBootTests.jl". Controls the algorithm employed by boottest.
+\item{boot_algo}{Character scalar. Either "R" or "WildBootTests.jl". Controls the algorithm employed by boottest.
 "R" is the default and implements the cluster bootstrap as in Roodman (2019). "WildBootTests.jl" executes the wild cluster bootstrap by via the WildBootTests.jl
 package. For it to run, Julia and WildBootTests.jl need to be installed. Check out the set_up_ ... functions
 The "fast and wild" algorithm is extremely fast for small number of clusters, but because it is fully vectorized, very memory-demanding.

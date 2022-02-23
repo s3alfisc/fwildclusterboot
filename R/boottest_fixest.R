@@ -57,7 +57,7 @@
 #'                 to use. The default is to use 1 core.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`. 
 #'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function. 
-#' @param boot_algo Character scalar. Either "R", "R-lean" or "WildBootTests.jl". Controls the algorithm employed by boottest.
+#' @param boot_algo Character scalar. Either "R" or "WildBootTests.jl". Controls the algorithm employed by boottest.
 #'                  "R" is the default and implements the cluster bootstrap as in Roodman (2019). "WildBootTests.jl" executes the wild cluster bootstrap by via the WildBootTests.jl
 #'                  package. For it to run, Julia and WildBootTests.jl need to be installed. Check out the set_up_ ... functions
 #'                  The "fast and wild" algorithm is extremely fast for small number of clusters, but because it is fully vectorized, very memory-demanding.
@@ -395,30 +395,31 @@ boottest.fixest <- function(object,
                         full_enumeration = full_enumeration, 
                         small_sample_correction = small_sample_correction
       )
-    } else if(boot_algo == "R-lean") {
-      res <- boot_algo1(preprocessed_object = preprocess,
-                        boot_iter = B,
-                        point_estimate = point_estimate,
-                        impose_null = impose_null,
-                        beta0 = beta0,
-                        sign_level = sign_level,
-                        param = param,
-                        # seed = seed,
-                        p_val_type = p_val_type, 
-                        nthreads = nthreads, 
-                        type = type, 
-                        full_enumeration = full_enumeration, 
-                        small_sample_correction = small_sample_correction
-      )
     }
-    
+    # } else if(boot_algo == "R-lean") {
+    #   res <- boot_algo1(preprocessed_object = preprocess,
+    #                     boot_iter = B,
+    #                     point_estimate = point_estimate,
+    #                     impose_null = impose_null,
+    #                     beta0 = beta0,
+    #                     sign_level = sign_level,
+    #                     param = param,
+    #                     # seed = seed,
+    #                     p_val_type = p_val_type, 
+    #                     nthreads = nthreads, 
+    #                     type = type, 
+    #                     full_enumeration = full_enumeration, 
+    #                     small_sample_correction = small_sample_correction
+    #   )
+    # }
+    # 
     # compute confidence sets
     if(class(res) == "boot_algo1"){
       conf_int <-  FALSE
     }
-    
+
     if (is.null(conf_int) || conf_int == TRUE) {
-      
+
       # guess for standard errors
       if(impose_null == TRUE){
         # should always be positive, point_estimate and t_stat need to have same
@@ -427,8 +428,8 @@ boottest.fixest <- function(object,
       } else if(impose_null == FALSE){
         se_guess <- abs((point_estimate - beta0) / res$t_stat)
       }
-      
-      
+
+
       res_p_val <- invert_p_val(
         object = res,
         boot_iter = B,
@@ -438,8 +439,8 @@ boottest.fixest <- function(object,
         sign_level = sign_level,
         vcov_sign = preprocess$vcov_sign,
         impose_null = impose_null,
-        p_val_type = p_val_type, 
-        maxiter = maxiter, 
+        p_val_type = p_val_type,
+        maxiter = maxiter,
         tol = tol
       )
     } else {
@@ -449,7 +450,7 @@ boottest.fixest <- function(object,
         test_vals = NA
       )
     }
-    
+
     res_final <- list(
       point_estimate = point_estimate,
       p_val = res[["p_val"]],
@@ -468,8 +469,8 @@ boottest.fixest <- function(object,
       sign_level = sign_level,
       call = call,
       type = type,
-      impose_null = impose_null, 
-      R = R, 
+      impose_null = impose_null,
+      R = R,
       beta0 = beta0
     )
     
