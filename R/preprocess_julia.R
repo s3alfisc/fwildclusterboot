@@ -16,11 +16,11 @@ preprocess_julia <- function(object, cluster, fe, param, bootcluster, na_omit, R
   # ---------------------------------------------------------------------------- #
   # Step 1: preprocessing of call
   
-  check_arg(cluster, "character scalar | character vector")
-  check_arg(fe, "character scalar | NULL")
-  check_arg(param, "character vector | NULL")
-  check_arg(bootcluster, "character vector | NULL")
-  check_arg(R, "numeric matrix | numeric vector | numeric scalar")
+  check_arg(cluster, "MBT character scalar | character vector")
+  check_arg(fe, "MBT character scalar | NULL")
+  check_arg(param, "MBT character vector | NULL")
+  check_arg(bootcluster, "MBT character vector | NULL")
+  check_arg(R, "MBT numeric matrix | numeric vector | numeric scalar")
   
   if (class(object) == "fixest") {
     of <- object$call
@@ -136,9 +136,14 @@ preprocess_julia <- function(object, cluster, fe, param, bootcluster, na_omit, R
     # formula: model formula plus additional additional cluster variables specified via boottest()
     
     formula <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1, 2, 4), collapse = TRUE))
-    
+    # formula <- suppressWarnings(formula(as.Formula(eval(of$formula)), collapse = TRUE, drop = TRUE))
+
     # formula with only depvar and covariates, needed to construct design matrix X
     formula_X <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1, 2), collapse = TRUE))
+
+    # get rid of all potential 0's
+    formula <- update(formula, . ~ . - 0)
+    formula_X <- update(formula_X, . ~ . - 0)
     
     # drop fe from formula if required
     if(!is.null(fe)){

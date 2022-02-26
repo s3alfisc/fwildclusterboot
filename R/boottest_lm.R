@@ -647,9 +647,7 @@ boottest.lm <- function(object,
 #' @param sign_level A numeric between 0 and 1 which sets the significance level
 #'        of the inference procedure. E.g. sign_level = 0.05
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
-#' @param conf_int A logical vector. If TRUE, boottest computes confidence
-#'        intervals by p-value inversion. If FALSE, only the p-value is returned.
-#' @param rng An integer. Controls the random number generation, which is handled via the `StableRNG()` function from the `StableRNGs` Julia package.
+#' @param seed An integer. Controls the random number generation, which is handled via the `StableRNG()` function from the `StableRNGs` Julia package.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
 #' @param beta0 A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
@@ -722,7 +720,7 @@ boottest.lm <- function(object,
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
 #' \dontrun{
-#'  library(wildboottestjlr)
+#'  library(fwildclusterboot)
 #'  data(voters)
 #'  lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
 #'           data = voters)
@@ -734,9 +732,8 @@ waldboottest.lm <- function(object,
                         R,
                         beta0 = rep(0,nrow(R)),
                         bootcluster = "max",
-                        conf_int = NULL,
-                        rng = NULL,
-                        sign_level = NULL,
+                        seed = NULL,
+                        sign_level = 0.05,
                         type = "rademacher",
                         impose_null = TRUE,
                         p_val_type = "two-tailed",
@@ -759,12 +756,13 @@ waldboottest.lm <- function(object,
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
   
-  check_arg(clustid, "character scalar | character vector")
-  check_arg(B, "scalar integer")
+  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(B, "MBT scalar integer")
+  check_arg(R, "MBT numeric vector | numeric matrix")
+  
   check_arg(sign_level, "scalar numeric")
   check_arg(conf_int, "logical scalar | NULL")
   check_arg(rng, "scalar integer | NULL")
-  check_arg(R, "numeric vector | numeric matrix")
   check_arg(beta0, "numeric vector  | NULL")
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar")
@@ -778,10 +776,9 @@ waldboottest.lm <- function(object,
   check_arg(bootstrapc, "scalar logical")
   check_arg(floattype, "charin(Float32, Float64")
   
-  if(length(beta0) != nrow(R)){
-    stop(paste("beta0 must be a vector of length nrow(R) = ", nrow(R), "but it is of length", length(beta0), "."))
+  if(nrow(R) != length(beta0)){
+    stop(paste("The dimensions of func args R and beta0 do not match. The number of rows of R is ", nrow(R), ", but the length of beta0 0 is", length(beta0), "."))
   }
-
   # param required in preprocess
   param <- NULL
   
@@ -819,14 +816,6 @@ waldboottest.lm <- function(object,
          call. = FALSE)
   }
   
-  if ((conf_int == TRUE || is.null(conf_int)) & B <= 100) {
-    stop("The function argument B is smaller than 100. The number of bootstrap
-          iterations needs to be 100 or higher in order to guarantee that the
-          root finding procudure used to find the confidence set
-          works properly.",
-         call. = FALSE
-    )
-  }
   if (!is.null(sign_level) & (sign_level <= 0 || sign_level >= 1)) {
     stop("The function argument sign_level is outside of the unit interval
          (0, 1). Please specify sign_level so that it is within the
@@ -867,6 +856,7 @@ waldboottest.lm <- function(object,
   #pracma::tic()
   preprocess <- preprocess_julia(object = object,
                                  cluster = clustid,
+                                 param = NULL, 
                                  fe = NULL,
                                  bootcluster = bootcluster,
                                  na_omit = na_omit,
@@ -944,7 +934,7 @@ waldboottest.lm <- function(object,
   #obswt <-  preprocess$weights      # if no weights provided: vector of ones
   feid <- preprocess$fixed_effect
   level <-  1 - sign_level
-  getCI <- ifelse(is.null(conf_int) || conf_int == TRUE, TRUE, FALSE)
+  getCI <- FALSE 
   imposenull <- ifelse(is.null(impose_null) || impose_null == TRUE, TRUE, FALSE)
   rtol <- tol
   small <- small_sample_adjustment
@@ -971,7 +961,7 @@ waldboottest.lm <- function(object,
   
   WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
   #if(!is.null(rng)){
-  rng_jl <- juliaEval(paste0("Random.MersenneTwister(", rng, ")"))
+  rng_jl <- juliaEval(paste0("Random.MersenneTwister(", seed, ")"))
   #}
   
   eval_list <- list(floattype,
@@ -1058,5 +1048,5 @@ waldboottest.lm <- function(object,
   class(res_final) <- "waldboottest"
   
   invisible(res_final)
-  #res_final
+
 }
