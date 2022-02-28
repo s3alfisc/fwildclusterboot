@@ -1,4 +1,4 @@
-# Test 12: test crosstab 
+# test crosstab function
 
 if(requireNamespace("data.table")){
   library(fwildclusterboot)
@@ -19,4 +19,3 @@ if(requireNamespace("data.table")){
   expect_equivalent(ct1, ct4)
   # expect_equivalent(ct2, ct4)  
 }
-

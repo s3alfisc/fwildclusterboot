@@ -1,3 +1,16 @@
+# fwildclusterboot 0.8
+
++ `fwildclusterboot` now supports calling `WildBootTests.jl`, which is a very fast implementation of the fast cluster bootstrap algorithm in Julia by David Roodman. To do so, a new function argument is introduced, `boot_algo`, through which the user can choose if she wants to run the fast wild cluster bootstrap via R or Julia. 
++ WildBootTests.jl is (after compilation) orders of magnitudes faster than `fwildclusterboot's` native R implementation, and speed gains are particularly pronounced for large problems with a large number of clusters and many bootstrap iterations. 
++ Furthermore, `WildBootTests.jl` supports a range of models and tests that were previously not supported by `fwildclusterboot`: most importantly a) wild cluster bootstrap tests of multiple joint hypotheses and b) the WRE bootstrap by Davidson & MacKinnon for instrumental variables estimation. On top of the cake ... WRE is really fast. 
++ To facilitate the installation of Julia and `WildBootTests.jl`... The function `get...` helps with downloading Julia, WildBootTests.jl, and linking R and Julia via the `JuliaConnectoR` package.
++ Another new function helps to set global variables in Julia, which is in particular required for running Julia on multiple threads. 
++ make better use of `dreamerr`
++ few new function arguments 
++ **Important** the following function arguments of `boottest()` will be deprecated / the following function options will be renamed: 
+  + for clarity, the `beta0` function argument is renamed to `r`
+  + the option `p_val_type = "equal-tailed"` will be renamed to `p_val_type = "symmetric"`. 
+  
 # fwildclusterboot 0.7
 
 + Bug fixes, see issues [#26](https://github.com/s3alfisc/fwildclusterboot/issues/26) and [#27](https://github.com/s3alfisc/fwildclusterboot/issues/27) regarding preprocessing for fixest when weights are passed to feols() as a formula or when cluster is specified in fixest as a column vector. 
@@ -39,6 +52,7 @@ Prior to v 0.6, by default, no small sample adjustments regarding the sample siz
 + New feature II: `boottest()` now also supports "equal-tailed" p-values and one-sided hypotheses. For one-sided tests, confidence intervals are currently not supported. 
 + Internal changes: To allow for multivariable tests, the `boot_algo2()` function has slightly been modified. `invert_p_val2()` is superseded by `invert_p_val()`. 
 + Further, a CRAN error is fixed - some tests for exact equality failed with relative difference e-05 on openBLAS. In consequence, all exact tests are set to reltol = 1e-04. 
++ Make better use of functionality of `dreamerr` package. 
 
 # fwildclusterboot 0.3.7
 

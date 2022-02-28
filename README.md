@@ -20,41 +20,38 @@ coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/ba
 
 <!-- badges: end -->
 
-The `fwildclusterboot` package is an R port of STATA’s
-[boottest](https://github.com/droodman/boottest) package.
-
-It implements the fast wild cluster bootstrap algorithm developed in
-[Roodman et al
+The `fwildclusterboot` provides a native R implementation of the fast
+wild cluster bootstrap algorithm developed in [Roodman et al
 (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for
-regression objects in R. It currently works for regression objects of
-type `lm`, `felm` and `fixest` from base R and the `lfe` and `fixest`
-packages.
+regression objects in R. It also ports functionality of
+[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) to R
+via the
+[JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR).
 
 The package’s central function is `boottest()`. It allows the user to
-test univariate hypotheses using a wild cluster bootstrap. The “fast”
-algorithm developed in Roodman et al makes it feasible to calculate test
-statistics based on a large number of bootstrap draws even for large
-samples – as long as the number of bootstrapping clusters is not too
-large.
+test univariate hypotheses using a wild cluster bootstrap at extreme
+speed.
 
-The `fwildclusterboot` package currently supports multi-dimensional
-clustering and one-dimensional hypotheses. It supports regression
-weights, multiple distributions of bootstrap weights, fixed effects,
-restricted (WCR) and unrestricted (WCU) bootstrap inference and
-subcluster bootstrapping for few treated clusters [(MacKinnon & Webb,
-(2018))](https://academic.oup.com/ectj/article-abstract/21/2/114/5078969).
+`fwildclusterboot` supports the following features:
 
-If you are interested in the wild cluster bootstrap for IV models
-[(Davidson & MacKinnon,
-2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221) or
-want to test multiple joint hypotheses, you can use the
-[wildboottestjlr](https://github.com/s3alfisc/wildboottestjlr) package,
-which is an R wrapper of the
-[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) Julia
-package. While `fwildclusterboot` is already quite fast (see the
-benchmarks below), the implementation of the wild bootstrap for OLS in
-`WildBootTests.jl` is - after compilation - orders of magnitudes faster,
-in particular for problems with a large number of clusters.
+-   The wild bootstrap for OLS (Wu 1986).
+-   The subcluster bootstrap (MacKinnon and Webb 2018).
+-   Confidence intervals formed by inverting the test and iteratively
+    searching for bounds.
+-   Multiway clustering.
+-   One-way fixed effects.
+
+Additional features are provided through `WildBootTests.jl`:
+
+-   The Wild Restricted Efficient bootstrap (WRE) for IV/2SLS/LIML
+    ([(Davidson &
+    MacKinnon, 2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221)).
+-   Arbitrary and multiple linear hypotheses in the parameters.
+
+`fwildclusterboot` supports the following models:
+
+-   OLS: `lm` (from stats), `fixest` (from fixest), `felm` from (lfe)
+-   IV: `ivreg` (from ivreg).
 
 <!-- The following features will be added in the future:  -->
 <!-- * support for multivariate hypotheses  -->
@@ -89,8 +86,7 @@ summary(lm_boot)
 #>  
 #>  Hypothesis: 1*treatment = 0
 #>  Observations: 300
-#>  Bootstr. Iter: 9999
-#>  Bootstr. Type: rademacher
+#>   Bootstr. Type: rademacher
 #>  Clustering: 1-way
 #>  Confidence Sets: 95%
 #>  Number of Clusters: 40
@@ -103,8 +99,8 @@ feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration +
 # bootstrap inference via boottest()
 feols_boot <- boottest(feols_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
 summary(feols_boot)
-#> boottest.fixest(object = feols_fit, clustid = c("group_id1"), 
-#>     param = "treatment", B = 9999, seed = 1)
+#> boottest.fixest(object = feols_fit, param = "treatment", B = 9999, 
+#>     clustid = c("group_id1"), seed = 1)
 #>  
 #>  Hypothesis: 1*treatment = 0
 #>  Observations: 300
@@ -149,4 +145,20 @@ install.packages('fwildclusterboot', repos ='https://s3alfisc.r-universe.dev')
 # note: installation requires Rtools
 library(devtools)
 install_github("s3alfisc/fwildclusterboot")
+```
+
+To run `WildBootTests.jl` through `fwildclusterboot`, `Julia` and
+`WildBootTests.jl` need to be installed.
+
+You can install Julia by following the steps described on the official
+`Julia` homepage: <https://julialang.org/downloads/>. `WildBootTests.jl`
+can then be installed via Julia’s package management system.
+
+To install `WildBootTests.jl` and Julia from within R, you can use
+`fwildclusterboot's` `fwildclusterboot_setup()` function, which guides
+you through installing Julia and `WildBootTests.jl` and helps to connect
+R and Julia.
+
+``` r
+fwildclusterboot_setup()
 ```
