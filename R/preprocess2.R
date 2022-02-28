@@ -269,71 +269,73 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     
     # fe argument not allowed with boottest.lm
     fe <- NULL
-  } else if(class(object) == "plm"){
-    
-    of <- object$call
-    model <- of$model
-    o <- match(c("formula", "data", "weights"), names(of), 0L)
-    # keep only required arguments
-    of <- of[c(1L, o)]
-    of$drop.unused.levels <- TRUE
-    
-    # formula: model formula plus additional additional cluster variables specified via boottest()
-    formula <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1), collapse = TRUE))
-    
-    # add a cluster to formula to get full model.frame
-    if (!is.null(cluster)) {
-      formula <- update(formula, paste("~ . +", paste(cluster, collapse = "+")))
-      # formula <- update(formula, paste("~ . +", paste(names(index(object)), collapse = "+")))    
-    }
-    
-    # different formulas for different plm estimation types
-    if(model == "pooled"){
-      # no time / individual fixed effects are added 
-      formula <- formula
-    } else if(model == "within"){
-      
-    } else if(model == "between"){
-      
-    } else if(model == "difference"){
-      
-    }
-    
-
-    
-    if(of$)
-    # formula_coef_fe: depvar, covariates and index variables
-    if(length(names(index(object))) != 0){
-      formula_coef_fe <- update(formula, paste("~ . +", paste(names(index(object)), collapse = "+")))
-    }
-    
-    # of !is.null(fe), delete fe from formula_coef_fe
-    if (!is.null(fe)) {
-      formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
-    }
-    
-    # add weights to formula
-    if (!is.null(eval(of$weights))) {
-      add_weights <- as.character(of$weights)
-      formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
-      weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
-    } else {
-      weights_fml <- NULL
-    }
-    
-    # over-write model object's formula
-    of$formula <- as.call(formula)
-    
-    o <- match(c("formula", "data", "weights"), names(of), 0L)
-    of <- of[c(1L, o)]
-    
-    
-    
-    of[[1L]] <- quote(stats::model.frame)
-    of <- eval(of, parent.frame())
-    
-    
-  }
+  } 
+  
+  # else if(class(object) == "plm"){
+  #   
+  #   of <- object$call
+  #   model <- of$model
+  #   o <- match(c("formula", "data", "weights"), names(of), 0L)
+  #   # keep only required arguments
+  #   of <- of[c(1L, o)]
+  #   of$drop.unused.levels <- TRUE
+  #   
+  #   # formula: model formula plus additional additional cluster variables specified via boottest()
+  #   formula <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1), collapse = TRUE))
+  #   
+  #   # add a cluster to formula to get full model.frame
+  #   if (!is.null(cluster)) {
+  #     formula <- update(formula, paste("~ . +", paste(cluster, collapse = "+")))
+  #     # formula <- update(formula, paste("~ . +", paste(names(index(object)), collapse = "+")))    
+  #   }
+  #   
+  #   # different formulas for different plm estimation types
+  #   if(model == "pooled"){
+  #     # no time / individual fixed effects are added 
+  #     formula <- formula
+  #   } else if(model == "within"){
+  #     
+  #   } else if(model == "between"){
+  #     
+  #   } else if(model == "difference"){
+  #     
+  #   }
+  #   
+  # 
+  #   
+  #   if(of$)
+  #   # formula_coef_fe: depvar, covariates and index variables
+  #   if(length(names(index(object))) != 0){
+  #     formula_coef_fe <- update(formula, paste("~ . +", paste(names(index(object)), collapse = "+")))
+  #   }
+  #   
+  #   # of !is.null(fe), delete fe from formula_coef_fe
+  #   if (!is.null(fe)) {
+  #     formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
+  #   }
+  #   
+  #   # add weights to formula
+  #   if (!is.null(eval(of$weights))) {
+  #     add_weights <- as.character(of$weights)
+  #     formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
+  #     weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
+  #   } else {
+  #     weights_fml <- NULL
+  #   }
+  #   
+  #   # over-write model object's formula
+  #   of$formula <- as.call(formula)
+  #   
+  #   o <- match(c("formula", "data", "weights"), names(of), 0L)
+  #   of <- of[c(1L, o)]
+  #   
+  #   
+  #   
+  #   of[[1L]] <- quote(stats::model.frame)
+  #   of <- eval(of, parent.frame())
+  #   
+  #   
+  # }
   
   
   
