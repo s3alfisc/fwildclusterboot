@@ -407,8 +407,8 @@ iv_test <- function(run_this_test){
     #                         param = "education",
     #                         clustid = c("kww", "age"),
     #                         type = "rademacher")
-    #
-    #
+    # 
+    # 
     # expect_equivalent(boot_ivreg2$t_stat, res_df1[res_df2$term == "education",'statistic'])
     
   }

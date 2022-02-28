@@ -161,11 +161,13 @@ run_tests <- function(){
     # test R models
     for(model in all_feols_felm_models_R){
       print(expect_equivalent(boot_lm_R[[x]], get(model)[[x]]))
+      # print(fwildclusterboot:::tidy(boot_lm_R), fwildclusterboot:::tidy(get(model)[[x]]))
     }
 
     # test Julia models
     for(model in all_feols_felm_models_jl){
       print(expect_equivalent(boot_lm_WildBootTests.jl[[x]], get(model)[[x]]))
+      # print(fwildclusterboot:::tidy(boot_lm_R), fwildclusterboot:::tidy(get(model)[[x]]))
     }
 
     # different seeds -> different values

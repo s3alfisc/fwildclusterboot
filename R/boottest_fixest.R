@@ -205,7 +205,7 @@ boottest.fixest <- function(object,
   check_arg(object, "MBT class(fixest)")
   check_arg(clustid, "MBT character scalar | character vector")
   check_arg(param, "MBT scalar character | character vector")
-  check_arg(B, "MBT scalar integer")  
+  check_arg(B, "MBT scalar integer GT{99}")  
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, 'charin(two-tailed, equal-tailed,>, <)')
@@ -258,13 +258,6 @@ boottest.fixest <- function(object,
     if(p_val_type %in% c(">", "<") && conf_int == TRUE){
       conf_int <- FALSE
       warning(paste("Currently, boottest() calculates confidence intervals for one-sided hypotheses only for boot_algo = 'WildBootTests.jl'."), call. = FALSE)
-    }
-    if ((conf_int == TRUE || is.null(conf_int)) & B <= 100) {
-      stop("The function argument B is smaller than 100. The number of bootstrap 
-          iterations needs to be 100 or higher in order to guarantee that the root
-          finding procudure used to find the confidence set works properly.",
-           call. = FALSE
-      )
     }
     
   }

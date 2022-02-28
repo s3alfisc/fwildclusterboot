@@ -207,7 +207,7 @@ boottest.felm <- function(object,
   check_arg(object, "MBT class(felm)")
   check_arg(clustid, "MBT character scalar | character vector")
   check_arg(param, "MBT scalar character | character vector")
-  check_arg(B, "MBT scalar integer")  
+  check_arg(B, "MBT scalar integer GT{99}")  
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, 'charin(two-tailed, equal-tailed,>, <)')
