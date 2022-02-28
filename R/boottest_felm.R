@@ -251,9 +251,9 @@ boottest.felm <- function(object,
   # repeat the same: check if fe is in the data.frame
 
   if(is.null(R)){
-    R <- rep(1, length(coef(object)))
+    R <- rep(1, length(param))
   } else {
-    if(ncol(R) != length(coef(object))){
+    if(length(R) != length(param)){
       stop("The constraints vector must either be NULL or have as many columns as the number of coefficients.")
     }
   }
@@ -745,7 +745,6 @@ waldboottest.felm <- function(object,
                                 beta0 = rep(0,nrow(R)),
                                 bootcluster = "max",
                                 fe = NULL, 
-                                conf_int = NULL,
                                 seed = NULL,
                                 sign_level = 0.05,
                                 type = "rademacher",
@@ -781,7 +780,6 @@ waldboottest.felm <- function(object,
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, 'charin(two-tailed, equal-tailed,>, <)')
   
-  check_arg(conf_int, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL")
@@ -789,8 +787,7 @@ waldboottest.felm <- function(object,
   check_arg(tol, "numeric scalar GT{0}")
   # check_arg(maxiter, "scalar integer")
   check_arg(boot_ssc, 'class(ssc) | class(boot_ssc)')
-  check_arg(boot_algo, "charin(R, WildBootTests.jl)")
-  
+
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(turbo, "scalar logical")
   check_arg(maxmatsize, "scalar integer | NULL")

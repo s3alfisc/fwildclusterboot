@@ -57,7 +57,9 @@ Imports:
     generics,
     gtools,
     dqrng, 
-    JuliaConnectoR
+    JuliaConnectoR,
+    JuliaCall, 
+    usethis
 Suggests: 
     fixest,
     lfe,
@@ -73,9 +75,7 @@ Suggests:
     rmarkdown,
     broom, 
     modelsummary, 
-    RStata, 
-    JuliaCall, 
-    usethis
+    RStata
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

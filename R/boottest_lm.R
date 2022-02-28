@@ -762,7 +762,7 @@ waldboottest.lm <- function(object,
   
   check_arg(sign_level, "scalar numeric")
   check_arg(conf_int, "logical scalar | NULL")
-  check_arg(rng, "scalar integer | NULL")
+  check_arg(seed, "scalar integer | NULL")
   check_arg(beta0, "numeric vector  | NULL")
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar")

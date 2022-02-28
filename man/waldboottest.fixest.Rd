@@ -12,7 +12,6 @@
   beta0 = rep(0, nrow(R)),
   bootcluster = "max",
   fe = NULL,
-  conf_int = NULL,
   seed = NULL,
   sign_level = 0.05,
   type = "rademacher",
