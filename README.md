@@ -154,11 +154,14 @@ You can install Julia by following the steps described on the official
 `Julia` homepage: <https://julialang.org/downloads/>. `WildBootTests.jl`
 can then be installed via Julia’s package management system.
 
-To install `WildBootTests.jl` and Julia from within R, you can use
-`fwildclusterboot's` `fwildclusterboot_setup()` function, which guides
-you through installing Julia and `WildBootTests.jl` and helps to connect
-R and Julia.
+To install `WildBootTests.jl` and Julia from within R, you can
+alternatively use the `JuliaConnectoR.utils` package.
 
 ``` r
-fwildclusterboot_setup()
+devtools::install_github("s3alfisc/JuliaConnectoR.utils")
+library(JuliaConnectoR.utils)
+install_julia() # install Julia
+connect_julia_r() # instructions to connect Julia and R
+install_julia_packages("WildBootTests.jl") # install WildBootTests.jl
+set_julia_ntreads() # instructions to set nthreads for Julia
 ```

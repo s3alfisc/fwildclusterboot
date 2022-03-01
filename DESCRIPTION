@@ -1,6 +1,6 @@
 Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap Inference for Linear Regression Models
-Version: 0.8.0
+Version: 0.7.2
 Date: 2022-03-01
 Authors@R: 
     c(
@@ -57,9 +57,7 @@ Imports:
     generics,
     gtools,
     dqrng, 
-    JuliaConnectoR,
-    JuliaCall, 
-    usethis
+    JuliaConnectoR
 Suggests: 
     fixest,
     lfe,
@@ -75,7 +73,8 @@ Suggests:
     rmarkdown,
     broom, 
     modelsummary, 
-    RStata
+    JuliaConnectoR.utils
+Remotes: s3alfisc/JuliaConnectoR.utils
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
