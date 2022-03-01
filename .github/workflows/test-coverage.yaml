@@ -1,6 +1,5 @@
 on:
-  schedule:
-    - cron: "* * 0 * *" # run once a month
+  push:
     branches:
       - main
       - master
