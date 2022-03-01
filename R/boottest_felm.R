@@ -509,8 +509,9 @@ boottest.felm <- function(object,
     #all_c <- lapply(all_c , function(x) ifelse(length(x) == 0, NULL, x))
     
     # note that c("group_id1", NULL) == "group_id1"
-    clustid_mat <- (preprocess$model_frame[, all_c])
-    clustid_df <- base::as.matrix(sapply(clustid_mat, as.integer))
+    clustid_mat <- data.frame(preprocess$model_frame[, all_c])
+    names(clustid_mat) <- all_c
+    clustid_df <- base::as.matrix(sapply(clustid_mat, to_integer))
     
     # `nbootclustvar::Integer=1`: number of bootstrap-clustering variables
     # `nerrclustvar::Integer=nbootclustvar`: number of error-clustering variables
@@ -906,8 +907,9 @@ waldboottest.felm <- function(object,
     #all_c <- lapply(all_c , function(x) ifelse(length(x) == 0, NULL, x))
     
     # note that c("group_id1", NULL) == "group_id1"
-    clustid_mat <- (preprocess$model_frame[, all_c])
-    clustid_df <- base::as.matrix(sapply(clustid_mat, as.integer))
+    clustid_mat <- data.frame(preprocess$model_frame[, all_c])
+    names(clustid_mat) <- all_c
+    clustid_df <- base::as.matrix(sapply(clustid_mat, to_integer))
     
     # `nbootclustvar::Integer=1`: number of bootstrap-clustering variables
     # `nerrclustvar::Integer=nbootclustvar`: number of error-clustering variables
