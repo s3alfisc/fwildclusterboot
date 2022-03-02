@@ -70,10 +70,10 @@ boot_lm_interact <- boottest(lm_fit_interact, clustid = "group_id1", param = "lo
 ```
 
 `boottest()` further allows for multivariable tests. Suppose we're interested in 
-testing the null hypothesis $0.6*treatment + 0.2*ideology1 = 0.02$. To test such a hypothesis, one would have to specify the hypothesis via the `param`, `R` and `beta0` arguments: 
+testing the null hypothesis $0.6*treatment + 0.2*ideology1 = 0.02$. To test such a hypothesis, one would have to specify the hypothesis via the `param`, `R` and `r` arguments: 
 
 ```{r}
-boot_multi <- boottest(lm_fit, clustid = "group_id1", param = c("treatment", "ideology1"), R = c(0.6, 0.2), beta0 = 0.02, B = 9999)
+boot_multi <- boottest(lm_fit, clustid = "group_id1", param = c("treatment", "ideology1"), R = c(0.6, 0.2), r = 0.02, B = 9999)
 ```
 
 
@@ -296,7 +296,7 @@ boot_lm <- boottest(lm_fit,
 
 <!-- $$ -->
 
-<!-- For univariate hypotheses, both numerator and J are linear in $beta0$.  -->
+<!-- For univariate hypotheses, both numerator and J are linear in $r$.  -->
 <!-- Note that several objects used in the computation of both numerator and J can be written as $\ü :* A$ or $\ü * A$, where $A$ is and $ü$ is .... All derivations are shown for the first case, while the main conclusions apply to the second as well.  -->
 <!-- First, for the WCU, it holds that  -->
 
@@ -377,7 +377,7 @@ boot_lm <- boottest(lm_fit,
 <!--   J :* J = C :* C  + 2 C :* D \times r + D :* D \times r^{2} -->
 <!-- $$ -->
 
-<!-- So, in short: one can simply compute C, D, CC, CD and DD once and then invert the p-value by searching over beta0.  -->
+<!-- So, in short: one can simply compute C, D, CC, CD and DD once and then invert the p-value by searching over r.  -->
 
 <!-- Again, note that for for the WCU, $X_0 = 0$, which implies that in the equations above, all elements in $Q$, $Q1$, $Q2$, $Q3$, $D$, $CD$ and $DD$ are zero. In consequence, for the WCU, the numerator can be computed as  -->
 
