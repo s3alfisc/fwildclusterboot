@@ -256,16 +256,23 @@ boottest.ivreg <- function(object,
   N_G_2 <- 2^N_G
   # NOTE: no need to reset B in enumeration case -> handled by WildBootTests.jl ->
   # throws an error
-  if (type %in% c("rademacher") & N_G_2 < B) {
+  #N_G <- preprocess$N_G
+  N_G_2 <- 2^N_G
+  if (type %in% c("rademacher") & N_G_2 <= B) {
     warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-            call. = FALSE,
+            call. = FALSE, 
             noBreaks. = TRUE
     )
     warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-            call. = FALSE,
+            call. = FALSE, 
             noBreaks. = TRUE
     )
+    B <- N_G_2
+    full_enumeration <- TRUE
+  } else{
+    full_enumeration <- FALSE
   }
+  
   
   # assign all values needed in WildBootTests.jl
   
