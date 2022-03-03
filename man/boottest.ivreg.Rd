@@ -13,14 +13,15 @@
   conf_int = TRUE,
   seed = NULL,
   R = NULL,
-  beta0 = 0,
+  r = 0,
+  beta0 = r,
   sign_level = 0.05,
   type = "rademacher",
   impose_null = TRUE,
   p_val_type = "two-tailed",
   tol = 1e-06,
   na_omit = TRUE,
-  floattype = "Float32",
+  floattype = "Float64",
   fweights = FALSE,
   getauxweights = FALSE,
   t_boot = FALSE,
@@ -61,8 +62,10 @@ intervals by p-value inversion. If FALSE, only the p-value is returned.}
 
 \item{R}{Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as \code{param}. If NULL, a vector of ones of length param.}
 
-\item{beta0}{A numeric. Shifts the null hypothesis
-H0: param = beta0 vs H1: param != beta0}
+\item{r}{A numeric. Shifts the null hypothesis
+H0: param = r vs H1: param != r}
+
+\item{beta0}{Deprecated function argument, replaced by 'r'.}
 
 \item{sign_level}{A numeric between 0 and 1 which sets the significance level
 of the inference procedure. E.g. sign_level = 0.05
@@ -92,7 +95,7 @@ variables in the cluster variable that have not previously been deleted
 when fitting the regression object (e.g. if the cluster variable was not used
 when fitting the regression model).}
 
-\item{floattype}{Float32 by default. Other optio: Float64. Should floating point numbers in Julia be represented as 32 or 64 bit?}
+\item{floattype}{Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?}
 
 \item{fweights}{Logical. FALSE by default, TRUE for frequency weights.}
 

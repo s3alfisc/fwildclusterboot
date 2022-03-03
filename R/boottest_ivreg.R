@@ -45,7 +45,7 @@
 #'        variables in the cluster variable that have not previously been deleted
 #'        when fitting the regression object (e.g. if the cluster variable was not used
 #'        when fitting the regression model).
-#' @param floattype Float32 by default. Other optio: Float64. Should floating point numbers in Julia be represented as 32 or 64 bit?
+#' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?
 #' @param fweights Logical. FALSE by default, TRUE for frequency weights.
 #' @param getauxweights Logical. FALSE by default. Whether to save auxilliary weight matrix (v)
 #' @param t_boot Logical. Should bootstrapped t-statistics be returned?
@@ -114,7 +114,7 @@ boottest.ivreg <- function(object,
                            p_val_type = "two-tailed",
                            tol = 1e-6,
                            na_omit = TRUE,
-                           floattype = "Float32",
+                           floattype = "Float64",
                            fweights = FALSE,
                            getauxweights = FALSE,
                            t_boot = FALSE,

@@ -64,7 +64,7 @@
 #'                  For large number of clusters and large number of bootstrap iterations, the fast and wild algorithm becomes infeasible. If a out-of-memory error #
 #'                  occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap. 
 #'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm.               
-#' @param floattype Character scalar. Only relevant when "boot_algo" is set to "WildBootTests.jl". Determines if Julia computes with 32- or 64-bit values. Options are "Float32" (default) and "Float64".
+#' @param floattype Character scalar. Only relevant when "boot_algo" is set to "WildBootTests.jl". Determines if Julia computes with 32- or 64-bit values. Options are "Float32" (default) and "Float64". Float64 by defaul.
 #' @param turbo Logical. Only relevant when "boot_algo" is set to "WildBootTests.jl". Controls if "WildBootTests.jl" utilizes the 'turbo' package, which can increase runtime at the cost of increased compilation time. 
 #' @param beta0 Deprecated function argument, replaced by 'r'. 
 #' @param maxmatsize ... Only relevant when "boot_algo" is set to "WildBootTests.jl".
@@ -190,7 +190,7 @@ boottest.fixest <- function(object,
                                            cluster.adj = TRUE, 
                                            cluster.df = "conventional"),
                             boot_algo = "R",
-                            floattype = "Float32", 
+                            floattype = "Float64", 
                             turbo = FALSE, 
                             maxmatsize = FALSE, 
                             bootstrapc = FALSE, 
@@ -726,7 +726,7 @@ boottest.fixest <- function(object,
 #'        variables in the cluster variable that have not previously been deleted
 #'        when fitting the regression object (e.g. if the cluster variable was not used
 #'        when fitting the regression model).
-#' @param floattype Float32 by default. Other optio: Float64. Should floating point numbers in Julia be represented as 32 or 64 bit?
+#' @param floattype Character scalar. Only relevant when "boot_algo" is set to "WildBootTests.jl". Determines if Julia computes with 32- or 64-bit values. Options are "Float32" (default) and "Float64". Float64 by defaul.
 #' @param fweights Logical. FALSE by default, TRUE for frequency weights.
 #' @param getauxweights Logical. FALSE by default. Whether to save auxilliary weight matrix (v)
 #' @param t_boot Logical. Should bootstrapped t-statistics be returned?
@@ -797,7 +797,7 @@ waldboottest.fixest <- function(object,
                             p_val_type = "two-tailed",
                             tol = 1e-6,
                             na_omit = TRUE,
-                            floattype = "Float32",
+                            floattype = "Float64",
                             #small_sample_adjustment = TRUE,
                             fweights = FALSE,
                             getauxweights = FALSE,

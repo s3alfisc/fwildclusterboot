@@ -9,7 +9,8 @@
   clustid,
   B,
   R,
-  beta0 = rep(0, nrow(R)),
+  r = rep(0, nrow(R)),
+  beta0 = r,
   bootcluster = "max",
   seed = NULL,
   sign_level = 0.05,
@@ -18,7 +19,7 @@
   p_val_type = "two-tailed",
   tol = 1e-06,
   na_omit = TRUE,
-  floattype = "Float32",
+  floattype = "Float64",
   fweights = FALSE,
   getauxweights = FALSE,
   t_boot = FALSE,
@@ -41,8 +42,10 @@ increasing B adds little additional runtime.}
 \item{R}{Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 of joint hypotheses and k the number of estimated coefficients.}
 
-\item{beta0}{A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
-H0: param = beta0 vs H1: param != beta0. If not provided, a vector of zeros of length q.}
+\item{r}{A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
+H0: param = r vs H1: param != r. If not provided, a vector of zeros of length q.}
+
+\item{beta0}{Deprecated function argument, replaced by 'r'.}
 
 \item{bootcluster}{A character vector. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
@@ -81,7 +84,7 @@ variables in the cluster variable that have not previously been deleted
 when fitting the regression object (e.g. if the cluster variable was not used
 when fitting the regression model).}
 
-\item{floattype}{Float32 by default. Other optio: Float64. Should floating point numbers in Julia be represented as 32 or 64 bit?}
+\item{floattype}{Character scalar. Only relevant when "boot_algo" is set to "WildBootTests.jl". Determines if Julia computes with 32- or 64-bit values. Options are "Float32" (default) and "Float64". Float64 by defaul.}
 
 \item{fweights}{Logical. FALSE by default, TRUE for frequency weights.}
 
