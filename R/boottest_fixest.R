@@ -777,9 +777,13 @@ boottest.fixest <- function(object,
 #' @examples
 #' \dontrun{
 #'  library(fwildclusterboot)
+#'  library(clubSandwich)
+#'  library(fixest)
 #'  data(voters)
 #'  feols_fit <-feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
 #'           data = voters)
+#'  R <- clubSandwich::constrain_zero(2:3, feols_fit)
+#'  waldboottest(feols_fit, R = R, B = 999, clustid = "group_id1")
 #' }
 
 waldboottest.fixest <- function(object,

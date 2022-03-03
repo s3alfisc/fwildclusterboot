@@ -728,9 +728,12 @@ boottest.lm <- function(object,
 #' @examples
 #' \dontrun{
 #'  library(fwildclusterboot)
+#'  library(clubSandwich)
 #'  data(voters)
 #'  lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
 #'           data = voters)
+#'  R <- clubSandwich::constrain_zero(2:3, lm_fit)
+#'  waldboottest(lm_fit, R = R, B = 999, clustid = "group_id1")
 #' }
 
 waldboottest.lm <- function(object,
