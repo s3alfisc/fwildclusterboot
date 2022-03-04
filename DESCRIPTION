@@ -57,8 +57,7 @@ Imports:
     generics,
     gtools,
     dqrng, 
-    JuliaConnectoR, 
-    JuliaConnectoR.utils
+    JuliaConnectoR
 Suggests: 
     fixest,
     lfe,
@@ -73,7 +72,8 @@ Suggests:
     knitr,
     rmarkdown,
     broom, 
-    modelsummary
+    modelsummary, 
+    JuliaConnectoR.utils
 Remotes: s3alfisc/JuliaConnectoR.utils
 Encoding: UTF-8
 LazyData: true
@@ -82,4 +82,4 @@ RoxygenNote: 7.1.2
 LinkingTo: Rcpp, RcppArmadillo, RcppEigen
 VignetteBuilder: knitr
 Language: en-US
-SystemRequirements: Julia (>= 1.6), WildBootTests.jl (>=0.7.4)
+SystemRequirements: Julia (>= 1.6), WildBootTests.jl (>=0.7)

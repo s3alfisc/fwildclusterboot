@@ -24,8 +24,8 @@
 #'        intervals by p-value inversion. If FALSE, only the p-value is returned.
 #' @param seed An integer. Controls the random number generation, which is handled via the `StableRNG()` function from the `StableRNGs` Julia package.
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
-#' @param r A numeric. Shifts the null hypothesis
-#'        H0: param = r vs H1: param != r
+#' @param beta0 A numeric. Shifts the null hypothesis
+#'        H0: param = beta0 vs H1: param != beta0
 #' @param type character or function. The character string specifies the type
 #'        of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
 #'        and "webb". Alternatively, type can be a function(n) for drawing
@@ -45,7 +45,7 @@
 #'        variables in the cluster variable that have not previously been deleted
 #'        when fitting the regression object (e.g. if the cluster variable was not used
 #'        when fitting the regression model).
-#' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?
+#' @param floattype Float32 by default. Other optio: Float64. Should floating point numbers in Julia be represented as 32 or 64 bit?
 #' @param fweights Logical. FALSE by default, TRUE for frequency weights.
 #' @param getauxweights Logical. FALSE by default. Whether to save auxilliary weight matrix (v)
 #' @param t_boot Logical. Should bootstrapped t-statistics be returned?
@@ -58,7 +58,6 @@
 #' @param ARubin False by default. Logical scalar. TRUE for Anderson-Rubin Test.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.
-#' @param beta0 Deprecated function argument, replaced by 'r'. 
 #' @param ... Further arguments passed to or from other methods.
 #'
 #' @importFrom dreamerr check_arg validate_dots
@@ -95,17 +94,7 @@
 #' @references MacKinnon, James G., and Matthew D. Webb. "The wild bootstrap for few (treated) clusters." The Econometrics Journal 21.2 (2018): 114-135.
 #' @references MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite economique 91.1-2 (2015): 11-33.
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
-#' 
-#' @examples
-#' \dontrun{
-#'  library(fwildclusterboot)
-#'  library(ivreg)
-#'  data("SchoolingReturns", package = "ivreg")
-#'  ivreg_fit <- ivreg(log(wage) ~ education + poly(experience, 2, raw = TRUE) + ethnicity + smsa + south |
-#'               nearcollege + poly(age, 2, raw = TRUE) + ethnicity + smsa + south,
-#'               data = SchoolingReturns)
-#'  boottest(ivreg_fit, param = "education", B = 999, clustid = "smsa")
-#' }
+
 
 
 boottest.ivreg <- function(object,
@@ -116,15 +105,14 @@ boottest.ivreg <- function(object,
                            conf_int = TRUE,
                            seed = NULL,
                            R = NULL,
-                           r = 0,
-                           beta0 = r,
+                           beta0 = 0,
                            sign_level = 0.05,
                            type = "rademacher",
                            impose_null = TRUE,
                            p_val_type = "two-tailed",
                            tol = 1e-6,
                            na_omit = TRUE,
-                           floattype = "Float64",
+                           floattype = "Float32",
                            fweights = FALSE,
                            getauxweights = FALSE,
                            t_boot = FALSE,
@@ -154,7 +142,7 @@ boottest.ivreg <- function(object,
   check_arg(conf_int, "logical scalar ")
   check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
-  check_arg(r, "numeric scalar | NULL")
+  check_arg(beta0, "numeric scalar | NULL")
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(floattype, "charin(Float32, Float64)")
@@ -171,10 +159,6 @@ boottest.ivreg <- function(object,
   check_arg(ARubin, "scalar logical")
   check_arg(p_val_type, 'charin(two-tailed, equal-tailed,>, <)')
   check_arg(boot_ssc, 'class(ssc) | class(boot_ssc)')
-  
-  if(!missing(beta0)){
-    warning("The function argument 'beta0' is deprecated - use the function argument 'r' instead.")
-  }
   
   # translate ssc into small_sample_adjustment
   if(ssc[['adj']] == TRUE && ssc[['cluster.adj']] == TRUE){
@@ -256,23 +240,16 @@ boottest.ivreg <- function(object,
   N_G_2 <- 2^N_G
   # NOTE: no need to reset B in enumeration case -> handled by WildBootTests.jl ->
   # throws an error
-  #N_G <- preprocess$N_G
-  N_G_2 <- 2^N_G
-  if (type %in% c("rademacher") & N_G_2 <= B) {
+  if (type %in% c("rademacher") & N_G_2 < B) {
     warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-            call. = FALSE, 
+            call. = FALSE,
             noBreaks. = TRUE
     )
     warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-            call. = FALSE, 
+            call. = FALSE,
             noBreaks. = TRUE
     )
-    B <- N_G_2
-    full_enumeration <- TRUE
-  } else{
-    full_enumeration <- FALSE
   }
-  
   
   # assign all values needed in WildBootTests.jl
   
@@ -285,7 +262,7 @@ boottest.ivreg <- function(object,
   } else {
     R <- matrix(preprocess$R, 1, length(preprocess$R))
   }
-  r <- r
+  r <- beta0
   reps <- as.integer(B) # WildBootTests.jl demands integer
   
   # Order the columns of `clustid` this way:
@@ -436,7 +413,7 @@ boottest.ivreg <- function(object,
     type = type,
     impose_null = impose_null,
     R = R,
-    beta0 = r,
+    beta0 = beta0,
     plotpoints = plotpoints
   )
   

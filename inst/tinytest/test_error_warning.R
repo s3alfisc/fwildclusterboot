@@ -449,14 +449,3 @@ expect_error(boottest(lm_fit, param = "treatment", B = 999, clustid = "clustid")
 expect_error(boottest(feols_fit, param = "treatment", B = 999, clustid = "clustid"))
 expect_error(boottest(lfe_fit, param = "treatment", B = 999, clustid = "clustid"))
 
-
-# use beta0
-expect_warning(boottest(object = lm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
-                        beta0 = 0))
-expect_warning(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
-                        beta0 = 0))
-expect_warning(boottest(object = feols_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, 
-                        beta0 = 0))
-
-
-

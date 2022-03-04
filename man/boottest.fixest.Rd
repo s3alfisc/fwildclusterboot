@@ -15,8 +15,7 @@
   conf_int = TRUE,
   seed = NULL,
   R = NULL,
-  r = 0,
-  beta0 = r,
+  beta0 = 0,
   type = "rademacher",
   impose_null = TRUE,
   p_val_type = "two-tailed",
@@ -27,7 +26,7 @@
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
   boot_algo = "R",
-  floattype = "Float64",
+  floattype = "Float32",
   turbo = FALSE,
   maxmatsize = FALSE,
   bootstrapc = FALSE,
@@ -69,10 +68,8 @@ intervals by p-value inversion. If FALSE, only the p-value is returned.}
 
 \item{R}{Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as \code{param}. If NULL, a vector of ones of length param.}
 
-\item{r}{A numeric. Shifts the null hypothesis
-H0: param = r vs H1: param != r}
-
-\item{beta0}{Deprecated function argument, replaced by 'r'.}
+\item{beta0}{A numeric. Shifts the null hypothesis
+H0: param = beta0 vs H1: param != beta0}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm"
@@ -118,7 +115,7 @@ For large number of clusters and large number of bootstrap iterations, the fast 
 occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
 Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm.}
 
-\item{floattype}{Character scalar. Only relevant when "boot_algo" is set to "WildBootTests.jl". Determines if Julia computes with 32- or 64-bit values. Options are "Float32" (default) and "Float64". Float64 by defaul.}
+\item{floattype}{Character scalar. Only relevant when "boot_algo" is set to "WildBootTests.jl". Determines if Julia computes with 32- or 64-bit values. Options are "Float32" (default) and "Float64".}
 
 \item{turbo}{Logical. Only relevant when "boot_algo" is set to "WildBootTests.jl". Controls if "WildBootTests.jl" utilizes the 'turbo' package, which can increase runtime at the cost of increased compilation time.}
 
@@ -146,8 +143,8 @@ the cluster variables contain NA values.}
 \item{sign_level}{Significance level used in boottest.}
 \item{type}{Distribution of the bootstrap weights.}
 \item{impose_null}{Whether the null was imposed on the bootstrap dgp or not.}
-\item{R}{The vector "R" in the null hypothesis of interest Rbeta = r.}
-\item{r}{The scalar "r" in the null hypothesis of interest Rbeta = r.}
+\item{R}{The vector "R" in the null hypothesis of interest Rbeta = beta0.}
+\item{beta0}{The scalar "beta0" in the null hypothesis of interest Rbeta = beta0.}
 \item{point_estimate}{R'beta. A scalar: the constraints vector times the regression coefficients.}
 \item{p_test_vals}{All p-values calculated while calculating the confidence
 interval.}
@@ -214,14 +211,14 @@ boot4 <- boottest(feols_fit,
                   fe = "Q1_immigration", 
                   sign_level = 0.2, 
                   seed = 8,
-                  r = 2)
+                  beta0 = 2)
 # test treatment + ideology1 = 2                   
 boot5 <- boottest(feols_fit, 
                   B = 9999, 
                   clustid = c("group_id1", "group_id2"),
                   param = c("treatment", "ideology1"),
                   R = c(1, 1), 
-                  r = 2)
+                  beta0 = 2)
 summary(boot1)
 plot(boot1)
 }
