@@ -3,7 +3,7 @@ library(lfe)
 library(fwildclusterboot)
 
 
-data1 <<- fwildclusterboot:::create_data(N = 1000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 7645)
+data1 <<- fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 7645)
 sapply(data1, class)
 
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration + Q2_defense ,
@@ -171,7 +171,7 @@ run_tests <- function(){
     }
 
     # different seeds -> different values
-    expect_equivalent(boot_lm_R[[x]], as.vector(boot_lm_WildBootTests.jl[[x]]), tol = 0.02)
+    print(expect_equivalent(boot_lm_R[[x]], as.vector(boot_lm_WildBootTests.jl[[x]]), tol = 0.02))
     
   }
   

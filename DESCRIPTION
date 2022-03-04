@@ -57,7 +57,8 @@ Imports:
     generics,
     gtools,
     dqrng, 
-    JuliaConnectoR
+    JuliaConnectoR, 
+    JuliaConnectoR.utils
 Suggests: 
     fixest,
     lfe,
@@ -72,8 +73,7 @@ Suggests:
     knitr,
     rmarkdown,
     broom, 
-    modelsummary, 
-    JuliaConnectoR.utils
+    modelsummary
 Remotes: s3alfisc/JuliaConnectoR.utils
 Encoding: UTF-8
 LazyData: true
