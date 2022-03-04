@@ -26,7 +26,7 @@
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
   boot_algo = "R",
-  floattype = "Float32",
+  floattype = "Float64",
   turbo = FALSE,
   maxmatsize = FALSE,
   bootstrapc = FALSE,
@@ -115,7 +115,7 @@ For large number of clusters and large number of bootstrap iterations, the fast 
 occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
 Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm.}
 
-\item{floattype}{Character scalar. Only relevant when "boot_algo" is set to "WildBootTests.jl". Determines if Julia computes with 32- or 64-bit values. Options are "Float32" (default) and "Float64".}
+\item{floattype}{Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?}
 
 \item{turbo}{Logical. Only relevant when "boot_algo" is set to "WildBootTests.jl". Controls if "WildBootTests.jl" utilizes the 'turbo' package, which can increase runtime at the cost of increased compilation time.}
 
