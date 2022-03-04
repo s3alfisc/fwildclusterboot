@@ -26,7 +26,6 @@
     "conventional"),
   boot_algo = "R",
   floattype = "Float64",
-  turbo = FALSE,
   maxmatsize = FALSE,
   bootstrapc = FALSE,
   t_boot = FALSE,
@@ -111,8 +110,6 @@ occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-arma
 Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm.}
 
 \item{floattype}{Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?}
-
-\item{turbo}{Logical. Only relevant when "boot_algo" is set to "WildBootTests.jl". Controls if "WildBootTests.jl" utilizes the 'turbo' package, which can increase runtime at the cost of increased compilation time.}
 
 \item{maxmatsize}{... Only relevant when "boot_algo" is set to "WildBootTests.jl".}
 

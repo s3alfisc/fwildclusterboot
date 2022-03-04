@@ -49,7 +49,6 @@
 #' @param fweights Logical. FALSE by default, TRUE for frequency weights.
 #' @param getauxweights Logical. FALSE by default. Whether to save auxilliary weight matrix (v)
 #' @param t_boot Logical. Should bootstrapped t-statistics be returned?
-#' @param turbo Logical scalar, FALSE by default. Whether to exploit acceleration of the LoopVectorization package: slower on first use in a session, faster after
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t
 #' @param LIML Logical scalar. False by default. TRUE for LIML or Fuller LIML
@@ -116,7 +115,6 @@ boottest.ivreg <- function(object,
                            fweights = FALSE,
                            getauxweights = FALSE,
                            t_boot = FALSE,
-                           turbo = FALSE,
                            maxmatsize = NULL,
                            bootstrapc = FALSE,
                            LIML = FALSE,
@@ -149,7 +147,6 @@ boottest.ivreg <- function(object,
   check_arg(fweights, "scalar logical")
   check_arg(t_boot, "scalar logical")
   check_arg(getauxweights, "scalar logical")
-  check_arg(turbo, "scalar logical")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   # IV specific arguments
@@ -350,7 +347,6 @@ boottest.ivreg <- function(object,
                     ptype = ptype,
                     reps = reps,
                     fweights = fweights,
-                    turbo = turbo,
                     bootstrapc = bootstrapc,
                     LIML = LIML,
                     ARubin = ARubin

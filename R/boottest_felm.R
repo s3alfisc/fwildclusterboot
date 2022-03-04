@@ -65,7 +65,6 @@
 #'                  occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap. 
 #'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm.               
 #' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?
-#' @param turbo Logical. Only relevant when "boot_algo" is set to "WildBootTests.jl". Controls if "WildBootTests.jl" utilizes the 'turbo' package, which can increase runtime at the cost of increased compilation time. 
 #' @param maxmatsize ... Only relevant when "boot_algo" is set to "WildBootTests.jl".
 #' @param bootstrapc ... Only relevant when "boot_algo" is set to "WildBootTests.jl". Runs the boostrap-c as advertised by Young (2019).
 #' @param t_boot ... 
@@ -192,7 +191,6 @@ boottest.felm <- function(object,
                                          cluster.df = "conventional"),
                           boot_algo = "R",
                           floattype = "Float64", 
-                          turbo = FALSE, 
                           maxmatsize = FALSE, 
                           bootstrapc = FALSE, 
                           t_boot = FALSE, 
@@ -224,7 +222,6 @@ boottest.felm <- function(object,
   check_arg(boot_algo, "charin(R, WildBootTests.jl)")
   
   check_arg(floattype, "charin(Float32, Float64)")
-  check_arg(turbo, "scalar logical")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
@@ -569,7 +566,6 @@ boottest.felm <- function(object,
                       ptype = ptype,
                       reps = reps,
                       fweights = FALSE,
-                      turbo = turbo,
                       bootstrapc = bootstrapc
     )
     
@@ -689,7 +685,6 @@ boottest.felm <- function(object,
 #' @param fweights Logical. FALSE by default, TRUE for frequency weights.
 #' @param getauxweights Logical. FALSE by default. Whether to save auxilliary weight matrix (v)
 #' @param t_boot Logical. Should bootstrapped t-statistics be returned?
-#' @param turbo Logical scalar, FALSE by default. Whether to exploit acceleration of the LoopVectorization package: slower on first use in a session, faster after
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`.
@@ -758,7 +753,6 @@ waldboottest.felm <- function(object,
                                 fweights = FALSE,
                                 getauxweights = FALSE,
                                 t_boot = FALSE,
-                                turbo = FALSE,
                                 maxmatsize = NULL,
                                 bootstrapc = FALSE,
                                 ssc = boot_ssc(adj = TRUE,
@@ -790,7 +784,6 @@ waldboottest.felm <- function(object,
   check_arg(boot_ssc, 'class(ssc) | class(boot_ssc)')
 
   check_arg(floattype, "charin(Float32, Float64)")
-  check_arg(turbo, "scalar logical")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
@@ -967,7 +960,6 @@ waldboottest.felm <- function(object,
                       ptype = ptype,
                       reps = reps,
                       fweights = FALSE,
-                      turbo = turbo,
                       bootstrapc = bootstrapc
     )
     
