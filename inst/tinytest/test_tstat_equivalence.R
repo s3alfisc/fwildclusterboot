@@ -35,8 +35,7 @@ if (run_this_test) {
   # cluster.df= "conventional"
   # impose_null= TRUE
 
-  # for(boot_algo in c("R", "WildBootTests.jl")){
-  for(boot_algo in c("R")){
+  for(boot_algo in c("R", "WildBootTests.jl")){
     for(adj in c(TRUE, FALSE)){
       for(cluster.adj in c(TRUE, FALSE)){
         for(cluster.df in c("conventional", "min")){
@@ -358,18 +357,19 @@ wald_test <- function(run_this_test){
   }
 
 }
+
 iv_test <- function(run_this_test){
 
   # Note: Test with Float64 for exact match
   if(run_this_test){
+    
+    library(data.table)
     fwildclusterboot::set_julia_seed(123)
     
     data("SchoolingReturns", package = "ivreg")
     
-    data1 <- SchoolingReturns
-    setDT(data1)
-    data1 <<- na.omit(data1)
-    
+    # drop all NA values from SchoolingReturns
+    data1 <<- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
     ivreg_fit <- ivreg(log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
                          nearcollege + age  + ethnicity + smsa + south + parents14,
                        data = data1)
@@ -414,6 +414,6 @@ iv_test <- function(run_this_test){
   }
 }
 
-ols_test(run_this_test = FALSE)
-iv_test(run_this_test = FALSE)
-wald_test(run_this_test = FALSE)
+ols_test(run_this_test = TRUE)
+iv_test(run_this_test = TRUE)
+wald_test(run_this_test = TRUE)

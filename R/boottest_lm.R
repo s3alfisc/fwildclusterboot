@@ -304,14 +304,14 @@ boottest.lm <- function(object,
     # R*beta; 
     point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
     
-    # number of clusters used in bootstrap - always derived from bootcluster
-    if(is.null(clustid)){
-      N_G <- preprocess$N
-      # also, override algo to lean
-      boot_algo <- "R-lean"
-    } else {
-      N_G <- length(unique(preprocess$bootcluster[, 1]))
-    }
+    # # number of clusters used in bootstrap - always derived from bootcluster
+    # if(is.null(clustid)){
+    #   N_G <- preprocess$N
+    #   # also, override algo to lean
+    #   boot_algo <- "R-lean"
+    # } else {
+    #   N_G <- length(unique(preprocess$bootcluster[, 1]))
+    # }
     
     #N_G <- preprocess$N_G
     N_G_2 <- 2^N_G
@@ -364,10 +364,10 @@ boottest.lm <- function(object,
     #   )
     # }
     # 
-    # compute confidence sets
-    if(class(res) == "boot_algo1"){
-      conf_int <-  FALSE
-    }
+    # # compute confidence sets
+    # if(class(res) == "boot_algo1"){
+    #   conf_int <-  FALSE
+    # }
 
     if (is.null(conf_int) || conf_int == TRUE) {
 

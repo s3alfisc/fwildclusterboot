@@ -62,9 +62,9 @@ Imports:
 Suggests: 
     fixest,
     lfe,
-    ivreg, 
-    clubSandwich, 
-    sandwich, 
+    ivreg,
+    clubSandwich,
+    sandwich,
     lmtest,
     data.table,
     fabricatr,
@@ -72,7 +72,7 @@ Suggests:
     covr,
     knitr,
     rmarkdown,
-    broom, 
+    broom,
     modelsummary
 Remotes: s3alfisc/JuliaConnectoR.utils
 Encoding: UTF-8
@@ -83,3 +83,4 @@ LinkingTo: Rcpp, RcppArmadillo, RcppEigen
 VignetteBuilder: knitr
 Language: en-US
 SystemRequirements: Julia (>= 1.6), WildBootTests.jl (>=0.7)
+Config/testthat/edition: 3

@@ -270,6 +270,7 @@ if(run_tests){
                                           adj = TRUE,
                                           cluster.adj = TRUE))
 
+        pracma::tic()
         boot_jl_nosmall <- boottest(object,
                                     clustid = "group_id1",
                                     B = 99999,
@@ -282,9 +283,10 @@ if(run_tests){
                                                    cluster.adj = TRUE),                                                     floattype = "Float64",
                                     conf_int = FALSE,
                                     boot_algo = "WildBootTests.jl"                                    )
-
-        expect_equal(boot_r$p_val, boot_jl_nosmall$p_val)
-        expect_equal(boot_r$t_stat, boot_jl_nosmall$t_stat)
+        pracma::toc()
+        
+        print(expect_equal(boot_r$p_val, boot_jl_nosmall$p_val))
+        print(expect_equal(boot_r$t_stat, boot_jl_nosmall$t_stat))
 
         # twoway clustering
         boot_r <- boottest(object,
@@ -297,6 +299,7 @@ if(run_tests){
                            bootcluster = "min",
                            ssc = boot_ssc(adj = TRUE))
 
+        pracma::tic()
         boot_jl_nosmall <- boottest(object,
                                     clustid = c("group_id1", "group_id2"),
                                     B = 99999,
@@ -308,9 +311,10 @@ if(run_tests){
                                     bootcluster = "min",
                                     ssc = boot_ssc(adj = TRUE),
                                     boot_algo = "WildBootTests.jl")
-
-        expect_equal(boot_r$p_val, boot_jl_nosmall$p_val)
-        expect_equal(boot_r$t_stat, boot_jl_nosmall$t_stat)
+        pracma::toc()
+        
+        print(expect_equal(boot_r$p_val, boot_jl_nosmall$p_val))
+        print(expect_equal(boot_r$t_stat, boot_jl_nosmall$t_stat))
 
       }
 

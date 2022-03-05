@@ -310,14 +310,14 @@ boottest.felm <- function(object,
     clustid_dims <- preprocess$clustid_dims
     point_estimate <- as.vector(object$coefficients[param,] %*% preprocess$R0[param])
     
-    # number of clusters used in bootstrap - always derived from bootcluster
-    if(is.null(clustid)){
-      N_G <- preprocess$N
-      # also, override algo to lean
-      boot_algo <- "R-lean"
-    } else {
-      N_G <- length(unique(preprocess$bootcluster[, 1]))
-    }
+    # # number of clusters used in bootstrap - always derived from bootcluster
+    # if(is.null(clustid)){
+    #   N_G <- preprocess$N
+    #   # also, override algo to lean
+    #   boot_algo <- "R-lean"
+    # } else {
+    #   N_G <- length(unique(preprocess$bootcluster[, 1]))
+    # }
     
     #N_G <- preprocess$N_G
     N_G_2 <- 2^N_G
@@ -369,10 +369,10 @@ boottest.felm <- function(object,
     #   )
     # }
     # 
-    # compute confidence sets
-    if(class(res) == "boot_algo1"){
-      conf_int <-  FALSE
-    }
+    # # compute confidence sets
+    # if(class(res) == "boot_algo1"){
+    #   conf_int <-  FALSE
+    # }
 
     if (is.null(conf_int) || conf_int == TRUE) {
 
@@ -819,7 +819,7 @@ waldboottest.felm <- function(object,
   banned_fun_args <- c("contrasts", "subset")
   if (sum(call_object %in% banned_fun_args) > 0) {
     stop(paste(
-      "boottest.felm currently does not accept objects of type fixest with 
+      "boottest.felm currently does not accept objects of type felm with 
       function arguments",
       paste0(banned_fun_args[1:(length(banned_fun_args) - 1)], collapse = ", "), 
       "and", banned_fun_args[length(banned_fun_args)], "."
@@ -1023,4 +1023,6 @@ waldboottest.felm <- function(object,
   
   invisible(res_final)
 }
+
+
 
