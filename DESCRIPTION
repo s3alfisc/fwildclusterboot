@@ -68,7 +68,6 @@ Suggests:
     lmtest,
     data.table,
     fabricatr,
-    tinytest,
     covr,
     knitr,
     rmarkdown,
