@@ -237,7 +237,7 @@ wald_test <- function(run_this_test){
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit))
       boot_jl <- suppressWarnings(
-        suppressWarnings(fwildclusterboot::waldtest(floattype = "Float64",
+        suppressWarnings(fwildclusterboot::waldboottest(floattype = "Float64",
                                   object = lm_fit,
                                   R = R,
                                   clustid = "group_id1",
@@ -254,7 +254,7 @@ wald_test <- function(run_this_test){
       
       # one hypothesis
       R <- clubSandwich::constrain_zero(constraints = 2, coefs = coef(lm_fit))
-      boot_jl <- suppressWarnings(fwildclusterboot::waldtest(floattype = "Float64",
+      boot_jl <- suppressWarnings(fwildclusterboot::waldboottest(floattype = "Float64",
                                                             lm_fit,
                                                             R = R,
                                                             clustid = c("group_id1", "group_id2"),
@@ -273,7 +273,7 @@ wald_test <- function(run_this_test){
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit))
       boot_jl <- suppressWarnings(
-        fwildclusterboot::waldtest(floattype = "Float64",
+        fwildclusterboot::waldboottest(floattype = "Float64",
                                   object = lm_fit,
                                   R = R,
                                   clustid = "group_id1",
@@ -297,7 +297,7 @@ wald_test <- function(run_this_test){
       
       # one hypothesis
       R <- clubSandwich::constrain_zero(constraints = 2, coefs = coef(lm_fit_weights))
-      boot_jl <- suppressWarnings(fwildclusterboot::waldtest(floattype = "Float64", lm_fit_weights, R = R, clustid = "group_id1", B = 999))
+      boot_jl <- suppressWarnings(fwildclusterboot::waldboottest(floattype = "Float64", lm_fit_weights, R = R, clustid = "group_id1", B = 999))
       
       #sW <- coeftest(object, vcov = sandwich::vcovCL(object, cluster = ~ group_id1))
       wald_stat <- fixest::wald(feols_fit_weights, "treatment", cluster = ~ group_id1)
@@ -308,7 +308,7 @@ wald_test <- function(run_this_test){
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit_weights))
       boot_jl <- suppressWarnings(
-        fwildclusterboot::waldtest(floattype = "Float64",
+        fwildclusterboot::waldboottest(floattype = "Float64",
                                   object = lm_fit_weights,
                                   R = R,
                                   clustid = "group_id1",
@@ -325,7 +325,7 @@ wald_test <- function(run_this_test){
       
       # one hypothesis
       R <- clubSandwich::constrain_zero(constraints = 2, coefs = coef(lm_fit_weights))
-      boot_jl <- suppressWarnings(fwildclusterboot::waldtest(floattype = "Float64",
+      boot_jl <- suppressWarnings(fwildclusterboot::waldboottest(floattype = "Float64",
                                                             lm_fit_weights,
                                                             R = R,
                                                             clustid = c("group_id1", "group_id2"),
@@ -347,7 +347,7 @@ wald_test <- function(run_this_test){
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit_weights))
       boot_jl <- suppressWarnings(
-        fwildclusterboot::waldtest(floattype = "Float64",
+        fwildclusterboot::waldboottest(floattype = "Float64",
                                   object = lm_fit_weights,
                                   R = R,
                                   clustid = "group_id1",
