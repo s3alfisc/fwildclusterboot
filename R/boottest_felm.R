@@ -319,7 +319,8 @@ boottest.felm <- function(object,
     #   N_G <- length(unique(preprocess$bootcluster[, 1]))
     # }
     
-    #N_G <- preprocess$N_G
+    N_G <- length(unique(preprocess$bootcluster[, 1]))
+    # N_G <- preprocess$N_G
     N_G_2 <- 2^N_G
     if (type %in% c("rademacher") & N_G_2 <= B) {
       warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),

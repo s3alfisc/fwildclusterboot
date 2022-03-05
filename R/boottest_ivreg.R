@@ -234,6 +234,7 @@ boottest.ivreg <- function(object,
   
   # number of clusters used in bootstrap - always derived from bootcluster
   N_G <- length(unique(preprocess$bootcluster[, 1]))
+  #N_G <- preprocess$N_G
   N_G_2 <- 2^N_G
   # NOTE: no need to reset B in enumeration case -> handled by WildBootTests.jl ->
   # throws an error
