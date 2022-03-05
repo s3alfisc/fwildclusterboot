@@ -125,6 +125,7 @@
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 
 #' @examples
+#' \dontrun{
 #' if(requireNamespace("fixest")){
 #' library(fwildclusterboot)
 #' library(fixest)
@@ -162,6 +163,7 @@
 #'                   beta0 = 2)
 #' summary(boot1)
 #' plot(boot1)
+#' }
 #' }
 
 boottest.fixest <- function(object,

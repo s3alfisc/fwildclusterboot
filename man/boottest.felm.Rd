@@ -181,7 +181,7 @@ stops the procedure after 10 iterations.
 }
 
 \examples{
-
+\dontrun{
 if(requireNamespace("lfe")){
 library(fwildclusterboot)
 library(lfe)
@@ -219,6 +219,7 @@ boot5 <- boottest(felm_fit,
                   beta0 = 2)
 summary(boot1)
 plot(boot1)
+}
 }
 }
 \references{

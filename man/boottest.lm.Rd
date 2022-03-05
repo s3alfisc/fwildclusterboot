@@ -175,6 +175,7 @@ stops the procedure after 10 iterations.
 }
 
 \examples{
+\dontrun{
 library(fwildclusterboot)
 data(voters)
 lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -203,6 +204,7 @@ boot4 <- boottest(lm_fit,
                   beta0 = 2)
 summary(boot1)
 plot(boot1)
+}
 }
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in

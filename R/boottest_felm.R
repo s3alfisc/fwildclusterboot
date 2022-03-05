@@ -125,7 +125,7 @@
 #' @references MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite economique 91.1-2 (2015): 11-33.             
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples 
-#' 
+#' \dontrun{
 #' if(requireNamespace("lfe")){
 #' library(fwildclusterboot)
 #' library(lfe)
@@ -163,6 +163,7 @@
 #'                   beta0 = 2)
 #' summary(boot1)
 #' plot(boot1)
+#' }
 #' }
 
 

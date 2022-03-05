@@ -181,6 +181,7 @@ stops the procedure after 10 iterations.
 }
 
 \examples{
+\dontrun{
 if(requireNamespace("fixest")){
 library(fwildclusterboot)
 library(fixest)
@@ -218,6 +219,7 @@ boot5 <- boottest(feols_fit,
                   beta0 = 2)
 summary(boot1)
 plot(boot1)
+}
 }
 }
 \references{
