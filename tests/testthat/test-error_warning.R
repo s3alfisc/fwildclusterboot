@@ -1,4 +1,4 @@
-test_that("multiplication works", {
+test_that("errors and warnings", {
   
   # ------------------------------------------------------------------ # 
   # test for warnings and errors
@@ -45,11 +45,11 @@ test_that("multiplication works", {
   expect_error(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment1", conf_int = TRUE))
   
   # rademacher enumeration case
-  expect_warning(boottest(object = lm_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE))
-  expect_warning(boottest(object = feols_fit, clustid = c("group_id1"), B = 9999, seed = 911, param = "treatment", conf_int = TRUE))
-  expect_warning(boottest(object = felm_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE))
+  suppressWarnings(expect_warning(boottest(object = lm_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE)))
+  suppressWarnings(expect_warning(boottest(object = feols_fit, clustid = c("group_id1"), B = 9999, seed = 911, param = "treatment", conf_int = TRUE)))
+  suppressWarnings(expect_warning(boottest(object = felm_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE)))
   
-  expect_warning(boottest(object = lm_fit, clustid =  "group_id1", B = 2^10, seed = 911, param = "treatment", conf_int = TRUE))
+  suppressWarnings(expect_warning(boottest(object = lm_fit, clustid =  "group_id1", B = 2^10, seed = 911, param = "treatment", conf_int = TRUE)))
   
   #expect_warning(boottest(object = lm_fit, clustid =  "group_id1", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, type = "mammen"))
   #expect_warning(boottest(object = feols_fit, clustid = c("group_id1"), B = 9999, seed = 911, param = "treatment", conf_int = TRUE, type = "mammen"))
@@ -62,12 +62,13 @@ test_that("multiplication works", {
   expect_error(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment1", conf_int = TRUE))
   
   # joint fe != NULL and weights = on
+  data <- fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
-                     weights = 1:10000/ 10000, 
-                     data = fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                     weights = data$weights, 
+                     data = data)
   felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  
-                   weights = 1:10000/ 10000, 
-                   data = fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+                   weights = data$weights, 
+                   data = data)
   expect_error(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, fe = "Q1_immigration"))
   expect_error(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, fe = "Q1_immigration"))
   
@@ -86,6 +87,7 @@ test_that("multiplication works", {
   #                       param = "treatment",
   #                       conf_int = TRUE, 
   #                       nthreads = 20))
+  
   # Warning: In boottest.lm(object = lm_fit, clustid = "group_id1...:
   # Asked for 20 threads while the maximum is 8. Set to 8 threads instead.
   # will probably not run on cran, as max 2 cores
@@ -203,23 +205,23 @@ test_that("multiplication works", {
                         p_val_type = "equaltail"))
   
   # B = 1000
-  expect_message(boottest(object = lm_fit,
+  suppressWarnings(expect_message(boottest(object = lm_fit,
                           clustid =  "group_id1",
                           B = 1000, seed = 911, 
                           param = "treatment",
-                          conf_int = TRUE))
+                          conf_int = TRUE)))
   
-  expect_message(boottest(object = feols_fit,
+  suppressWarnings(expect_message(boottest(object = feols_fit,
                           clustid =  "group_id1",
                           B = 1000, seed = 911, 
                           param = "treatment",
-                          conf_int = TRUE))
+                          conf_int = TRUE)))
   
-  expect_message(boottest(object = felm_fit,
+  suppressWarnings(expect_message(boottest(object = felm_fit,
                           clustid =  "group_id1",
                           B = 1000, seed = 911, 
                           param = "treatment",
-                          conf_int = TRUE))
+                          conf_int = TRUE)))
   
   # banned function arguments 
   
@@ -363,7 +365,7 @@ test_that("multiplication works", {
       na_omit = FALSE)
   )
   
-  expect_warning(
+  suppressWarnings( expect_warning(
     res <- 
       boottest(
         object = lm_fit, 
@@ -375,14 +377,14 @@ test_that("multiplication works", {
         type = "rademacher",
         conf_int = TRUE, 
         na_omit = TRUE)
-  )
+  ))
   expect_equal(res$N, 99)
   
   data[2, "group_id1"] <- NA
   data3 <<- data
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
                data = data3)
-  expect_warning(
+  suppressWarnings(expect_warning(
     res <- 
       boottest(
         object = lm_fit, 
@@ -394,7 +396,7 @@ test_that("multiplication works", {
         type = "rademacher",
         conf_int = TRUE, 
         na_omit = TRUE)
-  )
+  ))
   expect_equal(res$N, 98)
   
   
@@ -452,3 +454,4 @@ test_that("multiplication works", {
   # expect_error(boottest(lfe_fit, param = "treatment", B = 999, clustid = "clustid"))
   
 })
+
