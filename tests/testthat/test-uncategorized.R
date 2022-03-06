@@ -102,25 +102,29 @@ test_that("multiplication works", {
                               clustid = c("Q1_immigration"),
                               B = 9999,
                               param = "treatment",
-                              bootcluster='min'))
+                              bootcluster='min', 
+                              seed = 123))
   boot2 <- 
     suppressWarnings(boottest(feols_fit_2,
                               clustid = c("Q1_immigration"),
                               B = 9999,
                               param = "treatment",
-                              bootcluster='min'))
+                              bootcluster='min', 
+                              seed = 123))
   boot3 <- 
     suppressWarnings(boottest(lfe_fit,
                               clustid = c("Q1_immigration"),
                               B = 9999,
                               param = "treatment",
-                              bootcluster='min'))
+                              bootcluster='min', 
+                              seed = 123))
   boot4 <- 
     suppressWarnings(boottest(lfe_fit_2,
                               clustid = c("Q1_immigration"),
                               B = 9999,
                               param = "treatment",
-                              bootcluster='min'))
+                              bootcluster='min', 
+                              seed = 123))
   expect_equal(boot1$p_val, boot2$p_val)
   expect_equal(boot2$p_val, boot3$p_val)
   expect_equal(boot3$p_val, boot4$p_val)
