@@ -412,16 +412,16 @@ iv_test <- function(run_this_test){
       
       
       # two-way clustering currently fails
-      # boot_ivreg2 <- boottest(floattype = "Float64",
-      #                         object = ivreg_fit,
-      #                         B = 999,
-      #                         param = "education",
-      #                         clustid = c("kww", "age"),
-      #                         type = "rademacher")
-      # 
-      # 
-      # #skip_on_cran()
-      # expect_equal(boot_ivreg2$t_stat, res_df1[res_df2$term == "education",'statistic'])
+      boot_ivreg2 <- boottest(floattype = "Float64",
+                              object = ivreg_fit,
+                              B = 999,
+                              param = "education",
+                              clustid = c("smsa", "kww"),
+                              type = "rademacher")
+
+
+      #skip_on_cran()
+      expect_equal(boot_ivreg2$t_stat, res_df2[res_df2$term == "education",'statistic'])
       
     }
   }
