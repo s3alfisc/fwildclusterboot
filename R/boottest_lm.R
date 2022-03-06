@@ -645,9 +645,6 @@ boottest.lm <- function(object,
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
-#' @param sign_level A numeric between 0 and 1 which sets the significance level
-#'        of the inference procedure. E.g. sign_level = 0.05
-#'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
 #' @param seed An integer. Controls the random number generation, which is handled via the `StableRNG()` function from the `StableRNGs` Julia package.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
@@ -698,7 +695,6 @@ boottest.lm <- function(object,
 #' \item{B}{Number of Bootstrap Iterations.}
 #' \item{clustid}{Names of the cluster Variables.}
 #' \item{N_G}{Dimension of the cluster variables as used in boottest.}
-#' \item{sign_level}{Significance level used in boottest.}
 #' \item{type}{Distribution of the bootstrap weights.}
 #' \item{t_stat}{The original test statistics - either imposing the null or not - with small sample correction `G / (G-1)`.}
 #' \item{test_vals}{All t-statistics calculated while calculating the
@@ -733,7 +729,6 @@ waldboottest.lm <- function(object,
                         beta0 = rep(0,nrow(R)),
                         bootcluster = "max",
                         seed = NULL,
-                        sign_level = 0.05,
                         type = "rademacher",
                         impose_null = TRUE,
                         p_val_type = "two-tailed",
@@ -759,7 +754,6 @@ waldboottest.lm <- function(object,
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric vector | numeric matrix")
   
-  check_arg(sign_level, "scalar numeric")
   check_arg(conf_int, "logical scalar | NULL")
   check_arg(seed, "scalar integer | NULL")
   check_arg(beta0, "numeric vector  | NULL")
@@ -813,29 +807,7 @@ waldboottest.lm <- function(object,
          'two-tailed', 'equal-tailed','>' or '<'.",
          call. = FALSE)
   }
-  
-  if (!is.null(sign_level) & (sign_level <= 0 || sign_level >= 1)) {
-    stop("The function argument sign_level is outside of the unit interval
-         (0, 1). Please specify sign_level so that it is within the
-         unit interval.",
-         call. = FALSE
-    )
-  }
-  
-  if (is.null(sign_level)) {
-    sign_level <- 0.05
-  }
-  
-  
-  
-  if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
-    message(paste("Note: The bootstrap usually performs best when the
-                  confidence level (here,", 1 - sign_level, "%)
-                  times the number of replications plus 1
-                  (", B, "+ 1 = ", B + 1, ") is an integer."))
-  }
-  
-  
+
   # throw error if specific function arguments are used in lm() call
   call_object <- names(object$call)[names(object$call) != ""]
   banned_fun_args <- c("contrasts", "subset", "offset", "x", "y")
@@ -932,8 +904,6 @@ waldboottest.lm <- function(object,
   
   #obswt <-  preprocess$weights      # if no weights provided: vector of ones
   feid <- preprocess$fixed_effect
-  level <-  1 - sign_level
-  getCI <- FALSE 
   imposenull <- ifelse(is.null(impose_null) || impose_null == TRUE, TRUE, FALSE)
   rtol <- tol
   small <- small_sample_adjustment
@@ -971,8 +941,6 @@ waldboottest.lm <- function(object,
                     clustid = clustid_df,
                     nbootclustvar = nbootclustvar,
                     nerrclustvar = nerrclustvar,
-                    level = level,
-                    getCI = getCI,
                     imposenull = imposenull,
                     rtol = rtol,
                     small = small,
@@ -1000,11 +968,7 @@ waldboottest.lm <- function(object,
   
   # collect results:
   p_val <- WildBootTests$p(wildboottest_res)
-  if(getCI == TRUE){
-    conf_int <- WildBootTests$CI(wildboottest_res)
-  } else{
-    conf_int <- NA
-  }
+  conf_int <- NA
   
   t_stat <- WildBootTests$teststat(wildboottest_res)
   if(t_boot == TRUE){
@@ -1033,7 +997,6 @@ waldboottest.lm <- function(object,
     clustid = clustid,
     # depvar = depvar,
     N_G = preprocess$N_G,
-    sign_level = sign_level,
     call = call,
     type = type,
     impose_null = impose_null,

@@ -13,7 +13,6 @@
   bootcluster = "max",
   fe = NULL,
   seed = NULL,
-  sign_level = 0.05,
   type = "rademacher",
   impose_null = TRUE,
   p_val_type = "two-tailed",
@@ -56,10 +55,6 @@ out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.}
 
 \item{seed}{An integer. Controls the random number generation, which is handled via the \code{StableRNG()} function from the \code{StableRNGs} Julia package.}
-
-\item{sign_level}{A numeric between 0 and 1 which sets the significance level
-of the inference procedure. E.g. sign_level = 0.05
-returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -112,7 +107,6 @@ cluster variables contain NA values.}
 \item{B}{Number of Bootstrap Iterations.}
 \item{clustid}{Names of the cluster Variables.}
 \item{N_G}{Dimension of the cluster variables as used in boottest.}
-\item{sign_level}{Significance level used in boottest.}
 \item{type}{Distribution of the bootstrap weights.}
 \item{t_stat}{The original test statistics - either imposing the null or not - with small sample correction \code{G / (G-1)}.}
 \item{test_vals}{All t-statistics calculated while calculating the
