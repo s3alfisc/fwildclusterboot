@@ -7,5 +7,8 @@
   # adds info on number of threads to options()
   setBoottest_nthreads()
   
+  setBoottest_boot_algo()
+  
+  
   invisible()
 }

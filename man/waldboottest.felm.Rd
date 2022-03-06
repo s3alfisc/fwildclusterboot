@@ -116,6 +116,7 @@ confidence interval.}
 \item{call}{Function call of boottest.}
 \item{getauxweights}{The bootstrap auxiliary weights matrix v. Only returned if getauxweights = TRUE.}
 \item{t_boot}{The bootstrapped t-statistics. Only returned if t_boot = TRUE.}
+\item{boot_algo}{The employed bootstrap algorithm.}
 }
 \description{
 \code{waldboottest.felm} is a S3 method that allows for fast wild cluster

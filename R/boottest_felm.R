@@ -63,7 +63,8 @@
 #'                  The "fast and wild" algorithm is extremely fast for small number of clusters, but because it is fully vectorized, very memory-demanding.
 #'                  For large number of clusters and large number of bootstrap iterations, the fast and wild algorithm becomes infeasible. If a out-of-memory error #
 #'                  occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap. 
-#'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm.               
+#'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. Note that you can set the employed algorithm globally by using the 
+#'                  `setBoottest_boot_algo()` function.               
 #' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?
 #' @param maxmatsize ... Only relevant when "boot_algo" is set to "WildBootTests.jl".
 #' @param bootstrapc ... Only relevant when "boot_algo" is set to "WildBootTests.jl". Runs the boostrap-c as advertised by Young (2019).
@@ -190,7 +191,7 @@ boottest.felm <- function(object,
                                          fixef.K = "none", 
                                          cluster.adj = TRUE, 
                                          cluster.df = "conventional"),
-                          boot_algo = "R",
+                          boot_algo = getBoottest_boot_algo(),
                           floattype = "Float64", 
                           maxmatsize = FALSE, 
                           bootstrapc = FALSE, 
@@ -429,7 +430,8 @@ boottest.felm <- function(object,
       type = type,
       impose_null = impose_null,
       R = R,
-      beta0 = beta0
+      beta0 = beta0, 
+      boot_algo = "R"
     )
     
   } else if(boot_algo == "WildBootTests.jl"){
@@ -624,7 +626,9 @@ boottest.felm <- function(object,
       impose_null = impose_null,
       R = R,
       beta0 = beta0,
-      plotpoints = plotpoints
+      plotpoints = plotpoints, 
+      # boot_algo returns NULL if not set via global variable
+      boot_algo = "WildBootTests.jl"
     )
     
   }
@@ -714,7 +718,8 @@ boottest.felm <- function(object,
 #' \item{call}{Function call of boottest.}
 #' \item{getauxweights}{The bootstrap auxiliary weights matrix v. Only returned if getauxweights = TRUE.}
 #' \item{t_boot}{The bootstrapped t-statistics. Only returned if t_boot = TRUE.}
-#'
+#' \item{boot_algo}{The employed bootstrap algorithm.}
+
 #' @export
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
