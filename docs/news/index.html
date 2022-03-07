@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8</span>
       </span>
     </div>
 
@@ -96,6 +96,21 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Calling_WildBootTests_jl_through_fwildclusterboot.html">Calling WildBootTests.jl through fwildclusterboot</a>
+    </li>
+    <li>
+      <a href="../articles/WildBootTests.html">Calling WildBootTests.jl through fwildclusterboot</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -125,6 +140,21 @@
       <small>Source: <a href='https://github.com/s3alfisc/fwildclusterboot/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="fwildclusterboot-08" class="section level1">
+<h1 class="page-header" data-toc-text="0.8">
+<a href="#fwildclusterboot-08" class="anchor"></a>fwildclusterboot 0.8<small> Unreleased </small>
+</h1>
+<div id="wildboottestsjl" class="section level2">
+<h2 class="hasAnchor">
+<a href="#wildboottestsjl" class="anchor"></a>WildBootTests.jl</h2>
+<ul>
+<li>
+<code>fwildclusterboot</code> now supports calling <code>WildBootTests.jl</code>, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, <code>boot_algo</code>, through which the user can choose if she wants to run the fast wild cluster bootstrap via R or Julia.</li>
+<li>WildBootTests.jl is (after compilation) orders of magnitudes faster than <code>fwildclusterboot's</code> native R implementation, and speed gains are particularly pronounced for large problems with a large number of clusters and many bootstrap iterations.</li>
+<li>Furthermore, <code>WildBootTests.jl</code> supports a range of models and tests that were previously not supported by <code>fwildclusterboot</code>: most importantly a) wild cluster bootstrap tests of multiple joint hypotheses and b) the WRE bootstrap by Davidson &amp; MacKinnon for instrumental variables estimation. On top of the cake … WRE is really fast.</li>
+</ul>
+</div>
+</div>
     <div id="fwildclusterboot-07" class="section level1">
 <h1 class="page-header" data-toc-text="0.7">
 <a href="#fwildclusterboot-07" class="anchor"></a>fwildclusterboot 0.7<small> 2022-01-03 </small>
@@ -177,6 +207,7 @@
 <li>New feature II: <code><a href="../reference/boottest.html">boottest()</a></code> now also supports “equal-tailed” p-values and one-sided hypotheses. For one-sided tests, confidence intervals are currently not supported.</li>
 <li>Internal changes: To allow for multivariable tests, the <code><a href="../reference/boot_algo2.html">boot_algo2()</a></code> function has slightly been modified. <code>invert_p_val2()</code> is superseded by <code>invert_p_val()</code>.</li>
 <li>Further, a CRAN error is fixed - some tests for exact equality failed with relative difference e-05 on openBLAS. In consequence, all exact tests are set to reltol = 1e-04.</li>
+<li>Make better use of functionality of <code>dreamerr</code> package.</li>
 </ul>
 </div>
     <div id="fwildclusterboot-037" class="section level1">

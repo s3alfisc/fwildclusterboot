@@ -758,7 +758,6 @@ boottest.fixest <- function(object,
 #' \item{getauxweights}{The bootstrap auxiliary weights matrix v. Only returned if getauxweights = TRUE.}
 #' \item{t_boot}{The bootstrapped t-statistics. Only returned if t_boot = TRUE.}
 #' \item{boot_algo}{The employed bootstrap algorithm.}
-
 #' @export
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in

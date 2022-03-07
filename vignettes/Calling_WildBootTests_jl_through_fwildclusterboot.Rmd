@@ -1,0 +1,93 @@
+---
+title: "Calling WildBootTests.jl through fwildclusterboot"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Calling_WildBootTests_jl_through_fwildclusterboot}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(fwildclusterboot)
+```
+
+`fwildclusterboot` serves as an R port to the [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) implementation of the "fast" wild cluster bootstrap. 
+
+## Installation and Set-Up
+
+You can install Julia and `WildBootTests.jl` from within R via the `JuliaConnectoR.utils` package:
+
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
+devtools::install_github("s3alfisc/JuliaConnectoR.utils")
+library(JuliaConnectoR.utils)
+install_julia() # install Julia
+install_julia_packages("WildBootTests.jl") # install WildBootTests.jl
+```
+
+The `connect_julia_r()` function will help you to make sure that Julia and R find each other: 
+
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
+connect_julia_r() # instructions to connect Julia and R
+```
+
+
+By default, the functions above install the most recent stable releases of both `Julia` and `WildBootTests.jl`.
+
+If `Julia` and `WildBootTests.jl` are already installed, you can check if the installed versions match the `SystemRequirements` by running 
+
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
+check_julia_system_requirements("fwildclusterboot")
+```
+
+Alternatively, you can install Julia from its official [https://julialang.org/downloads/](https://julialang.org/downloads/) and `WildBootTests.jl` via Julia's package manager. 
+
+## The `boot_algo` function argument
+
+You can run the wild cluster bootstrap through `WildBootTests.jl` via the `boot_algo` function argument: 
+
+```{r, message = FALSE, warning = FALSE}
+# load data set voters included in fwildclusterboot
+data(voters)
+# estimate the regression model via lm
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+```
+
+The first function call of `boottest()` will JIT-compile all required Julia code - this will take around 10-30 seconds. Note that if you re-start your R session, all Julia code will have to be re-compiled.
+
+```{r, message = FALSE, warning = FALSE}
+boot_lm <- boottest(lm_fit, clustid = "group_id1", param = "treatment", B = 9999, boot_algo = "WildBootTests.jl")
+summary(boot_lm)
+```
+
+If you decide that all your analyses should run through `WildBootTests.jl`, you can set a global variable via 
+
+```{r, eval  = FALSE, , message = FALSE, warning = FALSE}
+setBoottest_boot_algo("WildBootTests.jl")
+```
+
+All subsequent calls of `boottest()` will then automatically run `WildBootTests.jl` (unless you explicitly specify `boot_algo = "R"`).
+
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
+# after setting setBoottest_boot_algo("WildBootTests.jl"), 
+# the code below runs WildBootTests.jl without
+# specifying 'boot_algo = "WildBootTests.jl"'
+boottest(lm_fit, clustid = "group_id1", param = "treatment", B = 9999)
+```
+
+
+Note that if you want your analyses based on `WildBootTests.jl` to be reproducible, you need to set a seed for your `Julia` session. You can do so by calling 
+
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
+set_julia_seed(87658)
+```
+
+
+
+

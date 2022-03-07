@@ -3,7 +3,9 @@ tidy.waldboottest <- function(object, ...) {
   #' @param object object of type waldboottest
   #' @param ... Further arguments passed to or from other methods.
   #' @importFrom generics tidy
+  #' 
   #' @export
+  #' 
   #' @method tidy waldboottest
   #' @return A tidy data.frame with estimation results for objects of type
   #'         waldboottest
@@ -25,7 +27,9 @@ summary.waldboottest <- function(object, digits = 3, ...) {
   #' @param digits rounding of output. 3 by default
   #' @param ... Further arguments passed to or from other methods.
   #' @method summary waldboottest
+  #'
   #' @export
+  #'
   #' @return Returns result summaries for objects of type waldboottest
   
   

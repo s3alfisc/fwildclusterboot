@@ -2,6 +2,8 @@ pandoc: 2.14.0.3
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
+  Calling_WildBootTests_jl_through_fwildclusterboot: Calling_WildBootTests_jl_through_fwildclusterboot.html
   fwildclusterboot: fwildclusterboot.html
-last_built: 2022-02-05T18:17Z
+  WildBootTests: WildBootTests.html
+last_built: 2022-03-07T19:50Z
 
