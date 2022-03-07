@@ -6,16 +6,17 @@ test_that("global boot algo", {
                data = voters)
   
   boot1 <- boottest(lm_fit, param = "treatment", B = 999, clustid = "group_id1")
-  boot2 <- boottest(lm_fit, param = "treatment", B = 999, clustid = "group_id1", boot_algo = "WildBootTests.jl")
+  boot2 <- suppressWarnings(boottest(lm_fit, param = "treatment", B = 999, clustid = "group_id1", boot_algo = "WildBootTests.jl"))
   
   expect_equal(boot1$boot_algo, "R")
   expect_equal(boot2$boot_algo, "WildBootTests.jl")
   
   # leave state of global variables clean
-  op <- setBoottest_boot_algo(boot_algo = "WildBootTests.jl")
-  on.exit(options(op), add = TRUE)
-  boot1 <- boottest(lm_fit, param = "treatment", B = 999, clustid = "group_id1")
-  boot2 <- boottest(lm_fit, param = "treatment", B = 999, clustid = "group_id1")
+  setBoottest_boot_algo(boot_algo = "WildBootTests.jl")
+  # switch back to "R" as global variable at end of function
+  on.exit(setBoottest_boot_algo(boot_algo = "R"), add = TRUE)
+  boot1 <- suppressWarnings(boottest(lm_fit, param = "treatment", B = 999, clustid = "group_id1"))
+  boot2 <- suppressWarnings(boottest(lm_fit, param = "treatment", B = 999, clustid = "group_id1"))
   boot3 <- boottest(lm_fit, param = "treatment", B = 999, clustid = "group_id1", boot_algo = "R")
   
   expect_equal(boot1$boot_algo, "WildBootTests.jl")
