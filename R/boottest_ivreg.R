@@ -411,7 +411,8 @@ boottest.ivreg <- function(object,
     impose_null = impose_null,
     R = R,
     beta0 = beta0,
-    plotpoints = plotpoints
+    plotpoints = plotpoints, 
+    boot_algo = "WildBootTests.jl"
   )
   
   
