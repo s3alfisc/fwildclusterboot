@@ -11,8 +11,13 @@ tidy.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
   #dreamerr::validate_dots(stop = TRUE)
   
-  hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$beta0)
-  
+  if(object$boot_algo == "WildBootTests.jl"){
+    R <- object$R[which(object$R != 0)]
+    hypothesis <- paste(paste0(paste0(R, "*"), object$param, collapse = "+"),"=", object$beta0)
+  } else {
+    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$beta0)
+  }
+
   term <- hypothesis
   estimate <- object$point_estimate
   statistic <- object$t_stat
@@ -68,8 +73,12 @@ summary.boottest <- function(object, digits = 3, ...) {
   tidy_object <- as.data.frame(tidy_object)
   names(tidy_object) <- tidy_names
   
-  hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$beta0)
-  
+  if(object$boot_algo == "WildBootTests.jl"){
+    R <- object$R[which(object$R != 0)]
+    hypothesis <- paste(paste0(paste0(R, "*"), object$param, collapse = "+"),"=", object$beta0)
+  } else {
+    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$beta0)
+  }  
   
   print(call)
   cat(
