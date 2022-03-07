@@ -721,10 +721,14 @@ boottest.lm <- function(object,
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
 #' \dontrun{
-#'  library(fwildclusterboot)
-#'  data(voters)
-#'  lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-#'           data = voters)
+# library(clubSandwich)
+# R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+# wboottest <- 
+#   waldboottest(object = lm_fit, 
+#                clustid = "group_id1", 
+#                B = 999, 
+#                R = R)
+# generics::tidy(wboottest)
 #' }
 
 waldboottest.lm <- function(object,

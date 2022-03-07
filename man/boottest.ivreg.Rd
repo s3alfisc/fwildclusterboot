@@ -144,6 +144,26 @@ bootstrap inference for objects of class ivreg by  implementing
 the fast wild bootstrap algorithm developed in Roodman et al., 2019
 for instrumental variable models (WRE, Davidson & McKinnon, 2010)
 }
+\examples{
+\dontrun{
+library(ivreg)
+library(fwildclusterboot)
+
+# drop all NA values from SchoolingReturns
+SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
+ivreg_fit <- ivreg(log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
+                     nearcollege + age  + ethnicity + smsa + south + parents14, data = SchoolingReturns)
+
+boot_ivreg <- boottest(object = ivreg_fit,
+                       B = 999,
+                       param = "education",
+                       clustid = "kww",
+                       type = "mammen",
+                       impose_null = TRUE)
+summary(boot_ivreg)
+
+}
+}
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.

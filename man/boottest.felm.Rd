@@ -184,7 +184,6 @@ stops the procedure after 10 iterations.
 \examples{
 \dontrun{
 if(requireNamespace("lfe")){
-library(fwildclusterboot)
 library(lfe)
 data(voters)
 felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income

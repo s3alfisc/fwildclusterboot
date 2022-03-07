@@ -120,10 +120,6 @@ implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019
 }
 \examples{
 \dontrun{
- library(fwildclusterboot)
- data(voters)
- lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-          data = voters)
 }
 }
 \references{
