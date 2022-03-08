@@ -83,7 +83,7 @@ implemented in the STATA package boottest." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8</span>
       </span>
     </div>
 
@@ -100,6 +100,21 @@ implemented in the STATA package boottest." />
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Calling_WildBootTests_jl_through_fwildclusterboot.html">Calling WildBootTests.jl through fwildclusterboot</a>
+    </li>
+    <li>
+      <a href="../articles/WildBootTests.html">Calling WildBootTests.jl through fwildclusterboot</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -145,11 +160,11 @@ implemented in the STATA package <code>boottest</code>.</p>
   <span class='va'>clustid</span>,
   bootcluster <span class='op'>=</span> <span class='st'>"max"</span>,
   fe <span class='op'>=</span> <span class='cn'>NULL</span>,
-  conf_int <span class='op'>=</span> <span class='cn'>NULL</span>,
+  conf_int <span class='op'>=</span> <span class='cn'>TRUE</span>,
   seed <span class='op'>=</span> <span class='cn'>NULL</span>,
   R <span class='op'>=</span> <span class='cn'>NULL</span>,
   beta0 <span class='op'>=</span> <span class='fl'>0</span>,
-  sign_level <span class='op'>=</span> <span class='cn'>NULL</span>,
+  sign_level <span class='op'>=</span> <span class='fl'>0.05</span>,
   type <span class='op'>=</span> <span class='st'>"rademacher"</span>,
   impose_null <span class='op'>=</span> <span class='cn'>TRUE</span>,
   p_val_type <span class='op'>=</span> <span class='st'>"two-tailed"</span>,
@@ -159,6 +174,12 @@ implemented in the STATA package <code>boottest</code>.</p>
   nthreads <span class='op'>=</span> <span class='fu'>getBoottest_nthreads</span><span class='op'>(</span><span class='op'>)</span>,
   ssc <span class='op'>=</span> <span class='fu'><a href='boot_ssc.html'>boot_ssc</a></span><span class='op'>(</span>adj <span class='op'>=</span> <span class='cn'>TRUE</span>, fixef.K <span class='op'>=</span> <span class='st'>"none"</span>, cluster.adj <span class='op'>=</span> <span class='cn'>TRUE</span>, cluster.df <span class='op'>=</span>
     <span class='st'>"conventional"</span><span class='op'>)</span>,
+  boot_algo <span class='op'>=</span> <span class='fu'>getBoottest_boot_algo</span><span class='op'>(</span><span class='op'>)</span>,
+  floattype <span class='op'>=</span> <span class='st'>"Float64"</span>,
+  maxmatsize <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  bootstrapc <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  t_boot <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  getauxweights <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -171,8 +192,8 @@ implemented in the STATA package <code>boottest</code>.</p>
     </tr>
     <tr>
       <th>param</th>
-      <td><p>A character vector of length one. The name of the regression
-coefficient for which the hypothesis is to be tested</p></td>
+      <td><p>A character vector. The name of the regression
+coefficient(s) for which the hypothesis is to be tested</p></td>
     </tr>
     <tr>
       <th>B</th>
@@ -275,6 +296,37 @@ to use. The default is to use 1 core.</p></td>
 You can find more details in the help file for <code><a href='boot_ssc.html'>boot_ssc()</a></code>. The function is purposefully designed to mimic fixest's <code><a href='https://lrberge.github.io/fixest/reference/ssc.html'>ssc</a></code> function.</p></td>
     </tr>
     <tr>
+      <th>boot_algo</th>
+      <td><p>Character scalar. Either "R" or "WildBootTests.jl". Controls the algorithm employed by boottest.
+"R" is the default and implements the cluster bootstrap as in Roodman (2019). "WildBootTests.jl" executes the wild cluster bootstrap by via the WildBootTests.jl
+package. For it to run, Julia and WildBootTests.jl need to be installed. Check out the set_up_ ... functions
+The "fast and wild" algorithm is extremely fast for small number of clusters, but because it is fully vectorized, very memory-demanding.
+For large number of clusters and large number of bootstrap iterations, the fast and wild algorithm becomes infeasible. If a out-of-memory error #
+occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
+Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. Note that you can set the employed algorithm globally by using the
+<code><a href='setBoottest_boot_algo.html'>setBoottest_boot_algo()</a></code> function.</p></td>
+    </tr>
+    <tr>
+      <th>floattype</th>
+      <td><p>Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?</p></td>
+    </tr>
+    <tr>
+      <th>maxmatsize</th>
+      <td><p>... Only relevant when "boot_algo" is set to "WildBootTests.jl".</p></td>
+    </tr>
+    <tr>
+      <th>bootstrapc</th>
+      <td><p>... Only relevant when "boot_algo" is set to "WildBootTests.jl". Runs the boostrap-c as advertised by Young (2019).</p></td>
+    </tr>
+    <tr>
+      <th>t_boot</th>
+      <td><p>...</p></td>
+    </tr>
+    <tr>
+      <th>getauxweights</th>
+      <td><p>...</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>Further arguments passed to or from other methods.</p></td>
     </tr>
@@ -339,9 +391,8 @@ STATA using boottest", The STATA Journal.
 <p>Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span><span class='op'>(</span><span class='st'>"lfe"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://s3alfisc.github.io/fwildclusterboot/'>fwildclusterboot</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/sgaure/lfe'>lfe</a></span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>voters</span><span class='op'>)</span>
 <span class='va'>felm_fit</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lfe/man/felm.html'>felm</a></span><span class='op'>(</span><span class='va'>proposition_vote</span> <span class='op'>~</span> <span class='va'>treatment</span> <span class='op'>+</span> <span class='va'>ideology1</span> <span class='op'>+</span> <span class='va'>log_income</span>
@@ -378,17 +429,8 @@ STATA using boottest", The STATA Journal.
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>boot1</span><span class='op'>)</span>
 <span class='op'>}</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading required namespace: lfe</span></div><div class='output co'>#&gt; <span class='message'>Loading required package: Matrix</span></div><div class='output co'>#&gt; boottest.felm(object = felm_fit, param = "treatment", B = 9999, 
-#&gt;     clustid = "group_id1")
-#&gt; 	
-#&gt;  Hypothesis: 1*treatment = 0
-#&gt;  Observations: 300
-#&gt;  Bootstr. Iter: 9999
-#&gt;  Bootstr. Type: rademacher
-#&gt;  Clustering: 1-way
-#&gt;  Confidence Sets: 95%
-#&gt;  Number of Clusters: 40
-#&gt;  </div><div class='img'><img src='boottest.felm-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

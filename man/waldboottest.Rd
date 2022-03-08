@@ -12,11 +12,11 @@ waldboottest(object, ...)
 \item{...}{other arguments}
 }
 \value{
-An object of class \code{boottest}.
+An object of class \code{waldboottest}.
 }
 \description{
 \code{waldboottest} is a S3 method that allows for arbitrary linear hypothesis testing
-for objects of class lm, fixest, felm and ivreg
+for objects of class lm, fixest, felm
 }
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in
@@ -32,5 +32,5 @@ MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite eco
 Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 }
 \seealso{
-\link[fwildclusterboot]{waldboottest.lm}
+\link[fwildclusterboot]{waldboottest.lm} \link[fwildclusterboot]{waldboottest.felm} \link[fwildclusterboot]{waldboottest.fixest}
 }

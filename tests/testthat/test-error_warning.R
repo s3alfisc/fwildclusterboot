@@ -437,20 +437,34 @@ test_that("errors and warnings", {
   
   expect_error(boottest(feols_fit, param = "x1", B = 999, clustid = "clustid"))
   
-  # 
-  # data <- fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
-  # weights_vec <- data$weights
-  # 
-  # lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = weights_vec,
-  #              data = data)
-  # feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = weights_vec,
-  #                            data = data)
-  # lfe_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = weights_vec, 
-  #                      data = data)
-  # 
-  # expect_error(boottest(lm_fit, param = "treatment", B = 999, clustid = "clustid"))
-  # expect_error(boottest(feols_fit, param = "treatment", B = 999, clustid = "clustid"))
-  # expect_error(boottest(lfe_fit, param = "treatment", B = 999, clustid = "clustid"))
+
+  data <- fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+  weights_vec <- data$weights
+
+  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = weights_vec,
+               data = data)
+  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = weights_vec,
+                             data = data)
+  lfe_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , weights = weights_vec,
+                       data = data)
+
+  expect_error(boottest(lm_fit, param = "treatment", B = 999, clustid = "clustid"))
+  expect_error(boottest(feols_fit, param = "treatment", B = 999, clustid = "clustid"))
+  expect_error(boottest(lfe_fit, param = "treatment", B = 999, clustid = "clustid"))
+  
+  
+  # param not in clustid, fe
+  feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , 
+                             data = data)
+  lfe_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , 
+                       data = data)
+  
+  expect_error(boottest(feols_fit, param = "treatment", fe = "treatment", B = 999, clustid = "group_id1"))
+  expect_error(boottest(lfe_fit, param = "treatment", fe = "treatment", B = 999, clustid = "group_id1"))
+  expect_error(boottest(feols_fit, param = "treatment", fe = "Q1_immigration", B = 999, clustid = "Q1_immigration"))
+  expect_error(boottest(lfe_fit, param = "treatment", fe = "Q1_immigration", B = 999, clustid = "Q1_immigration"))
+  
+  
   
 })
 

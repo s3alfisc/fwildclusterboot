@@ -24,7 +24,7 @@
   nthreads = getBoottest_nthreads(),
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
-  boot_algo = "R",
+  boot_algo = getBoottest_boot_algo(),
   floattype = "Float64",
   maxmatsize = FALSE,
   bootstrapc = FALSE,
@@ -107,7 +107,8 @@ package. For it to run, Julia and WildBootTests.jl need to be installed. Check o
 The "fast and wild" algorithm is extremely fast for small number of clusters, but because it is fully vectorized, very memory-demanding.
 For large number of clusters and large number of bootstrap iterations, the fast and wild algorithm becomes infeasible. If a out-of-memory error #
 occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
-Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm.}
+Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. Note that you can set the employed algorithm globally by using the
+\code{setBoottest_boot_algo()} function.}
 
 \item{floattype}{Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?}
 
@@ -146,6 +147,7 @@ confidence interval.}
 \item{t_boot}{All bootstrap t-statistics.}
 \item{regression}{The regression object used in boottest.}
 \item{call}{Function call of boottest.}
+\item{boot_algo}{The employed bootstrap algorithm.}
 }
 \description{
 \code{boottest.lm} is a S3 method that allows for fast wild cluster

@@ -38,9 +38,18 @@ reference:
   - '`boottest.lm`'
   - '`boottest.felm`'
   - '`boottest.fixest`'
+  - '`boottest.ivreg`'
+  - '`waldboottest`'
+  - '`waldboottest.lm`'
+  - '`waldboottest.felm`'
+  - '`waldboottest.fixest`'
+  - '`boot_ssc`'
+  - '`setBoottest_boot_algo`'
+  - 'setBoottest_nthreads'
+
 - title: Internal functions
   desc: > 
-    Functions to compute p-values, confidence intervals and preprocess the data 
+    Relevant internal functions to compute p-values, confidence intervals and preprocess the data 
   contents: 
   - '`boot_algo2`'
   - '`crosstab`'
@@ -48,19 +57,17 @@ reference:
   - '`p_val_null2`'
   - '`invert_p_val2`'
   - '`preprocess2`'
+  
 - title: Methods to inspect results
   desc: > 
     Functions and methods to inspect results
   contents: 
-  - '`plot.boottest`'
-  - '`summary.boottest`'
-  - '`tidy.boottest`'
   - '`tidy`'
-- title: Other  
-  contents: 
-  - '`create_data_2`'
-  - 'setBoottest_nthreads'
-  - 'getBoottest_nthreads'
-  - 'check_set_nthreads'
-
-
+  - '`summary`'
+  - '`plot`'
+  - '`tidy.boottest`'
+  - '`summary.boottest`'
+  - '`plot.boottest`'
+  - '`tidy.waldboottest`'
+  - '`summary.waldboottest`'
+  - '`plot.waldboottest`'

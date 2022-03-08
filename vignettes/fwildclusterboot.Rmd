@@ -19,17 +19,14 @@ knitr::opts_chunk$set(
 library(fwildclusterboot)
 ```
 
-The `fwildclusterboot` package is an R port of STATA's [boottest](https://github.com/droodman/boottest) package. 
+The `fwildclusterboot` package implements the "fast" wild cluster bootstrap algorithm developed in Roodman et al (2019) for regression objects in R. The "fast" algorithm makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples - as long as the number of bootstrapping clusters is not too large.
 
-It implements the "fast" wild cluster bootstrap algorithm developed in Roodman et al (2019) for regression objects in R. The "fast" algorithm makes it feasible to calculate test statistics based on a large number of bootstrap draws even for large samples - as long as the number of bootstrapping clusters is not too large.
+For linear regression models, `fwildclusterboot` supports almost all features of Stata's `boottest` package. This means that a set of different bootstrap distributions, regression weights, fixed effects, and both restricted (WCR) and unrestricted (WCU) bootstrap inference are supported. The main difference is that it currently only supports univariate hypothesis tests of regression paramters of the form $H_{0}: R\beta = r$ vs $H_{1}: R\beta \neq r$, where r is scalar.
 
-A description of the algorithm is beyond the scope of this vignette. It is very clearly presented in [Roodman et al. (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm).
+Further, `fwildclusterboot` serves as an R port to [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl), which implements the fast wild cluster bootstrap in Julia at extreme speed. Beyond being significantly faster than `fwildclusterboot's` native R implementation of the wild cluster bootstrap for OLS (in particular for more demanding problems), `WildBootTests.jl` offers support for the WRE bootstrap for IV models ([(Davidson & MacKinnon, 2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221)) and functionality for tests of multiple hypothesis.
+
+A description of the "fast" algorithm is beyond the scope of this vignette. It is very clearly presented in [Roodman et al. (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm).
 For technical details of the implementation in `fwildclusterboot`, have a look at the `technical vignette` (tba).
-
-For linear regression models, `fwildclusterboot` supports almost all features of `boottest`. This means that a set of different bootstrap distributions, regression weights, fixed effects, and both restricted (WCR) and unrestricted (WCU) boostrap inference are supported. The main difference is that it currently only supports univariate hypothesis tests of regression paramters of the form $H_{0}: R\beta = r$ vs $H_{1}: R\beta \neq r$, where r is scalar.
-
-In contrast to `boottest`, `fwildclusterboot` does not support methods for instrumental variable estimation and the score bootstrap for non-linear models.
-
 
 # The `boottest()` function
 
@@ -266,6 +263,75 @@ boot_lm <- boottest(lm_fit,
                        nthreads = 2)
 ```
 
+# Running the wild cluster bootstrap via WildBootTests.jl 
+
+`fwildclusterboot` serves as an R port to [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) package. 
+
+For guidance on how to install `Julia` and `WildBootTests.jl` and how to connect R and Julia, please take a look at the [running WildBootTests.jl through fwildclusterboot](WildBootTests.html) vignette. 
+
+You can tell `boottest()` to run `WildBootTests.jl` by using the `boot_algo` function argument: 
+
+```{r, message = FALSE, warning = FALSE}
+# set a Julia seed for reproducibility
+fwildclusterboot::set_julia_seed(8785)
+boot_lm <- boottest(lm_fit, 
+                       clustid = "group_id1", 
+                       param = "treatment", 
+                       B = 9999, 
+                       boot_algo = "WildBootTests.jl")
+```
+
+If you decide to run all your bootstraps through `WildBootTests.jl`, you can set a global variable via 
+
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
+setBoottest_boot_algo("WildBootTests.jl")
+```
+
+Calling `boottest()` without specifying `boot_algo = "WildBootTests.jl"` will now automatically run the bootstrap through `WildBootTests.jl`.
+
+## The WRE bootstrap for IV models 
+
+Through `WildBootTests.jl`, `fwildclusterboot` supports the WRE bootstrap by [Davidson & MacKinnon, 2010](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221) for IV (instrumental variables) models for objects of type `ivreg` via the `boottest()` function: 
+
+```{r, message = FALSE, warning = FALSE}
+library(ivreg)
+
+fwildclusterboot::set_julia_seed(123)
+data("SchoolingReturns", package = "ivreg")
+      
+# drop all NA values from SchoolingReturns
+SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
+ivreg_fit <- ivreg(log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
+                           nearcollege + age  + ethnicity + smsa + south + parents14, data = SchoolingReturns)
+
+      
+boot_ivreg <- boottest(object = ivreg_fit,
+                        B = 999,
+                        param = "education",
+                        clustid = "kww",
+                        type = "mammen",
+                        impose_null = TRUE)
+summary(boot_ivreg)
+```
+
+## Tests of multiple joint hypotheses (q > 1)
+
+Through `WildBootTests.jl`, you can also test multiple joint hypotheses via the `waldboottest()` function. 
+With minor differences, `waldboottest()'s` syntax largely mirrors `boottest()`.
+
+To jointly test the null hypothesis $H_0: treatment = 0 \text{ and } ideology1 = 0$ vs $H_0: treatment \neq 0 \text{ and } ideology1 \neq 0$ via a wild cluster bootstrap, you can run
+
+```{r, message = FALSE, warning = FALSE}
+library(clubSandwich)
+R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+wboottest <- 
+waldboottest(object = lm_fit, 
+             clustid = "group_id1", 
+             B = 999, 
+             R = R)
+generics::tidy(wboottest)
+```
+
 
 # Miscellanea
 
@@ -395,9 +461,9 @@ boot_lm <- boottest(lm_fit,
 
 <!-- + why might confidence intervals differ for estimates based on `lm()`, `feols()` and `felm()`? -->
 
-## Can I check if `fwildclusterboot::boottest()` works as intended?
+## A sanity check if `fwildclusterboot::boottest()` works as intended
 
-One sanity check to see if `fwildclusterboot::boottest()` works as intended is to look at its `t_stat` return value. For both the WCR and WCU bootstrap, `boottest()` re-calculates the "original" - hence non-bootstrapped - t-statistic from its input regression model. The t-stat computed in `boottest()` and the t-stats reported by either `lm()`, `feols()` and `lfe()` should be *identical*. If you find that they differ, please report a bug [on github](https://github.com/s3alfisc/fwildclusterboot/issues). Note that `fwildclusterboot` explicitly tests for t-stat equality against `fixest::feols()` [here](https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_small_sample_correction_tstat.R).
+A sanity check to see if `fwildclusterboot::boottest()` works as intended is to look at its `t_stat` return value. For both the WCR and WCU bootstrap, `boottest()` re-calculates the "original" - hence non-bootstrapped - t-statistic from its input regression model. The t-stat computed in `boottest()` and the t-stats reported by either `lm()`, `feols()` and `lfe()` under the same error clustering structure and small-sample adjustments should be *identical*. If you find that they differ, please report a bug [on github](https://github.com/s3alfisc/fwildclusterboot/issues). Note that `fwildclusterboot` explicitly tests for t-stat equality against `fixest::feols()` [here](https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_small_sample_correction_tstat.R).
 
 ```{r}
 data <- 

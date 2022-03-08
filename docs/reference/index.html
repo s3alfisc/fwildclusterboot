@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fwildclusterboot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8</span>
       </span>
     </div>
 
@@ -96,6 +96,21 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Calling_WildBootTests_jl_through_fwildclusterboot.html">Calling WildBootTests.jl through fwildclusterboot</a>
+    </li>
+    <li>
+      <a href="../articles/WildBootTests.html">Calling WildBootTests.jl through fwildclusterboot</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -168,12 +183,54 @@
           <p><code><a href="boottest.fixest.html">boottest(<i>&lt;fixest&gt;</i>)</a></code> </p>
         </td>
         <td><p>Fast wild cluster bootstrap inference for object of class fixest</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="boottest.ivreg.html">boottest(<i>&lt;ivreg&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class lm</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="waldboottest.html">waldboottest()</a></code> </p>
+        </td>
+        <td><p>Arbitrary Linear Hypothesis Testing for Regression Models via Wald-Tests</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="waldboottest.lm.html">waldboottest(<i>&lt;lm&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class lm</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="waldboottest.felm.html">waldboottest(<i>&lt;felm&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class feols</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="waldboottest.fixest.html">waldboottest(<i>&lt;fixest&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class feols</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="boot_ssc.html">boot_ssc()</a></code> </p>
+        </td>
+        <td><p>set the small sample correction factor applied in <code>boottest()</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="setBoottest_boot_algo.html">setBoottest_boot_algo()</a></code> </p>
+        </td>
+        <td><p>Sets the bootstrap algo to be run via <code>boottest()</code> and <code>waldboottest()</code></p></td>
       </tr>
     </tbody><tbody>
       <tr>
         <th colspan="2">
           <h2 id="section-internal-functions" class="hasAnchor"><a href="#section-internal-functions" class="anchor"></a>Internal functions</h2>
-          <p class="section-desc"><p>Functions to compute p-values, confidence intervals and preprocess the data</p></p>
+          <p class="section-desc"><p>Relevant internal functions to compute p-values, confidence intervals and preprocess the data</p></p>
         </th>
       </tr>
       
@@ -203,9 +260,99 @@
       <tr>
         
         <td>
+          <p><code><a href="boottest.felm.html">boottest(<i>&lt;felm&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class felm</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="boottest.fixest.html">boottest(<i>&lt;fixest&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class fixest</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="boottest.ivreg.html">boottest(<i>&lt;ivreg&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class lm</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="boottest.lm.html">boottest(<i>&lt;lm&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class lm</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="boottest.html">boottest()</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="boot_algo2.html">boot_algo2()</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap algorithm</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="boot_ssc.html">boot_ssc()</a></code> </p>
+        </td>
+        <td><p>set the small sample correction factor applied in <code>boottest()</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="cpp_get_nb_threads.html">cpp_get_nb_threads()</a></code> </p>
+        </td>
+        <td><p>Get maximum number of threads on hardware for open mp support</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="create_data.html">create_data()</a></code> </p>
+        </td>
+        <td><p>Simulate Data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="dot-onLoad.html">.onLoad()</a></code> </p>
+        </td>
+        <td><p>setting options for nthreads when package is loaded</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="eigenMapMatMult.html">eigenMapMatMult()</a></code> </p>
+        </td>
+        <td><p>Matrix Multiplication via Eigen</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="get_ssc.html">get_ssc()</a></code> </p>
+        </td>
+        <td><p>Compute small sample adjustment factors</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="glance.boottest.html">glance(<i>&lt;boottest&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>S3 method to glance at objects of class boottest</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="plot.boottest.html">plot(<i>&lt;boottest&gt;</i>)</a></code> </p>
         </td>
         <td><p>Plot the bootstrap distribution of t-statistics</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="setBoottest_boot_algo.html">setBoottest_boot_algo()</a></code> </p>
+        </td>
+        <td><p>Sets the bootstrap algo to be run via <code>boottest()</code> and <code>waldboottest()</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="set_julia_seed.html">set_julia_seed()</a></code> </p>
+        </td>
+        <td><p>Set a global seed in the current Julia session</p></td>
       </tr><tr>
         
         <td>
@@ -215,23 +362,58 @@
       </tr><tr>
         
         <td>
+          <p><code><a href="summary.waldboottest.html">summary(<i>&lt;waldboottest&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>S3 method to summarize objects of class waldboottest</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="tidy.boottest.html">tidy(<i>&lt;boottest&gt;</i>)</a></code> </p>
         </td>
         <td><p>S3 method to summarize objects of class boottest into tidy data.frame</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="tidy.waldboottest.html">tidy(<i>&lt;waldboottest&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>S3 method to summarize objects of class waldboottest into tidy data.frame</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="to_integer.html">to_integer()</a></code> </p>
+        </td>
+        <td><p>Transform vectors of all types safely to integer vectors</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="voters.html">voters</a></code> </p>
+        </td>
+        <td><p>Random example data set</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="waldboottest.felm.html">waldboottest(<i>&lt;felm&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class feols</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="waldboottest.fixest.html">waldboottest(<i>&lt;fixest&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class feols</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="waldboottest.lm.html">waldboottest(<i>&lt;lm&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Fast wild cluster bootstrap inference for object of class lm</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="waldboottest.html">waldboottest()</a></code> </p>
+        </td>
+        <td><p>Arbitrary Linear Hypothesis Testing for Regression Models via Wald-Tests</p></td>
       </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-other" class="hasAnchor"><a href="#section-other" class="anchor"></a>Other</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      
     </tbody>
     </table>
   </div>

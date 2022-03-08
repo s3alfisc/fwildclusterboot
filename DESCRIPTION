@@ -1,7 +1,7 @@
 Package: fwildclusterboot
-Title: Fast Wild Cluster Bootstrap Inference for Linear Regression Models
-Version: 0.7.2
-Date: 2022-03-01
+Title: Fast Wild Cluster Bootstrap Inference for Linear Models
+Version: 0.8
+Date: 2022-03-07
 Authors@R: 
     c(
     person(given = "Alexander",
@@ -44,6 +44,8 @@ Description: Implementation of the fast algorithm for wild cluster bootstrap
              (WCU) bootstrap are supported. Methods are provided for a variety 
              of fitted models, including 'lm()', 'feols()' 
              (from package 'fixest') and 'felm()' (from package 'lfe').
+             Further, R port to WildBootTests.jl, which provides the wild cluster 
+             bootstrap for OLS, IV and hypotheses with q > 1.
 URL: https://s3alfisc.github.io/fwildclusterboot/
 BugReports: https://github.com/s3alfisc/fwildclusterboot/issues/
 License: GPL-3 

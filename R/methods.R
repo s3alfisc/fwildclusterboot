@@ -31,16 +31,16 @@ boottest <- function(object,
 #'
 #'
 #' `waldboottest` is a S3 method that allows for arbitrary linear hypothesis testing
-#' for objects of class lm, fixest, felm and ivreg
+#' for objects of class lm, fixest, felm
 #'
 #' @param object An object of type lm, fixest, felm or ivreg
 #' @param ... other arguments
 #'
-#' @seealso \link[fwildclusterboot]{waldboottest.lm}
+#' @seealso \link[fwildclusterboot]{waldboottest.lm} \link[fwildclusterboot]{waldboottest.felm} \link[fwildclusterboot]{waldboottest.fixest}
 #'
 #' @export
 #'
-#' @return An object of class \code{boottest}.
+#' @return An object of class \code{waldboottest}.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
 #'             (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})

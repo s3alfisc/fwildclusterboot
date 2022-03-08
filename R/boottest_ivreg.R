@@ -93,7 +93,25 @@
 #' @references MacKinnon, James G., and Matthew D. Webb. "The wild bootstrap for few (treated) clusters." The Econometrics Journal 21.2 (2018): 114-135.
 #' @references MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite economique 91.1-2 (2015): 11-33.
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
-
+#' @examples 
+#' \dontrun{
+#' library(ivreg)
+#' library(fwildclusterboot)
+#' 
+#' # drop all NA values from SchoolingReturns
+#' SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
+#' ivreg_fit <- ivreg(log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
+#'                      nearcollege + age  + ethnicity + smsa + south + parents14, data = SchoolingReturns)
+#' 
+#' boot_ivreg <- boottest(object = ivreg_fit,
+#'                        B = 999,
+#'                        param = "education",
+#'                        clustid = "kww",
+#'                        type = "mammen",
+#'                        impose_null = TRUE)
+#' summary(boot_ivreg)
+#' 
+#'}
 
 
 boottest.ivreg <- function(object,
@@ -411,7 +429,8 @@ boottest.ivreg <- function(object,
     impose_null = impose_null,
     R = R,
     beta0 = beta0,
-    plotpoints = plotpoints
+    plotpoints = plotpoints, 
+    boot_algo = "WildBootTests.jl"
   )
   
   
