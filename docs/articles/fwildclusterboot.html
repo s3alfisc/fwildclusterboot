@@ -64,10 +64,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/Calling_WildBootTests_jl_through_fwildclusterboot.html">Calling WildBootTests.jl through fwildclusterboot</a>
-    </li>
-    <li>
-      <a href="../articles/WildBootTests.html">Calling WildBootTests.jl through fwildclusterboot</a>
+      <a href="../articles/WildBootTests.html">Running WildBootTests.jl</a>
     </li>
   </ul>
 </li>
@@ -174,7 +171,7 @@
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                                 term estimate statistic p.value conf.low</span>
-<span class="co">#&gt; 1 0.6*treatment+0.2*ideology1 = 0.02    0.048     2.346   0.025    0.024</span>
+<span class="co">#&gt; 1 0.6*treatment+0.2*ideology1 = 0.02    0.048     2.346   0.025    0.023</span>
 <span class="co">#&gt;   conf.high</span>
 <span class="co">#&gt; 1     0.072</span>
 
@@ -224,7 +221,7 @@ Model 2
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
--0.038 (0.000)
+-0.038 (0.001)
 </td>
 </tr>
 <tr>
@@ -233,7 +230,7 @@ Model 2
 <td style="text-align:center;box-shadow: 0px 1px">
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[-0.056, -0.019]
+[-0.057, -0.019]
 </td>
 </tr>
 <tr>
@@ -327,7 +324,7 @@ Log.Lik.
 <span class="co">#&gt;  Number of Clusters: 40 20 251</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 1*treatment = 0    0.073     3.845   0.004    0.031     0.116</span></code></pre></div>
+<span class="co">#&gt; 1 1*treatment = 0    0.073     3.845   0.004    0.032     0.115</span></code></pre></div>
 </div>
 <div id="choice-of-bootstrap-weights" class="section level2">
 <h2 class="hasAnchor">
@@ -368,20 +365,20 @@ Model 2
 1*treatment = 0
 </td>
 <td style="text-align:center;">
-0.073 (0.004)
+0.073 (0.002)
 </td>
 <td style="text-align:center;">
-0.073 (0.003)
+0.073 (0.002)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;box-shadow: 0px 1px">
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.031, 0.116]
+[0.034, 0.112]
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.032, 0.112]
+[0.029, 0.117]
 </td>
 </tr>
 <tr>
@@ -611,20 +608,20 @@ Model 2
 1*treatment = 0
 </td>
 <td style="text-align:center;">
-0.073 (0.004)
+0.073 (0.005)
 </td>
 <td style="text-align:center;">
-0.073 (0.008)
+0.073 (0.007)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;box-shadow: 0px 1px">
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.031, 0.110]
+[0.031, 0.111]
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.028, 0.116]
+[0.027, 0.116]
 </td>
 </tr>
 <tr>
@@ -761,17 +758,17 @@ Model 2
 0.073 (0.005)
 </td>
 <td style="text-align:center;">
-0.073 (0.007)
+0.073 (0.009)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;box-shadow: 0px 1px">
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.032, 0.110]
+[0.031, 0.111]
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.029, 0.116]
+[0.029, 0.117]
 </td>
 </tr>
 <tr>
@@ -926,7 +923,7 @@ Log.Lik.
 <span class="co">#&gt;  Number of Clusters: 46</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 1*education = 0    0.064     1.044   0.271   -0.036     0.212</span></code></pre></div>
+<span class="co">#&gt; 1 1*education = 0    0.064     1.044   0.294   -0.039     0.222</span></code></pre></div>
 </div>
 <div id="tests-of-multiple-joint-hypotheses-q-1" class="section level2">
 <h2 class="hasAnchor">
@@ -943,7 +940,7 @@ Log.Lik.
              R <span class="op">=</span> <span class="va">R</span><span class="op">)</span>
 <span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html">tidy</a></span><span class="op">(</span><span class="va">wboottest</span><span class="op">)</span>
 <span class="co">#&gt;     F_stat       p_val</span>
-<span class="co">#&gt; 1 8.469086 0.003003003</span></code></pre></div>
+<span class="co">#&gt; 1 8.469086 0.002002002</span></code></pre></div>
 </div>
 </div>
 <div id="miscellanea" class="section level1">
