@@ -1,3 +1,0 @@
-module fwildclusterboot
-
-end # module
