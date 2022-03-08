@@ -1,8 +1,8 @@
 ---
-title: "Calling WildBootTests.jl through fwildclusterboot"
+title: "Running WildBootTests.jl"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Calling_WildBootTests_jl_through_fwildclusterboot}
+  %\VignetteIndexEntry{WildBootTests}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
