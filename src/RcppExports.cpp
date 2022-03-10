@@ -35,10 +35,42 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// sample_weights
+arma::mat sample_weights(int G, int type);
+RcppExport SEXP _fwildclusterboot_sample_weights(SEXP GSEXP, SEXP typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type G(GSEXP);
+    Rcpp::traits::input_parameter< int >::type type(typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(sample_weights(G, type));
+    return rcpp_result_gen;
+END_RCPP
+}
+// wildboottestHC
+List wildboottestHC(const arma::vec& y, const arma::mat& X, const arma::mat& R, const float& r, const int& B, const int& N_G_bootcluster, const int& cores, const int& type);
+RcppExport SEXP _fwildclusterboot_wildboottestHC(SEXP ySEXP, SEXP XSEXP, SEXP RSEXP, SEXP rSEXP, SEXP BSEXP, SEXP N_G_bootclusterSEXP, SEXP coresSEXP, SEXP typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type R(RSEXP);
+    Rcpp::traits::input_parameter< const float& >::type r(rSEXP);
+    Rcpp::traits::input_parameter< const int& >::type B(BSEXP);
+    Rcpp::traits::input_parameter< const int& >::type N_G_bootcluster(N_G_bootclusterSEXP);
+    Rcpp::traits::input_parameter< const int& >::type cores(coresSEXP);
+    Rcpp::traits::input_parameter< const int& >::type type(typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(wildboottestHC(y, X, R, r, B, N_G_bootcluster, cores, type));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_fwildclusterboot_eigenMapMatMult", (DL_FUNC) &_fwildclusterboot_eigenMapMatMult, 3},
     {"_fwildclusterboot_cpp_get_nb_threads", (DL_FUNC) &_fwildclusterboot_cpp_get_nb_threads, 0},
+    {"_fwildclusterboot_sample_weights", (DL_FUNC) &_fwildclusterboot_sample_weights, 2},
+    {"_fwildclusterboot_wildboottestHC", (DL_FUNC) &_fwildclusterboot_wildboottestHC, 8},
     {NULL, NULL, 0}
 };
 

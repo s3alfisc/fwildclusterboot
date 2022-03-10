@@ -1,5 +1,6 @@
 #' Fast wild cluster bootstrap inference for object of class lm
 #' 
+
 #' `boottest.lm` is a S3 method that allows for fast wild cluster 
 #' bootstrap inference for objects of class lm by  implementing
 #' the fast wild bootstrap algorithm developed in Roodman et al., 2019. 
@@ -155,9 +156,9 @@
 #' }
 
 boottest.lm <- function(object,
-                        clustid,
                         param,
                         B,
+                        clustid = NULL,
                         bootcluster = "max",
                         conf_int = TRUE,
                         seed = NULL,
@@ -181,14 +182,14 @@ boottest.lm <- function(object,
                         bootstrapc = FALSE, 
                         t_boot = FALSE, 
                         getauxweights = FALSE,
-                        ...) {
+                        ...){
 
 
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
   
   check_arg(object, "MBT class(lm)")
-  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(clustid, "NULL | character scalar | character vector")
   check_arg(param, "MBT scalar character | character vector")
   check_arg(B, "MBT scalar integer")  
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
@@ -203,7 +204,7 @@ boottest.lm <- function(object,
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer")
   check_arg(boot_ssc, 'class(ssc) | class(boot_ssc)')
-  check_arg(boot_algo, "charin(R, WildBootTests.jl)")
+  check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl)")
   
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
@@ -308,18 +309,18 @@ boottest.lm <- function(object,
     # R*beta; 
     point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
     
-    # # number of clusters used in bootstrap - always derived from bootcluster
-    # if(is.null(clustid)){
-    #   N_G <- preprocess$N
-    #   # also, override algo to lean
-    #   boot_algo <- "R-lean"
-    # } else {
-    #   N_G <- length(unique(preprocess$bootcluster[, 1]))
-    # }
+    # number of clusters used in bootstrap - always derived from bootcluster
+    if(is.null(clustid)){
+      N_G <- preprocess$N
+      # also, override algo to lean
+      boot_algo <- "R-lean"
+    } else {
+      N_G <- length(unique(preprocess$bootcluster[, 1]))
+    }
     
     # N_G <- preprocess$N_G
     
-    N_G <- length(unique(preprocess$bootcluster[, 1]))
+    # N_G <- length(unique(preprocess$bootcluster[, 1]))
     N_G_2 <- 2^N_G
     if (type %in% c("rademacher") & N_G_2 <= B) {
       warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
@@ -350,30 +351,28 @@ boottest.lm <- function(object,
                         nthreads = nthreads, 
                         type = type, 
                         full_enumeration = full_enumeration, 
-                        small_sample_correction = small_sample_correction
-      )
+                        small_sample_correction = small_sample_correction)
+      } else if(boot_algo == "R-lean") {
+       res <- boot_algo1(preprocessed_object = preprocess,
+                         boot_iter = B,
+                         point_estimate = point_estimate,
+                         impose_null = impose_null,
+                         beta0 = beta0,
+                         sign_level = sign_level,
+                         param = param,
+                         # seed = seed,
+                         p_val_type = p_val_type,
+                         nthreads = nthreads,
+                         type = type,
+                         full_enumeration = full_enumeration,
+                         small_sample_correction = small_sample_correction
+     )
     }
-    # } else if(boot_algo == "R-lean") {
-    #   res <- boot_algo1(preprocessed_object = preprocess,
-    #                     boot_iter = B,
-    #                     point_estimate = point_estimate,
-    #                     impose_null = impose_null,
-    #                     beta0 = beta0,
-    #                     sign_level = sign_level,
-    #                     param = param,
-    #                     # seed = seed,
-    #                     p_val_type = p_val_type,
-    #                     nthreads = nthreads,
-    #                     type = type,
-    #                     full_enumeration = full_enumeration,
-    #                     small_sample_correction = small_sample_correction
-    #   )
-    # }
-    # 
-    # # compute confidence sets
-    # if(class(res) == "boot_algo1"){
-    #   conf_int <-  FALSE
-    # }
+
+    # compute confidence sets
+    if(class(res) == "boot_algo1"){
+      conf_int <-  FALSE
+    }
 
     if (is.null(conf_int) || conf_int == TRUE) {
 
@@ -759,7 +758,9 @@ waldboottest.lm <- function(object,
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
   
-  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(object, "MBT class(lm)")
+  
+  check_arg(clustid, "character scalar | character vector")
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric vector | numeric matrix")
   
