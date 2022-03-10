@@ -351,7 +351,7 @@ boottest.lm <- function(object,
                         nthreads = nthreads, 
                         type = type, 
                         full_enumeration = full_enumeration, 
-                        small_sample_correction = small_sample_correction)
+                        small_sample_correctionR_ = small_sample_correction)
       } else if(boot_algo == "R-lean") {
        res <- boot_algo1(preprocessed_object = preprocess,
                          boot_iter = B,

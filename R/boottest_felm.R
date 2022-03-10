@@ -171,7 +171,7 @@ boottest.felm <- function(object,
                           # clustid,
                           param,
                           B,
-                          clustid,
+                          clustid = NULL,
                           bootcluster = "max",
                           fe = NULL,
                           conf_int = TRUE,
@@ -204,7 +204,7 @@ boottest.felm <- function(object,
   
   # Step 1: check arguments of felm call
   check_arg(object, "MBT class(felm)")
-  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(clustid, "NULL | character scalar | character vector")
   check_arg(param, "MBT scalar character | character vector")
   check_arg(B, "MBT scalar integer GT{99}")  
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
@@ -311,16 +311,16 @@ boottest.felm <- function(object,
     clustid_dims <- preprocess$clustid_dims
     point_estimate <- as.vector(object$coefficients[param,] %*% preprocess$R0[param])
     
-    # # number of clusters used in bootstrap - always derived from bootcluster
-    # if(is.null(clustid)){
-    #   N_G <- preprocess$N
-    #   # also, override algo to lean
-    #   boot_algo <- "R-lean"
-    # } else {
-    #   N_G <- length(unique(preprocess$bootcluster[, 1]))
-    # }
+    # number of clusters used in bootstrap - always derived from bootcluster
+    if(is.null(clustid)){
+      N_G <- preprocess$N
+      # also, override algo to lean
+      boot_algo <- "R-lean"
+    } else {
+      N_G <- length(unique(preprocess$bootcluster[, 1]))
+    }
     
-    N_G <- length(unique(preprocess$bootcluster[, 1]))
+    # N_G <- length(unique(preprocess$bootcluster[, 1]))
     # N_G <- preprocess$N_G
     N_G_2 <- 2^N_G
     if (type %in% c("rademacher") & N_G_2 <= B) {
@@ -353,28 +353,27 @@ boottest.felm <- function(object,
                         full_enumeration = full_enumeration, 
                         small_sample_correction = small_sample_correction
       )
+    } else if(boot_algo == "R-lean") {
+      res <- boot_algo1(preprocessed_object = preprocess,
+                        boot_iter = B,
+                        point_estimate = point_estimate,
+                        impose_null = impose_null,
+                        beta0 = beta0,
+                        sign_level = sign_level,
+                        param = param,
+                        # seed = seed,
+                        p_val_type = p_val_type,
+                        nthreads = nthreads,
+                        type = type,
+                        full_enumeration = full_enumeration,
+                        small_sample_correction = small_sample_correction
+      )
     }
-    # } else if(boot_algo == "R-lean") {
-    #   res <- boot_algo1(preprocessed_object = preprocess,
-    #                     boot_iter = B,
-    #                     point_estimate = point_estimate,
-    #                     impose_null = impose_null,
-    #                     beta0 = beta0,
-    #                     sign_level = sign_level,
-    #                     param = param,
-    #                     # seed = seed,
-    #                     p_val_type = p_val_type, 
-    #                     nthreads = nthreads, 
-    #                     type = type, 
-    #                     full_enumeration = full_enumeration, 
-    #                     small_sample_correction = small_sample_correction
-    #   )
-    # }
-    # 
-    # # compute confidence sets
-    # if(class(res) == "boot_algo1"){
-    #   conf_int <-  FALSE
-    # }
+
+    # compute confidence sets
+    if(class(res) == "boot_algo1"){
+      conf_int <-  FALSE
+    }
 
     if (is.null(conf_int) || conf_int == TRUE) {
 
