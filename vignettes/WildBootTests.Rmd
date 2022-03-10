@@ -1,5 +1,5 @@
 ---
-title: "Running WildBootTests.jl"
+title: "WildBootTests"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{WildBootTests}
@@ -12,7 +12,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ```{r setup}
