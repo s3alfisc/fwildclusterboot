@@ -63,6 +63,7 @@ arma::mat sample_weights(int G,
 //' @param N_G_bootcluster - The number of bootstrap clusters. For heteroskesdatic wild bootstrap, N_G_bootcluster = N, where N is the number of observations.
 //' @param cores Integer: the number of cores to be used.
 //' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
+//' @param small_sample_correction: Float. Small sample correction to be applied.
 //' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
 
 // [[Rcpp::export]]
@@ -73,7 +74,8 @@ List wildboottestHC(const arma::vec & y,
                     const int & B,
                     const int & N_G_bootcluster,
                     const int & cores,
-                    const int & type) {
+                    const int & type, 
+                    const float & small_sample_correction) {
 
   // function implements wild cluster bootstrap,
   // imposing the null
@@ -130,7 +132,7 @@ List wildboottestHC(const arma::vec & y,
   t_boot.col(0) = coef_boot / arma::sqrt(arma::diagvec(sigma_boot));
 
   List res;
-  res["t_boot"] = t_boot;
+  res["t_boot"] = small_sample_correction * t_boot;
 
   return res;
 

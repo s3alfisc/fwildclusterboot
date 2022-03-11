@@ -230,6 +230,12 @@ boottest.felm <- function(object,
   # check appropriateness and assign nthreads
   nthreads <- check_set_nthreads(nthreads)
   
+  if(is.null(clustid)){
+    heteroskedastic <- TRUE  
+  } else {
+    heteroskedastic <- FALSE
+  }
+  
   if(!is.null(seed)){
     dqrng::dqset.seed(seed)
   }
@@ -305,9 +311,8 @@ boottest.felm <- function(object,
     G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
     vcov_sign <- preprocess$vcov_sign
     
-    small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign)
-    #small_sample_correction <- ifelse(length(small_sample_correction) == 0, NULL, small_sample_correction)
-    
+    small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign, heteroskedastic = heteroskedastic)
+
     clustid_dims <- preprocess$clustid_dims
     point_estimate <- as.vector(object$coefficients[param,] %*% preprocess$R0[param])
     
@@ -366,7 +371,8 @@ boottest.felm <- function(object,
                         nthreads = nthreads,
                         type = type,
                         full_enumeration = full_enumeration,
-                        small_sample_correction = small_sample_correction
+                        small_sample_correction = small_sample_correction, 
+                        heteroskedastic = heteroskedastic
       )
     }
 

@@ -8,7 +8,7 @@
   object,
   param,
   B,
-  clustid,
+  clustid = NULL,
   bootcluster = "max",
   fe = NULL,
   conf_int = TRUE,

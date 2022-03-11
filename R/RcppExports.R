@@ -27,6 +27,7 @@ cpp_get_nb_threads <- function() {
 #' @param N_G_bootcluster - The number of bootstrap clusters. For heteroskesdatic wild bootstrap, N_G_bootcluster = N, where N is the number of observations.
 #' @param cores Integer: the number of cores to be used.
 #' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
+#' @param small_sample_correction: Float. Small sample correction to be applied.
 #' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
 NULL
 
@@ -34,7 +35,7 @@ sample_weights <- function(G, type) {
     .Call('_fwildclusterboot_sample_weights', PACKAGE = 'fwildclusterboot', G, type)
 }
 
-wildboottestHC <- function(y, X, R, r, B, N_G_bootcluster, cores, type) {
-    .Call('_fwildclusterboot_wildboottestHC', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type)
+wildboottestHC <- function(y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction) {
+    .Call('_fwildclusterboot_wildboottestHC', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction)
 }
 

@@ -4,7 +4,7 @@
 \alias{get_ssc}
 \title{Compute small sample adjustment factors}
 \usage{
-get_ssc(boot_ssc_object, N, k, G, vcov_sign)
+get_ssc(boot_ssc_object, N, k, G, vcov_sign, heteroskedastic = FALSE)
 }
 \arguments{
 \item{boot_ssc_object}{An object of type 'boot_ssc.type'}
@@ -16,6 +16,9 @@ get_ssc(boot_ssc_object, N, k, G, vcov_sign)
 \item{G}{The number of clusters}
 
 \item{vcov_sign}{A vector that helps create the covariance matrix}
+
+\item{heteroskedastic}{Heteroskedastic wild bootstrap? FALSE by default. If
+TRUE, cluster adjustments via G and vcov_sign will be ignored}
 }
 \value{
 A small sample adjustment factor

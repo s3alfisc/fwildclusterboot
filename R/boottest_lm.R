@@ -213,6 +213,12 @@ boottest.lm <- function(object,
   # check appropriateness of nthreads
   nthreads <- check_set_nthreads(nthreads)
   
+  if(is.null(clustid)){
+    heteroskedastic <- TRUE  
+  } else {
+    heteroskedastic <- FALSE
+  }
+  
   if(!is.null(seed)){
     dqrng::dqset.seed(seed)
   }
@@ -302,8 +308,7 @@ boottest.lm <- function(object,
     G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
     vcov_sign <- preprocess$vcov_sign
     
-    small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign)
-    #small_sample_correction <- ifelse(length(small_sample_correction) == 0, NULL, small_sample_correction)
+    small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign, heteroskedastic = heteroskedastic)
     
     clustid_dims <- preprocess$clustid_dims
     # R*beta; 
@@ -351,7 +356,7 @@ boottest.lm <- function(object,
                         nthreads = nthreads, 
                         type = type, 
                         full_enumeration = full_enumeration, 
-                        small_sample_correctionR_ = small_sample_correction)
+                        small_sample_correction = small_sample_correction)
       } else if(boot_algo == "R-lean") {
        res <- boot_algo1(preprocessed_object = preprocess,
                          boot_iter = B,
@@ -365,7 +370,8 @@ boottest.lm <- function(object,
                          nthreads = nthreads,
                          type = type,
                          full_enumeration = full_enumeration,
-                         small_sample_correction = small_sample_correction
+                         small_sample_correction = small_sample_correction, 
+                         heteroskedastic = heteroskedastic
      )
     }
 

@@ -1,4 +1,4 @@
-boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction) {
+boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction, heteroskedastic) {
 
   #' Fast wild cluster bootstrap algorithm
   #'
@@ -28,6 +28,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #' @param full_enumeration Is full enumeration employed? Full enum. is used if
   #'        N_G^2 < boot_iter for Mammen and Rademacher weights
   #' @param small_sample_correction The small sample correction to be applied. See ssc().
+  #' @param heteroskedastic Logical - if TRUE, run a heteroskedastic. If FALSE, run wild cluster bootstrap.
   #' @return A list of ...
   #' @importFrom Matrix t Diagonal
   #' @importFrom Matrix.utils aggregate.Matrix
@@ -73,7 +74,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
     stop("The 'lean' bootstrap algorithm is currently not supported for hypotheses about more than one parameter.")
   }
 
-  if(is.null(preprocessed_object$clustid)){
+  if(heteroskedastic == TRUE){
     boot_res <-
       wildboottestHC(y = Y,
                      X = X,
@@ -82,7 +83,8 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
                      B = boot_iter,
                      N_G_bootcluster = N,
                      cores = nthreads,
-                     type = type)[[1]]
+                     type = type, 
+                     small_sample_correction = small_sample_correction)[[1]]
   } else {
     bootcluster <- preprocessed_object$bootcluster[, 1]
     # is bootcluster a vector of integers that starts at 0?

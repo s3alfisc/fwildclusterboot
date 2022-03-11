@@ -16,7 +16,8 @@ boot_algo1(
   nthreads,
   type,
   full_enumeration,
-  small_sample_correction
+  small_sample_correction,
+  heteroskedastic
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ wild bootstrap factors. "rademacher" by default.}
 N_G^2 < boot_iter for Mammen and Rademacher weights}
 
 \item{small_sample_correction}{The small sample correction to be applied. See ssc().}
+
+\item{heteroskedastic}{Logical - if TRUE, run a heteroskedastic. If FALSE, run wild cluster bootstrap.}
 }
 \value{
 A list of ...
