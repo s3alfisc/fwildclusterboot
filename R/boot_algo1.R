@@ -88,20 +88,21 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
                      small_sample_correction = small_sample_correction)[[1]]
   } else {
     bootcluster <- preprocessed_object$bootcluster[, 1]
-    # is bootcluster a vector of integers that starts at 0?
-    if(!class(bootcluster) == "integer"){
-      stop("bootcluster needs to be an integer vector")
-    }
+    # turn bootcluster into sequence of integers, starting at 0, 1, 2, ..., length(unique(bootcluster)) (required for cpp
+    # implementation)
+    # if(!class(bootcluster) == "integer"){
+    bootcluster <- to_integer(preprocessed_object$bootcluster[, 1])
+    #}
     # bootcluster must be integers, starting with 0 (due to cpp implementation)
     bootcluster <- bootcluster - min(bootcluster)
 
     boot_res <-
-      wildboottestCL(y = Y,
-                     X = X,
-                     R = t(R),
+      wildboottestCL(y = unname(Y),
+                     X = unname(X),
+                     R = t(unname(R)),
                      r = beta0,
                      B = boot_iter,
-                     N_G_bootcluster = N_G_bootcluster,
+                     N_G_bootcluster = unname(N_G_bootcluster),
                      cores = nthreads,
                      type = type,
                      cluster = bootcluster)[[1]]

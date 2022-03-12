@@ -25,11 +25,30 @@ eigenMapMatMult <- function(A, B, nthreads) {
 #' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
 NULL
 
+#' Implementation of the wild  cluster bootstrap. Computes
+#' cluster robust variance estimators. For use in fwildclusterboot when
+#' the memory demands of the fast and wild algorithm are infeasible
+#' @param y A vector - the dependent variable
+#' @param X A matrix - the design matrix
+#' @param R A matrix - the constraints matrix for a hypothesis test R'beta = r.
+#' @param r A vector - r in hypothesis test R'beta = r.
+#' @param B An integer - controls the number of bootstrap iterations.
+#' @param N_G_bootcluster - The number of bootstrap clusters.
+#' @param cores Integer: the number of cores to be used.
+#' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
+#' @param cluster: Integer Vector. Contains information on the clusters.
+#' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
+NULL
+
 sample_weights <- function(G, type) {
     .Call('_fwildclusterboot_sample_weights', PACKAGE = 'fwildclusterboot', G, type)
 }
 
 wildboottestHC <- function(y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction) {
     .Call('_fwildclusterboot_wildboottestHC', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction)
+}
+
+wildboottestCL <- function(y, X, R, r, B, N_G_bootcluster, cores, type, cluster) {
+    .Call('_fwildclusterboot_wildboottestCL', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type, cluster)
 }
 

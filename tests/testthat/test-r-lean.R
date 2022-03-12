@@ -13,7 +13,7 @@ test_that("test lean cpp boottest", {
                                          icc2 = 0.01,
                                          numb_fe1 = 10,
                                          numb_fe2 = 10,
-                                         seed = 123)
+                                         seed = 11223)
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income ,
                 data = data)
   feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income ,
@@ -28,19 +28,21 @@ test_that("test lean cpp boottest", {
   # pracma::tic()
   boot_lm <- boottest(lm_fit,
                       param = "treatment",
-                      B = 19999,
+                      B = 9999,
                       ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                       nthreads = 8)
   # pracma::toc()
   
   boot_feols <- boottest(feols_fit,
                       param = "treatment", 
-                      B = 999,
-                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE))
+                      B = 9999,
+                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                      nthreads = 8)
   boot_felm <- boottest(felm_fit,
                       param = "treatment", 
-                      B = 999,
-                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE))
+                      B = 9999,
+                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                      nthreads = 8)
   
   # 2.155239
   res <- broom::tidy(
@@ -63,16 +65,19 @@ test_that("test lean cpp boottest", {
   
   boot_lm <- boottest(lm_fit,
                       param = "treatment", 
-                      B = 999,
-                      ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE))
+                      B = 9999,
+                      ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE), 
+                      nthreads = 8)
   boot_feols <- boottest(feols_fit,
                          param = "treatment", 
-                         B = 999,
-                         ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE))
+                         B = 9999,
+                         ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE), 
+                         nthreads = 8)
   boot_felm <- boottest(felm_fit,
                         param = "treatment", 
-                        B = 999,
-                        ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE))
+                        B = 9999,
+                        ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE), 
+                        nthreads = 8)
   
   res <- broom::tidy(
     lmtest::coeftest(
@@ -88,9 +93,9 @@ test_that("test lean cpp boottest", {
   # in fwildclusterboot: t / sqrt((n-1) / n-k)
   ssc_corr <- (N-1) / N
 
-  expect_equal(res$statistic / sqrt(ssc_corr), boot_lm$t_stat, tolerance = 0.01)
-  expect_equal(res$statistic / sqrt(ssc_corr), boot_feols$t_stat, tolerance = 0.01)
-  expect_equal(res$statistic / sqrt(ssc_corr), boot_felm$t_stat, tolerance = 0.01)
+  expect_equal(res$statistic / sqrt(ssc_corr), boot_lm$t_stat)
+  expect_equal(res$statistic / sqrt(ssc_corr), boot_feols$t_stat)
+  expect_equal(res$statistic / sqrt(ssc_corr), boot_felm$t_stat)
   
   expect_equal(res$p.value, boot_lm$p_val, tolerance = 0.05)
   expect_equal(res$p.value, boot_feols$p_val, tolerance = 0.05)
@@ -100,21 +105,28 @@ test_that("test lean cpp boottest", {
   
   
   # test oneway clustering
+  # pracma::tic()
+  boot_lm1 <-  boottest(lm_fit,
+                        param = "treatment",
+                        clustid = "group_id1",
+                        B = 2999, 
+                        boot_algo = "R-lean",
+                        nthreads = 8)
+  # pracma::toc()
   
-  # res <- 
-  # bench::mark(
-  #   boot_lm1 = boottest(lm_fit, param = "treatment", clustid = "group_id1", B = 999, boot_algo = "R-lean"),
-  #   boot_lm2 = boottest(lm_fit, param = "treatment", clustid = "group_id1", B = 999, boot_algo = "R"),
-  #   iterations = 1, 
-  #   check = FALSE
-  # )
-  # res
+  # pracma::tic()
+  boot_lm2 <-  boottest(lm_fit,
+                        param = "treatment",
+                        clustid = "group_id1",
+                        B = 2999, 
+                        boot_algo = "R",
+                        nthreads = 4, 
+                        ssc = boot_ssc(adj = FALSE, 
+                                       cluster.adj = FALSE))
+  # pracma::toc()
+  
+  expect_equal(boot_lm1$p_val, boot_lm2$p_val, tolerance = 0.02)
+  expect_equal(boot_lm1$t_stat, boot_lm2$t_stat)
+  
 
-  # 
-  # boot_lm11 <- boottest(lm_fit, param = "treatment", clustid = "group_id1", B = 9999, boot_algo = "R", ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE))
-  # boot_lm22 <- boottest(lm_fit, param = "treatment", clustid = "group_id1", B = 9999, boot_algo = "R-lean", ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE))
-  # 
-  # expect_equal(boot_lm1$p_val, boot_lm2$p_val, tolerance = 0.02)
-  # expect_equal(boot_lm1$t_stat, boot_lm2$t_stat)
-  
 })

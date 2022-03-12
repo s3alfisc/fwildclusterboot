@@ -322,30 +322,24 @@ boottest.lm <- function(object,
     # R*beta; 
     point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
     
-    # number of clusters used in bootstrap - always derived from bootcluster
-    # force algo to be R-lean for heteroskedastic model
-    if(is.null(clustid)){
-      N_G <- preprocess$N
-    } else {
-      N_G <- length(unique(preprocess$bootcluster[, 1]))
-    }
-    
-    N_G_2 <- 2^N_G
-    if (type %in% c("rademacher") & N_G_2 <= B) {
-      warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-              call. = FALSE, 
-              noBreaks. = TRUE
-      )
-      warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-              call. = FALSE, 
-              noBreaks. = TRUE
-      )
-      B <- N_G_2
-      full_enumeration <- TRUE
-    } else{
-      full_enumeration <- FALSE
-    }
-    
+    if(heteroskedastic == FALSE){
+      N_G_2 <- 2^preprocess$N_G
+      if (type %in% c("rademacher") & N_G_2 <= B) {
+        warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
+                call. = FALSE, 
+                noBreaks. = TRUE
+        )
+        warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
+                call. = FALSE, 
+                noBreaks. = TRUE
+        )
+        B <- N_G_2
+        full_enumeration <- TRUE
+      } else{
+        full_enumeration <- FALSE
+      }
+    }  
+
     
     if(boot_algo == "R"){
       res <- boot_algo2(preprocessed_object = preprocess,
