@@ -116,7 +116,7 @@ List wildboottestHC(const arma::vec & y,
     arma::mat sigma_boot =   (XXinv * meat * XXinv);
 
     // calculate t-stats
-    t_boot.col(b) = coef_boot / arma::sqrt(arma::diagvec(sigma_boot));
+    t_boot.col(b) = coef_boot / arma::sqrt(small_sample_correction * arma::diagvec(sigma_boot));
   }
 
   // for b = 0
@@ -129,14 +129,15 @@ List wildboottestHC(const arma::vec & y,
   arma::mat sigma_boot =   (XXinv * meat * XXinv);
 
   // calculate t-stats
-  t_boot.col(0) = coef_boot / arma::sqrt(arma::diagvec(sigma_boot));
+  t_boot.col(0) = coef_boot / arma::sqrt(small_sample_correction * arma::diagvec(sigma_boot));
 
   List res;
-  res["t_boot"] = small_sample_correction * t_boot;
+  res["t_boot"] = t_boot;
 
   return res;
 
 }
+
 
 // //' Implementation of the wild  cluster bootstrap. Computes
 // //' cluster robust variance estimators. For use in fwildclusterboot when
@@ -161,93 +162,93 @@ List wildboottestHC(const arma::vec & y,
 //                     const int & N_G_bootcluster,
 //                     const int & cores,
 //                     const int & type,
-//                     const arma::vec & cluster,
-//                     const arma::vec & vcov_sign,
-//                     const int & G) {
-// 
+//                     const arma::vec & cluster
+// ) {
+//   
 //   // function implements wild cluster bootstrap,
 //   // imposing the null
-// 
+//   
 //   omp_set_num_threads(cores);
-// 
+//   
+//   int small_sample_correction = 1; 
 //   int n = X.n_rows;
 //   int k = X.n_cols;
-// 
+//   
 //   // impose null on the bootstrap dgp
 //   arma::mat XXinv = (X.t() * X ).i();
 //   arma::mat beta = XXinv * (X.t() * y);
-// 
+//   
 //   // calculate beta constrained
 //   arma::vec beta_r = beta - XXinv * R * (R.t() * XXinv * R).i() * (R.t() * beta - r);
 //   arma::vec yhat_r = X * beta_r;
 //   arma::vec resid_r = y - yhat_r;
-// 
+//   
 //   arma::mat t_boot(k, B + 1);
-// 
+//   
 // #pragma omp parallel for
 //   for(int b = 1; b < B + 1; b++){
-// 
+//     
 //     // create bootstrap sample
 //     arma::vec y_boot(n);
 //     for(int g = 0; g < N_G_bootcluster; g++){
 //       y_boot(find(cluster == g)) = yhat_r(find(cluster == g)) + resid_r(find(cluster == g)) * sample_weights(1, type);
 //     }
-// 
+//     
 //     // get bootstrapped coefs and resids
 //     arma::vec coef_boot = XXinv * (X.t() * y_boot) ;
 //     arma::vec resid_boot = y_boot - X * coef_boot;
-// 
+//     
 //     // calculate CR vcov
 //     arma::mat meat(k, k);
-// 
-//     for(int g = 0; g < G; g++){
-//       arma::mat meat_g(k, k);
-//       for(int ng = 0; ng < N_G_bootcluster; ng++){
-//         arma::mat X_ng = X.rows(find(cluster == ng(g)));
-//         arma::mat resid_boot_ng = resid_boot(find(cluster == ng(g)));
-//         //meat +=  vcov_sign(g) * small_sample_correction(g) * X_ng.t() * resid_boot_ng * resid_boot_g.t() * X_ng;
-//         meat_g += X_ng.t() * resid_boot_ng * resid_boot_g.t() * X_ng;
-//       }
-//       meat += meat_g;
+//     
+//     // for all g = 1,..., G clusters
+//     //for(int g = 0; g < G; g++){
+//     //arma::mat meat_g(k, k);
+//     for(int n_g = 0; n_g < N_G_bootcluster; n_g++){
+//       arma::mat X_ng = X.rows(find(cluster == n_g));
+//       arma::mat resid_boot_ng = resid_boot(find(cluster == n_g));
+//       //meat +=  vcov_sign(g) * small_sample_correction(g) * X_ng.t() * resid_boot_ng * resid_boot_g.t() * X_ng;
+//       meat += X_ng.t() * resid_boot_ng * resid_boot_ng.t() * X_ng;
 //     }
-// 
+//     //meat += meat_g;
+//     //}
+//     
 //     arma::mat sigma_boot =  (XXinv * meat * XXinv);
-// 
+//     
 //     // calculate t-stats
-//     t_boot.col(b) = coef_boot / arma::sqrt(arma::diagvec(sigma_boot));
+//     t_boot.col(b) = coef_boot / arma::sqrt(small_sample_correction * arma::diagvec(sigma_boot));
 //   }
-// 
+//   
 //   // for b = 0
-// 
 //   // create bootstrap sample
 //   arma::vec y_boot(n);
-//   for(int g = 0; g < N_G_bootcluster; g++){
-//     y_boot(find(cluster == g)) = yhat_r(find(cluster == g)) + resid_r(find(cluster == g)) ;
+//   for(int n_g = 0; n_g < N_G_bootcluster; n_g++){
+//     y_boot(find(cluster == n_g)) = yhat_r(find(cluster == n_g)) + resid_r(find(cluster == n_g)) ;
 //   }
-// 
+//   
 //   // get bootstrapped coefs and resids
 //   arma::vec coef_boot = XXinv * (X.t() * y_boot) ;
 //   arma::vec resid_boot = y_boot - X * coef_boot;
-// 
+//   
 //   // calculate CR vcov
 //   arma::mat meat(k, k);
-//   for(int g = 0; g < G; g++){
-//     for(int ng = 0; ng < N_G_bootcluster; ng++){
-//       arma::mat X_ng = X.rows(find(cluster == ng(g)));
-//       arma::mat resid_boot_ng = resid_boot(find(cluster == ng(g)));
-//       //meat +=  vcov_sign(g) * small_sample_correction(g) * X_ng.t() * resid_boot_ng * resid_boot_g.t() * X_ng;
-//       meat_g += X_ng.t() * resid_boot_ng * resid_boot_g.t() * X_ng;
-//     }
-//     meat += meat_g;
+//   //for(int g = 0; g < G; g++){
+//   for(int n_g = 0; n_g < N_G_bootcluster; n_g++){
+//     arma::mat X_ng = X.rows(find(cluster == n_g));
+//     arma::mat resid_boot_ng = resid_boot(find(cluster == n_g));
+//     //meat +=  vcov_sign(g) * small_sample_correction(g) * X_ng.t() * resid_boot_ng * resid_boot_g.t() * X_ng;
+//     meat += X_ng.t() * resid_boot_ng * resid_boot_ng.t() * X_ng;
 //   }
+//   //meat += meat_g;
+//   //}
 //   arma::mat sigma_boot =   (XXinv * meat * XXinv);
-// 
+//   
 //   // calculate t-stats
-//   t_boot.col(0) = coef_boot / arma::sqrt(arma::diagvec(sigma_boot));
-// 
+//   t_boot.col(0) = coef_boot / arma::sqrt(small_sample_correction * arma::diagvec(sigma_boot));
+//   
 //   List res;
 //   res["t_boot"] = t_boot;
-// 
+//   
 //   return res;
-// 
+//   
 // }

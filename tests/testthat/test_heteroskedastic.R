@@ -1,38 +1,120 @@
-# test_that("test heteroskedastic boottest", {
-#   
-#   set.seed(98013)
-#   library(fixest)
-#   library(lfe)
-#   library(fwildclusterboot)
-#   skip()
-#   # devtools::load_all()
-#   data <- fwildclusterboot:::create_data(N = 1000,
-#                                          N_G1 = 1000,
-#                                          icc1 = 0.81,
-#                                          N_G2 = 10,
-#                                          icc2 = 0.01,
-#                                          numb_fe1 = 10,
-#                                          numb_fe2 = 10,
-#                                          seed = 97069)
-#   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income ,
-#                 data = data)
-# 
-#   feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income ,
-#                 data = data)
-#   
-#   felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income ,
-#                    data = data)
-#   
-#   boot_lm <- boottest(lm_fit, param = "treatment", B = 9999, nthreads = 1)
-#   boot_feols <- boottest(feols_fit, param = "treatment", B = 9999, nthreads = 1)
-#   boot_felm <- boottest(felm_fit, param = "treatment", B = 9999, nthreads = 1)
-# 
-#   # tidy(boot_lm)
-#   # tidy(boot_feols)
-#   # tidy(boot_felm)
-#   
-#   
-#   # p_boot <- generics::tidy(boot_lm)
-#   p_hc <- broom::tidy(lmtest::coeftest(lm_fit, sandwich::vcovHC(lm_fit)))[2, 5]
-#   #expect_equal(boot_lm$p_val, p_hc, tolerance = 0.02, ignore_attr = TRUE)
-# })
+test_that("test lean cpp boottest", {
+
+  set.seed(9809873)
+  library(fixest)
+  library(lfe)
+  library(fwildclusterboot)
+  # skip()
+  # devtools::load_all()
+  data <- fwildclusterboot:::create_data(N = 1000,
+                                         N_G1 = 1000,
+                                         icc1 = 0.5,
+                                         N_G2 = 10,
+                                         icc2 = 0.01,
+                                         numb_fe1 = 10,
+                                         numb_fe2 = 10,
+                                         seed = 123)
+  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income ,
+                data = data)
+  feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income ,
+                data = data)
+  felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income ,
+                   data = data)
+
+  
+  # Test 1: heteroskedastic wild bootstrap
+  # 
+  # HC0
+  # pracma::tic()
+  boot_lm <- boottest(lm_fit,
+                      param = "treatment",
+                      B = 19999,
+                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
+                      nthreads = 8)
+  # pracma::toc()
+  
+  boot_feols <- boottest(feols_fit,
+                      param = "treatment", 
+                      B = 999,
+                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE))
+  boot_felm <- boottest(felm_fit,
+                      param = "treatment", 
+                      B = 999,
+                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE))
+  
+  # 2.155239
+  res <- broom::tidy(
+              lmtest::coeftest(
+                lm_fit,
+                sandwich::vcovHC(lm_fit, type = "HC0")
+                )
+  )[2,4:5]
+  
+  expect_equal(res$statistic, boot_lm$t_stat)
+  expect_equal(res$statistic, boot_feols$t_stat)
+  expect_equal(res$statistic, boot_felm$t_stat)
+  
+  expect_equal(res$p.value, boot_lm$p_val, tolerance = 0.05)
+  expect_equal(res$p.value, boot_feols$p_val, tolerance = 0.05)
+  expect_equal(res$p.value, boot_felm$p_val, tolerance = 0.05)
+  
+  
+  # HC1
+  
+  boot_lm <- boottest(lm_fit,
+                      param = "treatment", 
+                      B = 999,
+                      ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE))
+  boot_feols <- boottest(feols_fit,
+                         param = "treatment", 
+                         B = 999,
+                         ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE))
+  boot_felm <- boottest(felm_fit,
+                        param = "treatment", 
+                        B = 999,
+                        ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE))
+  
+  res <- broom::tidy(
+    lmtest::coeftest(
+      lm_fit,
+      sandwich::vcovHC(lm_fit, type = "HC1")
+    )
+  )[2,4:5]
+  
+  k <- length(coef(lm_fit))
+  N <- nobs(lm_fit)
+  
+  # HC1 in sandwich : t / sqrt(n / (n -k))
+  # in fwildclusterboot: t / sqrt((n-1) / n-k)
+  ssc_corr <- (N-1) / N
+
+  expect_equal(res$statistic / sqrt(ssc_corr), boot_lm$t_stat, tolerance = 0.01)
+  expect_equal(res$statistic / sqrt(ssc_corr), boot_feols$t_stat, tolerance = 0.01)
+  expect_equal(res$statistic / sqrt(ssc_corr), boot_felm$t_stat, tolerance = 0.01)
+  
+  expect_equal(res$p.value, boot_lm$p_val, tolerance = 0.05)
+  expect_equal(res$p.value, boot_feols$p_val, tolerance = 0.05)
+  expect_equal(res$p.value, boot_felm$p_val, tolerance = 0.05)
+  
+  
+  
+  
+  # test oneway clustering
+  
+  # res <- 
+  # bench::mark(
+  #   boot_lm1 = boottest(lm_fit, param = "treatment", clustid = "group_id1", B = 999, boot_algo = "R-lean"),
+  #   boot_lm2 = boottest(lm_fit, param = "treatment", clustid = "group_id1", B = 999, boot_algo = "R"),
+  #   iterations = 1, 
+  #   check = FALSE
+  # )
+  # res
+
+  # 
+  # boot_lm11 <- boottest(lm_fit, param = "treatment", clustid = "group_id1", B = 9999, boot_algo = "R", ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE))
+  # boot_lm22 <- boottest(lm_fit, param = "treatment", clustid = "group_id1", B = 9999, boot_algo = "R-lean", ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE))
+  # 
+  # expect_equal(boot_lm1$p_val, boot_lm2$p_val, tolerance = 0.02)
+  # expect_equal(boot_lm1$t_stat, boot_lm2$t_stat)
+  
+})

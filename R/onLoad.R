@@ -5,8 +5,9 @@
   #' @return Changes number of threads used. 
   
   # adds info on number of threads to options()
-  setBoottest_nthreads()
+  # setBoottest_nthreads()
   
+  setBoottest_nthreads()
   setBoottest_boot_algo()
   
   

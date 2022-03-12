@@ -70,6 +70,7 @@
 #' @param ... Further arguments passed to or from other methods.
 #' @import JuliaConnectoR
 #' @importFrom dreamerr check_arg validate_dots
+#' @importFrom parallel detectCores
 #' 
 #' @method boottest lm
 #' 
@@ -209,12 +210,19 @@ boottest.lm <- function(object,
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
+
   
   # check appropriateness of nthreads
+  #nthreads <- ifelse(nthreads > cpp_get_nb_threads(), cpp_get_nb_threads(), nthreads)
   nthreads <- check_set_nthreads(nthreads)
+  #cat(paste("nthreads:", nthreads), "\n")
   
   if(is.null(clustid)){
     heteroskedastic <- TRUE  
+    if(boot_algo == "R"){
+      # heteroskedastic models should always be run through R-lean
+      boot_algo <- "R-lean"
+    }
   } else {
     heteroskedastic <- FALSE
   }
@@ -315,17 +323,13 @@ boottest.lm <- function(object,
     point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
     
     # number of clusters used in bootstrap - always derived from bootcluster
+    # force algo to be R-lean for heteroskedastic model
     if(is.null(clustid)){
       N_G <- preprocess$N
-      # also, override algo to lean
-      boot_algo <- "R-lean"
     } else {
       N_G <- length(unique(preprocess$bootcluster[, 1]))
     }
     
-    # N_G <- preprocess$N_G
-    
-    # N_G <- length(unique(preprocess$bootcluster[, 1]))
     N_G_2 <- 2^N_G
     if (type %in% c("rademacher") & N_G_2 <= B) {
       warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
@@ -434,7 +438,8 @@ boottest.lm <- function(object,
       impose_null = impose_null,
       R = R,
       beta0 = beta0, 
-      boot_algo = "R"
+      boot_algo = boot_algo, 
+      nthreads = nthreads
     )
     
   } else if(boot_algo == "WildBootTests.jl"){

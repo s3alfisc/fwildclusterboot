@@ -55,6 +55,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   # vcov_sign <- preprocessed_object$vcov_sign
   weights <- preprocessed_object$weights
   R <- t(as.matrix(preprocessed_object$R0))
+  vcov_sign <- preprocessed_object$vcov_sign
 
   N_G_bootcluster <- N_G
 
@@ -91,6 +92,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
     if(!class(bootcluster) == "integer"){
       stop("bootcluster needs to be an integer vector")
     }
+    # bootcluster must be integers, starting with 0 (due to cpp implementation)
     bootcluster <- bootcluster - min(bootcluster)
 
     boot_res <-

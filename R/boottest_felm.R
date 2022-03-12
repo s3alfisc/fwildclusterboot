@@ -232,6 +232,10 @@ boottest.felm <- function(object,
   
   if(is.null(clustid)){
     heteroskedastic <- TRUE  
+    if(boot_algo == "R"){
+      # heteroskedastic models should always be run through R-lean
+      boot_algo <- "R-lean"
+    }
   } else {
     heteroskedastic <- FALSE
   }
@@ -319,8 +323,6 @@ boottest.felm <- function(object,
     # number of clusters used in bootstrap - always derived from bootcluster
     if(is.null(clustid)){
       N_G <- preprocess$N
-      # also, override algo to lean
-      boot_algo <- "R-lean"
     } else {
       N_G <- length(unique(preprocess$bootcluster[, 1]))
     }
@@ -435,8 +437,9 @@ boottest.felm <- function(object,
       impose_null = impose_null,
       R = R,
       beta0 = beta0, 
-      boot_algo = "R"
-    )
+      boot_algo = boot_algo, 
+      nthreads = nthreads
+      )
     
   } else if(boot_algo == "WildBootTests.jl"){
     
