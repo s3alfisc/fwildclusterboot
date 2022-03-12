@@ -105,7 +105,8 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
                      N_G_bootcluster = unname(N_G_bootcluster),
                      cores = nthreads,
                      type = type,
-                     cluster = bootcluster)[[1]]
+                     cluster = bootcluster, 
+                     small_sample_correction = small_sample_correction)[[1]]
   }
 
 

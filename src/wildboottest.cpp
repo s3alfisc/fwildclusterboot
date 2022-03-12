@@ -162,7 +162,8 @@ List wildboottestCL(const arma::vec & y,
                     const int & N_G_bootcluster,
                     const int & cores,
                     const int & type,
-                    const arma::vec & cluster
+                    const arma::vec & cluster, 
+                    const float & small_sample_correction
 ) {
 
   // function implements wild cluster bootstrap,
@@ -170,7 +171,6 @@ List wildboottestCL(const arma::vec & y,
 
   omp_set_num_threads(cores);
 
-  float small_sample_correction = 1;
   int n = X.n_rows;
   int k = X.n_cols;
 

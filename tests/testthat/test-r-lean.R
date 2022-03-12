@@ -13,7 +13,7 @@ test_that("test lean cpp boottest", {
                                          icc2 = 0.01,
                                          numb_fe1 = 10,
                                          numb_fe2 = 10,
-                                         seed = 11223)
+                                         seed = 121223)
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income ,
                 data = data)
   feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income ,
@@ -106,12 +106,14 @@ test_that("test lean cpp boottest", {
   
   # test oneway clustering
   # pracma::tic()
-  boot_lm1 <-  boottest(lm_fit,
+  boot_lm1 <-  boottest(feols_fit,
                         param = "treatment",
                         clustid = "group_id1",
                         B = 2999, 
                         boot_algo = "R-lean",
-                        nthreads = 8)
+                        nthreads = 8, 
+                        ssc = boot_ssc(adj = FALSE, 
+                                       cluster.adj = FALSE))
   # pracma::toc()
   
   # pracma::tic()
@@ -128,5 +130,25 @@ test_that("test lean cpp boottest", {
   expect_equal(boot_lm1$p_val, boot_lm2$p_val, tolerance = 0.02)
   expect_equal(boot_lm1$t_stat, boot_lm2$t_stat)
   
+  
+  boot_lm1 <-  boottest(feols_fit,
+                        param = "treatment",
+                        clustid = "group_id1",
+                        B = 9999, 
+                        boot_algo = "R-lean",
+                        nthreads = 8)
+  # pracma::toc()
+  
+  # pracma::tic()
+  boot_lm2 <-  boottest(feols_fit,
+                        param = "treatment",
+                        clustid = "group_id1",
+                        B = 9999, 
+                        boot_algo = "R",
+                        nthreads = 4)
+  # pracma::toc()
+  
+  expect_equal(boot_lm1$p_val, boot_lm2$p_val, tolerance = 0.02)
+  expect_equal(boot_lm1$t_stat, boot_lm2$t_stat)
 
 })
