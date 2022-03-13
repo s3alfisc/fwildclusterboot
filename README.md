@@ -40,6 +40,8 @@ with *B* = 100.000 iterations in less than a second!
 `fwildclusterboot` supports the following features:
 
 -   The wild bootstrap for OLS (Wu 1986).
+-   The wild cluster bootstrap for OLS (Cameron, Gelbach & Miller 2008,
+    Roodman et al, 2019)
 -   The subcluster bootstrap (MacKinnon and Webb 2018).
 -   Confidence intervals formed by inverting the test and iteratively
     searching for bounds.
