@@ -1,4 +1,4 @@
-boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction, heteroskedastic) {
+boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction, heteroskedastic, seed) {
 
   #' Fast wild cluster bootstrap algorithm
   #'
@@ -29,6 +29,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #'        N_G^2 < boot_iter for Mammen and Rademacher weights
   #' @param small_sample_correction The small sample correction to be applied. See ssc().
   #' @param heteroskedastic Logical - if TRUE, run a heteroskedastic. If FALSE, run wild cluster bootstrap.
+  #' @param seed Integer scalar. Either set via boottest()'s seed argument or inherited from R's global seed (set via set.seed)
   #' @return A list of ...
   #' @importFrom Matrix t Diagonal
   #' @importFrom Matrix.utils aggregate.Matrix
@@ -75,6 +76,10 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
     stop("The 'lean' bootstrap algorithm is currently not supported for hypotheses about more than one parameter.")
   }
 
+  if(is.null(seed)){
+    seed <- get_seed()
+  }
+  
   if(heteroskedastic == TRUE){
     boot_res <-
       wildboottestHC(y = Y,
@@ -85,7 +90,8 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
                      N_G_bootcluster = N,
                      cores = nthreads,
                      type = type, 
-                     small_sample_correction = small_sample_correction)[[1]]
+                     small_sample_correction = small_sample_correction, 
+                     seed = seed)[[1]]
   } else {
     bootcluster <- preprocessed_object$bootcluster[, 1]
     # turn bootcluster into sequence of integers, starting at 0, 1, 2, ..., length(unique(bootcluster)) (required for cpp
@@ -106,7 +112,8 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
                      cores = nthreads,
                      type = type,
                      cluster = bootcluster, 
-                     small_sample_correction = small_sample_correction)[[1]]
+                     small_sample_correction = small_sample_correction, 
+                     seed = seed)[[1]]
   }
 
 
@@ -148,4 +155,11 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
 
   invisible(res)
 
+}
+
+
+# for using set.seed() for controlling rcpp's seed, see this 
+# blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/
+get_seed <- function() {
+  sample.int(.Machine$integer.max, 1)
 }

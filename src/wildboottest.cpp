@@ -11,6 +11,7 @@
 
 using namespace Rcpp;
 
+
 // [[Rcpp::export]]
 arma::mat sample_weights(int G,
                          int type){
@@ -64,6 +65,7 @@ arma::mat sample_weights(int G,
 //' @param cores Integer: the number of cores to be used.
 //' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
 //' @param small_sample_correction: Float. Small sample correction to be applied.
+//' @param seed: Numeric scalar. Controls the seed used in bootstrap.
 //' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
 
 // [[Rcpp::export]]
@@ -75,11 +77,13 @@ List wildboottestHC(const arma::vec & y,
                     const int & N_G_bootcluster,
                     const int & cores,
                     const int & type, 
-                    const float & small_sample_correction) {
+                    const float & small_sample_correction, 
+                    const float & seed) {
 
   // function implements wild cluster bootstrap,
   // imposing the null
-
+  
+  srand(seed);
   omp_set_num_threads(cores);
 
   //int n = X.n_rows;
@@ -151,6 +155,7 @@ List wildboottestHC(const arma::vec & y,
 //' @param cores Integer: the number of cores to be used.
 //' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
 //' @param cluster: Integer Vector. Contains information on the clusters.
+//' @param seed: Numeric scalar. Controls the seed used in bootstrap.
 //' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
 
 // [[Rcpp::export]]
@@ -163,12 +168,15 @@ List wildboottestCL(const arma::vec & y,
                     const int & cores,
                     const int & type,
                     const arma::vec & cluster, 
-                    const float & small_sample_correction
+                    const float & small_sample_correction, 
+                    const float & seed
 ) {
 
   // function implements wild cluster bootstrap,
   // imposing the null
 
+  srand(seed);
+  
   omp_set_num_threads(cores);
 
   int n = X.n_rows;

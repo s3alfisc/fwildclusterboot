@@ -329,7 +329,7 @@ boottest.lm <- function(object,
                 call. = FALSE, 
                 noBreaks. = TRUE
         )
-        warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
+        warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(preprocess$N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
                 call. = FALSE, 
                 noBreaks. = TRUE
         )
@@ -369,7 +369,8 @@ boottest.lm <- function(object,
                          type = type,
                          full_enumeration = full_enumeration,
                          small_sample_correction = small_sample_correction, 
-                         heteroskedastic = heteroskedastic
+                         heteroskedastic = heteroskedastic, 
+                         seed = seed
      )
     }
 

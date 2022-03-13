@@ -17,7 +17,8 @@ boot_algo1(
   type,
   full_enumeration,
   small_sample_correction,
-  heteroskedastic
+  heteroskedastic,
+  seed
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ N_G^2 < boot_iter for Mammen and Rademacher weights}
 \item{small_sample_correction}{The small sample correction to be applied. See ssc().}
 
 \item{heteroskedastic}{Logical - if TRUE, run a heteroskedastic. If FALSE, run wild cluster bootstrap.}
+
+\item{seed}{Integer scalar. Either set via boottest()'s seed argument or inherited from R's global seed (set via set.seed)}
 }
 \value{
 A list of ...
