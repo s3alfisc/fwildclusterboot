@@ -141,15 +141,26 @@
 <h1 class="page-header" data-toc-text="0.8">
 <a href="#fwildclusterboot-08" class="anchor"></a>fwildclusterboot 0.8<small> Unreleased </small>
 </h1>
-<div id="wildboottestsjl" class="section level2">
-<h2 class="hasAnchor">
-<a href="#wildboottestsjl" class="anchor"></a>WildBootTests.jl</h2>
+<div id="1-wildboottestsjl" class="section level3">
+<h3 class="hasAnchor">
+<a href="<a href='https://github.com/s3alfisc/fwildclusterboot/issues/1'>#1</a>-wildboottestsjl" class="anchor"></a>1) WildBootTests.jl</h3>
 <ul>
 <li>
 <code>fwildclusterboot</code> now supports calling <code>WildBootTests.jl</code>, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, <code>boot_algo</code>, through which the user can choose if she wants to run the fast wild cluster bootstrap via R or Julia.</li>
 <li>WildBootTests.jl is (after compilation) orders of magnitudes faster than <code>fwildclusterboot's</code> native R implementation, and speed gains are particularly pronounced for large problems with a large number of clusters and many bootstrap iterations.</li>
 <li>Furthermore, <code>WildBootTests.jl</code> supports a range of models and tests that were previously not supported by <code>fwildclusterboot</code>: most importantly a) wild cluster bootstrap tests of multiple joint hypotheses and b) the WRE bootstrap by Davidson &amp; MacKinnon for instrumental variables estimation. On top of the cake … WRE is really fast.</li>
+<li>For guidance on how to run <code>WildBooTests.jl</code>, have a look at the associated <a href="https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html">article</a>.</li>
 </ul>
+</div>
+<div id="2-lean-rcpp-based-implementations-of-the-wild-heteroskedastic-and-wild-cluster-robust" class="section level3">
+<h3 class="hasAnchor">
+<a href="<a href='https://github.com/s3alfisc/fwildclusterboot/issues/2'>#2</a>-lean-rcpp-based-implementations-of-the-wild-heteroskedastic-and-wild-cluster-robust" class="anchor"></a>2) ‘Lean’ Rcpp-based implementations of the wild heteroskedastic and wild cluster robust</h3>
+<p>A key limitation of the vectorized ‘fast’ cluster bootstrap algorithm as implemented in <code>fwildclusterboot</code> is that it is very memory-demanding. For ‘larger’ problems, running <code><a href="../reference/boottest.html">boottest()</a></code> might lead to out-of-memory errors. To offer an alternative, <code><a href="../reference/boottest.html">boottest()</a></code> now ships two ‘new’ rcpp- and loop-based algorithms:</p>
+<ul>
+<li>It is now possible to run <code><a href="../reference/boottest.html">boottest()</a></code> without specifying a <code>clustid</code> function argument. In this case, <code><a href="../reference/boottest.html">boottest()</a></code> runs a heteroskedasticity-robust wild bootstrap, which is implemented in c++.</li>
+<li>Second, <code>fwildclusterboot</code> now ships a “lean” implementation of the wild cluster bootstrap, which is in general much slower than the ‘fast’ algorithm, but requires less memory. The algorithm is equivalent to the ‘wild2’ algorithm in the “Fast &amp; Wild” paper by Roodman et al.</li>
+</ul>
+<p>Also, note that running the wild cluster bootstrap through <code>WildBootTests.jl</code> is often very memory-efficient.</p>
 </div>
 </div>
     <div id="fwildclusterboot-07" class="section level1">
@@ -188,11 +199,11 @@
 <ul>
 <li>Version 0.5 fixes an error for the bootstrap with weighted least squares introduced with version 0.4. All unit tests that compare fwildclusterboot with weighted least squares results from boottest.stata pass. In particular, enumerated cases pass with exact equality (in such cases, the bootstrap weights matrices are exactly identical in both R and Stata).</li>
 <li>
-<code><a href="../reference/boottest.html">boottest()</a></code> now stops if <code><a href="https://lrberge.github.io/fixest/reference/feols.html">fixest::feols()</a></code> deletes non-NA values (e.g. singleton fixed effects deletion) and asks the user to delete such rows prior to estimation via <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> &amp; <code><a href="../reference/boottest.html">boottest()</a></code>. Currently, <code>boottest()'s</code> pre-processing cannot handle such deletions - this remains future work.</li>
+<code><a href="../reference/boottest.html">boottest()</a></code> now stops if <code><a href="https://lrberge.github.io/fixest/reference/feols.html">fixest::feols()</a></code> deletes non-NA values (e.g. singleton fixed effects deletion) and asks the user to delete such rows prior to estimation via <code>feols()</code> &amp; <code><a href="../reference/boottest.html">boottest()</a></code>. Currently, <code>boottest()'s</code> pre-processing cannot handle such deletions - this remains future work.</li>
 <li>To align <code>fwildclusterboot</code> with Stata’s boottest command (Roodman et al, 2019), Mammen weights are no longer enumerated in <code><a href="../reference/boottest.html">fwildclusterboot::boottest()</a></code>.</li>
 <li>
 <code><a href="../reference/boottest.html">boottest()</a></code> no longer sets an internal seed (previously set.seed(1)) if no seed is provided as a function argument.</li>
-<li>Sampling of the bootstrap weights is now powered by the <code>dqrng</code> package, which speeds up the creation of the bootstrap weights matrix. To set a “global” seed, one now has use the <code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html">dqset.seed()</a></code> function from the <code>dqrng package</code>, which is added as a dependency.</li>
+<li>Sampling of the bootstrap weights is now powered by the <code>dqrng</code> package, which speeds up the creation of the bootstrap weights matrix. To set a “global” seed, one now has use the <code>dqset.seed()</code> function from the <code>dqrng package</code>, which is added as a dependency.</li>
 </ul>
 </div>
     <div id="fwilclusterboot-04" class="section level1">
@@ -212,7 +223,7 @@
 <a href="#fwildclusterboot-037" class="anchor"></a>fwildclusterboot 0.3.7<small> 2021-09-14 </small>
 </h1>
 <ul>
-<li>Bug fix: the output of <code><a href="../reference/boottest.html">boottest()</a></code> varied depending on the class of the input fixed effects for regressions both via <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">lfe::felm()</a></code> and <code><a href="https://lrberge.github.io/fixest/reference/feols.html">fixest::feols()</a></code>. This bug occurred because <code><a href="../reference/boottest.html">boottest()</a></code> does not work with a pre-processed model.frame object from either <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code> or <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> but works with the original input data. While both <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">felm()</a></code> and <code><a href="https://lrberge.github.io/fixest/reference/feols.html">feols()</a></code> change non-factor fixed effects variables to factors internally, <code><a href="../reference/boottest.html">boottest()</a></code> did not check but implicitely assumed that all fixed effects used in the regression models are indeed factors in the original data set. As a consequence, if one or more fixed effects were e.g. numeric, <code><a href="../reference/boottest.html">boottest()</a></code> would produce incorrect results without throwing an error. With version 0.3.7, <code><a href="../reference/boottest.html">boottest()</a></code> checks internally if all variables in the original data set which are used as fixed effects are factor variables and if not, changes them to factors. Thanks for timotheedotc for raising the issue on github, which can be found here: <a href="https://github.com/s3alfisc/fwildclusterboot/issues/14" class="uri">https://github.com/s3alfisc/fwildclusterboot/issues/14</a>.</li>
+<li>Bug fix: the output of <code><a href="../reference/boottest.html">boottest()</a></code> varied depending on the class of the input fixed effects for regressions both via <code><a href="https://rdrr.io/pkg/lfe/man/felm.html">lfe::felm()</a></code> and <code><a href="https://lrberge.github.io/fixest/reference/feols.html">fixest::feols()</a></code>. This bug occurred because <code><a href="../reference/boottest.html">boottest()</a></code> does not work with a pre-processed model.frame object from either <code>felm()</code> or <code>feols()</code> but works with the original input data. While both <code>felm()</code> and <code>feols()</code> change non-factor fixed effects variables to factors internally, <code><a href="../reference/boottest.html">boottest()</a></code> did not check but implicitely assumed that all fixed effects used in the regression models are indeed factors in the original data set. As a consequence, if one or more fixed effects were e.g. numeric, <code><a href="../reference/boottest.html">boottest()</a></code> would produce incorrect results without throwing an error. With version 0.3.7, <code><a href="../reference/boottest.html">boottest()</a></code> checks internally if all variables in the original data set which are used as fixed effects are factor variables and if not, changes them to factors. Thanks for timotheedotc for raising the issue on github, which can be found here: <a href="https://github.com/s3alfisc/fwildclusterboot/issues/14" class="uri">https://github.com/s3alfisc/fwildclusterboot/issues/14</a>.</li>
 <li>Some tests have been added that compare output from <code><a href="../reference/boottest.html">boottest()</a></code> with the wild cluster bootstrap implemented via <code>clusterSEs</code>.</li>
 </ul>
 </div>

@@ -1,16 +1,16 @@
 # fwildclusterboot 0.8
 
 
-## 1) WildBootTests.jl
+### 1) WildBootTests.jl
 
 + `fwildclusterboot` now supports calling `WildBootTests.jl`, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, `boot_algo`, through which the user can choose if she wants to run the fast wild cluster bootstrap via R or Julia. 
 + WildBootTests.jl is (after compilation) orders of magnitudes faster than `fwildclusterboot's` native R implementation, and speed gains are particularly pronounced for large problems with a large number of clusters and many bootstrap iterations. 
 + Furthermore, `WildBootTests.jl` supports a range of models and tests that were previously not supported by `fwildclusterboot`: most importantly a) wild cluster bootstrap tests of multiple joint hypotheses and b) the WRE bootstrap by Davidson & MacKinnon for instrumental variables estimation. On top of the cake ... WRE is really fast. 
 + For guidance on how to run `WildBooTests.jl`, have a look at the associated [article](https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html).
 
-## 2) 'Lean' Rcpp-based implementations of the wild heteroskedastic and wild cluster robust
+### 2) 'Lean' Rcpp-based implementations of the wild heteroskedastic and wild cluster robust
 
-A key limitation of the vectorized 'fast' cluster bootstrap algorithm as implemented in `fwildclusterboot` is that it is very memory-demanding. For 'larger' problems, running `boottest()` would lead to out-of-memory errors. To offer an alternative, `boottest()` now ships to 'new' rcpp- and loop-based algorithms: 
+A key limitation of the vectorized 'fast' cluster bootstrap algorithm as implemented in `fwildclusterboot` is that it is very memory-demanding. For 'larger' problems, running `boottest()` might lead to out-of-memory errors. To offer an alternative, `boottest()` now ships two 'new' rcpp- and loop-based algorithms: 
 
 + It is now possible to run `boottest()` without specifying a `clustid` function argument. In this case, `boottest()` runs a heteroskedasticity-robust wild bootstrap, which is implemented in c++. 
 + Second, `fwildclusterboot` now ships a "lean" implementation of the wild cluster bootstrap, which is in general much slower than the 'fast' algorithm, but requires less memory. The algorithm is equivalent to the 'wild2' algorithm in the "Fast & Wild" paper by Roodman et al.
