@@ -23,14 +23,19 @@ coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/ba
 The `fwildclusterboot` provides a native R implementation of the fast
 wild cluster bootstrap algorithm developed in [Roodman et al
 (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for
-regression objects in R. It also ports functionality of
+regression objects in R.
+
+It also ports functionality of
 [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) to R
 via the
 [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR).
 
 The package’s central function is `boottest()`. It allows the user to
 test univariate hypotheses using a wild cluster bootstrap at extreme
-speed.
+speed: via the ‘fast’ algorithm, it is possible to run a wild cluster
+bootstrap with *B* = 100.000 iterations in less than a second!
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 `fwildclusterboot` supports the following features:
 
@@ -53,11 +58,10 @@ Additional features are provided through `WildBootTests.jl`:
 -   OLS: `lm` (from stats), `fixest` (from fixest), `felm` from (lfe)
 -   IV: `ivreg` (from ivreg).
 
-<!-- The following features will be added in the future:  -->
-<!-- * support for multivariate hypotheses  -->
-<!-- * bootstrap distributions beyond the rademacher distribution -->
-
 ### The `boottest()` function
+
+For a longer introduction to `fwildclusterboot`, take a look at the
+[vignette](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
 ``` r
 # note: for performance reasons, the sampling of the bootstrap weights of types Rademacher, Webb and Normal within
@@ -112,18 +116,6 @@ summary(feols_boot)
 #>              term estimate statistic p.value conf.low conf.high
 #> 1 1*treatment = 0    0.079     4.117       0     0.04     0.118
 ```
-
-For a longer introduction to the package’s key function, `boottest()`,
-please follow this
-[link](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
-
-### Benchmarks
-
-Results of timing benchmarks of `boottest()`, with a sample of N =
-10000, k = 20 covariates and one cluster of dimension N_G (3 iterations
-each, median runtime is plotted).
-
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
 ### Installation
 

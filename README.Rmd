@@ -32,9 +32,33 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
-The `fwildclusterboot` provides a native R implementation of the fast wild cluster bootstrap algorithm developed in [Roodman et al (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for regression objects in R. It also ports functionality of [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) to R via the [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR).
+The `fwildclusterboot` provides a native R implementation of the fast wild cluster bootstrap algorithm developed in [Roodman et al (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for regression objects in R.
 
-The package's central function is `boottest()`. It allows the user to test univariate hypotheses using a wild cluster bootstrap at extreme speed.
+It also ports functionality of [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) to R via the [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR).
+
+The package's central function is `boottest()`. It allows the user to test univariate hypotheses using a wild cluster bootstrap at extreme speed: via the 'fast' algorithm, it is possible to run a wild cluster bootstrap with $B = 100.000$ iterations in less than a second!
+
+```{r, fig.width=10, fig.height=3, echo = FALSE, warning = FALSE, message = FALSE}
+library(ggplot2)
+df <- readRDS("C:/Users/alexa/Dropbox/R package development/fwildclusterboot develop/benchmarks/r_comparions.rds")
+
+df$B <- factor(df$B, levels = c("10K", "100K"))
+df$N_G <- factor(df$N_G, levels = c("N_G = 20", "N_G = 50", "N_G = 100", "N_G = 500", "N_G = 1000"))
+df$`boot algo` <- df$type
+```
+
+```{r, fig.width=10, fig.height=3, echo = FALSE, warning = FALSE, message = FALSE}
+ggplot(data = df, aes(x = B, y = time, color = `boot algo`)) + 
+  facet_wrap(~N_G, nrow = 1) + 
+  geom_point() + 
+scale_y_continuous(trans='log10') + 
+  labs(title = "Benchmarks", caption = "N = 10_000, k = 20 covariates and one cluster of dimension N_G (3 iterations each, median runtime is plotted).")+
+  #theme_bw() + 
+  xlab("Bootstrap iterations") + 
+  ylab("time in seconds, log scale") + 
+  theme_bw()
+```
+
 
 `fwildclusterboot` supports the following features:
 
@@ -54,48 +78,9 @@ Additional features are provided through `WildBootTests.jl`:
 + OLS: `lm` (from stats), `fixest` (from fixest), `felm` from (lfe)
 + IV: `ivreg` (from ivreg). 
 
-<!-- The following features will be added in the future:  -->
-
-<!-- * support for multivariate hypotheses  -->
-<!-- * bootstrap distributions beyond the rademacher distribution -->
-
-
-```{r, echo=FALSE, include=FALSE, results="hide", execute = FALSE}
-# setwd("C:/Users/alexa/Dropbox")
-# devtools::install("fwildclusterboot")
-# devtools::document("fwildclusterboot")
-# devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
-# usethis::use_github_actions()
-# usethis::use_github_action(“render-readme.yaml”)
-#usethis::use_github_actions_badge(name = "R-CMD-check", repo_spec = NULL)#
-
-# usethis::use_mit_license("C:/Users/alexa/Dropbox/fwildclusterboot")
-# # # cmd check r 
-# # Sys.setenv('_R_CHECK_SYSTEM_CLOCK_' = 0)
-# # #system("defaults write org.R-project.R force.LANG en_US.UTF-8") # restart R
-# # Sys.getlocale()
-# # Sys.setlocale("LC_MESSAGES", "C")
-# # #Sys.setenv(LANG = "en_US.UTF-8")
-# Sys.getlocale()
-
-# # install
-# setwd("C:/Users/alexa/Dropbox")
-# devtools::install("fwildclusterboot")
-# devtools::document("fwildclusterboot")
-# devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
-# devtools::test("C:/Users/alexa/Dropbox/fwildclusterboot")
-# devtools::check("C:/Users/alexa/Dropbox/fwildclusterboot")
-
-
-
-# execute all functions in fwildclusterboot 
-# setwd("C:/Users/alexa/Dropbox/fwildclusterboot/R")
-# file.sources = list.files(pattern="*.R")
-# sapply(file.sources, source, .GlobalEnv)
-
-```
-
 ### The `boottest()` function
+
+For a longer introduction to `fwildclusterboot`, take a look at the [vignette](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
 ```{r}
 # note: for performance reasons, the sampling of the bootstrap weights of types Rademacher, Webb and Normal within
@@ -125,32 +110,6 @@ feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration +
 # bootstrap inference via boottest()
 feols_boot <- boottest(feols_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
 summary(feols_boot)
-
-```
-
-For a longer introduction to the package's key function, `boottest()`, please follow this [link](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
-
-### Benchmarks
-
-Results of timing benchmarks of `boottest()`, with a 
-sample of N = 10000, k = 20 covariates and one cluster of dimension N_G (3 iterations each, median runtime is plotted).
-  
-
-```{r, fig.width=10, fig.height=3, echo = FALSE, warning = FALSE, message = FALSE}
-library(ggplot2)
-df <- readRDS("C:/Users/alexa/Dropbox/R package development/fwildclusterboot develop/benchmarks/r_comparions.rds")
-
-df$B <- factor(df$B, levels = c("10K", "100K"))
-df$N_G <- factor(df$N_G, levels = c("N_G = 20", "N_G = 50", "N_G = 100", "N_G = 500", "N_G = 1000"))
-df$`boot algo` <- df$type
-
-ggplot(data = df, aes(x = B, y = time, color = `boot algo`)) + 
-  facet_wrap(~N_G, nrow = 1) + 
-  geom_point() + 
-scale_y_continuous(trans='log10') + 
-  theme_bw() + 
-  xlab("Bootstrap iterations") + 
-  ylab("time in seconds, log scale")
 
 ```
 
