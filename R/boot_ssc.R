@@ -28,7 +28,7 @@ boot_ssc <- function(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.d
 
 }
 
-get_ssc <- function(boot_ssc_object, N, k, G, vcov_sign){
+get_ssc <- function(boot_ssc_object, N, k, G, vcov_sign, heteroskedastic = FALSE){
   
   #' Compute small sample adjustment factors 
   #' @param boot_ssc_object An object of type 'boot_ssc.type'
@@ -36,6 +36,8 @@ get_ssc <- function(boot_ssc_object, N, k, G, vcov_sign){
   #' @param k The number of estimated parameters
   #' @param G The number of clusters
   #' @param vcov_sign A vector that helps create the covariance matrix
+  #' @param heteroskedastic Heteroskedastic wild bootstrap? FALSE by default. If 
+  #'        TRUE, cluster adjustments via G and vcov_sign will be ignored
   #' @return A small sample adjustment factor
   
   adj <- boot_ssc_object$adj
@@ -43,48 +45,48 @@ get_ssc <- function(boot_ssc_object, N, k, G, vcov_sign){
   cluster.adj <- boot_ssc_object$cluster.adj
   cluster.df <- boot_ssc_object$cluster.df
   
-  # cat("--------------------------------", "\n")
-  # 
-  # cat("adj:", adj, "\n")
-  # cat("fixef.K:", fixef.K, "\n")
-  # cat("cluster.adj:", cluster.adj, "\n")
-  # cat("cluster.df:", cluster.df, "\n")
-  # 
-  # cat("--------------------------------", "\n")
-  # 
-  # cat("N:", N, "\n")
-  # cat("k:", k, "\n")
-  # cat("G:", G, "\n")
-  # cat("vcov_sign:", vcov_sign, "\n")
-  # 
-  # cat("--------------------------------", "\n")
   
-  if(adj == TRUE){
-    #if(fixef.K == 'none'){
+  if(heteroskedastic == FALSE){
+    if(adj == TRUE){
+      #if(fixef.K == 'none'){
       adj <- (N-1) / (N-k)
-    #} else {
-    #  adj <- (N-1) / N
-    #}
-  } else {
-    adj <- 1
-  }
-  
-  if(cluster.adj == TRUE){
-    if(cluster.df == "conventional"){
-      cluster.adj <- G / (G - 1) 
-    } else if(cluster.df == "min"){
-      G <- min(G)
-      cluster.adj <- G / (G - 1) 
+      #} else {
+      #  adj <- (N-1) / N
+      #}
+    } else {
+      adj <- 1
     }
-  } else {
-    cluster.adj <- 1 
+    
+    if(cluster.adj == TRUE){
+      if(cluster.df == "conventional"){
+        cluster.adj <- G / (G - 1) 
+      } else if(cluster.df == "min"){
+        G <- min(G)
+        cluster.adj <- G / (G - 1) 
+      }
+    } else {
+      cluster.adj <- 1 
+    }
+    
+    small_sample_correction <- adj * cluster.adj * vcov_sign
+    
+  } else if(heteroskedastic == TRUE){
+    if(adj == TRUE){
+      #if(fixef.K == 'none'){
+      adj <- (N-1) / (N-k)
+      #} else {
+      #  adj <- (N-1) / N
+      #}
+    } else {
+      adj <- 1
+    }
+    
+    small_sample_correction <- adj
+    
+    
   }
   
-  # cat("updated parameters", "\n")
-  # cat("adj update:", adj, "\n")
-  # cat("cluster.adj update:", cluster.adj, "\n")
   
-  small_sample_correction <- adj * cluster.adj * vcov_sign
   small_sample_correction
   
   

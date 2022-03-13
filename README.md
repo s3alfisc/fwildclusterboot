@@ -81,8 +81,8 @@ lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigrati
 # bootstrap inference via boottest()
 lm_boot <- boottest(lm_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
 summary(lm_boot)
-#> boottest.lm(object = lm_fit, clustid = c("group_id1"), param = "treatment", 
-#>     B = 9999, seed = 1)
+#> boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1"), 
+#>     seed = 1)
 #>  
 #>  Hypothesis: 1*treatment = 0
 #>  Observations: 300

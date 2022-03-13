@@ -204,7 +204,7 @@ boottest.fixest <- function(object,
   
   # Step 1: check arguments of feols call
   check_arg(object, "MBT class(fixest)")
-  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(clustid, "NULL | character scalar | character vector")
   check_arg(param, "MBT scalar character | character vector")
   check_arg(B, "MBT scalar integer GT{99}")  
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
@@ -220,7 +220,7 @@ boottest.fixest <- function(object,
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer")
   check_arg(boot_ssc, 'class(ssc) | class(boot_ssc)')
-  check_arg(boot_algo, "charin(R, WildBootTests.jl)")
+  check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl)")
   
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
@@ -240,6 +240,16 @@ boottest.fixest <- function(object,
   # check appropriateness of nthreads
   nthreads <- check_set_nthreads(nthreads)
 
+  if(is.null(clustid)){
+    heteroskedastic <- TRUE  
+    if(boot_algo == "R"){
+      # heteroskedastic models should always be run through R-lean
+      boot_algo <- "R-lean"
+    }
+  } else {
+    heteroskedastic <- FALSE
+  }
+  
   if(!is.null(seed)){
     dqrng::dqset.seed(seed)
   }
@@ -340,41 +350,31 @@ boottest.fixest <- function(object,
     G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
     vcov_sign <- preprocess$vcov_sign
     
-    small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign)
-    #small_sample_correction <- ifelse(length(small_sample_correction) == 0, NULL, small_sample_correction)
-    
+    small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign, heteroskedastic = heteroskedastic)
+
     clustid_dims <- preprocess$clustid_dims
     # R*beta; 
     point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
     
-    # # number of clusters used in bootstrap - always derived from bootcluster
-    # if(is.null(clustid)){
-    #   N_G <- preprocess$N
-    #   # also, override algo to lean
-    #   boot_algo <- "R-lean"
-    # } else {
-    #   N_G <- length(unique(preprocess$bootcluster[, 1]))
-    # }
+  
+    if(heteroskedastic == FALSE){
+      N_G_2 <- 2^preprocess$N_G
+      if (type %in% c("rademacher") & N_G_2 <= B) {
+        warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
+                call. = FALSE, 
+                noBreaks. = TRUE
+        )
+        warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(preprocess$N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
+                call. = FALSE, 
+                noBreaks. = TRUE
+        )
+        B <- N_G_2
+        full_enumeration <- TRUE
+      } else{
+        full_enumeration <- FALSE
+      }
+    }  
     
-    N_G <- length(unique(preprocess$bootcluster[, 1]))
-    
-    #N_G <- preprocess$N_G
-    
-    N_G_2 <- 2^N_G
-    if (type %in% c("rademacher") & N_G_2 <= B) {
-      warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-              call. = FALSE, 
-              noBreaks. = TRUE
-      )
-      warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-              call. = FALSE, 
-              noBreaks. = TRUE
-      )
-      B <- N_G_2
-      full_enumeration <- TRUE
-    } else{
-      full_enumeration <- FALSE
-    }
     
     if(boot_algo == "R"){
       res <- boot_algo2(preprocessed_object = preprocess,
@@ -391,28 +391,28 @@ boottest.fixest <- function(object,
                         full_enumeration = full_enumeration, 
                         small_sample_correction = small_sample_correction
       )
+    } else if(boot_algo == "R-lean") {
+      res <- boot_algo1(preprocessed_object = preprocess,
+                        boot_iter = B,
+                        point_estimate = point_estimate,
+                        impose_null = impose_null,
+                        beta0 = beta0,
+                        sign_level = sign_level,
+                        param = param,
+                        # seed = seed,
+                        p_val_type = p_val_type,
+                        nthreads = nthreads,
+                        type = type,
+                        full_enumeration = full_enumeration,
+                        small_sample_correction = small_sample_correction, 
+                        heteroskedastic = heteroskedastic
+      )
     }
-    # } else if(boot_algo == "R-lean") {
-    #   res <- boot_algo1(preprocessed_object = preprocess,
-    #                     boot_iter = B,
-    #                     point_estimate = point_estimate,
-    #                     impose_null = impose_null,
-    #                     beta0 = beta0,
-    #                     sign_level = sign_level,
-    #                     param = param,
-    #                     # seed = seed,
-    #                     p_val_type = p_val_type, 
-    #                     nthreads = nthreads, 
-    #                     type = type, 
-    #                     full_enumeration = full_enumeration, 
-    #                     small_sample_correction = small_sample_correction
-    #   )
-    # }
-    # 
-    # # compute confidence sets
-    # if(class(res) == "boot_algo1"){
-    #   conf_int <-  FALSE
-    # }
+
+    # compute confidence sets
+    if(class(res) == "boot_algo1"){
+      conf_int <-  FALSE
+    }
 
     if (is.null(conf_int) || conf_int == TRUE) {
 
@@ -468,7 +468,8 @@ boottest.fixest <- function(object,
       impose_null = impose_null,
       R = R,
       beta0 = beta0,
-      boot_algo = "R"
+      boot_algo = boot_algo, 
+      nthreads = nthreads
     )
     
   } else if(boot_algo == "WildBootTests.jl"){

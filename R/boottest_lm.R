@@ -1,5 +1,6 @@
 #' Fast wild cluster bootstrap inference for object of class lm
 #' 
+
 #' `boottest.lm` is a S3 method that allows for fast wild cluster 
 #' bootstrap inference for objects of class lm by  implementing
 #' the fast wild bootstrap algorithm developed in Roodman et al., 2019. 
@@ -69,6 +70,7 @@
 #' @param ... Further arguments passed to or from other methods.
 #' @import JuliaConnectoR
 #' @importFrom dreamerr check_arg validate_dots
+#' @importFrom parallel detectCores
 #' 
 #' @method boottest lm
 #' 
@@ -155,9 +157,9 @@
 #' }
 
 boottest.lm <- function(object,
-                        clustid,
                         param,
                         B,
+                        clustid = NULL,
                         bootcluster = "max",
                         conf_int = TRUE,
                         seed = NULL,
@@ -181,14 +183,14 @@ boottest.lm <- function(object,
                         bootstrapc = FALSE, 
                         t_boot = FALSE, 
                         getauxweights = FALSE,
-                        ...) {
+                        ...){
 
 
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
   
   check_arg(object, "MBT class(lm)")
-  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(clustid, "NULL | character scalar | character vector")
   check_arg(param, "MBT scalar character | character vector")
   check_arg(B, "MBT scalar integer")  
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
@@ -203,14 +205,27 @@ boottest.lm <- function(object,
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer")
   check_arg(boot_ssc, 'class(ssc) | class(boot_ssc)')
-  check_arg(boot_algo, "charin(R, WildBootTests.jl)")
+  check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl)")
   
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
+
   
   # check appropriateness of nthreads
+  #nthreads <- ifelse(nthreads > cpp_get_nb_threads(), cpp_get_nb_threads(), nthreads)
   nthreads <- check_set_nthreads(nthreads)
+  #cat(paste("nthreads:", nthreads), "\n")
+  
+  if(is.null(clustid)){
+    heteroskedastic <- TRUE  
+    if(boot_algo == "R"){
+      # heteroskedastic models should always be run through R-lean
+      boot_algo <- "R-lean"
+    }
+  } else {
+    heteroskedastic <- FALSE
+  }
   
   if(!is.null(seed)){
     dqrng::dqset.seed(seed)
@@ -301,41 +316,30 @@ boottest.lm <- function(object,
     G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
     vcov_sign <- preprocess$vcov_sign
     
-    small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign)
-    #small_sample_correction <- ifelse(length(small_sample_correction) == 0, NULL, small_sample_correction)
+    small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign, heteroskedastic = heteroskedastic)
     
     clustid_dims <- preprocess$clustid_dims
     # R*beta; 
     point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
     
-    # # number of clusters used in bootstrap - always derived from bootcluster
-    # if(is.null(clustid)){
-    #   N_G <- preprocess$N
-    #   # also, override algo to lean
-    #   boot_algo <- "R-lean"
-    # } else {
-    #   N_G <- length(unique(preprocess$bootcluster[, 1]))
-    # }
-    
-    # N_G <- preprocess$N_G
-    
-    N_G <- length(unique(preprocess$bootcluster[, 1]))
-    N_G_2 <- 2^N_G
-    if (type %in% c("rademacher") & N_G_2 <= B) {
-      warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-              call. = FALSE, 
-              noBreaks. = TRUE
-      )
-      warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-              call. = FALSE, 
-              noBreaks. = TRUE
-      )
-      B <- N_G_2
-      full_enumeration <- TRUE
-    } else{
-      full_enumeration <- FALSE
-    }
-    
+    if(heteroskedastic == FALSE){
+      N_G_2 <- 2^preprocess$N_G
+      if (type %in% c("rademacher") & N_G_2 <= B) {
+        warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
+                call. = FALSE, 
+                noBreaks. = TRUE
+        )
+        warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(preprocess$N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
+                call. = FALSE, 
+                noBreaks. = TRUE
+        )
+        B <- N_G_2
+        full_enumeration <- TRUE
+      } else{
+        full_enumeration <- FALSE
+      }
+    }  
+
     
     if(boot_algo == "R"){
       res <- boot_algo2(preprocessed_object = preprocess,
@@ -350,30 +354,30 @@ boottest.lm <- function(object,
                         nthreads = nthreads, 
                         type = type, 
                         full_enumeration = full_enumeration, 
-                        small_sample_correction = small_sample_correction
-      )
+                        small_sample_correction = small_sample_correction)
+      } else if(boot_algo == "R-lean") {
+       res <- boot_algo1(preprocessed_object = preprocess,
+                         boot_iter = B,
+                         point_estimate = point_estimate,
+                         impose_null = impose_null,
+                         beta0 = beta0,
+                         sign_level = sign_level,
+                         param = param,
+                         # seed = seed,
+                         p_val_type = p_val_type,
+                         nthreads = nthreads,
+                         type = type,
+                         full_enumeration = full_enumeration,
+                         small_sample_correction = small_sample_correction, 
+                         heteroskedastic = heteroskedastic, 
+                         seed = seed
+     )
     }
-    # } else if(boot_algo == "R-lean") {
-    #   res <- boot_algo1(preprocessed_object = preprocess,
-    #                     boot_iter = B,
-    #                     point_estimate = point_estimate,
-    #                     impose_null = impose_null,
-    #                     beta0 = beta0,
-    #                     sign_level = sign_level,
-    #                     param = param,
-    #                     # seed = seed,
-    #                     p_val_type = p_val_type,
-    #                     nthreads = nthreads,
-    #                     type = type,
-    #                     full_enumeration = full_enumeration,
-    #                     small_sample_correction = small_sample_correction
-    #   )
-    # }
-    # 
-    # # compute confidence sets
-    # if(class(res) == "boot_algo1"){
-    #   conf_int <-  FALSE
-    # }
+
+    # compute confidence sets
+    if(class(res) == "boot_algo1"){
+      conf_int <-  FALSE
+    }
 
     if (is.null(conf_int) || conf_int == TRUE) {
 
@@ -429,7 +433,8 @@ boottest.lm <- function(object,
       impose_null = impose_null,
       R = R,
       beta0 = beta0, 
-      boot_algo = "R"
+      boot_algo = boot_algo, 
+      nthreads = nthreads
     )
     
   } else if(boot_algo == "WildBootTests.jl"){
@@ -721,14 +726,14 @@ boottest.lm <- function(object,
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
 #' \dontrun{
-# library(clubSandwich)
-# R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
-# wboottest <- 
-#   waldboottest(object = lm_fit, 
-#                clustid = "group_id1", 
-#                B = 999, 
-#                R = R)
-# generics::tidy(wboottest)
+#' library(clubSandwich)
+#' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+#' wboottest <- 
+#'   waldboottest(object = lm_fit, 
+#'                clustid = "group_id1", 
+#'                B = 999, 
+#'                R = R)
+#' generics::tidy(wboottest)
 #' }
 
 waldboottest.lm <- function(object,
@@ -759,7 +764,9 @@ waldboottest.lm <- function(object,
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
   
-  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(object, "MBT class(lm)")
+  
+  check_arg(clustid, "character scalar | character vector")
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric vector | numeric matrix")
   

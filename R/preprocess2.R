@@ -230,6 +230,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
     # add potential other cluster variables from cluster argument
     formula_coef_fe <- eval(of$formula)
     
+    formula <- formula_coef_fe
     # add cluster variables to formula
     if (!is.null(cluster)) {
       formula <- update(formula_coef_fe, paste("~ . +", paste(cluster, collapse = "+")))
@@ -464,42 +465,52 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   # Start Sandwich code 
   # ---------------------------------------------------------------------------- #
   
-  clustid <- cluster
-  cluster_names <- clustid
-  clustid <- as.data.frame(model_frame[, clustid], stringsAsFactors = FALSE)
-  clustid_dims <- ncol(clustid)
-  
-  
-  i <- !sapply(clustid, is.numeric)
-  clustid[i] <- lapply(clustid[i], as.character)
-  
-  # taken from multiwayvcov::cluster.boot
-  acc <- list()
-  for (i in 1:clustid_dims) {
-    acc <- append(acc, utils::combn(1:clustid_dims, i, simplify = FALSE))
-  }
-  
-  vcov_sign <- sapply(acc, function(i) (-1)^(length(i) + 1))
-  acc <- acc[-1:-clustid_dims]
-  
-  if (clustid_dims == 1) {
-    names(clustid) <- cluster_names
-  }
-  
-  if (clustid_dims > 1) {
-    for (i in acc) {
-      clustid <- cbind(clustid, Reduce(paste0, clustid[, i]))
-      names(clustid)[length(names(clustid))] <- Reduce(paste0, names(clustid[, i]))
-      # cluster_names <- cbind(cluster_names, Reduce(paste0, clustid[,i]))
+  if(!is.null(cluster)){
+    clustid <- cluster
+    cluster_names <- clustid
+    clustid <- as.data.frame(model_frame[, clustid], stringsAsFactors = FALSE)
+    clustid_dims <- ncol(clustid)
+    
+    
+    i <- !sapply(clustid, is.numeric)
+    clustid[i] <- lapply(clustid[i], as.character)
+    
+    # taken from multiwayvcov::cluster.boot
+    acc <- list()
+    for (i in 1:clustid_dims) {
+      acc <- append(acc, utils::combn(1:clustid_dims, i, simplify = FALSE))
     }
+    
+    vcov_sign <- sapply(acc, function(i) (-1)^(length(i) + 1))
+    acc <- acc[-1:-clustid_dims]
+    
+    if (clustid_dims == 1) {
+      names(clustid) <- cluster_names
+    }
+    
+    if (clustid_dims > 1) {
+      for (i in acc) {
+        clustid <- cbind(clustid, Reduce(paste0, clustid[, i]))
+        names(clustid)[length(names(clustid))] <- Reduce(paste0, names(clustid[, i]))
+        # cluster_names <- cbind(cluster_names, Reduce(paste0, clustid[,i]))
+      }
+    }    
   }
+
   
   # ---------------------------------------------------------------------------- #
   # End Sandwich code 
   # ---------------------------------------------------------------------------- #
   
-  
-  N_G <- sapply(clustid, function(x) length(unique(x)))
+  if(is.null(cluster)){
+    clustid = NULL
+    vcov_sign = NULL
+    clustid_dims = NULL
+    N_G = NULL
+    bootcluster = NULL
+  } else {
+    N_G <- sapply(clustid, function(x) length(unique(x)))
+  }
   
   # create a bootcluster vector
   if (length(bootcluster) == 1) {
@@ -525,6 +536,7 @@ preprocess2 <- function(object, cluster, fe, param, bootcluster, na_omit, R) {
   R0 <- rep(0, length(colnames(X)))
   R0[match(param, colnames(X))] <- R
   names(R0) <- colnames(X)
+  
   
   res <- list(
     Y = Y,

@@ -18,13 +18,14 @@ knitr::opts_chunk$set(
 library(fwildclusterboot)
 ```
 
+ 
 `fwildclusterboot` serves as an R port to the [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) implementation of the "fast" wild cluster bootstrap. 
 
 ## Installation and Set-Up
 
 You can install Julia and `WildBootTests.jl` from within R via the `JuliaConnectoR.utils` package:
-
-```{r, eval = FALSE, message = FALSE, warning = FALSE}
+  
+  ```{r, eval = FALSE, message = FALSE, warning = FALSE}
 devtools::install_github("s3alfisc/JuliaConnectoR.utils")
 library(JuliaConnectoR.utils)
 install_julia() # install Julia
@@ -32,8 +33,8 @@ install_julia_packages("WildBootTests.jl") # install WildBootTests.jl
 ```
 
 The `connect_julia_r()` function will help you to make sure that Julia and R find each other: 
-
-```{r, eval = FALSE, message = FALSE, warning = FALSE}
+  
+  ```{r, eval = FALSE, message = FALSE, warning = FALSE}
 connect_julia_r() # instructions to connect Julia and R
 ```
 
@@ -87,7 +88,6 @@ Note that if you want your analyses based on `WildBootTests.jl` to be reproducib
 ```{r, eval = FALSE, message = FALSE, warning = FALSE}
 set_julia_seed(87658)
 ```
-
 
 
 

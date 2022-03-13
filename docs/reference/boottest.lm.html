@@ -150,9 +150,9 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019.</p>
     <pre class="usage"><span class='co'># S3 method for lm</span>
 <span class='fu'><a href='boottest.html'>boottest</a></span><span class='op'>(</span>
   <span class='va'>object</span>,
-  <span class='va'>clustid</span>,
   <span class='va'>param</span>,
   <span class='va'>B</span>,
+  clustid <span class='op'>=</span> <span class='cn'>NULL</span>,
   bootcluster <span class='op'>=</span> <span class='st'>"max"</span>,
   conf_int <span class='op'>=</span> <span class='cn'>TRUE</span>,
   seed <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -185,10 +185,6 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019.</p>
       <td><p>An object of class lm</p></td>
     </tr>
     <tr>
-      <th>clustid</th>
-      <td><p>A character vector containing the names of the cluster variables</p></td>
-    </tr>
-    <tr>
       <th>param</th>
       <td><p>A character vector. The name of the regression
 coefficient(s) for which the hypothesis is to be tested</p></td>
@@ -197,6 +193,10 @@ coefficient(s) for which the hypothesis is to be tested</p></td>
       <th>B</th>
       <td><p>Integer. The number of bootstrap iterations. When the number of clusters is low,
 increasing B adds little additional runtime.</p></td>
+    </tr>
+    <tr>
+      <th>clustid</th>
+      <td><p>A character vector containing the names of the cluster variables</p></td>
     </tr>
     <tr>
       <th>bootcluster</th>
