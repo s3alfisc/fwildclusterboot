@@ -138,54 +138,21 @@ sample of N = 10000, k = 20 covariates and one cluster of dimension N_G (3 itera
 
 ```{r, fig.width=10, fig.height=3, echo = FALSE, warning = FALSE, message = FALSE}
 library(ggplot2)
-library(scales)
-library(data.table)
+df <- readRDS("C:/Users/alexa/Dropbox/R package development/fwildclusterboot develop/benchmarks/r_comparions.rds")
 
-benchmarks_clean2 <- fread("C:/Users/alexa/Dropbox/R package development/wildboottestjlr/benchmarks_df")
-benchmarks_clean2 <- benchmarks_clean2[type != "wildboottestjlr"]
+df$B <- factor(df$B, levels = c("10K", "100K"))
+df$N_G <- factor(df$N_G, levels = c("N_G = 20", "N_G = 50", "N_G = 100", "N_G = 500", "N_G = 1000"))
+df$`boot algo` <- df$type
 
-benchmarks_clean2[, N_G := factor(N_G, levels = c("N_G = 20", "N_G = 50", "N_G = 100", "N_G = 500", "N_G = 1000"))]
-benchmarks_clean2[, B := factor(B, levels = c("10K", "100K"))]
-
-ggplot(data = benchmarks_clean2, aes(x = B, y = time, group = factor(type))) + 
+ggplot(data = df, aes(x = B, y = time, color = `boot algo`)) + 
   facet_wrap(~N_G, nrow = 1) + 
-  geom_point(aes(colour = factor(type)), size = 2) + 
-  geom_line(aes(colour = factor(type))) + 
-  scale_y_continuous(labels = comma, trans = 'log10') +
-  # scale_x_continuous(labels = label_number(scale = 1/1000, suffix = "K"), breaks = breaks_width(50000))  +
-  ylab("time in seconds (log scale)") +
-  xlab("number of bootstrap iterations") +
-  theme_bw()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-        legend.title = element_blank())
-
-# benchmarks_clean <- 
-# readRDS("C:/Users/alexa/Dropbox/fwildclusterboot develop/benchmarks_clean.rds")
-# 
-# ggplot(data = benchmarks_clean, aes(x = B, y = mean, group = factor(expr))) +
-#   facet_wrap(~N_G, nrow = 1) +
-#   geom_point(aes(colour = factor(expr)), size = 2) +
-#   geom_line(aes(colour = factor(expr))) +
-#   #geom_bar(stat = "identity", position = position_dodge()) +
-#   #scale_y_continuous(labels = comma) +
-#   scale_y_continuous(labels = comma, trans = 'log10') +
-#   scale_x_continuous(labels = label_number(scale = 1/1000, suffix = "K"), breaks = breaks_width(50000))  +
-#   ylab("time in seconds (log scale)") +
-#   xlab("number of bootstrap iterations") +
-#   theme_bw()+
-#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1),
-#         legend.title = element_blank())
+  geom_point() + 
+scale_y_continuous(trans='log10') + 
+  theme_bw() + 
+  xlab("Bootstrap iterations") + 
+  ylab("time in seconds, log scale")
 
 ```
-
-<!-- For a small number of clusters, `fwildclusterboot` is in generally faster than implementations of the wild cluster bootstrap in the `sandwich` and `clusterSEs` packages.  -->
-
-```{r, include = FALSE}
-# All defaults
-# knitr::include_graphics("man/figures/benchmarks.png")
-```
-<!-- ![Benchmark](man/figures/bench_ggplot.png) -->
-
 
 ### Installation
 
