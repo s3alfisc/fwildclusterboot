@@ -30,10 +30,10 @@ It also ports functionality of
 via the
 [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR).
 
-The package’s central function is `boottest()`. It allows the user to
-test univariate hypotheses using a wild cluster bootstrap at extreme
-speed: via the ‘fast’ algorithm, it is possible to run a wild cluster
-bootstrap with *B* = 100.000 iterations in less than a second!
+The package’s central function is `boottest()`. It allows to test
+univariate hypotheses using a wild cluster bootstrap at extreme speed:
+via the ‘fast’ algorithm, it is possible to run a wild cluster bootstrap
+with *B* = 100.000 iterations in less than a second!
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
@@ -49,8 +49,8 @@ bootstrap with *B* = 100.000 iterations in less than a second!
 Additional features are provided through `WildBootTests.jl`:
 
 -   The Wild Restricted Efficient bootstrap (WRE) for IV/2SLS/LIML
-    ([(Davidson &
-    MacKinnon, 2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221)).
+    [(Davidson &
+    MacKinnon, 2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221).
 -   Arbitrary and multiple linear hypotheses in the parameters.
 
 `fwildclusterboot` supports the following models:
