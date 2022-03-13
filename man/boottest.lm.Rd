@@ -21,7 +21,7 @@
   tol = 1e-06,
   maxiter = 10,
   na_omit = TRUE,
-  nthreads = 1,
+  nthreads = getBoottest_nthreads(),
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
   boot_algo = getBoottest_boot_algo(),
