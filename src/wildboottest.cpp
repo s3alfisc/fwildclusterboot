@@ -78,7 +78,7 @@ List wildboottestHC(const arma::vec & y,
                     const int & cores,
                     const int & type, 
                     const float & small_sample_correction, 
-                    const float & seed) {
+                    const int & seed) {
 
   // function implements wild cluster bootstrap,
   // imposing the null
@@ -169,7 +169,7 @@ List wildboottestCL(const arma::vec & y,
                     const int & type,
                     const arma::vec & cluster, 
                     const float & small_sample_correction, 
-                    const float & seed
+                    const int & seed
 ) {
 
   // function implements wild cluster bootstrap,

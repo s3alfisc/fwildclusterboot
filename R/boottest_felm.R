@@ -266,10 +266,11 @@ boottest.felm <- function(object,
     }
   }
 
-  if (!is.null(fe) && fe %in% c(clustid, param)) {
-    stop(paste("The function argument fe =", fe, "is included in either the clustering variables or the the hypothesis (via the `param` argument). This is not allowed. Please set fe to another factor variable or NULL."),
-      call. = FALSE
-    )
+  if (!is.null(fe)) {
+    if(fe %in% c(clustid, param)){
+      stop(paste("The function argument fe =", fe, "is included in either the clustering variables or the the hypothesis (via the `param` argument). This is not allowed. Please set fe to another factor variable or NULL."),
+           call. = FALSE)
+    }
   }
 
   if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
@@ -320,22 +321,23 @@ boottest.felm <- function(object,
     clustid_dims <- preprocess$clustid_dims
     point_estimate <- as.vector(object$coefficients[param,] %*% preprocess$R0[param])
     
+    full_enumeration <- FALSE
     if(heteroskedastic == FALSE){
       N_G_2 <- 2^preprocess$N_G
-      if (type %in% c("rademacher") & N_G_2 <= B) {
-        warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-                call. = FALSE, 
-                noBreaks. = TRUE
-        )
-        warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(preprocess$N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-                call. = FALSE, 
-                noBreaks. = TRUE
-        )
-        B <- N_G_2
-        full_enumeration <- TRUE
-      } else{
-        full_enumeration <- FALSE
-      }
+      if (type == "rademacher") {
+        if(N_G_2 <= B){
+          warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
+                  call. = FALSE, 
+                  noBreaks. = TRUE
+          )
+          warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(preprocess$N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
+                  call. = FALSE, 
+                  noBreaks. = TRUE
+          )
+          B <- N_G_2
+          full_enumeration <- TRUE
+        }
+      } 
     }  
     
     if(boot_algo == "R"){
@@ -367,7 +369,8 @@ boottest.felm <- function(object,
                         type = type,
                         full_enumeration = full_enumeration,
                         small_sample_correction = small_sample_correction, 
-                        heteroskedastic = heteroskedastic
+                        heteroskedastic = heteroskedastic, 
+                        seed = seed
       )
     }
 
@@ -436,7 +439,7 @@ boottest.felm <- function(object,
     
   } else if(boot_algo == "WildBootTests.jl"){
     
-    fedfadj <- FALSE
+    fedfadj <- 0L
     
     preprocess <- preprocess_julia(object = object,
                                    cluster = clustid,
@@ -451,25 +454,28 @@ boottest.felm <- function(object,
     point_estimate <- as.vector(object$coefficients[param,] %*% preprocess$R0[param])
     
     # number of clusters used in bootstrap - always derived from bootcluster
-    N_G <- length(unique(preprocess$bootcluster[, 1]))
-    N_G_2 <- 2^N_G
-    if (type %in% c("rademacher") & N_G_2 < B) {
-      warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-              call. = FALSE,
-              noBreaks. = TRUE
-      )
-      warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-              call. = FALSE,
-              noBreaks. = TRUE
-      )
+    N_G_bootcluster <- preprocess$N_G_bootcluster
+    N_G_2 <- 2^N_G_bootcluster
+    if (type == "rademacher") {
+      if(N_G_2 <= B){
+        warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", N_G_bootcluster, "bootstrap clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
+                call. = FALSE, 
+                noBreaks. = TRUE
+        )
+        warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G_bootcluster - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
+                call. = FALSE, 
+                noBreaks. = TRUE
+        )
+      }
     }
     
     # translate ssc into small_sample_adjustment
-    if(ssc[['adj']] == TRUE && ssc[['cluster.adj']] == TRUE){
-      small_sample_adjustment <- small <- TRUE
-    } else {
-      small_sample_adjustment <- small <- FALSE
-    }
+    small_sample_adjustment <- small <- FALSE
+    if(ssc[['adj']] == TRUE){
+      if(ssc[['cluster.adj']] == TRUE){
+        small_sample_adjustment <- small <- TRUE
+      }
+    } 
     
     if(ssc[['fixef.K']] != "none" || ssc[['cluster.df']] != "conventional"){
       message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional' when 'boot_algo = WildBootTests.jl'."))
@@ -827,7 +833,7 @@ waldboottest.felm <- function(object,
     )
   }
   
-    fedfadj <- FALSE
+    fedfadj <- 0L
     
     preprocess <- preprocess_julia(object = object,
                                    cluster = clustid,
@@ -840,19 +846,20 @@ waldboottest.felm <- function(object,
     clustid_dims <- preprocess$clustid_dims
   
     # number of clusters used in bootstrap - always derived from bootcluster
-    N_G <- length(unique(preprocess$bootcluster[, 1]))
-    N_G_2 <- 2^N_G
-    if (type %in% c("rademacher") & N_G_2 < B) {
-      warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-              call. = FALSE,
-              noBreaks. = TRUE
-      )
-      warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-              call. = FALSE,
-              noBreaks. = TRUE
-      )
+    N_G_bootcluster <- preprocess$N_G_bootcluster
+    N_G_2 <- 2^N_G_bootcluster
+    if (type == "rademacher") {
+      if(N_G_2 <= B){
+        warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", N_G_bootcluster, "bootstrap clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
+                call. = FALSE, 
+                noBreaks. = TRUE
+        )
+        warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G_bootcluster - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
+                call. = FALSE, 
+                noBreaks. = TRUE
+        )
+      }    
     }
-    
     # translate ssc into small_sample_adjustment
     if(ssc[['adj']] == TRUE && ssc[['cluster.adj']] == TRUE){
       small_sample_adjustment <- small <- TRUE

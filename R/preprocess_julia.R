@@ -467,6 +467,7 @@ preprocess_julia <- function(object, cluster, fe, param, bootcluster, na_omit, R
     clustid_dims = clustid_dims,
     N_G = N_G,
     bootcluster = bootcluster,
+    N_G_bootcluster = length(unique(bootcluster[, 1])),
     R0 = R0,
     model_frame = model_frame,
     X_exog = X_exog,

@@ -76,9 +76,10 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
     stop("The 'lean' bootstrap algorithm is currently not supported for hypotheses about more than one parameter.")
   }
 
-  if(is.null(seed)){
-    seed <- get_seed()
-  }
+
+  cat(seed, "\n")
+  #seed <- 1
+  # cat(seed, "\n")
   
   if(heteroskedastic == TRUE){
     boot_res <-
@@ -161,5 +162,12 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
 # for using set.seed() for controlling rcpp's seed, see this 
 # blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/
 get_seed <- function() {
-  sample.int(.Machine$integer.max, 1)
+  x <- sample.int(.Machine$integer.max, 1)
+  return(x)
+}
+
+get_seed_julia <- function(){
+  JuliaConnectoR::juliaEval("using StatsBase")
+  x <- JuliaConnectoR::juliaEval("sample(1:typemax(Int32))")
+  return(x)
 }

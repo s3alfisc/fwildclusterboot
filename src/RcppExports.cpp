@@ -38,7 +38,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // wildboottestHC
-List wildboottestHC(const arma::vec& y, const arma::mat& X, const arma::mat& R, const float& r, const int& B, const int& N_G_bootcluster, const int& cores, const int& type, const float& small_sample_correction, const float& seed);
+List wildboottestHC(const arma::vec& y, const arma::mat& X, const arma::mat& R, const float& r, const int& B, const int& N_G_bootcluster, const int& cores, const int& type, const float& small_sample_correction, const int& seed);
 RcppExport SEXP _fwildclusterboot_wildboottestHC(SEXP ySEXP, SEXP XSEXP, SEXP RSEXP, SEXP rSEXP, SEXP BSEXP, SEXP N_G_bootclusterSEXP, SEXP coresSEXP, SEXP typeSEXP, SEXP small_sample_correctionSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -52,13 +52,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type cores(coresSEXP);
     Rcpp::traits::input_parameter< const int& >::type type(typeSEXP);
     Rcpp::traits::input_parameter< const float& >::type small_sample_correction(small_sample_correctionSEXP);
-    Rcpp::traits::input_parameter< const float& >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< const int& >::type seed(seedSEXP);
     rcpp_result_gen = Rcpp::wrap(wildboottestHC(y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction, seed));
     return rcpp_result_gen;
 END_RCPP
 }
 // wildboottestCL
-List wildboottestCL(const arma::vec& y, const arma::mat& X, const arma::mat& R, const float& r, const int& B, const int& N_G_bootcluster, const int& cores, const int& type, const arma::vec& cluster, const float& small_sample_correction, const float& seed);
+List wildboottestCL(const arma::vec& y, const arma::mat& X, const arma::mat& R, const float& r, const int& B, const int& N_G_bootcluster, const int& cores, const int& type, const arma::vec& cluster, const float& small_sample_correction, const int& seed);
 RcppExport SEXP _fwildclusterboot_wildboottestCL(SEXP ySEXP, SEXP XSEXP, SEXP RSEXP, SEXP rSEXP, SEXP BSEXP, SEXP N_G_bootclusterSEXP, SEXP coresSEXP, SEXP typeSEXP, SEXP clusterSEXP, SEXP small_sample_correctionSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -73,7 +73,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type type(typeSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type cluster(clusterSEXP);
     Rcpp::traits::input_parameter< const float& >::type small_sample_correction(small_sample_correctionSEXP);
-    Rcpp::traits::input_parameter< const float& >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< const int& >::type seed(seedSEXP);
     rcpp_result_gen = Rcpp::wrap(wildboottestCL(y, X, R, r, B, N_G_bootcluster, cores, type, cluster, small_sample_correction, seed));
     return rcpp_result_gen;
 END_RCPP

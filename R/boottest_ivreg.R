@@ -254,22 +254,21 @@ boottest.ivreg <- function(object,
   clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
   
   # number of clusters used in bootstrap - always derived from bootcluster
-  N_G <- length(unique(preprocess$bootcluster[, 1]))
-  #N_G <- preprocess$N_G
-  N_G_2 <- 2^N_G
-  # NOTE: no need to reset B in enumeration case -> handled by WildBootTests.jl ->
-  # throws an error
-  if (type %in% c("rademacher") & N_G_2 < B) {
-    warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", length(unique(preprocess$bootcluster[, 1])), "clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-            call. = FALSE,
-            noBreaks. = TRUE
-    )
-    warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-            call. = FALSE,
-            noBreaks. = TRUE
-    )
+  N_G_bootcluster <- preprocess$N_G_bootcluster
+  N_G_2 <- 2^N_G_bootcluster
+  if (type == "rademacher") {
+    if(N_G_2 <= B){
+      warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", N_G_bootcluster, "bootstrap clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
+              call. = FALSE, 
+              noBreaks. = TRUE
+      )
+      warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G_bootcluster - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
+              call. = FALSE, 
+              noBreaks. = TRUE
+      )
+    }
   }
-  
+    
   # assign all values needed in WildBootTests.jl
   
   resp <- as.numeric(preprocess$Y)

@@ -1,4 +1,5 @@
-test_that("multiplication works", {
+test_that("method equivalence works", {
+  
   library(fixest)
   library(lfe)
   library(fwildclusterboot)
