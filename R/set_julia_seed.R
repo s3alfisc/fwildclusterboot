@@ -5,7 +5,7 @@ set_julia_seed <- function(rng){
   #' @export
 
   JuliaConnectoR::juliaEval('using Random')
-  rng_char <- paste0("Random.MersenneTwister(", rng, ")")
+  rng_char <- paste0("Random.seed!(", rng, ")")
   JuliaConnectoR::juliaEval(rng_char)
 
 }

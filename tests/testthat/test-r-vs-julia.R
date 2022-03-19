@@ -1,12 +1,12 @@
 test_that("test r against Julia I: stochastic tests", {
 
   # skip_on_cran()
-  
+
   reltol <- 0.05
-  
+
   N <- 10000
   seed <- 875784
-  
+
   data1 <<- fwildclusterboot:::create_data(N = 10000,
                                            N_G1 = 20,
                                            icc1 = 0.5,
@@ -16,25 +16,25 @@ test_that("test r against Julia I: stochastic tests", {
                                            numb_fe2 = 10,
                                            seed = 90864369,
                                            weights = 1:N / N)
-  
+
   lm_fit <- lm(proposition_vote ~ treatment  + log_income ,
                data = data1)
-  
-  
-  
+
+
+
   lm_fit_weights <- lm(proposition_vote ~ treatment  + log_income  ,
                        weights = data1$weights,
                        data = data1)
   lm_fits <- list(ols = lm_fit, wls = lm_fit_weights)
-  
+
   # object = lm_fit
   # impose_null = FALSE
   # type = "rademacher"
   # p_val_type = "two-tailed"
 
-  
+
   cat("Part 1: Large B Tests", "\n")
-  
+
 
     for(object in lm_fits){
 
@@ -208,6 +208,6 @@ test_that("test r against Julia I: stochastic tests", {
 
     }
 
-  
-  
+
+
 })

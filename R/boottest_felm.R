@@ -226,6 +226,30 @@ boottest.felm <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
+  if(is.null(seed)){
+    internal_seed <- get_seed()
+  } else {
+    set.seed(seed)
+    internal_seed <- get_seed()
+  }
+  
+  
+  if(boot_algo == "R"){
+    if(type %in% c("rademacher", "webb", "norm")){
+      dqrng::dqset.seed(internal_seed)
+    } else {
+      set.seed(internal_seed)
+    }
+  } else if(boot_algo == "R-lean"){
+    set.seed(internal_seed)
+  } else if(boot_algo == "WildBootTests.jl"){
+    JuliaConnectoR::juliaEval('using Random')
+    #JuliaConnectoR::juliaEval('using StableRNGs')
+    #JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
+    rng_char <- paste0("Random.seed!(", internal_seed, ")")
+    JuliaConnectoR::juliaEval(rng_char)
+    internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
+  }
   
   # check appropriateness and assign nthreads
   nthreads <- check_set_nthreads(nthreads)
@@ -238,10 +262,6 @@ boottest.felm <- function(object,
     }
   } else {
     heteroskedastic <- FALSE
-  }
-  
-  if(!is.null(seed)){
-    dqrng::dqset.seed(seed)
   }
   
   if(maxiter < 1){
@@ -370,7 +390,8 @@ boottest.felm <- function(object,
                         full_enumeration = full_enumeration,
                         small_sample_correction = small_sample_correction, 
                         heteroskedastic = heteroskedastic, 
-                        seed = seed
+                        seed = internal_seed
+                        
       )
     }
 
@@ -533,11 +554,8 @@ boottest.felm <- function(object,
     rtol <- tol
     
     JuliaConnectoR::juliaEval('using WildBootTests')
-    JuliaConnectoR::juliaEval('using Random')
-    
     WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
-    rng <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(seed), ")"))
-    
+
     ptype <- switch(p_val_type,
                     "two-tailed" = "symmetric",
                     "equal-tailed" = "equaltail",
@@ -571,7 +589,7 @@ boottest.felm <- function(object,
                       imposenull = imposenull,
                       rtol = rtol,
                       small = small,
-                      rng = rng,
+                      rng = internal_seed,
                       auxwttype = auxwttype,
                       ptype = ptype,
                       reps = reps,
@@ -800,10 +818,20 @@ waldboottest.felm <- function(object,
   check_arg(bootstrapc, "scalar logical")
   
 
-  if(!is.null(seed)){
-    dqrng::dqset.seed(seed)
+  if(is.null(seed)){
+    internal_seed <- get_seed()
+  } else {
+    set.seed(seed)
+    internal_seed <- get_seed()
   }
   
+  # set random seed
+  JuliaConnectoR::juliaEval('using Random')
+  #JuliaConnectoR::juliaEval('using StableRNGs')
+  #JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
+  rng_char <- paste0("Random.seed!(", internal_seed, ")")
+  JuliaConnectoR::juliaEval(rng_char)
+  internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
 
   # if(is.null(R)){
   #   R <- rep(1, length(names(coef(object))))
@@ -924,7 +952,7 @@ waldboottest.felm <- function(object,
     JuliaConnectoR::juliaEval('using Random')
     
     WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
-    rng <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(seed), ")"))
+    # rng <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(seed), ")"))
     
     ptype <- switch(p_val_type,
                     "two-tailed" = "symmetric",
@@ -957,7 +985,7 @@ waldboottest.felm <- function(object,
                       imposenull = imposenull,
                       rtol = rtol,
                       small = small,
-                      rng = rng,
+                      rng = internal_seed,
                       auxwttype = auxwttype,
                       ptype = ptype,
                       reps = reps,

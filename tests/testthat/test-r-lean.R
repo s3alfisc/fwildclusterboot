@@ -6,7 +6,7 @@ test_that("test lean cpp boottest", {
   library(fwildclusterboot)
   # skip()
   # devtools::load_all()
-  data <- fwildclusterboot:::create_data(N = 1000,
+  data1 <<- fwildclusterboot:::create_data(N = 1000,
                                          N_G1 = 1000,
                                          icc1 = 0.5,
                                          N_G2 = 10,
@@ -15,11 +15,11 @@ test_that("test lean cpp boottest", {
                                          numb_fe2 = 10,
                                          seed = 2293)
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income ,
-                data = data)
+                data = data1)
   feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income ,
-                data = data)
+                data = data1)
   felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income ,
-                   data = data)
+                   data = data1)
 
   
   # Test 1: heteroskedastic wild bootstrap

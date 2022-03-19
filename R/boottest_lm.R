@@ -211,7 +211,34 @@ boottest.lm <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
 
+  if(is.null(seed)){
+    internal_seed <- get_seed()
+  } else {
+    set.seed(seed)
+    internal_seed <- get_seed()
+  }
   
+
+  if(boot_algo == "R"){
+    if(type %in% c("rademacher", "webb", "norm")){
+      dqrng::dqset.seed(internal_seed)
+    } else {
+      set.seed(internal_seed)
+    }
+  } else if(boot_algo == "R-lean"){
+    set.seed(internal_seed)
+  } else if(boot_algo == "WildBootTests.jl"){
+    JuliaConnectoR::juliaEval('using Random')
+    #JuliaConnectoR::juliaEval('using StableRNGs')
+    #JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
+    rng_char <- paste0("Random.seed!(", internal_seed, ")")
+    JuliaConnectoR::juliaEval(rng_char)
+    internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
+  }
+  
+  # cat(internal_seed, "\n")
+  seed <- internal_seed
+    
   # check appropriateness of nthreads
   #nthreads <- ifelse(nthreads > cpp_get_nb_threads(), cpp_get_nb_threads(), nthreads)
   nthreads <- check_set_nthreads(nthreads)
@@ -225,33 +252,6 @@ boottest.lm <- function(object,
     }
   } else {
     heteroskedastic <- FALSE
-  }
-  
-  if(!is.null(seed)){
-    if(boot_algo == "R"){
-      if(type != "mammen"){
-        dqrng::dqset.seed(seed)
-      } else {
-        set.seed(seed)
-      }
-    } else if(boot_algo == "R-lean"){
-      set.seed(seed)
-      # to reproduce seed that is set externally and set that is set
-      # internally
-      seed <- get_seed()
-    } else if(boot_algo == "WildBootTests.jl"){
-      rng <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(seed), ")"))
-    }
-  } else if(is.null(seed)){
-    # seed is probided for cpp algorithm
-    if(boot_algo == "R-lean"){
-      cat(paste("seed 1:", seed), "\n")
-      seed <- get_seed()
-      cat(paste("seed 2:", seed), "\n")
-    } else if(boot_algo == "WildBootTests.jl"){
-      seed <- get_seed_julia()
-      rng <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(seed), ")"))
-    }
   }
   
 
@@ -394,8 +394,8 @@ boottest.lm <- function(object,
                          full_enumeration = full_enumeration,
                          small_sample_correction = small_sample_correction, 
                          heteroskedastic = heteroskedastic, 
-                         seed = seed
-     )
+                         seed = internal_seed
+       )
     }
 
     # compute confidence sets
@@ -556,7 +556,7 @@ boottest.lm <- function(object,
     rtol <- tol
     
     JuliaConnectoR::juliaEval('using WildBootTests')
-    JuliaConnectoR::juliaEval('using Random')
+    JuliaConnectoR::juliaEval('using StableRNGs')
     
     WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
 
@@ -593,7 +593,7 @@ boottest.lm <- function(object,
                       imposenull = imposenull,
                       rtol = rtol,
                       small = small,
-                      # rng = rng,
+                      rng = internal_seed,
                       auxwttype = auxwttype,
                       ptype = ptype,
                       reps = reps,
@@ -601,9 +601,9 @@ boottest.lm <- function(object,
                       bootstrapc = bootstrapc
     )
     
-    if(!is.null(seed)){
-      eval_list[["rng"]] <- rng
-    }
+    # if(!is.null(seed)){
+    #   eval_list[["rng"]] <- rng
+    # }
     
     if(!is.null(maxmatsize)){
       eval_list[["maxmatsize"]] <- maxmatsize
@@ -814,6 +814,23 @@ waldboottest.lm <- function(object,
   check_arg(bootstrapc, "scalar logical")
   check_arg(floattype, "charin(Float32, Float64")
   
+  # set random seed
+  
+  if(is.null(seed)){
+    internal_seed <- get_seed()
+  } else {
+    set.seed(seed)
+    internal_seed <- get_seed()
+  }
+  
+  JuliaConnectoR::juliaEval('using Random')
+  #JuliaConnectoR::juliaEval('using StableRNGs')
+  #JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
+  rng_char <- paste0("Random.seed!(", internal_seed, ")")
+  JuliaConnectoR::juliaEval(rng_char)
+  internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
+  
+  
   if(nrow(R) != length(beta0)){
     stop(paste("The dimensions of func args R and beta0 do not match. The number of rows of R is ", nrow(R), ", but the length of beta0 0 is", length(beta0), "."))
   }
@@ -973,13 +990,8 @@ waldboottest.lm <- function(object,
   )
   
   JuliaConnectoR::juliaEval('using WildBootTests')
-  JuliaConnectoR::juliaEval('using Random')
-  
   WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
-  #if(!is.null(rng)){
-  rng_jl <- juliaEval(paste0("Random.MersenneTwister(", seed, ")"))
-  #}
-  
+
   eval_list <- list(floattype,
                     R,
                     r,
@@ -991,7 +1003,7 @@ waldboottest.lm <- function(object,
                     imposenull = imposenull,
                     rtol = rtol,
                     small = small,
-                    rng = rng_jl,
+                    rng = internal_seed,
                     ptype = ptype,
                     auxwttype = auxwttype,
                     reps = reps,

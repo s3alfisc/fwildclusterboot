@@ -226,6 +226,32 @@ boottest.fixest <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
 
+  if(is.null(seed)){
+    internal_seed <- get_seed()
+  } else {
+    set.seed(seed)
+    internal_seed <- get_seed()
+  }
+  
+  if(boot_algo == "R"){
+    if(type %in% c("rademacher", "webb", "norm")){
+      dqrng::dqset.seed(internal_seed)
+    } else {
+      set.seed(internal_seed)
+    }
+  } else if(boot_algo == "R-lean"){
+    set.seed(internal_seed)
+  } else if(boot_algo == "WildBootTests.jl"){
+    JuliaConnectoR::juliaEval('using Random')
+    #JuliaConnectoR::juliaEval('using StableRNGs')
+    #JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
+    rng_char <- paste0("Random.seed!(", internal_seed, ")")
+    JuliaConnectoR::juliaEval(rng_char)
+    internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
+  }  
+  
+  
+  
   # fixest specific checks
   if(object$method != "feols"){
     stop("boottest() only supports OLS estimation via fixest::feols() - it does not support non-linear models computed via e.g. fixest::fepois() or fixest::feglm.")
@@ -248,10 +274,6 @@ boottest.fixest <- function(object,
     }
   } else {
     heteroskedastic <- FALSE
-  }
-  
-  if(!is.null(seed)){
-    dqrng::dqset.seed(seed)
   }
   
   if(maxiter < 1){
@@ -406,7 +428,7 @@ boottest.fixest <- function(object,
                         full_enumeration = full_enumeration,
                         small_sample_correction = small_sample_correction, 
                         heteroskedastic = heteroskedastic, 
-                        seed = seed
+                        seed = internal_seed
       )
     }
 
@@ -569,10 +591,10 @@ boottest.fixest <- function(object,
     rtol <- tol
     
     JuliaConnectoR::juliaEval('using WildBootTests')
-    JuliaConnectoR::juliaEval('using Random')
+    # JuliaConnectoR::juliaEval('using Random')
     
     WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
-    rng <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(seed), ")"))
+    # rng <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(seed), ")"))
     
     ptype <- switch(p_val_type,
                     "two-tailed" = "symmetric",
@@ -607,7 +629,7 @@ boottest.fixest <- function(object,
                       imposenull = imposenull,
                       rtol = rtol,
                       small = small,
-                      rng = rng,
+                      rng = internal_seed,
                       auxwttype = auxwttype,
                       ptype = ptype,
                       reps = reps,
@@ -836,6 +858,19 @@ waldboottest.fixest <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
+  if(is.null(seed)){
+    internal_seed <- get_seed()
+  } else {
+    set.seed(seed)
+    internal_seed <- get_seed()
+  }
+  
+  # set random seed
+  JuliaConnectoR::juliaEval('using Random')
+  rng_char <- paste0("Random.seed!(", internal_seed, ")")
+  JuliaConnectoR::juliaEval(rng_char)
+  internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
+  
   # fixest specific checks
   if(object$method != "feols"){
     stop("waldboottest() only supports OLS estimation via fixest::feols() - it does not support non-linear models computed via e.g. fixest::fepois() or fixest::feglm.")
@@ -853,11 +888,7 @@ waldboottest.fixest <- function(object,
     stop(paste("The dimensions of func args R and beta0 do not match. The number of rows of R is ", nrow(R), ", but the length of beta0 0 is", length(beta0), "."))
   }
   # -------------------------------------------- 
-  
-  if(!is.null(seed)){
-    dqrng::dqset.seed(seed)
-  }
-  
+
   # if(maxiter < 1){
   #   stop("The function argument maxiter needs to be larger than 1.", 
   #        call. = FALSE)
@@ -998,11 +1029,8 @@ waldboottest.fixest <- function(object,
   rtol <- tol
   
   JuliaConnectoR::juliaEval('using WildBootTests')
-  JuliaConnectoR::juliaEval('using Random')
-  
   WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
-  rng <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(seed), ")"))
-  
+
   ptype <- switch(p_val_type,
                   "two-tailed" = "symmetric",
                   "equal-tailed" = "equaltail",
@@ -1034,7 +1062,7 @@ waldboottest.fixest <- function(object,
                     imposenull = imposenull,
                     rtol = rtol,
                     small = small,
-                    rng = rng,
+                    rng = internal_seed,
                     auxwttype = auxwttype,
                     ptype = ptype,
                     reps = reps,

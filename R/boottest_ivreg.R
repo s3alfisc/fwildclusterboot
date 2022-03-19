@@ -178,6 +178,22 @@ boottest.ivreg <- function(object,
   check_arg(p_val_type, 'charin(two-tailed, equal-tailed,>, <)')
   check_arg(boot_ssc, 'class(ssc) | class(boot_ssc)')
   
+  # set random seed
+  
+  if(is.null(seed)){
+    internal_seed <- get_seed()
+  } else {
+    set.seed(seed)
+    internal_seed <- get_seed()
+  }
+  
+  JuliaConnectoR::juliaEval('using Random')
+  #JuliaConnectoR::juliaEval('using StableRNGs')
+  #JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
+  rng_char <- paste0("Random.seed!(", internal_seed, ")")
+  JuliaConnectoR::juliaEval(rng_char)
+  internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
+  
   # translate ssc into small_sample_adjustment
   if(ssc[['adj']] == TRUE && ssc[['cluster.adj']] == TRUE){
     small_sample_adjustment <- TRUE
@@ -325,11 +341,8 @@ boottest.ivreg <- function(object,
   small <- small_sample_adjustment
   
   JuliaConnectoR::juliaEval('using WildBootTests')
-  JuliaConnectoR::juliaEval('using Random')
-  
   WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
-  rng <- juliaEval(paste0("Random.MersenneTwister(", seed, ")"))
-  
+
   ptype <- switch(p_val_type,
                   "two-tailed" = "symmetric",
                   "equal-tailed" = "equaltail",
@@ -363,7 +376,7 @@ boottest.ivreg <- function(object,
                     imposenull = imposenull,
                     rtol = rtol,
                     small = small,
-                    rng = rng,
+                    rng = internal_seed,
                     auxwttype = auxwttype,
                     ptype = ptype,
                     reps = reps,

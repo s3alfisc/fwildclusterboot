@@ -173,7 +173,7 @@ test_that("method equivalence works", {
       }
       
       # different seeds -> different values
-      print(expect_equal(boot_lm_R[[x]], as.vector(boot_lm_WildBootTests.jl[[x]]), tol = 0.02), ignore_attr = TRUE)
+      print(expect_equal(boot_lm_R[[x]], as.vector(boot_lm_WildBootTests.jl[[x]]), tolerance = 0.02), ignore_attr = TRUE)
       
     }
     
