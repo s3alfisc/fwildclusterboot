@@ -205,16 +205,7 @@ boottest.ivreg <- function(object,
     message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional'."))
   }
   
-  if ((conf_int == TRUE || is.null(conf_int)) & B <= 100) {
-    stop("The function argument B is smaller than 100. The number of bootstrap
-          iterations needs to be 100 or higher in order to guarantee that the
-          root finding procudure used to find the confidence set
-          works properly.",
-         call. = FALSE
-    )
-  }
-  
-  
+
   # which parametrs can be tested?
   if (mean(param %in% names(c(object$exogenous, object$endogenous)) != 1)) {
     stop(paste("The parameter", param, "is not included in the estimated model.

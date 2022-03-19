@@ -40,6 +40,10 @@ test_that("method equivalence works", {
                        cluster = ~ group_id1 + group_id2)
   feols_fit11 <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration | Q2_defense,
                        data = data1)
+  feols_fit12 <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, fixef = "Q2_defense",
+                       data = data1)
+  feols_fit13 <- feols(proposition_vote ~ treatment + ideology1 + log_income, fixef =  c("Q1_immigration", "Q2_defense"),
+                       data = data1)
   
   # can also assign fixed effects via fixef = c("") arguments ...
   
@@ -86,6 +90,9 @@ test_that("method equivalence works", {
       assign(paste0("boot_fixest8_" , boot_algo),suppressWarnings(boottest(object = feols_fit8, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
       assign(paste0("boot_fixest9_" , boot_algo),suppressWarnings(boottest(object = feols_fit9, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
       assign(paste0("boot_fixest10_" , boot_algo),suppressWarnings(boottest(object = feols_fit10, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest11_" , boot_algo),suppressWarnings(boottest(object = feols_fit11, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest12_" , boot_algo),suppressWarnings(boottest(object = feols_fit12, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest13_" , boot_algo),suppressWarnings(boottest(object = feols_fit13, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
       
       assign(paste0("boot_fixest6fe_" , boot_algo),suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
       assign(paste0("boot_fixest7fe_" , boot_algo),suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration",B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
@@ -94,6 +101,8 @@ test_that("method equivalence works", {
       assign(paste0("boot_fixest10fe_" , boot_algo),suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration",B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
       # why suddenly fe = Q2_defense? Should give the same models
       assign(paste0("boot_fixest11fe_" , boot_algo),suppressWarnings(boottest(object = feols_fit11, clustid = clustid, fe = "Q2_defense",B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest12fe_" , boot_algo),suppressWarnings(boottest(object = feols_fit12, clustid = clustid, fe = "Q2_defense", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest13fe_" , boot_algo),suppressWarnings(boottest(object = feols_fit13, clustid = clustid, fe = "Q2_defense", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
       
       assign(paste0("boot_felm1_" , boot_algo),suppressWarnings(boottest(object = felm_fit1, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
       assign(paste0("boot_felm2_" , boot_algo),suppressWarnings(boottest(object = felm_fit2, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
@@ -187,13 +196,13 @@ test_that("method equivalence works", {
     
   }
   
-  all_feols_felm_models_R <- c(paste0("boot_fixest", 1:10, "_R"),
-                               paste0("boot_fixest", 6:11, "fe_R"),
+  all_feols_felm_models_R <- c(paste0("boot_fixest", 1:13, "_R"),
+                               paste0("boot_fixest", 6:13, "fe_R"),
                                paste0("boot_felm", 1:6, "_R"),
                                paste0("boot_felm", 4:7, "fe_R") 
   )
   
-  all_feols_felm_models_jl <- c(paste0("boot_fixest", 1:10, "_WildBootTests.jl"),
+  all_feols_felm_models_jl <- c(paste0("boot_fixest", 1:13, "_WildBootTests.jl"),
                                 paste0("boot_fixest", 6:11, "fe_WildBootTests.jl"),
                                 paste0("boot_felm", 1:6, "_WildBootTests.jl"),
                                 paste0("boot_felm", 4:7, "fe_WildBootTests.jl")

@@ -500,7 +500,104 @@ test_that("errors and warnings", {
     
     
     
+    if(boot_algo %in% c("R", "R-lean")){
+      
+      # R is matrix 
+      expect_error(boottest(lm_fit, param = "treatment", R = matrix(c(0, 0), 2, 1), fe = "treatment", B = 999, clustid = "group_id1", boot_algo = boot_algo))
+      expect_error(boottest(feols_fit, param = "treatment", R = matrix(c(0, 0), 2, 1), fe = "treatment", B = 999, clustid = "group_id1", boot_algo = boot_algo))
+      expect_error(boottest(felm_fit, param = "treatment", R = matrix(c(0, 0), 2, 1), fe = "treatment", B = 999, clustid = "group_id1", boot_algo = boot_algo))
+      
+      expect_error(boottest(lm_fit, param = "treatment", fe = "treatment", B = 999, clustid = "group_id1", boot_algo = boot_algo, p_val_type = ">", conf_int = TRUE))
+      expect_error(boottest(feols_fit, param = "treatment", fe = "treatment", B = 999, clustid = "group_id1", boot_algo = boot_algo, p_val_type = ">", conf_int = TRUE))
+      expect_error(boottest(felm_fit, param = "treatment", fe = "treatment", B = 999, clustid = "group_id1", boot_algo = boot_algo, p_val_type = ">", conf_int = TRUE))
+      
+    }
+    
+    
   }
   
   
 })
+
+
+
+test_that("error warning IV/WRE", {
+  
+  
+  library(ivreg)
+  library(fwildclusterboot)
+  
+  # drop all NA values from SchoolingReturns
+  SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
+  ivreg_fit <- ivreg(log(wage) ~ education + age +
+                       ethnicity + smsa + south + parents14 |
+                       nearcollege + age  + ethnicity + smsa
+                     + south + parents14,
+                     data = SchoolingReturns)
+  
+
+  # error because invalid param name
+  expect_error(
+    suppressMessages(
+    boottest(
+      object = ivreg_fit, 
+      clustid =  "kww", 
+      B = 999, 
+      param = "res", 
+      type = "rademacher",
+      conf_int = FALSE)
+    )
+  )
+  
+  # error due to length(R) != length(param)
+  expect_error(
+    suppressMessages(
+      boottest(
+        object = ivreg_fit, 
+        clustid =  "kww", 
+        B = 999, 
+        param = "education",
+        R = c(0, 1),
+        type = "rademacher",
+        conf_int = FALSE)
+    )
+  )
+  
+  # forbidden function arguments
+  ivreg_fit2 <- ivreg(log(wage) ~ education + age +
+                       ethnicity + smsa + south + parents14 |
+                       nearcollege + age  + ethnicity + smsa
+                     + south + parents14,
+                     data = SchoolingReturns, 
+                     subset = 1:100)
+  
+  expect_error(
+    suppressMessages(
+      boottest(
+        object = ivreg_fit2, 
+        clustid =  "kww", 
+        B = 999, 
+        param = "education",
+        type = "rademacher",
+        conf_int = FALSE)
+    )
+  )
+  
+  # enumeration warning 
+  expect_warning(
+    suppressMessages(
+      boottest(
+        object = ivreg_fit, 
+        clustid =  "ethnicity", 
+        B = 999, 
+        param = "education",
+        type = "rademacher",
+        conf_int = FALSE)
+    )
+  )
+  
+  
+})
+
+
+

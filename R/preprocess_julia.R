@@ -207,7 +207,7 @@ preprocess_julia <- function(object, cluster, fe, param, bootcluster, na_omit, R
     }
     
     # add bootcluster variables if not in model
-    if(!(is.null(bootcluster) || bootcluster == "max" || bootcluster == "min")){
+    if(sum(bootcluster %in% c(NULL, "max", "min")) == 0){
       formula <- update(formula, paste("~ . +", paste(bootcluster, collapse = "+")))
     }
     
