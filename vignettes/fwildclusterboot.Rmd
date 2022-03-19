@@ -273,7 +273,6 @@ You can tell `boottest()` to run `WildBootTests.jl` by using the `boot_algo` fun
 
 ```{r, message = FALSE, warning = FALSE}
 # set a Julia seed for reproducibility
-fwildclusterboot::set_julia_seed(8785)
 boot_lm <- boottest(lm_fit, 
                        clustid = "group_id1", 
                        param = "treatment", 
@@ -296,7 +295,6 @@ Through `WildBootTests.jl`, `fwildclusterboot` supports the WRE bootstrap by [Da
 ```{r, message = FALSE, warning = FALSE}
 library(ivreg)
 
-fwildclusterboot::set_julia_seed(123)
 data("SchoolingReturns", package = "ivreg")
       
 # drop all NA values from SchoolingReturns

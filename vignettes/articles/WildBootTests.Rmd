@@ -78,11 +78,5 @@ boottest(lm_fit, clustid = "group_id1", param = "treatment", B = 9999)
 ```
 
 
-Note that if you want your analyses based on `WildBootTests.jl` to be reproducible, you need to set a seed for your `Julia` session. You can do so by calling 
-
-```{r, eval = FALSE, message = FALSE, warning = FALSE}
-set_julia_seed(87658)
-```
-
 
 
