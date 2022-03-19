@@ -251,6 +251,7 @@ boottest.felm <- function(object,
     internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
   }
   
+  
   # check appropriateness and assign nthreads
   nthreads <- check_set_nthreads(nthreads)
   

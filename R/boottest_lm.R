@@ -236,9 +236,7 @@ boottest.lm <- function(object,
     internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
   }
   
-  # cat(internal_seed, "\n")
-  seed <- internal_seed
-    
+
   # check appropriateness of nthreads
   #nthreads <- ifelse(nthreads > cpp_get_nb_threads(), cpp_get_nb_threads(), nthreads)
   nthreads <- check_set_nthreads(nthreads)

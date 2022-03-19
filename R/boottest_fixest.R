@@ -248,7 +248,7 @@ boottest.fixest <- function(object,
     rng_char <- paste0("Random.seed!(", internal_seed, ")")
     JuliaConnectoR::juliaEval(rng_char)
     internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
-  }  
+  }
   
   
   
