@@ -30,13 +30,13 @@ test_that("test lean cpp boottest", {
                       param = "treatment",
                       B = 9999,
                       ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                      nthreads = 8, 
+                      nthreads = 1, 
                       seed = 1)
   boot_lm2 <- boottest(lm_fit,
                       param = "treatment",
                       B = 9999,
                       ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                      nthreads = 8, 
+                      nthreads = 1, 
                       seed = 2)
   boot_lm$p_val; boot_lm2$p_val
   # pracma::toc()
@@ -45,12 +45,12 @@ test_that("test lean cpp boottest", {
                       param = "treatment", 
                       B = 9999,
                       ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
-                      nthreads = 8)
+                      nthreads = 1)
   boot_felm <- boottest(felm_fit,
                       param = "treatment", 
                       B = 9999,
                       ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
-                      nthreads = 8)
+                      nthreads = 1)
   
   # 2.155239
   res <- broom::tidy(
@@ -75,17 +75,17 @@ test_that("test lean cpp boottest", {
                       param = "treatment", 
                       B = 9999,
                       ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE), 
-                      nthreads = 8)
+                      nthreads = 1)
   boot_feols <- boottest(feols_fit,
                          param = "treatment", 
                          B = 9999,
                          ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE), 
-                         nthreads = 8)
+                         nthreads = 1)
   boot_felm <- boottest(felm_fit,
                         param = "treatment", 
                         B = 9999,
                         ssc = boot_ssc(adj = TRUE, cluster.adj = FALSE), 
-                        nthreads = 8)
+                        nthreads = 1)
   
   res <- broom::tidy(
     lmtest::coeftest(
@@ -119,7 +119,7 @@ test_that("test lean cpp boottest", {
                         clustid = "group_id1",
                         B = 2999, 
                         boot_algo = "R-lean",
-                        nthreads = 8, 
+                        nthreads = 1, 
                         ssc = boot_ssc(adj = FALSE, 
                                        cluster.adj = FALSE))
   # pracma::toc()
@@ -130,7 +130,7 @@ test_that("test lean cpp boottest", {
                         clustid = "group_id1",
                         B = 2999, 
                         boot_algo = "R",
-                        nthreads = 8, 
+                        nthreads = 1, 
                         ssc = boot_ssc(adj = FALSE, 
                                        cluster.adj = FALSE))
   # pracma::toc()
@@ -144,7 +144,7 @@ test_that("test lean cpp boottest", {
                         clustid = "group_id1",
                         B = 9999, 
                         boot_algo = "R-lean",
-                        nthreads = 8)
+                        nthreads = 1)
   # pracma::toc()
   
   # pracma::tic()
@@ -153,7 +153,7 @@ test_that("test lean cpp boottest", {
                         clustid = "group_id1",
                         B = 9999, 
                         boot_algo = "R",
-                        nthreads = 8)
+                        nthreads = 1)
   # pracma::toc()
   
   expect_equal(boot_lm1$p_val, boot_lm2$p_val, tolerance = 0.05)

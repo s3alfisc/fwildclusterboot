@@ -283,15 +283,29 @@ boottest.fixest <- function(object,
   
   if(boot_algo != "WildBootTests.jl"){
     
-    if(!is.null(R) && length(nrow(R)) != 0){
-      stop("Hypotheses with q>1 are currently only supported via WildBootTests.jl. Please set the function argument 'boot_algo = WildBootTests.jl'.")
+    if(!is.null(R)){
+      if(length(nrow(R)) != 0){
+        stop("Hypotheses with q>1 are currently only supported via WildBootTests.jl. Please set the function argument 'boot_algo = WildBootTests.jl'.")
+      }
     }
     
-    if(p_val_type %in% c(">", "<") && conf_int == TRUE){
-      conf_int <- FALSE
-      warning(paste("Currently, boottest() calculates confidence intervals for one-sided hypotheses only for boot_algo = 'WildBootTests.jl'."), call. = FALSE)
-    }
+    if(p_val_type %in% c(">", "<")){
+      if(conf_int == TRUE){
+        conf_int <- FALSE
+        warning(paste("Currently, boottest() calculates confidence intervals for one-sided hypotheses only for boot_algo = 'WildBootTests.jl'."), call. = FALSE)
+      }
+    } 
     
+    
+    if (conf_int == TRUE || is.null(conf_int)){
+      if(B <= 100){
+        stop("The function argument B is smaller than 100. The number of bootstrap 
+          iterations needs to be 100 or higher in order to guarantee that the root
+          finding procudure used to find the confidence set works properly.",
+             call. = FALSE
+        )
+      }
+    }
   }
  
   if (mean(param %in% c(names(object$coefficients))) != 1) {
@@ -380,7 +394,7 @@ boottest.fixest <- function(object,
     
     full_enumeration <- FALSE
     if(heteroskedastic == FALSE){
-      N_G_2 <- 2^preprocess$N_G
+      N_G_2 <- 2^preprocess$N_G_bootcluster
       if (type == "rademacher") {
         if(N_G_2 <= B){
           warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", N_G_bootcluster, "bootstrap clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead. Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G_bootcluster - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),

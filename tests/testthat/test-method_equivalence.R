@@ -162,18 +162,16 @@ test_that("method equivalence works", {
       cat(x, "\n")
       # test R models
       for(model in all_feols_felm_models_R){
-        print(expect_equal(boot_lm_R[[x]], get(model)[[x]]), ignore_attr = TRUE)
-        # print(fwildclusterboot:::tidy(boot_lm_R), fwildclusterboot:::tidy(get(model)[[x]]))
+        expect_equal(boot_lm_R[[x]], get(model)[[x]], ignore_attr = TRUE)
       }
       
       # test Julia models
       for(model in all_feols_felm_models_jl){
-        print(expect_equal(boot_lm_WildBootTests.jl[[x]], get(model)[[x]]), ignore_attr = TRUE)
-        # print(fwildclusterboot:::tidy(boot_lm_R), fwildclusterboot:::tidy(get(model)[[x]]))
+        expect_equal(boot_lm_WildBootTests.jl[[x]], get(model)[[x]], ignore_attr = TRUE)
       }
       
       # different seeds -> different values
-      print(expect_equal(boot_lm_R[[x]], as.vector(boot_lm_WildBootTests.jl[[x]]), tolerance = 0.02), ignore_attr = TRUE)
+      expect_equal(boot_lm_R[[x]], as.vector(boot_lm_WildBootTests.jl[[x]]), tolerance = 0.02, ignore_attr = TRUE)
       
     }
     

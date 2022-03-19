@@ -39,10 +39,7 @@ test_that("test r against Julia I: stochastic tests", {
     for(object in lm_fits){
 
       cat("start ols/wls", "\n")
-      set_julia_seed(12345)
-      #:set.fwildclusterboot.seed(12345)
       set.seed(12391786)
-      dqrng::dqset.seed(8723467)
       #type <- "rademacher"
       for(type in c("rademacher", "webb", "mammen", "norm")){
 
@@ -53,7 +50,7 @@ test_that("test r against Julia I: stochastic tests", {
 
             cat(paste("type:", type, "p-val:", p_val_type, "null imposed:", impose_null), "\n")
 
-            cat("Check 1:", "\n")
+            #cat("Check 1:", "\n")
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
               boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null))
               #pracma::tic()
@@ -85,7 +82,7 @@ test_that("test r against Julia I: stochastic tests", {
 
 
             # multi-param hypotheses
-            cat("Check 2:", "\n")
+            #cat("Check 2:", "\n")
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
               boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), beta0 = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null))
               boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), beta0 = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
@@ -113,7 +110,7 @@ test_that("test r against Julia I: stochastic tests", {
 
             # --------------------------------------------------
             # and all with twoway clustering:
-            cat("Check 3:", "\n")
+            #cat("Check 3:", "\n")
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
               boot_r <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1))
               boot_jl <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
@@ -141,7 +138,7 @@ test_that("test r against Julia I: stochastic tests", {
 
             # multi-param hypotheses
 
-            cat("Check 4:", "\n")
+            #cat("Check 4:", "\n")
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
               boot_r <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1))
               boot_jl <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))

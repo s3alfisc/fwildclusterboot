@@ -214,7 +214,7 @@ wald_test <- function(run_this_test){
       type <- "rademacher"
       p_val_type <- "two-tailed"
       # impose_null <- TRUE
-      fwildclusterboot::set_julia_seed(12345)
+
       set.seed(12391786)
       dqrng::dqset.seed(8723467)
       
@@ -374,8 +374,7 @@ iv_test <- function(run_this_test){
     if(run_this_test){
       
       library(data.table)
-      fwildclusterboot::set_julia_seed(123)
-      
+      set.seed(123)
       data("SchoolingReturns", package = "ivreg")
       
       # drop all NA values from SchoolingReturns
