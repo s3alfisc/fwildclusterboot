@@ -556,7 +556,7 @@ boottest.lm <- function(object,
     rtol <- tol
     
     JuliaConnectoR::juliaEval('using WildBootTests')
-    JuliaConnectoR::juliaEval('using StableRNGs')
+    # JuliaConnectoR::juliaEval('using StableRNGs')
     
     WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
 
