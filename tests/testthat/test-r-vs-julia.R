@@ -56,7 +56,6 @@ test_that("test r against Julia I: stochastic tests", {
               #pracma::tic()
               boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
               #pracma::toc()
-              skip_on_covr()
               res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
               #if(res == FALSE){print(res)}
               rm(res)
