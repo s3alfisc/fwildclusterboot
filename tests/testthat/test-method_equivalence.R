@@ -1,9 +1,10 @@
-test_that("method equivalence works", {
+test_that("Do different, but equivalent ways to specify linear models lead to equivalent results?", {
   
   library(fixest)
   library(lfe)
   library(fwildclusterboot)
   
+  print_results <- FALSE
   
   data1 <<- fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 7645)
   sapply(data1, class)
@@ -171,28 +172,44 @@ test_that("method equivalence works", {
       cat(x, "\n")
       # test R models
       for(model in all_feols_felm_models_R){
-        expect_equal(boot_lm_R[[x]], get(model)[[x]], ignore_attr = TRUE)
+        if(print_results){
+          print(expect_equal(boot_lm_R[[x]], get(model)[[x]], ignore_attr = TRUE))
+        } else {
+          expect_equal(boot_lm_R[[x]], get(model)[[x]], ignore_attr = TRUE)
+        }
       }
       
       # test Julia models
       for(model in all_feols_felm_models_jl){
-        expect_equal(boot_lm_WildBootTests.jl[[x]], get(model)[[x]], ignore_attr = TRUE)
+        if(print_results){
+          print(expect_equal(boot_lm_WildBootTests.jl[[x]], get(model)[[x]], ignore_attr = TRUE))
+        } else {
+          expect_equal(boot_lm_WildBootTests.jl[[x]], get(model)[[x]], ignore_attr = TRUE)
+        }
       }
       
       # different seeds -> different values
-      expect_equal(boot_lm_R[[x]], as.vector(boot_lm_WildBootTests.jl[[x]]), tolerance = 0.02, ignore_attr = TRUE)
-      
+      if(print_results){
+        print(expect_equal(boot_lm_R[[x]], as.vector(boot_lm_WildBootTests.jl[[x]]), tolerance = 0.02, ignore_attr = TRUE))
+      } else {
+        expect_equal(boot_lm_R[[x]], as.vector(boot_lm_WildBootTests.jl[[x]]), tolerance = 0.02, ignore_attr = TRUE)
+      }
+
     }
     
     cat("test waldboottest","\n")
     
     # test wald models 
-    for(x in c("point_estimate", "p_val", "t_stat")){
+    for(x in c("p_val", "t_stat")){
       for(model in all_wald_models){
-        print(expect_equal(wboot_lm_WildBootTests.jl[[x]], get(model)[[x]]), ignore_attr = TRUE)
-      }    
+        if(print_results){
+          print(expect_equal(wboot_lm_WildBootTests.jl[[x]], get(model)[[x]], ignore_attr = TRUE))
+        } else {
+          expect_equal(wboot_lm_WildBootTests.jl[[x]], get(model)[[x]], ignore_attr = TRUE)
+        }
+      }
     }
-    
+
     
   }
   

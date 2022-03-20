@@ -329,14 +329,14 @@ boottest.lm <- function(object,
   
   if(boot_algo %in% c("R", "R-lean")){
     # preprocess the data: Y, X, weights, fixed_effect
-    preprocess <- preprocess2(object = object, 
+    preprocess <- preprocess(object = object, 
                               cluster = clustid,
                               fe = NULL, 
                               param = param,
                               bootcluster = bootcluster, 
                               na_omit = na_omit, 
-                              R = R#, 
-                              #fweights = fweights
+                              R = R,
+                              boot_algo = boot_algo
     )
     
     
@@ -383,7 +383,6 @@ boottest.lm <- function(object,
                         full_enumeration = full_enumeration, 
                         small_sample_correction = small_sample_correction)
       } else if(boot_algo == "R-lean") {
-        cat("R-lean", "\n")
        res <- boot_algo1(preprocessed_object = preprocess,
                          boot_iter = B,
                          point_estimate = point_estimate,
@@ -466,13 +465,14 @@ boottest.lm <- function(object,
     
   } else if(boot_algo == "WildBootTests.jl"){
     
-    preprocess <- preprocess_julia(object = object,
-                                   cluster = clustid,
-                                   fe = NULL,
-                                   param = param,
-                                   bootcluster = bootcluster,
-                                   na_omit = na_omit,
-                                   R = R)
+    preprocess <- preprocess(object = object,
+                             cluster = clustid,
+                             fe = NULL,
+                             param = param,
+                             bootcluster = bootcluster,
+                             na_omit = na_omit,
+                             R = R, 
+                             boot_algo = "WildBootTests.jl")
     
     clustid_dims <- preprocess$clustid_dims
     # R*beta;
@@ -890,13 +890,14 @@ waldboottest.lm <- function(object,
   
   # preprocess data: X, Y, weights, fixed effects
   #pracma::tic()
-  preprocess <- preprocess_julia(object = object,
-                                 cluster = clustid,
-                                 param = NULL, 
-                                 fe = NULL,
-                                 bootcluster = bootcluster,
-                                 na_omit = na_omit,
-                                 R = R)
+  preprocess <- preprocess(object = object, 
+                           cluster = clustid,
+                           fe = NULL, 
+                           param = NULL,
+                           bootcluster = bootcluster, 
+                           na_omit = na_omit, 
+                           R = R,
+                           boot_algo = "WildBootTests.jl")
   #pracma::toc()
   
   

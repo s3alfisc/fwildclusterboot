@@ -226,6 +226,12 @@ boottest.fixest <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
 
+  if(boot_algo == "R-lean"){
+    if(!is.null(fe)){
+      stop("boottest() currently does not support fixed effects with boot_algo = 'R-lean'.")
+    }
+  }
+  
   if(is.null(seed)){
     internal_seed <- get_seed()
   } else {
@@ -370,15 +376,14 @@ boottest.fixest <- function(object,
   
   if(boot_algo %in% c("R", "R-lean")){
     # preprocess the data: Y, X, weights, fixed_effect
-    preprocess <- preprocess2(object = object, 
+    preprocess <- preprocess(object = object, 
                               cluster = clustid,
                               fe = fe, 
                               param = param,
                               bootcluster = bootcluster, 
                               na_omit = na_omit, 
-                              R = R#, 
-                              #fweights = fweights
-    )
+                              R = R,
+                             boot_algo = boot_algo)
 
     
     N <- preprocess$N
@@ -510,13 +515,14 @@ boottest.fixest <- function(object,
     
     fedfadj <- 0L
     
-    preprocess <- preprocess_julia(object = object,
-                                   cluster = clustid,
-                                   fe = fe,
-                                   param = param,
-                                   bootcluster = bootcluster,
-                                   na_omit = na_omit,
-                                   R = R)
+    preprocess <- preprocess(object = object, 
+                             cluster = clustid,
+                             fe = fe, 
+                             param = param,
+                             bootcluster = bootcluster, 
+                             na_omit = na_omit, 
+                             R = R,
+                             boot_algo = boot_algo)
     
     clustid_dims <- preprocess$clustid_dims
     # R*beta; 
@@ -954,13 +960,14 @@ waldboottest.fixest <- function(object,
   
   fedfadj <- 0L
     
-  preprocess <- preprocess_julia(object = object,
-                                 cluster = clustid,
-                                 fe = fe,
-                                 param = NULL, 
-                                 bootcluster = bootcluster,
-                                 na_omit = na_omit,
-                                 R = R)
+  preprocess <- preprocess(object = object, 
+                           cluster = clustid,
+                           fe = fe, 
+                           param = NULL,
+                           bootcluster = bootcluster, 
+                           na_omit = na_omit, 
+                           R = R,
+                           boot_algo = "WildBootTests.jl")
   
   clustid_dims <- preprocess$clustid_dims
 

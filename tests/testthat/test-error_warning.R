@@ -8,8 +8,11 @@ test_that("errors and warnings", {
   library(lfe)
   
   
-  #for(boot_algo in c("R", "WildBootTests.jl", "R-lean")){
-  for(boot_algo in c("R-lean")){  
+  for(boot_algo in c("R", "WildBootTests.jl", "R-lean")){
+    
+    cat(boot_algo, "\n")
+    
+  #for(boot_algo in c("R-lean")){  
     # test boottest function arguments for errors 
     lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
                  data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
@@ -73,16 +76,19 @@ test_that("errors and warnings", {
                        data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
     expect_error(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment1", conf_int = TRUE, boot_algo = boot_algo))
     
-    # joint fe != NULL and weights = on
     feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration, 
                        weights = fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)$weights, 
                        data = fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
     felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,  
                      weights = fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)$weights, 
                      data = fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
-    expect_error(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, fe = "Q1_immigration", boot_algo = boot_algo))
-    expect_error(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, fe = "Q1_immigration", boot_algo = boot_algo))
     
+    # joint fe != NULL and weights = on
+    if(boot_algo %in% c("R", "R-lean")){
+      expect_error(boottest(object = felm_fit, clustid =  "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE, fe = "Q1_immigration", boot_algo = boot_algo))
+      expect_error(boottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, param = "treatment", conf_int = TRUE, fe = "Q1_immigration", boot_algo = boot_algo))
+    }
+
     # nthreads < 1
     
     expect_error(boottest(object = lm_fit,
@@ -510,6 +516,19 @@ test_that("errors and warnings", {
       expect_error(boottest(lm_fit, param = "treatment", fe = "treatment", B = 999, clustid = "group_id1", boot_algo = boot_algo, p_val_type = ">", conf_int = TRUE))
       expect_error(boottest(feols_fit, param = "treatment", fe = "treatment", B = 999, clustid = "group_id1", boot_algo = boot_algo, p_val_type = ">", conf_int = TRUE))
       expect_error(boottest(felm_fit, param = "treatment", fe = "treatment", B = 999, clustid = "group_id1", boot_algo = boot_algo, p_val_type = ">", conf_int = TRUE))
+      
+    }
+    
+    
+    # no support for R-lean with fe = on
+    if(boot_algo == "R-lean"){
+      feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, 
+                           data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+      expect_error(boottest(feols_fit_c, param = "treatment", fe = "Q1_immigration", B = 999, clustid = "group_id1", boot_algo = "R-lean"))
+      
+      felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, 
+                           data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234))
+      expect_error(boottest(felm_fit_c, param = "treatment", fe = "Q1_immigration", B = 999, clustid = "group_id1", boot_algo = "R-lean"))
       
     }
     

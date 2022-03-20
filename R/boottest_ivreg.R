@@ -247,13 +247,14 @@ boottest.ivreg <- function(object,
   }
   
   # preprocess data: X, Y, weights, fixed effects
-  preprocess <- preprocess_julia(object = object,
-                                 cluster = clustid,
-                                 fe = NULL,
-                                 param = param,
-                                 bootcluster = bootcluster,
-                                 na_omit = na_omit,
-                                 R = R)
+  preprocess <- preprocess(object = object,
+                           cluster = clustid,
+                           fe = NULL,
+                           param = param,
+                           bootcluster = bootcluster,
+                           na_omit = na_omit,
+                           R = R, 
+                           boot_algo = "WildBootTests.jl")
   
   clustid_dims <- preprocess$clustid_dims
   point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
