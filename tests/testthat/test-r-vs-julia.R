@@ -84,8 +84,8 @@ test_that("test r against Julia I: stochastic tests", {
             # multi-param hypotheses
             #cat("Check 2:", "\n")
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
-              boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), beta0 = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null))
-              boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), beta0 = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
+              boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null))
+              boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
               res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
               #if(res == FALSE){print(res)}
               rm(res)
@@ -96,8 +96,8 @@ test_that("test r against Julia I: stochastic tests", {
               #if(res == FALSE){print(res)}
               rm(res)
             } else {
-              boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), beta0 = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE))
-              boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), beta0 = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE, boot_algo = "WildBootTests.jl"))
+              boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE))
+              boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE, boot_algo = "WildBootTests.jl"))
               res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
               #if(res == FALSE){print(res)}
               rm(res)

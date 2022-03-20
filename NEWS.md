@@ -17,6 +17,10 @@ A key limitation of the vectorized 'fast' cluster bootstrap algorithm as impleme
 
 Also, note that running the wild cluster bootstrap through `WildBootTests.jl` is often very memory-efficient.
 
+### 3) `boottest()` function argument `beta0` deprecated
+
++ For consistency with `WildBootTests.jl`, it is now replaced by a new function argument, `r`. You can still use `beta0`.
+
 # fwildclusterboot 0.7
 
 + Bug fixes, see issues [#26](https://github.com/s3alfisc/fwildclusterboot/issues/26) and [#27](https://github.com/s3alfisc/fwildclusterboot/issues/27) regarding preprocessing for fixest when weights are passed to feols() as a formula or when cluster is specified in fixest as a column vector. 

@@ -24,8 +24,9 @@
 #'        intervals by p-value inversion. If FALSE, only the p-value is returned.
 #' @param seed An integer. Controls the random number generation, which is handled via the `StableRNG()` function from the `StableRNGs` Julia package.
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
-#' @param beta0 A numeric. Shifts the null hypothesis
-#'        H0: param = beta0 vs H1: param != beta0
+#' @param r A numeric. Shifts the null hypothesis
+#'        H0: param = r vs H1: param != r
+#' @param beta0 Superseded function argument, replaced by function argument 'r'        
 #' @param type character or function. The character string specifies the type
 #'        of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
 #'        and "webb". Alternatively, type can be a function(n) for drawing
@@ -125,7 +126,7 @@ boottest.ivreg <- function(object,
                            conf_int = TRUE,
                            seed = NULL,
                            R = NULL,
-                           beta0 = 0,
+                           r = 0,
                            sign_level = 0.05,
                            type = "rademacher",
                            impose_null = TRUE,
@@ -161,7 +162,7 @@ boottest.ivreg <- function(object,
   check_arg(conf_int, "logical scalar ")
   check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
-  check_arg(beta0, "numeric scalar | NULL")
+  check_arg(r, "numeric scalar | NULL")
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(floattype, "charin(Float32, Float64)")
@@ -284,7 +285,7 @@ boottest.ivreg <- function(object,
   } else {
     R <- matrix(preprocess$R, 1, length(preprocess$R))
   }
-  r <- beta0
+  r <- r
   reps <- as.integer(B) # WildBootTests.jl demands integer
   
   # Order the columns of `clustid` this way:
@@ -431,7 +432,7 @@ boottest.ivreg <- function(object,
     type = type,
     impose_null = impose_null,
     R = R,
-    beta0 = beta0,
+    r = r,
     plotpoints = plotpoints, 
     boot_algo = "WildBootTests.jl"
   )

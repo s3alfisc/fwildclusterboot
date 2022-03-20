@@ -46,8 +46,8 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
   # pass constant function values to p_val_null, substract sign.level & compile
   # function will be used to create grid points, and, based on the results
   # from the grid points, the root finding algorithm
-  p_val_null2_x <- function(beta0, sign_level) {
-    p_val_null2(beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, point_estimate = point_estimate, impose_null = impose_null, p_val_type = p_val_type)$p_val - sign_level
+  p_val_null2_x <- function(r, sign_level) {
+    p_val_null2(r, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, point_estimate = point_estimate, impose_null = impose_null, p_val_type = p_val_type)$p_val - sign_level
   }
   
   p_val_null2_x_cmp <- compiler::cmpfun(p_val_null2_x)
@@ -96,7 +96,7 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
       }
 
       # find starting value
-      p_candidate <- p_val_null2_x_cmp (beta0 = starting_vals, sign_level = sign_level)
+      p_candidate <- p_val_null2_x_cmp (r = starting_vals, sign_level = sign_level)
     
       # need to add sign_level
       p_candidate <- p_candidate + sign_level

@@ -1,4 +1,4 @@
-boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction) {
+boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, r, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction) {
   
   #' Fast wild cluster bootstrap algorithm 
   #' 
@@ -10,7 +10,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #' @param impose_null If TRUE, the null is not imposed on the bootstrap distribution.
   #'        This is what Roodman et al call the "WCU" bootstrap. With impose_null = FALSE, the
   #'        null is imposed ("WCR").
-  #' @param beta0 Shifts the null hypothesis.
+  #' @param r Shifts the null hypothesis.
   #' @param sign_level The significance level.
   #' @param param name of the test parameter.
   #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"
@@ -207,7 +207,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   A <- crossprod(as.matrix(numer_a), v)                        # q x (B+1) -> q = 1
   B <- crossprod(numer_b, v)                                   # q x (B+1) -> q = 1
     
-  p_val_res <- p_val_null2(beta0 = beta0, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, impose_null = impose_null, point_estimate = point_estimate, p_val_type = p_val_type)
+  p_val_res <- p_val_null2(r = r, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, impose_null = impose_null, point_estimate = point_estimate, p_val_type = p_val_type)
   # collect results from P-val_null2
   p_val <- p_val_res$p_val
   t_stat <- p_val_res$t_stat

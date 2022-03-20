@@ -9,7 +9,7 @@ boot_algo2(
   boot_iter,
   point_estimate,
   impose_null,
-  beta0,
+  r,
   sign_level,
   param,
   p_val_type,
@@ -30,7 +30,7 @@ boot_algo2(
 This is what Roodman et al call the "WCU" bootstrap. With impose_null = FALSE, the
 null is imposed ("WCR").}
 
-\item{beta0}{Shifts the null hypothesis.}
+\item{r}{Shifts the null hypothesis.}
 
 \item{sign_level}{The significance level.}
 

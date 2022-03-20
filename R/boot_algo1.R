@@ -1,4 +1,4 @@
-boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, beta0, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction, heteroskedastic, seed) {
+boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, r, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction, heteroskedastic, seed) {
 
   #' Fast wild cluster bootstrap algorithm
   #'
@@ -10,7 +10,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #' @param impose_null If TRUE, the null is not imposed on the bootstrap distribution.
   #'        This is what Roodman et al call the "WCU" bootstrap. With impose_null = FALSE, the
   #'        null is imposed ("WCR").
-  #' @param beta0 Shifts the null hypothesis.
+  #' @param r Shifts the null hypothesis.
   #' @param sign_level The significance level.
   #' @param param name of the test parameter.
   #' @param p_val_type type Type of p-value. By default "two-tailed". Other options: "equal-tailed", ">", "<"
@@ -82,7 +82,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
       wildboottestHC(y = Y,
                      X = X,
                      R = t(R),
-                     r = beta0,
+                     r = r,
                      B = boot_iter,
                      N_G_bootcluster = N,
                      cores = nthreads,
@@ -103,7 +103,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
       wildboottestCL(y = unname(Y),
                      X = unname(X),
                      R = t(unname(R)),
-                     r = beta0,
+                     r = r,
                      B = boot_iter,
                      N_G_bootcluster = unname(N_G_bootcluster),
                      cores = nthreads,

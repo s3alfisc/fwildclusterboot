@@ -1,8 +1,8 @@
-p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sample_correction, impose_null, point_estimate, p_val_type) {
+p_val_null2 <- function(r, A, B, CC, CD, DD, clustid, boot_iter, small_sample_correction, impose_null, point_estimate, p_val_type) {
 
 
   #' Calculate p-values based on A, B, CC, CD, DD and other inputs
-  #' @param beta0 Scalar. Shifts the null hypothesis.
+  #' @param r Scalar. Shifts the null hypothesis.
   #' @param A A list.
   #' @param B A list.
   #' @param CC A list.
@@ -22,15 +22,15 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
   # Roodman et al on WCU: "Therefore, as we vary ßj0, the bootstrap samples
   # do not change, and hence, only one set of bootstrap samples needs to be constructed."
   # here, note that if impose_null = FALSE -> WCU: B = 0, CD = 0, DD = 0 and hence numer and
-  # JJ do not vary in beta0
+  # JJ do not vary in r
 
-  numer <- A + B * beta0
+  numer <- A + B * r
   names_clustid <- names(clustid)
 
   JJ <- list()
   for (x in seq_along(names_clustid)) {
-    # JJ[[x]] <- colSums(small_sample_correction[x] * (CC[[x]] + 2* CD[[x]]*beta0+ DD[[x]]* beta0^2))
-    JJ[[x]] <- (small_sample_correction[x] * (CC[[x]] + 2 * CD[[x]] * beta0 + DD[[x]] * beta0^2))
+    # JJ[[x]] <- colSums(small_sample_correction[x] * (CC[[x]] + 2* CD[[x]]*r+ DD[[x]]* r^2))
+    JJ[[x]] <- (small_sample_correction[x] * (CC[[x]] + 2 * CD[[x]] * r + DD[[x]] * r^2))
   }
 
   len_names_clustid <- length(names_clustid)
@@ -52,7 +52,7 @@ p_val_null2 <- function(beta0, A, B, CC, CD, DD, clustid, boot_iter, small_sampl
   if (impose_null == TRUE) {
     t_stat <- t[1]
   } else if (impose_null == FALSE) {
-    t_stat <- ((point_estimate - beta0) / denom[1])
+    t_stat <- ((point_estimate - r) / denom[1])
   }
 
 

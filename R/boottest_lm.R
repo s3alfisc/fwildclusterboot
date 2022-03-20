@@ -24,8 +24,8 @@
 #'        intervals by p-value inversion. If FALSE, only the p-value is returned.
 #' @param seed An integer. Allows the user to set a random seed. If you want to set a "global" seed, set it via `dqrng::dqset.seed()`. For Mammen weights, you have to use `set.seed()` instead. 
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
-#' @param beta0 A numeric. Shifts the null hypothesis 
-#'        H0: param = beta0 vs H1: param != beta0
+#' @param r A numeric. Shifts the null hypothesis 
+#'        H0: param = r vs H1: param != r
 #' @param type character or function. The character string specifies the type
 #'        of boostrap to use: One of "rademacher", "mammen", "norm"
 #'        and "webb". Alternatively, type can be a function(n) for drawing 
@@ -87,8 +87,8 @@
 #' \item{sign_level}{Significance level used in boottest.}
 #' \item{type}{Distribution of the bootstrap weights.}
 #' \item{impose_null}{Whether the null was imposed on the bootstrap dgp or not.}
-#' \item{R}{The vector "R" in the null hypothesis of interest Rbeta = beta0.}
-#' \item{beta0}{The scalar "beta0" in the null hypothesis of interest Rbeta = beta0.}
+#' \item{R}{The vector "R" in the null hypothesis of interest Rbeta = r.}
+#' \item{r}{The scalar "r" in the null hypothesis of interest Rbeta = r.}
 #' \item{point_estimate}{R'beta. A scalar: the constraints vector times the regression coefficients.}
 #' \item{p_test_vals}{All p-values calculated while calculating the confidence
 #'      interval.}
@@ -144,14 +144,14 @@
 #'                   clustid = c("group_id1", "group_id2"),
 #'                   sign_level = 0.2,
 #'                   seed = 8,
-#'                   beta0 = 2)
+#'                   r = 2)
 #' # test treatment + ideology1 = 2                   
 #' boot4 <- boottest(lm_fit, 
 #'                   B = 9999, 
 #'                   clustid = c("group_id1", "group_id2"),
 #'                   param = c("treatment", "ideology1"),
 #'                   R = c(1, 1), 
-#'                   beta0 = 2)
+#'                   r = 2)
 #' summary(boot1)
 #' plot(boot1)
 #' }
@@ -164,7 +164,8 @@ boottest.lm <- function(object,
                         conf_int = TRUE,
                         seed = NULL,
                         R = NULL,
-                        beta0 = 0,
+                        r = 0,
+                        beta0 = r, 
                         sign_level = 0.05,
                         type = "rademacher",
                         impose_null = TRUE,
@@ -200,6 +201,7 @@ boottest.lm <- function(object,
   check_arg(conf_int, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
+  check_arg(r, "numeric scalar | NULL")
   check_arg(beta0, "numeric scalar | NULL")
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar GT{0}")
@@ -218,6 +220,9 @@ boottest.lm <- function(object,
     internal_seed <- get_seed()
   }
   
+  if(missing(r) & !missing(beta0)){
+    warning("Note that the 'beta0' function argument is superseded by a new argument, 'r'. Please specify your hypothesis via the new function argument instead of using 'beta0'.")
+  }
 
   if(boot_algo == "R"){
     if(type %in% c("rademacher", "webb", "norm")){
@@ -373,7 +378,7 @@ boottest.lm <- function(object,
                         boot_iter = B,
                         point_estimate = point_estimate,
                         impose_null = impose_null,
-                        beta0 = beta0,
+                        r = r,
                         sign_level = sign_level,
                         param = param,
                         # seed = seed,
@@ -387,7 +392,7 @@ boottest.lm <- function(object,
                          boot_iter = B,
                          point_estimate = point_estimate,
                          impose_null = impose_null,
-                         beta0 = beta0,
+                         r = r,
                          sign_level = sign_level,
                          param = param,
                          p_val_type = p_val_type,
@@ -413,7 +418,7 @@ boottest.lm <- function(object,
         # sign, abs for security
         se_guess <- abs(point_estimate / res$t_stat)
       } else if(impose_null == FALSE){
-        se_guess <- abs((point_estimate - beta0) / res$t_stat)
+        se_guess <- abs((point_estimate - r) / res$t_stat)
       }
 
 
@@ -458,7 +463,7 @@ boottest.lm <- function(object,
       type = type,
       impose_null = impose_null,
       R = R,
-      beta0 = beta0, 
+      r = r, 
       boot_algo = boot_algo, 
       nthreads = nthreads
     )
@@ -517,7 +522,7 @@ boottest.lm <- function(object,
     } else {
       R <- matrix(preprocess$R, 1, length(preprocess$R))
     }
-    r <- beta0
+    r <- r
     reps <- as.integer(B) # WildBootTests.jl demands integer
     
     # Order the columns of `clustid` this way:
@@ -655,7 +660,7 @@ boottest.lm <- function(object,
       type = type,
       impose_null = impose_null,
       R = R,
-      beta0 = beta0,
+      r = r,
       plotpoints = plotpoints, 
       # boot_algo returns NULL if not set via global variable
       boot_algo = "WildBootTests.jl"
@@ -691,8 +696,8 @@ boottest.lm <- function(object,
 #' @param seed An integer. Controls the random number generation, which is handled via the `StableRNG()` function from the `StableRNGs` Julia package.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
-#' @param beta0 A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
-#'        H0: param = beta0 vs H1: param != beta0. If not provided, a vector of zeros of length q.
+#' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
+#'        H0: param = r vs H1: param != r. If not provided, a vector of zeros of length q.
 #' @param type character or function. The character string specifies the type
 #'        of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
 #'        and "webb". Alternatively, type can be a function(n) for drawing
@@ -773,7 +778,7 @@ waldboottest.lm <- function(object,
                         clustid,
                         B,
                         R,
-                        beta0 = rep(0,nrow(R)),
+                        r = rep(0,nrow(R)),
                         bootcluster = "max",
                         seed = NULL,
                         type = "rademacher",
@@ -805,7 +810,7 @@ waldboottest.lm <- function(object,
   
   check_arg(conf_int, "logical scalar | NULL")
   check_arg(seed, "scalar integer | NULL")
-  check_arg(beta0, "numeric vector  | NULL")
+  check_arg(r, "numeric vector  | NULL")
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar")
   check_arg(floattype, "character scalar")
@@ -834,8 +839,8 @@ waldboottest.lm <- function(object,
   internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
   
   
-  if(nrow(R) != length(beta0)){
-    stop(paste("The dimensions of func args R and beta0 do not match. The number of rows of R is ", nrow(R), ", but the length of beta0 0 is", length(beta0), "."))
+  if(nrow(R) != length(r)){
+    stop(paste("The dimensions of func args R and r do not match. The number of rows of R is ", nrow(R), ", but the length of r 0 is", length(r), "."))
   }
   # param required in preprocess
   param <- NULL
@@ -929,7 +934,7 @@ waldboottest.lm <- function(object,
   } else {
     R <- matrix(preprocess$R, 1, length(preprocess$R))
   }
-  r <- beta0
+  r <- r
   reps <- as.integer(B) # WildBootTests.jl demands integer
   
   
@@ -1060,7 +1065,7 @@ waldboottest.lm <- function(object,
     type = type,
     impose_null = impose_null,
     R = R,
-    beta0 = beta0,
+    r = r,
     plotpoints = plotpoints
   )
   

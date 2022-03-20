@@ -13,9 +13,9 @@ tidy.boottest <- function(object, ...) {
   
   if(object$boot_algo == "WildBootTests.jl"){
     R <- object$R[which(object$R != 0)]
-    hypothesis <- paste(paste0(paste0(R, "*"), object$param, collapse = "+"),"=", object$beta0)
+    hypothesis <- paste(paste0(paste0(R, "*"), object$param, collapse = "+"),"=", object$r)
   } else {
-    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$beta0)
+    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$r)
   }
 
   term <- hypothesis
@@ -75,9 +75,9 @@ summary.boottest <- function(object, digits = 3, ...) {
   
   if(object$boot_algo == "WildBootTests.jl"){
     R <- object$R[which(object$R != 0)]
-    hypothesis <- paste(paste0(paste0(R, "*"), object$param, collapse = "+"),"=", object$beta0)
+    hypothesis <- paste(paste0(paste0(R, "*"), object$param, collapse = "+"),"=", object$r)
   } else {
-    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$beta0)
+    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$r)
   }  
   
   print(call)

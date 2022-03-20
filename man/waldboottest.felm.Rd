@@ -9,7 +9,8 @@
   clustid,
   B,
   R,
-  beta0 = rep(0, nrow(R)),
+  r = rep(0, nrow(R)),
+  beta0 = r,
   bootcluster = "max",
   fe = NULL,
   seed = NULL,
@@ -40,8 +41,8 @@ increasing B adds little additional runtime.}
 \item{R}{Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 of joint hypotheses and k the number of estimated coefficients.}
 
-\item{beta0}{A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
-H0: param = beta0 vs H1: param != beta0. If not provided, a vector of zeros of length q.}
+\item{r}{A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
+H0: param = r vs H1: param != r. If not provided, a vector of zeros of length q.}
 
 \item{bootcluster}{A character vector. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of

@@ -13,7 +13,7 @@
   conf_int = TRUE,
   seed = NULL,
   R = NULL,
-  beta0 = 0,
+  r = 0,
   sign_level = 0.05,
   type = "rademacher",
   impose_null = TRUE,
@@ -60,8 +60,8 @@ intervals by p-value inversion. If FALSE, only the p-value is returned.}
 
 \item{R}{Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as \code{param}. If NULL, a vector of ones of length param.}
 
-\item{beta0}{A numeric. Shifts the null hypothesis
-H0: param = beta0 vs H1: param != beta0}
+\item{r}{A numeric. Shifts the null hypothesis
+H0: param = r vs H1: param != r}
 
 \item{sign_level}{A numeric between 0 and 1 which sets the significance level
 of the inference procedure. E.g. sign_level = 0.05
@@ -115,6 +115,8 @@ when fitting the regression model).}
 You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.}
 
 \item{...}{Further arguments passed to or from other methods.}
+
+\item{beta0}{Superseded function argument, replaced by function argument 'r'}
 }
 \value{
 An object of class \code{boottest}

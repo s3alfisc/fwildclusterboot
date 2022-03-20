@@ -13,7 +13,8 @@
   conf_int = TRUE,
   seed = NULL,
   R = NULL,
-  beta0 = 0,
+  r = 0,
+  beta0 = r,
   sign_level = 0.05,
   type = "rademacher",
   impose_null = TRUE,
@@ -58,8 +59,8 @@ intervals by p-value inversion. If FALSE, only the p-value is returned.}
 
 \item{R}{Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as \code{param}. If NULL, a vector of ones of length param.}
 
-\item{beta0}{A numeric. Shifts the null hypothesis
-H0: param = beta0 vs H1: param != beta0}
+\item{r}{A numeric. Shifts the null hypothesis
+H0: param = r vs H1: param != r}
 
 \item{sign_level}{A numeric between 0 and 1 which sets the significance level
 of the inference procedure. E.g. sign_level = 0.05
@@ -136,8 +137,8 @@ the cluster variables contain NA values.}
 \item{sign_level}{Significance level used in boottest.}
 \item{type}{Distribution of the bootstrap weights.}
 \item{impose_null}{Whether the null was imposed on the bootstrap dgp or not.}
-\item{R}{The vector "R" in the null hypothesis of interest Rbeta = beta0.}
-\item{beta0}{The scalar "beta0" in the null hypothesis of interest Rbeta = beta0.}
+\item{R}{The vector "R" in the null hypothesis of interest Rbeta = r.}
+\item{r}{The scalar "r" in the null hypothesis of interest Rbeta = r.}
 \item{point_estimate}{R'beta. A scalar: the constraints vector times the regression coefficients.}
 \item{p_test_vals}{All p-values calculated while calculating the confidence
 interval.}
@@ -196,14 +197,14 @@ boot3 <- boottest(lm_fit,
                   clustid = c("group_id1", "group_id2"),
                   sign_level = 0.2,
                   seed = 8,
-                  beta0 = 2)
+                  r = 2)
 # test treatment + ideology1 = 2                   
 boot4 <- boottest(lm_fit, 
                   B = 9999, 
                   clustid = c("group_id1", "group_id2"),
                   param = c("treatment", "ideology1"),
                   R = c(1, 1), 
-                  beta0 = 2)
+                  r = 2)
 summary(boot1)
 plot(boot1)
 }
