@@ -22,8 +22,8 @@ arma::mat sample_weights(int G,
 
   if(type == 0){
     for(int g = 0; g < G; g++){
-      float v = rand() % 2;
-      if(v == 0){
+      float v = arma::randu();
+      if(v < 0.5){
         weights(g) = -1;
       } else {
         weights(g) = 1;
@@ -31,18 +31,18 @@ arma::mat sample_weights(int G,
     }
   } else if(type == 1){
     for(int g = 0; g < G; g++){
-      float v = rand() % 6;
-      if(v == 0){
+      float v = arma::randu();
+      if(v < 1/6){
         weights(g) = -sqrt(1.5);
-      } else if (v == 1){
+      } else if (v < 1/3){
         weights(g) = -1;
-      } else if (v == 2){
+      } else if (v < 1/2){
         weights(g) = -sqrt(0.5);
-      }  else if (v == 3){
+      }  else if (v < 2/3){
         weights(g) = sqrt(0.5);
-      } else if (v == 4){
+      } else if (v < 5/6){
         weights(g) = 1;
-      } else if (v == 5){
+      } else if (v >= 5/6){
         weights(g) = sqrt(1.5);
       }
     }
@@ -83,7 +83,8 @@ List wildboottestHC(const arma::vec & y,
   // function implements wild cluster bootstrap,
   // imposing the null
   
-  srand(seed);
+  //arma::armadillo_set_seed(seed);
+  //srand(seed);
   omp_set_num_threads(cores);
 
   //int n = X.n_rows;
@@ -175,8 +176,9 @@ List wildboottestCL(const arma::vec & y,
   // function implements wild cluster bootstrap,
   // imposing the null
 
-  srand(seed);
-  
+  //srand(seed);
+  //arma::armadillo_set_seed(seed);
+
   omp_set_num_threads(cores);
 
   int n = X.n_rows;
