@@ -5,14 +5,14 @@
 \title{Function checks if addition of new clustering variable leads to
 deletion of rows}
 \usage{
-check_deleted_obs(N_model, of, na_omit, N)
+check_deleted_obs(N_model, N, na_omit)
 }
 \arguments{
 \item{N_model}{the number of observations in the original model}
 
-\item{of}{a pre-processed model object}
-
 \item{na_omit}{Logical - if TRUE, deletion of rows is enabled}
+
+\item{of}{a pre-processed model object}
 }
 \description{
 Function checks if addition of new clustering variable leads to

@@ -24,405 +24,38 @@ preprocess <- function(object, cluster, fe, param, bootcluster, na_omit, R, boot
   check_arg(R, "numeric matrix | numeric vector | numeric scalar")
   check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl)")
 
-  if (inherits(object, "fixest")) {
-    of <- object$call
-    
-    o <- match(c("fml", "data", "weights", "cluster", "fixef"), names(of), 0L)
-    # keep only required arguments
-    of <- of[c(1L, o)]
-    # add argument to function
-    of$drop.unused.levels <- TRUE
-    
-    # create formula objects by adding fixed effects and clusters from call
-    # add potential other cluster variables from cluster argument
-    formula <- eval(of$fml)
-    
-    # combine fixed effects in formula with main formula
-    # note: you get a warning here if rhs = 2 is empty (no fixed effect specified via fml)
-    formula_coef_fe <- suppressWarnings(formula(Formula::as.Formula(formula), lhs = 1, rhs = c(1, 2), collapse = TRUE))
 
-    # formula: formula_coef_fe + additional cluster variables and weights. Only
-    # used to construct model.frame
-    formula <- formula_coef_fe
-    
-    if (!is.null(eval(of$fixef))) {
-      # add additional fixed effects specified in fixef argument of feols()
-      formula_coef_fe <- update(formula_coef_fe, paste("~ . +", paste(eval(of$fixef), collapse = " + ")))
-      formula <- formula_coef_fe
-    }
-    
-    # add cluster variables specified in feols-cluster and boottest-cluster arguments
-    if (!is.null(eval(of$cluster))) {
-      if(class(eval(of$cluster)) == "formula"){
-        add_cluster <- unlist(strsplit(deparse(of$cluster), "[~]"))[2]
-        formula <- update(formula, paste("~ . +", paste(add_cluster, collapse = "+")))
-      } else if(class(eval(of$cluster)) == "character"){
-        formula <- update(formula, paste("~ . +", paste(eval(of$cluster), collapse = "+")))
-      } else {
-        deparse_data <- unlist(strsplit(deparse(of$data), "[$]"))
-        deparse_cluster <- unlist(strsplit(deparse(of$cluster), "[$]"))
-        add_cluster <- deparse_cluster[-(which(deparse_cluster %in% deparse_data))]
-        formula <- update(formula, paste("~ . +", paste(add_cluster, collapse = "+")))
-      }
-    }
-    
-    if (!is.null(cluster)) {
-      formula <- update(formula, paste("~ . +", paste(cluster, collapse = "+")))
-    }
-    
-    # add fixed effects to formula - needed for model.matrix
-    # note: contains cluster variable if cluster variable are also a covariate of fixed effects
-    # further: gets rid of fixed effect specified as fe
-    
-    # if(!is.null(eval(of$fixef))){
-    #   formula_coef_fe <- update(formula_coef_fe, paste("~ . +",paste(eval(of$fixef), collapse = "+")))
-    # }
-    if (!is.null(fe)) {
-      formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
-    }
-    
-    # add weights
-    if (!is.null(eval(of$weights))) {
-      if(class(eval(of$weights)) == "formula"){
-        add_weights <- unlist(strsplit(deparse(of$weights), "[~]"))[2]
-        formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
-        weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
-      } else {
-        deparse_data <- unlist(strsplit(deparse(of$data), "[$]"))
-        deparse_weights <- unlist(strsplit(deparse(of$weights), "[$]"))
-        add_weights <-  deparse_weights[-(which(deparse_weights %in% deparse_data))]
-        if(length(add_weights) == 0){
-          stop(paste0("Currently, boottest() accepts regression weights for feols() only if they are specified as a formula as weights = ", paste0("~", deparse_weights), " or in reference to the input data.frame as as weights = ", paste0(deparse_data, "$", deparse_weights), "."))
-        }
-        formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
-        weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
-      }
-    } else {
-      weights_fml <- NULL
-    }
-    
-    
-    # if there is at least one fixed effect, get rid of intercept
-    # note: length(NULL) == 0
-    # if(length(object$fixef_vars) >= 1){
-    #   formula_coef_fe <- update(formula_coef_fe, "~. - 1")
-    # }
-    
-    of$formula <- as.call(formula)
-    
-    o <- match(c("formula", "data"), names(of), 0L)
-    of <- of[c(1L, o)]
-    of[[1L]] <- quote(stats::model.frame)
-    # of is a data.frame that contains all variables: depvar, X, fixed effects and clusters specified
-    # in feols and via fe argument
-    
-    of <- eval(of, parent.frame())
-    
-    # check if one of the fixed effects or cluster variables is not of 
-    # type character or factor
-    #sapply(of, class)
-    fixedid <- object$fixef_vars
-    # are fixed effects neither character nor factor?
-    j <- which(!(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("factor")))
-    # j <- (sapply(data.frame(of[,c(fixedid)]), class) %in%  c("character", "factor"))
-    
-    # if only one fixed effect & if it is not a factor, `of[,c(fixedid)]` is not a data.frame but a vector
-    if(length(j) == 1){
-      of[, c(fixedid)] <- factor(of[, c(fixedid)])
-    } else if(length(j) > 1) {
-      of[, c(fixedid)][,j] <- lapply(j, function(x) factor(of[, c(fixedid)][,x]))
-    }
-    #sapply(of, class)
-    
-    # are all integer/ numeric variables now characters? 
-    j <- !(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("factor"))
-    
-    # if at least one j evaluates to "TRUE" 
-    # not covered by test coverage - case should never occur
-    if(sum(j) > 0){
-      stop(paste("The fixed effects variable(s)", paste(fixedid[j], collapse = " & "), "is/are not factor variables. This should have been fixed internally but apparently wasn't. Please report the bug!"))
-    }
-    N_model <- object$nobs
-    model_param_names <- c(names(coef(object)), object$fixef)
-  } else if (inherits(object, "felm")) {
-    
-    of <- object$call
-    o <- match(c("formula", "data", "weights"), names(of), 0L)
-    # keep only required arguments
-    of <- of[c(1L, o)]
-    of$drop.unused.levels <- TRUE
-    
-    # create formula objects by adding fixed effects and clusters from call
-    # add potential other cluster variables from cluster argument
-    if (suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 0, rhs = 3)) != "~0") {
-      stop("IV estimation is currently not supported by boottest()")
-    }
-    
-    # formula: model formula plus additional additional cluster variables specified via boottest()
-    
-    formula <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1, 2, 4), collapse = TRUE))
-    # drop any potential 0s in formula - no effect if no zero in formula
-    formula <- update(formula, "~ . - 0")
-    
-    # add a cluster to formula to get full model.frame
-    if (!is.null(cluster)) {
-      formula <- update(formula, paste("~ . +", paste(cluster, collapse = "+")))
-      # formula <- update(formula, paste("~ . -",fe))
-    }
-    
-    # formula_coef_fe: model_formula specified in felm: depvar, covariates + fe
-    formula_coef_fe <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1, 2), collapse = TRUE))
-    formula_coef_fe <- update(formula_coef_fe,  "~ . - 0")
-    # of !is.null(fe), delte fe from formula_coef_fe
-    if (!is.null(fe)) {
-      formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
-    }
-    
-    # add weights
-    if (!is.null(eval(of$weights))) {
-      if(class(eval(of$weights)) == "formula"){
-        add_weights <- unlist(strsplit(deparse(of$weights), "[~]"))[2]
-        formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
-        weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
-      } else {
-        deparse_data <- unlist(strsplit(deparse(of$data), "[$]"))
-        deparse_weights <- unlist(strsplit(deparse(of$weights), "[$]"))
-        add_weights <-  deparse_weights[-(which(deparse_weights %in% deparse_data))]
-        if(length(add_weights) == 0){
-          stop(paste0("Currently, boottest() accepts regression weights for felm() only if they are specified in reference to the input data.frame as as weights = ", paste0(deparse_data, "$", deparse_weights), "."))
-        }
-        formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
-        weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
-      }
-    } else {
-      weights_fml <- NULL
-    }
-    
-    of$formula <- as.call(formula)
-    
-    o <- match(c("formula", "data", "weights"), names(of), 0L)
-    of <- of[c(1L, o)]
-    
-    of[[1L]] <- quote(stats::model.frame)
-    # names(of$fml) <- "formula"
-    of <- eval(of, parent.frame())
-    
-    # check if one of the fixed effects or cluster variables is not of 
-    # type character or factor
-    fixedid <- names(object$fe)
-    # are fixed effects neither character nor factor?
-    j <- which(!(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("character", "factor")))
-    # if only one fixed effect & if it is not a factor, `of[,c(fixedid)]` is not a data.frame but a vector
-    if(length(j) == 1){
-      of[, c(fixedid)] <- factor(of[, c(fixedid)])
-    } else if(length(j) > 1) {
-      of[, c(fixedid)][,j] <- lapply(j, function(x) factor(of[, c(fixedid)][,x]))
-    }    
-    N_model <- object$N
-    model_param_names <- rownames(coef(object))
-  } else if (inherits(object, "lm")) {
-    of <- object$call
-    o <- match(c("formula", "data", "weights"), names(of), 0L)
-    # keep only required arguments
-    of <- of[c(1L, o)]
-    # add argument to function
-    # of$formula <- of$fml
-    of$drop.unused.levels <- TRUE
-    
-    # create formula objects by adding fixed effects and clusters from call
-    # add potential other cluster variables from cluster argument
-    formula_coef_fe <- eval(of$formula)
-    
-    formula <- formula_coef_fe
-    # add cluster variables to formula
-    if (!is.null(cluster)) {
-      formula <- update(formula_coef_fe, paste("~ . +", paste(cluster, collapse = "+")))
-      # formula <- update(formula, paste("~ . -",fe))
-    }
-    
-    # add weights
-    if (!is.null(eval(of$weights))) {
-      if(class(eval(of$weights)) == "formula"){
-        add_weights <- unlist(strsplit(deparse(of$weights), "[~]"))[2]
-        formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
-        weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
-      } else {
-        deparse_data <- unlist(strsplit(deparse(of$data), "[$]"))
-        deparse_weights <- unlist(strsplit(deparse(of$weights), "[$]"))
-        add_weights <-  deparse_weights[-(which(deparse_weights %in% deparse_data))]
-        if(length(add_weights) == 0){
-          stop(paste0("Currently, boottest() accepts regression weights for lm() only if they are specified in reference to the input data.frame as weights = ", paste0(deparse_data, "$", deparse_weights), "."))
-        }
-        formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
-        weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
-      }
-    } else {
-      weights_fml <- NULL
-    }
-    
-    of$formula <- as.call(formula)
-    
-    o <- match(c("formula", "data", "weights"), names(of), 0L)
-    of <- of[c(1L, o)]
-    
-    of[[1L]] <- quote(stats::model.frame)
-    of <- eval(of, parent.frame())
-    
-    N_model <- length(residuals(object))
-    model_param_names <- names(coef(object))
-    
-    # fe argument not allowed with boottest.lm
-    fe <- NULL
-    
-  } else if(inherits(object, "ivreg")){
-    
-    of <- object$call
-    o <- match(c("formula", "data", "weights"), names(of), 0L)
-    # keep only required arguments
-    of <- of[c(1L, o)]
-    # add argument to function
-    of$drop.unused.levels <- TRUE
-    
-    # create formula objects by adding fixed effects and clusters from call
-    # add potential other cluster variables from cluster argument
-    formula <- eval(of$formula)
-    
-    # formula with only depvar and covariates, needed to construct design matrix X
-    formula <- formula(Formula::Formula(formula), collapse = TRUE)
-    formula_coef_fe <- formula
-    
-    fml <- Formula::as.Formula(of$formula)
-    fml_linear <- formula(fml, lhs = 1, rhs = 1)
-    fml_iv <- formula(fml, lhs = 0, rhs = 2)
-    fml_linear_cluster <- update(fml_linear, paste("~ . +", paste(cluster, collapse = "+")))
-    fml_cluster <- Formula::as.Formula(fml_linear_cluster, fml_iv)
-    fml_iv_cluster <- formula(fml_cluster, collapse = TRUE, update = TRUE)
-    
-    formula <- formula(Formula::as.Formula(fml_linear, fml_iv), collapse = TRUE, update = TRUE)
-    
-    # add weights 
-    # add weights
-    if (!is.null(eval(of$weights))) {
-      if(class(eval(of$weights)) == "formula"){
-        add_weights <- unlist(strsplit(deparse(of$weights), "[~]"))[2]
-        formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
-        weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
-      } else {
-        deparse_data <- unlist(strsplit(deparse(of$data), "[$]"))
-        deparse_weights <- unlist(strsplit(deparse(of$weights), "[$]"))
-        add_weights <-  deparse_weights[-(which(deparse_weights %in% deparse_data))]
-        if(length(add_weights) == 0){
-          stop(paste0("Currently, boottest() accepts regression weights for lm() only if they are specified in reference to the input data.frame as weights = ", paste0(deparse_data, "$", deparse_weights), "."))
-        }
-        formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
-        weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
-      }
-    } else {
-      weights_fml <- NULL
-    }
-    
-    if(sum(bootcluster %in% c(NULL, "max", "min")) == 0){
-      formula <- update(formula, paste("~ . +", paste(bootcluster, collapse = "+")))
-    }
-    
-    
-    
-    of$formula <- as.call(fml_iv_cluster)
-    o <- match(c("formula", "data", "weights"), names(of), 0L)
-    of <- of[c(1L, o)]
-    of[[1L]] <- quote(stats::model.frame)
-    of <- eval(of, parent.frame())
-    N_model <- object$nobs
-    
-    model_param_names <- names(coef(object))
-    
-    fe <- NULL
-    
-  }
-  
-  # else if(class(object) == "plm"){
-  #   
-  #   of <- object$call
-  #   model <- of$model
-  #   o <- match(c("formula", "data", "weights"), names(of), 0L)
-  #   # keep only required arguments
-  #   of <- of[c(1L, o)]
-  #   of$drop.unused.levels <- TRUE
-  #   
-  #   # formula: model formula plus additional additional cluster variables specified via boottest()
-  #   formula <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1), collapse = TRUE))
-  #   
-  #   # add a cluster to formula to get full model.frame
-  #   if (!is.null(cluster)) {
-  #     formula <- update(formula, paste("~ . +", paste(cluster, collapse = "+")))
-  #     # formula <- update(formula, paste("~ . +", paste(names(index(object)), collapse = "+")))    
-  #   }
-  #   
-  #   # different formulas for different plm estimation types
-  #   if(model == "pooled"){
-  #     # no time / individual fixed effects are added 
-  #     formula <- formula
-  #   } else if(model == "within"){
-  #     
-  #   } else if(model == "between"){
-  #     
-  #   } else if(model == "difference"){
-  #     
-  #   }
-  #   
-  # 
-  #   
-  #   if(of$)
-  #   # formula_coef_fe: depvar, covariates and index variables
-  #   if(length(names(index(object))) != 0){
-  #     formula_coef_fe <- update(formula, paste("~ . +", paste(names(index(object)), collapse = "+")))
-  #   }
-  #   
-  #   # of !is.null(fe), delete fe from formula_coef_fe
-  #   if (!is.null(fe)) {
-  #     formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
-  #   }
-  #   
-  #   # add weights to formula
-  #   if (!is.null(eval(of$weights))) {
-  #     add_weights <- as.character(of$weights)
-  #     formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
-  #     weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
-  #   } else {
-  #     weights_fml <- NULL
-  #   }
-  #   
-  #   # over-write model object's formula
-  #   of$formula <- as.call(formula)
-  #   
-  #   o <- match(c("formula", "data", "weights"), names(of), 0L)
-  #   of <- of[c(1L, o)]
-  #   
-  #   
-  #   
-  #   of[[1L]] <- quote(stats::model.frame)
-  #   of <- eval(of, parent.frame())
-  #   
-  #   
-  # }
-  
-  
-  
   # ---------------------------------------------------------------------------- #
   # From here on: everything the same, independent of model class
   # Step 2: Add warning / error if cluster variables contain NAs
   
-  N <- dim(of)[1]
+  of <- object$call
+  
+  create_formulas <- 
+    get_formulas(object = object,
+                 cluster = cluster,
+                 fe = fe,
+                 param = param,
+                 bootcluster=bootcluster)
+  
+  # formula with fixed effects and clusters
+  formula <- create_formulas$formula
+  # formula with params & fixed effects
+  formula_coef_fe <- create_formulas$formula_coef_fe
+  N_model <- create_formulas$N_model
+  model_param_names <- create_formulas$model_param_names
+  fe <- create_formulas$fe
+  weights_fml <- create_formulas$weights_fml
+    
+  model_frame <- create_formulas$of
+  N <- dim(model_frame)[1]
   
   check_deleted_obs(N_model = N_model, 
-                    of = of,
                     na_omit = na_omit, 
                     N = N)
   
   # ---------------------------------------------------------------------------- #
   # Step 3: assign Y, X, weights, fixed_effects, W etc.
-  
-  model_frame <- of
   
   Y <- model.response(model_frame)
   # X: need to delete clusters
@@ -558,7 +191,7 @@ preprocess <- function(object, cluster, fe, param, bootcluster, na_omit, R, boot
 # --------------------------------------------------------------------- # 
 # other functions
 
-check_deleted_obs <- function(N_model, of, na_omit, N){
+check_deleted_obs <- function(N_model, N, na_omit){
   
   #' Function checks if addition of new clustering variable leads to 
   #' deletion of rows 
@@ -717,6 +350,295 @@ demean_fe <- function(fixed_effect, model_frame, X, Y, weights_fml, N){
   
 }
 
+
+get_formulas <- function(object, cluster, fe, param, bootcluster){
+  
+  of <- object$call
+  
+  if (inherits(object, "fixest")) {
+
+    o <- match(c("fml", "data", "weights", "cluster", "fixef"), names(of), 0L)
+    # keep only required arguments
+    of <- of[c(1L, o)]
+    # add argument to function
+    of$drop.unused.levels <- TRUE
+    
+    # create formula objects by adding fixed effects and clusters from call
+    # add potential other cluster variables from cluster argument
+    formula <- eval(of$fml)
+    
+    # combine fixed effects in formula with main formula
+    # note: you get a warning here if rhs = 2 is empty (no fixed effect specified via fml)
+    formula_coef_fe <- suppressWarnings(formula(Formula::as.Formula(formula), lhs = 1, rhs = c(1, 2), collapse = TRUE))
+    
+    # formula: formula_coef_fe + additional cluster variables and weights. Only
+    # used to construct model.frame
+    formula <- formula_coef_fe
+    
+    if (!is.null(eval(of$fixef))) {
+      # add additional fixed effects specified in fixef argument of feols()
+      formula_coef_fe <- update(formula_coef_fe, paste("~ . +", paste(eval(of$fixef), collapse = " + ")))
+      formula <- formula_coef_fe
+    }
+    
+    # add cluster variables specified in feols-cluster and boottest-cluster arguments
+    if (!is.null(eval(of$cluster))) {
+      if(class(eval(of$cluster)) == "formula"){
+        add_cluster <- unlist(strsplit(deparse(of$cluster), "[~]"))[2]
+        formula <- update(formula, paste("~ . +", paste(add_cluster, collapse = "+")))
+      } else if(class(eval(of$cluster)) == "character"){
+        formula <- update(formula, paste("~ . +", paste(eval(of$cluster), collapse = "+")))
+      } else {
+        deparse_data <- unlist(strsplit(deparse(of$data), "[$]"))
+        deparse_cluster <- unlist(strsplit(deparse(of$cluster), "[$]"))
+        add_cluster <- deparse_cluster[-(which(deparse_cluster %in% deparse_data))]
+        formula <- update(formula, paste("~ . +", paste(add_cluster, collapse = "+")))
+      }
+    }
+    
+    if (!is.null(cluster)) {
+      formula <- update(formula, paste("~ . +", paste(cluster, collapse = "+")))
+    }
+    
+    # add fixed effects to formula - needed for model.matrix
+    # note: contains cluster variable if cluster variable are also a covariate of fixed effects
+    # further: gets rid of fixed effect specified as fe
+    
+    # if(!is.null(eval(of$fixef))){
+    #   formula_coef_fe <- update(formula_coef_fe, paste("~ . +",paste(eval(of$fixef), collapse = "+")))
+    # }
+    if (!is.null(fe)) {
+      formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
+    }
+    
+    # add weights
+    weights_formulas <- add_weights(of = of, formula = formula)
+    formula <- weights_formulas$formula
+    weights_fml <- weights_formulas$weights_fml
+    
+    # if there is at least one fixed effect, get rid of intercept
+    # note: length(NULL) == 0
+    # if(length(object$fixef_vars) >= 1){
+    #   formula_coef_fe <- update(formula_coef_fe, "~. - 1")
+    # }
+    
+    of$formula <- as.call(formula)
+    
+    o <- match(c("formula", "data"), names(of), 0L)
+    of <- of[c(1L, o)]
+    of[[1L]] <- quote(stats::model.frame)
+    # of is a data.frame that contains all variables: depvar, X, fixed effects and clusters specified
+    # in feols and via fe argument
+    
+    of <- eval(of, parent.frame())
+    
+    # check if one of the fixed effects or cluster variables is not of type character or factor
+    fixedid <- object$fixef_vars
+    of <- check_set_fixef_types(of = of, fixedid = fixedid)
+    
+
+    N_model <- object$nobs
+    model_param_names <- c(names(coef(object)), object$fixef)
+    
+  } else if (inherits(object, "felm")) {
+    
+    o <- match(c("formula", "data", "weights"), names(of), 0L)
+    # keep only required arguments
+    of <- of[c(1L, o)]
+    of$drop.unused.levels <- TRUE
+    
+    # create formula objects by adding fixed effects and clusters from call
+    # add potential other cluster variables from cluster argument
+    if (suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 0, rhs = 3)) != "~0") {
+      stop("IV estimation is currently not supported by boottest()")
+    }
+    
+    # formula: model formula plus additional additional cluster variables specified via boottest()
+    
+    formula <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1, 2, 4), collapse = TRUE))
+    # drop any potential 0s in formula - no effect if no zero in formula
+    formula <- update(formula, "~ . - 0")
+    
+    # add a cluster to formula to get full model.frame
+    if (!is.null(cluster)) {
+      formula <- update(formula, paste("~ . +", paste(cluster, collapse = "+")))
+      # formula <- update(formula, paste("~ . -",fe))
+    }
+    
+    # formula_coef_fe: model_formula specified in felm: depvar, covariates + fe
+    formula_coef_fe <- suppressWarnings(formula(Formula::as.Formula(eval(of$formula)), lhs = 1, rhs = c(1, 2), collapse = TRUE))
+    formula_coef_fe <- update(formula_coef_fe,  "~ . - 0")
+    # of !is.null(fe), delte fe from formula_coef_fe
+    if (!is.null(fe)) {
+      formula_coef_fe <- update(formula_coef_fe, paste("~ . -", fe))
+    }
+    
+    # add weights
+    weights_formulas <- add_weights(of = of, formula = formula)
+    formula <- weights_formulas$formula
+    weights_fml <- weights_formulas$weights_fml
+    
+    of$formula <- as.call(formula)
+    
+    o <- match(c("formula", "data", "weights"), names(of), 0L)
+    of <- of[c(1L, o)]
+    
+    of[[1L]] <- quote(stats::model.frame)
+    # names(of$fml) <- "formula"
+    of <- eval(of, parent.frame())
+    
+    # check if one of the fixed effects or cluster variables is not of 
+    # type character or factor
+    fixedid <- names(object$fe)
+    of <- check_set_fixef_types(of = of, fixedid = fixedid)
+    
+    N_model <- object$N
+    model_param_names <- rownames(coef(object))
+    
+  } else if (inherits(object, "lm")) {
+
+    o <- match(c("formula", "data", "weights"), names(of), 0L)
+    # keep only required arguments
+    of <- of[c(1L, o)]
+    # add argument to function
+    # of$formula <- of$fml
+    of$drop.unused.levels <- TRUE
+    
+    # create formula objects by adding fixed effects and clusters from call
+    # add potential other cluster variables from cluster argument
+    formula_coef_fe <- eval(of$formula)
+    
+    formula <- formula_coef_fe
+    # add cluster variables to formula
+    formula <- add_boottest_cluster(formula_coef_fe = formula_coef_fe, cluster = cluster)
+    
+    formula <- add_bootcluster(formula=formula, bootcluster = bootcluster)
+    
+    # add weights
+    weights_formulas <- add_weights(of = of, formula = formula)
+    formula <- weights_formulas$formula
+    weights_fml <- weights_formulas$weights_fml
+    
+    
+    of$formula <- as.call(formula)
+    
+    o <- match(c("formula", "data", "weights"), names(of), 0L)
+    of <- of[c(1L, o)]
+    
+    of[[1L]] <- quote(stats::model.frame)
+    of <- eval(of, parent.frame())
+    
+    N_model <- length(residuals(object))
+    model_param_names <- names(coef(object))
+    
+    # fe argument not allowed with boottest.lm
+    fe <- NULL
+    
+  } else if(inherits(object, "ivreg")){
+    
+    # create formula objects by adding fixed effects and clusters from call
+    # add potential other cluster variables from cluster argument
+    formula <- eval(of$formula)
+    
+    o <- match(c("formula", "data", "weights"), names(of), 0L)
+    # keep only required arguments
+    of <- of[c(1L, o)]
+    # add argument to function
+    of$drop.unused.levels <- TRUE
+    
+    # formula with only depvar and covariates, needed to construct design matrix X
+    formula <- formula(Formula::Formula(formula), collapse = TRUE)
+    formula_coef_fe <- formula
+    
+    fml <- Formula::as.Formula(of$formula)
+    fml_linear <- formula(fml, lhs = 1, rhs = 1)
+    fml_iv <- formula(fml, lhs = 0, rhs = 2)
+    fml_linear_cluster <- update(fml_linear, paste("~ . +", paste(cluster, collapse = "+")))
+    fml_cluster <- Formula::as.Formula(fml_linear_cluster, fml_iv)
+    fml_iv_cluster <- formula(fml_cluster, collapse = TRUE, update = TRUE)
+    
+    formula <- formula(Formula::as.Formula(fml_linear, fml_iv), collapse = TRUE, update = TRUE)
+    
+    formula <- add_bootcluster(formula=formula, bootcluster = bootcluster)
+    
+    
+    of$formula <- as.call(fml_iv_cluster)
+    o <- match(c("formula", "data", "weights"), names(of), 0L)
+    of <- of[c(1L, o)]
+    of[[1L]] <- quote(stats::model.frame)
+    of <- eval(of, parent.frame())
+    
+    N_model <- object$nobs
+    model_param_names <- names(coef(object))
+    
+    fe <- NULL
+  }
+  
+
+  
+  
+  
+  res <- list(fe = fe, 
+              model_param_names = model_param_names, 
+              formula = formula, 
+              formula_coef_fe = formula_coef_fe, 
+              N_model = N_model, 
+              weights_fml = weights_fml, 
+              of = of, 
+              weights_fml = weights_fml
+              )
+  
+  res
+}
+
+add_boottest_cluster <- function(cluster, formula_coef_fe){
+  if (!is.null(cluster)) {
+    formula <- update(formula_coef_fe, paste("~ . +", paste(cluster, collapse = "+")))
+  }
+  formula
+}
+
+add_bootcluster <- function(formula, bootcluster){
+  if(sum(bootcluster %in% c(NULL, "max", "min")) == 0){
+    formula <- update(formula, paste("~ . +", paste(bootcluster, collapse = "+")))
+  }
+  formula
+}
+
+add_weights <- function(of, formula){
+  # add weights
+  if (!is.null(eval(of$weights))) {
+    if(class(eval(of$weights)) == "formula"){
+      add_weights <- unlist(strsplit(deparse(of$weights), "[~]"))[2]
+      formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
+      weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
+    } else {
+      deparse_data <- unlist(strsplit(deparse(of$data), "[$]"))
+      deparse_weights <- unlist(strsplit(deparse(of$weights), "[$]"))
+      add_weights <-  deparse_weights[-(which(deparse_weights %in% deparse_data))]
+      if(length(add_weights) == 0){
+        stop(paste0("Currently, boottest() accepts regression weights only if they are specified as a formula as weights = ", paste0("~", deparse_weights), " or in reference to the input data.frame as as weights = ", paste0(deparse_data, "$", deparse_weights), "."))
+      }
+      formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
+      weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
+    }
+  } else {
+    weights_fml <- NULL
+  }
+  res <- list(formula = formula, 
+              weights_fml = weights_fml)
+}
+
+check_set_fixef_types <- function(of, fixedid){
+  j <- which(!(sapply(data.frame(of[,c(fixedid)]), class) %in%  c("character", "factor")))
+  # if only one fixed effect & if it is not a factor, `of[,c(fixedid)]` is not a data.frame but a vector
+  if(length(j) == 1){
+    of[, c(fixedid)] <- factor(of[, c(fixedid)])
+  } else if(length(j) > 1) {
+    of[, c(fixedid)][,j] <- lapply(j, function(x) factor(of[, c(fixedid)][,x]))
+  }    
+  of
+}
 # get_iv <- function(){
 #     X_exog <- X[, names(object$exogenous)]
 #     X_endog <- X[, names(object$endogenous)]
