@@ -560,7 +560,10 @@ get_formulas <- function(object, cluster, fe, param, bootcluster){
     formula <- formula(Formula::as.Formula(fml_linear, fml_iv), collapse = TRUE, update = TRUE)
     
     formula <- add_bootcluster(formula=formula, bootcluster = bootcluster)
-    
+    # add weights
+    weights_formulas <- add_weights(of = of, formula = formula)
+    formula <- weights_formulas$formula
+    weights_fml <- weights_formulas$weights_fml
     
     of$formula <- as.call(fml_iv_cluster)
     o <- match(c("formula", "data", "weights"), names(of), 0L)
@@ -583,7 +586,6 @@ get_formulas <- function(object, cluster, fe, param, bootcluster){
               formula = formula, 
               formula_coef_fe = formula_coef_fe, 
               N_model = N_model, 
-              weights_fml = weights_fml, 
               of = of, 
               weights_fml = weights_fml
               )
