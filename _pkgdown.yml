@@ -1,7 +1,9 @@
+url: https://s3alfisc.github.io/fwildclusterboot/
+
+
 template:
-  params:
-    bootswatch: flatly
-    
+  bootstrap: 5
+
 navbar:
   structure:
     left:
@@ -45,7 +47,6 @@ reference:
   - '`waldboottest.fixest`'
   - '`boot_ssc`'
   - '`setBoottest_boot_algo`'
-  - 'setBoottest_nthreads'
 
 - title: Internal functions
   desc: > 
