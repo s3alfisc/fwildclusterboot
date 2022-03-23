@@ -510,10 +510,12 @@ get_formulas <- function(object, cluster, fe, param, bootcluster){
     
     formula <- formula_coef_fe
     # add cluster variables to formula
-    formula <- add_boottest_cluster(formula_coef_fe = formula_coef_fe, cluster = cluster)
-    
-    formula <- add_bootcluster(formula=formula, bootcluster = bootcluster)
-    
+    if(!is.null(cluster)){
+      formula <- add_boottest_cluster(formula_coef_fe = formula_coef_fe, cluster = cluster)
+      formula <- add_bootcluster(formula=formula, bootcluster = bootcluster)
+    }
+
+
     # add weights
     weights_formulas <- add_weights(of = of, formula = formula)
     formula <- weights_formulas$formula
@@ -629,6 +631,7 @@ add_weights <- function(of, formula){
   }
   res <- list(formula = formula, 
               weights_fml = weights_fml)
+  res
 }
 
 check_set_fixef_types <- function(of, fixedid){

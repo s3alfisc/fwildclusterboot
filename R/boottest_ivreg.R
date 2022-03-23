@@ -127,6 +127,7 @@ boottest.ivreg <- function(object,
                            seed = NULL,
                            R = NULL,
                            r = 0,
+                           beta0 = r,
                            sign_level = 0.05,
                            type = "rademacher",
                            impose_null = TRUE,
@@ -262,17 +263,12 @@ boottest.ivreg <- function(object,
   
   clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
   
-  # number of clusters used in bootstrap - always derived from bootcluster
-  N_G_bootcluster <- preprocess$N_G_bootcluster
-  N_G_2 <- 2^N_G_bootcluster
-  if (type == "rademacher") {
-    if(N_G_2 <= B){
-      warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", N_G_bootcluster, "bootstrap clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead. Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G_bootcluster - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-              call. = FALSE, 
-              noBreaks. = TRUE
-      )
-    }
-  }
+  enumerate <- 
+    check_set_full_enumeration(preprocess = preprocess, 
+                               B = B, 
+                               type = type)
+  full_enumeration <- enumerate$full_enumeration
+  B <- enumerate$B
     
   # assign all values needed in WildBootTests.jl
   

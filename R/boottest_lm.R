@@ -185,8 +185,8 @@ boottest.lm <- function(object,
                         t_boot = FALSE, 
                         getauxweights = FALSE,
                         ...){
-
-
+  
+  
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
   
@@ -212,7 +212,7 @@ boottest.lm <- function(object,
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
-
+  
   if(is.null(seed)){
     internal_seed <- get_seed()
   } else {
@@ -223,7 +223,7 @@ boottest.lm <- function(object,
   if(missing(r) & !missing(beta0)){
     warning("Note that the 'beta0' function argument is superseded by a new argument, 'r'. Please specify your hypothesis via the new function argument instead of using 'beta0'.")
   }
-
+  
   if(boot_algo == "R"){
     if(type %in% c("rademacher", "webb", "norm")){
       dqrng::dqset.seed(internal_seed)
@@ -241,7 +241,7 @@ boottest.lm <- function(object,
     internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
   }
   
-
+  
   # check appropriateness of nthreads
   #nthreads <- ifelse(nthreads > cpp_get_nb_threads(), cpp_get_nb_threads(), nthreads)
   nthreads <- check_set_nthreads(nthreads)
@@ -257,7 +257,7 @@ boottest.lm <- function(object,
     heteroskedastic <- FALSE
   }
   
-
+  
   if(maxiter < 1){
     stop("The function argument maxiter needs to be larger than 1.", 
          call. = FALSE)
@@ -279,7 +279,7 @@ boottest.lm <- function(object,
       }
     } 
     
-
+    
     if (conf_int == TRUE || is.null(conf_int)){
       if(B <= 100){
         stop("The function argument B is smaller than 100. The number of bootstrap 
@@ -290,7 +290,7 @@ boottest.lm <- function(object,
       }
     }
   }
-    
+  
   
   if (mean(param %in% c(names(coef(object)))) != 1) {
     stop(paste("The parameter", param, "is not included in the estimated model.
@@ -335,13 +335,13 @@ boottest.lm <- function(object,
   if(boot_algo %in% c("R", "R-lean")){
     # preprocess the data: Y, X, weights, fixed_effect
     preprocess <- preprocess(object = object, 
-                              cluster = clustid,
-                              fe = NULL, 
-                              param = param,
-                              bootcluster = bootcluster, 
-                              na_omit = na_omit, 
-                              R = R,
-                              boot_algo = boot_algo
+                             cluster = clustid,
+                             fe = NULL, 
+                             param = param,
+                             bootcluster = bootcluster, 
+                             na_omit = na_omit, 
+                             R = R,
+                             boot_algo = boot_algo
     )
     
     
@@ -356,21 +356,13 @@ boottest.lm <- function(object,
     # R*beta; 
     point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
     
-    full_enumeration <- FALSE
-    if(heteroskedastic == FALSE){
-      N_G_bootcluster <- preprocess$N_G_bootcluster
-      N_G_2 <- 2^N_G_bootcluster      
-      if (type == "rademacher") {
-        if(N_G_2 <= B){
-          warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", N_G_bootcluster, "bootstrap clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead. Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G_bootcluster - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-                  call. = FALSE, 
-                  noBreaks. = TRUE
-          )
-          B <- N_G_2
-          full_enumeration <- TRUE
-        }
-      } 
-    }  
+    enumerate <- 
+      check_set_full_enumeration(preprocess = preprocess, 
+                                 heteroskedastic = heteroskedastic, 
+                                 B = B, 
+                                 type = type)
+    full_enumeration <- enumerate$full_enumeration
+    B <- enumerate$B
     
     
     if(boot_algo == "R"){
@@ -387,31 +379,31 @@ boottest.lm <- function(object,
                         type = type, 
                         full_enumeration = full_enumeration, 
                         small_sample_correction = small_sample_correction)
-      } else if(boot_algo == "R-lean") {
-       res <- boot_algo1(preprocessed_object = preprocess,
-                         boot_iter = B,
-                         point_estimate = point_estimate,
-                         impose_null = impose_null,
-                         r = r,
-                         sign_level = sign_level,
-                         param = param,
-                         p_val_type = p_val_type,
-                         nthreads = nthreads,
-                         type = type,
-                         full_enumeration = full_enumeration,
-                         small_sample_correction = small_sample_correction, 
-                         heteroskedastic = heteroskedastic, 
-                         seed = internal_seed
-       )
+    } else if(boot_algo == "R-lean") {
+      res <- boot_algo1(preprocessed_object = preprocess,
+                        boot_iter = B,
+                        point_estimate = point_estimate,
+                        impose_null = impose_null,
+                        r = r,
+                        sign_level = sign_level,
+                        param = param,
+                        p_val_type = p_val_type,
+                        nthreads = nthreads,
+                        type = type,
+                        full_enumeration = full_enumeration,
+                        small_sample_correction = small_sample_correction, 
+                        heteroskedastic = heteroskedastic, 
+                        seed = internal_seed
+      )
     }
-
+    
     # compute confidence sets
     if(class(res) == "boot_algo1"){
       conf_int <-  FALSE
     }
-
+    
     if (is.null(conf_int) || conf_int == TRUE) {
-
+      
       # guess for standard errors
       if(impose_null == TRUE){
         # should always be positive, point_estimate and t_stat need to have same
@@ -420,8 +412,8 @@ boottest.lm <- function(object,
       } else if(impose_null == FALSE){
         se_guess <- abs((point_estimate - r) / res$t_stat)
       }
-
-
+      
+      
       res_p_val <- invert_p_val(
         object = res,
         boot_iter = B,
@@ -442,7 +434,7 @@ boottest.lm <- function(object,
         test_vals = NA
       )
     }
-
+    
     res_final <- list(
       point_estimate = point_estimate,
       p_val = res[["p_val"]],
@@ -483,22 +475,14 @@ boottest.lm <- function(object,
     # R*beta;
     point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
     
-    # number of clusters used in bootstrap - always derived from bootcluster
-    N_G_bootcluster <- preprocess$N_G_bootcluster
-    N_G_2 <- 2^N_G_bootcluster
-    if (type == "rademacher") {
-      if(N_G_2 <= B){
-        warning(paste("There are only", N_G_2, "unique draws from the rademacher distribution for", N_G_bootcluster, "bootstrap clusters. Therefore, B = ", N_G_2, " with full enumeration. Consider using webb weights instead."),
-                call. = FALSE, 
-                noBreaks. = TRUE
-        )
-        warning(paste("Further, note that under full enumeration and with B =", N_G_2, "bootstrap draws, only 2^(#clusters - 1) = ", 2^(N_G_bootcluster - 1), " distinct t-statistics and p-values can be computed. For a more thorough discussion, see Webb `Reworking wild bootstrap based inference for clustered errors` (2013)."),
-                call. = FALSE, 
-                noBreaks. = TRUE
-        )
-      }
-    }
-      
+    enumerate <- 
+      check_set_full_enumeration(preprocess = preprocess, 
+                                 B = B, 
+                                 type = type)
+    
+    full_enumeration <- enumerate$full_enumeration
+    B <- enumerate$B
+    
     
     # translate ssc into small_sample_adjustment
     small_sample_adjustment <- small <- FALSE
@@ -567,7 +551,7 @@ boottest.lm <- function(object,
     # JuliaConnectoR::juliaEval('using StableRNGs')
     
     WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
-
+    
     ptype <- switch(p_val_type,
                     "two-tailed" = "symmetric",
                     "equal-tailed" = "equaltail",
@@ -775,29 +759,29 @@ boottest.lm <- function(object,
 #' }
 
 waldboottest.lm <- function(object,
-                        clustid,
-                        B,
-                        R,
-                        r = rep(0,nrow(R)),
-                        bootcluster = "max",
-                        seed = NULL,
-                        type = "rademacher",
-                        impose_null = TRUE,
-                        p_val_type = "two-tailed",
-                        tol = 1e-6,
-                        na_omit = TRUE,
-                        floattype = "Float64",
-                        #small_sample_adjustment = TRUE,
-                        fweights = FALSE,
-                        getauxweights = FALSE,
-                        t_boot = FALSE,
-                        maxmatsize = NULL,
-                        bootstrapc = FALSE,
-                        ssc = boot_ssc(adj = TRUE,
-                                       fixef.K = "none",
-                                       cluster.adj = TRUE,
-                                       cluster.df = "conventional"),
-                        ...) {
+                            clustid,
+                            B,
+                            R,
+                            r = rep(0,nrow(R)),
+                            bootcluster = "max",
+                            seed = NULL,
+                            type = "rademacher",
+                            impose_null = TRUE,
+                            p_val_type = "two-tailed",
+                            tol = 1e-6,
+                            na_omit = TRUE,
+                            floattype = "Float64",
+                            #small_sample_adjustment = TRUE,
+                            fweights = FALSE,
+                            getauxweights = FALSE,
+                            t_boot = FALSE,
+                            maxmatsize = NULL,
+                            bootstrapc = FALSE,
+                            ssc = boot_ssc(adj = TRUE,
+                                           fixef.K = "none",
+                                           cluster.adj = TRUE,
+                                           cluster.df = "conventional"),
+                            ...) {
   
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
@@ -878,7 +862,7 @@ waldboottest.lm <- function(object,
          'two-tailed', 'equal-tailed','>' or '<'.",
          call. = FALSE)
   }
-
+  
   # throw error if specific function arguments are used in lm() call
   call_object <- names(object$call)[names(object$call) != ""]
   banned_fun_args <- c("contrasts", "subset", "offset", "x", "y")
@@ -996,7 +980,7 @@ waldboottest.lm <- function(object,
   
   JuliaConnectoR::juliaEval('using WildBootTests')
   WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
-
+  
   eval_list <- list(floattype,
                     R,
                     r,
@@ -1073,5 +1057,5 @@ waldboottest.lm <- function(object,
   class(res_final) <- "waldboottest"
   
   invisible(res_final)
-
+  
 }

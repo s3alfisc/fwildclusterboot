@@ -1,0 +1,139 @@
+boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid, sign_leve, conf_int, tol, small_sample_adjustment, p_val_type, type,
+                            floattype, bootstrapc, LIML, ARubin, getauxweights){
+  
+  resp <- as.numeric(preprocess$Y)
+  predexog <- preprocess$X_exog
+  predendog <- preprocess$X_endog
+  inst <- preprocess$instruments
+  
+  if(is.matrix(preprocess$R)){
+    R <- preprocess$R
+  } else {
+    R <- matrix(preprocess$R, 1, length(preprocess$R))
+  }
+
+  reps <- as.integer(B) # WildBootTests.jl demands integer
+  
+  # Order the columns of `clustid` this way:
+  # 1. Variables only used to define bootstrapping clusters, as in the subcluster bootstrap.
+  # 2. Variables used to define both bootstrapping and error clusters.
+  # 3. Variables only used to define error clusters.
+  # In the most common case, `clustid` is a single column of type 2.
+  
+  if(length(bootcluster == 1) && bootcluster == "max"){
+    bootcluster_n <- clustid
+  } else if(length(bootcluster == 1) && bootcluster == "min"){
+    bootcluster_n <- names(preprocess$N_G[which.min(preprocess$N_G)])
+  } else {
+    bootcluster_n <- bootcluster
+  }
+  
+  # only bootstrapping cluster: in bootcluster and not in clustid
+  c1 <- bootcluster_n[which(!(bootcluster_n %in% clustid))]
+  # both bootstrapping and error cluster: all variables in clustid that are also in bootcluster
+  c2 <- clustid[which(clustid %in% bootcluster_n)]
+  # only error cluster: variables in clustid not in c1, c2
+  c3 <- clustid[which(!(clustid %in% c(c1, c2)))]
+  all_c <- c(c1, c2, c3)
+  #all_c <- lapply(all_c , function(x) ifelse(length(x) == 0, NULL, x))
+  
+  # note that c("group_id1", NULL) == "group_id1"
+  clustid_mat <- data.frame(preprocess$model_frame[, all_c])
+  names(clustid_mat) <- all_c
+  clustid_df <- base::as.matrix(sapply(clustid_mat, to_integer))
+  
+  # `nbootclustvar::Integer=1`: number of bootstrap-clustering variables
+  # `nerrclustvar::Integer=nbootclustvar`: number of error-clustering variables
+  nbootclustvar <- ifelse(bootcluster == "max", length(clustid), length(bootcluster))
+  nerrclustvar <- length(clustid)
+  
+  obswt <-  preprocess$weights
+  feid <- as.integer(preprocess$fixed_effect[,1])
+  level <-  1 - sign_level
+  getCI <- ifelse(is.null(conf_int) || conf_int == TRUE, TRUE, FALSE)
+  imposenull <- ifelse(is.null(impose_null) || impose_null == TRUE, TRUE, FALSE)
+  rtol <- tol
+  small <- small_sample_adjustment
+  
+  JuliaConnectoR::juliaEval('using WildBootTests')
+  WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
+  
+  ptype <- switch(p_val_type,
+                  "two-tailed" = "symmetric",
+                  "equal-tailed" = "equaltail",
+                  "<" = "lower",
+                  ">" = "upper",
+                  ptype
+  )
+  
+  auxwttype <- switch(type,
+                      "rademacher" = "rademacher",
+                      "mammen" = "mammen",
+                      "norm" = "normal",
+                      "webb" = "webb",
+                      "gamma" = "gamma",
+                      auxwttype
+  )
+  
+  eval_list <- list(floattype,
+                    R,
+                    r,
+                    resp = resp,
+                    predexog = predexog,
+                    predendog = predendog,
+                    inst = inst,
+                    clustid = clustid_df,
+                    nbootclustvar = nbootclustvar,
+                    nerrclustvar = nerrclustvar,
+                    obswt = obswt,
+                    level = level,
+                    getCI = getCI,
+                    imposenull = imposenull,
+                    rtol = rtol,
+                    small = small,
+                    rng = internal_seed,
+                    auxwttype = auxwttype,
+                    ptype = ptype,
+                    reps = reps,
+                    fweights = fweights,
+                    bootstrapc = bootstrapc,
+                    LIML = LIML,
+                    ARubin = ARubin
+                    
+  )
+  
+  if(!is.null(maxmatsize)){
+    eval_list[["maxmatsize"]] <- maxmatsize
+  }
+  
+  if(!is.null(Fuller)){
+    eval_list[["Fuller"]] <- Fuller
+  }
+  
+  if(!is.null(kappa)){
+    eval_list[["kappa"]] <- kappa
+  }
+  
+  wildboottest_res <- do.call(WildBootTests$wildboottest, eval_list)
+  
+  
+  # collect results:
+  p_val <- WildBootTests$p(wildboottest_res)
+  if(getCI == TRUE){
+    conf_int <- WildBootTests$CI(wildboottest_res)
+  } else{
+    conf_int <- NA
+  }
+  t_stat <- WildBootTests$teststat(wildboottest_res)
+  if(t_boot == TRUE){
+    t_boot <- WildBootTests$dist(wildboottest_res)
+  }
+  
+  if(getauxweights == TRUE){
+    getauxweights <- WildBootTests$auxweights(wildboottest_res)
+  }
+  
+  plotpoints <- WildBootTests$plotpoints(wildboottest_res)
+  plotpoints <- cbind(plotpoints$X[[1]], plotpoints$p)
+  
+}

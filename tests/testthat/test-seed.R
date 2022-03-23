@@ -1,8 +1,9 @@
 test_that("seed works for OLS", {
   
 
+  data1 <<- fwildclusterboot:::create_data(N = 100, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1)
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
-               data = fwildclusterboot:::create_data(N = 100, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1))
+               data = data1)
   
   
   for(boot_algo in c("R", "R-lean", "WildBootTests.jl")){
