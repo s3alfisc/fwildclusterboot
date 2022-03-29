@@ -73,6 +73,18 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/mboottest.felm.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/mboottest.fixest.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/mboottest.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/mboottest.lm.html</loc>
+  </url>
+  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/plot.boottest.html</loc>
   </url>
   <url>
@@ -82,30 +94,18 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/summary.boottest.html</loc>
   </url>
   <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/summary.waldboottest.html</loc>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/summary.mboottest.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/tidy.boottest.html</loc>
   </url>
   <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/tidy.waldboottest.html</loc>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/tidy.mboottest.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/to_integer.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/voters.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/waldboottest.felm.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/waldboottest.fixest.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/waldboottest.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/waldboottest.lm.html</loc>
   </url>
 </urlset>
