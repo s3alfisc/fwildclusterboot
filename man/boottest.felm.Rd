@@ -32,6 +32,7 @@
   bootstrapc = FALSE,
   t_boot = FALSE,
   getauxweights = FALSE,
+  fweights = FALSE,
   ...
 )
 }

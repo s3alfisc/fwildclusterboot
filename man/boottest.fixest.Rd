@@ -32,6 +32,7 @@
   bootstrapc = FALSE,
   t_boot = FALSE,
   getauxweights = FALSE,
+  fweights = FALSE,
   ...
 )
 }
@@ -127,6 +128,8 @@ Note that if no cluster is provided, boottest() always defaults to the "lean" al
 \item{t_boot}{...}
 
 \item{getauxweights}{...}
+
+\item{fweights}{Logical. FALSE by default, TRUE for frequency weights.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }

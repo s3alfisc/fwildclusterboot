@@ -1,16 +1,16 @@
-tidy.waldboottest <- function(object, ...) {
-  #' S3 method to summarize objects of class waldboottest into tidy data.frame
-  #' @param object object of type waldboottest
+tidy.mboottest <- function(object, ...) {
+  #' S3 method to summarize objects of class mboottest into tidy data.frame
+  #' @param object object of type mboottest
   #' @param ... Further arguments passed to or from other methods.
   #' @importFrom generics tidy
   #' 
   #' @export
   #' 
-  #' @method tidy waldboottest
+  #' @method tidy mboottest
   #' @return A tidy data.frame with estimation results for objects of type
-  #'         waldboottest
+  #'         mboottest
   
-  stopifnot(inherits(object, "waldboottest"))
+  stopifnot(inherits(object, "mboottest"))
   #dreamerr::validate_dots(stop = TRUE)
   
   statistic <- object$t_stat
@@ -21,20 +21,20 @@ tidy.waldboottest <- function(object, ...) {
   return(res)
 }
 
-summary.waldboottest <- function(object, digits = 3, ...) {
-  #' S3 method to summarize objects of class waldboottest
-  #' @param object object of type waldboottest
+summary.mboottest <- function(object, digits = 3, ...) {
+  #' S3 method to summarize objects of class mboottest
+  #' @param object object of type mboottest
   #' @param digits rounding of output. 3 by default
   #' @param ... Further arguments passed to or from other methods.
-  #' @method summary waldboottest
+  #' @method summary mboottest
   #'
   #' @export
   #'
-  #' @return Returns result summaries for objects of type waldboottest
+  #' @return Returns result summaries for objects of type mboottest
   
   
   
-  stopifnot(inherits(object, "waldboottest"))
+  stopifnot(inherits(object, "mboottest"))
   dreamerr::validate_dots(stop = TRUE)
   
   N <- object$N
@@ -62,7 +62,7 @@ summary.waldboottest <- function(object, digits = 3, ...) {
   tidy_object <- as.data.frame(tidy_object)
   names(tidy_object) <- tidy_names
   
-  hypothesis <- "Multivariate waldboottest"
+  hypothesis <- "Multivariate mboottest"
   
   print(call)
   cat(

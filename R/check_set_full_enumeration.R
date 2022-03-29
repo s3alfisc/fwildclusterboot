@@ -1,5 +1,5 @@
 # diverse helper functions 
-check_set_full_enumeration <- function(heteroskedastic = FALSE, preprocess, B, type){
+check_set_full_enumeration <- function(heteroskedastic = FALSE, preprocess, B, type, boot_algo){
   
   full_enumeration <- FALSE
   if(heteroskedastic == FALSE){
@@ -11,8 +11,11 @@ check_set_full_enumeration <- function(heteroskedastic = FALSE, preprocess, B, t
                 call. = FALSE, 
                 noBreaks. = TRUE
         )
-        B <- N_G_2
         full_enumeration <- TRUE
+        if(boot_algo != "WildBootTests.jl"){
+          # this is handled internally by WildBootTests.jl
+          B <- N_G_2
+        }
       }
     } 
   }  

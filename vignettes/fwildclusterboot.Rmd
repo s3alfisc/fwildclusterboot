@@ -314,8 +314,8 @@ summary(boot_ivreg)
 
 ## Tests of multiple joint hypotheses (q > 1)
 
-Through `WildBootTests.jl`, you can also test multiple joint hypotheses via the `waldboottest()` function. 
-With minor differences, `waldboottest()'s` syntax largely mirrors `boottest()`.
+Through `WildBootTests.jl`, you can also test multiple joint hypotheses via the `mboottest()` function. 
+With minor differences, `mboottest()'s` syntax largely mirrors `boottest()`.
 
 To jointly test the null hypothesis $H_0: treatment = 0 \text{ and } ideology1 = 0$ vs $H_0: treatment \neq 0 \text{ and } ideology1 \neq 0$ via a wild cluster bootstrap, you can run
 
@@ -323,7 +323,7 @@ To jointly test the null hypothesis $H_0: treatment = 0 \text{ and } ideology1 =
 library(clubSandwich)
 R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 wboottest <- 
-waldboottest(object = lm_fit, 
+mboottest(object = lm_fit, 
              clustid = "group_id1", 
              B = 999, 
              R = R)

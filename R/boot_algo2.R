@@ -1,4 +1,4 @@
-boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, r, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction) {
+boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_null, r, sign_level, param, p_val_type, nthreads, type, full_enumeration, small_sample_correction, conf_int, maxiter, tol) {
   
   #' Fast wild cluster bootstrap algorithm 
   #' 
@@ -28,6 +28,12 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #' @param full_enumeration Is full enumeration employed? Full enum. is used if
   #'        N_G^2 < boot_iter for Mammen and Rademacher weights
   #' @param small_sample_correction The small sample correction to be applied. See ssc().
+  #' @param conf_int Logical. Should confidence intervals be calculated (by test inversion)?
+  #' @param tol Numeric vector of length 1. The desired accuracy 
+  #'        (convergence tolerance) used in the root finding procedure to find the confidence interval.
+  #'        1e-6 by default.
+  #' @param maxiter Integer. Maximum number of iterations used in the root finding procedure to find the confidence interval.
+  #'        10 by default.
   #' @return A list of ...
   #' @importFrom Matrix t Diagonal
   #' @importFrom Matrix.utils aggregate.Matrix
@@ -54,6 +60,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   # vcov_sign <- preprocessed_object$vcov_sign
   weights <- preprocessed_object$weights
   R <- t(as.matrix(preprocessed_object$R0))
+  #r <- preprocessed_object$r
 
   N_G_bootcluster <- length(unique(bootcluster[[1]]))
   
@@ -216,18 +223,56 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   # collect pre-computed A, B, CC, CD, DD - will be needed for p-value inversion
   ABCD <- list(A = A, B = B, CC = CC, CD = CD, DD = DD)
  
+  
+  # compute confidence interval
+  
+  if (is.null(conf_int) || conf_int == TRUE){
+    
+    # guess for standard errors
+    if(impose_null == TRUE){
+      # should always be positive, point_estimate and t_stat need to have same
+      # sign, abs for security
+      se_guess <- abs(point_estimate / t_stat)
+    } else if(impose_null == FALSE){
+      se_guess <- abs((point_estimate - r) / t_stat)
+    }
+    
+    
+    conf_int <- invert_p_val(ABCD = ABCD,
+                             small_sample_correction = small_sample_correction,
+                             boot_iter = boot_iter,
+                             point_estimate = point_estimate,
+                             se_guess = se_guess,
+                             clustid = clustid,
+                             sign_level = sign_level,
+                             vcov_sign = vcov_sign,
+                             impose_null = impose_null,
+                             p_val_type = p_val_type,
+                             maxiter = maxiter,
+                             tol = tol)
+  } else {
+    conf_int <- list(
+      conf_int = NA,
+      p_test_vals = NA,
+      test_vals = NA
+    )
+  }
+  
   res <- list(
     p_val = p_val,
+    conf_int = conf_int$conf_int, 
+    p_grid_vals = conf_int$p_grid_vals,
+    grid_vals = conf_int$grid_vals,
     t_stat = t_stat,
     t_boot = t_boot,
-    B = B,
-    R0 = R,
-    param = param,
-    clustid = clustid,
+    # B = B,
+    # R0 = R,
+    # param = param,
+    # clustid = clustid,
     v = v,
     invalid_t = invalid_t,
-    ABCD = ABCD, 
-    small_sample_correction = small_sample_correction
+    ABCD = ABCD#, 
+    # small_sample_correction = small_sample_correction
   )
   
   class(res) <- "boot_algo"

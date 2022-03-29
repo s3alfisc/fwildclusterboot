@@ -208,46 +208,21 @@ boottest.ivreg <- function(object,
   }
   
 
-  # which parametrs can be tested?
-  if (mean(param %in% names(c(object$exogenous, object$endogenous)) != 1)) {
-    stop(paste("The parameter", param, "is not included in the estimated model.
-               Maybe you are trying to test for an interaction parameter?
-               To see all model parameter names, run names(coef(model))."))
-  }
+  check_params_in_model(object = object,
+                        param = param)
   
-  if(is.null(R)){
-    R <- rep(1, length(param))
-  } else {
-    if(length(R) != length(param)){
-      stop("The constraints vector must either be NULL or a numeric of the same length as the `param` input vector.")
-    }
-  }
   
-  if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
-    message(paste("Note: The bootstrap usually performs best when the
-                  confidence level (here,", 1 - sign_level, "%)
-                  times the number of replications plus 1
-                  (", B, "+ 1 = ", B + 1, ") is an integer."))
-  }
+  R <- process_R(R = R, 
+                 param = param)
   
-  if(object$method != "OLS"){
-    stop("Currently, only 2SLS is supported. Please set the function argument method to `OLS`.")
-  }
   
-  # throw error if specific function arguments are used in lm() call
-  call_object <- names(object$call)[names(object$call) != ""]
-  banned_fun_args <- c("contrasts", "subset", "offset", "instruments")
-  if (sum(call_object %in% banned_fun_args) > 0) {
-    stop(paste(
-      "boottest.ivreg currently does not accept objects of type lm with
-      function arguments",
-      paste0(banned_fun_args[1:(length(banned_fun_args) - 1)], collapse = ", "),
-      "and", banned_fun_args[length(banned_fun_args)], "."
-    ),
-    call. = FALSE
-    )
-  }
-  
+  check_boottest_args_plus(object = object, 
+                           R = R, 
+                           param = param,
+                           sign_level = sign_level, 
+                           B = B)
+
+
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess(object = object,
                            cluster = clustid,
@@ -258,17 +233,19 @@ boottest.ivreg <- function(object,
                            R = R, 
                            boot_algo = "WildBootTests.jl")
   
+  enumerate <- 
+    check_set_full_enumeration(preprocess = preprocess, 
+                               B = B, 
+                               type = type, 
+                               boot_algo = "WildBootTests.jl")
+  
+  full_enumeration <- enumerate$full_enumeration
+  B <- enumerate$B
+  
   clustid_dims <- preprocess$clustid_dims
   point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
   
   clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
-  
-  enumerate <- 
-    check_set_full_enumeration(preprocess = preprocess, 
-                               B = B, 
-                               type = type)
-  full_enumeration <- enumerate$full_enumeration
-  B <- enumerate$B
     
   # assign all values needed in WildBootTests.jl
   
@@ -365,7 +342,7 @@ boottest.ivreg <- function(object,
                     auxwttype = auxwttype,
                     ptype = ptype,
                     reps = reps,
-                    fweights = fweights,
+                    # fweights = 1L,
                     bootstrapc = bootstrapc,
                     LIML = LIML,
                     ARubin = ARubin

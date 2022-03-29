@@ -10,9 +10,9 @@ check_deleted_obs(N_model, N, na_omit)
 \arguments{
 \item{N_model}{the number of observations in the original model}
 
-\item{na_omit}{Logical - if TRUE, deletion of rows is enabled}
+\item{N}{number of observations}
 
-\item{of}{a pre-processed model object}
+\item{na_omit}{Logical - if TRUE, deletion of rows is enabled}
 }
 \description{
 Function checks if addition of new clustering variable leads to

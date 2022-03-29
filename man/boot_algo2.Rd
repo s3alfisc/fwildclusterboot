@@ -16,7 +16,10 @@ boot_algo2(
   nthreads,
   type,
   full_enumeration,
-  small_sample_correction
+  small_sample_correction,
+  conf_int,
+  maxiter,
+  tol
 )
 }
 \arguments{
@@ -55,6 +58,15 @@ wild bootstrap factors. "rademacher" by default.}
 N_G^2 < boot_iter for Mammen and Rademacher weights}
 
 \item{small_sample_correction}{The small sample correction to be applied. See ssc().}
+
+\item{conf_int}{Logical. Should confidence intervals be calculated (by test inversion)?}
+
+\item{maxiter}{Integer. Maximum number of iterations used in the root finding procedure to find the confidence interval.
+10 by default.}
+
+\item{tol}{Numeric vector of length 1. The desired accuracy
+(convergence tolerance) used in the root finding procedure to find the confidence interval.
+1e-6 by default.}
 }
 \value{
 A list of ...

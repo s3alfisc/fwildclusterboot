@@ -2,7 +2,8 @@
 #' 
 #' Inverts the bootstrap p-value and calculates confidence sets
 #' 
-#' @param object A  object of type boottest
+#' @param ABCD ...
+#' @param small_sample_correction
 #' @param boot_iter An integer. Number of bootstrap iterations
 #' @param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
 #' @param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion.
@@ -19,7 +20,7 @@
 #'         and corresponding p-values used in the grid search.
 #' @noRd
 
-invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, sign_level, vcov_sign, impose_null, p_val_type, tol, maxiter) {
+invert_p_val <- function(ABCD, small_sample_correction, boot_iter, point_estimate, se_guess, clustid, sign_level, vcov_sign, impose_null, p_val_type, tol, maxiter) {
   
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")
@@ -33,7 +34,7 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
   
 
   # retain information from input "object"
-  ABCD <- object$ABCD
+  #ABCD <- object$ABCD
   # note: A, B are matrices, CC, CD and DD are lists
   A <- ABCD$A
   B <- ABCD$B
@@ -41,7 +42,7 @@ invert_p_val <- function(object, boot_iter, point_estimate, se_guess, clustid, s
   CD <- ABCD$CD
   DD <- ABCD$DD
   
-  small_sample_correction <- object$small_sample_correction
+  #small_sample_correction <- object$small_sample_correction
   
   # pass constant function values to p_val_null, substract sign.level & compile
   # function will be used to create grid points, and, based on the results

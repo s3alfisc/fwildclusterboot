@@ -1,17 +1,14 @@
-boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid, sign_leve, conf_int, tol, small_sample_adjustment, p_val_type, type,
-                            floattype, bootstrapc, LIML, ARubin, getauxweights){
+boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid, sign_level, conf_int, tol, small_sample_adjustment, p_val_type, type,
+                            floattype, bootstrapc, getauxweights, fweights, internal_seed, maxmatsize, small, fe = NULL, fedfadj = NULL, LIML = NULL, ARubin = NULL, Fuller = NULL, kappa = NULL){
   
   resp <- as.numeric(preprocess$Y)
-  predexog <- preprocess$X_exog
-  predendog <- preprocess$X_endog
-  inst <- preprocess$instruments
-  
+  predexog <- preprocess$X
   if(is.matrix(preprocess$R)){
     R <- preprocess$R
   } else {
     R <- matrix(preprocess$R, 1, length(preprocess$R))
   }
-
+  r <- r
   reps <- as.integer(B) # WildBootTests.jl demands integer
   
   # Order the columns of `clustid` this way:
@@ -24,8 +21,6 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     bootcluster_n <- clustid
   } else if(length(bootcluster == 1) && bootcluster == "min"){
     bootcluster_n <- names(preprocess$N_G[which.min(preprocess$N_G)])
-  } else {
-    bootcluster_n <- bootcluster
   }
   
   # only bootstrapping cluster: in bootcluster and not in clustid
@@ -48,14 +43,14 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
   nerrclustvar <- length(clustid)
   
   obswt <-  preprocess$weights
-  feid <- as.integer(preprocess$fixed_effect[,1])
   level <-  1 - sign_level
   getCI <- ifelse(is.null(conf_int) || conf_int == TRUE, TRUE, FALSE)
   imposenull <- ifelse(is.null(impose_null) || impose_null == TRUE, TRUE, FALSE)
   rtol <- tol
-  small <- small_sample_adjustment
   
   JuliaConnectoR::juliaEval('using WildBootTests')
+  # JuliaConnectoR::juliaEval('using StableRNGs')
+  
   WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
   
   ptype <- switch(p_val_type,
@@ -80,9 +75,9 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
                     r,
                     resp = resp,
                     predexog = predexog,
-                    predendog = predendog,
-                    inst = inst,
                     clustid = clustid_df,
+                    nbootclustvar = nbootclustvar,
+                    nerrclustvar = nerrclustvar,
                     nbootclustvar = nbootclustvar,
                     nerrclustvar = nerrclustvar,
                     obswt = obswt,
@@ -95,27 +90,21 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
                     auxwttype = auxwttype,
                     ptype = ptype,
                     reps = reps,
-                    fweights = fweights,
-                    bootstrapc = bootstrapc,
-                    LIML = LIML,
-                    ARubin = ARubin
-                    
+                    fweights = FALSE,
+                    bootstrapc = bootstrapc
   )
+  
+  if(!is.null(fe)){
+    feid <- as.integer(preprocess$fixed_effect[,1])
+    eval_list[["feid"]] <- feid
+    eval_list[["fedfadj"]] <- fedfadj
+  }
   
   if(!is.null(maxmatsize)){
     eval_list[["maxmatsize"]] <- maxmatsize
   }
   
-  if(!is.null(Fuller)){
-    eval_list[["Fuller"]] <- Fuller
-  }
-  
-  if(!is.null(kappa)){
-    eval_list[["kappa"]] <- kappa
-  }
-  
   wildboottest_res <- do.call(WildBootTests$wildboottest, eval_list)
-  
   
   # collect results:
   p_val <- WildBootTests$p(wildboottest_res)
@@ -125,6 +114,7 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     conf_int <- NA
   }
   t_stat <- WildBootTests$teststat(wildboottest_res)
+  t_boot <- FALSE
   if(t_boot == TRUE){
     t_boot <- WildBootTests$dist(wildboottest_res)
   }
@@ -136,4 +126,14 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
   plotpoints <- WildBootTests$plotpoints(wildboottest_res)
   plotpoints <- cbind(plotpoints$X[[1]], plotpoints$p)
   
+  res_final <- list(
+    p_val = p_val,
+    conf_int = conf_int,
+    t_stat = t_stat,
+    t_boot = t_boot,
+    auxweights = getauxweights,
+    plotpoints = plotpoints
+  )
+  
+  res_final
 }

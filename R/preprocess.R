@@ -196,7 +196,7 @@ check_deleted_obs <- function(N_model, N, na_omit){
   #' Function checks if addition of new clustering variable leads to 
   #' deletion of rows 
   #' @param N_model the number of observations in the original model
-  #' @param of a pre-processed model object
+  #' @param N number of observations
   #' @param na_omit Logical - if TRUE, deletion of rows is enabled
   
   N_diff <- abs(N - N_model)

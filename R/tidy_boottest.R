@@ -111,8 +111,8 @@ plot.boottest <- function(x, ...) {
   stopifnot(inherits(x, "boottest"))
   dreamerr::validate_dots(stop = TRUE)
   
-  test_vals <- x$test_vals
-  p_test_vals <- x$p_test_vals
+  test_vals <- x$grid_vals
+  p_test_vals <- x$p_grid_vals
   conf_int <- x$conf_int
   sign_level <- x$sign_level
   xlab <- x$param
