@@ -197,6 +197,8 @@ Note that if no cluster is provided, boottest() always defaults to the "lean" al
 <dd><p>...</p></dd>
 <dt>getauxweights</dt>
 <dd><p>...</p></dd>
+<dt>fweights</dt>
+<dd><p>Logical. FALSE by default, TRUE for frequency weights.</p></dd>
 <dt>...</dt>
 <dd><p>Further arguments passed to or from other methods.</p></dd>
 </dl></div>
@@ -280,44 +282,51 @@ STATA using boottest", The STATA Journal.
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"lfe"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sgaure/lfe" class="external-link">lfe</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">felm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lfe/man/felm.html" class="external-link">felm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span></span>
-<span class="r-in">           <span class="op">|</span> <span class="va">Q1_immigration</span>, </span>
-<span class="r-in">           data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">boot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>, </span>
-<span class="r-in">                  B <span class="op">=</span> <span class="fl">9999</span>, </span>
-<span class="r-in">                  param <span class="op">=</span> <span class="st">"treatment"</span>,</span>
-<span class="r-in">                  clustid <span class="op">=</span> <span class="st">"group_id1"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">boot2</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>, </span>
-<span class="r-in">                  B <span class="op">=</span> <span class="fl">9999</span>, </span>
-<span class="r-in">                  param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
-<span class="r-in">                  clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">boot3</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>, </span>
-<span class="r-in">                  B <span class="op">=</span> <span class="fl">9999</span>, </span>
-<span class="r-in">                  param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
-<span class="r-in">                  clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>,</span>
-<span class="r-in">                  fe <span class="op">=</span> <span class="st">"Q1_immigration"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">boot4</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>, </span>
-<span class="r-in">                  B <span class="op">=</span> <span class="fl">999</span>, </span>
-<span class="r-in">                  param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
-<span class="r-in">                  clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>,</span>
-<span class="r-in">                  fe <span class="op">=</span> <span class="st">"Q1_immigration"</span>, </span>
-<span class="r-in">                  sign_level <span class="op">=</span> <span class="fl">0.2</span>, </span>
-<span class="r-in">                  seed <span class="op">=</span> <span class="fl">8</span>,</span>
-<span class="r-in">                  r <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># test treatment + ideology1 = 2                   </span></span>
-<span class="r-in"><span class="va">boot5</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>, </span>
-<span class="r-in">                  B <span class="op">=</span> <span class="fl">9999</span>, </span>
-<span class="r-in">                  clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>,</span>
-<span class="r-in">                  param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment"</span>, <span class="st">"ideology1"</span><span class="op">)</span>,</span>
-<span class="r-in">                  R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, </span>
-<span class="r-in">                  r <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot1</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot1</span><span class="op">)</span></span>
+<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"lfe"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="r-in">  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/sgaure/lfe" class="external-link">lfe</a></span><span class="op">)</span></span>
+<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span></span>
+<span class="r-in">  <span class="va">felm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lfe/man/felm.html" class="external-link">felm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">|</span></span>
+<span class="r-in">    <span class="va">Q1_immigration</span>,</span>
+<span class="r-in">  data <span class="op">=</span> <span class="va">voters</span></span>
+<span class="r-in">  <span class="op">)</span></span>
+<span class="r-in">  <span class="va">boot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>,</span>
+<span class="r-in">    B <span class="op">=</span> <span class="fl">9999</span>,</span>
+<span class="r-in">    param <span class="op">=</span> <span class="st">"treatment"</span>,</span>
+<span class="r-in">    clustid <span class="op">=</span> <span class="st">"group_id1"</span></span>
+<span class="r-in">  <span class="op">)</span></span>
+<span class="r-in">  <span class="va">boot2</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>,</span>
+<span class="r-in">    B <span class="op">=</span> <span class="fl">9999</span>,</span>
+<span class="r-in">    param <span class="op">=</span> <span class="st">"treatment"</span>,</span>
+<span class="r-in">    clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span></span>
+<span class="r-in">  <span class="op">)</span></span>
+<span class="r-in">  <span class="va">boot3</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>,</span>
+<span class="r-in">    B <span class="op">=</span> <span class="fl">9999</span>,</span>
+<span class="r-in">    param <span class="op">=</span> <span class="st">"treatment"</span>,</span>
+<span class="r-in">    clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>,</span>
+<span class="r-in">    fe <span class="op">=</span> <span class="st">"Q1_immigration"</span></span>
+<span class="r-in">  <span class="op">)</span></span>
+<span class="r-in">  <span class="va">boot4</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>,</span>
+<span class="r-in">    B <span class="op">=</span> <span class="fl">999</span>,</span>
+<span class="r-in">    param <span class="op">=</span> <span class="st">"treatment"</span>,</span>
+<span class="r-in">    clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>,</span>
+<span class="r-in">    fe <span class="op">=</span> <span class="st">"Q1_immigration"</span>,</span>
+<span class="r-in">    sign_level <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span class="r-in">    seed <span class="op">=</span> <span class="fl">8</span>,</span>
+<span class="r-in">    r <span class="op">=</span> <span class="fl">2</span></span>
+<span class="r-in">  <span class="op">)</span></span>
+<span class="r-in">  <span class="co"># test treatment + ideology1 = 2</span></span>
+<span class="r-in">  <span class="va">boot5</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">felm_fit</span>,</span>
+<span class="r-in">    B <span class="op">=</span> <span class="fl">9999</span>,</span>
+<span class="r-in">    clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>,</span>
+<span class="r-in">    param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment"</span>, <span class="st">"ideology1"</span><span class="op">)</span>,</span>
+<span class="r-in">    R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span class="r-in">    r <span class="op">=</span> <span class="fl">2</span></span>
+<span class="r-in">  <span class="op">)</span></span>
+<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot1</span><span class="op">)</span></span>
+<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot1</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>
 <span class="r-in"><span class="op">}</span></span>
+<span class="r-in"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

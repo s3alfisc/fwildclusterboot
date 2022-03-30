@@ -179,7 +179,7 @@ when fitting the regression model).</p></dd>
 <dt>Fuller</dt>
 <dd><p>NULL by default. Numeric scalar. Fuller LIML factor</p></dd>
 <dt>kappa</dt>
-<dd><p>Null by default. fixed κ for k-class estimation</p></dd>
+<dd><p>Null by default. fixed &lt;U+03BA&gt; for k-class estimation</p></dd>
 <dt>ARubin</dt>
 <dd><p>False by default. Logical scalar. TRUE for Anderson-Rubin Test.</p></dd>
 <dt>ssc</dt>
@@ -244,22 +244,25 @@ STATA using boottest", The STATA Journal.
 <span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># drop all NA values from SchoolingReturns</span></span>
-<span class="r-in"><span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="va">SchoolingReturns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">SchoolingReturns</span>, <span class="va">is.na</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>,<span class="op">]</span></span>
-<span class="r-in"><span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> </span>
-<span class="r-in">                               <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span></span>
-<span class="r-in">                               <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span>  <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> </span>
-<span class="r-in">                               <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>, </span>
-<span class="r-in">                               data <span class="op">=</span> <span class="va">SchoolingReturns</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="va">SchoolingReturns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">SchoolingReturns</span>, <span class="va">is.na</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="op">]</span></span>
+<span class="r-in"><span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span></span>
+<span class="r-in">  <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span></span>
+<span class="r-in">  <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span></span>
+<span class="r-in">    <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>,</span>
+<span class="r-in">data <span class="op">=</span> <span class="va">SchoolingReturns</span></span>
+<span class="r-in"><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">boot_ivreg</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">ivreg_fit</span>,</span>
-<span class="r-in">                       B <span class="op">=</span> <span class="fl">999</span>,</span>
-<span class="r-in">                       param <span class="op">=</span> <span class="st">"education"</span>,</span>
-<span class="r-in">                       clustid <span class="op">=</span> <span class="st">"kww"</span>,</span>
-<span class="r-in">                       type <span class="op">=</span> <span class="st">"mammen"</span>,</span>
-<span class="r-in">                       impose_null <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">boot_ivreg</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span></span>
+<span class="r-in">  object <span class="op">=</span> <span class="va">ivreg_fit</span>,</span>
+<span class="r-in">  B <span class="op">=</span> <span class="fl">999</span>,</span>
+<span class="r-in">  param <span class="op">=</span> <span class="st">"education"</span>,</span>
+<span class="r-in">  clustid <span class="op">=</span> <span class="st">"kww"</span>,</span>
+<span class="r-in">  type <span class="op">=</span> <span class="st">"mammen"</span>,</span>
+<span class="r-in">  impose_null <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span class="r-in"><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span></span>
-<span class="r-in"></span>
 <span class="r-in"><span class="op">}</span></span>
+<span class="r-in"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
