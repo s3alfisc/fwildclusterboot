@@ -110,7 +110,7 @@ when fitting the regression model).}
 
 \item{Fuller}{NULL by default. Numeric scalar. Fuller LIML factor}
 
-\item{kappa}{Null by default. fixed κ for k-class estimation}
+\item{kappa}{Null by default. fixed <U+03BA> for k-class estimation}
 
 \item{ARubin}{False by default. Logical scalar. TRUE for Anderson-Rubin Test.}
 
@@ -153,22 +153,25 @@ library(ivreg)
 library(fwildclusterboot)
 
 # drop all NA values from SchoolingReturns
-SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
-ivreg_fit <- ivreg(log(wage) ~ education + age + 
-                               ethnicity + smsa + south + parents14 |
-                               nearcollege + age  + ethnicity + smsa 
-                               + south + parents14, 
-                               data = SchoolingReturns)
+SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
+ivreg_fit <- ivreg(log(wage) ~ education + age +
+  ethnicity + smsa + south + parents14 |
+  nearcollege + age + ethnicity + smsa
+    + south + parents14,
+data = SchoolingReturns
+)
 
-boot_ivreg <- boottest(object = ivreg_fit,
-                       B = 999,
-                       param = "education",
-                       clustid = "kww",
-                       type = "mammen",
-                       impose_null = TRUE)
+boot_ivreg <- boottest(
+  object = ivreg_fit,
+  B = 999,
+  param = "education",
+  clustid = "kww",
+  type = "mammen",
+  impose_null = TRUE
+)
 summary(boot_ivreg)
-
 }
+
 }
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in

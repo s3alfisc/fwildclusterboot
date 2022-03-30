@@ -5,29 +5,29 @@ tidy.boottest <- function(object, ...) {
   #' @importFrom generics tidy
   #' @export
   #' @method tidy boottest
-  #' @return A tidy data.frame with estimation results for objects of type 
+  #' @return A tidy data.frame with estimation results for objects of type
   #'         boottest
 
   stopifnot(inherits(object, "boottest"))
-  #dreamerr::validate_dots(stop = TRUE)
-  
-  if(object$boot_algo == "WildBootTests.jl"){
+  # dreamerr::validate_dots(stop = TRUE)
+
+  if (object$boot_algo == "WildBootTests.jl") {
     R <- object$R[which(object$R != 0)]
-    hypothesis <- paste(paste0(paste0(R, "*"), object$param, collapse = "+"),"=", object$r)
+    hypothesis <- paste(paste0(paste0(R, "*"), object$param, collapse = "+"), "=", object$r)
   } else {
-    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$r)
+    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"), "=", object$r)
   }
 
   term <- hypothesis
   estimate <- object$point_estimate
   statistic <- object$t_stat
   p.value <- object$p_val
-  #std.error <- NA
+  # std.error <- NA
   conf.low <- min(object$conf_int)
   conf.high <- max(object$conf_int)
-  
+
   res <- data.frame(term, estimate, statistic, p.value, conf.low, conf.high)
- 
+
   return(res)
 }
 
@@ -40,11 +40,11 @@ summary.boottest <- function(object, digits = 3, ...) {
   #' @export
   #' @return Returns result summaries for objects of type boottest
 
-  
+
 
   stopifnot(inherits(object, "boottest"))
   dreamerr::validate_dots(stop = TRUE)
-  
+
   N <- object$N
   B <- object$B
   sign_level <- object$sign_level
@@ -55,31 +55,33 @@ summary.boottest <- function(object, digits = 3, ...) {
   type <- ifelse(object$type %in% c("rademacher", "mammen", "norm", "webb"), object$type, "custom")
   # clustid <-
   estim_function <- class(object$regression)
-  
-  clustering_type <-  paste0(length(object$clustid), "-way")
+
+  clustering_type <- paste0(length(object$clustid), "-way")
   numb_clusters <- object$N_G
-  
-  tidy_names <- c("term","estimate", "statistic", "p.value", "conf.low", "conf.high")
-  
-  tidy_object <- lapply(tidy_names, 
-                        function(x){
-                         if(is.numeric(tidy.boottest(object)[[x]])){
-                           round(tidy.boottest(object)[[x]], digits = digits)
-                         } else{
-                           tidy.boottest(object)[[x]]
-                         }
-                  })
-  
+
+  tidy_names <- c("term", "estimate", "statistic", "p.value", "conf.low", "conf.high")
+
+  tidy_object <- lapply(
+    tidy_names,
+    function(x) {
+      if (is.numeric(tidy.boottest(object)[[x]])) {
+        round(tidy.boottest(object)[[x]], digits = digits)
+      } else {
+        tidy.boottest(object)[[x]]
+      }
+    }
+  )
+
   tidy_object <- as.data.frame(tidy_object)
   names(tidy_object) <- tidy_names
-  
-  if(object$boot_algo == "WildBootTests.jl"){
+
+  if (object$boot_algo == "WildBootTests.jl") {
     R <- object$R[which(object$R != 0)]
-    hypothesis <- paste(paste0(paste0(R, "*"), object$param, collapse = "+"),"=", object$r)
+    hypothesis <- paste(paste0(paste0(R, "*"), object$param, collapse = "+"), "=", object$r)
   } else {
-    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"),"=", object$r)
-  }  
-  
+    hypothesis <- paste(paste0(paste0(object$R, "*"), object$param, collapse = "+"), "=", object$r)
+  }
+
   print(call)
   cat(
     "\t\n",
@@ -106,11 +108,11 @@ plot.boottest <- function(x, ...) {
   #' @method plot boottest
   #' @export
   #' @return A plot of bootstrap t-statistics under different null hypotheses
-  
+
 
   stopifnot(inherits(x, "boottest"))
   dreamerr::validate_dots(stop = TRUE)
-  
+
   test_vals <- x$grid_vals
   p_test_vals <- x$p_grid_vals
   conf_int <- x$conf_int
@@ -124,19 +126,17 @@ plot.boottest <- function(x, ...) {
   graphics::abline(h = sign_level, col = "red")
 }
 
-glance.boottest <- function(x, ...){
-  
+glance.boottest <- function(x, ...) {
+
   #' S3 method to glance at objects of class boottest
   #' @param x object of type boottest
   #' @param ... Further arguments passed to or from other methods.
   #' @importFrom generics glance
   #' @method glance boottest
   #' @export
-  #' @return A single row summary "glance" of an object of type boottest 
+  #' @return A single row summary "glance" of an object of type boottest
   #'         - lists characteristics of the input regression model
 
   stopifnot(inherits(x, "boottest"))
   broom::glance(eval(x$call$object))
-
 }
-

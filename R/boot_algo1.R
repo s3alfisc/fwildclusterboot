@@ -52,7 +52,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   W <- preprocessed_object$W
   clustid <- preprocessed_object$clustid
   # n_fe <- preprocessed_object$n_fe
-  #bootcluster <- preprocessed_object$bootcluster
+  # bootcluster <- preprocessed_object$bootcluster
   # vcov_sign <- preprocessed_object$vcov_sign
   weights <- preprocessed_object$weights
   R <- t(as.matrix(preprocessed_object$R0))
@@ -60,62 +60,66 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
 
   N_G_bootcluster <- N_G
 
-  if(type == "rademacher"){
+  if (type == "rademacher") {
     type <- 0
-  } else if(type == "webb"){
+  } else if (type == "webb") {
     type <- 1
   } else {
     stop("For the 'lean' bootstrap algorithm, only webb and rademacher weights are supported.")
   }
 
-  if(impose_null == FALSE){
+  if (impose_null == FALSE) {
     stop("The 'lean' bootstrap algorithm is currently not supported without imposing the null on the bootstrap dgp.")
   }
 
-  if(sum(R) > 1){
+  if (sum(R) > 1) {
     stop("The 'lean' bootstrap algorithm is currently not supported for hypotheses about more than one parameter.")
   }
 
 
-  if(heteroskedastic == TRUE){
+  if (heteroskedastic == TRUE) {
     boot_res <-
-      wildboottestHC(y = Y,
-                     X = X,
-                     R = t(R),
-                     r = r,
-                     B = boot_iter,
-                     N_G_bootcluster = N,
-                     cores = nthreads,
-                     type = type, 
-                     small_sample_correction = small_sample_correction, 
-                     seed = seed)[[1]]
+      wildboottestHC(
+        y = Y,
+        X = X,
+        R = t(R),
+        r = r,
+        B = boot_iter,
+        N_G_bootcluster = N,
+        cores = nthreads,
+        type = type,
+        small_sample_correction = small_sample_correction,
+        seed = seed
+      )[[1]]
   } else {
     bootcluster <- preprocessed_object$bootcluster[, 1]
     # turn bootcluster into sequence of integers, starting at 0, 1, 2, ..., length(unique(bootcluster)) (required for cpp
     # implementation)
     # if(!class(bootcluster) == "integer"){
     bootcluster <- to_integer(preprocessed_object$bootcluster[, 1])
-    #}
+    # }
     # bootcluster must be integers, starting with 0 (due to cpp implementation)
     bootcluster <- bootcluster - min(bootcluster)
 
     boot_res <-
-      wildboottestCL(y = unname(Y),
-                     X = unname(X),
-                     R = t(unname(R)),
-                     r = r,
-                     B = boot_iter,
-                     N_G_bootcluster = unname(N_G_bootcluster),
-                     cores = nthreads,
-                     type = type,
-                     cluster = bootcluster, 
-                     small_sample_correction = small_sample_correction, 
-                     seed = seed)[[1]]
+      wildboottestCL(
+        y = unname(Y),
+        X = unname(X),
+        R = t(unname(R)),
+        r = r,
+        B = boot_iter,
+        N_G_bootcluster = unname(N_G_bootcluster),
+        cores = nthreads,
+        type = type,
+        cluster = bootcluster,
+        small_sample_correction = small_sample_correction,
+        seed = seed
+      )[[1]]
   }
 
 
   selector <- which(R == 1)
-  t_stat <- boot_res[selector,1]
+  t_stat <- boot_res[selector, 1]
   t_boot <- boot_res[selector, 2:(boot_iter + 1)]
 
   # p_val_type <- "two-tailed symmetric"
@@ -142,7 +146,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
     R0 = R,
     param = param,
     clustid = clustid,
-    #v = v,
+    # v = v,
     invalid_t = NULL,
     ABCD = NULL,
     small_sample_correction = small_sample_correction
@@ -151,7 +155,4 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   class(res) <- "boot_algo1"
 
   invisible(res)
-
 }
-
-

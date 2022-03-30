@@ -186,33 +186,39 @@ stops the procedure after 10 iterations.
 \dontrun{
 library(fwildclusterboot)
 data(voters)
-lm_fit <-lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-         data = voters)
-boot1 <- boottest(lm_fit, 
-                  B = 9999, 
-                  param = "treatment",
-                   clustid = "group_id1")
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  data = voters
+)
+boot1 <- boottest(lm_fit,
+  B = 9999,
+  param = "treatment",
+  clustid = "group_id1"
+)
 boot2 <- boottest(lm_fit,
-                  B = 9999,
-                  param = "treatment",
-                 clustid = c("group_id1", "group_id2"))
+  B = 9999,
+  param = "treatment",
+  clustid = c("group_id1", "group_id2")
+)
 boot3 <- boottest(lm_fit,
-                  B = 9999,
-                  param = "treatment",
-                  clustid = c("group_id1", "group_id2"),
-                  sign_level = 0.2,
-                  seed = 8,
-                  r = 2)
-# test treatment + ideology1 = 2                   
-boot4 <- boottest(lm_fit, 
-                  B = 9999, 
-                  clustid = c("group_id1", "group_id2"),
-                  param = c("treatment", "ideology1"),
-                  R = c(1, 1), 
-                  r = 2)
+  B = 9999,
+  param = "treatment",
+  clustid = c("group_id1", "group_id2"),
+  sign_level = 0.2,
+  seed = 8,
+  r = 2
+)
+# test treatment + ideology1 = 2
+boot4 <- boottest(lm_fit,
+  B = 9999,
+  clustid = c("group_id1", "group_id2"),
+  param = c("treatment", "ideology1"),
+  R = c(1, 1),
+  r = 2
+)
 summary(boot1)
 plot(boot1)
 }
+
 }
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in

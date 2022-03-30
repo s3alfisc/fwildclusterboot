@@ -122,13 +122,16 @@ implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019
 \dontrun{
 library(clubSandwich)
 R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
-wboottest <- 
-  mboottest(object = lm_fit, 
-               clustid = "group_id1", 
-               B = 999, 
-               R = R)
+wboottest <-
+  mboottest(
+    object = lm_fit,
+    clustid = "group_id1",
+    B = 999,
+    R = R
+  )
 generics::tidy(wboottest)
 }
+
 }
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in

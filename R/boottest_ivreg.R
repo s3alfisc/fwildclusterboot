@@ -26,7 +26,7 @@
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
-#' @param beta0 Superseded function argument, replaced by function argument 'r'        
+#' @param beta0 Superseded function argument, replaced by function argument 'r'
 #' @param type character or function. The character string specifies the type
 #'        of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
 #'        and "webb". Alternatively, type can be a function(n) for drawing
@@ -54,7 +54,7 @@
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t
 #' @param LIML Logical scalar. False by default. TRUE for LIML or Fuller LIML
 #' @param Fuller NULL by default. Numeric scalar. Fuller LIML factor
-#' @param kappa Null by default. fixed κ for k-class estimation
+#' @param kappa Null by default. fixed <U+03BA> for k-class estimation
 #' @param ARubin False by default. Logical scalar. TRUE for Anderson-Rubin Test.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.
@@ -94,30 +94,31 @@
 #' @references MacKinnon, James G., and Matthew D. Webb. "The wild bootstrap for few (treated) clusters." The Econometrics Journal 21.2 (2018): 114-135.
 #' @references MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite economique 91.1-2 (2015): 11-33.
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
-#' @examples 
+#' @examples
 #' \dontrun{
 #' library(ivreg)
 #' library(fwildclusterboot)
-#' 
+#'
 #' # drop all NA values from SchoolingReturns
-#' SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
-#' ivreg_fit <- ivreg(log(wage) ~ education + age + 
-#'                                ethnicity + smsa + south + parents14 |
-#'                                nearcollege + age  + ethnicity + smsa 
-#'                                + south + parents14, 
-#'                                data = SchoolingReturns)
-#' 
-#' boot_ivreg <- boottest(object = ivreg_fit,
-#'                        B = 999,
-#'                        param = "education",
-#'                        clustid = "kww",
-#'                        type = "mammen",
-#'                        impose_null = TRUE)
+#' SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
+#' ivreg_fit <- ivreg(log(wage) ~ education + age +
+#'   ethnicity + smsa + south + parents14 |
+#'   nearcollege + age + ethnicity + smsa
+#'     + south + parents14,
+#' data = SchoolingReturns
+#' )
+#'
+#' boot_ivreg <- boottest(
+#'   object = ivreg_fit,
+#'   B = 999,
+#'   param = "education",
+#'   clustid = "kww",
+#'   type = "mammen",
+#'   impose_null = TRUE
+#' )
 #' summary(boot_ivreg)
-#' 
-#'}
-
-
+#' }
+#'
 boottest.ivreg <- function(object,
                            clustid,
                            param,
@@ -144,16 +145,18 @@ boottest.ivreg <- function(object,
                            Fuller = NULL,
                            kappa = NULL,
                            ARubin = FALSE,
-                           ssc = boot_ssc(adj = TRUE,
-                                          fixef.K = "none",
-                                          cluster.adj = TRUE,
-                                          cluster.df = "conventional"),
-                           ...){
-  
+                           ssc = boot_ssc(
+                             adj = TRUE,
+                             fixef.K = "none",
+                             cluster.adj = TRUE,
+                             cluster.df = "conventional"
+                           ),
+                           ...) {
+
   # check inputs
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
-  
+
   check_arg(object, "MBT class(ivreg)")
   check_arg(clustid, "MBT character scalar | character vector")
   check_arg(param, "MBT scalar character | character vector")
@@ -177,104 +180,114 @@ boottest.ivreg <- function(object,
   check_arg(Fuller, "NULL | scalar numeric")
   check_arg(kappa, "NULL | scalar numeric")
   check_arg(ARubin, "scalar logical")
-  check_arg(p_val_type, 'charin(two-tailed, equal-tailed,>, <)')
-  check_arg(boot_ssc, 'class(ssc) | class(boot_ssc)')
-  
+  check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
+  check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
+
   # set random seed
-  
-  if(is.null(seed)){
+
+  if (is.null(seed)) {
     internal_seed <- get_seed()
   } else {
     set.seed(seed)
     internal_seed <- get_seed()
   }
-  
-  JuliaConnectoR::juliaEval('using Random')
-  #JuliaConnectoR::juliaEval('using StableRNGs')
-  #JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
+
+  JuliaConnectoR::juliaEval("using Random")
+  # JuliaConnectoR::juliaEval('using StableRNGs')
+  # JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
   rng_char <- paste0("Random.seed!(", internal_seed, ")")
   JuliaConnectoR::juliaEval(rng_char)
-  internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed),")"))
-  
+  internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed), ")"))
+
   # translate ssc into small_sample_adjustment
-  if(ssc[['adj']] == TRUE && ssc[['cluster.adj']] == TRUE){
+  if (ssc[["adj"]] == TRUE && ssc[["cluster.adj"]] == TRUE) {
     small_sample_adjustment <- TRUE
   } else {
     small_sample_adjustment <- FALSE
   }
-  
-  if(ssc[['fixef.K']] != "none" || ssc[['cluster.df']] != "conventional"){
+
+  if (ssc[["fixef.K"]] != "none" || ssc[["cluster.df"]] != "conventional") {
     message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional'."))
   }
-  
 
-  check_params_in_model(object = object,
-                        param = param)
-  
-  
-  R <- process_R(R = R, 
-                 param = param)
-  
-  
-  check_boottest_args_plus(object = object, 
-                           R = R, 
-                           param = param,
-                           sign_level = sign_level, 
-                           B = B)
+
+  check_params_in_model(
+    object = object,
+    param = param
+  )
+
+
+  R <- process_R(
+    R = R,
+    param = param
+  )
+
+
+  check_boottest_args_plus(
+    object = object,
+    R = R,
+    param = param,
+    sign_level = sign_level,
+    B = B
+  )
 
 
   # preprocess data: X, Y, weights, fixed effects
-  preprocess <- preprocess(object = object,
-                           cluster = clustid,
-                           fe = NULL,
-                           param = param,
-                           bootcluster = bootcluster,
-                           na_omit = na_omit,
-                           R = R, 
-                           boot_algo = "WildBootTests.jl")
-  
-  enumerate <- 
-    check_set_full_enumeration(preprocess = preprocess, 
-                               B = B, 
-                               type = type, 
-                               boot_algo = "WildBootTests.jl")
-  
+  preprocess <- preprocess(
+    object = object,
+    cluster = clustid,
+    fe = NULL,
+    param = param,
+    bootcluster = bootcluster,
+    na_omit = na_omit,
+    R = R,
+    boot_algo = "WildBootTests.jl"
+  )
+
+  enumerate <-
+    check_set_full_enumeration(
+      preprocess = preprocess,
+      B = B,
+      type = type,
+      boot_algo = "WildBootTests.jl"
+    )
+
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-  
+
   clustid_dims <- preprocess$clustid_dims
   point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
-  
+
   clustid_fml <- as.formula(paste("~", paste(clustid, collapse = "+")))
-    
+
   # assign all values needed in WildBootTests.jl
-  
+
   resp <- as.numeric(preprocess$Y)
   predexog <- preprocess$X_exog
   predendog <- preprocess$X_endog
   inst <- preprocess$instruments
-  if(is.matrix(preprocess$R)){
+  if (is.matrix(preprocess$R)) {
     R <- preprocess$R
   } else {
     R <- matrix(preprocess$R, 1, length(preprocess$R))
   }
   r <- r
   reps <- as.integer(B) # WildBootTests.jl demands integer
-  
+
   # Order the columns of `clustid` this way:
   # 1. Variables only used to define bootstrapping clusters, as in the subcluster bootstrap.
   # 2. Variables used to define both bootstrapping and error clusters.
   # 3. Variables only used to define error clusters.
   # In the most common case, `clustid` is a single column of type 2.
-  
-  if(length(bootcluster == 1) && bootcluster == "max"){
+
+  if (length(bootcluster == 1) && bootcluster == "max") {
     bootcluster_n <- clustid
-  } else if(length(bootcluster == 1) && bootcluster == "min"){
+  } else if (length(bootcluster == 1) && bootcluster == "min") {
     bootcluster_n <- names(preprocess$N_G[which.min(preprocess$N_G)])
   } else {
     bootcluster_n <- bootcluster
   }
-  
+
   # only bootstrapping cluster: in bootcluster and not in clustid
   c1 <- bootcluster_n[which(!(bootcluster_n %in% clustid))]
   # both bootstrapping and error cluster: all variables in clustid that are also in bootcluster
@@ -282,108 +295,107 @@ boottest.ivreg <- function(object,
   # only error cluster: variables in clustid not in c1, c2
   c3 <- clustid[which(!(clustid %in% c(c1, c2)))]
   all_c <- c(c1, c2, c3)
-  #all_c <- lapply(all_c , function(x) ifelse(length(x) == 0, NULL, x))
-  
+  # all_c <- lapply(all_c , function(x) ifelse(length(x) == 0, NULL, x))
+
   # note that c("group_id1", NULL) == "group_id1"
   clustid_mat <- data.frame(preprocess$model_frame[, all_c])
   names(clustid_mat) <- all_c
   clustid_df <- base::as.matrix(sapply(clustid_mat, to_integer))
-  
+
   # `nbootclustvar::Integer=1`: number of bootstrap-clustering variables
   # `nerrclustvar::Integer=nbootclustvar`: number of error-clustering variables
   nbootclustvar <- ifelse(bootcluster == "max", length(clustid), length(bootcluster))
   nerrclustvar <- length(clustid)
-  
-  obswt <-  preprocess$weights
-  feid <- as.integer(preprocess$fixed_effect[,1])
-  level <-  1 - sign_level
+
+  obswt <- preprocess$weights
+  feid <- as.integer(preprocess$fixed_effect[, 1])
+  level <- 1 - sign_level
   getCI <- ifelse(is.null(conf_int) || conf_int == TRUE, TRUE, FALSE)
   imposenull <- ifelse(is.null(impose_null) || impose_null == TRUE, TRUE, FALSE)
   rtol <- tol
   small <- small_sample_adjustment
-  
-  JuliaConnectoR::juliaEval('using WildBootTests')
+
+  JuliaConnectoR::juliaEval("using WildBootTests")
   WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
 
   ptype <- switch(p_val_type,
-                  "two-tailed" = "symmetric",
-                  "equal-tailed" = "equaltail",
-                  "<" = "lower",
-                  ">" = "upper",
-                  ptype
+    "two-tailed" = "symmetric",
+    "equal-tailed" = "equaltail",
+    "<" = "lower",
+    ">" = "upper",
+    ptype
   )
-  
+
   auxwttype <- switch(type,
-                      "rademacher" = "rademacher",
-                      "mammen" = "mammen",
-                      "norm" = "normal",
-                      "webb" = "webb",
-                      "gamma" = "gamma",
-                      auxwttype
+    "rademacher" = "rademacher",
+    "mammen" = "mammen",
+    "norm" = "normal",
+    "webb" = "webb",
+    "gamma" = "gamma",
+    auxwttype
   )
-  
+
   eval_list <- list(floattype,
-                    R,
-                    r,
-                    resp = resp,
-                    predexog = predexog,
-                    predendog = predendog,
-                    inst = inst,
-                    clustid = clustid_df,
-                    nbootclustvar = nbootclustvar,
-                    nerrclustvar = nerrclustvar,
-                    obswt = obswt,
-                    level = level,
-                    getCI = getCI,
-                    imposenull = imposenull,
-                    rtol = rtol,
-                    small = small,
-                    rng = internal_seed,
-                    auxwttype = auxwttype,
-                    ptype = ptype,
-                    reps = reps,
-                    # fweights = 1L,
-                    bootstrapc = bootstrapc,
-                    LIML = LIML,
-                    ARubin = ARubin
-                    
+    R,
+    r,
+    resp = resp,
+    predexog = predexog,
+    predendog = predendog,
+    inst = inst,
+    clustid = clustid_df,
+    nbootclustvar = nbootclustvar,
+    nerrclustvar = nerrclustvar,
+    obswt = obswt,
+    level = level,
+    getCI = getCI,
+    imposenull = imposenull,
+    rtol = rtol,
+    small = small,
+    rng = internal_seed,
+    auxwttype = auxwttype,
+    ptype = ptype,
+    reps = reps,
+    # fweights = 1L,
+    bootstrapc = bootstrapc,
+    LIML = LIML,
+    ARubin = ARubin
   )
-  
-  if(!is.null(maxmatsize)){
+
+  if (!is.null(maxmatsize)) {
     eval_list[["maxmatsize"]] <- maxmatsize
   }
-  
-  if(!is.null(Fuller)){
+
+  if (!is.null(Fuller)) {
     eval_list[["Fuller"]] <- Fuller
   }
-  
-  if(!is.null(kappa)){
+
+  if (!is.null(kappa)) {
     eval_list[["kappa"]] <- kappa
   }
-  
+
   wildboottest_res <- do.call(WildBootTests$wildboottest, eval_list)
-  
-  
+
+
   # collect results:
   p_val <- WildBootTests$p(wildboottest_res)
-  if(getCI == TRUE){
+  if (getCI == TRUE) {
     conf_int <- WildBootTests$CI(wildboottest_res)
-  } else{
+  } else {
     conf_int <- NA
   }
   t_stat <- WildBootTests$teststat(wildboottest_res)
-  if(t_boot == TRUE){
+  if (t_boot == TRUE) {
     t_boot <- WildBootTests$dist(wildboottest_res)
   }
-  
-  if(getauxweights == TRUE){
+
+  if (getauxweights == TRUE) {
     getauxweights <- WildBootTests$auxweights(wildboottest_res)
   }
-  
+
   plotpoints <- WildBootTests$plotpoints(wildboottest_res)
   plotpoints <- cbind(plotpoints$X[[1]], plotpoints$p)
-  
-  
+
+
   res_final <- list(
     point_estimate = point_estimate,
     p_val = p_val,
@@ -393,7 +405,7 @@ boottest.ivreg <- function(object,
     t_stat = t_stat,
     t_boot = t_boot,
     auxweights = getauxweights,
-    #regression = res$object,
+    # regression = res$object,
     param = param,
     N = preprocess$N,
     B = B,
@@ -406,13 +418,12 @@ boottest.ivreg <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    plotpoints = plotpoints, 
+    plotpoints = plotpoints,
     boot_algo = "WildBootTests.jl"
   )
-  
-  
+
+
   class(res_final) <- "boottest"
-  
+
   invisible(res_final)
-  
 }
