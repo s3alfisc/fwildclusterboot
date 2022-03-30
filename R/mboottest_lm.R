@@ -65,10 +65,8 @@
 #' \item{clustid}{Names of the cluster Variables.}
 #' \item{N_G}{Dimension of the cluster variables as used in boottest.}
 #' \item{type}{Distribution of the bootstrap weights.}
-#' \item{t_stat}{The original test statistics - either imposing the null or not - with small sample correction `G / (G-1)`.}
-#' \item{test_vals}{All t-statistics calculated while calculating the
-#'       confidence interval.}
-#'  \item{t_boot}{All bootstrap t-statistics.}
+#' \item{teststat}{The original test statistics - either imposing the null or not - with small sample correction `G / (G-1)`.}
+#' \item{teststat_boot}{All bootstrap t-statistics.}
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
 #' \item{getauxweights}{The bootstrap auxiliary weights matrix v. Only returned if getauxweights = TRUE.}
@@ -251,8 +249,8 @@ mboottest.lm <- function(object,
   # collect results
   res_final <- list(
     p_val = res$p_val,
-    t_stat = res$t_stat,
-    t_boot = res$t_boot,
+    teststat = res$t_stat,
+    teststat_boot = res$t_boot,
     # regression = res$object,
     N = preprocess$N,
     boot_iter = B,
