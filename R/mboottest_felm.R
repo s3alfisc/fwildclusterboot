@@ -1,31 +1,27 @@
-#' Fast wild cluster bootstrap inference for object of class lm
+#' Fast wild cluster bootstrap inference for joint hypotheses for object of class felm
 #'
-#' `boottest.ivreg` is a S3 method that allows for fast wild cluster
-#' bootstrap inference for objects of class ivreg by  implementing
-#' the fast wild bootstrap algorithm developed in Roodman et al., 2019
-#' for instrumental variable models (WRE, Davidson & McKinnon, 2010)
+#' `mboottest.felm` is a S3 method that allows for fast wild cluster
+#' bootstrap inference of multivariate hypotheses for objects of class felm by
+#' implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019.
 #'
-#' @param object An object of class lm
+#' @param object An object of class felm
 #' @param clustid A character vector containing the names of the cluster variables
-#' @param param A character vector of length one. The name of the regression
-#'        coefficient for which the hypothesis is to be tested
 #' @param B Integer. The number of bootstrap iterations. When the number of clusters is low,
-#'        increasing B adds little additional runtime
+#'        increasing B adds little additional runtime.
 #' @param bootcluster A character vector. Specifies the bootstrap clustering variable or variables. If more
 #'        than one variable is specified, then bootstrapping is clustered by the intersections of
 #'        clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
-#' @param sign_level A numeric between 0 and 1 which sets the significance level
-#'        of the inference procedure. E.g. sign_level = 0.05
-#'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
-#' @param conf_int A logical vector. If TRUE, boottest computes confidence
-#'        intervals by p-value inversion. If FALSE, only the p-value is returned.
+#' @param fe A character vector of length one which contains the name of the fixed effect to be projected
+#'        out in the bootstrap. Note: if regression weights are used, fe
+#'        needs to be NULL.
 #' @param seed An integer. Controls the random number generation, which is handled via the `StableRNG()` function from the `StableRNGs` Julia package.
-#' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
-#' @param r A numeric. Shifts the null hypothesis
-#'        H0: param = r vs H1: param != r
+#' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
+#'        of joint hypotheses and k the number of estimated coefficients.
+#' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
+#'        H0: param = r vs H1: param != r. If not provided, a vector of zeros of length q.
 #' @param beta0 Superseded function argument, replaced by function argument 'r'
 #' @param type character or function. The character string specifies the type
 #'        of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -52,29 +48,25 @@
 #' @param t_boot Logical. Should bootstrapped t-statistics be returned?
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t
-#' @param LIML Logical scalar. False by default. TRUE for LIML or Fuller LIML
-#' @param Fuller NULL by default. Numeric scalar. Fuller LIML factor
-#' @param kappa Null by default. fixed <U+03BA> for k-class estimation
-#' @param ARubin False by default. Logical scalar. TRUE for Anderson-Rubin Test.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.
 #' @param ... Further arguments passed to or from other methods.
 #'
+#' @import JuliaConnectoR
 #' @importFrom dreamerr check_arg validate_dots
+#' @importFrom stats as.formula coef model.matrix model.response model.weights residuals rlnorm rnorm update
 #'
-#' @method boottest ivreg
+#' @method mboottest felm
 #'
-#' @return An object of class \code{boottest}
+#' @return An object of class \code{mboottest}
 #'
 #' \item{p_val}{The bootstrap p-value.}
-#' \item{conf_int}{The bootstrap confidence interval.}
 #' \item{param}{The tested parameter.}
 #' \item{N}{Sample size. Might differ from the regression sample size if the
 #'          cluster variables contain NA values.}
 #' \item{B}{Number of Bootstrap Iterations.}
 #' \item{clustid}{Names of the cluster Variables.}
 #' \item{N_G}{Dimension of the cluster variables as used in boottest.}
-#' \item{sign_level}{Significance level used in boottest.}
 #' \item{type}{Distribution of the bootstrap weights.}
 #' \item{t_stat}{The original test statistics - either imposing the null or not - with small sample correction `G / (G-1)`.}
 #' \item{test_vals}{All t-statistics calculated while calculating the
@@ -84,7 +76,8 @@
 #' \item{call}{Function call of boottest.}
 #' \item{getauxweights}{The bootstrap auxiliary weights matrix v. Only returned if getauxweights = TRUE.}
 #' \item{t_boot}{The bootstrapped t-statistics. Only returned if t_boot = TRUE.}
-#'
+#' \item{boot_algo}{The employed bootstrap algorithm.}
+
 #' @export
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
@@ -96,55 +89,40 @@
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
 #' \dontrun{
-#' library(ivreg)
-#' library(fwildclusterboot)
-#'
-#' # drop all NA values from SchoolingReturns
-#' SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
-#' ivreg_fit <- ivreg(log(wage) ~ education + age +
-#'   ethnicity + smsa + south + parents14 |
-#'   nearcollege + age + ethnicity + smsa
-#'     + south + parents14,
-#' data = SchoolingReturns
-#' )
-#'
-#' boot_ivreg <- boottest(
-#'   object = ivreg_fit,
-#'   B = 999,
-#'   param = "education",
-#'   clustid = "kww",
-#'   type = "mammen",
-#'   impose_null = TRUE
-#' )
-#' summary(boot_ivreg)
+#' library(lfe)
+#' library(clubSandwich)
+#' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+#' wboottest <-
+#'   mboottest(
+#'     object = lm_fit,
+#'     clustid = "group_id1",
+#'     B = 999,
+#'     R = R
+#'   )
+#' generics::tidy(wboottest)
 #' }
 #'
-boottest.ivreg <- function(object,
+mboottest.felm <- function(object,
                            clustid,
-                           param,
                            B,
-                           bootcluster = "max",
-                           conf_int = TRUE,
-                           seed = NULL,
-                           R = NULL,
-                           r = 0,
+                           R,
+                           r = rep(0, nrow(R)),
                            beta0 = r,
-                           sign_level = 0.05,
+                           bootcluster = "max",
+                           fe = NULL,
+                           seed = NULL,
                            type = "rademacher",
                            impose_null = TRUE,
                            p_val_type = "two-tailed",
                            tol = 1e-6,
                            na_omit = TRUE,
                            floattype = "Float64",
+                           # small_sample_adjustment = TRUE,
                            fweights = FALSE,
                            getauxweights = FALSE,
                            t_boot = FALSE,
                            maxmatsize = NULL,
                            bootstrapc = FALSE,
-                           LIML = FALSE,
-                           Fuller = NULL,
-                           kappa = NULL,
-                           ARubin = FALSE,
                            ssc = boot_ssc(
                              adj = TRUE,
                              fixef.K = "none",
@@ -152,98 +130,62 @@ boottest.ivreg <- function(object,
                              cluster.df = "conventional"
                            ),
                            ...) {
-
-  # check inputs
   call <- match.call()
+  
   dreamerr::validate_dots(stop = TRUE)
-
-  check_arg(object, "MBT class(ivreg)")
+  
+  # Step 1: check arguments of feols call
+  check_arg(object, "MBT class(felm)")
   check_arg(clustid, "MBT character scalar | character vector")
-  check_arg(param, "MBT scalar character | character vector")
-  check_arg(B, "MBT scalar integer GT{0}")
-  check_arg(sign_level, "scalar numeric GT{0} LT{1}")
+  check_arg(B, "MBT scalar integer")
+  check_arg(R, "MBT numeric vector | numeric matrix")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
-  check_arg(conf_int, "logical scalar ")
+  check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(seed, "scalar integer | NULL")
-  check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
+  check_arg(fe, "character scalar | NULL")
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar GT{0}")
+  check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
   check_arg(floattype, "charin(Float32, Float64)")
-  check_arg(fweights, "scalar logical")
-  check_arg(t_boot, "scalar logical")
-  check_arg(getauxweights, "scalar logical")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
-  # IV specific arguments
-  check_arg(LIML, "scalar logical")
-  check_arg(Fuller, "NULL | scalar numeric")
-  check_arg(kappa, "NULL | scalar numeric")
-  check_arg(ARubin, "scalar logical")
-  check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
-  check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
-
-  # set random seed
-
+  
   if (is.null(seed)) {
     internal_seed <- get_seed()
   } else {
     set.seed(seed)
     internal_seed <- get_seed()
   }
-
+  
+  # set random seed
   JuliaConnectoR::juliaEval("using Random")
   # JuliaConnectoR::juliaEval('using StableRNGs')
   # JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
   rng_char <- paste0("Random.seed!(", internal_seed, ")")
   JuliaConnectoR::juliaEval(rng_char)
   internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed), ")"))
-
-  # translate ssc into small_sample_adjustment
-  if (ssc[["adj"]] == TRUE && ssc[["cluster.adj"]] == TRUE) {
-    small_sample_adjustment <- TRUE
-  } else {
-    small_sample_adjustment <- FALSE
-  }
-
-  if (ssc[["fixef.K"]] != "none" || ssc[["cluster.df"]] != "conventional") {
-    message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional'."))
-  }
-
-
-  check_params_in_model(
-    object = object,
-    param = param
-  )
-
-
-  R <- process_R(
-    R = R,
-    param = param
-  )
-
-
-  check_boottest_args_plus(
+  
+  check_mboottest_args_plus(
     object = object,
     R = R,
-    param = param,
-    sign_level = sign_level,
+    r = r,
     B = B
   )
-
-
-  # preprocess data: X, Y, weights, fixed effects
+  
+  fedfadj <- 0L
+  
   preprocess <- preprocess(
     object = object,
     cluster = clustid,
-    fe = NULL,
-    param = param,
+    fe = fe,
+    param = NULL,
     bootcluster = bootcluster,
     na_omit = na_omit,
     R = R,
     boot_algo = "WildBootTests.jl"
   )
-
+  
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -251,12 +193,10 @@ boottest.ivreg <- function(object,
       type = type,
       boot_algo = "WildBootTests.jl"
     )
-
+  
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-
-  point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
-
+  
   # translate ssc into small_sample_adjustment
   small_sample_adjustment <- small <- FALSE
   if (ssc[["adj"]] == TRUE) {
@@ -264,7 +204,11 @@ boottest.ivreg <- function(object,
       small_sample_adjustment <- small <- TRUE
     }
   }
-
+  
+  if (ssc[["fixef.K"]] != "none" || ssc[["cluster.df"]] != "conventional") {
+    message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional' when 'boot_algo = WildBootTests.jl'."))
+  }
+  
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -272,8 +216,8 @@ boottest.ivreg <- function(object,
     B = B,
     bootcluster = bootcluster,
     clustid = clustid,
-    sign_level = sign_level,
-    conf_int = conf_int,
+    sign_level = NULL,
+    conf_int = FALSE,
     tol = tol,
     small_sample_adjustment = small_sample_adjustment,
     p_val_type = p_val_type,
@@ -287,27 +231,21 @@ boottest.ivreg <- function(object,
     maxmatsize = maxmatsize,
     fweights = 1L,
     small = small,
-    fe = NULL,
-    fedfadj = NULL
+    fe = fe,
+    fedfadj = fedfadj
   )
 
   # collect results
   res_final <- list(
-    point_estimate = point_estimate,
     p_val = res$p_val,
-    conf_int = res$conf_int,
-    p_grid_vals = res$p_grid_vals,
-    grid_vals = res$grid_vals,
     t_stat = res$t_stat,
     t_boot = res$t_boot,
     # regression = res$object,
-    param = param,
     N = preprocess$N,
     boot_iter = B,
     clustid = clustid,
     # depvar = depvar,
     N_G = preprocess$N_G,
-    sign_level = sign_level,
     call = call,
     type = type,
     impose_null = impose_null,
@@ -315,8 +253,8 @@ boottest.ivreg <- function(object,
     r = r,
     boot_algo = "WildBootTests.jl"
   )
-
-  class(res_final) <- "boottest"
-
+  
+  class(res_final) <- "mboottest"
+  
   invisible(res_final)
 }

@@ -189,6 +189,11 @@ preprocess <- function(object, cluster, fe, param, bootcluster, na_omit, R, boot
     instruments = instruments
   )
 
+  if(inherits(object, "ivreg")){
+    class(res) <- c("preprocess", "iv")
+  } else {
+    class(res) <- c("preprocess", "ols")
+  }
   res
 }
 

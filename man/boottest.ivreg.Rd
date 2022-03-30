@@ -45,7 +45,7 @@
 coefficient for which the hypothesis is to be tested}
 
 \item{B}{Integer. The number of bootstrap iterations. When the number of clusters is low,
-increasing B adds little additional runtime.}
+increasing B adds little additional runtime}
 
 \item{bootcluster}{A character vector. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of

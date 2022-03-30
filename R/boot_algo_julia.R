@@ -1,7 +1,16 @@
 boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid, sign_level, conf_int, tol, small_sample_adjustment, p_val_type, type,
                             floattype, bootstrapc, getauxweights, fweights, internal_seed, maxmatsize, small, fe = NULL, fedfadj = NULL, LIML = NULL, ARubin = NULL, Fuller = NULL, kappa = NULL) {
+  
   resp <- as.numeric(preprocess$Y)
-  predexog <- preprocess$X
+  
+  if(inherits(preprocess, "iv")){
+    predexog <- preprocess$X_exog
+    predendog <- preprocess$X_endog
+    inst <- preprocess$instruments
+  } else if(inherits(preprocess, "ols")){
+    predexog <- preprocess$X
+  }
+
   if (is.matrix(preprocess$R)) {
     R <- preprocess$R
   } else {
@@ -42,7 +51,6 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
   nerrclustvar <- length(clustid)
 
   obswt <- preprocess$weights
-  level <- 1 - sign_level
   getCI <- ifelse(is.null(conf_int) || conf_int == TRUE, TRUE, FALSE)
   imposenull <- ifelse(is.null(impose_null) || impose_null == TRUE, TRUE, FALSE)
   rtol <- tol
@@ -80,7 +88,6 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     nbootclustvar = nbootclustvar,
     nerrclustvar = nerrclustvar,
     obswt = obswt,
-    level = level,
     getCI = getCI,
     imposenull = imposenull,
     rtol = rtol,
@@ -102,7 +109,29 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
   if (!is.null(maxmatsize)) {
     eval_list[["maxmatsize"]] <- maxmatsize
   }
+  
+  if(!is.null(sign_level)){
+    eval_list[["level"]] <- 1 - sign_level
+  }
 
+  if(inherits(preprocess, "iv")){
+      eval_list[["predendog"]] <- predendog
+      eval_list[["inst"]] <- inst
+      if(!is.null(LIML)){
+        eval_list[["LIML"]] <- LIML
+      }
+      if(!is.null(ARubin)){
+        eval_list[["ARubin"]] <- ARubin
+      }
+      if(!is.null(Fuller)){
+        eval_list[["Fuller"]] <- Fuller
+      }
+      if(!is.null(kappa)){
+        eval_list[["kappa"]] <- kappa
+      }
+      
+  }
+  
   wildboottest_res <- do.call(WildBootTests$wildboottest, eval_list)
 
   # collect results:
