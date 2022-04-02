@@ -257,12 +257,13 @@ boottest.ivreg <- function(object,
 
   point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
 
-  # translate ssc into small_sample_adjustment
-  small_sample_adjustment <- small <- FALSE
-  if (ssc[["adj"]] == TRUE) {
-    if (ssc[["cluster.adj"]] == TRUE) {
-      small_sample_adjustment <- small <- TRUE
-    }
+  julia_ssc <- get_ssc_julia(ssc)
+  small <- julia_ssc$small
+  clusteradj <- julia_ssc$clusteradj
+  clustermin <- julia_ssc$clustermin
+  
+  if (ssc[["fixef.K"]] != "none") {
+    message(paste("Currently, boottest() only supports fixef.K = 'none'."))
   }
 
   res <- boot_algo_julia(
@@ -287,6 +288,8 @@ boottest.ivreg <- function(object,
     maxmatsize = maxmatsize,
     fweights = 1L,
     small = small,
+    clusteradj = clusteradj, 
+    clustermin = clustermin,
     fe = NULL,
     fedfadj = NULL
   )

@@ -352,7 +352,12 @@ boottest.fixest <- function(object,
   k <- length(coef(object))
   G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
   vcov_sign <- preprocess$vcov_sign
+  
   small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign, heteroskedastic = heteroskedastic)
+  
+  #clustermin, clusteradj
+  
+  
   clustid_dims <- preprocess$clustid_dims
   # R*beta;
   point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
@@ -399,16 +404,13 @@ boottest.fixest <- function(object,
   } else if (boot_algo == "WildBootTests.jl") {
     fedfadj <- 0L
 
-    # translate ssc into small_sample_adjustment
-    small_sample_adjustment <- small <- FALSE
-    if (ssc[["adj"]] == TRUE) {
-      if (ssc[["cluster.adj"]] == TRUE) {
-        small_sample_adjustment <- small <- TRUE
-      }
-    }
-
-    if (ssc[["fixef.K"]] != "none" || ssc[["cluster.df"]] != "conventional") {
-      message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional' when 'boot_algo = WildBootTests.jl'."))
+    julia_ssc <- get_ssc_julia(ssc)
+    small <- julia_ssc$small
+    clusteradj <- julia_ssc$clusteradj
+    clustermin <- julia_ssc$clustermin
+    
+    if (ssc[["fixef.K"]] != "none") {
+      message(paste("Currently, boottest() only supports fixef.K = 'none'."))
     }
 
     res <- boot_algo_julia(
@@ -433,6 +435,8 @@ boottest.fixest <- function(object,
       maxmatsize = maxmatsize,
       fweights = 1L,
       small = small,
+      clusteradj = clusteradj, 
+      clustermin = clustermin,
       fe = fe,
       fedfadj = fedfadj
     )

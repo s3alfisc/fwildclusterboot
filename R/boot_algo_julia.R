@@ -1,5 +1,5 @@
 boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid, sign_level, conf_int, tol, small_sample_adjustment, p_val_type, type,
-                            floattype, bootstrapc, getauxweights, fweights, internal_seed, maxmatsize, small, fe = NULL, fedfadj = NULL, LIML = NULL, ARubin = NULL, Fuller = NULL, kappa = NULL) {
+                            floattype, bootstrapc, getauxweights, fweights, internal_seed, maxmatsize, small, clusteradj, clustermin, fe = NULL, fedfadj = NULL, LIML = NULL, ARubin = NULL, Fuller = NULL, kappa = NULL) {
   
   resp <- as.numeric(preprocess$Y)
   
@@ -91,7 +91,6 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     getCI = getCI,
     imposenull = imposenull,
     rtol = rtol,
-    small = small,
     rng = internal_seed,
     auxwttype = auxwttype,
     ptype = ptype,
@@ -99,6 +98,18 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     fweights = FALSE,
     bootstrapc = bootstrapc
   )
+  
+  if (!is.null(small)) {
+    eval_list[["small"]] <- small
+  }
+  
+  if (!is.null(clusteradj)) {
+    eval_list[["clusteradj"]] <- clusteradj
+  }
+  
+  if (!is.null(clustermin)) {
+    eval_list[["clustermin"]] <- clustermin
+  }
 
   if (!is.null(fe)) {
     feid <- as.integer(preprocess$fixed_effect[, 1])

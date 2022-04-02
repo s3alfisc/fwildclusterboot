@@ -208,16 +208,13 @@ mboottest.lm <- function(object,
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
   
-  # translate ssc into small_sample_adjustment
-  small_sample_adjustment <- small <- FALSE
-  if (ssc[["adj"]] == TRUE) {
-    if (ssc[["cluster.adj"]] == TRUE) {
-      small_sample_adjustment <- small <- TRUE
-    }
-  }
+  julia_ssc <- get_ssc_julia(ssc)
+  small <- julia_ssc$small
+  clusteradj <- julia_ssc$clusteradj
+  clustermin <- julia_ssc$clustermin
   
-  if (ssc[["fixef.K"]] != "none" || ssc[["cluster.df"]] != "conventional") {
-    message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional' when 'boot_algo = WildBootTests.jl'."))
+  if (ssc[["fixef.K"]] != "none") {
+    message(paste("Currently, boottest() only supports fixef.K = 'none'."))
   }
   
   res <- boot_algo_julia(
@@ -242,6 +239,8 @@ mboottest.lm <- function(object,
     maxmatsize = maxmatsize,
     fweights = 1L,
     small = small,
+    clusteradj = clusteradj, 
+    clustermin = clustermin,
     fe = NULL,
     fedfadj = fedfadj
   )

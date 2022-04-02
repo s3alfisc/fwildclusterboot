@@ -87,3 +87,64 @@ get_ssc <- function(boot_ssc_object, N, k, G, vcov_sign, heteroskedastic = FALSE
 
   small_sample_correction
 }
+
+
+get_ssc_julia <- function(boot_ssc_object){
+  
+
+  # no small sample correction
+  if(boot_ssc_object$adj == FALSE){
+    small <- FALSE
+    if(boot_ssc_object$cluster.adj == FALSE){
+      clusteradj <- FALSE
+      # set clustermin to FALSE, but argument is irrelevant as clusteradj = FALSE
+      clustermin <- FALSE
+    }
+  }
+  # only G adjustment
+  if(boot_ssc_object$adj == FALSE){
+    small <- FALSE
+    if(boot_ssc_object$cluster.adj == TRUE){
+      clusteradj <- TRUE
+      if(boot_ssc_object$cluster.df == "conventional"){
+        clustermin <- FALSE
+      } else if(boot_ssc_object$cluster.df == "min"){
+        clustermin <- TRUE
+      }
+    }
+  }
+  
+  # only N adjustment 
+  if(boot_ssc_object$adj == TRUE){
+    small <- TRUE
+    if(boot_ssc_object$cluster.adj == FALSE){
+      clusteradj <- FALSE
+      clustermin <- FALSE
+    }
+  }
+  
+  # N and G adjustment
+  if(boot_ssc_object$adj == TRUE){
+    small <- TRUE
+    if(boot_ssc_object$cluster.adj == TRUE){
+      clusteradj <- TRUE
+      if(boot_ssc_object$cluster.df == "conventional"){
+        clustermin <- FALSE
+      } else if(boot_ssc_object$cluster.df == "min"){
+        clustermin <- TRUE
+      }
+    }
+  }
+
+
+  
+  res <- list(
+    small = small, 
+    clusteradj = clusteradj,
+    clustermin = clustermin
+  )
+  
+  res
+  
+}
+

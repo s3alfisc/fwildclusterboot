@@ -1,4 +1,4 @@
-test_that("t-stat equivalence", {
+test_that("t-stat equivalence OLS", {
   
   library(fixest)
   library(ivreg)
@@ -40,8 +40,9 @@ test_that("t-stat equivalence", {
             for (cluster.df in c("conventional", "min")) {
               for (impose_null in c(TRUE, FALSE)) {
                 if (boot_algo == "WildBootTests.jl") {
-                  cluster.adj <- FALSE
-                  adj <- FALSE
+                  #cluster.adj <- FALSE
+                  #adj <- FALSE
+                  cluster.df <- 'conventional'
                 }
                 # cat("--------------------------------", "\n")
                 #
@@ -197,10 +198,23 @@ test_that("t-stat equivalence", {
     }
   }
 
+
+  ols_test(run_this_test = TRUE)
+})
+
+# exact tests
+test_that("t-stat equivalence OLS q > 1", {
+  library(fixest)
+  library(ivreg)
+  library(sandwich)
+  library(lmtest)
+  library(data.table)
+  library(fwildclusterboot)
+  
   wald_test <- function(run_this_test) {
     if (run_this_test) {
       reltol <- 0.002
-
+      
       N <- 1000
       data1 <<- fwildclusterboot:::create_data(
         N = 1000,
@@ -213,55 +227,58 @@ test_that("t-stat equivalence", {
         seed = 90864369,
         weights = 1:N / N
       )
-
-
+      
+      
       feols_fit <- fixest::feols(proposition_vote ~ treatment + log_income + year,
-        data = data1
+                                 data = data1
       )
       lm_fit <- lm(proposition_vote ~ treatment + log_income + year,
-        data = data1
+                   data = data1
       )
-
+      
       feols_fit_weights <- fixest::feols(proposition_vote ~ treatment + log_income + year,
-        data = data1,
-        weights = data1$weights
+                                         data = data1,
+                                         weights = data1$weights
       )
       lm_fit_weights <- lm(proposition_vote ~ treatment + log_income + year,
-        data = data1,
-        weights = data1$weights
+                           data = data1,
+                           weights = data1$weights
       )
-
-
-
+      
+      
+      
       N <- nrow(data1)
       k <- length(coef(lm_fit))
       G <- length(unique(data1$group_id1))
-
-
-
+      
+      
+      
       type <- "rademacher"
       p_val_type <- "two-tailed"
       # impose_null <- TRUE
-
-      set.seed(12391786)
-      dqrng::dqset.seed(8723467)
-
-
+      
       # OLS
-
-
+      
+      
       # 1) oneway clustering
-
+      
       # one hypothesis
       R <- clubSandwich::constrain_zero(constraints = 2, coefs = coef(lm_fit))
-      boot_jl <- suppressWarnings(mboottest(floattype = "Float64", lm_fit, R = R, clustid = "group_id1", B = 999))
-
+      boot_jl <- suppressWarnings(
+        mboottest(
+          lm_fit,
+          R = R,
+          clustid = "group_id1", 
+          B = 999
+        )
+      )
+      
       # sW <- coeftest(object, vcov = sandwich::vcovCL(object, cluster = ~ group_id1))
       wald_stat <- fixest::wald(feols_fit, "treatment", cluster = ~group_id1)
-
+      
       # skip_on_cran()
-      expect_equal(boot_jl$t_stat, sqrt(wald_stat$stat), ignore_attr = TRUE)
-
+      expect_equal(boot_jl$teststat, sqrt(wald_stat$stat), ignore_attr = TRUE)
+      
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit))
       boot_jl <- suppressWarnings(
@@ -277,12 +294,12 @@ test_that("t-stat equivalence", {
           )
         ))
       )
-
+      
       wald_stat <- fixest::wald(feols_fit, "Inter|treatment", cluster = ~group_id1)
       # skip_on_cran()
-      expect_equal(boot_jl$t_stat, wald_stat$stat, ignore_attr = TRUE)
-
-
+      expect_equal(boot_jl$teststat, wald_stat$stat, ignore_attr = TRUE)
+      
+      
       # one hypothesis
       R <- clubSandwich::constrain_zero(constraints = 2, coefs = coef(lm_fit))
       boot_jl <- suppressWarnings(fwildclusterboot::mboottest(
@@ -293,17 +310,17 @@ test_that("t-stat equivalence", {
         B = 999,
         ssc = boot_ssc(cluster.df = "min")
       ))
-
+      
       # sW <- coeftest(object, vcov = sandwich::vcovCL(object, cluster = ~ group_id1))
       wald_stat <- fixest::wald(feols_fit,
-        "treatment",
-        cluster = ~ group_id1 + group_id2,
-        ssc = ssc(cluster.df = "conventional")
+                                "treatment",
+                                cluster = ~ group_id1 + group_id2,
+                                ssc = ssc(cluster.df = "min")
       )
-
+      
       # skip_on_cran()
-      expect_equal(boot_jl$t_stat, sqrt(wald_stat$stat), ignore_attr = TRUE)
-
+      expect_equal(boot_jl$teststat, sqrt(wald_stat$stat), ignore_attr = TRUE)
+      
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit))
       boot_jl <- suppressWarnings(
@@ -319,31 +336,31 @@ test_that("t-stat equivalence", {
           )
         )
       )
-
+      
       wald_stat <- fixest::wald(feols_fit, "Inter|treatment",
-        cluster = ~group_id1,
-        cluster.df = "conventional"
+                                cluster = ~group_id1,
+                                cluster.df = "conventional"
       )
       # skip_on_cran()
-      expect_equal(boot_jl$t_stat, wald_stat$stat, ignore_attr = TRUE)
-
-
-
+      expect_equal(boot_jl$teststat, wald_stat$stat, ignore_attr = TRUE)
+      
+      
+      
       # WLS
-
-
+      
+      
       # 1) oneway clustering
-
+      
       # one hypothesis
       R <- clubSandwich::constrain_zero(constraints = 2, coefs = coef(lm_fit_weights))
       boot_jl <- suppressWarnings(fwildclusterboot::mboottest(floattype = "Float64", lm_fit_weights, R = R, clustid = "group_id1", B = 999))
-
+      
       # sW <- coeftest(object, vcov = sandwich::vcovCL(object, cluster = ~ group_id1))
       wald_stat <- fixest::wald(feols_fit_weights, "treatment", cluster = ~group_id1)
-
+      
       # skip_on_cran()
-      expect_equal(boot_jl$t_stat, sqrt(wald_stat$stat), ignore_attr = TRUE)
-
+      expect_equal(boot_jl$teststat, sqrt(wald_stat$stat), ignore_attr = TRUE)
+      
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit_weights))
       boot_jl <- suppressWarnings(
@@ -359,13 +376,13 @@ test_that("t-stat equivalence", {
           )
         )
       )
-
+      
       wald_stat <- fixest::wald(feols_fit_weights, "Inter|treatment", cluster = ~group_id1)
-
+      
       # skip_on_cran()
-      expect_equal(boot_jl$t_stat, wald_stat$stat, ignore_attr = TRUE)
-
-
+      expect_equal(boot_jl$teststat, wald_stat$stat, ignore_attr = TRUE)
+      
+      
       # one hypothesis
       R <- clubSandwich::constrain_zero(constraints = 2, coefs = coef(lm_fit_weights))
       boot_jl <- suppressWarnings(fwildclusterboot::mboottest(
@@ -378,17 +395,17 @@ test_that("t-stat equivalence", {
         p_val_type = p_val_type,
         ssc = boot_ssc(cluster.df = "min")
       ))
-
+      
       # sW <- coeftest(object, vcov = sandwich::vcovCL(object, cluster = ~ group_id1))
       wald_stat <- fixest::wald(feols_fit_weights,
-        "treatment",
-        cluster = ~ group_id1 + group_id2,
-        ssc = ssc(cluster.df = "conventional")
+                                "treatment",
+                                cluster = ~ group_id1 + group_id2,
+                                ssc = ssc(cluster.df = "min")
       )
-
+      
       # skip_on_cran()
-      expect_equal(boot_jl$t_stat, sqrt(wald_stat$stat), ignore_attr = TRUE)
-
+      expect_equal(boot_jl$teststat, sqrt(wald_stat$stat), ignore_attr = TRUE)
+      
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit_weights))
       boot_jl <- suppressWarnings(
@@ -401,48 +418,61 @@ test_that("t-stat equivalence", {
           ssc = boot_ssc(cluster.adj = TRUE)
         )
       )
-
+      
       wald_stat <- fixest::wald(feols_fit_weights, "Inter|treatment",
-        cluster = ~group_id1,
-        cluster.df = "conventional"
+                                cluster = ~group_id1,
+                                cluster.df = "conventional"
       )
-
+      
       # skip_on_cran()
-      expect_equal(boot_jl$t_stat, wald_stat$stat, ignore_attr = TRUE)
+      expect_equal(boot_jl$teststat, wald_stat$stat, ignore_attr = TRUE)
     }
   }
+  
+  wald_test(run_this_test = TRUE)
+  
+  
+})
 
+test_that("t-stat equivalence IV", {
+  library(fixest)
+  library(ivreg)
+  library(sandwich)
+  library(lmtest)
+  library(data.table)
+  library(fwildclusterboot)
+  
   iv_test <- function(run_this_test) {
-
+    
     # Note: Test with Float64 for exact match
     if (run_this_test) {
       library(data.table)
       set.seed(123)
       data("SchoolingReturns", package = "ivreg")
-
+      
       # drop all NA values from SchoolingReturns
       data1 <<- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
       ivreg_fit <- ivreg(log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
-        nearcollege + age + ethnicity + smsa + south + parents14,
-      data = data1
+                           nearcollege + age + ethnicity + smsa + south + parents14,
+                         data = data1
       )
       vcov1 <- sandwich::vcovCL(ivreg_fit,
-        cluster = ~kww,
-        cadjust = TRUE,
-        type = "HC1"
+                                cluster = ~kww,
+                                cadjust = TRUE,
+                                type = "HC1"
       )
       vcov2 <- sandwich::vcovCL(ivreg_fit,
-        cluster = ~ smsa + kww,
-        cadjust = TRUE,
-        type = "HC1"
+                                cluster = ~ smsa + kww,
+                                cadjust = TRUE,
+                                type = "HC1"
       )
-
+      
       res1 <- coeftest(ivreg_fit, vcov1)
       res_df1 <- as.data.frame(broom::tidy(res1))
-
+      
       res2 <- coeftest(ivreg_fit, vcov2)
       res_df2 <- as.data.frame(broom::tidy(res2))
-
+      
       boot_ivreg1 <- suppressWarnings(boottest(
         floattype = "Float64",
         object = ivreg_fit,
@@ -452,11 +482,11 @@ test_that("t-stat equivalence", {
         type = "mammen",
         impose_null = TRUE
       ))
-
+      
       # skip_on_cran()
       expect_equal(boot_ivreg1$t_stat, as.vector(res_df1[res_df1$term == "education", "statistic"]), ignore_attr = TRUE)
-
-
+      
+      
       # two-way clustering currently fails
       boot_ivreg2 <- boottest(
         floattype = "Float64",
@@ -466,14 +496,14 @@ test_that("t-stat equivalence", {
         clustid = c("smsa", "kww"),
         type = "rademacher"
       )
-
-
+      
+      
       # skip_on_cran()
       expect_equal(boot_ivreg2$t_stat, res_df2[res_df2$term == "education", "statistic"])
     }
   }
-
-  ols_test(run_this_test = TRUE)
+  
   iv_test(run_this_test = TRUE)
-  wald_test(run_this_test = TRUE)
+  
+  
 })
