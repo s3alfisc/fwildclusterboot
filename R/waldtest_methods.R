@@ -13,7 +13,7 @@ tidy.mboottest <- function(object, ...) {
   stopifnot(inherits(object, "mboottest"))
   # dreamerr::validate_dots(stop = TRUE)
 
-  statistic <- object$t_stat
+  statistic <- object$teststat
   p.value <- object$p_val
 
   res <- data.frame(F_stat = statistic, p_val = p.value)
@@ -82,3 +82,4 @@ summary.mboottest <- function(object, digits = 3, ...) {
 
   tidy(object)
 }
+
