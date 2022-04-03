@@ -21,7 +21,7 @@ eigenMapMatMult <- function(A, B, nthreads) {
 #' @param N_G_bootcluster - The number of bootstrap clusters. For heteroskesdatic wild bootstrap, N_G_bootcluster = N, where N is the number of observations.
 #' @param cores Integer: the number of cores to be used.
 #' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
-#' @param small_sample_correction: Float. Small sample correction to be applied.
+#' @param small_sample_correction: double. Small sample correction to be applied.
 #' @param seed: Numeric scalar. Controls the seed used in bootstrap.
 #' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
 NULL

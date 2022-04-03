@@ -1,4 +1,5 @@
 test_that("test lean cpp boottest", {
+  
   set.seed(9809873)
   library(fixest)
   library(lfe)
@@ -32,7 +33,7 @@ test_that("test lean cpp boottest", {
   # pracma::tic()
   boot_lm <- boottest(lm_fit,
     param = "treatment",
-    B = 9999,
+    B = 999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1,
     seed = 1, 
@@ -40,7 +41,7 @@ test_that("test lean cpp boottest", {
   )
   boot_lm2 <- boottest(lm_fit,
     param = "treatment",
-    B = 9999,
+    B = 999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1,
     seed = 2, 

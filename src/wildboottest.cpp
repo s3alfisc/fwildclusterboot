@@ -23,7 +23,7 @@ arma::mat sample_weights(int G,
 
   if(type == 0){
     for(int g = 0; g < G; g++){
-      float v = arma::randu();
+      double v = arma::randu();
       if(v < 0.5){
         weights(g) = -1;
       } else {
@@ -32,18 +32,18 @@ arma::mat sample_weights(int G,
     }
   } else if(type == 1){
     for(int g = 0; g < G; g++){
-      float v = arma::randu();
-      if(v < 1/6){
+      double v = arma::randu();
+      if(v < 1.0/6.0){
         weights(g) = -sqrt(1.5);
-      } else if (v < 1/3){
+      } else if (v < 1.0/3.0){
         weights(g) = -1;
-      } else if (v < 1/2){
+      } else if (v < 1.0/2.0){
         weights(g) = -sqrt(0.5);
-      }  else if (v < 2/3){
+      } else if (v < 2.0/3.0){
         weights(g) = sqrt(0.5);
-      } else if (v < 5/6){
+      } else if (v < 5.0/6.0){
         weights(g) = 1;
-      } else if (v >= 5/6){
+      } else {
         weights(g) = sqrt(1.5);
       }
     }
@@ -66,7 +66,7 @@ arma::mat sample_weights(int G,
 //   
 //   if(type == 0){
 //     for(int g = 0; g < G; g++){
-//       float v = R::runif(0, 1);
+//       double v = R::runif(0, 1);
 //       if(v < 0.5){
 //         weights(g) = -1;
 //       } else {
@@ -75,7 +75,7 @@ arma::mat sample_weights(int G,
 //     }
 //   } else if(type == 1){
 //     for(int g = 0; g < G; g++){
-//       float v = R::runif(0, 1);
+//       double v = R::runif(0, 1);
 //       if(v < 1/6){
 //         weights(g) = -sqrt(1.5);
 //       } else if (v < 1/3){
@@ -109,7 +109,7 @@ arma::mat sample_weights(int G,
 //' @param N_G_bootcluster - The number of bootstrap clusters. For heteroskesdatic wild bootstrap, N_G_bootcluster = N, where N is the number of observations.
 //' @param cores Integer: the number of cores to be used.
 //' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
-//' @param small_sample_correction: Float. Small sample correction to be applied.
+//' @param small_sample_correction: double. Small sample correction to be applied.
 //' @param seed: Numeric scalar. Controls the seed used in bootstrap.
 //' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
 
@@ -117,12 +117,12 @@ arma::mat sample_weights(int G,
 List wildboottestHC(const arma::vec & y,
                     const arma::mat & X,
                     const arma::mat & R,
-                    const float & r,
+                    const double & r,
                     const int & B,
                     const int & N_G_bootcluster,
                     const int & cores,
                     const int & type, 
-                    const float & small_sample_correction, 
+                    const double & small_sample_correction, 
                     const int & seed) {
 
   // function implements wild cluster bootstrap,
@@ -208,13 +208,13 @@ List wildboottestHC(const arma::vec & y,
 List wildboottestCL(const arma::vec & y,
                     const arma::mat & X,
                     const arma::mat & R,
-                    const float & r,
+                    const double & r,
                     const int & B,
                     const int & N_G_bootcluster,
                     const int & cores,
                     const int & type,
                     const arma::vec & cluster, 
-                    const float & small_sample_correction, 
+                    const double & small_sample_correction, 
                     const int & seed
 ) {
 
