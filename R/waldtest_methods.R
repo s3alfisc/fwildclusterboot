@@ -47,7 +47,7 @@ summary.mboottest <- function(object, digits = 3, ...) {
   clustering_type <- paste0(length(object$clustid), "-way")
   numb_clusters <- object$N_G
 
-  tidy_names <- c("F_stat", "p_val")
+  tidy_names <- c("teststat", "p_val")
 
   # rounding
   tidy_object <- lapply(
