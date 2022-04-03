@@ -1,15 +1,39 @@
-// [[Rcpp::depends(RcppArmadillo)]]
-
-// [[Rcpp::plugins(openmp)]]
-
 #include <RcppArmadillo.h>
+#include <RcppEigen.h>
 #ifdef _OPENMP
   #include <omp.h>
 #else
   #define omp_get_max_threads() 0
+  #define EIGEN_DONT_PARALLELIZE
 #endif
 
+// [[Rcpp::depends(RcppArmadillo, RcppEigen)]]
+// [[Rcpp::plugins(openmp)]]
+
 using namespace Rcpp;
+
+
+//' Matrix Multiplication via Eigen
+//' @param A A matrix.
+//' @param B A matrix.
+//' @param nthreads Integer. Number of threads to use for matrix multiplication.
+//' @return A matrix
+// [[Rcpp::export]]
+SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A,
+                     Eigen::Map<Eigen::MatrixXd> B,
+                     int nthreads){
+  
+  Eigen::setNbThreads(nthreads);
+  //omp_set_num_threads(nthreads);
+  Eigen::MatrixXd C = A * B;
+  return Rcpp::wrap(C);
+}
+
+//' Get maximum number of threads on hardware for open mp support
+// [[Rcpp::export]]
+int cpp_get_nb_threads(){
+  return omp_get_max_threads();
+}
 
 
 // [[Rcpp::export]]
