@@ -1,0 +1,114 @@
+---
+title: "Seeds and Random Number Generation across languages"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(fwildclusterboot)
+```
+
+Version 0.8 of the `fwildclusterboot` package allows to run the wild cluster bootstrap through algorithms implemented in three languages: `fwildclusterboot's` initial implementation of the fast algorithm in R, a new memory-sensitive (but slow) implementation via rcpp and last, version 0.8 provides a binding to David Roodman's `WildBootTests.jl` package.
+
+As the bootstrap is a resampling method and thereby stochastic, this causes some challenges with random number generation. One key design goal is to guarantee reproducibility across all three languages. On top of the language differences, `fwildclusterboot's` 'native' implementation of the wild cluster bootstrap relies on the `dqrng` package for fast random number generation for all supported weight types except for Mammen weights. 
+
+To guarantee reproducibility of computations via `boottest()`, prior to version 0.8, it was therefore required to set a global seed via the `dqrng::dqset.seed`function. For Mammen weights, an additional seed needed to be set via the familiar `set.seed()`.
+
+This is no longer required for `fwildclusterboot` v0.8. It is now possible to control all random number generation in *both* R and Julia via `set.seed()`. 
+
+This is achieved by borrowing from an idea by [Rory Nolan ](https://www.r-bloggers.com/2018/09/using-rs-set-seed-to-set-seeds-for-use-in-c-c-including-rcpp/). He suggests to use another R function that *stochastically* generates a random integer $x$ *based on the current state of the global R seed* - which is initially set via the familiar `set.seed()` - and to then to use the generated integer as a seed value in either R, Julia or c++. 
+
+Hence when using the Julia or c++ based algorithms, neither `set.seed(1234); boottest(..., seed = NULL);` nor `boottest(..., seed = 1234)` actually pass `1234` as a seed value to Julia or c++. Instead, both create a new integer based on the state of R's global seed, which is implicitly called by the `sample.int(.Machine$integer.max, 1)` function.
+
+Here is a Julia example: 
+
+```{r}
+library(JuliaConnectoR)
+
+stochastic_julia_fun <- function(seed = NULL){
+  
+  if(is.null(seed)){
+    seed <- sample.int(.Machine$integer.max, 1)
+    JuliaConnectoR::juliaEval('using Random')
+    rng_char <- paste0("Random.seed!(", seed, ")")
+    JuliaConnectoR::juliaEval(rng_char)
+  } else if(!is.null(seed)){
+    set.seed(seed)
+    seed <- sample.int(.Machine$integer.max, 1)
+    JuliaConnectoR::juliaEval('using Random')
+    rng_char <- paste0("Random.seed!(", seed, ")")
+    JuliaConnectoR::juliaEval(rng_char)
+  }
+  
+  JuliaConnectoR::juliaEval("using StatsBase")
+  x <- JuliaConnectoR::juliaEval("sample(1:typemax(Int32))")
+
+  x
+  
+}
+
+set.seed(1234)
+stochastic_julia_fun()
+stochastic_julia_fun(seed = 1234)
+
+set.seed(1235)
+stochastic_julia_fun()
+stochastic_julia_fun(seed = 1235)
+```
+
+So we have successfully controlled randomness in Julia by passing a derivative of R's global seed from R to Julia! 
+
+How would the same look for c++/Rcpp? 
+
+Let's first define a Rcpp based function that randomly samples an integer: 
+
+```{Rcpp}
+#include <Rcpp.h>
+
+//[[Rcpp::export]]
+int stochastic_cpp(int seed){
+  srand(seed);
+  int x = rand();
+  return x; 
+}
+```
+
+```{r}
+stochastic_cpp(seed = 123)
+stochastic_cpp(seed = 2)
+```
+
+We can proceed as with the Julia seed: 
+
+```{r}
+stochastic_rcpp_fun <- function(seed = NULL){
+  
+  if(is.null(seed)){
+    seed <- sample.int(.Machine$integer.max, 1)
+  } else if(!is.null(seed)){
+    set.seed(seed)
+    seed <- sample.int(.Machine$integer.max, 1)
+  }
+  
+  x <- stochastic_cpp(seed = seed)
+
+  x
+  
+}
+
+set.seed(1234)
+stochastic_rcpp_fun()
+stochastic_rcpp_fun(seed = 1234)
+
+set.seed(42)
+stochastic_rcpp_fun()
+stochastic_rcpp_fun(seed = 42)
+
+```
+
+Once again, we have managed to set the stochastic behavior in the rcpp function via `set.seed()` from within R & based on R's global seed.
