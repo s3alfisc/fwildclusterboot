@@ -1,5 +1,7 @@
 test_that("global boot_algo", {
+  
   library(fwildclusterboot)
+
   data(voters)
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
     data = voters
@@ -28,7 +30,8 @@ test_that("global boot_algo", {
 
 
 test_that("global nthreads", {
-  skip_on_ci()
+  
+
   library(fwildclusterboot)
   data(voters)
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,

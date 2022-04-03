@@ -1,5 +1,7 @@
 test_that("t-stat equivalence OLS", {
   
+  skip_on_cran()
+  
   library(fixest)
   library(ivreg)
   library(sandwich)
@@ -204,6 +206,9 @@ test_that("t-stat equivalence OLS", {
 
 # exact tests
 test_that("t-stat equivalence OLS q > 1", {
+  
+  skip_on_cran()
+  
   library(fixest)
   library(ivreg)
   library(sandwich)
@@ -435,6 +440,9 @@ test_that("t-stat equivalence OLS q > 1", {
 })
 
 test_that("t-stat equivalence IV", {
+  
+  skip_on_cran()
+  
   library(fixest)
   library(ivreg)
   library(sandwich)

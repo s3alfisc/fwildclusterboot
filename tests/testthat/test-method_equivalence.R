@@ -1,4 +1,7 @@
 test_that("Do different, but equivalent ways to specify linear models lead to equivalent results?", {
+  
+  skip_on_cran()
+  
   library(fixest)
   library(lfe)
   # library(fwildclusterboot)

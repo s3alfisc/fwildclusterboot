@@ -1,4 +1,7 @@
 test_that("multiplication works", {
+  
+  skip_on_cran()
+  
   # see this issue: https://github.com/s3alfisc/fwildclusterboot/issues/26
 
   data1 <<- fwildclusterboot:::create_data(N = 500, N_G1 = 6, icc1 = 0.01, N_G2 = 4, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 9865)
