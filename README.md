@@ -1,10 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# fwildclusterboot <img src="man/figures/logo.png" width="200px" align="right" />
+# fwildclusterboot
+
+<img src="man/figures/logo.png" width="200px" align="right" />
 
 <!-- badges: start -->
-<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 0.5, 2021, 03, 31, 80133, R, R version 4.0.5 (2021-03-31), Shake and Throw-orange.svg?style=flat-square)](commits/master) -->
+<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 1.3, 2022, 03, 10, 81868, R, R version 4.1.3 (2022-03-10), One Push-Up-orange.svg?style=flat-square)](commits/master) -->
 
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
@@ -33,7 +35,9 @@ via the
 The package’s central function is `boottest()`. It allows to test
 univariate hypotheses using a wild cluster bootstrap at extreme speed:
 via the ‘fast’ algorithm, it is possible to run a wild cluster bootstrap
-with *B* = 100.000 iterations in less than a second!
+with
+![B = 100.000](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;B%20%3D%20100.000 "B = 100.000")
+iterations in less than a second!
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
@@ -66,23 +70,12 @@ For a longer introduction to `fwildclusterboot`, take a look at the
 [vignette](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
 ``` r
-# note: for performance reasons, the sampling of the bootstrap weights of types Rademacher, Webb and Normal within
-# fwildclusterboot are handled via the dqrng package, which is installed with the
-# package as a dependency. To set a global seed for boottest() for these weight types, use dqrng's dqset.seed() function
-# For Mammen weights, one can set a global seed via the set.seed() function.
-
-# set global seed for Rademacher, Webb and Normal weights
-library(dqrng)
-dqrng::dqset.seed(965326)
-# set a global seed for Mammen weights
-set.seed(23325)
-
 library(fwildclusterboot)
 
 data(voters)
+set.seed(23325)
 
 # fit the model via fixest::feols(), lfe::felm() or stats::lm()
-
 lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigration) + as.factor(Q2_defense), data = voters)
 # bootstrap inference via boottest()
 lm_boot <- boottest(lm_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
@@ -98,25 +91,7 @@ summary(lm_boot)
 #>  Number of Clusters: 40
 #> 
 #>              term estimate statistic p.value conf.low conf.high
-#> 1 1*treatment = 0    0.079     3.983       0     0.04     0.118
-
-library(fixest)
-feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters)
-# bootstrap inference via boottest()
-feols_boot <- boottest(feols_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
-summary(feols_boot)
-#> boottest.fixest(object = feols_fit, param = "treatment", B = 9999, 
-#>     clustid = c("group_id1"), seed = 1)
-#>  
-#>  Hypothesis: 1*treatment = 0
-#>  Observations: 300
-#>   Bootstr. Type: rademacher
-#>  Clustering: 1-way
-#>  Confidence Sets: 95%
-#>  Number of Clusters: 40
-#> 
-#>              term estimate statistic p.value conf.low conf.high
-#> 1 1*treatment = 0    0.079     4.117       0     0.04     0.118
+#> 1 1*treatment = 0    0.079     3.983   0.001    0.039      0.12
 ```
 
 ### Installation
@@ -128,10 +103,8 @@ one of the steps below:
 ``` r
 # from CRAN 
 install.packages("fwildclusterboot")
-
 # from r-universe (windows & mac, compiled R > 4.0 required)
 install.packages('fwildclusterboot', repos ='https://s3alfisc.r-universe.dev')
-
 # dev version from github
 # note: installation requires Rtools
 library(devtools)

@@ -15,7 +15,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 # fwildclusterboot 
 
 <img src="man/figures/logo.png" width="200px" align="right" />
@@ -85,34 +84,16 @@ Additional features are provided through `WildBootTests.jl`:
 For a longer introduction to `fwildclusterboot`, take a look at the [vignette](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
 ```{r}
-# note: for performance reasons, the sampling of the bootstrap weights of types Rademacher, Webb and Normal within
-# fwildclusterboot are handled via the dqrng package, which is installed with the
-# package as a dependency. To set a global seed for boottest() for these weight types, use dqrng's dqset.seed() function
-# For Mammen weights, one can set a global seed via the set.seed() function.
-
-# set global seed for Rademacher, Webb and Normal weights
-library(dqrng)
-dqrng::dqset.seed(965326)
-# set a global seed for Mammen weights
-set.seed(23325)
-
 library(fwildclusterboot)
 
 data(voters)
+set.seed(23325)
 
 # fit the model via fixest::feols(), lfe::felm() or stats::lm()
-
 lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigration) + as.factor(Q2_defense), data = voters)
 # bootstrap inference via boottest()
 lm_boot <- boottest(lm_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
 summary(lm_boot)
-
-library(fixest)
-feols_fit <- feols(proposition_vote ~ treatment  + log_income | Q1_immigration + Q2_defense, data = voters)
-# bootstrap inference via boottest()
-feols_boot <- boottest(feols_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
-summary(feols_boot)
-
 ```
 
 ### Installation
@@ -122,10 +103,8 @@ You can install compiled versions of`fwildclusterboot` from CRAN and the develop
 ```{r, eval = FALSE}
 # from CRAN 
 install.packages("fwildclusterboot")
-
 # from r-universe (windows & mac, compiled R > 4.0 required)
 install.packages('fwildclusterboot', repos ='https://s3alfisc.r-universe.dev')
-
 # dev version from github
 # note: installation requires Rtools
 library(devtools)
