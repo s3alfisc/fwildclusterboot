@@ -25,6 +25,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_get_nb_threads
+int cpp_get_nb_threads();
+RcppExport SEXP _fwildclusterboot_cpp_get_nb_threads() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(cpp_get_nb_threads());
+    return rcpp_result_gen;
+END_RCPP
+}
 // sample_weights
 arma::mat sample_weights(int G, int type);
 RcppExport SEXP _fwildclusterboot_sample_weights(SEXP GSEXP, SEXP typeSEXP) {
@@ -81,6 +91,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_fwildclusterboot_eigenMapMatMult", (DL_FUNC) &_fwildclusterboot_eigenMapMatMult, 3},
+    {"_fwildclusterboot_cpp_get_nb_threads", (DL_FUNC) &_fwildclusterboot_cpp_get_nb_threads, 0},
     {"_fwildclusterboot_sample_weights", (DL_FUNC) &_fwildclusterboot_sample_weights, 2},
     {"_fwildclusterboot_wildboottestHC", (DL_FUNC) &_fwildclusterboot_wildboottestHC, 10},
     {"_fwildclusterboot_wildboottestCL", (DL_FUNC) &_fwildclusterboot_wildboottestCL, 11},

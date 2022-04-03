@@ -19,7 +19,7 @@ setBoottest_nthreads <- function(nthreads) {
   max_CRAN <- as.numeric(Sys.getenv("OMP_THREAD_LIMIT"))
   max_CRAN[is.na(max_CRAN)] <- 1000
 
-  max_threads <- min(parallel::detectCores(), 1000, max_CRAN) # we cap at 1k nthreads
+  max_threads <- min(cpp_get_nb_threads(), 1000, max_CRAN) # we cap at 1k nthreads
 
   if (missing(nthreads) || is.null(nthreads)) {
     # New default: one cores used
@@ -58,9 +58,10 @@ check_set_nthreads <- function(nthreads) {
 
   dreamerr::set_up(1)
 
-  dreamerr::check_value(nthreads, "integer scalar GE{0} | numeric scalar GT{0} LT{1}", .message = paste0("The argument 'nthreads' must be an integer lower or equal to the number of threads available (", max(parallel::detectCores(), 1), "). It can be equal to 0 which means all threads. Alternatively, if equal to a number strictly between 0 and 1, it represents the fraction of all threads to be used."))
+  dreamerr::check_value(nthreads, "integer scalar GE{0} | numeric scalar GT{0} LT{1}", .message = paste0("The argument 'nthreads' must be an integer lower or equal to the number of threads available (", max(cpp_get_nb_threads(), 1), "). It can be equal to 0 which means all threads. Alternatively, if equal to a number strictly between 0 and 1, it represents the fraction of all threads to be used."))
 
-  max_threads <- parallel::detectCores()
+  #max_threads <- parallel::detectCores()
+  max_threads <- cpp_get_nb_threads()
   # cat("max_threads \n")
   # print(max_threads)
 

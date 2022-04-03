@@ -379,15 +379,10 @@ boottest.fixest <- function(object,
     )
   } else if (boot_algo == "R-lean") {
     
-    if(length(clustid) > 1){
-      stop("The R-lean algorithm currently only supports oneway clustering.")
-    }
-    
-    if (boot_algo == "R-lean") {
-      if (!is.null(fe)) {
-        stop("boottest() currently does not support fixed effects with boot_algo = 'R-lean'.")
-      }
-    }
+    check_r_lean(
+      clustid = clustid, 
+      fe = fe
+    )
     
     res <- boot_algo1(
       preprocessed_object = preprocess,

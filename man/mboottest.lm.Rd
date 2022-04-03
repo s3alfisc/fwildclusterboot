@@ -96,8 +96,6 @@ You can find more details in the help file for \code{boot_ssc()}. The function i
 An object of class \code{mboottest}
 
 \item{p_val}{The bootstrap p-value.}
-\item{conf_int}{The bootstrap confidence interval.}
-\item{param}{The tested parameter.}
 \item{N}{Sample size. Might differ from the regression sample size if the
 cluster variables contain NA values.}
 \item{B}{Number of Bootstrap Iterations.}

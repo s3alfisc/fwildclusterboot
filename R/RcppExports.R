@@ -10,6 +10,11 @@ eigenMapMatMult <- function(A, B, nthreads) {
     .Call('_fwildclusterboot_eigenMapMatMult', PACKAGE = 'fwildclusterboot', A, B, nthreads)
 }
 
+#' Get maximum number of threads on hardware for open mp support
+cpp_get_nb_threads <- function() {
+    .Call('_fwildclusterboot_cpp_get_nb_threads', PACKAGE = 'fwildclusterboot')
+}
+
 #' Implementation of the heteroskedastic wild bootstrap. Computes
 #' HC robust variance estimators. For use in fwildclusterboot when no
 #' cluster variable is provided

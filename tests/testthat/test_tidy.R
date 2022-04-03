@@ -3,7 +3,7 @@ test_that("test tidiers with q = 1", {
   skip_on_cran()
   
   library(generics)
-  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  lm_fit <<- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
                data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   )
   
@@ -42,7 +42,7 @@ test_that("test tidiers with q > 1", {
   
   library(generics)
   
-  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  lm_fit <<- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
                data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   )
   
@@ -52,7 +52,7 @@ test_that("test tidiers with q > 1", {
       mboottest(
         lm_fit, 
         R = R,
-        B = 9999, 
+        B = 999, 
         clustid = "group_id1", 
         seed = 123
     )
