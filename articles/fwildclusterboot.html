@@ -144,7 +144,7 @@
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 1*treatment = 0    0.073     3.709   0.001    0.032     0.114</span>
+<span class="co">#&gt; 1 1*treatment = 0    0.073     3.709   0.001    0.033     0.112</span>
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot_multi</span><span class="op">)</span>
 <span class="co">#&gt; boottest.lm(object = lm_fit, param = c("treatment", "ideology1"), </span>
 <span class="co">#&gt;     B = 9999, clustid = "group_id1", R = c(0.6, 0.2), r = 0.02)</span>
@@ -157,7 +157,7 @@
 <span class="co">#&gt;  Number of Clusters: 40</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                                 term estimate statistic p.value conf.low</span>
-<span class="co">#&gt; 1 0.6*treatment+0.2*ideology1 = 0.02    0.048     2.346   0.025    0.024</span>
+<span class="co">#&gt; 1 0.6*treatment+0.2*ideology1 = 0.02    0.048     2.346   0.024    0.024</span>
 <span class="co">#&gt;   conf.high</span>
 <span class="co">#&gt; 1     0.072</span>
 
@@ -195,7 +195,7 @@ Model 2
 <td style="text-align:left;">
 </td>
 <td style="text-align:center;">
-[0.032, 0.114]
+[0.033, 0.112]
 </td>
 <td style="text-align:center;">
 </td>
@@ -207,7 +207,7 @@ Model 2
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
--0.038 (0.001)
+-0.038 (0.000)
 </td>
 </tr>
 <tr>
@@ -310,7 +310,7 @@ Log.Lik.
 <span class="co">#&gt;  Number of Clusters: 40 20 251</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 1*treatment = 0    0.073     3.845   0.003    0.031     0.115</span></code></pre></div>
+<span class="co">#&gt; 1 1*treatment = 0    0.073     3.845   0.004    0.032     0.114</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="choice-of-bootstrap-weights">Choice of Bootstrap Weights<a class="anchor" aria-label="anchor" href="#choice-of-bootstrap-weights"></a>
@@ -351,20 +351,20 @@ Model 2
 1*treatment = 0
 </td>
 <td style="text-align:center;">
-0.073 (0.004)
+0.073 (0.002)
 </td>
 <td style="text-align:center;">
-0.073 (0.009)
+0.073 (0.003)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;box-shadow: 0px 1px">
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.031, 0.115]
+[0.033, 0.114]
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.030, 0.115]
+[0.030, 0.114]
 </td>
 </tr>
 <tr>
@@ -483,10 +483,10 @@ Model 2
 <td style="text-align:left;box-shadow: 0px 1px">
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.033, 0.114]
+[0.033, 0.112]
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.040, 0.106]
+[0.039, 0.107]
 </td>
 </tr>
 <tr>
@@ -597,17 +597,17 @@ Model 2
 0.073 (0.006)
 </td>
 <td style="text-align:center;">
-0.073 (0.007)
+0.073 (0.009)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;box-shadow: 0px 1px">
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.031, 0.111]
+[0.032, 0.110]
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.027, 0.115]
+[0.027, 0.116]
 </td>
 </tr>
 <tr>
@@ -741,20 +741,20 @@ Model 2
 1*treatment = 0
 </td>
 <td style="text-align:center;">
-0.073 (0.004)
+0.073 (0.005)
 </td>
 <td style="text-align:center;">
-0.073 (0.008)
+0.073 (0.007)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;box-shadow: 0px 1px">
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.031, 0.110]
+[0.032, 0.111]
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[0.029, 0.116]
+[0.029, 0.117]
 </td>
 </tr>
 <tr>
@@ -902,7 +902,7 @@ Log.Lik.
 <span class="co">#&gt;  Number of Clusters: 46</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 1*education = 0    0.064     1.044   0.253   -0.034     0.209</span></code></pre></div>
+<span class="co">#&gt; 1 1*education = 0    0.064     1.044   0.278   -0.036     0.208</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="tests-of-multiple-joint-hypotheses-q-1">Tests of multiple joint hypotheses (q &gt; 1)<a class="anchor" aria-label="anchor" href="#tests-of-multiple-joint-hypotheses-q-1"></a>
