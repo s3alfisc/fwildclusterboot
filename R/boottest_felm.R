@@ -241,12 +241,6 @@ boottest.felm <- function(object,
     warning("Note that the 'beta0' function argument is superseded by a new argument, 'r'. Please specify your hypothesis via the new function argument instead of using 'beta0'.")
   }
 
-  if (boot_algo == "R-lean") {
-    if (!is.null(fe)) {
-      stop("boottest() currently does not support fixed effects with boot_algo = 'R-lean'.")
-    }
-  }
-
   if (is.null(seed)) {
     internal_seed <- get_seed()
   } else {
@@ -364,6 +358,12 @@ boottest.felm <- function(object,
       tol = tol
     )
   } else if (boot_algo == "R-lean") {
+    
+    check_r_lean(
+      clustid = clustid, 
+      fe = fe
+    )
+    
     res <- boot_algo1(
       preprocessed_object = preprocess,
       boot_iter = B,

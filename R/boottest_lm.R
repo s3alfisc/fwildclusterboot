@@ -344,6 +344,12 @@ boottest.lm <- function(object,
       tol = tol
     )
   } else if (boot_algo == "R-lean") {
+    
+    check_r_lean(
+      clustid = clustid, 
+      fe = NULL
+    )
+    
     res <- boot_algo1(
       preprocessed_object = preprocess,
       boot_iter = B,
