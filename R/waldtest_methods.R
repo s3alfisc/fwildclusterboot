@@ -16,7 +16,7 @@ tidy.mboottest <- function(object, ...) {
   statistic <- object$teststat
   p.value <- object$p_val
 
-  res <- data.frame(F_stat = statistic, p_val = p.value)
+  res <- data.frame(teststat = statistic, p_val = p.value)
 
   return(res)
 }

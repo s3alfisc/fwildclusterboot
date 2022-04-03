@@ -3,8 +3,7 @@
 // [[Rcpp::plugins(openmp)]]
 
 #include <RcppArmadillo.h>
-#include <cstdlib>
-#ifdef _OPENMP
+#ifdef SUPPORT_OPENMP
   #include <omp.h>
 #endif
 
@@ -83,10 +82,11 @@ List wildboottestHC(const arma::vec & y,
   // function implements wild cluster bootstrap,
   // imposing the null
   
-  //arma::armadillo_set_seed(seed);
-  //srand(seed);
+arma::arma_rng::set_seed(seed);  //srand(seed);
+  
+#ifdef SUPPORT_OPENMP
   omp_set_num_threads(cores);
-
+#endif
   //int n = X.n_rows;
   int k = X.n_cols;
 
@@ -177,10 +177,12 @@ List wildboottestCL(const arma::vec & y,
   // imposing the null
 
   //srand(seed);
-  //arma::armadillo_set_seed(seed);
+  arma::arma_rng::set_seed(seed);
 
+#ifdef SUPPORT_OPENMP
   omp_set_num_threads(cores);
-
+#endif
+  
   int n = X.n_rows;
   int k = X.n_cols;
 

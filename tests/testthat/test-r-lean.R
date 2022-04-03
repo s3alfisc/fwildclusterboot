@@ -35,14 +35,16 @@ test_that("test lean cpp boottest", {
     B = 9999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1,
-    seed = 1
+    seed = 1, 
+    type = "webb"
   )
   boot_lm2 <- boottest(lm_fit,
     param = "treatment",
     B = 9999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1,
-    seed = 2
+    seed = 2, 
+    type = "webb"
   )
   boot_lm$p_val
   boot_lm2$p_val

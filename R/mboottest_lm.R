@@ -108,7 +108,6 @@ mboottest.lm <- function(object,
                          tol = 1e-6,
                          na_omit = TRUE,
                          floattype = "Float64",
-                         # small_sample_adjustment = TRUE,
                          fweights = FALSE,
                          getauxweights = FALSE,
                          t_boot = FALSE,
@@ -136,7 +135,6 @@ mboottest.lm <- function(object,
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar")
   check_arg(floattype, "character scalar")
-  # check_arg(small_sample_adjustment, "scalar logical")
   check_arg(fweights, "scalar logical")
   check_arg(getauxweights, "scalar logical")
   check_arg(t_boot, "scalar logical")
@@ -165,17 +163,9 @@ mboottest.lm <- function(object,
   # param required in preprocess
   param <- NULL
   
-  # translate ssc into small_sample_adjustment
-  if (ssc[["adj"]] == TRUE && ssc[["cluster.adj"]] == TRUE) {
-    small_sample_adjustment <- TRUE
-  } else {
-    small_sample_adjustment <- FALSE
-  }
-  
   if (ssc[["fixef.K"]] != "none" || ssc[["cluster.df"]] != "conventional") {
     message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional'."))
   }
-  
   
   check_mboottest_args_plus(
     object = object,
@@ -227,7 +217,6 @@ mboottest.lm <- function(object,
     sign_level = NULL,
     conf_int = FALSE,
     tol = tol,
-    small_sample_adjustment = small_sample_adjustment,
     p_val_type = p_val_type,
     type = type,
     floattype = floattype,
@@ -242,7 +231,7 @@ mboottest.lm <- function(object,
     clusteradj = clusteradj, 
     clustermin = clustermin,
     fe = NULL,
-    fedfadj = fedfadj
+    fedfadj = 0L
   )
   
   # collect results

@@ -82,7 +82,7 @@ check_boottest_args_plus <- function(object, R, param, sign_level, B, clustid = 
 
   if (inherits(object, "ivreg")) {
     if (object$method != "OLS") {
-      stop("Currently, only 2SLS is supported. Please set the function argument method to `OLS`.")
+      stop("Currently, only 2SLS is supported. Please set the `ivreg` function argument `method` to `OLS`.")
     }
 
     # throw error if specific function arguments are used in lm() call
@@ -155,7 +155,7 @@ check_mboottest_args_plus <- function(object, R, r, B) {
     ) {
       stop("Advanced formula notation in fixest / fixest (i(), ^, [x]
          and vectorized formulas via c(),) is currently not supported
-         in boottest().")
+         in mboottest().")
     }
   }
 
@@ -166,7 +166,7 @@ check_mboottest_args_plus <- function(object, R, r, B) {
     banned_fun_args <- c("contrasts", "subset")
     if (sum(call_object %in% banned_fun_args) > 0) {
       stop(paste(
-        "boottest.felm currently does not accept objects of type fixest with
+        "boottest.felm currently does not accept objects of type felm with
       function arguments",
         paste0(banned_fun_args[1:(length(banned_fun_args) - 1)], collapse = ", "),
         "and", banned_fun_args[length(banned_fun_args)], "."
@@ -186,7 +186,7 @@ check_mboottest_args_plus <- function(object, R, r, B) {
     banned_fun_args <- c("contrasts", "subset", "offset", "instruments")
     if (sum(call_object %in% banned_fun_args) > 0) {
       stop(paste(
-        "boottest.ivreg currently does not accept objects of type lm with
+        "boottest.ivreg currently does not accept objects of type ivreg with
       function arguments",
         paste0(banned_fun_args[1:(length(banned_fun_args) - 1)], collapse = ", "),
         "and", banned_fun_args[length(banned_fun_args)], "."
@@ -197,6 +197,6 @@ check_mboottest_args_plus <- function(object, R, r, B) {
   }
 
   if (nrow(R) != length(r)) {
-    stop(paste("The dimensions of func args R and r do not match. The number of rows of R is ", nrow(R), ", but the length of r 0 is", length(r), "."))
+    stop(paste("The dimensions of func args R and r do not match. The number of rows of R is ", nrow(R), ", but the length of r is", length(r), "."))
   }
 }

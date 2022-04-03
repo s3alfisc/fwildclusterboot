@@ -1,4 +1,4 @@
-boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid, sign_level, conf_int, tol, small_sample_adjustment, p_val_type, type,
+boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid, sign_level, conf_int, tol, p_val_type, type,
                             floattype, bootstrapc, getauxweights, fweights, internal_seed, maxmatsize, small, clusteradj, clustermin, fe = NULL, fedfadj = NULL, LIML = NULL, ARubin = NULL, Fuller = NULL, kappa = NULL) {
   
   resp <- as.numeric(preprocess$Y)
@@ -171,7 +171,8 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     t_stat = t_stat,
     t_boot = t_boot,
     auxweights = getauxweights,
-    plotpoints = plotpoints
+    grid_vals = plotpoints[,1],
+    p_grid_vals = plotpoints[,2]
   )
 
   res_final
