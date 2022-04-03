@@ -127,9 +127,6 @@ List wildboottestHC(const arma::vec & y,
   // function implements wild cluster bootstrap,
   // imposing the null
   
-//arma::arma_rng::set_seed(seed);  //srand(seed);
-  
-  omp_set_num_threads(cores);
 
   //int n = X.n_rows;
   int k = X.n_cols;
@@ -150,8 +147,8 @@ List wildboottestHC(const arma::vec & y,
 
   arma::mat t_boot(k, B + 1);
 
-#pragma omp parallel for
-  for(int b = 1; b < B + 1; b++){
+#pragma omp parallel for num_threads(cores)
+for(int b = 1; b < B + 1; b++){
 
     // create bootstrap sample
     //arma::vec weights = RcppArmadillo::sample(s, N_G_bootcluster, true, prob);
@@ -220,11 +217,6 @@ List wildboottestCL(const arma::vec & y,
   // function implements wild cluster bootstrap,
   // imposing the null
 
-  //srand(seed);
-  //arma::arma_rng::set_seed(seed);
-
-  omp_set_num_threads(cores);
-
   int n = X.n_rows;
   int k = X.n_cols;
 
@@ -239,7 +231,7 @@ List wildboottestCL(const arma::vec & y,
 
   arma::mat t_boot(k, B + 1);
 
-#pragma omp parallel for
+#pragma omp parallel for num_threads(cores)
   for(int b = 1; b < B + 1; b++){
 
     // create bootstrap sample
