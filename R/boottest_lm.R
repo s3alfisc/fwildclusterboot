@@ -206,7 +206,6 @@ boottest.lm <- function(object,
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
-
   check_arg(conf_int, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
@@ -217,7 +216,6 @@ boottest.lm <- function(object,
   check_arg(maxiter, "scalar integer GT{5}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
   check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl)")
-
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
@@ -228,6 +226,7 @@ boottest.lm <- function(object,
     set.seed(seed)
     internal_seed <- get_seed()
   }
+
 
   if (missing(r) & !missing(beta0)) {
     warning("Note that the 'beta0' function argument is superseded by a new argument, 'r'. Please specify your hypothesis via the new function argument instead of using 'beta0'.")
@@ -250,11 +249,9 @@ boottest.lm <- function(object,
     internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed), ")"))
   }
 
-
+  
   # check appropriateness of nthreads
-  # nthreads <- ifelse(nthreads > cpp_get_nb_threads(), cpp_get_nb_threads(), nthreads)
   nthreads <- check_set_nthreads(nthreads)
-  # cat(paste("nthreads:", nthreads), "\n")
 
   if (is.null(clustid)) {
     heteroskedastic <- TRUE

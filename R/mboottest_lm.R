@@ -57,8 +57,6 @@
 #' @return An object of class \code{mboottest}
 #'
 #' \item{p_val}{The bootstrap p-value.}
-#' \item{conf_int}{The bootstrap confidence interval.}
-#' \item{param}{The tested parameter.}
 #' \item{N}{Sample size. Might differ from the regression sample size if the
 #'          cluster variables contain NA values.}
 #' \item{B}{Number of Bootstrap Iterations.}
@@ -176,7 +174,6 @@ mboottest.lm <- function(object,
   
   
   # preprocess data: X, Y, weights, fixed effects
-  # pracma::tic()
   preprocess <- preprocess(
     object = object,
     cluster = clustid,
@@ -239,11 +236,9 @@ mboottest.lm <- function(object,
     p_val = res$p_val,
     teststat = res$t_stat,
     teststat_boot = res$t_boot,
-    # regression = res$object,
     N = preprocess$N,
     boot_iter = B,
     clustid = clustid,
-    # depvar = depvar,
     N_G = preprocess$N_G,
     call = call,
     type = type,

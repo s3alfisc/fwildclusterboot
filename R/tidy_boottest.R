@@ -139,4 +139,5 @@ glance.boottest <- function(x, ...) {
 
   stopifnot(inherits(x, "boottest"))
   broom::glance(eval(x$call$object))
+  
 }

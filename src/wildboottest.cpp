@@ -3,10 +3,12 @@
 // [[Rcpp::plugins(openmp)]]
 
 #include <RcppArmadillo.h>
-#ifdef SUPPORT_OPENMP
+#ifdef _OPENMP
   #include <omp.h>
+#else
+  #define omp_get_thread_num() 0
+  #define omp_get_max_threads() 0
 #endif
-
 
 using namespace Rcpp;
 
@@ -52,6 +54,50 @@ arma::mat sample_weights(int G,
 
 }
 
+
+// // [[Rcpp::export]]
+// arma::mat sample_weights2(int G,
+//                          int type){
+//   
+//   // R random function based random numbers
+//   // type == 0 for rademacher
+//   // type == 1 for mammen
+//   arma::vec weights(G);
+//   
+//   if(type == 0){
+//     for(int g = 0; g < G; g++){
+//       float v = R::runif(0, 1);
+//       if(v < 0.5){
+//         weights(g) = -1;
+//       } else {
+//         weights(g) = 1;
+//       }
+//     }
+//   } else if(type == 1){
+//     for(int g = 0; g < G; g++){
+//       float v = R::runif(0, 1);
+//       if(v < 1/6){
+//         weights(g) = -sqrt(1.5);
+//       } else if (v < 1/3){
+//         weights(g) = -1;
+//       } else if (v < 1/2){
+//         weights(g) = -sqrt(0.5);
+//       }  else if (v < 2/3){
+//         weights(g) = sqrt(0.5);
+//       } else if (v < 5/6){
+//         weights(g) = 1;
+//       } else if (v >= 5/6){
+//         weights(g) = sqrt(1.5);
+//       }
+//     }
+//   }
+//   
+//   
+//   return weights;
+//   
+// }
+
+
 //' Implementation of the heteroskedastic wild bootstrap. Computes
 //' HC robust variance estimators. For use in fwildclusterboot when no
 //' cluster variable is provided
@@ -82,11 +128,10 @@ List wildboottestHC(const arma::vec & y,
   // function implements wild cluster bootstrap,
   // imposing the null
   
-arma::arma_rng::set_seed(seed);  //srand(seed);
+//arma::arma_rng::set_seed(seed);  //srand(seed);
   
-#ifdef SUPPORT_OPENMP
   omp_set_num_threads(cores);
-#endif
+
   //int n = X.n_rows;
   int k = X.n_cols;
 
@@ -177,12 +222,10 @@ List wildboottestCL(const arma::vec & y,
   // imposing the null
 
   //srand(seed);
-  arma::arma_rng::set_seed(seed);
+  //arma::arma_rng::set_seed(seed);
 
-#ifdef SUPPORT_OPENMP
   omp_set_num_threads(cores);
-#endif
-  
+
   int n = X.n_rows;
   int k = X.n_cols;
 
