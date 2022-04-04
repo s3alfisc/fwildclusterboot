@@ -82,7 +82,6 @@ implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019
   tol <span class="op">=</span> <span class="fl">1e-06</span>,
   na_omit <span class="op">=</span> <span class="cn">TRUE</span>,
   floattype <span class="op">=</span> <span class="st">"Float64"</span>,
-  fweights <span class="op">=</span> <span class="cn">FALSE</span>,
   getauxweights <span class="op">=</span> <span class="cn">FALSE</span>,
   t_boot <span class="op">=</span> <span class="cn">FALSE</span>,
   maxmatsize <span class="op">=</span> <span class="cn">NULL</span>,
@@ -147,8 +146,6 @@ when fitting the regression object (e.g. if the cluster variable was not used
 when fitting the regression model).</p></dd>
 <dt>floattype</dt>
 <dd><p>Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?</p></dd>
-<dt>fweights</dt>
-<dd><p>Logical. FALSE by default, TRUE for frequency weights.</p></dd>
 <dt>getauxweights</dt>
 <dd><p>Logical. FALSE by default. Whether to save auxilliary weight matrix (v)</p></dd>
 <dt>t_boot</dt>

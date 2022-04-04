@@ -88,7 +88,6 @@ for instrumental variable models (WRE, Davidson &amp; McKinnon, 2010)</p>
   tol <span class="op">=</span> <span class="fl">1e-06</span>,
   na_omit <span class="op">=</span> <span class="cn">TRUE</span>,
   floattype <span class="op">=</span> <span class="st">"Float64"</span>,
-  fweights <span class="op">=</span> <span class="cn">FALSE</span>,
   getauxweights <span class="op">=</span> <span class="cn">FALSE</span>,
   t_boot <span class="op">=</span> <span class="cn">FALSE</span>,
   maxmatsize <span class="op">=</span> <span class="cn">NULL</span>,
@@ -164,8 +163,6 @@ when fitting the regression object (e.g. if the cluster variable was not used
 when fitting the regression model).</p></dd>
 <dt>floattype</dt>
 <dd><p>Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?</p></dd>
-<dt>fweights</dt>
-<dd><p>Logical. FALSE by default, TRUE for frequency weights.</p></dd>
 <dt>getauxweights</dt>
 <dd><p>Logical. FALSE by default. Whether to save auxilliary weight matrix (v)</p></dd>
 <dt>t_boot</dt>
@@ -187,6 +184,8 @@ when fitting the regression model).</p></dd>
 You can find more details in the help file for <code><a href="boot_ssc.html">boot_ssc()</a></code>. The function is purposefully designed to mimic fixest's <code><a href="https://lrberge.github.io/fixest/reference/ssc.html" class="external-link">ssc</a></code> function.</p></dd>
 <dt>...</dt>
 <dd><p>Further arguments passed to or from other methods.</p></dd>
+<dt>fweights</dt>
+<dd><p>Logical. FALSE by default, TRUE for frequency weights.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
