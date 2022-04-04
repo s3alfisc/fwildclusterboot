@@ -1,4 +1,5 @@
 #include <RcppArmadillo.h>
+#define NDEBUG 
 #include <RcppEigen.h>
 #ifdef _OPENMP
   #include <omp.h>
