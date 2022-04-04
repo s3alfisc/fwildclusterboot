@@ -39,7 +39,6 @@
 #'        when fitting the regression object (e.g. if the cluster variable was not used
 #'        when fitting the regression model).
 #' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?
-#' @param fweights Logical. FALSE by default, TRUE for frequency weights.
 #' @param getauxweights Logical. FALSE by default. Whether to save auxilliary weight matrix (v)
 #' @param t_boot Logical. Should bootstrapped t-statistics be returned?
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes
@@ -106,7 +105,6 @@ mboottest.lm <- function(object,
                          tol = 1e-6,
                          na_omit = TRUE,
                          floattype = "Float64",
-                         fweights = FALSE,
                          getauxweights = FALSE,
                          t_boot = FALSE,
                          maxmatsize = NULL,
@@ -133,7 +131,6 @@ mboottest.lm <- function(object,
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar")
   check_arg(floattype, "character scalar")
-  check_arg(fweights, "scalar logical")
   check_arg(getauxweights, "scalar logical")
   check_arg(t_boot, "scalar logical")
   check_arg(maxmatsize, "scalar integer | NULL")
@@ -223,7 +220,7 @@ mboottest.lm <- function(object,
     getauxweights = getauxweights,
     internal_seed = internal_seed,
     maxmatsize = maxmatsize,
-    fweights = 1L,
+    # fweights = 1L,
     small = small,
     clusteradj = clusteradj, 
     clustermin = clustermin,

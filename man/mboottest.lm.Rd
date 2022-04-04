@@ -18,7 +18,6 @@
   tol = 1e-06,
   na_omit = TRUE,
   floattype = "Float64",
-  fweights = FALSE,
   getauxweights = FALSE,
   t_boot = FALSE,
   maxmatsize = NULL,
@@ -76,8 +75,6 @@ when fitting the regression object (e.g. if the cluster variable was not used
 when fitting the regression model).}
 
 \item{floattype}{Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?}
-
-\item{fweights}{Logical. FALSE by default, TRUE for frequency weights.}
 
 \item{getauxweights}{Logical. FALSE by default. Whether to save auxilliary weight matrix (v)}
 

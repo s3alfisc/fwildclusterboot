@@ -22,7 +22,6 @@
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
 #' @param conf_int A logical vector. If TRUE, boottest computes confidence
 #'        intervals by p-value inversion. If FALSE, only the p-value is returned.
-#' @param fweights Logical. FALSE by default, TRUE for frequency weights.
 #' @param seed An integer. Allows the user to set a random seed. If you want to set a "global" seed, set it via `dqrng::dqset.seed()`. For Mammen weights, you have to use `set.seed()` instead.
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
@@ -65,7 +64,6 @@
 #'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. Note that you can set the employed algorithm globally by using the
 #'                  `setBoottest_boot_algo()` function.
 #' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?
-#' @param fweights Logical. FALSE by default, TRUE for frequency weights.
 #' @param maxmatsize ... Only relevant when "boot_algo" is set to "WildBootTests.jl".
 #' @param bootstrapc ... Only relevant when "boot_algo" is set to "WildBootTests.jl". Runs the boostrap-c as advertised by Young (2019).
 #' @param t_boot ...
@@ -194,7 +192,6 @@ boottest.lm <- function(object,
                         bootstrapc = FALSE,
                         t_boot = FALSE,
                         getauxweights = FALSE,
-                        fweights = FALSE,
                         ...) {
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
@@ -397,7 +394,7 @@ boottest.lm <- function(object,
       getauxweights = getauxweights,
       internal_seed = internal_seed,
       maxmatsize = maxmatsize,
-      fweights = 1L,
+      # fweights = 1L,
       small = small,
       clusteradj = clusteradj, 
       clustermin = clustermin,

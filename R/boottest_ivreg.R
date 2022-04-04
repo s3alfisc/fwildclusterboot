@@ -136,7 +136,6 @@ boottest.ivreg <- function(object,
                            tol = 1e-6,
                            na_omit = TRUE,
                            floattype = "Float64",
-                           fweights = FALSE,
                            getauxweights = FALSE,
                            t_boot = FALSE,
                            maxmatsize = NULL,
@@ -170,7 +169,6 @@ boottest.ivreg <- function(object,
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(floattype, "charin(Float32, Float64)")
-  check_arg(fweights, "scalar logical")
   check_arg(t_boot, "scalar logical")
   check_arg(getauxweights, "scalar logical")
   check_arg(maxmatsize, "scalar integer | NULL")
@@ -285,7 +283,7 @@ boottest.ivreg <- function(object,
     getauxweights = getauxweights,
     internal_seed = internal_seed,
     maxmatsize = maxmatsize,
-    fweights = 1L,
+    # fweights = 1L,
     small = small,
     clusteradj = clusteradj, 
     clustermin = clustermin,

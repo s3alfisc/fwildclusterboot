@@ -22,7 +22,6 @@
   tol = 1e-06,
   na_omit = TRUE,
   floattype = "Float64",
-  fweights = FALSE,
   getauxweights = FALSE,
   t_boot = FALSE,
   maxmatsize = NULL,
@@ -96,8 +95,6 @@ when fitting the regression model).}
 
 \item{floattype}{Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?}
 
-\item{fweights}{Logical. FALSE by default, TRUE for frequency weights.}
-
 \item{getauxweights}{Logical. FALSE by default. Whether to save auxilliary weight matrix (v)}
 
 \item{t_boot}{Logical. Should bootstrapped t-statistics be returned?}
@@ -118,6 +115,8 @@ when fitting the regression model).}
 You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.}
 
 \item{...}{Further arguments passed to or from other methods.}
+
+\item{fweights}{Logical. FALSE by default, TRUE for frequency weights.}
 }
 \value{
 An object of class \code{boottest}

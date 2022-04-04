@@ -67,7 +67,6 @@
 #'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. Note that you can set the employed algorithm globally by using the
 #'                  `setBoottest_boot_algo()` function.
 #' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?
-#' @param fweights Logical. FALSE by default, TRUE for frequency weights.
 #' @param maxmatsize ... Only relevant when "boot_algo" is set to "WildBootTests.jl".
 #' @param bootstrapc ... Only relevant when "boot_algo" is set to "WildBootTests.jl". Runs the boostrap-c as advertised by Young (2019).
 #' @param t_boot ...
@@ -206,7 +205,6 @@ boottest.felm <- function(object,
                           bootstrapc = FALSE,
                           t_boot = FALSE,
                           getauxweights = FALSE,
-                          fweights = FALSE,
                           ...) {
   call <- match.call()
 
@@ -413,7 +411,7 @@ boottest.felm <- function(object,
       getauxweights = getauxweights,
       internal_seed = internal_seed,
       maxmatsize = maxmatsize,
-      fweights = 1L,
+      # fweights = 1L,
       small = small,
       clusteradj = clusteradj, 
       clustermin = clustermin,
