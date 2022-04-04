@@ -3,13 +3,13 @@
 #include <RcppEigen.h>
 #ifdef _OPENMP
   #include <omp.h>
+// [[Rcpp::plugins(openmp)]]
 #else
   #define omp_get_max_threads() 0
   #define EIGEN_DONT_PARALLELIZE
 #endif
 
 // [[Rcpp::depends(RcppArmadillo, RcppEigen)]]
-// [[Rcpp::plugins(openmp)]]
 
 using namespace Rcpp;
 

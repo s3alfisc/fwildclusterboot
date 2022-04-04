@@ -49,150 +49,276 @@ test_that("test r against Julia I: stochastic tests", {
         for (impose_null in c(TRUE, FALSE)) {
           cat(paste("type:", type, "p-val:", p_val_type, "null imposed:", impose_null), "\n")
 
-          # cat("Check 1:", "\n")
-          if (p_val_type %in% c("two-tailed", "equal-tailed")) {
-            boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null))
-            # pracma::tic()
-            boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
-            # pracma::toc()
-            res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$conf_int, c(boot_jl$conf_int), tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-          } else {
-            boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE))
-            boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE, boot_algo = "WildBootTests.jl"))
-            res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-          }
-
-          rm(boot_r, boot_jl)
-
-
-
-          # multi-param hypotheses
-          # cat("Check 2:", "\n")
-          if (p_val_type %in% c("two-tailed", "equal-tailed")) {
-            boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null))
-            boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
-            res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$conf_int, c(boot_jl$conf_int), tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-          } else {
-            boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE))
-            boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE, boot_algo = "WildBootTests.jl"))
-            res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-          }
-
-          rm(boot_r, boot_jl)
-
-          # --------------------------------------------------
-          # and all with twoway clustering:
-          # cat("Check 3:", "\n")
-          if (p_val_type %in% c("two-tailed", "equal-tailed")) {
-            boot_r <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1))
-            boot_jl <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
-            res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$conf_int, c(boot_jl$conf_int), tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-          } else {
-            boot_r <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1, conf_int = FALSE))
-            boot_jl <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE, boot_algo = "WildBootTests.jl"))
-            res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-          }
-
-          rm(boot_r, boot_jl)
-
-          # multi-param hypotheses
-
-          # cat("Check 4:", "\n")
-          if (p_val_type %in% c("two-tailed", "equal-tailed")) {
-            boot_r <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1))
-            boot_jl <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
-            res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$conf_int, c(boot_jl$conf_int), tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-          } else {
-            boot_r <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1, conf_int = FALSE))
-            boot_jl <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE, boot_algo = "WildBootTests.jl"))
-            res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-            res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
-            # if(res == FALSE){print(res)}
-            rm(res)
-          }
-
-          rm(boot_r, boot_jl)
+          cat(type, "\n")
+          cat(p_val_type, "\n")
+          cat(impose_null, "\n")
+          
+          # # cat("Check 1:", "\n")
+          # if (p_val_type %in% c("two-tailed", "equal-tailed")) {
+          #   boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null))
+          #   # pracma::tic()
+          #   boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
+          #   # pracma::toc()
+          #   res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$conf_int, c(boot_jl$conf_int), tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          # } else {
+          #   boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE))
+          #   boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE, boot_algo = "WildBootTests.jl"))
+          #   res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          # }
+          # 
+          # rm(boot_r, boot_jl)
+          # 
+          # 
+          # 
+          # # multi-param hypotheses
+          # # cat("Check 2:", "\n")
+          # if (p_val_type %in% c("two-tailed", "equal-tailed")) {
+          #   boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null))
+          #   boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
+          #   res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$conf_int, c(boot_jl$conf_int), tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          # } else {
+          #   boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE))
+          #   boot_jl <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), r = 0.1, type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE, boot_algo = "WildBootTests.jl"))
+          #   res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          # }
+          # 
+          # rm(boot_r, boot_jl)
+          # 
+          # # --------------------------------------------------
+          # # and all with twoway clustering:
+          # # cat("Check 3:", "\n")
+          # if (p_val_type %in% c("two-tailed", "equal-tailed")) {
+          #   boot_r <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1))
+          #   boot_jl <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
+          #   res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$conf_int, c(boot_jl$conf_int), tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          # } else {
+          #   boot_r <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1, conf_int = FALSE))
+          #   boot_jl <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE, boot_algo = "WildBootTests.jl"))
+          #   res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          # }
+          # 
+          # rm(boot_r, boot_jl)
+          # 
+          # # multi-param hypotheses
+          # 
+          # # cat("Check 4:", "\n")
+          # if (p_val_type %in% c("two-tailed", "equal-tailed")) {
+          #   boot_r <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1))
+          #   boot_jl <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, boot_algo = "WildBootTests.jl"))
+          #   res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$conf_int, c(boot_jl$conf_int), tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          # } else {
+          #   boot_r <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, nthreads = 1, conf_int = FALSE))
+          #   boot_jl <- suppressWarnings(boottest(object, clustid = c("group_id1", "group_id2"), B = 19999, param = c("treatment", "log_income"), R = c(1, 0.1), type = type, p_val_type = p_val_type, impose_null = impose_null, conf_int = FALSE, boot_algo = "WildBootTests.jl"))
+          #   res <- expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          #   res <- expect_equal(boot_r$t_stat, boot_jl$t_stat[1], tolerance = reltol, ignore_attr = TRUE)
+          #   # if(res == FALSE){print(res)}
+          #   rm(res)
+          # }
+          # 
+          # rm(boot_r, boot_jl)
 
           # ------------------------------------------------------------------------------ #
           # test subcluster bootstrap
 
-          # bootcluster variable not in clustid 1
-          # boot_r <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "Q1_immigration"), B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type)
-          # boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "Q1_immigration"),B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type,small_sample_adjustment = FALSE)
-          # print(expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol))
-          #
-          # # bootcluster variable not in clustid 2
-          # # currently: bug in fwildclusterboot when not all bootcluster variables \in clustid OR specified in lm() (e.g. drop Q2_defense from lm_fit -> error)
-          # boot_r <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "year"), B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type)
-          # boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "year"),B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type,)
-          # print(expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol))
-          #
-          # boot_r <- suppressWarnings(boottest(lm_fit, clustid = "group_id2", bootcluster = c("group_id2", "state"), B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type)
-          # boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = "group_id2", bootcluster = c("group_id2", "state"),B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type,)
-          # print(expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol))
-          #
-          # # clustid variale not in bootcluster & bootcluster variable not in clustid
-          # boot_r <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1","group_id2", "Q1_immigration"), B = 19999, param = "treatment", nthreads = 1)
-          # boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1","group_id2", "Q1_immigration"),B = 19999, param = "treatment")
-          # print(expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol))
-          #
-          # # clustid variale not in bootcluster & bootcluster variable not in clustid
-          # #boot_r <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1"), bootcluster = c("group_id1", "dummy"), B = 19999, param = "treatment", nthreads = 1)
-          # #boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1"), bootcluster = c("group_id1", "dummy"),B = 19999, param = "treatment")
-          # #print(expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol))
-          #
-          # boot_r <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"), B = 499999, param = "treatment", nthreads = 1)
-          # boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"),B = 499999, param = "treatment")
-          # print(expect_equal(boot_r$p_val, boot_jl1$p_val[1], tolerance = reltol))
+          
+          if(p_val_type %in% c("two-tailed", "equal-tailed")){
+            # bootcluster variable not in clustid 1
+            boot_r <- suppressWarnings(
+              boottest(
+                lm_fit,
+                clustid = "group_id1",
+                bootcluster = c("group_id1", "Q1_immigration"),
+                B = 19999, 
+                param = "treatment",
+                type = "rademacher",
+                p_val_type = p_val_type
+              )
+            )
+            
+            boot_jl1 <- suppressWarnings(
+              boottest(
+                lm_fit,
+                clustid = "group_id1",
+                bootcluster = c("group_id1", "Q1_immigration"),
+                B = 19999,
+                param = "treatment", 
+                type = "rademacher", 
+                p_val_type = p_val_type
+              )
+            )
+            
+            expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
+            expect_equal(boot_r$t_stat, boot_jl1$t_stat)
+            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+              expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
+            }
+            
+            # bootcluster variable not in clustid 2
+            # currently: bug in fwildclusterboot when not all bootcluster variables \in clustid OR specified in lm() (e.g. drop Q2_defense from lm_fit -> error)
+            boot_r <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "year"), B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type))
+            boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "year"),B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type))
+            
+            expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
+            expect_equal(boot_r$t_stat, boot_jl1$t_stat)
+            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+              expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
+            }
+            
+            boot_r <-
+              suppressWarnings(
+                boottest(
+                  lm_fit,
+                  clustid = "group_id2",
+                  bootcluster = c("group_id2", "state"),
+                  B = 19999,
+                  param = "treatment",
+                  type = "rademacher",
+                  p_val_type = p_val_type
+                )
+              )
+            boot_jl1 <-
+              suppressWarnings(
+                boottest(
+                  lm_fit,
+                  clustid = "group_id2",
+                  bootcluster = c("group_id2", "state"),
+                  B = 19999,
+                  param = "treatment",
+                  type = "rademacher",
+                  p_val_type = p_val_type
+                )
+              )
+            
+            expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
+            expect_equal(boot_r$t_stat, boot_jl1$t_stat)
+            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+              expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
+            }
+            
+            # clustid variale not in bootcluster & bootcluster variable not in clustid
+            boot_r <-
+              suppressWarnings(
+                boottest(
+                  lm_fit,
+                  clustid = c("group_id1", "group_id2"),
+                  bootcluster = c("group_id1", "group_id2", "Q1_immigration"),
+                  B = 19999,
+                  param = "treatment",
+                  nthreads = 1
+                )
+              )
+            
+            boot_jl1 <-
+              suppressWarnings(
+                boottest(
+                  lm_fit,
+                  clustid = c("group_id1", "group_id2"),
+                  bootcluster = c("group_id1", "group_id2", "Q1_immigration"),
+                  B = 19999,
+                  param = "treatment"
+                )
+              )
+            
+            
+            expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
+            expect_equal(boot_r$t_stat, boot_jl1$t_stat)
+            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+              expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
+            }
+            
+            
+            # clustid variale not in bootcluster & bootcluster variable not in clustid
+            boot_r <-
+              suppressWarnings(
+                boottest(
+                  lm_fit,
+                  clustid = c("group_id1", "group_id2"),
+                  bootcluster = c("group_id1", "Q1_immigration"),
+                  B = 19999,
+                  param = "treatment",
+                  nthreads = 1
+                )
+              )
+            
+            boot_jl1 <-
+              suppressWarnings(
+                boottest(
+                  lm_fit,
+                  clustid = c("group_id1", "group_id2"),
+                  bootcluster = c("group_id1", "Q1_immigration"),
+                  B = 19999,
+                  param = "treatment"
+                )
+              )
+            
+            
+            expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
+            expect_equal(boot_r$t_stat, boot_jl1$t_stat)
+            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+              expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
+            }
+            
+            # clustid variale not in bootcluster & bootcluster variable not in clustid
+            
+            boot_r <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"), B = 499999, param = "treatment"))
+            boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"),B = 499999, param = "treatment"))
+            
+            expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
+            expect_equal(boot_r$t_stat, boot_jl1$t_stat)
+            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+              expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
+            }
+            
+          }
         }
       }
     }
