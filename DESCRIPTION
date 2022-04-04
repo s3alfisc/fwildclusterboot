@@ -75,6 +75,7 @@ Suggests:
     rmarkdown,
     broom,
     modelsummary,
+    bench,
     testthat (>= 3.0.0)
 Encoding: UTF-8
 LazyData: true
