@@ -115,8 +115,6 @@ when fitting the regression model).}
 You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.}
 
 \item{...}{Further arguments passed to or from other methods.}
-
-\item{fweights}{Logical. FALSE by default, TRUE for frequency weights.}
 }
 \value{
 An object of class \code{boottest}
