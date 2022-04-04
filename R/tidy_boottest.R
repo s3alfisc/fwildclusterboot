@@ -23,8 +23,8 @@ tidy.boottest <- function(object, ...) {
   statistic <- object$t_stat
   p.value <- object$p_val
   # std.error <- NA
-  conf.low <- min(object$conf_int)
-  conf.high <- max(object$conf_int)
+  conf.low <- object$conf_int[1]
+  conf.high <- object$conf_int[2]
 
   res <- data.frame(term, estimate, statistic, p.value, conf.low, conf.high)
 
