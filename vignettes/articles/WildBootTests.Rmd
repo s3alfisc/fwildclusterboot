@@ -48,7 +48,7 @@ Alternatively, you can install Julia from its official [https://julialang.org/do
 
 You can run the wild cluster bootstrap through `WildBootTests.jl` via the `boot_algo` function argument: 
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
 # load data set voters included in fwildclusterboot
 data(voters)
 # estimate the regression model via lm
@@ -57,9 +57,8 @@ lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigrat
 
 The first function call of `boottest()` will JIT-compile all required Julia code - this will take around 10-30 seconds. Note that if you re-start your R session, all Julia code will have to be re-compiled.
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
 boot_lm <- boottest(lm_fit, clustid = "group_id1", param = "treatment", B = 9999, boot_algo = "WildBootTests.jl")
-#summary(boot_lm)
 ```
 
 If you decide that all your analyses should run through `WildBootTests.jl`, you can set a global variable via 

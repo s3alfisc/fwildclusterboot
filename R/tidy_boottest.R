@@ -23,8 +23,12 @@ tidy.boottest <- function(object, ...) {
   statistic <- object$t_stat
   p.value <- object$p_val
   # std.error <- NA
-  conf.low <- object$conf_int[1]
-  conf.high <- object$conf_int[2]
+  if(!is.null(object$conf_int)){
+    conf.low <- object$conf_int[1]
+    conf.high <- object$conf_int[2]
+  } else {
+    conf.low <- conf.high <- NA
+  }
 
   res <- data.frame(term, estimate, statistic, p.value, conf.low, conf.high)
 
@@ -113,6 +117,9 @@ plot.boottest <- function(x, ...) {
   stopifnot(inherits(x, "boottest"))
   dreamerr::validate_dots(stop = TRUE)
 
+  if(is.null(x$conf_int)){
+    stop("No plot method if boottest()'s function argument 'conf_int = FALSE'.")
+  }
   test_vals <- x$grid_vals
   p_test_vals <- x$p_grid_vals
   conf_int <- x$conf_int

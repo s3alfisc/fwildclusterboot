@@ -109,6 +109,15 @@ boot_lm <- boottest(lm_fit, clustid = c("group_id1", "group_id2"), param = "trea
 summary(boot_lm)
 ```
 
+## The Heteroskedastic Bootstrap
+
+If you drop the `clustid` argument, `boottest()` will run a heteroskedasticity robust wild bootstrap via the 'R-lean' algorithm. At the moment, the null hypothesis is always imposed, only Rademacher and Webb weights are supported, and no confidence intervals are computed. As all algorithms in `fwildclusterboot`, p-values are calculated based on pivotal t-statistics.
+
+```{r}
+boot_lm <- boottest(lm_fit, param = "treatment", B = 9999)
+summary(boot_lm)
+boot_lm$boot_algo
+```
 
 
 ## Choice of Bootstrap Weights
@@ -271,14 +280,17 @@ For guidance on how to install `Julia` and `WildBootTests.jl` and how to connect
 
 You can tell `boottest()` to run `WildBootTests.jl` by using the `boot_algo` function argument: 
 
-```{r, message = FALSE, warning = FALSE}
-# set a Julia seed for reproducibility
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
 boot_lm <- boottest(lm_fit, 
                        clustid = "group_id1", 
                        param = "treatment", 
                        B = 9999, 
                        boot_algo = "WildBootTests.jl")
+generics::tidy(boot_lm)
+#             term   estimate statistic    p.value   conf.low conf.high
+#1 1*treatment = 0 0.07290769  3.709435 0.00060006 0.03326969 0.1134117
 ```
+The seed used within Julia is linked to R's global seed, which you can set through the familiar `set.seed()` function.
 
 If you decide to run all your bootstraps through `WildBootTests.jl`, you can set a global variable via 
 
@@ -292,7 +304,7 @@ Calling `boottest()` without specifying `boot_algo = "WildBootTests.jl"` will no
 
 Through `WildBootTests.jl`, `fwildclusterboot` supports the WRE bootstrap by [Davidson & MacKinnon, 2010](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221) for IV (instrumental variables) models for objects of type `ivreg` via the `boottest()` function: 
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
 library(ivreg)
 
 data("SchoolingReturns", package = "ivreg")
@@ -309,7 +321,9 @@ boot_ivreg <- boottest(object = ivreg_fit,
                         clustid = "kww",
                         type = "mammen",
                         impose_null = TRUE)
-summary(boot_ivreg)
+generics::tidy(boot_ivreg)
+#              term  estimate statistic   p.value    conf.low conf.high
+# 1 1*education = 0 0.0638822  1.043969 0.2482482 -0.03152655 0.2128746
 ```
 
 ## Tests of multiple joint hypotheses (q > 1)
@@ -319,7 +333,7 @@ With minor differences, `mboottest()'s` syntax largely mirrors `boottest()`.
 
 To jointly test the null hypothesis $H_0: treatment = 0 \text{ and } ideology1 = 0$ vs $H_0: treatment \neq 0 \text{ and } ideology1 \neq 0$ via a wild cluster bootstrap, you can run
 
-```{r, message = FALSE, warning = FALSE}
+```{r, eval = FALSE, message = FALSE, warning = FALSE}
 library(clubSandwich)
 R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 wboottest <- 
@@ -328,11 +342,11 @@ mboottest(object = lm_fit,
              B = 999, 
              R = R)
 generics::tidy(wboottest)
+#   teststat p_val
+# 1 8.469086     0
 ```
 
-
 # Miscellanea
-
 
 
 <!-- ## Why does `boottest()` not compute standard errors? -->
@@ -508,6 +522,53 @@ df
 
 `boottest()` offers several options for small sample adjustments via the `ssc` function argument which need to be specified via the `boot_ssc()` function. `boot_ssc()` has 4 arguments and is intentionally designed to mimic `fixest's` `ssc()` function. For more information on the default choices and alternative options, see `?fwildclusterboot::boot_ssc()`.
 
+## Memory & the 'lean' implementation of the wild cluster bootstrap
+
+Because the R-implementation of the fast algorithm is memory-intensive, `fwildclusterboot` further supports a Rcpp-based 'lean' implementation of the wild cluster bootstrap in case that memory demands get prohibitively large. In general, the 'lean' algorithm is much slower: its main feature is that it requires *much* less memory. The algorithm is equivalent to the 'wild2' algorithm in the "Fast & Wild" paper by Roodman et al. Note that the implementation in `WildBootTests.jl` is, in general,  very memory-efficient.
+
+```{r, eval = FALSE}
+library(bench)
+
+dt <- fwildclusterboot:::create_data(
+  N = 10000, 
+  N_G1 = 250, 
+  icc1 = 0.01, 
+  N_G2 = 10, 
+  icc2 = 0.01, 
+  numb_fe1 = 10, 
+  numb_fe2 = 10, 
+  seed = 7645
+)
+
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = dt)
+
+res <- 
+bench::mark(
+  "R" = boottest(lm_fit, 
+           clustid = "group_id1", 
+           param = "treatment", 
+           B = 9999, 
+           boot_algo = "R", 
+           nthreads = 4), 
+  "R-lean" = boottest(lm_fit, 
+           clustid = "group_id1", 
+           param = "treatment", 
+           B = 9999, 
+           boot_algo = "R-lean", 
+           nthreads = 4),
+  "WildBootTests.jl" = 
+    boottest(lm_fit, 
+           clustid = "group_id1", 
+           param = "treatment", 
+           B = 9999, 
+           boot_algo = "WildBootTests.jl"), 
+  iterations = 1, 
+  check = FALSE
+)
+
+res
+
+```
 
 
 ## Treatment of Invalid Test Statistics for multiway clustering
