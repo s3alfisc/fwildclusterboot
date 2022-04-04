@@ -99,6 +99,7 @@
 #'  \item{t_boot}{All bootstrap t-statistics.}
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
+#' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.}
 #'
 #' @export
 #' @method boottest felm
@@ -443,7 +444,8 @@ boottest.felm <- function(object,
     R = R,
     r = r,
     boot_algo = boot_algo,
-    nthreads = nthreads
+    nthreads = nthreads, 
+    internal_seed = internal_seed
   )
 
 

@@ -113,6 +113,7 @@ cluster variables contain NA values.}
 \item{getauxweights}{The bootstrap auxiliary weights matrix v. Only returned if getauxweights = TRUE.}
 \item{t_boot}{The bootstrapped t-statistics. Only returned if t_boot = TRUE.}
 \item{boot_algo}{The employed bootstrap algorithm.}
+\item{internal_seed}{The integer value -inherited from set.seed() - used within mboottest() to set the random seed in either R or Julia.}
 }
 \description{
 \code{mboottest.fixest} is a S3 method that allows for fast wild cluster

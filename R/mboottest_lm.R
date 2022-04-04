@@ -68,7 +68,8 @@
 #' \item{call}{Function call of boottest.}
 #' \item{getauxweights}{The bootstrap auxiliary weights matrix v. Only returned if getauxweights = TRUE.}
 #' \item{t_boot}{The bootstrapped t-statistics. Only returned if t_boot = TRUE.}
-#'
+#' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.}
+
 #' @export
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
@@ -242,7 +243,8 @@ mboottest.lm <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    boot_algo = "WildBootTests.jl"
+    boot_algo = "WildBootTests.jl", 
+    internal_seed = internal_seed
   )
   
   

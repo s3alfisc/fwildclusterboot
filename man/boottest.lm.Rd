@@ -151,6 +151,7 @@ confidence interval.}
 \item{regression}{The regression object used in boottest.}
 \item{call}{Function call of boottest.}
 \item{boot_algo}{The employed bootstrap algorithm.}
+\item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.}
 }
 \description{
 \code{boottest.lm} is a S3 method that allows for fast wild cluster
