@@ -56,18 +56,23 @@
 #' @return An object of class \code{mboottest}
 #'
 #' \item{p_val}{The bootstrap p-value.}
-#' \item{N}{Sample size. Might differ from the regression sample size if the
-#'          cluster variables contain NA values.}
-#' \item{B}{Number of Bootstrap Iterations.}
+#' \item{N}{Sample size. Might differ from the regression sample size if
+#'      the cluster variables contain NA values.}
+#' \item{boot_iter}{Number of Bootstrap Iterations.}
 #' \item{clustid}{Names of the cluster Variables.}
 #' \item{N_G}{Dimension of the cluster variables as used in boottest.}
+#' \item{sign_level}{Significance level used in boottest.}
 #' \item{type}{Distribution of the bootstrap weights.}
-#' \item{teststat}{The original test statistics - either imposing the null or not - with small sample correction `G / (G-1)`.}
+#' \item{impose_null}{Whether the null was imposed on the bootstrap dgp or not.}
+#' \item{R}{The vector "R" in the null hypothesis of interest Rbeta = r.}
+#' \item{r}{The scalar "r" in the null hypothesis of interest Rbeta = r.}
+#' \item{point_estimate}{R'beta. A scalar: the constraints vector times the regression coefficients.}
+#' \item{teststat_stat}{The 'original' regression test statistics.}
 #' \item{teststat_boot}{All bootstrap t-statistics.}
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
-#' \item{getauxweights}{The bootstrap auxiliary weights matrix v. Only returned if getauxweights = TRUE.}
-#' \item{t_boot}{The bootstrapped t-statistics. Only returned if t_boot = TRUE.}
+#' \item{boot_algo}{The employed bootstrap algorithm.}
+#' \item{nthreads}{The number of threads employed.}
 #' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.}
 
 #' @export

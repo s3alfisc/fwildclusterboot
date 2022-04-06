@@ -76,13 +76,13 @@
 #'
 #' @importFrom dreamerr check_arg validate_dots
 #' @return An object of class \code{boottest}
-#'
+
 #' \item{p_val}{The bootstrap p-value.}
 #' \item{conf_int}{The bootstrap confidence interval.}
 #' \item{param}{The tested parameter.}
 #' \item{N}{Sample size. Might differ from the regression sample size if
 #'      the cluster variables contain NA values.}
-#' \item{B}{Number of Bootstrap Iterations.}
+#' \item{boot_iter}{Number of Bootstrap Iterations.}
 #' \item{clustid}{Names of the cluster Variables.}
 #' \item{N_G}{Dimension of the cluster variables as used in boottest.}
 #' \item{sign_level}{Significance level used in boottest.}
@@ -91,14 +91,16 @@
 #' \item{R}{The vector "R" in the null hypothesis of interest Rbeta = r.}
 #' \item{r}{The scalar "r" in the null hypothesis of interest Rbeta = r.}
 #' \item{point_estimate}{R'beta. A scalar: the constraints vector times the regression coefficients.}
-#' \item{p_test_vals}{All p-values calculated while calculating the confidence
+#' \item{grid_vals}{All t-statistics calculated while calculating the
+#'       confidence interval.}
+#' \item{p_grid_vals}{All p-values calculated while calculating the confidence
 #'      interval.}
 #' \item{t_stat}{The 'original' regression test statistics.}
-#' \item{test_vals}{All t-statistics calculated while calculating the
-#'       confidence interval.}
 #'  \item{t_boot}{All bootstrap t-statistics.}
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
+#' \item{boot_algo}{The employed bootstrap algorithm.}
+#' \item{nthreads}{The number of threads employed.}
 #' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.}
 #'
 #' @export

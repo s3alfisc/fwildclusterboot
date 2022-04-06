@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
-The `fwildclusterboot` provides a native R implementation of the fast wild cluster bootstrap algorithm developed in [Roodman et al (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for regression objects in R.
+The `fwildclusterboot` package provides a native R implementation of the fast wild cluster bootstrap algorithm developed in [Roodman et al (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for regression objects in R.
 
 It also ports functionality of [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) to R via the [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR).
 
