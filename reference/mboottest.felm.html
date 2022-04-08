@@ -84,7 +84,7 @@ implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019
   na_omit <span class="op">=</span> <span class="cn">TRUE</span>,
   floattype <span class="op">=</span> <span class="st">"Float64"</span>,
   getauxweights <span class="op">=</span> <span class="cn">FALSE</span>,
-  t_boot <span class="op">=</span> <span class="cn">FALSE</span>,
+  teststat_boot <span class="op">=</span> <span class="cn">FALSE</span>,
   maxmatsize <span class="op">=</span> <span class="cn">NULL</span>,
   bootstrapc <span class="op">=</span> <span class="cn">FALSE</span>,
   ssc <span class="op">=</span> <span class="fu"><a href="boot_ssc.html">boot_ssc</a></span><span class="op">(</span>adj <span class="op">=</span> <span class="cn">TRUE</span>, fixef.K <span class="op">=</span> <span class="st">"none"</span>, cluster.adj <span class="op">=</span> <span class="cn">TRUE</span>, cluster.df <span class="op">=</span>
@@ -116,13 +116,14 @@ than one variable is specified, then bootstrapping is clustered by the intersect
 clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 the default is to cluster by the intersection of all the variables specified via the <code>clustid</code> argument,
 even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
-Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.</p></dd>
+Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
+Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is supported - see the <a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a> for details.</p></dd>
 <dt>fe</dt>
 <dd><p>A character vector of length one which contains the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.</p></dd>
 <dt>seed</dt>
-<dd><p>An integer. Controls the random number generation, which is handled via the <code>StableRNG()</code> function from the <code>StableRNGs</code> Julia package.</p></dd>
+<dd><p>An integer. Allows to set a random seed. A global seed can be set via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>.</p></dd>
 <dt>type</dt>
 <dd><p>character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -151,8 +152,8 @@ when fitting the regression model).</p></dd>
 <dd><p>Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?</p></dd>
 <dt>getauxweights</dt>
 <dd><p>Logical. FALSE by default. Whether to save auxilliary weight matrix (v)</p></dd>
-<dt>t_boot</dt>
-<dd><p>Logical. Should bootstrapped t-statistics be returned?</p></dd>
+<dt>teststat_boot</dt>
+<dd><p>Logical. Should bootstrapped test statistics be returned?</p></dd>
 <dt>maxmatsize</dt>
 <dd><p>NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes</p></dd>
 <dt>bootstrapc</dt>
@@ -168,35 +169,41 @@ You can find more details in the help file for <code><a href="boot_ssc.html">boo
     <p>An object of class <code>mboottest</code></p>
 <dl><dt>p_val</dt>
 <dd><p>The bootstrap p-value.</p></dd>
-<dt>param</dt>
-<dd><p>The tested parameter.</p></dd>
 <dt>N</dt>
-<dd><p>Sample size. Might differ from the regression sample size if the
-cluster variables contain NA values.</p></dd>
-<dt>B</dt>
+<dd><p>Sample size. Might differ from the regression sample size if
+the cluster variables contain NA values.</p></dd>
+<dt>boot_iter</dt>
 <dd><p>Number of Bootstrap Iterations.</p></dd>
 <dt>clustid</dt>
 <dd><p>Names of the cluster Variables.</p></dd>
 <dt>N_G</dt>
 <dd><p>Dimension of the cluster variables as used in boottest.</p></dd>
+<dt>sign_level</dt>
+<dd><p>Significance level used in boottest.</p></dd>
 <dt>type</dt>
 <dd><p>Distribution of the bootstrap weights.</p></dd>
-<dt>teststat</dt>
-<dd><p>The original test statistics - either imposing the null or not - with small sample correction <code>G / (G-1)</code>.</p></dd>
+<dt>impose_null</dt>
+<dd><p>Whether the null was imposed on the bootstrap dgp or not.</p></dd>
+<dt>R</dt>
+<dd><p>The vector "R" in the null hypothesis of interest Rbeta = r.</p></dd>
+<dt>r</dt>
+<dd><p>The scalar "r" in the null hypothesis of interest Rbeta = r.</p></dd>
+<dt>point_estimate</dt>
+<dd><p>R'beta. A scalar: the constraints vector times the regression coefficients.</p></dd>
+<dt>teststat_stat</dt>
+<dd><p>The 'original' regression test statistics.</p></dd>
 <dt>teststat_boot</dt>
 <dd><p>All bootstrap t-statistics.</p></dd>
 <dt>regression</dt>
 <dd><p>The regression object used in boottest.</p></dd>
 <dt>call</dt>
 <dd><p>Function call of boottest.</p></dd>
-<dt>getauxweights</dt>
-<dd><p>The bootstrap auxiliary weights matrix v. Only returned if getauxweights = TRUE.</p></dd>
-<dt>t_boot</dt>
-<dd><p>The bootstrapped t-statistics. Only returned if t_boot = TRUE.</p></dd>
 <dt>boot_algo</dt>
 <dd><p>The employed bootstrap algorithm.</p></dd>
+<dt>nthreads</dt>
+<dd><p>The number of threads employed.</p></dd>
 <dt>internal_seed</dt>
-<dd><p>The integer value -inherited from set.seed() - used within mboottest() to set the random seed in either R or Julia.</p></dd>
+<dd><p>The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

@@ -113,14 +113,16 @@ coefficient(s) for which the hypothesis is to be tested</p></dd>
 <dd><p>Integer. The number of bootstrap iterations. When the number of clusters is low,
 increasing B adds little additional runtime.</p></dd>
 <dt>clustid</dt>
-<dd><p>A character vector containing the names of the cluster variables</p></dd>
+<dd><p>A character vector containing the names of the cluster variables. If NULL,
+a heteroskedasticity-robust (HC1) wild bootstrap is run.</p></dd>
 <dt>bootcluster</dt>
 <dd><p>A character vector. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
 clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 the default is to cluster by the intersection of all the variables specified via the <code>clustid</code> argument,
 even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
-Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.</p></dd>
+Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
+Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is supported - see the <a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a> for details.</p></dd>
 <dt>fe</dt>
 <dd><p>A character vector of length one which contains the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
@@ -131,9 +133,10 @@ of the inference procedure. E.g. sign_level = 0.05
 returns 0.95% confidence intervals. By default, sign_level = 0.05.</p></dd>
 <dt>conf_int</dt>
 <dd><p>A logical vector. If TRUE, boottest computes confidence
-intervals by p-value inversion. If FALSE, only the p-value is returned.</p></dd>
+intervals by test inversion. If FALSE, only the p-value is returned.</p></dd>
 <dt>seed</dt>
-<dd><p>An integer. Allows the user to set a random seed. If you want to set a "global" seed, set it via <code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code>. For Mammen weights, you have to use <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> instead.</p></dd>
+<dd><p>An integer. Allows to set a random seed. For all bootstrap algorithms -
+R, R-lean, and WildBootTests.jl - a global seed can be set via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>.</p></dd>
 <dt>R</dt>
 <dd><p>Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as <code>param</code>. If NULL, a vector of ones of length param.</p></dd>
 <dt>r</dt>
@@ -178,24 +181,21 @@ to use. The default is to use 1 core.</p></dd>
 <dd><p>An object of class <code>boot_ssc.type</code> obtained with the function <code><a href="boot_ssc.html">boot_ssc</a></code>. Represents how the small sample adjustments are computed. The defaults are <code>adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"</code>.
 You can find more details in the help file for <code><a href="boot_ssc.html">boot_ssc()</a></code>. The function is purposefully designed to mimic fixest's <code><a href="https://lrberge.github.io/fixest/reference/ssc.html" class="external-link">ssc</a></code> function.</p></dd>
 <dt>boot_algo</dt>
-<dd><p>Character scalar. Either "R" or "WildBootTests.jl". Controls the algorithm employed by boottest.
-"R" is the default and implements the cluster bootstrap as in Roodman (2019). "WildBootTests.jl" executes the wild cluster bootstrap by via the WildBootTests.jl
-package. For it to run, Julia and WildBootTests.jl need to be installed. Check out the set_up_ ... functions
-The "fast and wild" algorithm is extremely fast for small number of clusters, but because it is fully vectorized, very memory-demanding.
-For large number of clusters and large number of bootstrap iterations, the fast and wild algorithm becomes infeasible. If a out-of-memory error #
-occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
-Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. Note that you can set the employed algorithm globally by using the
+<dd><p>Character scalar. Either "R" or "WildBootTests.jl". Controls the algorithm employed by boottest().
+"R" is the default and implements the cluster bootstrap as in Roodman (2019). "WildBootTests.jl" executes the wild cluster bootstrap via the WildBootTests.jl
+package. For it to run, Julia and WildBootTests.jl need to be installed.
+Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. You can set the employed algorithm globally by using the
 <code><a href="setBoottest_boot_algo.html">setBoottest_boot_algo()</a></code> function.</p></dd>
 <dt>floattype</dt>
-<dd><p>Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?</p></dd>
+<dd><p>Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit? Only relevant when 'boot_algo = "WildBootTests.jl"'</p></dd>
 <dt>maxmatsize</dt>
-<dd><p>... Only relevant when "boot_algo" is set to "WildBootTests.jl".</p></dd>
+<dd><p>NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes. Only relevant when 'boot_algo = "WildBootTests.jl"'</p></dd>
 <dt>bootstrapc</dt>
-<dd><p>... Only relevant when "boot_algo" is set to "WildBootTests.jl". Runs the boostrap-c as advertised by Young (2019).</p></dd>
+<dd><p>Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo = "WildBootTests.jl"'</p></dd>
 <dt>t_boot</dt>
-<dd><p>...</p></dd>
+<dd><p>Logical. Should bootstrapped t-statistics be returned?</p></dd>
 <dt>getauxweights</dt>
-<dd><p>...</p></dd>
+<dd><p>Logical. Whether to save auxilliary weight matrix (v)</p></dd>
 <dt>...</dt>
 <dd><p>Further arguments passed to or from other methods.</p></dd>
 </dl></div>
@@ -211,7 +211,7 @@ Note that if no cluster is provided, boottest() always defaults to the "lean" al
 <dt>N</dt>
 <dd><p>Sample size. Might differ from the regression sample size if
 the cluster variables contain NA values.</p></dd>
-<dt>B</dt>
+<dt>boot_iter</dt>
 <dd><p>Number of Bootstrap Iterations.</p></dd>
 <dt>clustid</dt>
 <dd><p>Names of the cluster Variables.</p></dd>
@@ -229,22 +229,26 @@ the cluster variables contain NA values.</p></dd>
 <dd><p>The scalar "r" in the null hypothesis of interest Rbeta = r.</p></dd>
 <dt>point_estimate</dt>
 <dd><p>R'beta. A scalar: the constraints vector times the regression coefficients.</p></dd>
-<dt>p_test_vals</dt>
+<dt>grid_vals</dt>
+<dd><p>All t-statistics calculated while calculating the
+confidence interval.</p></dd>
+<dt>p_grid_vals</dt>
 <dd><p>All p-values calculated while calculating the confidence
 interval.</p></dd>
 <dt>t_stat</dt>
 <dd><p>The 'original' regression test statistics.</p></dd>
-<dt>test_vals</dt>
-<dd><p>All t-statistics calculated while calculating the
-confidence interval.</p></dd>
 <dt>t_boot</dt>
 <dd><p>All bootstrap t-statistics.</p></dd>
 <dt>regression</dt>
 <dd><p>The regression object used in boottest.</p></dd>
 <dt>call</dt>
 <dd><p>Function call of boottest.</p></dd>
+<dt>boot_algo</dt>
+<dd><p>The employed bootstrap algorithm.</p></dd>
+<dt>nthreads</dt>
+<dd><p>The number of threads employed.</p></dd>
 <dt>internal_seed</dt>
-<dd><p>The integer value -inherited from set.seed() - used within mboottest() to set the random seed in either R or Julia.</p></dd>
+<dd><p>The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="confidence-intervals">Confidence Intervals<a class="anchor" aria-label="anchor" href="#confidence-intervals"></a></h2>
