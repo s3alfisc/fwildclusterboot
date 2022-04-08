@@ -19,12 +19,6 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item">
-  <a class="nav-link" href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li class="nav-item">
   <a class="nav-link" href="../articles/fwildclusterboot.html">Get started</a>
 </li>
 <li class="nav-item">
@@ -43,7 +37,7 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
       <ul class="navbar-nav"><li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/s3alfisc/fwildclusterboot/">
+  <a class="external-link nav-link" href="https://github.com/s3alfisc/fwildclusterboot/" aria-label="github">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -62,24 +56,80 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8" id="fwildclusterboot-08">fwildclusterboot 0.8<a class="anchor" aria-label="anchor" href="#fwildclusterboot-08"></a></h2>
 <div class="section level4">
-<h4 id="1-wildboottestsjl-0-8">1) WildBootTests.jl<a class="anchor" aria-label="anchor" href="#1-wildboottestsjl-0-8"></a></h4>
+<h4 id="two-new-bootstrap-algorithms-wildboottestsjl-and-r-lean-0-8">Two new bootstrap algorithms: ‘WildBootTests.jl’ and ‘R-lean’<a class="anchor" aria-label="anchor" href="#two-new-bootstrap-algorithms-wildboottestsjl-and-r-lean-0-8"></a></h4>
+<div class="section level5">
+<h5 id="boot_algo--wildboottestsjl-0-8">boot_algo = ‘WildBootTests.jl’<a class="anchor" aria-label="anchor" href="#boot_algo--wildboottestsjl-0-8"></a></h5>
 <ul><li>
-<code>fwildclusterboot</code> now supports calling <code>WildBootTests.jl</code>, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, <code>boot_algo</code>, through which the user can choose if she wants to run the fast wild cluster bootstrap via R or Julia.</li>
-<li>WildBootTests.jl is (after compilation) orders of magnitudes faster than <code>fwildclusterboot's</code> native R implementation, and speed gains are particularly pronounced for large problems with a large number of clusters and many bootstrap iterations.</li>
-<li>Furthermore, <code>WildBootTests.jl</code> supports a range of models and tests that were previously not supported by <code>fwildclusterboot</code>: most importantly a) wild cluster bootstrap tests of multiple joint hypotheses and b) the WRE bootstrap by Davidson &amp; MacKinnon for instrumental variables estimation. On top of the cake … WRE is really fast.</li>
-<li>For guidance on how to run <code>WildBooTests.jl</code>, have a look at the associated <a href="https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html">article</a>.</li>
+<code>fwildclusterboot</code> now supports calling <code>WildBootTests.jl</code>, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, <code>boot_algo</code>, through which it is possible to control the executed bootstrap algorithm.</li>
+</ul><pre class="{r}"><code><span class="co"># load data set voters included in fwildclusterboot</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span>
+<span class="co"># estimate the regression model via lm</span>
+<span class="va">lm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
+<span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span>
+  <span class="va">lm_fit</span>, 
+  clustid <span class="op">=</span> <span class="st">"group_id1"</span>, 
+  param <span class="op">=</span> <span class="st">"treatment"</span>, 
+  B <span class="op">=</span> <span class="fl">9999</span>, 
+  boot_algo <span class="op">=</span> <span class="st">"WildBootTests.jl"</span>
+<span class="op">)</span></code></pre>
+<ul><li><p>WildBootTests.jl is (after compilation) orders of magnitudes faster than <code>fwildclusterboot's</code> native R implementation, and speed gains are particularly pronounced for large problems with a large number of clusters and many bootstrap iterations.</p></li>
+<li><p>Furthermore, <code>WildBootTests.jl</code> supports a range of models and tests that were previously not supported by <code>fwildclusterboot</code>: most importantly a) wild cluster bootstrap tests of multiple joint hypotheses and b) the WRE bootstrap by Davidson &amp; MacKinnon for instrumental variables estimation. On top of the cake … the WRE is really fast.</p></li>
+</ul><pre class="{r}"><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://john-d-fox.github.io/ivreg/" class="external-link">ivreg</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"SchoolingReturns"</span>, package <span class="op">=</span> <span class="st">"ivreg"</span><span class="op">)</span>
+<span class="co"># drop all NA values from SchoolingReturns</span>
+<span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="va">SchoolingReturns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">SchoolingReturns</span>, <span class="va">is.na</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>,<span class="op">]</span>
+<span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span>
+                           <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span>  <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>, data <span class="op">=</span> <span class="va">SchoolingReturns</span><span class="op">)</span>
+
+<span class="va">boot_ivreg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span>
+  object <span class="op">=</span> <span class="va">ivreg_fit</span>,
+  B <span class="op">=</span> <span class="fl">999</span>,
+  param <span class="op">=</span> <span class="st">"education"</span>,
+  clustid <span class="op">=</span> <span class="st">"kww"</span>,
+  type <span class="op">=</span> <span class="st">"mammen"</span>,
+  impose_null <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
+<span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span>
+<span class="co">#              term  estimate statistic   p.value    conf.low conf.high</span>
+<span class="co"># 1 1*education = 0 0.0638822  1.043969 0.2482482 -0.03152655 0.2128746</span></code></pre>
+<ul><li><p>For guidance on how to install and run <code>WildBooTests.jl</code>, have a look at the associated <a href="https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html">article</a>.</p></li>
+<li><p>Also, note that running the wild cluster bootstrap through <code>WildBootTests.jl</code> is often very memory-efficient.</p></li>
 </ul></div>
-<div class="section level4">
-<h4 id="2-lean-rcpp-based-implementations-of-the-wild-heteroskedastic-and-wild-cluster-robust-0-8">2) ‘Lean’ Rcpp-based implementations of the wild heteroskedastic and wild cluster robust<a class="anchor" aria-label="anchor" href="#2-lean-rcpp-based-implementations-of-the-wild-heteroskedastic-and-wild-cluster-robust-0-8"></a></h4>
-<p>A key limitation of the vectorized ‘fast’ cluster bootstrap algorithm as implemented in <code>fwildclusterboot</code> is that it is very memory-demanding. For ‘larger’ problems, running <code><a href="../reference/boottest.html">boottest()</a></code> might lead to out-of-memory errors. To offer an alternative, <code><a href="../reference/boottest.html">boottest()</a></code> now ships two ‘new’ rcpp- and loop-based algorithms:</p>
-<ul><li>It is now possible to run <code><a href="../reference/boottest.html">boottest()</a></code> without specifying a <code>clustid</code> function argument. In this case, <code><a href="../reference/boottest.html">boottest()</a></code> runs a heteroskedasticity-robust wild bootstrap, which is implemented in c++.</li>
-<li>Second, <code>fwildclusterboot</code> now ships a “lean” implementation of the wild cluster bootstrap, which is in general much slower than the ‘fast’ algorithm, but requires less memory. The algorithm is equivalent to the ‘wild2’ algorithm in the “Fast &amp; Wild” paper by Roodman et al.</li>
-</ul><p>Also, note that running the wild cluster bootstrap through <code>WildBootTests.jl</code> is often very memory-efficient.</p>
+<div class="section level5">
+<h5 id="boot_algo--r-lean-0-8">boot_algo = ‘R-lean’<a class="anchor" aria-label="anchor" href="#boot_algo--r-lean-0-8"></a></h5>
+<p>A key limitation of the vectorized ‘fast’ cluster bootstrap algorithm as implemented in <code>fwildclusterboot</code> is that it is very memory-demanding. For ‘larger’ problems, running <code><a href="../reference/boottest.html">boottest()</a></code> might lead to out-of-memory errors. To offer an alternative, <code><a href="../reference/boottest.html">boottest()</a></code> now ships a ‘new’ rcpp- and loop-based implementation of the wild cluster bootstrap (the ‘wild2’ algorithm in Roodman et al).</p>
+<pre class="{r}"><code><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span>
+  <span class="va">lm_fit</span>, 
+  clustid <span class="op">=</span> <span class="st">"group_id1"</span>, 
+  param <span class="op">=</span> <span class="st">"treatment"</span>, 
+  B <span class="op">=</span> <span class="fl">9999</span>, 
+  boot_algo <span class="op">=</span> <span class="st">"R-lean"</span>
+<span class="op">)</span></code></pre>
+</div>
 </div>
 <div class="section level4">
-<h4 id="3-boottest-function-argument-beta0-deprecated-0-8">3) <code>boottest()</code> function argument <code>beta0</code> deprecated<a class="anchor" aria-label="anchor" href="#3-boottest-function-argument-beta0-deprecated-0-8"></a></h4>
-<ul><li>For consistency with <code>WildBootTests.jl</code>, it is now replaced by a new function argument, <code>r</code>. You can still use <code>beta0</code>.</li>
-</ul></div>
+<h4 id="heteroskeadstic-wild-bootstrap-0-8">Heteroskeadstic Wild Bootstrap<a class="anchor" aria-label="anchor" href="#heteroskeadstic-wild-bootstrap-0-8"></a></h4>
+<p>It is now possible to run <code><a href="../reference/boottest.html">boottest()</a></code> without specifying a <code>clustid</code> function argument. In this case, <code><a href="../reference/boottest.html">boottest()</a></code> runs a heteroskedasticity-robust wild bootstrap (HC1), which is implemented in c++.</p>
+<pre class="{r}"><code><span class="va">boot_hc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot_hc1</span><span class="op">)</span></code></pre>
+</div>
+<div class="section level4">
+<h4 id="random-seeds-0-8">Random Seeds<a class="anchor" aria-label="anchor" href="#random-seeds-0-8"></a></h4>
+<p>Supporting stochastic algorithms in multiple languages from within R poses some challenges for random number generation. Starting with version 0.8, it is possible and recommended to control <em>all</em> random number generation globally via the familiar <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> function. Now, how is random number generation in Julia linked to R’s seed? Or, in other words, how is R’s seed passed to Julia (and back)? In short, <code><a href="../reference/boottest.html">boottest()</a></code> now uses an internal random seed which is created by using an integer that is randomly generated by a function that directly depends on R’s seed (and calling which shifts the seed’s state). In practice, <code><a href="../reference/boottest.html">boottest()</a></code> calls <code><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int()</a></code> and uses it to set an internal random seed (if <code>boot_algo = 'R'</code> via <code>dqrng::set.seed()</code> for rademacher, webb and normal weights and via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> for <code>boot_algo = 'R'</code> and mammen weights and for <code>boot_algo = 'R-lean'</code>. For Julia, the internal seed is set via <code>!Random.seed()</code>).</p>
+</div>
+<div class="section level4">
+<h4 id="boottest-function-argument-beta0-deprecated-0-8">
+<code>boottest()</code> function argument <code>beta0</code> deprecated<a class="anchor" aria-label="anchor" href="#boottest-function-argument-beta0-deprecated-0-8"></a></h4>
+<p>For consistency with <code>WildBootTests.jl</code>, it is now replaced by a new function argument, <code>r</code>. You can still use <code>beta0</code> for the forseeable future - <code><a href="../reference/boottest.html">boottest()</a></code> will throw a warning.</p>
+</div>
+<div class="section level4">
+<h4 id="frühjahrsputz-0-8">Frühjahrsputz<a class="anchor" aria-label="anchor" href="#fr%C3%BChjahrsputz-0-8"></a></h4>
+<p>I have spent some time to clean up <code>fwildclusterboot's</code> internals, which should now hopefully be more readable and easier to maintain.</p>
+</div>
+<div class="section level4">
+<h4 id="testing-0-8">Testing<a class="anchor" aria-label="anchor" href="#testing-0-8"></a></h4>
+<p><code>fwildclusterboot</code> is now pre-dominantly tested against <code>WildBootTests.jl</code>. Tests that depend on Julia are by default on run on CRAN, but are regularly run on Mac, Windows and Linux via <a href="https://github.com/s3alfisc/fwildclusterboot/actions/workflows/R-CMD-check.yaml" class="external-link">github actions</a>.</p>
+</div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7" id="fwildclusterboot-07">fwildclusterboot 0.7<a class="anchor" aria-label="anchor" href="#fwildclusterboot-07"></a></h2><p class="text-muted">CRAN release: 2022-01-03</p>
@@ -106,7 +156,7 @@
 <li>To align <code>fwildclusterboot</code> with Stata’s boottest command (Roodman et al, 2019), Mammen weights are no longer enumerated in <code><a href="../reference/boottest.html">fwildclusterboot::boottest()</a></code>.</li>
 <li>
 <code><a href="../reference/boottest.html">boottest()</a></code> no longer sets an internal seed (previously set.seed(1)) if no seed is provided as a function argument.</li>
-<li>Sampling of the bootstrap weights is now powered by the <code>dqrng</code> package, which speeds up the creation of the bootstrap weights matrix. To set a “global” seed, one now has use the <code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqset.seed()</a></code> function from the <code>dqrng package</code>, which is added as a dependency.</li>
+<li>Sampling of the bootstrap weights is now powered by the <code>dqrng</code> package, which speeds up the creation of the bootstrap weights matrix. To set a “global” seed, one now has use the <code>dqset.seed()</code> function from the <code>dqrng package</code>, which is added as a dependency.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.7" id="fwildclusterboot-037">fwildclusterboot 0.3.7<a class="anchor" aria-label="anchor" href="#fwildclusterboot-037"></a></h2><p class="text-muted">CRAN release: 2021-09-14</p>

@@ -22,8 +22,8 @@ coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/ba
 
 <!-- badges: end -->
 
-The `fwildclusterboot` provides a native R implementation of the fast
-wild cluster bootstrap algorithm developed in [Roodman et al
+The `fwildclusterboot` package provides a native R implementation of the
+fast wild cluster bootstrap algorithm developed in [Roodman et al
 (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for
 regression objects in R.
 
