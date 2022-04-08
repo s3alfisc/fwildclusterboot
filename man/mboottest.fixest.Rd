@@ -47,13 +47,14 @@ than one variable is specified, then bootstrapping is clustered by the intersect
 clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 the default is to cluster by the intersection of all the variables specified via the \code{clustid} argument,
 even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
-Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.}
+Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
+Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.}
 
 \item{fe}{A character vector of length one which contains the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.}
 
-\item{seed}{An integer. Controls the random number generation, which is handled via the \code{StableRNG()} function from the \code{StableRNGs} Julia package.}
+\item{seed}{An integer. Allows to set a random seed. A global seed can be set via \code{set.seed()}.}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -83,8 +84,6 @@ when fitting the regression model).}
 
 \item{getauxweights}{Logical. FALSE by default. Whether to save auxilliary weight matrix (v)}
 
-\item{t_boot}{Logical. Should bootstrapped t-statistics be returned?}
-
 \item{maxmatsize}{NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes}
 
 \item{bootstrapc}{Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t}
@@ -93,6 +92,8 @@ when fitting the regression model).}
 You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.}
 
 \item{...}{Further arguments passed to or from other methods.}
+
+\item{teststat_boot}{Logical. Should bootstrapped test statistics be returned?}
 }
 \value{
 An object of class \code{mboottest}

@@ -17,12 +17,13 @@
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
+#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.
 #' @param sign_level A numeric between 0 and 1 which sets the significance level
 #'        of the inference procedure. E.g. sign_level = 0.05
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
 #' @param conf_int A logical vector. If TRUE, boottest computes confidence
-#'        intervals by p-value inversion. If FALSE, only the p-value is returned.
-#' @param seed An integer. Controls the random number generation, which is handled via the `StableRNG()` function from the `StableRNGs` Julia package.
+#'        intervals by test inversion. If FALSE, only the p-value is returned.
+#' @param seed An integer. Allows to set a random seed. A global seed can be set via `set.seed()`.
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
@@ -51,10 +52,10 @@
 #' @param t_boot Logical. Should bootstrapped t-statistics be returned?
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t
-#' @param LIML Logical scalar. False by default. TRUE for LIML or Fuller LIML
-#' @param Fuller NULL by default. Numeric scalar. Fuller LIML factor
+#' @param liml Logical scalar. False by default. TRUE for liml or fuller liml
+#' @param fuller NULL by default. Numeric scalar. fuller liml factor
 #' @param kappa Null by default. fixed <U+03BA> for k-class estimation
-#' @param ARubin False by default. Logical scalar. TRUE for Anderson-Rubin Test.
+#' @param arubin False by default. Logical scalar. TRUE for Anderson-Rubin Test.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.
 #' @param ... Further arguments passed to or from other methods.
@@ -146,10 +147,10 @@ boottest.ivreg <- function(object,
                            t_boot = FALSE,
                            maxmatsize = NULL,
                            bootstrapc = FALSE,
-                           LIML = FALSE,
-                           Fuller = NULL,
+                           liml = FALSE,
+                           fuller = NULL,
                            kappa = NULL,
-                           ARubin = FALSE,
+                           arubin = FALSE,
                            ssc = boot_ssc(
                              adj = TRUE,
                              fixef.K = "none",
@@ -180,10 +181,10 @@ boottest.ivreg <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   # IV specific arguments
-  check_arg(LIML, "scalar logical")
-  check_arg(Fuller, "NULL | scalar numeric")
+  check_arg(liml, "scalar logical")
+  check_arg(fuller, "NULL | scalar numeric")
   check_arg(kappa, "NULL | scalar numeric")
-  check_arg(ARubin, "scalar logical")
+  check_arg(arubin, "scalar logical")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
 
@@ -196,12 +197,8 @@ boottest.ivreg <- function(object,
     internal_seed <- get_seed()
   }
 
-  JuliaConnectoR::juliaEval("using Random")
-  # JuliaConnectoR::juliaEval('using StableRNGs')
-  # JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
-  rng_char <- paste0("Random.seed!(", internal_seed, ")")
-  JuliaConnectoR::juliaEval(rng_char)
-  internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed), ")"))
+  JuliaConnectoR::juliaEval('using StableRNGs')
+  internal_seed <- JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
 
   # translate ssc into small_sample_adjustment
   if (ssc[["adj"]] == TRUE && ssc[["cluster.adj"]] == TRUE) {
@@ -284,8 +281,8 @@ boottest.ivreg <- function(object,
     type = type,
     floattype = floattype,
     bootstrapc = bootstrapc,
-    # LIML = LIML,
-    # ARubin = ARubin,
+    # liml = liml,
+    # arubin = arubin,
     getauxweights = getauxweights,
     internal_seed = internal_seed,
     maxmatsize = maxmatsize,

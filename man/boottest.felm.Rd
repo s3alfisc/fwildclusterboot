@@ -44,23 +44,26 @@ coefficient(s) for which the hypothesis is to be tested}
 \item{B}{Integer. The number of bootstrap iterations. When the number of clusters is low,
 increasing B adds little additional runtime.}
 
-\item{clustid}{A character vector containing the names of the cluster variables}
+\item{clustid}{A character vector containing the names of the cluster variables. If NULL,
+a heteroskedasticity-robust (HC1) wild bootstrap is run.}
 
 \item{bootcluster}{A character vector. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
 clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 the default is to cluster by the intersection of all the variables specified via the \code{clustid} argument,
 even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
-Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.}
+Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
+Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.}
 
 \item{fe}{A character vector of length one which contains the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence
-intervals by p-value inversion. If FALSE, only the p-value is returned.}
+intervals by test inversion. If FALSE, only the p-value is returned.}
 
-\item{seed}{An integer. Allows the user to set a random seed. If you want to set a "global" seed, set it via \code{dqrng::dqset.seed()}. For Mammen weights, you have to use \code{set.seed()} instead.}
+\item{seed}{An integer. Allows to set a random seed. For all bootstrap algorithms -
+R, R-lean, and WildBootTests.jl - a global seed can be set via \code{set.seed()}.}
 
 \item{R}{Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as \code{param}. If NULL, a vector of ones of length param.}
 
@@ -118,15 +121,15 @@ occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-arma
 Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. Note that you can set the employed algorithm globally by using the
 \code{setBoottest_boot_algo()} function.}
 
-\item{floattype}{Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?}
+\item{floattype}{Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit? Only relevant when 'boot_algo = "WildBootTests.jl"'}
 
-\item{maxmatsize}{... Only relevant when "boot_algo" is set to "WildBootTests.jl".}
+\item{maxmatsize}{NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes. Only relevant when 'boot_algo = "WildBootTests.jl"'}
 
-\item{bootstrapc}{... Only relevant when "boot_algo" is set to "WildBootTests.jl". Runs the boostrap-c as advertised by Young (2019).}
+\item{bootstrapc}{Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo = "WildBootTests.jl"'}
 
-\item{t_boot}{...}
+\item{t_boot}{Logical. Should bootstrapped t-statistics be returned?}
 
-\item{getauxweights}{...}
+\item{getauxweights}{Logical. Whether to save auxilliary weight matrix (v)}
 
 \item{...}{Further arguments passed to or from other methods.}
 }

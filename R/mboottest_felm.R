@@ -14,10 +14,11 @@
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
+#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.
 #' @param fe A character vector of length one which contains the name of the fixed effect to be projected
 #'        out in the bootstrap. Note: if regression weights are used, fe
 #'        needs to be NULL.
-#' @param seed An integer. Controls the random number generation, which is handled via the `StableRNG()` function from the `StableRNGs` Julia package.
+#' @param seed An integer. Allows to set a random seed. A global seed can be set via `set.seed()`.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
 #' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
@@ -44,7 +45,7 @@
 #'        when fitting the regression model).
 #' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?
 #' @param getauxweights Logical. FALSE by default. Whether to save auxilliary weight matrix (v)
-#' @param t_boot Logical. Should bootstrapped t-statistics be returned?
+#' @param teststat_boot Logical. Should bootstrapped test statistics be returned?
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`.
@@ -119,7 +120,7 @@ mboottest.felm <- function(object,
                            na_omit = TRUE,
                            floattype = "Float64",
                            getauxweights = FALSE,
-                           t_boot = FALSE,
+                           teststat_boot = FALSE,
                            maxmatsize = NULL,
                            bootstrapc = FALSE,
                            ssc = boot_ssc(
@@ -149,6 +150,7 @@ mboottest.felm <- function(object,
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
+  check_arg(teststat_boot, "logical scalar")
   
   if (is.null(seed)) {
     internal_seed <- get_seed()
@@ -158,13 +160,9 @@ mboottest.felm <- function(object,
   }
   
   # set random seed
-  JuliaConnectoR::juliaEval("using Random")
-  # JuliaConnectoR::juliaEval('using StableRNGs')
-  # JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
-  rng_char <- paste0("Random.seed!(", internal_seed, ")")
-  JuliaConnectoR::juliaEval(rng_char)
-  internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed), ")"))
-  
+  JuliaConnectoR::juliaEval('using StableRNGs')
+  internal_seed <- JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
+
   check_mboottest_args_plus(
     object = object,
     R = R,

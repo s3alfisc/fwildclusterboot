@@ -26,10 +26,10 @@
   t_boot = FALSE,
   maxmatsize = NULL,
   bootstrapc = FALSE,
-  LIML = FALSE,
-  Fuller = NULL,
+  liml = FALSE,
+  fuller = NULL,
   kappa = NULL,
-  ARubin = FALSE,
+  arubin = FALSE,
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
   ...
@@ -51,12 +51,13 @@ than one variable is specified, then bootstrapping is clustered by the intersect
 clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 the default is to cluster by the intersection of all the variables specified via the \code{clustid} argument,
 even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
-Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.}
+Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
+Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence
-intervals by p-value inversion. If FALSE, only the p-value is returned.}
+intervals by test inversion. If FALSE, only the p-value is returned.}
 
-\item{seed}{An integer. Controls the random number generation, which is handled via the \code{StableRNG()} function from the \code{StableRNGs} Julia package.}
+\item{seed}{An integer. Allows to set a random seed. A global seed can be set via \code{set.seed()}.}
 
 \item{R}{Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as \code{param}. If NULL, a vector of ones of length param.}
 
@@ -103,13 +104,13 @@ when fitting the regression model).}
 
 \item{bootstrapc}{Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t}
 
-\item{LIML}{Logical scalar. False by default. TRUE for LIML or Fuller LIML}
+\item{liml}{Logical scalar. False by default. TRUE for liml or fuller liml}
 
-\item{Fuller}{NULL by default. Numeric scalar. Fuller LIML factor}
+\item{fuller}{NULL by default. Numeric scalar. fuller liml factor}
 
 \item{kappa}{Null by default. fixed <U+03BA> for k-class estimation}
 
-\item{ARubin}{False by default. Logical scalar. TRUE for Anderson-Rubin Test.}
+\item{arubin}{False by default. Logical scalar. TRUE for Anderson-Rubin Test.}
 
 \item{ssc}{An object of class \code{boot_ssc.type} obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are \verb{adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"}.
 You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.}

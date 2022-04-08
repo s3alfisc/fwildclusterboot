@@ -6,7 +6,8 @@
 #' implemented in the STATA package `boottest`.
 #'
 #' @param object An object of class fixest and estimated via `fixest::feols()`. Non-linear models are not supported.
-#' @param clustid A character vector containing the names of the cluster variables
+#' @param clustid A character vector containing the names of the cluster variables. If NULL, 
+#'        a heteroskedasticity-robust (HC1) wild bootstrap is run. 
 #' @param param A character vector. The name of the regression
 #'        coefficient(s) for which the hypothesis is to be tested
 #' @param B Integer. The number of bootstrap iterations. When the number of clusters is low,
@@ -17,6 +18,7 @@
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
+#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.
 #' @param fe A character vector of length one which contains the name of the fixed effect to be projected
 #'        out in the bootstrap. Note: if regression weights are used, fe
 #'        needs to be NULL.
@@ -24,8 +26,15 @@
 #'        of the inference procedure. E.g. sign_level = 0.05
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
 #' @param conf_int A logical vector. If TRUE, boottest computes confidence
-#'        intervals by p-value inversion. If FALSE, only the p-value is returned.
-#' @param seed An integer. Allows the user to set a random seed. If you want to set a "global" seed, set it via `dqrng::dqset.seed()`. For Mammen weights, you have to use `set.seed()` instead.
+#'        intervals by test inversion. If FALSE, only the p-value is returned.
+#' @param boot_algo Character scalar. Either "R" or "WildBootTests.jl". Controls the algorithm employed by boottest().
+#'                  "R" is the default and implements the cluster bootstrap as in Roodman (2019). "WildBootTests.jl" executes the wild cluster bootstrap via the WildBootTests.jl
+#'                  package. For it to run, Julia and WildBootTests.jl need to be installed. 
+#                   The "R-lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
+#'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. You can set the employed algorithm globally by using the
+#'                  `setBoottest_boot_algo()` function.
+#' @param seed An integer. Allows to set a random seed. For all bootstrap algorithms - 
+#'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`.
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
@@ -58,19 +67,11 @@
 #'                 to use. The default is to use 1 core.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.
-#' @param boot_algo Character scalar. Either "R" or "WildBootTests.jl". Controls the algorithm employed by boottest.
-#'                  "R" is the default and implements the cluster bootstrap as in Roodman (2019). "WildBootTests.jl" executes the wild cluster bootstrap by via the WildBootTests.jl
-#'                  package. For it to run, Julia and WildBootTests.jl need to be installed. Check out the set_up_ ... functions
-#'                  The "fast and wild" algorithm is extremely fast for small number of clusters, but because it is fully vectorized, very memory-demanding.
-#'                  For large number of clusters and large number of bootstrap iterations, the fast and wild algorithm becomes infeasible. If a out-of-memory error #
-#'                  occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
-#'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. Note that you can set the employed algorithm globally by using the
-#'                  `setBoottest_boot_algo()` function.
-#' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?
-#' @param maxmatsize ... Only relevant when "boot_algo" is set to "WildBootTests.jl".
-#' @param bootstrapc ... Only relevant when "boot_algo" is set to "WildBootTests.jl". Runs the boostrap-c as advertised by Young (2019).
-#' @param t_boot ...
-#' @param getauxweights ...
+#' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
+#' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit? Only relevant when 'boot_algo = "WildBootTests.jl"'
+#' @param maxmatsize NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes. Only relevant when 'boot_algo = "WildBootTests.jl"'
+#' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo = "WildBootTests.jl"'
+#' @param t_boot Logical. Should bootstrapped t-statistics be returned?
 #' @param ... Further arguments passed to or from other methods.
 #' @import JuliaConnectoR
 #' @importFrom dreamerr check_arg validate_dots
@@ -259,12 +260,8 @@ boottest.fixest <- function(object,
   } else if (boot_algo == "R-lean") {
     set.seed(internal_seed)
   } else if (boot_algo == "WildBootTests.jl") {
-    JuliaConnectoR::juliaEval("using Random")
-    # JuliaConnectoR::juliaEval('using StableRNGs')
-    # JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
-    rng_char <- paste0("Random.seed!(", internal_seed, ")")
-    JuliaConnectoR::juliaEval(rng_char)
-    internal_seed <- JuliaConnectoR::juliaEval(paste0("Random.MersenneTwister(", as.integer(internal_seed), ")"))
+    JuliaConnectoR::juliaEval('using StableRNGs')
+    internal_seed <- JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
   }
 
 

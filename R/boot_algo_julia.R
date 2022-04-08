@@ -1,5 +1,5 @@
 boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid, sign_level, conf_int, tol, p_val_type, type,
-                            floattype, bootstrapc, getauxweights, fweights, internal_seed, maxmatsize, small, clusteradj, clustermin, fe = NULL, fedfadj = NULL, LIML = NULL, ARubin = NULL, Fuller = NULL, kappa = NULL) {
+                            floattype, bootstrapc, getauxweights, fweights, internal_seed, maxmatsize, small, clusteradj, clustermin, fe = NULL, fedfadj = NULL, liml = NULL, arubin = NULL, fuller = NULL, kappa = NULL) {
   
   resp <- as.numeric(preprocess$Y)
   
@@ -51,12 +51,11 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
   nerrclustvar <- length(clustid)
 
   obswt <- preprocess$weights
-  getCI <- ifelse(is.null(conf_int) || conf_int == TRUE, TRUE, FALSE)
+  getci <- ifelse(is.null(conf_int) || conf_int == TRUE, TRUE, FALSE)
   imposenull <- ifelse(is.null(impose_null) || impose_null == TRUE, TRUE, FALSE)
   rtol <- tol
 
   JuliaConnectoR::juliaEval("using WildBootTests")
-  # JuliaConnectoR::juliaEval('using StableRNGs')
 
   WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
 
@@ -88,7 +87,7 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     nbootclustvar = nbootclustvar,
     nerrclustvar = nerrclustvar,
     obswt = obswt,
-    getCI = getCI,
+    getci = getci,
     imposenull = imposenull,
     rtol = rtol,
     rng = internal_seed,
@@ -128,14 +127,14 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
   if(inherits(preprocess, "iv")){
       eval_list[["predendog"]] <- predendog
       eval_list[["inst"]] <- inst
-      if(!is.null(LIML)){
-        eval_list[["LIML"]] <- LIML
+      if(!is.null(liml)){
+        eval_list[["liml"]] <- liml
       }
-      if(!is.null(ARubin)){
-        eval_list[["ARubin"]] <- ARubin
+      if(!is.null(arubin)){
+        eval_list[["arubin"]] <- arubin
       }
-      if(!is.null(Fuller)){
-        eval_list[["Fuller"]] <- Fuller
+      if(!is.null(fuller)){
+        eval_list[["fuller"]] <- fuller
       }
       if(!is.null(kappa)){
         eval_list[["kappa"]] <- kappa
@@ -147,8 +146,8 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
 
   # collect results:
   p_val <- WildBootTests$p(wildboottest_res)
-  if (getCI == TRUE) {
-    conf_int <- WildBootTests$CI(wildboottest_res)
+  if (getci == TRUE) {
+    conf_int <- WildBootTests$ci(wildboottest_res)
   } else {
     conf_int <- NA
   }

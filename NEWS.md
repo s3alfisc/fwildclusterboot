@@ -1,25 +1,95 @@
 # fwildclusterboot 0.8
 
 
-### 1) WildBootTests.jl
+### Two new bootstrap algorithms: 'WildBootTests.jl' and 'R-lean'
 
-+ `fwildclusterboot` now supports calling `WildBootTests.jl`, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, `boot_algo`, through which the user can choose if she wants to run the fast wild cluster bootstrap via R or Julia. 
+#### boot_algo = 'WildBootTests.jl'
+
++ `fwildclusterboot` now supports calling `WildBootTests.jl`, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, `boot_algo`, through which it is possible to control the executed bootstrap algorithm. 
+
+```{r}
+# load data set voters included in fwildclusterboot
+data(voters)
+# estimate the regression model via lm
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , data = voters)
+boot_lm <- boottest(
+  lm_fit, 
+  clustid = "group_id1", 
+  param = "treatment", 
+  B = 9999, 
+  boot_algo = "WildBootTests.jl"
+)
+```
 + WildBootTests.jl is (after compilation) orders of magnitudes faster than `fwildclusterboot's` native R implementation, and speed gains are particularly pronounced for large problems with a large number of clusters and many bootstrap iterations. 
-+ Furthermore, `WildBootTests.jl` supports a range of models and tests that were previously not supported by `fwildclusterboot`: most importantly a) wild cluster bootstrap tests of multiple joint hypotheses and b) the WRE bootstrap by Davidson & MacKinnon for instrumental variables estimation. On top of the cake ... WRE is really fast. 
-+ For guidance on how to run `WildBooTests.jl`, have a look at the associated [article](https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html).
 
-### 2) 'Lean' Rcpp-based implementations of the wild heteroskedastic and wild cluster robust
++ Furthermore, `WildBootTests.jl` supports a range of models and tests that were previously not supported by `fwildclusterboot`: most importantly a) wild cluster bootstrap tests of multiple joint hypotheses and b) the WRE bootstrap by Davidson & MacKinnon for instrumental variables estimation. On top of the cake ... the WRE is really fast. 
 
-A key limitation of the vectorized 'fast' cluster bootstrap algorithm as implemented in `fwildclusterboot` is that it is very memory-demanding. For 'larger' problems, running `boottest()` might lead to out-of-memory errors. To offer an alternative, `boottest()` now ships two 'new' rcpp- and loop-based algorithms: 
+```{r}
+library(ivreg)
+data("SchoolingReturns", package = "ivreg")
+# drop all NA values from SchoolingReturns
+SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
+ivreg_fit <- ivreg(log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
+                           nearcollege + age  + ethnicity + smsa + south + parents14, data = SchoolingReturns)
 
-+ It is now possible to run `boottest()` without specifying a `clustid` function argument. In this case, `boottest()` runs a heteroskedasticity-robust wild bootstrap, which is implemented in c++. 
-+ Second, `fwildclusterboot` now ships a "lean" implementation of the wild cluster bootstrap, which is in general much slower than the 'fast' algorithm, but requires less memory. The algorithm is equivalent to the 'wild2' algorithm in the "Fast & Wild" paper by Roodman et al.
+boot_ivreg <- boottest(
+  object = ivreg_fit,
+  B = 999,
+  param = "education",
+  clustid = "kww",
+  type = "mammen",
+  impose_null = TRUE
+)
+generics::tidy(boot_ivreg)
+#              term  estimate statistic   p.value    conf.low conf.high
+# 1 1*education = 0 0.0638822  1.043969 0.2482482 -0.03152655 0.2128746
+```
 
-Also, note that running the wild cluster bootstrap through `WildBootTests.jl` is often very memory-efficient.
++ For guidance on how to install and run `WildBooTests.jl`, have a look at the associated [article](https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html).
 
-### 3) `boottest()` function argument `beta0` deprecated
++ Also, note that running the wild cluster bootstrap through `WildBootTests.jl` is often very memory-efficient.
 
-+ For consistency with `WildBootTests.jl`, it is now replaced by a new function argument, `r`. You can still use `beta0`.
+
+#### boot_algo = 'R-lean' 
+
+A key limitation of the vectorized 'fast' cluster bootstrap algorithm as implemented in `fwildclusterboot` is that it is very memory-demanding. For 'larger' problems, running `boottest()` might lead to out-of-memory errors. To offer an alternative, `boottest()` now ships a 'new' rcpp- and loop-based implementation of the wild cluster bootstrap (the 'wild2' algorithm in Roodman et al).
+
+```{r}
+boot_lm <- boottest(
+  lm_fit, 
+  clustid = "group_id1", 
+  param = "treatment", 
+  B = 9999, 
+  boot_algo = "R-lean"
+)
+```
+
+### Heteroskeadstic Wild Bootstrap 
+
+It is now possible to run `boottest()` without specifying a `clustid` function argument. In this case, `boottest()` runs a heteroskedasticity-robust wild bootstrap (HC1), which is implemented in c++. 
+
+```{r}
+boot_hc1 <- boottest(lm_fit, param = "treatment", B = 9999)
+summary(boot_hc1)
+```
+
+### Random Seeds
+
+Supporting stochastic algorithms in multiple languages from within R poses some challenges for random number generation. Starting with version 0.8, it is possible and recommended to control *all* random number generation globally via the familiar `set.seed()` function. 
+Now, how is random number generation in Julia linked to R's seed? Or, in other words, how is R's seed passed to Julia (and back)? In short, `boottest()` now uses an internal random seed which is created by using an integer that is randomly generated by a function that directly depends on R's seed (and calling which shifts the seed's state). In practice, `boottest()` calls `sample.int()` and uses it to set an internal random seed (if `boot_algo = 'R'` via `dqrng::set.seed()` for rademacher, webb and normal weights and via `set.seed()` for `boot_algo = 'R'` and mammen weights and for `boot_algo = 'R-lean'`. For Julia, the internal seed is set via `!Random.seed()`).
+
+### `boottest()` function argument `beta0` deprecated
+
+For consistency with `WildBootTests.jl`, it is now replaced by a new function argument, `r`. You can still use `beta0` for the forseeable future - `boottest()` will throw a warning. 
+
+### Frühjahrsputz
+
+I have spent some time to clean up `fwildclusterboot's` internals, which should now hopefully be more readable and easier to maintain. 
+
+### Testing
+
+`fwildclusterboot` is now pre-dominantly tested against `WildBootTests.jl`. Tests that depend on Julia are by default on run on CRAN, but are regularly run on Mac, Windows and Linux via [github actions](https://github.com/s3alfisc/fwildclusterboot/actions/workflows/R-CMD-check.yaml).
+
 
 # fwildclusterboot 0.7
 
