@@ -14,6 +14,7 @@
   sign_level = 0.05,
   conf_int = TRUE,
   seed = NULL,
+  internal_seed = TRUE,
   R = NULL,
   r = 0,
   beta0 = r,
@@ -66,10 +67,12 @@ returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence
 intervals by test inversion. If FALSE, only the p-value is returned.}
 
-\item{seed}{An integer. Allows to set a random seed. For all bootstrap algorithms -
-R, R-lean, and WildBootTests.jl - a global seed can be set via \code{set.seed()}.}
+\item{seed}{An integer. Allows to set a random seed.}
 
-\item{R}{Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as \code{param}. If NULL, a vector of ones of length param.}
+\item{internal_seed}{Logical. TRUE by default. If TRUE, for all bootstrap algorithms -
+R, R-lean, and WildBootTests.jl - a global seed can be set via \code{set.seed()}. If FALSE,
+the random seed needs to be set via the appropriate functions. See the associated article on
+\link{seeds}#' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as \code{param}. If NULL, a vector of ones of length param.}
 
 \item{r}{A numeric. Shifts the null hypothesis
 H0: param = r vs H1: param != r}
@@ -157,7 +160,7 @@ interval.}
 \item{call}{Function call of boottest.}
 \item{boot_algo}{The employed bootstrap algorithm.}
 \item{nthreads}{The number of threads employed.}
-\item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.}
+\item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.}
 }
 \description{
 \code{boottest.fixest} is a S3 method that allows for fast wild cluster

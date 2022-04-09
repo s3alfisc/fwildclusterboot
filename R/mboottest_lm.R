@@ -15,7 +15,11 @@
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
 #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.
-#' @param seed An integer. Allows to set a random seed. A global seed can be set via `set.seed()`.
+#' @param seed An integer. Allows to set a random seed. 
+#' @param internal_seed Logical. TRUE by default. If TRUE, for all bootstrap algorithms - 
+#'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`. If FALSE, 
+#'        the random seed needs to be set via the appropriate functions. See the associated article on 
+#'        \link{seeds}
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
 #' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
@@ -74,7 +78,7 @@
 #' \item{call}{Function call of boottest.}
 #' \item{boot_algo}{The employed bootstrap algorithm.}
 #' \item{nthreads}{The number of threads employed.}
-#' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.}
+#' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.}
 
 #' @export
 #'
@@ -106,6 +110,7 @@ mboottest.lm <- function(object,
                          r = rep(0, nrow(R)),
                          bootcluster = "max",
                          seed = NULL,
+                         internal_seed = TRUE, 
                          type = "rademacher",
                          impose_null = TRUE,
                          p_val_type = "two-tailed",
@@ -134,6 +139,7 @@ mboottest.lm <- function(object,
   
   check_arg(conf_int, "logical scalar | NULL")
   check_arg(seed, "scalar integer | NULL")
+  check_arg(internal_seed, "scalar logical")
   check_arg(r, "numeric vector  | NULL")
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar")
@@ -147,20 +153,13 @@ mboottest.lm <- function(object,
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(teststat_boot, "logical scalar")
   
-  # set random seed
+  internal_seed <- set_internal_seed(
+    internal_seed = internal_seed, 
+    seed = seed, 
+    boot_algo = "WildBootTests.jl", 
+    type = type
+  )
   
-  if (is.null(seed)) {
-    internal_seed <- get_seed()
-  } else {
-    set.seed(seed)
-    internal_seed <- get_seed()
-  }
-  
-  JuliaConnectoR::juliaEval('using StableRNGs')
-  internal_seed <- JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
-
-  # param required in preprocess
-  param <- NULL
   
   if (ssc[["fixef.K"]] != "none" || ssc[["cluster.df"]] != "conventional") {
     message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional'."))

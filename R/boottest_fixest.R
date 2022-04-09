@@ -33,9 +33,11 @@
 #                   The "R-lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
 #'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. You can set the employed algorithm globally by using the
 #'                  `setBoottest_boot_algo()` function.
-#' @param seed An integer. Allows to set a random seed. For all bootstrap algorithms - 
-#'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`.
-#' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
+#' @param seed An integer. Allows to set a random seed. 
+#' @param internal_seed Logical. TRUE by default. If TRUE, for all bootstrap algorithms - 
+#'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`. If FALSE, 
+#'        the random seed needs to be set via the appropriate functions. See the associated article on 
+#'        \link{seeds}#' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
 #' @param beta0 Superseded function argument, replaced by function argument 'r'
@@ -102,7 +104,7 @@
 #' \item{call}{Function call of boottest.}
 #' \item{boot_algo}{The employed bootstrap algorithm.}
 #' \item{nthreads}{The number of threads employed.}
-#' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.}
+#' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.}
 
 #' @export
 #' @method boottest fixest
@@ -187,6 +189,7 @@ boottest.fixest <- function(object,
                             sign_level = 0.05,
                             conf_int = TRUE,
                             seed = NULL,
+                            internal_seed = TRUE, 
                             R = NULL,
                             r = 0,
                             beta0 = r,
@@ -225,6 +228,7 @@ boottest.fixest <- function(object,
 
   check_arg(conf_int, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
+  check_arg(internal_seed, "scalar logical")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
   check_arg(beta0, "numeric scalar | NULL")
@@ -244,26 +248,12 @@ boottest.fixest <- function(object,
   }
 
   
-  if (is.null(seed)) {
-    internal_seed <- get_seed()
-  } else {
-    set.seed(seed)
-    internal_seed <- get_seed()
-  }
-
-  if (boot_algo == "R") {
-    if (type %in% c("rademacher", "webb", "norm")) {
-      dqrng::dqset.seed(internal_seed)
-    } else {
-      set.seed(internal_seed)
-    }
-  } else if (boot_algo == "R-lean") {
-    set.seed(internal_seed)
-  } else if (boot_algo == "WildBootTests.jl") {
-    JuliaConnectoR::juliaEval('using StableRNGs')
-    internal_seed <- JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
-  }
-
+  internal_seed <- set_internal_seed(
+    internal_seed = internal_seed, 
+    seed = seed, 
+    boot_algo = boot_algo, 
+    type = type
+  )
 
 
   # fixest specific checks

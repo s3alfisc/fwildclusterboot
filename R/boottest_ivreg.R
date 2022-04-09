@@ -23,7 +23,11 @@
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
 #' @param conf_int A logical vector. If TRUE, boottest computes confidence
 #'        intervals by test inversion. If FALSE, only the p-value is returned.
-#' @param seed An integer. Allows to set a random seed. A global seed can be set via `set.seed()`.
+#' @param seed An integer. Allows to set a random seed. 
+#' @param internal_seed Logical. TRUE by default. If TRUE, for all bootstrap algorithms - 
+#'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`. If FALSE, 
+#'        the random seed needs to be set via the appropriate functions. See the associated article on 
+#'        \link{seeds}
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
@@ -90,8 +94,7 @@
 #' \item{call}{Function call of boottest.}
 #' \item{boot_algo}{The employed bootstrap algorithm.}
 #' \item{nthreads}{The number of threads employed.}
-#' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.}
-
+#' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.}
 #' @export
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
@@ -133,6 +136,7 @@ boottest.ivreg <- function(object,
                            bootcluster = "max",
                            conf_int = TRUE,
                            seed = NULL,
+                           internal_seed = TRUE, 
                            R = NULL,
                            r = 0,
                            beta0 = r,
@@ -171,6 +175,7 @@ boottest.ivreg <- function(object,
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(conf_int, "logical scalar ")
   check_arg(seed, "scalar integer | NULL")
+  check_arg(internal_seed, "scalar logical")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
   check_arg(bootcluster, "character vector")
@@ -190,16 +195,13 @@ boottest.ivreg <- function(object,
 
   # set random seed
 
-  if (is.null(seed)) {
-    internal_seed <- get_seed()
-  } else {
-    set.seed(seed)
-    internal_seed <- get_seed()
-  }
-
-  JuliaConnectoR::juliaEval('using StableRNGs')
-  internal_seed <- JuliaConnectoR::juliaEval(paste0("rng = StableRNG(",internal_seed,")"))
-
+  internal_seed <- set_internal_seed(
+    internal_seed = internal_seed, 
+    seed = seed, 
+    boot_algo = "WildBootTests.jl", 
+    type = type
+  )
+  
   # translate ssc into small_sample_adjustment
   if (ssc[["adj"]] == TRUE && ssc[["cluster.adj"]] == TRUE) {
     small_sample_adjustment <- TRUE

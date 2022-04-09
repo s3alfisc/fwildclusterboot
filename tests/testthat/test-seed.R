@@ -198,9 +198,376 @@ test_that("seed works for OLS", {
         seed = 2,
         boot_algo = boot_algo
       )
+      
+      
+      
     )
     expect_true(boot_lm_s1$p_val != boot_lm_s2$p_val)
   }
+  
+  
+})
+
+
+
+test_that("internal_seed = FALSE", {
+  
+  
+  skip_on_cran()
+  
+  # tests of internal_seed = FALSE
+  
+  # test A
+  set.seed(123)
+  
+  boot_lm_s1 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R", 
+      internal_seed = FALSE
+    )
+  )
+  
+  set.seed(123)
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R", 
+      internal_seed = FALSE
+    )
+  )
+  
+  expect_false(boot_lm_s1$p_val == boot_lm_s2$p_val)
+  
+  # test B
+  dqrng::dqset.seed(123)
+  
+  boot_lm_s1 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R", 
+      internal_seed = FALSE
+    )
+  )
+  
+  dqrng::dqset.seed(123)
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R", 
+      internal_seed = FALSE
+    )
+  )
+  
+  expect_equal(boot_lm_s1$p_val, boot_lm_s2$p_val)
+  
+  # test C
+  boot_lm_s1 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  expect_equal(boot_lm_s1$p_val, boot_lm_s2$p_val)
+  
+  dqrng::dqset.seed(123)
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R", 
+      internal_seed = FALSE
+    )
+  )
+  
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  expect_equal(boot_lm_s1$p_val, boot_lm_s2$p_val)
+  
+  
+  
+  # R-lean
+  
+  # test B
+  set.seed(123)
+  
+  boot_lm_s1 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R-lean", 
+      internal_seed = FALSE
+    )
+  )
+  
+  set.seed(123)
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R-lean", 
+      internal_seed = FALSE
+    )
+  )
+  
+  expect_equal(boot_lm_s1$p_val, boot_lm_s2$p_val)
+  
+  # test C
+  boot_lm_s1 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R-lean", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R-lean", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  expect_equal(boot_lm_s1$p_val, boot_lm_s2$p_val)
+  
+  set.seed(123)
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R-lean", 
+      internal_seed = FALSE
+    )
+  )
+  
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "R-lean", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  expect_equal(boot_lm_s1$p_val, boot_lm_s2$p_val)
+  
+  
+  
+  # test A
+  set.seed(123)
+  
+  boot_lm_s1 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "WildBootTests.jl", 
+      internal_seed = FALSE
+    )
+  )
+  
+  set.seed(123)
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "WildBootTests.jl", 
+      internal_seed = FALSE
+    )
+  )
+  
+  expect_false(boot_lm_s1$p_val == boot_lm_s2$p_val)
+  
+  # test B
+  boot_lm_s1 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "WildBootTests.jl", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "WildBootTests.jl", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  expect_equal(boot_lm_s1$p_val, boot_lm_s2$p_val)
+  
+  # test C
+  boot_lm_s1 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "WildBootTests.jl", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "WildBootTests.jl", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  expect_equal(boot_lm_s1$p_val, boot_lm_s2$p_val)
+  
+  dqrng::dqset.seed(123)
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "WildBootTests.jl", 
+      internal_seed = FALSE
+    )
+  )
+  
+  boot_lm_s2 <- suppressMessages(
+    boottest(
+      object = lm_fit,
+      clustid = "group_id1",
+      B = 999,
+      param = "treatment",
+      type = "rademacher",
+      conf_int = FALSE,
+      boot_algo = "WildBootTests.jl", 
+      internal_seed = FALSE, 
+      seed = 123
+    )
+  )
+  
+  expect_equal(boot_lm_s1$p_val, boot_lm_s2$p_val)
+  
+  
+  
+  
 })
 
 

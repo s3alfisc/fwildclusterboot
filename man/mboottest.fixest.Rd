@@ -13,6 +13,7 @@
   bootcluster = "max",
   fe = NULL,
   seed = NULL,
+  internal_seed = TRUE,
   type = "rademacher",
   impose_null = TRUE,
   p_val_type = "two-tailed",
@@ -54,7 +55,12 @@ Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see th
 out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.}
 
-\item{seed}{An integer. Allows to set a random seed. A global seed can be set via \code{set.seed()}.}
+\item{seed}{An integer. Allows to set a random seed.}
+
+\item{internal_seed}{Logical. TRUE by default. If TRUE, for all bootstrap algorithms -
+R, R-lean, and WildBootTests.jl - a global seed can be set via \code{set.seed()}. If FALSE,
+the random seed needs to be set via the appropriate functions. See the associated article on
+\link{seeds}}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -116,7 +122,7 @@ the cluster variables contain NA values.}
 \item{call}{Function call of boottest.}
 \item{boot_algo}{The employed bootstrap algorithm.}
 \item{nthreads}{The number of threads employed.}
-\item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.}
+\item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.}
 }
 \description{
 \code{mboottest.fixest} is a S3 method that allows for fast wild cluster

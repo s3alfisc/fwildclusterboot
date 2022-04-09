@@ -84,5 +84,5 @@ RoxygenNote: 7.1.2
 LinkingTo: Rcpp,RcppArmadillo, RcppEigen
 VignetteBuilder: knitr
 Language: en-US
-SystemRequirements: Julia (>= 1.7), WildBootTests.jl (>=0.7.10)
+SystemRequirements: Julia (>= 1.7), WildBootTests.jl (>=0.7.13)
 Config/testthat/edition: 3

@@ -90,13 +90,17 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     getci = getci,
     imposenull = imposenull,
     rtol = rtol,
-    rng = internal_seed,
+    # rng = internal_seed,
     auxwttype = auxwttype,
     ptype = ptype,
     reps = reps,
     fweights = FALSE,
     bootstrapc = bootstrapc
   )
+  
+  if(!is.null(internal_seed)){
+    eval_list[["rng"]] <- internal_seed  
+  }
   
   if (!is.null(small)) {
     eval_list[["small"]] <- small

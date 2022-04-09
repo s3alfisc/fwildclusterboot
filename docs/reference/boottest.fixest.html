@@ -33,6 +33,7 @@ implemented in the STATA package boottest."><meta property="og:image" content="h
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/seeds.html">How to set random seeds in fwildclusterboot</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -80,6 +81,7 @@ implemented in the STATA package <code>boottest</code>.</p>
   sign_level <span class="op">=</span> <span class="fl">0.05</span>,
   conf_int <span class="op">=</span> <span class="cn">TRUE</span>,
   seed <span class="op">=</span> <span class="cn">NULL</span>,
+  internal_seed <span class="op">=</span> <span class="cn">TRUE</span>,
   R <span class="op">=</span> <span class="cn">NULL</span>,
   r <span class="op">=</span> <span class="fl">0</span>,
   beta0 <span class="op">=</span> <span class="va">r</span>,
@@ -135,10 +137,12 @@ returns 0.95% confidence intervals. By default, sign_level = 0.05.</p></dd>
 <dd><p>A logical vector. If TRUE, boottest computes confidence
 intervals by test inversion. If FALSE, only the p-value is returned.</p></dd>
 <dt>seed</dt>
-<dd><p>An integer. Allows to set a random seed. For all bootstrap algorithms -
-R, R-lean, and WildBootTests.jl - a global seed can be set via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>.</p></dd>
-<dt>R</dt>
-<dd><p>Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as <code>param</code>. If NULL, a vector of ones of length param.</p></dd>
+<dd><p>An integer. Allows to set a random seed.</p></dd>
+<dt>internal_seed</dt>
+<dd><p>Logical. TRUE by default. If TRUE, for all bootstrap algorithms -
+R, R-lean, and WildBootTests.jl - a global seed can be set via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>. If FALSE,
+the random seed needs to be set via the appropriate functions. See the associated article on
+seeds#' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as <code>param</code>. If NULL, a vector of ones of length param.</p></dd>
 <dt>r</dt>
 <dd><p>A numeric. Shifts the null hypothesis
 H0: param = r vs H1: param != r</p></dd>
@@ -248,7 +252,7 @@ interval.</p></dd>
 <dt>nthreads</dt>
 <dd><p>The number of threads employed.</p></dd>
 <dt>internal_seed</dt>
-<dd><p>The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.</p></dd>
+<dd><p>The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="confidence-intervals">Confidence Intervals<a class="anchor" aria-label="anchor" href="#confidence-intervals"></a></h2>

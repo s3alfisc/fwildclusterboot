@@ -2,9 +2,10 @@ pandoc: 2.14.0.3
 pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
+  seeds: seeds.html
   WildBootTests: WildBootTests.html
   fwildclusterboot: fwildclusterboot.html
-last_built: 2022-04-08T19:31Z
+last_built: 2022-04-09T20:38Z
 urls:
   reference: https://s3alfisc.github.io/fwildclusterboot/reference
   article: https://s3alfisc.github.io/fwildclusterboot/articles
