@@ -88,8 +88,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
         N_G_bootcluster = N,
         cores = nthreads,
         type = type,
-        small_sample_correction = small_sample_correction,
-        seed = seed
+        small_sample_correction = small_sample_correction
       )[[1]]
   } else {
     bootcluster <- preprocessed_object$bootcluster[, 1]
@@ -112,8 +111,7 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
         cores = nthreads,
         type = type,
         cluster = bootcluster,
-        small_sample_correction = small_sample_correction,
-        seed = seed
+        small_sample_correction = small_sample_correction
       )[[1]]
   }
 

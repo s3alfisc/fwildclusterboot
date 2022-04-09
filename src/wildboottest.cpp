@@ -134,7 +134,6 @@ arma::mat sample_weights(int G,
 //' @param cores Integer: the number of cores to be used.
 //' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
 //' @param small_sample_correction: double. Small sample correction to be applied.
-//' @param seed: Numeric scalar. Controls the seed used in bootstrap.
 //' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
 
 // [[Rcpp::export]]
@@ -146,8 +145,7 @@ List wildboottestHC(const arma::vec & y,
                     const int & N_G_bootcluster,
                     const int & cores,
                     const int & type, 
-                    const double & small_sample_correction, 
-                    const int & seed) {
+                    const double & small_sample_correction) {
 
   // function implements wild cluster bootstrap,
   // imposing the null
@@ -222,7 +220,6 @@ for(int b = 1; b < B + 1; b++){
 //' @param cores Integer: the number of cores to be used.
 //' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
 //' @param cluster: Integer Vector. Contains information on the clusters.
-//' @param seed: Numeric scalar. Controls the seed used in bootstrap.
 //' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
 
 // [[Rcpp::export]]
@@ -235,9 +232,7 @@ List wildboottestCL(const arma::vec & y,
                     const int & cores,
                     const int & type,
                     const arma::vec & cluster, 
-                    const double & small_sample_correction, 
-                    const int & seed
-) {
+                    const double & small_sample_correction) {
 
   // function implements wild cluster bootstrap,
   // imposing the null
