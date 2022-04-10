@@ -52,7 +52,7 @@ jobs:
         shell: bash
       # install WildBootTests.jl
       - name: install WildBootTests.jl
-        run: julia -e 'using Pkg; Pkg.add("WildBootTests")'
+        run: julia -e 'using Pkg; Pkg.add(["WildBootTests", "StableRNGs"])'
         shell: bash
 
 
