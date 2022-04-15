@@ -42,7 +42,7 @@ in which case you will have to set appropriate seeds via `set.seed()`, `dqrng::s
 Here is an example in which no seeds are provided to `boottest()`, a global seed is set
 via `set.seed()`, and the wild cluster bootstrap is run for different weights and via R, rcpp and Julia. 
 
-```{r}
+```{r, eval = FALSE}
 # load data set voters included in fwildclusterboot
 data(voters)
 # estimate the regression model via lm
@@ -84,17 +84,21 @@ for(x in 1:2){
 
 cbind("p-values iter 1" = res[[1]], "p-values iter 2" = res[[2]])
 
+#      p-values iter 1 p-values iter 2
+# [1,]      0.00140014      0.00140014
+# [2,]      0.00210021      0.00210021
+# [3,]      0.00110011      0.00110011
+# [4,]      0.00100010      0.00100010
 ```
 
 As can be seen, all p-values are reproducible across languages and random number generators, only by setting a seed via `set.seed()`.
 
 If `boottest()` uses an internal seed, it is exported and can be accessed via 
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, eval = FALSE}
 boot_lm1$internal_seed
+# 488349520
 ```
-
-
 ### A Julia Example 
 
 Here is a more concrete example of what happens inside of `boottest()` with 'internal
@@ -102,7 +106,7 @@ seeding'.
 
 In a first step, we define a function `stochastic_julia_fun` that randomly samples an integer in Julia. The function has only one optional function argument, `seed`, and we use the `JuliaConnectoR` package to communicate between R and Julia.
 
-```{r, message = FALSE}
+```{r, message = FALSE, eval = FALSE}
 library(JuliaConnectoR)
 
 stochastic_julia_fun <- function(seed = NULL){
@@ -130,32 +134,36 @@ stochastic_julia_fun <- function(seed = NULL){
 set.seed(1234)
 stochastic_julia_fun()
 stochastic_julia_fun(seed = 1234)
+# 1225195882
+# 1225195882
 ```
 
 Before creating a random number in Julia for the first time via `stochastic_julia_fun()`, we set a seed in R through the `set.seed()` function. 
 
-```{r, message = FALSE}
+```{r, message = FALSE, eval= FALSE}
 set.seed(1234)
 stochastic_julia_fun()
+# 1225195882
 ```
 
 Within `stochastic_julia_fun()`, the following steps are now executed: 
 as no seed has been directly provided, `stochastic_julia_fun()` samples an integer *within* R via the `sample()` function, whose stochastic behavior is determined by the seed set via `set.seed(1234)`. 
 
-```{r}
+```{r, eval = FALSE}
 internal_seed <- sample.int(.Machine$integer.max, 1)
 internal_seed
+# 469344150
 ```
 
 In a next step, the drawn integer is passed to Julia and used as the 'global Julia-seed', which then controls the random number generation in Julia.
 
-```{r, message = FALSE}
+```{r, eval = FALSE}
 JuliaConnectoR::juliaEval('using Random')
 rng_char <- paste0("Random.seed!(", internal_seed, ")")
 JuliaConnectoR::juliaEval(rng_char)
 ```
 
-In short, the value `r internal_seed` is used as a seed value in Julia - not `1234` - which is the seed value set in R. But the seed used in Julia is a direct derivative of the R seed and thereby controlled via R's `set.seed()` function.
+In short, the value `469344150` is used as a seed value in Julia - not `1234` - which is the seed value set in R. But the seed used in Julia is a direct derivative of the R seed and thereby controlled via R's `set.seed()` function.
 
 
 ### An Rcpp Example
@@ -175,14 +183,16 @@ int stochastic_cpp(int seed){
 }
 ```
 
-```{r, message = FALSE}
+```{r, message = FALSE, eval  = FALSE}
 stochastic_cpp(seed = 123)
 stochastic_cpp(seed = 2)
+# 440
+# 45
 ```
 
 We can proceed as with the Julia seed: 
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, eval = FALSE}
 stochastic_rcpp_fun <- function(seed = NULL){
   
   if(is.null(seed)){
@@ -201,6 +211,8 @@ stochastic_rcpp_fun <- function(seed = NULL){
 set.seed(1234)
 stochastic_rcpp_fun()
 stochastic_rcpp_fun(seed = 1234)
+# [1] 23829
+# [1] 23829
 ```
 
 Once again, we have managed to set the stochastic behavior in the rcpp function via `set.seed()` from within R & based on R's global seed.
@@ -209,7 +221,7 @@ Once again, we have managed to set the stochastic behavior in the rcpp function 
 
 If you don't like the solution presented above, or want to reproduce results from `fwildclusterboot` before version 0.8, you can set the `boottest()` function argument `internal_seed = FALSE`, in which case random number generation in Julia and via the `dqrng` package no longer inherits from R's global seed. 
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, eval = FALSE}
 res <- list()
 for(x in 1:2){
   set.seed(1234)
@@ -249,14 +261,18 @@ for(x in 1:2){
 }
 
 cbind("p-values iter 1" = res[[1]], "p-values iter 2" = res[[2]])
-
+#      p-values iter 1 p-values iter 2
+# [1,]      0.00060006      0.00080008
+# [2,]      0.00280028      0.00280028
+# [3,]      0.00040004      0.00040004
+# [4,]      0.00070007      0.00120012
 ```
 
 As you can see, setting a random seed via `set.seed()` guarantees reproducibility for Mammen weights and the "R" algorithm and for the Rcpp based algorithm (because Rcpp can interface R's global seed). But the computed p-values for `boot_algo = "R"` for Rademacher weights and `boot_algo = "WildBootTests.jl` differ. 
 
 For reproducible results, you have to set `dqrng` and Julia seeds when appropriate to guarantee reproducible resuls:
 
-```{r, message = FALSE, warning = FALSE}
+```{r, message = FALSE, warning = FALSE, eval = FALSE}
 res <- list()
 for(x in 1:2){
   dqrng::dqset.seed(1234)
@@ -286,6 +302,8 @@ for(x in 1:2){
 }
 
 cbind("p-values iter 1" = res[[1]], "p-values iter 2" = res[[2]])
-
+#      p-values iter 1 p-values iter 2
+# [1,]      0.00110011      0.00110011
+# [2,]      0.00110011      0.00070007
 ```
 
