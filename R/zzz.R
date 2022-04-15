@@ -1,0 +1,3 @@
+.onAttach <- function(libname, pkgname) {
+  packageStartupMessage("With fwildclusterboot 0.8, boottest() uses an 'internal' seed by default. As a consequence, bootstraps run via fwildclusterboot 0.7 might no longer be reproducible. To guarantee reproducibility with older versions, you can overwrite internal seeding by setting a global variable at the beginnig of your script via the 'set_internal_seed()' function. The idea behind using 'internal seeds' is explained in a dedicated vignette - please don't hesitate to send an email to fwildclusterboot's maintainer if you believe that internal seeds are a bad idea.")
+}
