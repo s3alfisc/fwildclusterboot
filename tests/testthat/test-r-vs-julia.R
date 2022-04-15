@@ -52,7 +52,7 @@ test_that("test r against Julia I: stochastic tests", {
           cat(type, "\n")
           cat(p_val_type, "\n")
           cat(impose_null, "\n")
-          
+
           # cat("Check 1:", "\n")
           if (p_val_type %in% c("two-tailed", "equal-tailed")) {
             boot_r <- suppressWarnings(boottest(object, clustid = "group_id1", B = 19999, param = "treatment", type = type, p_val_type = p_val_type, impose_null = impose_null))
@@ -169,7 +169,7 @@ test_that("test r against Julia I: stochastic tests", {
           # ------------------------------------------------------------------------------ #
           # test subcluster bootstrap
 
-          
+
           if(p_val_type %in% c("two-tailed", "equal-tailed")){
             # bootcluster variable not in clustid 1
             boot_r <- suppressWarnings(
@@ -177,42 +177,42 @@ test_that("test r against Julia I: stochastic tests", {
                 lm_fit,
                 clustid = "group_id1",
                 bootcluster = c("group_id1", "Q1_immigration"),
-                B = 19999, 
+                B = 19999,
                 param = "treatment",
                 type = "rademacher",
                 p_val_type = p_val_type
               )
             )
-            
+
             boot_jl1 <- suppressWarnings(
               boottest(
                 lm_fit,
                 clustid = "group_id1",
                 bootcluster = c("group_id1", "Q1_immigration"),
                 B = 19999,
-                param = "treatment", 
-                type = "rademacher", 
+                param = "treatment",
+                type = "rademacher",
                 p_val_type = p_val_type
               )
             )
-            
+
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
-            
+
             # bootcluster variable not in clustid 2
             # currently: bug in fwildclusterboot when not all bootcluster variables \in clustid OR specified in lm() (e.g. drop Q2_defense from lm_fit -> error)
             boot_r <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "year"), B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type))
             boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "year"),B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type))
-            
+
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
-            
+
             boot_r <-
               suppressWarnings(
                 boottest(
@@ -237,13 +237,13 @@ test_that("test r against Julia I: stochastic tests", {
                   p_val_type = p_val_type
                 )
               )
-            
+
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
-            
+
             # clustid variale not in bootcluster & bootcluster variable not in clustid
             boot_r <-
               suppressWarnings(
@@ -256,7 +256,7 @@ test_that("test r against Julia I: stochastic tests", {
                   nthreads = 6
                 )
               )
-            
+
             boot_jl1 <-
               suppressWarnings(
                 boottest(
@@ -267,15 +267,15 @@ test_that("test r against Julia I: stochastic tests", {
                   param = "treatment"
                 )
               )
-            
-            
+
+
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
-            
-            
+
+
             # clustid variale not in bootcluster & bootcluster variable not in clustid
             boot_r <-
               suppressWarnings(
@@ -288,7 +288,7 @@ test_that("test r against Julia I: stochastic tests", {
                   nthreads = 6
                 )
               )
-            
+
             boot_jl1 <-
               suppressWarnings(
                 boottest(
@@ -299,25 +299,25 @@ test_that("test r against Julia I: stochastic tests", {
                   param = "treatment"
                 )
               )
-            
-            
+
+
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
-            
+
             # clustid variale not in bootcluster & bootcluster variable not in clustid
-            
+
             boot_r <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"), B = 499999, param = "treatment"))
             boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"),B = 499999, param = "treatment"))
-            
+
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
             if(p_val_type %in% c("two-tailed", "equal-tailed")){
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
-            
+
           }
         }
       }

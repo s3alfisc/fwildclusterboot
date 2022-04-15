@@ -189,7 +189,7 @@ boottest.fixest <- function(object,
                             sign_level = 0.05,
                             conf_int = TRUE,
                             seed = NULL,
-                            internal_seed = TRUE, 
+                            internal_seed = getBoottest_internal_seed(), 
                             R = NULL,
                             r = 0,
                             beta0 = r,
@@ -248,7 +248,7 @@ boottest.fixest <- function(object,
   }
 
   
-  internal_seed <- set_internal_seed(
+  internal_seed <- set_get_internal_seed(
     internal_seed = internal_seed, 
     seed = seed, 
     boot_algo = boot_algo, 

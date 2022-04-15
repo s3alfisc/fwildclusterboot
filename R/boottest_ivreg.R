@@ -136,7 +136,7 @@ boottest.ivreg <- function(object,
                            bootcluster = "max",
                            conf_int = TRUE,
                            seed = NULL,
-                           internal_seed = TRUE, 
+                           internal_seed = getBoottest_internal_seed(), 
                            R = NULL,
                            r = 0,
                            beta0 = r,
@@ -195,7 +195,7 @@ boottest.ivreg <- function(object,
 
   # set random seed
 
-  internal_seed <- set_internal_seed(
+  internal_seed <- set_get_internal_seed(
     internal_seed = internal_seed, 
     seed = seed, 
     boot_algo = "WildBootTests.jl", 

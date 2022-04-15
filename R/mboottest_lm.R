@@ -110,7 +110,7 @@ mboottest.lm <- function(object,
                          r = rep(0, nrow(R)),
                          bootcluster = "max",
                          seed = NULL,
-                         internal_seed = TRUE, 
+                         internal_seed = getBoottest_internal_seed(), 
                          type = "rademacher",
                          impose_null = TRUE,
                          p_val_type = "two-tailed",
@@ -153,7 +153,7 @@ mboottest.lm <- function(object,
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(teststat_boot, "logical scalar")
   
-  internal_seed <- set_internal_seed(
+  internal_seed <- set_get_internal_seed(
     internal_seed = internal_seed, 
     seed = seed, 
     boot_algo = "WildBootTests.jl", 

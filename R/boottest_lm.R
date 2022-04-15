@@ -175,7 +175,7 @@ boottest.lm <- function(object,
                         bootcluster = "max",
                         conf_int = TRUE,
                         seed = NULL,
-                        internal_seed = TRUE, 
+                        internal_seed = getBoottest_internal_seed(), 
                         R = NULL,
                         r = 0,
                         beta0 = r,
@@ -229,7 +229,7 @@ boottest.lm <- function(object,
     warning("Note that the 'beta0' function argument is superseded by a new argument, 'r'. Please specify your hypothesis via the new function argument instead of using 'beta0'.")
   }
   
-  internal_seed <- set_internal_seed(
+  internal_seed <- set_get_internal_seed(
     internal_seed = internal_seed, 
     seed = seed, 
     boot_algo = boot_algo, 

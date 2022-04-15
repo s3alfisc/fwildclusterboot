@@ -14,7 +14,7 @@
   bootcluster = "max",
   fe = NULL,
   seed = NULL,
-  internal_seed = TRUE,
+  internal_seed = getBoottest_internal_seed(),
   type = "rademacher",
   impose_null = TRUE,
   p_val_type = "two-tailed",

@@ -1,4 +1,4 @@
-set_internal_seed <- function(internal_seed, seed, boot_algo, type){
+set_get_internal_seed <- function(internal_seed = TRUE, seed = NULL, boot_algo, type){
   
   if(internal_seed == TRUE){
     if (is.null(seed)) {

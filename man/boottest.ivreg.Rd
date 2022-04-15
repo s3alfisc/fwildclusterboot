@@ -12,7 +12,7 @@
   bootcluster = "max",
   conf_int = TRUE,
   seed = NULL,
-  internal_seed = TRUE,
+  internal_seed = getBoottest_internal_seed(),
   R = NULL,
   r = 0,
   beta0 = r,
