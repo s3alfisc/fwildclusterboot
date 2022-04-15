@@ -10,6 +10,9 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/articles/index.html</loc>
   </url>
   <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/articles/seeds.html</loc>
+  </url>
+  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html</loc>
   </url>
   <url>
@@ -92,6 +95,9 @@
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/setBoottest_boot_algo.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/setBoottest_internal_seed.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/summary.boottest.html</loc>

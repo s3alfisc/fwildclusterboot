@@ -51,6 +51,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/seeds.html">How to set random seeds in fwildclusterboot</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -90,7 +91,8 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span>
+<span class="co">#&gt; With fwildclusterboot 0.8, boottest() uses an 'internal' seed by default. As a consequence, bootstraps run via fwildclusterboot 0.7 might no longer be reproducible. To guarantee reproducibility with older versions, you can overwrite internal seeding by setting a global variable at the beginnig of your script via the `setBoottest_internal_seed()` function. The idea behind using 'internal seeds' is explained in a dedicated vignette (see `vignette('seeds', package = 'fwildclusterboot')`). If you believe that internal seeds are a bad idea, please send an email to fwildclusterboot's maintainer :).</span></code></pre></div>
 <p><code>fwildclusterboot</code> serves as an R port to the <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a> implementation of the “fast” wild cluster bootstrap.</p>
 <div class="section level2">
 <h2 id="installation-and-set-up">Installation and Set-Up<a class="anchor" aria-label="anchor" href="#installation-and-set-up"></a>

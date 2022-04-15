@@ -31,6 +31,7 @@ implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/seeds.html">How to set random seeds in fwildclusterboot</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -76,6 +77,7 @@ implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019
   bootcluster <span class="op">=</span> <span class="st">"max"</span>,
   fe <span class="op">=</span> <span class="cn">NULL</span>,
   seed <span class="op">=</span> <span class="cn">NULL</span>,
+  internal_seed <span class="op">=</span> <span class="fu">getBoottest_internal_seed</span><span class="op">(</span><span class="op">)</span>,
   type <span class="op">=</span> <span class="st">"rademacher"</span>,
   impose_null <span class="op">=</span> <span class="cn">TRUE</span>,
   p_val_type <span class="op">=</span> <span class="st">"two-tailed"</span>,
@@ -83,7 +85,7 @@ implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019
   na_omit <span class="op">=</span> <span class="cn">TRUE</span>,
   floattype <span class="op">=</span> <span class="st">"Float64"</span>,
   getauxweights <span class="op">=</span> <span class="cn">FALSE</span>,
-  t_boot <span class="op">=</span> <span class="cn">FALSE</span>,
+  teststat_boot <span class="op">=</span> <span class="cn">FALSE</span>,
   maxmatsize <span class="op">=</span> <span class="cn">NULL</span>,
   bootstrapc <span class="op">=</span> <span class="cn">FALSE</span>,
   ssc <span class="op">=</span> <span class="fu"><a href="boot_ssc.html">boot_ssc</a></span><span class="op">(</span>adj <span class="op">=</span> <span class="cn">TRUE</span>, fixef.K <span class="op">=</span> <span class="st">"none"</span>, cluster.adj <span class="op">=</span> <span class="cn">TRUE</span>, cluster.df <span class="op">=</span>
@@ -114,13 +116,18 @@ clustering implied by the listed variables. To mimic the behavior of stata's boo
 the default is to cluster by the intersection of all the variables specified via the <code>clustid</code> argument,
 even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
-Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is supported - see the <a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a> for details.</p></dd>
+Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is supported - see the <code><a href="../articles/fwildclusterboot.html">vignette("fwildclusterboot", package = "fwildclusterboot")</a></code> for details.</p></dd>
 <dt>fe</dt>
 <dd><p>A character vector of length one which contains the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.</p></dd>
 <dt>seed</dt>
-<dd><p>An integer. Allows to set a random seed. A global seed can be set via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>.</p></dd>
+<dd><p>An integer. Allows to set a random seed.</p></dd>
+<dt>internal_seed</dt>
+<dd><p>Logical. TRUE by default. If TRUE, for all bootstrap algorithms -
+R, R-lean, and WildBootTests.jl - a global seed can be set via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>. If FALSE,
+the random seed needs to be set via the appropriate functions. See the associated article on
+<code><a href="../articles/seeds.html">vignette("seeds", package = "fwildclusterboot")</a></code></p></dd>
 <dt>type</dt>
 <dd><p>character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -149,6 +156,8 @@ when fitting the regression model).</p></dd>
 <dd><p>Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?</p></dd>
 <dt>getauxweights</dt>
 <dd><p>Logical. FALSE by default. Whether to save auxilliary weight matrix (v)</p></dd>
+<dt>teststat_boot</dt>
+<dd><p>Logical. Should bootstrapped test statistics be returned?</p></dd>
 <dt>maxmatsize</dt>
 <dd><p>NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes</p></dd>
 <dt>bootstrapc</dt>
@@ -158,8 +167,6 @@ when fitting the regression model).</p></dd>
 You can find more details in the help file for <code><a href="boot_ssc.html">boot_ssc()</a></code>. The function is purposefully designed to mimic fixest's <code><a href="https://lrberge.github.io/fixest/reference/ssc.html" class="external-link">ssc</a></code> function.</p></dd>
 <dt>...</dt>
 <dd><p>Further arguments passed to or from other methods.</p></dd>
-<dt>teststat_boot</dt>
-<dd><p>Logical. Should bootstrapped test statistics be returned?</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -200,7 +207,7 @@ the cluster variables contain NA values.</p></dd>
 <dt>nthreads</dt>
 <dd><p>The number of threads employed.</p></dd>
 <dt>internal_seed</dt>
-<dd><p>The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia.</p></dd>
+<dd><p>The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
