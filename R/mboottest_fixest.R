@@ -22,7 +22,7 @@
 #' @param internal_seed Logical. TRUE by default. If TRUE, for all bootstrap algorithms - 
 #'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`. If FALSE, 
 #'        the random seed needs to be set via the appropriate functions. See the associated article on 
-#'        \link{seeds}
+#'        \code{vignette("seeds", package = "fwildclusterboot")}
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
 #' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
@@ -48,9 +48,9 @@
 #'        when fitting the regression model).
 #' @param floattype Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?
 #' @param getauxweights Logical. FALSE by default. Whether to save auxilliary weight matrix (v)
-#' @param teststat_boot Logical. Should bootstrapped test statistics be returned?
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t
+#' @param teststat_boot Logical. Should bootstrapped test statistics be returned?
 #' @param ssc An object of class `boot_ssc.type` obtained with the function \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.
 #' @param ... Further arguments passed to or from other methods.
@@ -123,7 +123,7 @@ mboottest.fixest <- function(object,
                              na_omit = TRUE,
                              floattype = "Float64",
                              getauxweights = FALSE,
-                             t_boot = FALSE,
+                             teststat_boot = FALSE,
                              maxmatsize = NULL,
                              bootstrapc = FALSE,
                              ssc = boot_ssc(

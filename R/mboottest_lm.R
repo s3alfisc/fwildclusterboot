@@ -19,7 +19,7 @@
 #' @param internal_seed Logical. TRUE by default. If TRUE, for all bootstrap algorithms - 
 #'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`. If FALSE, 
 #'        the random seed needs to be set via the appropriate functions. See the associated article on 
-#'        \link{seeds}
+#'        \code{vignette("seeds", package = "fwildclusterboot")}
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
 #' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
@@ -137,7 +137,6 @@ mboottest.lm <- function(object,
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric vector | numeric matrix")
   
-  check_arg(conf_int, "logical scalar | NULL")
   check_arg(seed, "scalar integer | NULL")
   check_arg(internal_seed, "scalar logical")
   check_arg(r, "numeric vector  | NULL")

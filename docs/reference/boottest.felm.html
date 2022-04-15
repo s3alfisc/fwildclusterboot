@@ -80,7 +80,7 @@ implemented in the STATA package <code>boottest</code>.</p>
   fe <span class="op">=</span> <span class="cn">NULL</span>,
   conf_int <span class="op">=</span> <span class="cn">TRUE</span>,
   seed <span class="op">=</span> <span class="cn">NULL</span>,
-  internal_seed <span class="op">=</span> <span class="cn">TRUE</span>,
+  internal_seed <span class="op">=</span> <span class="fu">getBoottest_internal_seed</span><span class="op">(</span><span class="op">)</span>,
   R <span class="op">=</span> <span class="cn">NULL</span>,
   r <span class="op">=</span> <span class="fl">0</span>,
   beta0 <span class="op">=</span> <span class="va">r</span>,

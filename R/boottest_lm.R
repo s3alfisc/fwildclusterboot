@@ -34,7 +34,7 @@
 #' @param internal_seed Logical. TRUE by default. If TRUE, for all bootstrap algorithms - 
 #'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`. If FALSE, 
 #'        the random seed needs to be set via the appropriate functions. See the associated article on 
-#'        \link{seeds},
+#'        \code{vignette("seeds", package = "fwildclusterboot")},
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r

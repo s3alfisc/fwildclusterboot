@@ -55,7 +55,7 @@ Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see th
 \item{internal_seed}{Logical. TRUE by default. If TRUE, for all bootstrap algorithms -
 R, R-lean, and WildBootTests.jl - a global seed can be set via \code{set.seed()}. If FALSE,
 the random seed needs to be set via the appropriate functions. See the associated article on
-\link{seeds}}
+\code{vignette("seeds", package = "fwildclusterboot")}}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"

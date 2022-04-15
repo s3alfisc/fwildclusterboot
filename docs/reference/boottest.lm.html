@@ -76,7 +76,7 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019.</p>
   bootcluster <span class="op">=</span> <span class="st">"max"</span>,
   conf_int <span class="op">=</span> <span class="cn">TRUE</span>,
   seed <span class="op">=</span> <span class="cn">NULL</span>,
-  internal_seed <span class="op">=</span> <span class="cn">TRUE</span>,
+  internal_seed <span class="op">=</span> <span class="fu">getBoottest_internal_seed</span><span class="op">(</span><span class="op">)</span>,
   R <span class="op">=</span> <span class="cn">NULL</span>,
   r <span class="op">=</span> <span class="fl">0</span>,
   beta0 <span class="op">=</span> <span class="va">r</span>,
@@ -130,7 +130,7 @@ intervals by test inversion. If FALSE, only the p-value is returned.</p></dd>
 <dd><p>Logical. TRUE by default. If TRUE, for all bootstrap algorithms -
 R, R-lean, and WildBootTests.jl - a global seed can be set via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>. If FALSE,
 the random seed needs to be set via the appropriate functions. See the associated article on
-seeds,</p></dd>
+<code><a href="../articles/seeds.html">vignette("seeds", package = "fwildclusterboot")</a></code>,</p></dd>
 <dt>R</dt>
 <dd><p>Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as <code>param</code>. If NULL, a vector of ones of length param.</p></dd>
 <dt>r</dt>

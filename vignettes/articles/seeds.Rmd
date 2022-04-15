@@ -23,12 +23,21 @@ To facilitate reproducibility across random number generators and languages, `fw
 
 In consequence, it is possible to control all random number generation in `boottest()` via the familiar `set.seed()` function. This means that it is not necessary to set a dedicated seed for Julia when running the wild bootstrap through `WildBootTests.jl`, and it is also not required to set a specific seed for weights created via the `dqrng` package. 
 
-This idea is borrowing from a post by [Rory Nolan ](https://www.r-bloggers.com/2018/09/using-rs-set-seed-to-set-seeds-for-use-in-c-c-including-rcpp/). He suggests to use another R function that *stochastically* generates a random integer $x$ *based on the current state of the global R seed* - which is initially set via the familiar `set.seed()` - and to then to use the generated integer as a seed value in either R, Julia or c++. 
+This idea is borrowing from a post by [Rory Nolan ](https://www.r-bloggers.com/2018/09/using-rs-set-seed-to-set-seeds-for-use-in-c-c-including-rcpp/). Rory suggests to use another R function that *stochastically* generates a random integer $x$ *based on the current state of the global R seed* - which is initially set via the familiar `set.seed()` - and to then to use the generated integer as a seed value in either R, Julia or c++. 
 
 Hence when using the Julia or c++ based algorithms, neither `set.seed(1234); boottest(..., seed = NULL);` nor `boottest(..., seed = 1234)` actually pass `1234` as a seed value to Julia or c++. Instead, both create a new integer based on the state of R's global seed, which is implicitly called by the `sample.int(.Machine$integer.max, 1)` function.
 
 
-## Setting global seeds for all algorithms and distributions via 'set.seed()'
+## If you don't want to use 'internal seeds'
+
+You can turn off internal seeding by setting a global variable via 
+
+```{r, eval = FALSE}
+setBoottest_internal_seed(FALSE)
+```
+in which case you will have to set appropriate seeds via `set.seed()`, `dqrng::set.seed()` and `Julia.StableRNGs`. This way, you can reproduce bootstrap results from fwildclusterboot versions 0.7 or earlier. 
+
+## Examples: Setting global seeds for all algorithms and distributions via 'set.seed()'
 
 Here is an example in which no seeds are provided to `boottest()`, a global seed is set
 via `set.seed()`, and the wild cluster bootstrap is run for different weights and via R, rcpp and Julia. 

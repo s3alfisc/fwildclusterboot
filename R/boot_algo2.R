@@ -57,7 +57,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   W <- preprocessed_object$W
   # n_fe <- preprocessed_object$n_fe
   bootcluster <- preprocessed_object$bootcluster
-  # vcov_sign <- preprocessed_object$vcov_sign
+  vcov_sign <- preprocessed_object$vcov_sign
   weights <- preprocessed_object$weights
   R <- t(as.matrix(preprocessed_object$R0))
   # r <- preprocessed_object$r

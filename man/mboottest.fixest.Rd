@@ -21,7 +21,7 @@
   na_omit = TRUE,
   floattype = "Float64",
   getauxweights = FALSE,
-  t_boot = FALSE,
+  teststat_boot = FALSE,
   maxmatsize = NULL,
   bootstrapc = FALSE,
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
@@ -60,7 +60,7 @@ needs to be NULL.}
 \item{internal_seed}{Logical. TRUE by default. If TRUE, for all bootstrap algorithms -
 R, R-lean, and WildBootTests.jl - a global seed can be set via \code{set.seed()}. If FALSE,
 the random seed needs to be set via the appropriate functions. See the associated article on
-\link{seeds}}
+\code{vignette("seeds", package = "fwildclusterboot")}}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -90,6 +90,8 @@ when fitting the regression model).}
 
 \item{getauxweights}{Logical. FALSE by default. Whether to save auxilliary weight matrix (v)}
 
+\item{teststat_boot}{Logical. Should bootstrapped test statistics be returned?}
+
 \item{maxmatsize}{NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes}
 
 \item{bootstrapc}{Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t}
@@ -98,8 +100,6 @@ when fitting the regression model).}
 You can find more details in the help file for \code{boot_ssc()}. The function is purposefully designed to mimic fixest's \code{\link[fixest]{ssc}} function.}
 
 \item{...}{Further arguments passed to or from other methods.}
-
-\item{teststat_boot}{Logical. Should bootstrapped test statistics be returned?}
 }
 \value{
 An object of class \code{mboottest}
