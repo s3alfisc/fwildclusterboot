@@ -18,7 +18,7 @@
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
-#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.
+#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.
 #' @param sign_level A numeric between 0 and 1 which sets the significance level
 #'        of the inference procedure. E.g. sign_level = 0.05
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.

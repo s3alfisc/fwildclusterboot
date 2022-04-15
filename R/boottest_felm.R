@@ -18,7 +18,7 @@
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
-#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.
+#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.
 #' @param fe A character vector of length one which contains the name of the fixed effect to be projected
 #'        out in the bootstrap. Note: if regression weights are used, fe
 #'        needs to be NULL.
@@ -37,7 +37,7 @@
 #' @param internal_seed Logical. TRUE by default. If TRUE, for all bootstrap algorithms - 
 #'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`. If FALSE, 
 #'        the random seed needs to be set via the appropriate functions. See the associated article on 
-#'        \link{seeds}
+#'        \code{vignette("seeds", package = "fwildclusterboot")}
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r

@@ -53,7 +53,7 @@ clustering implied by the listed variables. To mimic the behavior of stata's boo
 the default is to cluster by the intersection of all the variables specified via the \code{clustid} argument,
 even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
-Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.}
+Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.}
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence
 intervals by test inversion. If FALSE, only the p-value is returned.}

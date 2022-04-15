@@ -14,7 +14,7 @@
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
-#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.
+#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.
 #' @param seed An integer. Allows to set a random seed. 
 #' @param internal_seed Logical. TRUE by default. If TRUE, for all bootstrap algorithms - 
 #'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`. If FALSE, 

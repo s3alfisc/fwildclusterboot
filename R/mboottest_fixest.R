@@ -14,7 +14,7 @@
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
-#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \link{vignette} for details.
+#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.
 #' @param fe A character vector of length one which contains the name of the fixed effect to be projected
 #'        out in the bootstrap. Note: if regression weights are used, fe
 #'        needs to be NULL.
