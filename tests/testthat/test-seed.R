@@ -7,6 +7,9 @@ test_that("seed works for OLS", {
     data = data1
   )
 
+  setBoottest_internal_seed(TRUE)
+  on.exit(setBoottest_internal_seed(FALSE), add = TRUE)
+  
 
   for (boot_algo in c("R", "R-lean", "WildBootTests.jl")) {
 
@@ -211,6 +214,9 @@ test_that("seed works for OLS", {
 
 
 test_that("internal_seed = FALSE", {
+  
+  setBoottest_internal_seed(TRUE)
+  on.exit(setBoottest_internal_seed(FALSE), add = TRUE)
   
   
   skip_on_cran()

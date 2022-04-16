@@ -15,11 +15,11 @@
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
 #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.
-#' @param seed An integer. Allows to set a random seed. 
-#' @param internal_seed Logical. TRUE by default. If TRUE, for all bootstrap algorithms - 
-#'        R, R-lean, and WildBootTests.jl - a global seed can be set via `set.seed()`. If FALSE, 
-#'        the random seed needs to be set via the appropriate functions. See the associated article on 
-#'        \code{vignette("seeds", package = "fwildclusterboot")}
+#' @param seed An integer. Allows to set a random seed. For details, see below.  
+#' @param internal_seed Logical. FALSE by default. If TRUE, `boottest()` creates an internal seed that inherits from 
+#'        a global seed set via `set.seed()`. Hence for all bootstrap algorithms - 
+#'        R, R-lean, and WildBootTests.jl - setting a global seed via `set.seed()` ensures replicability. If FALSE, 
+#'        the random seed needs to be set via the appropriate functions. For details, see below.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
 #' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
@@ -56,8 +56,6 @@
 #' @importFrom dreamerr check_arg validate_dots
 #' @importFrom stats as.formula coef model.matrix model.response model.weights residuals rlnorm rnorm update
 #'
-#' @method mboottest lm
-#'
 #' @return An object of class \code{mboottest}
 #'
 #' \item{p_val}{The bootstrap p-value.}
@@ -79,8 +77,25 @@
 #' \item{boot_algo}{The employed bootstrap algorithm.}
 #' \item{nthreads}{The number of threads employed.}
 #' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.}
-
+#' 
 #' @export
+#' @method mboottest lm
+#' 
+#' @section Setting Seeds: 
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
+#' set a global random seed via 
+#' + `set.seed()` when using
+#'    the lean algorithm (via `boot_algo = "R-lean"`), the heteroskedastic wild bootstrap 
+#'    or the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights.
+#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
+#' + `fwildclusterboot::set_julia_seed()` when running the bootstrap via `boot_algo = WildBootTests.jl`  
+#' 
+#' Alternatively, you can set a global variable via `setBoottest_internal_seed(TRUE)`, in which case
+#' random number generation across all algorithms can be controlled by `set.seed()`.
+#'
+#' Note that whenever `boottest()'s` argument `internal_seed = TRUE`, an internal seed is set within `boottest()`, even
+#' when you are providing a custom seed to the function. Hence when evaluating `boottest(..., seed = 42, internal_seed = TRUE)`, the actual
+#' seed used within `boottest()` is not `42`. 
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.

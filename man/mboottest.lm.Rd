@@ -50,12 +50,12 @@ even though that is not necessarily recommended (see the paper by Roodman et al 
 Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
 Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.}
 
-\item{seed}{An integer. Allows to set a random seed.}
+\item{seed}{An integer. Allows to set a random seed. For details, see below.}
 
-\item{internal_seed}{Logical. TRUE by default. If TRUE, for all bootstrap algorithms -
-R, R-lean, and WildBootTests.jl - a global seed can be set via \code{set.seed()}. If FALSE,
-the random seed needs to be set via the appropriate functions. See the associated article on
-\code{vignette("seeds", package = "fwildclusterboot")}}
+\item{internal_seed}{Logical. FALSE by default. If TRUE, \code{boottest()} creates an internal seed that inherits from
+a global seed set via \code{set.seed()}. Hence for all bootstrap algorithms -
+R, R-lean, and WildBootTests.jl - setting a global seed via \code{set.seed()} ensures replicability. If FALSE,
+the random seed needs to be set via the appropriate functions. For details, see below.}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -124,6 +124,26 @@ the cluster variables contain NA values.}
 bootstrap inference of multivariate hypotheses for objects of class lm by
 implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019.
 }
+\section{Setting Seeds}{
+
+To guarantee reproducibility, you can either use \verb{boottest()'s} \code{seed} function argument, or
+set a global random seed via
+\itemize{
+\item \code{set.seed()} when using
+the lean algorithm (via \code{boot_algo = "R-lean"}), the heteroskedastic wild bootstrap
+or the wild cluster bootstrap via \code{boot_algo = "R"} with Mammen weights.
+\item \code{dqrng::dqset.seed()} when using \code{boot_algo = "R"} for Rademacher, Webb or Normal weights
+\item \code{fwildclusterboot::set_julia_seed()} when running the bootstrap via \code{boot_algo = WildBootTests.jl}
+}
+
+Alternatively, you can set a global variable via \code{setBoottest_internal_seed(TRUE)}, in which case
+random number generation across all algorithms can be controlled by \code{set.seed()}.
+
+Note that whenever \verb{boottest()'s} argument \code{internal_seed = TRUE}, an internal seed is set within \code{boottest()}, even
+when you are providing a custom seed to the function. Hence when evaluating \code{boottest(..., seed = 42, internal_seed = TRUE)}, the actual
+seed used within \code{boottest()} is not \code{42}.
+}
+
 \examples{
 \dontrun{
 library(clubSandwich)

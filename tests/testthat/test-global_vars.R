@@ -1,4 +1,6 @@
 test_that("global boot_algo", {
+
+  skip_on_cran()
   
   library(fwildclusterboot)
 

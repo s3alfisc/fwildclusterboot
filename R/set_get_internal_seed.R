@@ -7,7 +7,7 @@ setBoottest_internal_seed <- function(internal_seed){
 
   if (missing(internal_seed) || is.null(internal_seed)) {
     # New default: one cores used
-    internal_seed <- TRUE
+    internal_seed <- FALSE
   }
   
   internal_seed <- set_internal_seed(internal_seed)
