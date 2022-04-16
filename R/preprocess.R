@@ -393,10 +393,10 @@ get_formulas <- function(object, cluster, fe, param, bootcluster) {
 
     # add cluster variables specified in feols-cluster and boottest-cluster arguments
     if (!is.null(eval(of$cluster))) {
-      if (class(eval(of$cluster)) == "formula") {
+      if (inhterits(eval(of$cluster), "formula")) {
         add_cluster <- unlist(strsplit(deparse(of$cluster), "[~]"))[2]
         formula <- update(formula, paste("~ . +", paste(add_cluster, collapse = "+")))
-      } else if (class(eval(of$cluster)) == "character") {
+      } else if (inherits(eval(of$cluster),"character")) {
         formula <- update(formula, paste("~ . +", paste(eval(of$cluster), collapse = "+")))
       } else {
         deparse_data <- unlist(strsplit(deparse(of$data), "[$]"))
@@ -618,7 +618,7 @@ add_bootcluster <- function(formula, bootcluster) {
 add_weights <- function(of, formula) {
   # add weights
   if (!is.null(eval(of$weights))) {
-    if (class(eval(of$weights)) == "formula") {
+    if (inherits(eval(of$weights), "formula")) {
       add_weights <- unlist(strsplit(deparse(of$weights), "[~]"))[2]
       formula <- update(formula, paste("~ . +", paste(add_weights, collapse = "+")))
       weights_fml <- formula(paste("~ -1 + ", paste(add_weights, collapse = "+")))
