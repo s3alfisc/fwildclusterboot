@@ -361,7 +361,21 @@ test_that("errors and warnings q = 1", {
       conf_int = TRUE, boot_algo = boot_algo
     ))
 
+    feols_fit <- feols(proposition_vote ~ treatment + ideology1 | Q1_immigration^Q2_defense,
+                       data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234),
+                       subset = sample(c(TRUE, FALSE), 1000, TRUE)
+    )
+    expect_error(boottest(
+      object = feols_fit,
+      clustid = "group_id1",
+      B = 999, seed = 911,
+      param = "treatment",
+      conf_int = TRUE, 
+      boot_algo = boot_algo
+    ))
 
+    
+    
     # evalute dots ... in methods
     # write sig_level instead of sign_level
     expect_error(boottest(

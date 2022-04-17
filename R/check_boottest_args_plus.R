@@ -34,10 +34,17 @@ check_boottest_args_plus <- function(object, R, param, sign_level, B, clustid = 
 
     # check for forbidden fixest syntax sugar (can't handle this at the moment)
     deparse_fml <- Reduce(paste, as.character(as.formula(object$fml_all$linear)))
-    if (grepl("[", deparse_fml, fixed = TRUE) ||
+
+    if (
+      grepl("[", deparse_fml, fixed = TRUE) ||
       grepl("i(", deparse_fml, fixed = TRUE) ||
       grepl("c(", deparse_fml, fixed = TRUE) ||
-      grepl("^", deparse_fml, fixed = TRUE)
+      # '^' illegal in fixef argument, but legal in main formula - 
+      # e.g. fml = y ~ x1 + I(x2^2) shold be possible
+      ("fixef_vars" %in% names(object) && 
+       grepl("^",
+             Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
+             fixed = TRUE))
     # note: whitespace ~ - for IV
     # grepl("~", deparse_fml, fixed = TRUE)
     ) {
@@ -146,12 +153,19 @@ check_mboottest_args_plus <- function(object, R, r, B) {
 
     # check for forbidden fixest syntax sugar (can't handle this at the moment)
     deparse_fml <- Reduce(paste, as.character(as.formula(object$fml_all$linear)))
-    if (grepl("[", deparse_fml, fixed = TRUE) ||
+
+    if (
+      grepl("[", deparse_fml, fixed = TRUE) ||
       grepl("i(", deparse_fml, fixed = TRUE) ||
       grepl("c(", deparse_fml, fixed = TRUE) ||
-      grepl("^", deparse_fml, fixed = TRUE)
-    # note: whitespace ~ - for IV
-    # grepl("~", deparse_fml, fixed = TRUE)
+      # '^' illegal in fixef argument, but legal in main formula - 
+      # e.g. fml = y ~ x1 + I(x2^2) shold be possible
+      ("fixef_vars" %in% names(object) && 
+        grepl("^",
+              Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
+              fixed = TRUE))
+      # note: whitespace ~ - for IV
+      # grepl("~", deparse_fml, fixed = TRUE)
     ) {
       stop("Advanced formula notation in fixest / fixest (i(), ^, [x]
          and vectorized formulas via c(),) is currently not supported
