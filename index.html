@@ -7,8 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="Implementation of the fast algorithm for wild cluster bootstrap 
              inference developed in Roodman et al (2019, STATA Journal) for 
-             linear regression models 
-             &lt;doi:10.1177/1536867X19830877&gt;, 
+             linear regression models &lt;doi:10.1177/1536867X19830877&gt;, 
              which makes it feasible to quickly calculate bootstrap test 
              statistics based on a large number of bootstrap draws even for 
              large samples - as long as the number of bootstrapping clusters 
@@ -17,7 +16,9 @@
              are supported. Further, both restricted (WCR) and unrestricted
              (WCU) bootstrap are supported. Methods are provided for a variety 
              of fitted models, including lm(), feols() 
-             (from package fixest) and felm() (from package lfe).
+             (from package fixest) and felm() (from package lfe). 
+             Additionally implements a heteroskedasticity-robust (HC1) wild 
+             bootstrap.
              Further, the package provides an R binding to WildBootTests.jl,
              which provides additional speed gains and the wild cluster
              bootstrap for OLS, IV and hypotheses with q &gt; 1.">
@@ -35,8 +36,7 @@
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Fast Wild Cluster Bootstrap Inference for Linear Models">
 <meta property="og:description" content="Implementation of the fast algorithm for wild cluster bootstrap 
              inference developed in Roodman et al (2019, STATA Journal) for 
-             linear regression models 
-             &lt;doi:10.1177/1536867X19830877&gt;, 
+             linear regression models &lt;doi:10.1177/1536867X19830877&gt;, 
              which makes it feasible to quickly calculate bootstrap test 
              statistics based on a large number of bootstrap draws even for 
              large samples - as long as the number of bootstrapping clusters 
@@ -45,7 +45,9 @@
              are supported. Further, both restricted (WCR) and unrestricted
              (WCU) bootstrap are supported. Methods are provided for a variety 
              of fitted models, including lm(), feols() 
-             (from package fixest) and felm() (from package lfe).
+             (from package fixest) and felm() (from package lfe). 
+             Additionally implements a heteroskedasticity-robust (HC1) wild 
+             bootstrap.
              Further, the package provides an R binding to WildBootTests.jl,
              which provides additional speed gains and the wild cluster
              bootstrap for OLS, IV and hypotheses with q &gt; 1.">
