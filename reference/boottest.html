@@ -31,7 +31,6 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019."><meta prop
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/seeds.html">How to set random seeds in fwildclusterboot</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -73,7 +72,7 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>object</dt>
-<dd><p>An object of type lm, fixest of felm</p></dd>
+<dd><p>An object of type lm, fixest, felm or ivreg</p></dd>
 <dt>...</dt>
 <dd><p>other arguments</p></dd>
 </dl></div>
@@ -81,6 +80,16 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019.</p>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An object of class <code>boottest</code>.</p>
     </div>
+    <div class="section level2">
+    <h2 id="setting-seeds">Setting Seeds<a class="anchor" aria-label="anchor" href="#setting-seeds"></a></h2>
+    
+
+<p>To guarantee reproducibility, you can either use <code>boottest()'s</code> <code>seed</code> function argument, or
+set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>boot_algo = "R-lean"</code>), 2) the heteroskedastic wild bootstrap</p></li>
+<li><p>the wild cluster bootstrap via <code>boot_algo = "R"</code> with Mammen weights or 4) <code>boot_algo = "WildBootTests.jl"</code></p></li>
+</ol></li>
+<li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>boot_algo = "R"</code> for Rademacher, Webb or Normal weights</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Roodman et al., 2019, "Fast and wild: Bootstrap inference in
@@ -93,7 +102,7 @@ STATA using boottest", The STATA Journal.
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><a href="boottest.lm.html">boottest.lm</a>, <a href="boottest.fixest.html">boottest.fixest</a> and <a href="boottest.felm.html">boottest.felm</a></p></div>
+    <div class="dont-index"><p><a href="boottest.lm.html">boottest.lm</a>, <a href="boottest.fixest.html">boottest.fixest</a>, <a href="boottest.felm.html">boottest.felm</a>, <a href="boottest.ivreg.html">boottest.ivreg</a></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
