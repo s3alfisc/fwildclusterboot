@@ -73,7 +73,6 @@ implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019
   <span class="va">B</span>,
   <span class="va">R</span>,
   r <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">R</span><span class="op">)</span><span class="op">)</span>,
-  beta0 <span class="op">=</span> <span class="va">r</span>,
   bootcluster <span class="op">=</span> <span class="st">"max"</span>,
   fe <span class="op">=</span> <span class="cn">NULL</span>,
   seed <span class="op">=</span> <span class="cn">NULL</span>,
@@ -108,8 +107,6 @@ of joint hypotheses and k the number of estimated coefficients.</p></dd>
 <dt>r</dt>
 <dd><p>A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
 H0: param = r vs H1: param != r. If not provided, a vector of zeros of length q.</p></dd>
-<dt>beta0</dt>
-<dd><p>Superseded function argument, replaced by function argument 'r'</p></dd>
 <dt>bootcluster</dt>
 <dd><p>A character vector. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
