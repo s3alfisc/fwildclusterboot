@@ -4,14 +4,11 @@
 + checked on rhub
 + checked on r-devel
 
-rhub and r-devel lead to aligned notes, some of which have been fixed. 
-Other notes don't seem appropriate. 
+No errors or warnings have been found. 
 
-+ "Possibly misspelled words in DESCRIPTION:
-  OLS (49:28)
-  WildBootTests (47:60)
-  jl (47:74)"
-  -> everything spelled correctly
+rhub and r-devel lead to aligned notes, some of which have been fixed. 
+Other notes don't seem appropriate (?)
+
 + "Found the following (possibly) invalid file URI:
   URI: WildBootTests.html
     From: inst/doc/fwildclusterboot.html"

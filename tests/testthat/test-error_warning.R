@@ -291,23 +291,25 @@ test_that("errors and warnings q = 1", {
       boot_algo = boot_algo
     )))
 
-    suppressWarnings(expect_message(boottest(
-      object = feols_fit,
-      clustid = "group_id1",
-      B = 1000,
-      seed = 911,
-      param = "treatment",
-      conf_int = TRUE,
-      boot_algo = boot_algo
-    )))
-
-    suppressWarnings(expect_message(boottest(
-      object = felm_fit,
-      clustid = "group_id1",
-      B = 1000, seed = 911,
-      param = "treatment",
-      conf_int = TRUE, boot_algo = boot_algo
-    )))
+    if(boot_algo != "R-lean"){
+      suppressWarnings(expect_message(boottest(
+        object = feols_fit,
+        clustid = "group_id1",
+        B = 1000,
+        seed = 911,
+        param = "treatment",
+        conf_int = TRUE,
+        boot_algo = boot_algo
+      )))
+      
+      suppressWarnings(expect_message(boottest(
+        object = felm_fit,
+        clustid = "group_id1",
+        B = 1000, seed = 911,
+        param = "treatment",
+        conf_int = TRUE, boot_algo = boot_algo
+      )))
+    }
 
     # banned function arguments
 

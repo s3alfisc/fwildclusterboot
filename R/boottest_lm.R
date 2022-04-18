@@ -334,7 +334,7 @@ boottest.lm <- function(object,
   } else if (boot_algo == "R-lean") {
     
     check_r_lean(
-      weights = weights(object),
+      weights = stats::weights(object),
       clustid = clustid, 
       fe = NULL
     )

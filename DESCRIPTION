@@ -36,8 +36,7 @@ Description: Implementation of the fast algorithm for wild cluster bootstrap
              linear regression models <doi:10.1177/1536867X19830877>, 
              which makes it feasible to quickly calculate bootstrap test 
              statistics based on a large number of bootstrap draws even for 
-             large samples - as long as the number of bootstrapping clusters 
-             is not too large. Multiway clustering, regression weights, 
+             large samples. Multiway clustering, regression weights, 
              bootstrap weights, fixed effects and subcluster bootstrapping
              are supported. Further, both restricted (WCR) and unrestricted
              (WCU) bootstrap are supported. Methods are provided for a variety 
@@ -45,9 +44,11 @@ Description: Implementation of the fast algorithm for wild cluster bootstrap
              (from package 'fixest') and 'felm()' (from package 'lfe'). 
              Additionally implements a heteroskedasticity-robust (HC1) wild 
              bootstrap.
-             Further, the package provides an R binding to WildBootTests.jl,
-             which provides additional speed gains and the wild cluster
-             bootstrap for OLS, IV and hypotheses with q > 1.
+             Further, the package provides an R binding to 'WildBootTests.jl',
+             which provides additional speed gains and functionality, 
+             including the WRE bootstrap for instrumental variable models 
+             (based on models of type 'ivreg()' from package 'ivreg')
+             and hypotheses with q > 1.
 URL: https://s3alfisc.github.io/fwildclusterboot/
 BugReports: https://github.com/s3alfisc/fwildclusterboot/issues/
 License: GPL-3 
