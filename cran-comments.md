@@ -9,6 +9,11 @@ No errors or warnings have been found.
 rhub and r-devel lead to aligned notes, some of which have been fixed. 
 Other notes don't seem appropriate (?)
 
++ "   Possibly misspelled words in DESCRIPTION:
+     HC (45:67)
+     WRE (49:28)
+     heteroskedasticity (45:40)
+"
 + "Found the following (possibly) invalid file URI:
   URI: WildBootTests.html
     From: inst/doc/fwildclusterboot.html"
