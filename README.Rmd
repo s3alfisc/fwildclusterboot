@@ -86,8 +86,12 @@ For a longer introduction to `fwildclusterboot`, take a look at the [vignette](h
 ```{r}
 library(fwildclusterboot)
 
-data(voters)
+# set seed via dqset.seed for boot_algo = "R" & Rademacher, Webb & Normal weights
+dqrng::dqset.seed(2352342)
+# set 'familiar' seed for all other algorithms and weight types 
 set.seed(23325)
+
+data(voters)
 
 # fit the model via fixest::feols(), lfe::felm() or stats::lm()
 lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigration) + as.factor(Q2_defense), data = voters)

@@ -7,7 +7,7 @@
 mboottest(object, ...)
 }
 \arguments{
-\item{object}{An object of type lm, fixest, felm or ivreg}
+\item{object}{An object of type lm, fixest or felm}
 
 \item{...}{other arguments}
 }
@@ -18,6 +18,20 @@ An object of class \code{mboottest}.
 \code{mboottest} is a S3 method that allows for arbitrary linear hypothesis testing
 for objects of class lm, fixest, felm
 }
+\section{Setting Seeds}{
+
+To guarantee reproducibility, you can either use \verb{boottest()'s} \code{seed} function argument, or
+set a global random seed via
+\itemize{
+\item \code{set.seed()} when using
+\enumerate{
+\item the lean algorithm (via \code{boot_algo = "R-lean"}), 2) the heteroskedastic wild bootstrap
+\item the wild cluster bootstrap via \code{boot_algo = "R"} with Mammen weights or 4) \code{boot_algo = "WildBootTests.jl"}
+}
+\item \code{dqrng::dqset.seed()} when using \code{boot_algo = "R"} for Rademacher, Webb or Normal weights
+}
+}
+
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.

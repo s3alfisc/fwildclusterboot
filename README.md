@@ -72,8 +72,12 @@ For a longer introduction to `fwildclusterboot`, take a look at the
 ``` r
 library(fwildclusterboot)
 
-data(voters)
+# set seed via dqset.seed for boot_algo = "R" & Rademacher, Webb & Normal weights
+dqrng::dqset.seed(2352342)
+# set 'familiar' seed for all other algorithms and weight types 
 set.seed(23325)
+
+data(voters)
 
 # fit the model via fixest::feols(), lfe::felm() or stats::lm()
 lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigration) + as.factor(Q2_defense), data = voters)
@@ -91,7 +95,7 @@ summary(lm_boot)
 #>  Number of Clusters: 40
 #> 
 #>              term estimate statistic p.value conf.low conf.high
-#> 1 1*treatment = 0    0.079     3.983   0.001    0.039      0.12
+#> 1 1*treatment = 0    0.079     3.983       0     0.04     0.118
 ```
 
 ### Installation

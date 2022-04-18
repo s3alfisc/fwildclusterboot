@@ -74,6 +74,8 @@ preprocess <- function(object, cluster, fe, param, bootcluster, na_omit, R, boot
   }
 
   k <- dim(X)[2]
+  #fedfadj <- ifelse(!is.null(fixed_effect), length(unique(fixed_effect)), 0)
+  #k_all <- k + fedfadj
 
   # fixed effect demeaning for boot_algo = "R"
   if (boot_algo == "R" & !is.null(fe)) {
@@ -393,7 +395,7 @@ get_formulas <- function(object, cluster, fe, param, bootcluster) {
 
     # add cluster variables specified in feols-cluster and boottest-cluster arguments
     if (!is.null(eval(of$cluster))) {
-      if (inhterits(eval(of$cluster), "formula")) {
+      if (inherits(eval(of$cluster), "formula")) {
         add_cluster <- unlist(strsplit(deparse(of$cluster), "[~]"))[2]
         formula <- update(formula, paste("~ . +", paste(add_cluster, collapse = "+")))
       } else if (inherits(eval(of$cluster),"character")) {

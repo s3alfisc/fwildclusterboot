@@ -12,7 +12,6 @@
   r = rep(0, nrow(R)),
   bootcluster = "max",
   seed = NULL,
-  internal_seed = getBoottest_internal_seed(),
   type = "rademacher",
   impose_null = TRUE,
   p_val_type = "two-tailed",
@@ -51,11 +50,6 @@ Other options include "min", where bootstrapping is clustered by the cluster var
 Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.}
 
 \item{seed}{An integer. Allows to set a random seed. For details, see below.}
-
-\item{internal_seed}{Logical. FALSE by default. If TRUE, \code{boottest()} creates an internal seed that inherits from
-a global seed set via \code{set.seed()}. Hence for all bootstrap algorithms -
-R, R-lean, and WildBootTests.jl - setting a global seed via \code{set.seed()} ensures replicability. If FALSE,
-the random seed needs to be set via the appropriate functions. For details, see below.}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -130,18 +124,12 @@ To guarantee reproducibility, you can either use \verb{boottest()'s} \code{seed}
 set a global random seed via
 \itemize{
 \item \code{set.seed()} when using
-the lean algorithm (via \code{boot_algo = "R-lean"}), the heteroskedastic wild bootstrap
-or the wild cluster bootstrap via \code{boot_algo = "R"} with Mammen weights.
-\item \code{dqrng::dqset.seed()} when using \code{boot_algo = "R"} for Rademacher, Webb or Normal weights
-\item \code{fwildclusterboot::set_julia_seed()} when running the bootstrap via \code{boot_algo = WildBootTests.jl}
+\enumerate{
+\item the lean algorithm (via \code{boot_algo = "R-lean"}), 2) the heteroskedastic wild bootstrap
+\item the wild cluster bootstrap via \code{boot_algo = "R"} with Mammen weights or 4) \code{boot_algo = "WildBootTests.jl"}
 }
-
-Alternatively, you can set a global variable via \code{setBoottest_internal_seed(TRUE)}, in which case
-random number generation across all algorithms can be controlled by \code{set.seed()}.
-
-Note that whenever \verb{boottest()'s} argument \code{internal_seed = TRUE}, an internal seed is set within \code{boottest()}, even
-when you are providing a custom seed to the function. Hence when evaluating \code{boottest(..., seed = 42, internal_seed = TRUE)}, the actual
-seed used within \code{boottest()} is not \code{42}.
+\item \code{dqrng::dqset.seed()} when using \code{boot_algo = "R"} for Rademacher, Webb or Normal weights
+}
 }
 
 \examples{

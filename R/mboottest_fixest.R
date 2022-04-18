@@ -19,10 +19,6 @@
 #'        out in the bootstrap. Note: if regression weights are used, fe
 #'        needs to be NULL.
 #' @param seed An integer. Allows to set a random seed. For details, see below.  
-#' @param internal_seed Logical. FALSE by default. If TRUE, `boottest()` creates an internal seed that inherits from 
-#'        a global seed set via `set.seed()`. Hence for all bootstrap algorithms - 
-#'        R, R-lean, and WildBootTests.jl - setting a global seed via `set.seed()` ensures replicability. If FALSE, 
-#'        the random seed needs to be set via the appropriate functions. For details, see below.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
 #' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
@@ -89,17 +85,9 @@
 #' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
 #' set a global random seed via 
 #' + `set.seed()` when using
-#'    the lean algorithm (via `boot_algo = "R-lean"`), the heteroskedastic wild bootstrap 
-#'    or the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights.
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`), 2) the heteroskedastic wild bootstrap 
+#'    3) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 4) `boot_algo = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
-#' + `fwildclusterboot::set_julia_seed()` when running the bootstrap via `boot_algo = WildBootTests.jl`  
-#' 
-#' Alternatively, you can set a global variable via `setBoottest_internal_seed(TRUE)`, in which case
-#' random number generation across all algorithms can be controlled by `set.seed()`.
-#'
-#' Note that whenever `boottest()'s` argument `internal_seed = TRUE`, an internal seed is set within `boottest()`, even
-#' when you are providing a custom seed to the function. Hence when evaluating `boottest(..., seed = 42, internal_seed = TRUE)`, the actual
-#' seed used within `boottest()` is not `42`. 
 #' 
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
@@ -131,7 +119,6 @@ mboottest.fixest <- function(object,
                              bootcluster = "max",
                              fe = NULL,
                              seed = NULL,
-                             internal_seed = getBoottest_internal_seed(), 
                              type = "rademacher",
                              impose_null = TRUE,
                              p_val_type = "two-tailed",
@@ -163,7 +150,6 @@ mboottest.fixest <- function(object,
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   
   check_arg(seed, "scalar integer | NULL")
-  check_arg(internal_seed, "scalar logical")
   check_arg(r, "numeric vector | NULL")
   check_arg(fe, "character scalar | NULL")
   check_arg(bootcluster, "character vector")
@@ -176,12 +162,12 @@ mboottest.fixest <- function(object,
   check_arg(bootstrapc, "scalar logical")
   check_arg(teststat_boot, "logical scalar")
   
-  internal_seed <- set_get_internal_seed(
-    internal_seed = internal_seed, 
+  internal_seed <- set_seed(
     seed = seed, 
     boot_algo = "WildBootTests.jl", 
     type = type
   )
+  
   
   # fixest specific checks
   if (object$method != "feols") {

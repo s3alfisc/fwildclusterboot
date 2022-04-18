@@ -7,7 +7,7 @@
 boottest(object, ...)
 }
 \arguments{
-\item{object}{An object of type lm, fixest of felm}
+\item{object}{An object of type lm, fixest, felm or ivreg}
 
 \item{...}{other arguments}
 }
@@ -19,6 +19,20 @@ An object of class \code{boottest}.
 bootstrap inference for objects of class lm, fixest and felm by  implementing
 the fast wild bootstrap algorithm developed in Roodman et al., 2019.
 }
+\section{Setting Seeds}{
+
+To guarantee reproducibility, you can either use \verb{boottest()'s} \code{seed} function argument, or
+set a global random seed via
+\itemize{
+\item \code{set.seed()} when using
+\enumerate{
+\item the lean algorithm (via \code{boot_algo = "R-lean"}), 2) the heteroskedastic wild bootstrap
+\item the wild cluster bootstrap via \code{boot_algo = "R"} with Mammen weights or 4) \code{boot_algo = "WildBootTests.jl"}
+}
+\item \code{dqrng::dqset.seed()} when using \code{boot_algo = "R"} for Rademacher, Webb or Normal weights
+}
+}
+
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.
@@ -33,5 +47,5 @@ MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite eco
 Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 }
 \seealso{
-\link[fwildclusterboot]{boottest.lm}, \link[fwildclusterboot]{boottest.fixest} and \link[fwildclusterboot]{boottest.felm}
+\link[fwildclusterboot]{boottest.lm}, \link[fwildclusterboot]{boottest.fixest}, \link[fwildclusterboot]{boottest.felm}, \link[fwildclusterboot]{boottest.ivreg}
 }

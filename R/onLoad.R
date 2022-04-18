@@ -9,7 +9,6 @@
 
   setBoottest_nthreads()
   setBoottest_boot_algo()
-  setBoottest_internal_seed()
-  
+
   invisible()
 }

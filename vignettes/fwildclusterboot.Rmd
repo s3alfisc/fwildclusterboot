@@ -35,6 +35,10 @@ The `fwildclusterboot` package consists of one key function, `boottest()`. It im
 To start, we create a random data set with two cluster variables (group_id1 \& group_id2), two fixed effects and a set of covariates. The `icc_` arguments control the cluster variable's intra-cluster correlation.
 
 ```{r, error = FALSE, warning = FALSE, message = FALSE}
+# set seed via dqset.seed for boot_algo = "R" & Rademacher, Webb & Normal weights
+dqrng::dqset.seed(2352342)
+# set 'familiar' seed for all other algorithms and weight types 
+set.seed(23325)
 
 # load data set voters included in fwildclusterboot
 data(voters)
@@ -111,7 +115,7 @@ summary(boot_lm)
 
 ## The Heteroskedastic Bootstrap
 
-If you drop the `clustid` argument, `boottest()` will run a heteroskedasticity robust wild bootstrap via the 'R-lean' algorithm. At the moment, the null hypothesis is always imposed, only Rademacher and Webb weights are supported, and no confidence intervals are computed. As all algorithms in `fwildclusterboot`, p-values are calculated based on pivotal t-statistics.
+If you drop the `clustid` argument, `boottest()` will run a heteroskedasticity robust wild bootstrap via the 'R-lean' algorithm. At the moment, the null hypothesis is always imposed, only Rademacher and Webb weights are supported, and no confidence intervals are computed. Further, no regression weights are supported. As all algorithms in `fwildclusterboot`, p-values are calculated based on pivotal t-statistics.
 
 ```{r}
 boot_lm <- boottest(lm_fit, param = "treatment", B = 9999)
@@ -570,6 +574,9 @@ res
 
 ```
 
+## Seeds
+
+For Rademacher, Normal and Webb weights and `boot_algo = "R"`, you need to set a global seed via `dqrng::dqset.seed()`. For all other options - Mammen weights with `boot_algo = "R"`, `boot_algo = "R-lean"` or `boot_algo = "WildBootTests.jl"`, you can set a global seed via the familiar`set.seed()`. 
 
 ## Treatment of Invalid Test Statistics for multiway clustering
 

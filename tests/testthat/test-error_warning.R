@@ -638,6 +638,21 @@ test_that("errors and warnings q = 1", {
         data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
       )
       expect_error(boottest(felm_fit_c, param = "treatment", fe = "Q1_immigration", B = 999, clustid = "group_id1", boot_algo = "R-lean"))
+      
+      # no support for R-lean with weights
+      data1 <<- fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+      lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income , weights = data1$weights, 
+                         data = data1)
+      feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = data1$weights, 
+                         data = data1)
+      felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration, weights = data1$weights, 
+                       data = data1)
+      
+      expect_error(boottest(lm_fit, param = "treatment", B = 999, clustid = "group_id1", boot_algo = "R-lean"))
+      expect_error(boottest(felm_fit, param = "treatment", B = 999, clustid = "group_id1", boot_algo = "R-lean"))
+      expect_error(boottest(feols_fit, param = "treatment", B = 999, clustid = "group_id1", boot_algo = "R-lean"))
+      
+      
     }
   }
 })
@@ -831,6 +846,10 @@ test_that("error warning IV/WRE and q > 1", {
       R = R
     )
   )
+  
+  
+  # check_r_lean
+  
   
 
 })

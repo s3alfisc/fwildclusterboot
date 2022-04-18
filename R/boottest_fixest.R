@@ -34,10 +34,6 @@
 #'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. You can set the employed algorithm globally by using the
 #'                  `setBoottest_boot_algo()` function.
 #' @param seed An integer. Allows to set a random seed. For details, see below.  
-#' @param internal_seed Logical. FALSE by default. If TRUE, `boottest()` creates an internal seed that inherits from 
-#'        a global seed set via `set.seed()`. Hence for all bootstrap algorithms - 
-#'        R, R-lean, and WildBootTests.jl - setting a global seed via `set.seed()` ensures replicability. If FALSE, 
-#'        the random seed needs to be set via the appropriate functions. For details, see below.
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
@@ -114,17 +110,9 @@
 #' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
 #' set a global random seed via 
 #' + `set.seed()` when using
-#'    the lean algorithm (via `boot_algo = "R-lean"`), the heteroskedastic wild bootstrap 
-#'    or the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights.
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`), 2) the heteroskedastic wild bootstrap 
+#'    3) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 4) `boot_algo = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
-#' + `fwildclusterboot::set_julia_seed()` when running the bootstrap via `boot_algo = WildBootTests.jl`  
-#' 
-#' Alternatively, you can set a global variable via `setBoottest_internal_seed(TRUE)`, in which case
-#' random number generation across all algorithms can be controlled by `set.seed()`.
-#' 
-#' Note that whenever `boottest()'s` argument `internal_seed = TRUE`, an internal seed is set within `boottest()`, even
-#' when you are providing a custom seed to the function. Hence when evaluating `boottest(..., seed = 42, internal_seed = TRUE)`, the actual
-#' seed used within `boottest()` is not `42`. 
 #' 
 #' @section Confidence Intervals:
 #' \code{boottest} computes confidence intervals by inverting p-values.
@@ -207,7 +195,6 @@ boottest.fixest <- function(object,
                             sign_level = 0.05,
                             conf_int = TRUE,
                             seed = NULL,
-                            internal_seed = getBoottest_internal_seed(), 
                             R = NULL,
                             r = 0,
                             beta0 = r,
@@ -246,7 +233,6 @@ boottest.fixest <- function(object,
 
   check_arg(conf_int, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
-  check_arg(internal_seed, "scalar logical")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
   check_arg(beta0, "numeric scalar | NULL")
@@ -266,8 +252,7 @@ boottest.fixest <- function(object,
   }
 
   
-  internal_seed <- set_get_internal_seed(
-    internal_seed = internal_seed, 
+  internal_seed <- set_seed(
     seed = seed, 
     boot_algo = boot_algo, 
     type = type
@@ -386,6 +371,7 @@ boottest.fixest <- function(object,
   } else if (boot_algo == "R-lean") {
     
     check_r_lean(
+      weights = weights(object),
       clustid = clustid, 
       fe = fe
     )
