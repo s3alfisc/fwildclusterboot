@@ -280,7 +280,7 @@ boot_lm <- boottest(lm_fit,
 
 `fwildclusterboot` serves as an R port to [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) package. 
 
-For guidance on how to install `Julia` and `WildBootTests.jl` and how to connect R and Julia, please take a look at the [running WildBootTests.jl through fwildclusterboot](WildBootTests.html) vignette. 
+For guidance on how to install `Julia` and `WildBootTests.jl` and how to connect R and Julia, please take a look at the [running WildBootTests.jl through fwildclusterboot](https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html) vignette. 
 
 You can tell `boottest()` to run `WildBootTests.jl` by using the `boot_algo` function argument: 
 

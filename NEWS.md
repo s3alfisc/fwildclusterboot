@@ -75,7 +75,7 @@ summary(boot_hc1)
 
 ### `boottest()` function argument `beta0` deprecated
 
-For consistency with `WildBootTests.jl`, it is now replaced by a new function argument, `r`. You can still use `beta0` for the forseeable future - `boottest()` will throw a warning. 
+For consistency with `WildBootTests.jl`, the `boottest()` function argument `beta0` is now replaced by a new function argument, `r`. 
 
 ### Frühjahrsputz
 

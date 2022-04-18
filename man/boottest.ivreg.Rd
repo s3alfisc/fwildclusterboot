@@ -14,7 +14,6 @@
   seed = NULL,
   R = NULL,
   r = 0,
-  beta0 = r,
   sign_level = 0.05,
   type = "rademacher",
   impose_null = TRUE,
@@ -63,8 +62,6 @@ intervals by test inversion. If FALSE, only the p-value is returned.}
 
 \item{r}{A numeric. Shifts the null hypothesis
 H0: param = r vs H1: param != r}
-
-\item{beta0}{Superseded function argument, replaced by function argument 'r'}
 
 \item{sign_level}{A numeric between 0 and 1 which sets the significance level
 of the inference procedure. E.g. sign_level = 0.05

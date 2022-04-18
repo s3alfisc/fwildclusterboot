@@ -27,7 +27,6 @@
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
-#' @param beta0 Superseded function argument, replaced by function argument 'r'
 #' @param type character or function. The character string specifies the type
 #'        of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
 #'        and "webb". Alternatively, type can be a function(n) for drawing
@@ -142,7 +141,6 @@ boottest.ivreg <- function(object,
                            seed = NULL,
                            R = NULL,
                            r = 0,
-                           beta0 = r,
                            sign_level = 0.05,
                            type = "rademacher",
                            impose_null = TRUE,

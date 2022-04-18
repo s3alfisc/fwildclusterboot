@@ -23,7 +23,6 @@
 #'        of joint hypotheses and k the number of estimated coefficients.
 #' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r. If not provided, a vector of zeros of length q.
-#' @param beta0 Superseded function argument, replaced by function argument 'r'
 #' @param type character or function. The character string specifies the type
 #'        of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
 #'        and "webb". Alternatively, type can be a function(n) for drawing
@@ -117,7 +116,6 @@ mboottest.felm <- function(object,
                            B,
                            R,
                            r = rep(0, nrow(R)),
-                           beta0 = r,
                            bootcluster = "max",
                            fe = NULL,
                            seed = NULL,

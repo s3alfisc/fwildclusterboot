@@ -46,7 +46,7 @@ Description: Implementation of the fast algorithm for wild cluster bootstrap
              bootstrap.
              Further, the package provides an R binding to 'WildBootTests.jl',
              which provides additional speed gains and functionality, 
-             including the WRE bootstrap for instrumental variable models 
+             including the 'WRE' bootstrap for instrumental variable models 
              (based on models of type 'ivreg()' from package 'ivreg')
              and hypotheses with q > 1.
 URL: https://s3alfisc.github.io/fwildclusterboot/

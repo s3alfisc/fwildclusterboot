@@ -1,3 +1,11 @@
+## Re-submission of 0.8
+
++ "Found the following (possibly) invalid file URI:
+  URI: WildBootTests.html
+    From: inst/doc/fwildclusterboot.html"
+    -> replaced 'internal' reference with proper URL
+
+
 ## Submission of 0.8
 
 + checked on github actions (mac, windows, linux)

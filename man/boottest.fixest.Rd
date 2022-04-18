@@ -16,7 +16,7 @@
   seed = NULL,
   R = NULL,
   r = 0,
-  beta0 = r,
+  beta0 = NULL,
   type = "rademacher",
   impose_null = TRUE,
   p_val_type = "two-tailed",
@@ -73,7 +73,7 @@ intervals by test inversion. If FALSE, only the p-value is returned.}
 \item{r}{A numeric. Shifts the null hypothesis
 H0: param = r vs H1: param != r}
 
-\item{beta0}{Superseded function argument, replaced by function argument 'r'}
+\item{beta0}{Deprecated function argument. Replaced by function argument 'r'.}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm"

@@ -37,7 +37,7 @@
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
-#' @param beta0 Superseded function argument, replaced by function argument 'r'
+#' @param beta0 Deprecated function argument. Replaced by function argument 'r'.
 #' @param type character or function. The character string specifies the type
 #'        of boostrap to use: One of "rademacher", "mammen", "norm"
 #'        and "webb". Alternatively, type can be a function(n) for drawing
@@ -197,7 +197,7 @@ boottest.fixest <- function(object,
                             seed = NULL,
                             R = NULL,
                             r = 0,
-                            beta0 = r,
+                            beta0 = NULL, 
                             type = "rademacher",
                             impose_null = TRUE,
                             p_val_type = "two-tailed",
@@ -235,7 +235,6 @@ boottest.fixest <- function(object,
   check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
-  check_arg(beta0, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL")
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar GT{0}")
@@ -247,10 +246,9 @@ boottest.fixest <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
 
-  if (missing(r) & !missing(beta0)) {
-    warning("Note that the 'beta0' function argument is superseded by a new argument, 'r'. Please specify your hypothesis via the new function argument instead of using 'beta0'.")
+  if(!is.null(beta0)){
+    stop("The function argument 'beta0' is deprecated. Please use the function argument 'r' instead, by which it is replaced.")
   }
-
   
   internal_seed <- set_seed(
     seed = seed, 
