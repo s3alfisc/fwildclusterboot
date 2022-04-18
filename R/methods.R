@@ -5,12 +5,20 @@
 #' bootstrap inference for objects of class lm, fixest and felm by  implementing
 #' the fast wild bootstrap algorithm developed in Roodman et al., 2019.
 #'
-#' @param object An object of type lm, fixest of felm
+#' @param object An object of type lm, fixest, felm or ivreg
 #' @param ... other arguments
 #'
-#' @seealso \link[fwildclusterboot]{boottest.lm}, \link[fwildclusterboot]{boottest.fixest} and \link[fwildclusterboot]{boottest.felm}
+#' @seealso \link[fwildclusterboot]{boottest.lm}, \link[fwildclusterboot]{boottest.fixest}, \link[fwildclusterboot]{boottest.felm}, \link[fwildclusterboot]{boottest.ivreg}
 #'
 #' @export
+#' 
+#' @section Setting Seeds: 
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
+#' set a global random seed via 
+#' + `set.seed()` when using
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`), 2) the heteroskedastic wild bootstrap 
+#'    3) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 4) `boot_algo = "WildBootTests.jl"`
+#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
 #'
 #' @return An object of class \code{boottest}.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
@@ -33,13 +41,21 @@ boottest <- function(object,
 #' `mboottest` is a S3 method that allows for arbitrary linear hypothesis testing
 #' for objects of class lm, fixest, felm
 #'
-#' @param object An object of type lm, fixest, felm or ivreg
+#' @param object An object of type lm, fixest or felm
 #' @param ... other arguments
 #'
 #' @seealso \link[fwildclusterboot]{mboottest.lm} \link[fwildclusterboot]{mboottest.felm} \link[fwildclusterboot]{mboottest.fixest}
 #'
 #' @export
 #'
+#' @section Setting Seeds: 
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
+#' set a global random seed via 
+#' + `set.seed()` when using
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`), 2) the heteroskedastic wild bootstrap 
+#'    3) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 4) `boot_algo = "WildBootTests.jl"`
+#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
+#' 
 #' @return An object of class \code{mboottest}.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
