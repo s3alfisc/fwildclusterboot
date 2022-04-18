@@ -72,6 +72,7 @@
 #' @import JuliaConnectoR
 #' @importFrom dreamerr check_arg validate_dots
 #' @importFrom parallel detectCores
+#' @importFrom stats weights
 #'
 #' @method boottest lm
 #'

@@ -1,3 +1,30 @@
+## Submission of 0.8
+
++ checked on github actions (mac, windows, linux)
++ checked on rhub
++ checked on r-devel
+
+rhub and r-devel lead to aligned notes, some of which have been fixed. 
+Other notes don't seem appropriate. 
+
++ "Possibly misspelled words in DESCRIPTION:
+  OLS (49:28)
+  WildBootTests (47:60)
+  jl (47:74)"
+  -> everything spelled correctly
++ "Found the following (possibly) invalid file URI:
+  URI: WildBootTests.html
+    From: inst/doc/fwildclusterboot.html"
+  -> file URI to a package article
++ "Found the following (possibly) invalid DOIs:
+  DOI: 10.1177/1536867X19830877
+    From: DESCRIPTION
+    Status: Service Unavailable
+    Message: 503"
+  -> I have checked this DOI, and it looks valid to me
+
+
+
 ## Re-submission of 0.7
 
 

@@ -14,7 +14,7 @@ library(fwildclusterboot)
 ```
 
 
-`fwildclusterboot` serves as an R port to the [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) implementation of the "fast" wild cluster bootstrap. 
+`fwildclusterboot` provides an R binding to the [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) implementation of the "fast" wild cluster bootstrap. 
 
 ## Installation and Set-Up
 

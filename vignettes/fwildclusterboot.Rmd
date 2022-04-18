@@ -479,7 +479,7 @@ generics::tidy(wboottest)
 
 ## A sanity check if `fwildclusterboot::boottest()` works as intended
 
-A sanity check to see if `fwildclusterboot::boottest()` works as intended is to look at its `t_stat` return value. For both the WCR and WCU bootstrap, `boottest()` re-calculates the "original" - hence non-bootstrapped - t-statistic from its input regression model. The t-stat computed in `boottest()` and the t-stats reported by either `lm()`, `feols()` and `lfe()` under the same error clustering structure and small-sample adjustments should be *identical*. If you find that they differ, please report a bug [on github](https://github.com/s3alfisc/fwildclusterboot/issues). Note that `fwildclusterboot` explicitly tests for t-stat equality against `fixest::feols()` [here](https://github.com/s3alfisc/fwildclusterboot/blob/master/inst/tinytest/test_small_sample_correction_tstat.R).
+A sanity check to see if `fwildclusterboot::boottest()` works as intended is to look at its `t_stat` return value. For both the WCR and WCU bootstrap, `boottest()` re-calculates the "original" - hence non-bootstrapped - t-statistic from its input regression model. The t-stat computed in `boottest()` and the t-stats reported by either `lm()`, `feols()` and `lfe()` under the same error clustering structure and small-sample adjustments should be *identical*. If you find that they differ, please report a bug [on github](https://github.com/s3alfisc/fwildclusterboot/issues). Note that `fwildclusterboot` explicitly tests for t-stat equality against `fixest::feols()` [here](https://github.com/s3alfisc/fwildclusterboot/blob/master/tests/testthat/test-tstat_equivalence.R).
 
 ```{r}
 data <- 
