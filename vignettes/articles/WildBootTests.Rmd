@@ -18,12 +18,13 @@ library(fwildclusterboot)
 
 ## Installation and Set-Up
 
-You can install Julia and `WildBootTests.jl` from within R via the `JuliaConnectoR.utils` package:
+We recommend to install install Julia from its official website [https://julialang.org/downloads/](https://julialang.org/downloads/).
+
+The `JuliaConnectoR.utils` packages helps you to link R and Julia and to install `WildBootTests.jl` from within R. 
   
 ```{r, eval = FALSE, message = FALSE, warning = FALSE}
 devtools::install_github("s3alfisc/JuliaConnectoR.utils")
 library(JuliaConnectoR.utils)
-install_julia() # install Julia
 install_julia_packages("WildBootTests.jl") # install WildBootTests.jl
 ```
 
@@ -42,7 +43,6 @@ If `Julia` and `WildBootTests.jl` are already installed, you can check if the in
 check_julia_system_requirements("fwildclusterboot")
 ```
 
-Alternatively, you can install Julia from its official [https://julialang.org/downloads/](https://julialang.org/downloads/) and `WildBootTests.jl` via Julia's package manager. 
 
 ## The `boot_algo` function argument
 
