@@ -18,7 +18,7 @@ library(fwildclusterboot)
 
 ## Installation and Set-Up
 
-We recommend to install install Julia from its official website [https://julialang.org/downloads/](https://julialang.org/downloads/).
+We recommend to install Julia from its official website [https://julialang.org/downloads/](https://julialang.org/downloads/).
 
 The `JuliaConnectoR.utils` packages helps you to link R and Julia and to install `WildBootTests.jl` from within R. 
   
