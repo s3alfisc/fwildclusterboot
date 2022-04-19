@@ -33,7 +33,6 @@ implemented in the STATA package boottest."><meta property="og:image" content="h
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/seeds.html">How to set random seeds in fwildclusterboot</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -80,10 +79,9 @@ implemented in the STATA package <code>boottest</code>.</p>
   fe <span class="op">=</span> <span class="cn">NULL</span>,
   conf_int <span class="op">=</span> <span class="cn">TRUE</span>,
   seed <span class="op">=</span> <span class="cn">NULL</span>,
-  internal_seed <span class="op">=</span> <span class="fu">getBoottest_internal_seed</span><span class="op">(</span><span class="op">)</span>,
   R <span class="op">=</span> <span class="cn">NULL</span>,
   r <span class="op">=</span> <span class="fl">0</span>,
-  beta0 <span class="op">=</span> <span class="va">r</span>,
+  beta0 <span class="op">=</span> <span class="cn">NULL</span>,
   sign_level <span class="op">=</span> <span class="fl">0.05</span>,
   type <span class="op">=</span> <span class="st">"rademacher"</span>,
   impose_null <span class="op">=</span> <span class="cn">TRUE</span>,
@@ -124,7 +122,7 @@ clustering implied by the listed variables. To mimic the behavior of stata's boo
 the default is to cluster by the intersection of all the variables specified via the <code>clustid</code> argument,
 even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
-Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is supported - see the <a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a> for details.</p></dd>
+Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is supported - see the <code><a href="../articles/fwildclusterboot.html">vignette("fwildclusterboot", package = "fwildclusterboot")</a></code> for details.</p></dd>
 <dt>fe</dt>
 <dd><p>A character vector of length one which contains the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
@@ -133,19 +131,14 @@ needs to be NULL.</p></dd>
 <dd><p>A logical vector. If TRUE, boottest computes confidence
 intervals by test inversion. If FALSE, only the p-value is returned.</p></dd>
 <dt>seed</dt>
-<dd><p>An integer. Allows to set a random seed.</p></dd>
-<dt>internal_seed</dt>
-<dd><p>Logical. TRUE by default. If TRUE, for all bootstrap algorithms -
-R, R-lean, and WildBootTests.jl - a global seed can be set via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>. If FALSE,
-the random seed needs to be set via the appropriate functions. See the associated article on
-seeds</p></dd>
+<dd><p>An integer. Allows to set a random seed. For details, see below.</p></dd>
 <dt>R</dt>
 <dd><p>Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as <code>param</code>. If NULL, a vector of ones of length param.</p></dd>
 <dt>r</dt>
 <dd><p>A numeric. Shifts the null hypothesis
 H0: param = r vs H1: param != r</p></dd>
 <dt>beta0</dt>
-<dd><p>Superseded function argument, replaced by function argument 'r'</p></dd>
+<dd><p>Deprecated function argument. Replaced by function argument 'r'.</p></dd>
 <dt>sign_level</dt>
 <dd><p>A numeric between 0 and 1 which sets the significance level
 of the inference procedure. E.g. sign_level = 0.05
@@ -256,9 +249,17 @@ interval.</p></dd>
 <dd><p>The employed bootstrap algorithm.</p></dd>
 <dt>nthreads</dt>
 <dd><p>The number of threads employed.</p></dd>
-<dt>internal_seed</dt>
-<dd><p>The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.</p></dd>
 </dl></div>
+    <div class="section level2">
+    <h2 id="setting-seeds">Setting Seeds<a class="anchor" aria-label="anchor" href="#setting-seeds"></a></h2>
+    
+
+<p>To guarantee reproducibility, you can either use <code>boottest()'s</code> <code>seed</code> function argument, or
+set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>boot_algo = "R-lean"</code>), 2) the heteroskedastic wild bootstrap</p></li>
+<li><p>the wild cluster bootstrap via <code>boot_algo = "R"</code> with Mammen weights or 4) <code>boot_algo = "WildBootTests.jl"</code></p></li>
+</ol></li>
+<li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>boot_algo = "R"</code> for Rademacher, Webb or Normal weights</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="confidence-intervals">Confidence Intervals<a class="anchor" aria-label="anchor" href="#confidence-intervals"></a></h2>
     
