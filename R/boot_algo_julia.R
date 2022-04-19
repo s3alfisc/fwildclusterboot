@@ -57,7 +57,7 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
 
   JuliaConnectoR::juliaEval("using WildBootTests")
 
-  WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests")
+  suppressWarnings(WildBootTests <- JuliaConnectoR::juliaImport("WildBootTests"))
 
   ptype <- switch(p_val_type,
     "two-tailed" = "symmetric",
