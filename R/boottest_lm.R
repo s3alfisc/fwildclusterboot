@@ -109,8 +109,9 @@
 #' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
 #' set a global random seed via 
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`), 2) the heteroskedastic wild bootstrap 
-#'    3) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 4) `boot_algo = "WildBootTests.jl"`
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the heteroskedastic wild bootstrap 
+#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 
+#'    3) `boot_algo = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
 #' 
 #' @section Confidence Intervals:
