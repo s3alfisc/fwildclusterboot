@@ -95,11 +95,11 @@
 <div class="section level2">
 <h2 id="installation-and-set-up">Installation and Set-Up<a class="anchor" aria-label="anchor" href="#installation-and-set-up"></a>
 </h2>
-<p>You can install Julia and <code>WildBootTests.jl</code> from within R via the <code>JuliaConnectoR.utils</code> package:</p>
+<p>We recommend to install install Julia from its official website <a href="https://julialang.org/downloads/" class="external-link">https://julialang.org/downloads/</a>.</p>
+<p>The <code>JuliaConnectoR.utils</code> packages helps you to link R and Julia and to install <code>WildBootTests.jl</code> from within R.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"s3alfisc/JuliaConnectoR.utils"</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">JuliaConnectoR.utils</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/JuliaConnectoR.utils/man/install_julia.html" class="external-link">install_julia</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># install Julia</span>
 <span class="fu"><a href="https://rdrr.io/pkg/JuliaConnectoR.utils/man/install_julia_packages.html" class="external-link">install_julia_packages</a></span><span class="op">(</span><span class="st">"WildBootTests.jl"</span><span class="op">)</span> <span class="co"># install WildBootTests.jl</span></code></pre></div>
 <p>The <code><a href="https://rdrr.io/pkg/JuliaConnectoR.utils/man/connect_julia_R.html" class="external-link">connect_julia_r()</a></code> function will help you to make sure that Julia and R find each other:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -108,7 +108,6 @@
 <p>If <code>Julia</code> and <code>WildBootTests.jl</code> are already installed, you can check if the installed versions match the <code>SystemRequirements</code> by running</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/JuliaConnectoR.utils/man/check_julia_system_requirements.html" class="external-link">check_julia_system_requirements</a></span><span class="op">(</span><span class="st">"fwildclusterboot"</span><span class="op">)</span></code></pre></div>
-<p>Alternatively, you can install Julia from its official <a href="https://julialang.org/downloads/" class="external-link">https://julialang.org/downloads/</a> and <code>WildBootTests.jl</code> via Julia’s package manager.</p>
 </div>
 <div class="section level2">
 <h2 id="the-boot_algo-function-argument">The <code>boot_algo</code> function argument<a class="anchor" aria-label="anchor" href="#the-boot_algo-function-argument"></a>
