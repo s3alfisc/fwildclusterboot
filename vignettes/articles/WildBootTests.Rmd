@@ -25,17 +25,11 @@ The `JuliaConnectoR.utils` packages helps you to link R and Julia and to install
 ```{r, eval = FALSE, message = FALSE, warning = FALSE}
 devtools::install_github("s3alfisc/JuliaConnectoR.utils")
 library(JuliaConnectoR.utils)
+connect_julia_r() # instructions to connect Julia and R
 install_julia_packages("WildBootTests.jl") # install WildBootTests.jl
 ```
 
-The `connect_julia_r()` function will help you to make sure that Julia and R find each other: 
-  
-```{r, eval = FALSE, message = FALSE, warning = FALSE}
-connect_julia_r() # instructions to connect Julia and R
-```
-
-
-By default, the functions above install the most recent stable releases of both `Julia` and `WildBootTests.jl`.
+By default, the functions above install the most recent stable releases of `WildBootTests.jl`.
 
 If `Julia` and `WildBootTests.jl` are already installed, you can check if the installed versions match the `SystemRequirements` by running 
 
@@ -43,6 +37,13 @@ If `Julia` and `WildBootTests.jl` are already installed, you can check if the in
 check_julia_system_requirements("fwildclusterboot")
 ```
 
+To set the number of threads for use in Julia, you can run 
+
+```{r, warning = FALSE, message = FALSE, eval = FALSE}
+set_julia_nthreads() # instructions to set nthreads for Julia
+```
+
+and follow the provided instructions. 
 
 ## The `boot_algo` function argument
 
