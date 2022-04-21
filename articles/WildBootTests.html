@@ -100,14 +100,16 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"s3alfisc/JuliaConnectoR.utils"</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">JuliaConnectoR.utils</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/JuliaConnectoR.utils/man/connect_julia_R.html" class="external-link">connect_julia_r</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># instructions to connect Julia and R</span>
 <span class="fu"><a href="https://rdrr.io/pkg/JuliaConnectoR.utils/man/install_julia_packages.html" class="external-link">install_julia_packages</a></span><span class="op">(</span><span class="st">"WildBootTests.jl"</span><span class="op">)</span> <span class="co"># install WildBootTests.jl</span></code></pre></div>
-<p>The <code><a href="https://rdrr.io/pkg/JuliaConnectoR.utils/man/connect_julia_R.html" class="external-link">connect_julia_r()</a></code> function will help you to make sure that Julia and R find each other:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/JuliaConnectoR.utils/man/connect_julia_R.html" class="external-link">connect_julia_r</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># instructions to connect Julia and R</span></code></pre></div>
-<p>By default, the functions above install the most recent stable releases of both <code>Julia</code> and <code>WildBootTests.jl</code>.</p>
+<p>By default, the functions above install the most recent stable releases of <code>WildBootTests.jl</code>.</p>
 <p>If <code>Julia</code> and <code>WildBootTests.jl</code> are already installed, you can check if the installed versions match the <code>SystemRequirements</code> by running</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/JuliaConnectoR.utils/man/check_julia_system_requirements.html" class="external-link">check_julia_system_requirements</a></span><span class="op">(</span><span class="st">"fwildclusterboot"</span><span class="op">)</span></code></pre></div>
+<p>To set the number of threads for use in Julia, you can run</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/JuliaConnectoR.utils/man/set_julia_nthreads.html" class="external-link">set_julia_nthreads</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># instructions to set nthreads for Julia</span></code></pre></div>
+<p>and follow the provided instructions.</p>
 </div>
 <div class="section level2">
 <h2 id="the-boot_algo-function-argument">The <code>boot_algo</code> function argument<a class="anchor" aria-label="anchor" href="#the-boot_algo-function-argument"></a>
