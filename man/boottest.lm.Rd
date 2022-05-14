@@ -37,16 +37,16 @@
 \arguments{
 \item{object}{An object of class lm}
 
-\item{param}{A character vector. The name of the regression
+\item{param}{A character vector or formula. The name of the regression
 coefficient(s) for which the hypothesis is to be tested}
 
 \item{B}{Integer. The number of bootstrap iterations. When the number of clusters is low,
 increasing B adds little additional runtime.}
 
-\item{clustid}{A character vector containing the names of the cluster variables. If NULL,
+\item{clustid}{A character vector or formula containing the names of the cluster variables. If NULL,
 a heteroskedasticity-robust (HC1) wild bootstrap is run.}
 
-\item{bootcluster}{A character vector. Specifies the bootstrap clustering variable or variables. If more
+\item{bootcluster}{A character vector or formula. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
 clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 the default is to cluster by the intersection of all the variables specified via the \code{clustid} argument,

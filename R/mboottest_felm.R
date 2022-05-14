@@ -5,17 +5,17 @@
 #' implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019.
 #'
 #' @param object An object of class felm
-#' @param clustid A character vector containing the names of the cluster variables
+#' @param clustid A character vector or formula containing the names of the cluster variables
 #' @param B Integer. The number of bootstrap iterations. When the number of clusters is low,
 #'        increasing B adds little additional runtime.
-#' @param bootcluster A character vector. Specifies the bootstrap clustering variable or variables. If more
+#' @param bootcluster A character vector or formula. Specifies the bootstrap clustering variable or variables. If more
 #'        than one variable is specified, then bootstrapping is clustered by the intersections of
 #'        clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
 #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.
-#' @param fe A character vector of length one which contains the name of the fixed effect to be projected
+#' @param fe A character vector or formula of length one which contains the name of the fixed effect to be projected
 #'        out in the bootstrap. Note: if regression weights are used, fe
 #'        needs to be NULL.
 #' @param seed An integer. Allows to set a random seed. For details, see below.  
@@ -143,21 +143,34 @@ mboottest.felm <- function(object,
   
   # Step 1: check arguments of feols call
   check_arg(object, "MBT class(felm)")
-  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(clustid, "MBT character scalar | character vector | formula")
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric vector | numeric matrix")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(seed, "scalar integer | NULL")
   check_arg(r, "numeric scalar | NULL")
-  check_arg(fe, "character scalar | NULL")
-  check_arg(bootcluster, "character vector")
+  check_arg(fe, "character scalar | NULL | formula")
+  check_arg(bootcluster, "character vector | formula")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   check_arg(teststat_boot, "logical scalar")
+  
+  
+  if(inherits(clustid, "formula")){
+    clustid <- attr( terms(clustid), "term.labels")
+  }
+  
+  if(inherits(fe, "formula")){
+    fe <- attr( terms(fe), "term.labels")
+  }
+  
+  if(inherits(bootcluster, "formula")){
+    bootcluster <- attr( terms(bootcluster), "term.labels")
+  }
   
   internal_seed <- set_seed(
     seed = seed, 

@@ -6,13 +6,13 @@
 #' the fast wild bootstrap algorithm developed in Roodman et al., 2019.
 #'
 #' @param object An object of class lm
-#' @param clustid A character vector containing the names of the cluster variables. If NULL, 
+#' @param clustid A character vector or formula containing the names of the cluster variables. If NULL, 
 #'        a heteroskedasticity-robust (HC1) wild bootstrap is run. 
-#' @param param A character vector. The name of the regression
+#' @param param A character vector or formula. The name of the regression
 #'        coefficient(s) for which the hypothesis is to be tested
 #' @param B Integer. The number of bootstrap iterations. When the number of clusters is low,
 #'        increasing B adds little additional runtime.
-#' @param bootcluster A character vector. Specifies the bootstrap clustering variable or variables. If more
+#' @param bootcluster A character vector or formula. Specifies the bootstrap clustering variable or variables. If more
 #'        than one variable is specified, then bootstrapping is clustered by the intersections of
 #'        clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
@@ -209,8 +209,8 @@ boottest.lm <- function(object,
   dreamerr::validate_dots(stop = TRUE)
 
   check_arg(object, "MBT class(lm)")
-  check_arg(clustid, "NULL | character scalar | character vector")
-  check_arg(param, "MBT scalar character | character vector")
+  check_arg(clustid, "NULL | character scalar | character vector | formula")
+  check_arg(param, "MBT scalar character | character vector | formula")
   check_arg(B, "MBT scalar integer")
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
@@ -219,7 +219,7 @@ boottest.lm <- function(object,
   check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
-  check_arg(bootcluster, "character vector")
+  check_arg(bootcluster, "character vector | formula")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer GT{5}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
@@ -228,6 +228,22 @@ boottest.lm <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
 
+  
+  # allow formula arguments for param, clustid, bootcluster, fe
+  if(inherits(param, "formula")){
+    param <- attr( terms(param), "term.labels")
+  }
+  
+  if(inherits(clustid, "formula")){
+    clustid <- attr( terms(clustid), "term.labels")
+  }
+  
+  if(inherits(bootcluster, "formula")){
+    bootcluster <- attr( terms(bootcluster), "term.labels")
+  }
+  
+  
+  
   if(!is.null(beta0)){
     stop("The function argument 'beta0' is deprecated. Please use the function argument 'r' instead, by which it is replaced.")
   }

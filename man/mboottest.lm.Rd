@@ -30,7 +30,7 @@
 \arguments{
 \item{object}{An object of class lm}
 
-\item{clustid}{A character vector containing the names of the cluster variables}
+\item{clustid}{A character vector or formula containing the names of the cluster variables}
 
 \item{B}{Integer. The number of bootstrap iterations. When the number of clusters is low,
 increasing B adds little additional runtime.}
@@ -41,7 +41,7 @@ of joint hypotheses and k the number of estimated coefficients.}
 \item{r}{A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
 H0: param = r vs H1: param != r. If not provided, a vector of zeros of length q.}
 
-\item{bootcluster}{A character vector. Specifies the bootstrap clustering variable or variables. If more
+\item{bootcluster}{A character vector or formula. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
 clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 the default is to cluster by the intersection of all the variables specified via the \code{clustid} argument,
