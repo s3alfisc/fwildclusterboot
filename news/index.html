@@ -60,8 +60,7 @@
 <div class="section level5">
 <h5 id="boot_algo--wildboottestsjl-0-8">boot_algo = ‘WildBootTests.jl’<a class="anchor" aria-label="anchor" href="#boot_algo--wildboottestsjl-0-8"></a></h5>
 <ul><li>
-<code>fwildclusterboot</code> now supports calling <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a>, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, <code>boot_algo</code>, through which it is possible to control the executed bootstrap algorithm.</li>
-</ul><pre class="{r}"><code><span class="co"># load data set voters included in fwildclusterboot</span>
+<code>fwildclusterboot</code> now supports calling <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a>, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, <code>boot_algo</code>, through which it is possible to control the executed bootstrap algorithm.</li></ul><pre class="{r}"><code><span class="co"># load data set voters included in fwildclusterboot</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span>
 <span class="co"># estimate the regression model via lm</span>
 <span class="va">lm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
@@ -129,8 +128,7 @@
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7" id="fwildclusterboot-07">fwildclusterboot 0.7<a class="anchor" aria-label="anchor" href="#fwildclusterboot-07"></a></h2><p class="text-muted">CRAN release: 2022-01-03</p>
-<ul><li>Bug fixes, see issues <a href="https://github.com/s3alfisc/fwildclusterboot/issues/26" class="external-link">#26</a> and <a href="https://github.com/s3alfisc/fwildclusterboot/issues/27" class="external-link">#27</a> regarding preprocessing for fixest when weights are passed to feols() as a formula or when cluster is specified in fixest as a column vector.</li>
-</ul></div>
+<ul><li>Bug fixes, see issues <a href="https://github.com/s3alfisc/fwildclusterboot/issues/26" class="external-link">#26</a> and <a href="https://github.com/s3alfisc/fwildclusterboot/issues/27" class="external-link">#27</a> regarding preprocessing for fixest when weights are passed to feols() as a formula or when cluster is specified in fixest as a column vector.</li></ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6" id="fwildclusterboot-06">fwildclusterboot 0.6<a class="anchor" aria-label="anchor" href="#fwildclusterboot-06"></a></h2>
 <ul><li><p>Bug fix: for one-sided hypotheses for the WRU bootstrap (if impose_null = FALSE), the returned p-values were incorrect - they were reported as ‘p’, but should have been ‘1-p’. E.g. if the reported p-values was reported as 0.4, it should have been reported as 0.6.</p></li>
@@ -161,8 +159,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.6" id="fwildclusterboot-036">fwildclusterboot 0.3.6<a class="anchor" aria-label="anchor" href="#fwildclusterboot-036"></a></h2><p class="text-muted">CRAN release: 2021-08-01</p>
-<ul><li>Bug fix regarding suggested packages and CRAN: <a href="https://github.com/s3alfisc/fwildclusterboot/issues/12" class="external-link">see github issue </a><a href="https://github.com/s3alfisc/fwildclusterboot/issues/12" class="external-link">#12</a>. Added <code>if(requireNamespace("pkgname"))</code> statements for suggested packages in the vignettes, examples and tests. Note that unit tests will now only execute on CRAN if both <code>fixest</code> and <code>lfe</code> can be installed on the OS.</li>
-</ul></div>
+<ul><li>Bug fix regarding suggested packages and CRAN: <a href="https://github.com/s3alfisc/fwildclusterboot/issues/12" class="external-link">see github issue </a><a href="https://github.com/s3alfisc/fwildclusterboot/issues/12" class="external-link">#12</a>. Added <code>if(requireNamespace("pkgname"))</code> statements for suggested packages in the vignettes, examples and tests. Note that unit tests will now only execute on CRAN if both <code>fixest</code> and <code>lfe</code> can be installed on the OS.</li></ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.5" id="fwildclusterboot-035">fwildclusterboot 0.3.5<a class="anchor" aria-label="anchor" href="#fwildclusterboot-035"></a></h2><p class="text-muted">CRAN release: 2021-06-20</p>
 <ul><li><p>Bug fix: For Rademacher and Mammen weights and cases where (2^ number of clusters) &lt; # boostrap iterations, (deterministic ) full enumeration should have been employed for sampling the bootstrap weights. Full enumeration means the following: for e.g. 6 numbers of clusters, only 2^6 = 64 unique draws from either the Rademacher or Mammen distributions exists. Therefore, <code><a href="../reference/boottest.html">boottest()</a></code> overwrites the user-provided number of bootstrap iterations to <span class="math inline"><em>B</em> = (2^ number of clusters)</span> if a larger number is chosen. The bug now occured because the bootstrap weights were drawn <strong>randomly with replacement</strong> instead of using <strong>full enumeration</strong>. Note: full enumeration was introduced with version 0.3.3. Thanks to fschoner for finding the bug! <a href="https://github.com/s3alfisc/fwildclusterboot/issues/11" class="external-link">see github issue </a><a href="https://github.com/s3alfisc/fwildclusterboot/issues/11" class="external-link">#11</a></p></li>
@@ -172,16 +169,13 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.4" id="fwildclusterboot-034">fwildclusterboot 0.3.4<a class="anchor" aria-label="anchor" href="#fwildclusterboot-034"></a></h2><p class="text-muted">CRAN release: 2021-05-01</p>
-<ul><li>Fix CRAN errors caused by a small bug in the vignette</li>
-</ul></div>
+<ul><li>Fix CRAN errors caused by a small bug in the vignette</li></ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.3" id="fwildclusterboot-033">fwildclusterboot 0.3.3<a class="anchor" aria-label="anchor" href="#fwildclusterboot-033"></a></h2><p class="text-muted">CRAN release: 2021-04-12</p>
-<ul><li>implements full enumeration for Rademacher and Mammen Weights if <span class="math inline">2<sup><em>k</em></sup> &lt; <em>B</em></span>, where k is the number of clusters and B the number of bootstrap iterations</li>
-</ul></div>
+<ul><li>implements full enumeration for Rademacher and Mammen Weights if <span class="math inline">2<sup><em>k</em></sup> &lt; <em>B</em></span>, where k is the number of clusters and B the number of bootstrap iterations</li></ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.2" id="fwildclusterboot-032">fwildclusterboot 0.3.2<a class="anchor" aria-label="anchor" href="#fwildclusterboot-032"></a></h2><p class="text-muted">CRAN release: 2021-02-26</p>
-<ul><li>Fixes a CRAN test error message for Oracle Solaris.</li>
-</ul></div>
+<ul><li>Fixes a CRAN test error message for Oracle Solaris.</li></ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.1" id="fwildclusterboot-031">fwildclusterboot 0.3.1<a class="anchor" aria-label="anchor" href="#fwildclusterboot-031"></a></h2><p class="text-muted">CRAN release: 2021-02-16</p>
 <ul><li>A <code><a href="../reference/glance.boottest.html">glance.boottest()</a></code> method was added, which enables the use of the <code>modelsummary</code> package with <code>fwildclusterboot</code>.</li>
@@ -210,7 +204,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
     </footer></div>

@@ -211,7 +211,7 @@ Model 2
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
--0.038 (0.000)
+−0.038 (0.000)
 </td>
 </tr>
 <tr>
@@ -220,7 +220,7 @@ Model 2
 <td style="text-align:center;box-shadow: 0px 1px">
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-[-0.057, -0.019]
+[−0.057, −0.019]
 </td>
 </tr>
 <tr>
@@ -261,10 +261,10 @@ R2 Adj.
 AIC
 </td>
 <td style="text-align:center;">
--82.1
+−82.1
 </td>
 <td style="text-align:center;">
--92.2
+−92.2
 </td>
 </tr>
 <tr>
@@ -272,10 +272,10 @@ AIC
 BIC
 </td>
 <td style="text-align:center;">
--30.2
+−30.2
 </td>
 <td style="text-align:center;">
--40.4
+−40.4
 </td>
 </tr>
 <tr>
@@ -429,10 +429,10 @@ R2 Adj.
 AIC
 </td>
 <td style="text-align:center;">
--82.1
+−82.1
 </td>
 <td style="text-align:center;">
--82.1
+−82.1
 </td>
 </tr>
 <tr>
@@ -440,10 +440,10 @@ AIC
 BIC
 </td>
 <td style="text-align:center;">
--30.2
+−30.2
 </td>
 <td style="text-align:center;">
--30.2
+−30.2
 </td>
 </tr>
 <tr>
@@ -551,10 +551,10 @@ R2 Adj.
 AIC
 </td>
 <td style="text-align:center;">
--82.1
+−82.1
 </td>
 <td style="text-align:center;">
--82.1
+−82.1
 </td>
 </tr>
 <tr>
@@ -562,10 +562,10 @@ AIC
 BIC
 </td>
 <td style="text-align:center;">
--30.2
+−30.2
 </td>
 <td style="text-align:center;">
--30.2
+−30.2
 </td>
 </tr>
 <tr>
@@ -672,10 +672,10 @@ R2 Adj.
 AIC
 </td>
 <td style="text-align:center;">
--82.1
+−82.1
 </td>
 <td style="text-align:center;">
--82.1
+−82.1
 </td>
 </tr>
 <tr>
@@ -683,10 +683,10 @@ AIC
 BIC
 </td>
 <td style="text-align:center;">
--30.2
+−30.2
 </td>
 <td style="text-align:center;">
--30.2
+−30.2
 </td>
 </tr>
 <tr>
@@ -819,10 +819,10 @@ R2 Adj.
 AIC
 </td>
 <td style="text-align:center;">
--82.1
+−82.1
 </td>
 <td style="text-align:center;">
--82.1
+−82.1
 </td>
 </tr>
 <tr>
@@ -830,10 +830,10 @@ AIC
 BIC
 </td>
 <td style="text-align:center;">
--30.2
+−30.2
 </td>
 <td style="text-align:center;">
--30.2
+−30.2
 </td>
 </tr>
 <tr>
@@ -927,8 +927,8 @@ Log.Lik.
 <p>Through <code>WildBootTests.jl</code>, you can also test multiple joint hypotheses via the <code><a href="../reference/mboottest.html">mboottest()</a></code> function. With minor differences, <code>mboottest()'s</code> syntax largely mirrors <code><a href="../reference/boottest.html">boottest()</a></code>.</p>
 <p>To jointly test the null hypothesis <span class="math inline">\(H_0: treatment = 0 \text{ and } ideology1 = 0\)</span> vs <span class="math inline">\(H_0: treatment \neq 0 \text{ and } ideology1 \neq 0\)</span> via a wild cluster bootstrap, you can run</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jepusto/clubSandwich" class="external-link">clubSandwich</a></span><span class="op">)</span>
-<span class="va">R</span> <span class="op">&lt;-</span> <span class="fu">clubSandwich</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/clubSandwich/man/constraint_matrices.html" class="external-link">constrain_zero</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">lm_fit</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://jepusto.github.io/clubSandwich/" class="external-link">clubSandwich</a></span><span class="op">)</span>
+<span class="va">R</span> <span class="op">&lt;-</span> <span class="fu">clubSandwich</span><span class="fu">::</span><span class="fu"><a href="http://jepusto.github.io/clubSandwich/reference/constraint_matrices.html" class="external-link">constrain_zero</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">lm_fit</span><span class="op">)</span><span class="op">)</span>
 <span class="va">wboottest</span> <span class="op">&lt;-</span> 
 <span class="fu"><a href="../reference/mboottest.html">mboottest</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">lm_fit</span>, 
              clustid <span class="op">=</span> <span class="st">"group_id1"</span>, 
@@ -1158,7 +1158,7 @@ Log.Lik.
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
     </footer>
