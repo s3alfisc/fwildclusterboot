@@ -2,8 +2,8 @@
 #'
 #' Inverts the bootstrap p-value and calculates confidence sets
 #'
-#' @param ABCD ...
-#' @param small_sample_correction
+#' @param ABCD list of pre-computed objects
+#' @param small_sample_correction the applied small sample correction
 #' @param boot_iter An integer. Number of bootstrap iterations
 #' @param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
 #' @param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion.

@@ -8,6 +8,8 @@ test_that("t-stat equivalence OLS", {
   library(lmtest)
   library(data.table)
   library(fwildclusterboot)
+  
+  set.seed(5234)
 
   ols_test <- function(run_this_test) {
     if (run_this_test) {
@@ -15,23 +17,24 @@ test_that("t-stat equivalence OLS", {
       # data(voters)
       # adj <- cluster.adj <- TRUE; cluster.df <- "conventional"; impose_null = TRUE
 
-
+      data2 <<- fwildclusterboot:::create_data(N = 1000,
+                                               N_G1 = 20,
+                                               icc1 = 0.7,
+                                               N_G2 = 5,
+                                               icc2 = 0.8,
+                                               numb_fe1 = 10,
+                                               numb_fe2 = 5,
+                                               #seed = 41224,
+                                               seed = 986239,
+                                               weights = 1:N / N)
+      
       lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income,
-        data = fwildclusterboot:::create_data(
-          N = 1000,
-          N_G1 = 20,
-          icc1 = 0.81,
-          N_G2 = 10,
-          icc2 = 0.01,
-          numb_fe1 = 10,
-          numb_fe2 = 10,
-          seed = 97069
-        )
+                   data = data2
       )
-
       B <- 999
 
-      # adj= FALSE
+      # boot_algo = "R"
+      # adj= TRUE
       # cluster.adj= FALSE
       # cluster.df= "conventional"
       # impose_null= TRUE
@@ -42,28 +45,22 @@ test_that("t-stat equivalence OLS", {
             for (cluster.df in c("conventional", "min")) {
               for (impose_null in c(TRUE, FALSE)) {
              
+                
+  
+                
                 # cat("--------------------------------", "\n")
                 #
-                # cat("adj:", adj, "\n")
-                # cat("cluster.adj:", cluster.adj, "\n")
-                # cat("cluster.df:", cluster.df, "\n")
-                # #cat("impose_null:", impose_null, "\n")
-                #
-                # cat("--------------------------------", "\n")
-                # cat("oneway:", "\n")
+                cat("adj:", adj, "\n")
+                cat("cluster.adj:", cluster.adj, "\n")
+                cat("cluster.df:", cluster.df, "\n")
+                #cat("impose_null:", impose_null, "\n")
+
+                cat("--------------------------------", "\n")
+                cat("oneway:", "\n")
 
                 # oneway clustering
                 feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income,
-                  data = fwildclusterboot:::create_data(
-                    N = 1000,
-                    N_G1 = 20,
-                    icc1 = 0.81,
-                    N_G2 = 10,
-                    icc2 = 0.01,
-                    numb_fe1 = 10,
-                    numb_fe2 = 10,
-                    seed = 97069
-                  ),
+                  data = data2,
                   cluster = ~group_id1,
                   ssc = ssc(
                     adj = adj,
@@ -72,11 +69,11 @@ test_that("t-stat equivalence OLS", {
                   )
                 )
 
-                dof_tstat <- fixest::coeftable(feols_fit)[c("treatment", "log_income", "ideology1"), 3]
+                dof_tstat <- fixest::tstat(feols_fit)[c("treatment", "log_income", "ideology1")]
 
 
                 boot1 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
-                  clustid = c("group_id1"),
+                  clustid = ~group_id1,
                   B = B,
                   param = "treatment",
                   ssc = boot_ssc(
@@ -85,7 +82,8 @@ test_that("t-stat equivalence OLS", {
                     cluster.df = cluster.df
                   ),
                   impose_null = impose_null,
-                  boot_algo = boot_algo
+                  boot_algo = boot_algo, 
+                  conf_int = FALSE
                 ))
 
                 boot2 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
@@ -98,25 +96,27 @@ test_that("t-stat equivalence OLS", {
                     cluster.df = cluster.df
                   ),
                   impose_null = impose_null,
-                  boot_algo = boot_algo
+                  boot_algo = boot_algo, 
+                  conf_int = FALSE
                 ))
                 boot3 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
                   clustid = c("group_id1"),
                   B = B,
-                  param = "ideology1",
+                  param = ~ideology1,
                   ssc = boot_ssc(
                     adj = adj,
                     cluster.adj = cluster.adj,
                     cluster.df = cluster.df
                   ),
                   impose_null = impose_null,
-                  boot_algo = boot_algo
+                  boot_algo = boot_algo, 
+                  conf_int = FALSE
                 ))
 
                 # skip_on_cran()
-                expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]), ignore_attr = TRUE)
-                expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]), ignore_attr = TRUE)
-                expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]), ignore_attr = TRUE)
+                print(expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]), ignore_attr = TRUE))
+                print(expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]), ignore_attr = TRUE))
+                print(expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]), ignore_attr = TRUE))
 
 
                 # cat("--------------------------------", "\n")
@@ -124,24 +124,9 @@ test_that("t-stat equivalence OLS", {
                 # cat("--------------------------------", "\n")
 
 
-                if(boot_algo != "R-lean"){
-                  
-                  
-                  
-                  
-                }
                 # twoway clustering
                 feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income,
-                  data = fwildclusterboot:::create_data(
-                    N = 1000,
-                    N_G1 = 20,
-                    icc1 = 0.81,
-                    N_G2 = 10,
-                    icc2 = 0.01,
-                    numb_fe1 = 10,
-                    numb_fe2 = 10,
-                    seed = 97069
-                  ),
+                  data = data2,
                   cluster = ~ group_id1 + group_id2,
                   ssc = ssc(
                     adj = adj,
@@ -152,11 +137,11 @@ test_that("t-stat equivalence OLS", {
                 )
 
 
-                dof_tstat <- fixest::coeftable(feols_fit)[c("treatment", "log_income", "ideology1"), 3]
+                dof_tstat <- fixest::tstat(feols_fit)[c("treatment", "log_income", "ideology1")]
 
 
                 boot1 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
-                  clustid = c("group_id1", "group_id2"),
+                  clustid = ~group_id1 + group_id2,
                   B = B,
                   param = "treatment",
                   ssc = boot_ssc(
@@ -165,19 +150,21 @@ test_that("t-stat equivalence OLS", {
                     cluster.df = cluster.df
                   ),
                   impose_null = impose_null,
-                  boot_algo = boot_algo
+                  boot_algo = boot_algo, 
+                  conf_int = FALSE
                 ))
                 boot2 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
                   clustid = c("group_id1", "group_id2"),
                   B = B,
-                  param = "log_income",
+                  param = ~log_income,
                   ssc = boot_ssc(
                     adj = adj,
                     cluster.adj = cluster.adj,
                     cluster.df = cluster.df
                   ),
                   impose_null = impose_null,
-                  boot_algo = boot_algo
+                  boot_algo = boot_algo, 
+                  conf_int = FALSE
                 ))
                 boot3 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
                   clustid = c("group_id1", "group_id2"),
@@ -189,12 +176,13 @@ test_that("t-stat equivalence OLS", {
                     cluster.df = cluster.df
                   ),
                   impose_null = impose_null,
-                  boot_algo = boot_algo
+                  boot_algo = boot_algo, 
+                  conf_int = FALSE
                 ))
                 # skip_on_cran()
-                expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]), ignore_attr = TRUE)
-                expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]), ignore_attr = TRUE)
-                expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]), ignore_attr = TRUE)
+                print(expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]), ignore_attr = TRUE))
+                print(expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]), ignore_attr = TRUE))
+                print(expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]), ignore_attr = TRUE))
               }
             }
           }
@@ -210,16 +198,7 @@ test_that("t-stat equivalence OLS", {
                 
                 # oneway clustering
                 feols_fit <- fixest::feols(proposition_vote ~ treatment + ideology1 + log_income,
-                                           data = fwildclusterboot:::create_data(
-                                             N = 1000,
-                                             N_G1 = 20,
-                                             icc1 = 0.81,
-                                             N_G2 = 10,
-                                             icc2 = 0.01,
-                                             numb_fe1 = 10,
-                                             numb_fe2 = 10,
-                                             seed = 97069
-                                           ),
+                                           data = data2,
                                            cluster = ~group_id1,
                                            ssc = ssc(
                                              adj = adj,
