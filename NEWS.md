@@ -1,5 +1,25 @@
-# fwildclusterboot 0.8
+# fwildclusterboot 0.8.1
 
++ Moves data pre-processing from `model.frame` methods to `model_matrix` methods, and thereby fix a multicollinearity bug that occured when `lm()` or `fixest()` silently deleted multicollinar variable(s). This also allows to use a range of so far 'forbidden' functionalities, in particular of `fixest::feols()` - it is now possible to run `boottest()` after `feols()` models that use syntactic sugar, e.g. 
+
+```
+library(fwildclusterboot)
+library(fixest)
+
+feols_fit <- feols(proposition_vote ~ i(treatment, ideology1) ,
+    data = voters
+)
+boot1 <- boottest(feols_fit,
+    B = 9999,
+    param = "treatment::0:ideology1",
+    clustid = "group_id1"
+)
+```
++ The `na_omit` function argument has been dropped. If the cluster variable is not included in the regression model, it is now not allowed to contain NA values. 
+
++ Several function arguments can now be fed to `boottest()` as formulas (`param`, `clustid`, `bootcluster`, `fe`).
+
+# fwildclusterboot 0.8
 
 ### Two new bootstrap algorithms: 'WildBootTests.jl' and 'R-lean'
 

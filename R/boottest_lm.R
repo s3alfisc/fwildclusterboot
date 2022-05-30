@@ -6,13 +6,13 @@
 #' the fast wild bootstrap algorithm developed in Roodman et al., 2019.
 #'
 #' @param object An object of class lm
-#' @param clustid A character vector containing the names of the cluster variables. If NULL, 
+#' @param clustid A character vector or rhs formula containing the names of the cluster variables. If NULL, 
 #'        a heteroskedasticity-robust (HC1) wild bootstrap is run. 
-#' @param param A character vector. The name of the regression
+#' @param param A character vector or rhs formula. The name of the regression
 #'        coefficient(s) for which the hypothesis is to be tested
 #' @param B Integer. The number of bootstrap iterations. When the number of clusters is low,
 #'        increasing B adds little additional runtime.
-#' @param bootcluster A character vector. Specifies the bootstrap clustering variable or variables. If more
+#' @param bootcluster A character vector or rhs formula of length 1. Specifies the bootstrap clustering variable or variables. If more
 #'        than one variable is specified, then bootstrapping is clustered by the intersections of
 #'        clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 #'        the default is to cluster by the intersection of all the variables specified via the `clustid` argument,
@@ -52,10 +52,6 @@
 #'        1e-6 by default.
 #' @param maxiter Integer. Maximum number of iterations used in the root finding procedure to find the confidence interval.
 #'        10 by default.
-#' @param na_omit Logical. If TRUE, `boottest()` omits rows with missing
-#'        variables in the cluster variable that have not previously been deleted
-#'        when fitting the regression object (e.g. if the cluster variable was not used
-#'        when fitting the regression model).
 #' @param nthreads The number of threads. Can be: a) an integer lower than,
 #'                 or equal to, the maximum number of threads; b) 0: meaning
 #'                 all available threads will be used; c) a number strictly
@@ -190,7 +186,6 @@ boottest.lm <- function(object,
                         p_val_type = "two-tailed",
                         tol = 1e-6,
                         maxiter = 10,
-                        na_omit = TRUE,
                         nthreads = getBoottest_nthreads(),
                         ssc = boot_ssc(
                           adj = TRUE,
@@ -230,6 +225,18 @@ boottest.lm <- function(object,
 
   if(!is.null(beta0)){
     stop("The function argument 'beta0' is deprecated. Please use the function argument 'r' instead, by which it is replaced.")
+  }
+  
+  if(inherits(clustid, "formula")){
+    clustid <- attr(terms(clustid), "term.labels")
+  }
+  
+  if(inherits(bootcluster, "formula")){
+    bootcluster <- attr(terms(bootcluster), "term.labels")
+  }
+  
+  if(inherits(param, "formula")){
+    param <- attr(terms(param), "term.labels")
   }
 
   internal_seed <- set_seed(
@@ -280,14 +287,23 @@ boottest.lm <- function(object,
   # now split into R, R-lean and WildBootTests.jl algos
   # different pre-processing and different algo-functions
 
-  preprocess <- preprocess(
-    object = object,
-    cluster = clustid,
-    fe = NULL,
-    param = param,
-    bootcluster = bootcluster,
-    na_omit = na_omit,
-    R = R,
+  # preprocess <- preprocess(
+  #   object = object,
+  #   cluster = clustid,
+  #   fe = NULL,
+  #   param = param,
+  #   bootcluster = bootcluster,
+  #   na_omit = na_omit,
+  #   R = R,
+  #   boot_algo = boot_algo
+  # )
+  
+  preprocess <- preprocess2(
+    object = object, 
+    clustid = clustid, 
+    R = R, 
+    param = param, 
+    bootcluster = bootcluster, 
     boot_algo = boot_algo
   )
 

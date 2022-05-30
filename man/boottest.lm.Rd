@@ -21,7 +21,6 @@
   p_val_type = "two-tailed",
   tol = 1e-06,
   maxiter = 10,
-  na_omit = TRUE,
   nthreads = getBoottest_nthreads(),
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
@@ -37,16 +36,16 @@
 \arguments{
 \item{object}{An object of class lm}
 
-\item{param}{A character vector. The name of the regression
+\item{param}{A character vector or rhs formula. The name of the regression
 coefficient(s) for which the hypothesis is to be tested}
 
 \item{B}{Integer. The number of bootstrap iterations. When the number of clusters is low,
 increasing B adds little additional runtime.}
 
-\item{clustid}{A character vector containing the names of the cluster variables. If NULL,
+\item{clustid}{A character vector or rhs formula containing the names of the cluster variables. If NULL,
 a heteroskedasticity-robust (HC1) wild bootstrap is run.}
 
-\item{bootcluster}{A character vector. Specifies the bootstrap clustering variable or variables. If more
+\item{bootcluster}{A character vector or rhs formula of length 1. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
 clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 the default is to cluster by the intersection of all the variables specified via the \code{clustid} argument,
@@ -91,11 +90,6 @@ By default "two-tailed". Other options include "equal-tailed", ">" and "<".}
 
 \item{maxiter}{Integer. Maximum number of iterations used in the root finding procedure to find the confidence interval.
 10 by default.}
-
-\item{na_omit}{Logical. If TRUE, \code{boottest()} omits rows with missing
-variables in the cluster variable that have not previously been deleted
-when fitting the regression object (e.g. if the cluster variable was not used
-when fitting the regression model).}
 
 \item{nthreads}{The number of threads. Can be: a) an integer lower than,
 or equal to, the maximum number of threads; b) 0: meaning

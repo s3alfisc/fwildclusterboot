@@ -296,9 +296,9 @@ get_cluster <- function(cluster, model_frame) {
 
   if (clustid_dims > 1) {
     for (i in acc) {
-      clustid <- cbind(clustid, Reduce(paste0, clustid[, i]))
-      names(clustid)[length(names(clustid))] <- Reduce(paste0, names(clustid[, i]))
-      # cluster_names <- cbind(cluster_names, Reduce(paste0, clustid[,i]))
+      clustid <- cbind(clustid, Reduce(paste, clustid[, i]))
+      names(clustid)[length(names(clustid))] <- Reduce(paste, names(clustid[, i]))
+      # cluster_names <- cbind(cluster_names, Reduce(paste, clustid[,i]))
     }
   }
 
@@ -331,7 +331,7 @@ get_bootcluster <- function(bootcluster, clustid, N_G, model_param_names, cluste
   } else if (length(bootcluster) > 1) {
     # if a character vector of length > 1 is used to specify the bootcluster
     # same as above: model_frame[bootcluster] -> bootcluster will be a data.frame
-    bootcluster <- as.data.frame(Reduce(paste0, model_frame[bootcluster]))
+    bootcluster <- as.data.frame(Reduce(paste, model_frame[bootcluster]))
   }
 }
 
@@ -700,3 +700,5 @@ check_set_fixef_types <- function(of, fixedid) {
 # get_R <- function(){
 #
 # }
+
+# paste_ <- function(...) paste(..., sep = "_")

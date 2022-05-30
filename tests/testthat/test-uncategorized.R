@@ -1,6 +1,7 @@
-test_that("multiplication works", {
+test_that("uncategorized tests", {
   
   skip_on_cran()
+  library(fixest)
   
   # see this issue: https://github.com/s3alfisc/fwildclusterboot/issues/26
 
@@ -86,10 +87,10 @@ test_that("multiplication works", {
       bootcluster = "min"
     ))
 
-  expect_equal(boot1$p_val, boot2$p_val)
-  expect_equal(boot2$p_val, boot3$p_val)
-  expect_equal(boot3$p_val, boot4$p_val)
-  expect_equal(boot4$p_val, boot1$p_val)
+  expect_equal(boot1$t_stat, boot2$t_stat)
+  expect_equal(boot2$t_stat, boot3$t_stat)
+  expect_equal(boot3$t_stat, boot4$t_stat)
+  expect_equal(boot4$t_stat, boot1$t_stat)
 
 
   # Test 2: one fixed effect is numeric vs no fixed effect is numeric
@@ -140,10 +141,11 @@ test_that("multiplication works", {
       bootcluster = "min",
       seed = 123
     ))
-  expect_equal(boot1$p_val, boot2$p_val)
-  expect_equal(boot2$p_val, boot3$p_val)
-  expect_equal(boot3$p_val, boot4$p_val)
-  expect_equal(boot4$p_val, boot1$p_val)
+  
+  expect_equal(boot1$t_stat, boot2$t_stat)
+  expect_equal(boot2$t_stat, boot3$t_stat)
+  expect_equal(boot3$t_stat, boot4$t_stat)
+  expect_equal(boot4$t_stat, boot1$t_stat)
 
 
   # Test 3: all fixed effects and cluster variables are numeric vs factors
@@ -193,10 +195,10 @@ test_that("multiplication works", {
       param = "treatment",
       bootcluster = "min"
     ))
-  expect_equal(boot1$p_val, boot2$p_val)
-  expect_equal(boot2$p_val, boot3$p_val)
-  expect_equal(boot3$p_val, boot4$p_val)
-  expect_equal(boot4$p_val, boot1$p_val)
+  expect_equal(boot1$t_stat, boot2$t_stat)
+  expect_equal(boot2$t_stat, boot3$t_stat)
+  expect_equal(boot3$t_stat, boot4$t_stat)
+  expect_equal(boot4$t_stat, boot1$t_stat)
 
 
   # Test 4: Test 3, but now with two fixed effects
@@ -212,6 +214,7 @@ test_that("multiplication works", {
   voters_1$Q1_immigration <- as.numeric(voters_1$Q1_immigration)
   voters_1$Q2_defense <- as.numeric(voters_1$Q2_defense)
 
+  sapply(voters[, to_char], class)
   sapply(voters_1[, to_char], class)
 
   feols_fit <- feols(proposition_vote ~ treatment + log_income | Q1_immigration + Q2_defense, data = voters)
@@ -248,10 +251,10 @@ test_that("multiplication works", {
       bootcluster = "min"
     ))
 
-  expect_equal(boot1$p_val, boot2$p_val)
-  expect_equal(boot2$p_val, boot3$p_val)
-  expect_equal(boot3$p_val, boot4$p_val)
-  expect_equal(boot4$p_val, boot1$p_val)
+  expect_equal(boot1$t_stat, boot2$t_stat)
+  expect_equal(boot2$t_stat, boot3$t_stat)
+  expect_equal(boot3$t_stat, boot4$t_stat)
+  expect_equal(boot4$t_stat, boot1$t_stat)
 
 
 
@@ -270,9 +273,10 @@ test_that("multiplication works", {
   sapply(voters_1[, to_char], class)
 
   feols_fit <- feols(proposition_vote ~ treatment + log_income | Q1_immigration + Q2_defense, data = voters)
-  feols_fit_2 <- feols(proposition_vote ~ treatment + log_income | Q1_immigration + Q2_defense, data = voters_1)
+  feols_fit_2 <- feols(proposition_vote ~ treatment + log_income, fixef = c("Q1_immigration", "Q2_defense"), data = voters_1)
   lfe_fit <- lfe::felm(proposition_vote ~ treatment + log_income | Q1_immigration + Q2_defense, data = voters)
   lfe_fit_2 <- lfe::felm(proposition_vote ~ treatment + log_income | Q1_immigration + Q2_defense, data = voters_1)
+
 
   boot1 <-
     suppressWarnings(boottest(feols_fit,
@@ -281,13 +285,16 @@ test_that("multiplication works", {
       param = "treatment",
       bootcluster = "min"
     ))
-  boot2 <-
+  
+  expect_error(
+    #boot2 <-
     suppressWarnings(boottest(feols_fit_2,
       clustid = c("Q1_immigration"),
       B = 9999,
       param = "treatment",
       bootcluster = "min"
     ))
+  )
   boot3 <-
     suppressWarnings(boottest(lfe_fit,
       clustid = c("Q1_immigration"),
@@ -295,18 +302,20 @@ test_that("multiplication works", {
       param = "treatment",
       bootcluster = "min"
     ))
-  boot4 <-
-    suppressWarnings(boottest(lfe_fit_2,
-      clustid = c("Q1_immigration"),
-      B = 9999,
-      param = "treatment",
-      bootcluster = "min"
-    ))
+  expect_error(
+    #boot4 <-
+      suppressWarnings(boottest(lfe_fit_2,
+        clustid = c("Q1_immigration"),
+        B = 9999,
+        param = "treatment",
+        bootcluster = "min"
+      ))
+  )
 
-  expect_equal(boot1$p_val, boot2$p_val)
-  expect_equal(boot2$p_val, boot3$p_val)
-  expect_equal(boot3$p_val, boot4$p_val)
-  expect_equal(boot4$p_val, boot1$p_val)
+  expect_equal(boot1$t_stat, boot3$t_stat)
+  # expect_equal(boot2$t_stat, boot3$t_stat)
+  # expect_equal(boot3$t_stat, boot4$t_stat)
+  # expect_equal(boot4$t_stat, boot1$t_stat)
 
 
   # Test 4 with fe = ON in suppressWarnings(boottest()
@@ -361,8 +370,8 @@ test_that("multiplication works", {
       bootcluster = "min"
     ))
 
-  expect_equal(boot1$p_val, boot2$p_val)
-  expect_equal(boot2$p_val, boot3$p_val)
-  expect_equal(boot3$p_val, boot4$p_val)
-  expect_equal(boot4$p_val, boot1$p_val)
+  expect_equal(boot1$t_stat, boot2$t_stat)
+  expect_equal(boot2$t_stat, boot3$t_stat)
+  expect_equal(boot3$t_stat, boot4$t_stat)
+  expect_equal(boot4$t_stat, boot1$t_stat)
 })

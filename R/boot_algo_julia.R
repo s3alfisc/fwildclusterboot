@@ -19,31 +19,34 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
   r <- r
   reps <- as.integer(B) # WildBootTests.jl demands integer
 
-  # Order the columns of `clustid` this way:
-  # 1. Variables only used to define bootstrapping clusters, as in the subcluster bootstrap.
-  # 2. Variables used to define both bootstrapping and error clusters.
-  # 3. Variables only used to define error clusters.
-  # In the most common case, `clustid` is a single column of type 2.
+  # # Order the columns of `clustid` this way:
+  # # 1. Variables only used to define bootstrapping clusters, as in the subcluster bootstrap.
+  # # 2. Variables used to define both bootstrapping and error clusters.
+  # # 3. Variables only used to define error clusters.
+  # # In the most common case, `clustid` is a single column of type 2.
+  # 
+  # if (length(bootcluster == 1) && bootcluster == "max") {
+  #   bootcluster_n <- clustid
+  # } else if (length(bootcluster == 1) && bootcluster == "min") {
+  #   bootcluster_n <- names(preprocess$N_G[which.min(preprocess$N_G)])
+  # }
+  # 
+  # # only bootstrapping cluster: in bootcluster and not in clustid
+  # c1 <- bootcluster_n[which(!(bootcluster_n %in% clustid))]
+  # # both bootstrapping and error cluster: all variables in clustid that are also in bootcluster
+  # c2 <- clustid[which(clustid %in% bootcluster_n)]
+  # # only error cluster: variables in clustid not in c1, c2
+  # c3 <- clustid[which(!(clustid %in% c(c1, c2)))]
+  # all_c <- c(c1, c2, c3)
+  # # all_c <- lapply(all_c , function(x) ifelse(length(x) == 0, NULL, x))
 
-  if (length(bootcluster == 1) && bootcluster == "max") {
-    bootcluster_n <- clustid
-  } else if (length(bootcluster == 1) && bootcluster == "min") {
-    bootcluster_n <- names(preprocess$N_G[which.min(preprocess$N_G)])
-  }
-
-  # only bootstrapping cluster: in bootcluster and not in clustid
-  c1 <- bootcluster_n[which(!(bootcluster_n %in% clustid))]
-  # both bootstrapping and error cluster: all variables in clustid that are also in bootcluster
-  c2 <- clustid[which(clustid %in% bootcluster_n)]
-  # only error cluster: variables in clustid not in c1, c2
-  c3 <- clustid[which(!(clustid %in% c(c1, c2)))]
-  all_c <- c(c1, c2, c3)
-  # all_c <- lapply(all_c , function(x) ifelse(length(x) == 0, NULL, x))
-
+  all_c <- preprocess$all_c
+  clustid_df <- preprocess$cluster_bootcluster[, all_c, drop = FALSE]
+  
   # note that c("group_id1", NULL) == "group_id1"
-  clustid_mat <- data.frame(preprocess$model_frame[, all_c])
-  names(clustid_mat) <- all_c
-  clustid_df <- base::as.matrix(sapply(clustid_mat, to_integer))
+  # clustid_mat <- data.frame(preprocess$model_frame[, all_c])
+  # names(clustid_mat) <- all_c
+  clustid_mat <- base::as.matrix(sapply(clustid_df, to_integer))
 
   # `nbootclustvar::Integer=1`: number of bootstrap-clustering variables
   # `nerrclustvar::Integer=nbootclustvar`: number of error-clustering variables
@@ -81,7 +84,7 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     r,
     resp = resp,
     predexog = predexog,
-    clustid = clustid_df,
+    clustid = clustid_mat,
     nbootclustvar = nbootclustvar,
     nerrclustvar = nerrclustvar,
     nbootclustvar = nbootclustvar,

@@ -17,7 +17,6 @@
   impose_null = TRUE,
   p_val_type = "two-tailed",
   tol = 1e-06,
-  na_omit = TRUE,
   floattype = "Float64",
   getauxweights = FALSE,
   teststat_boot = FALSE,
@@ -31,7 +30,7 @@
 \arguments{
 \item{object}{An object of class feols}
 
-\item{clustid}{A character vector containing the names of the cluster variables}
+\item{clustid}{A character vector or rhs formula containing the names of the cluster variables}
 
 \item{B}{Integer. The number of bootstrap iterations. When the number of clusters is low,
 increasing B adds little additional runtime.}
@@ -42,7 +41,7 @@ of joint hypotheses and k the number of estimated coefficients.}
 \item{r}{A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
 H0: param = r vs H1: param != r. If not provided, a vector of zeros of length q.}
 
-\item{bootcluster}{A character vector. Specifies the bootstrap clustering variable or variables. If more
+\item{bootcluster}{A character vector or rhs formula of length 1. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
 clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 the default is to cluster by the intersection of all the variables specified via the \code{clustid} argument,
@@ -50,7 +49,7 @@ even though that is not necessarily recommended (see the paper by Roodman et al 
 Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
 Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.}
 
-\item{fe}{A character vector of length one which contains the name of the fixed effect to be projected
+\item{fe}{A character vector or rhs formula of length one which contains the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.}
 
@@ -74,11 +73,6 @@ By default "two-tailed". Other options include "equal-tailed", ">" and "<".}
 \item{tol}{Numeric vector of length 1. The desired accuracy
 (convergence tolerance) used in the root finding procedure to find the confidence interval.
 Relative tolerance of 1e-6 by default.}
-
-\item{na_omit}{Logical. If TRUE, \code{boottest()} omits rows with missing
-variables in the cluster variable that have not previously been deleted
-when fitting the regression object (e.g. if the cluster variable was not used
-when fitting the regression model).}
 
 \item{floattype}{Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?}
 

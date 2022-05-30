@@ -8,7 +8,7 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
 
   print_results <- FALSE
 
-  data1 <<- fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 7645)
+  data1 <<- fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 71986045)
   sapply(data1, class)
 
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration + Q2_defense,
@@ -92,95 +92,96 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
   )
 
 
-  R_no_fixef <- clubSandwich::constrain_zero(2:3, coefs = coef(lm_fit)) * 0.1
-  R_Q1 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit8)) * 0.1
-  R_Q2 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit7)) * 0.1
-  R_Q22 <- clubSandwich::constrain_zero(1:2, coefs = coef(feols_fit11)) * 0.1
-
   # R_Q1Q2 <- clubSandwich::constrain_zero(2:3, coefs = coef(felm_fit5))
   # one-way clustering
 
   create_models <- function(clustid) {
+    
+    R1 <- clubSandwich::constrain_zero(2:3, coefs = coef(lm_fit))
+    R2 <- clubSandwich::constrain_zero(1:2, coefs = coef(feols_fit6))
+    R3 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit8))
+    R4 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit7))
+    
     for (boot_algo in c("R", "WildBootTests.jl")) {
 
       # boottest()
       cat("boottest()", "\n")
-      assign(paste0("boot_lm_", boot_algo), suppressWarnings(boottest(object = lm_fit, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_lm_", boot_algo), suppressWarnings(boottest(object = lm_fit, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
 
-      assign(paste0("boot_fixest1_", boot_algo), suppressWarnings(boottest(object = feols_fit1, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest2_", boot_algo), suppressWarnings(boottest(object = feols_fit2, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest3_", boot_algo), suppressWarnings(boottest(object = feols_fit3, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest4_", boot_algo), suppressWarnings(boottest(object = feols_fit4, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest5_", boot_algo), suppressWarnings(boottest(object = feols_fit5, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest6_", boot_algo), suppressWarnings(boottest(object = feols_fit6, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest7_", boot_algo), suppressWarnings(boottest(object = feols_fit7, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest8_", boot_algo), suppressWarnings(boottest(object = feols_fit8, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest9_", boot_algo), suppressWarnings(boottest(object = feols_fit9, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest10_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest11_", boot_algo), suppressWarnings(boottest(object = feols_fit11, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest12_", boot_algo), suppressWarnings(boottest(object = feols_fit12, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest13_", boot_algo), suppressWarnings(boottest(object = feols_fit13, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest1_", boot_algo), suppressWarnings(boottest(object = feols_fit1, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest2_", boot_algo), suppressWarnings(boottest(object = feols_fit2, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest3_", boot_algo), suppressWarnings(boottest(object = feols_fit3, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest4_", boot_algo), suppressWarnings(boottest(object = feols_fit4, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest5_", boot_algo), suppressWarnings(boottest(object = feols_fit5, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest6_", boot_algo), suppressWarnings(boottest(object = feols_fit6, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest7_", boot_algo), suppressWarnings(boottest(object = feols_fit7, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest8_", boot_algo), suppressWarnings(boottest(object = feols_fit8, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest9_", boot_algo), suppressWarnings(boottest(object = feols_fit9, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest10_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest11_", boot_algo), suppressWarnings(boottest(object = feols_fit11, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest12_", boot_algo), suppressWarnings(boottest(object = feols_fit12, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest13_", boot_algo), suppressWarnings(boottest(object = feols_fit13, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
 
-      assign(paste0("boot_fixest6fe_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest7fe_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest8fe_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest9fe_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest10fe_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest6fe_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest7fe_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest8fe_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest9fe_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest10fe_", boot_algo), suppressWarnings(boottest(object = feols_fit10, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
       # why suddenly fe = Q2_defense? Should give the same models
-      assign(paste0("boot_fixest11fe_", boot_algo), suppressWarnings(boottest(object = feols_fit11, clustid = clustid, fe = "Q2_defense", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest12fe_", boot_algo), suppressWarnings(boottest(object = feols_fit12, clustid = clustid, fe = "Q2_defense", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_fixest13fe_", boot_algo), suppressWarnings(boottest(object = feols_fit13, clustid = clustid, fe = "Q2_defense", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest11fe_", boot_algo), suppressWarnings(boottest(object = feols_fit11, clustid = clustid, fe = "Q2_defense", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest12fe_", boot_algo), suppressWarnings(boottest(object = feols_fit12, clustid = clustid, fe = "Q2_defense", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_fixest13fe_", boot_algo), suppressWarnings(boottest(object = feols_fit13, clustid = clustid, fe = "Q2_defense", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
 
-      assign(paste0("boot_felm1_", boot_algo), suppressWarnings(boottest(object = felm_fit1, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_felm2_", boot_algo), suppressWarnings(boottest(object = felm_fit2, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_felm3_", boot_algo), suppressWarnings(boottest(object = felm_fit3, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_felm4_", boot_algo), suppressWarnings(boottest(object = felm_fit4, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_felm5_", boot_algo), suppressWarnings(boottest(object = felm_fit5, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_felm6_", boot_algo), suppressWarnings(boottest(object = felm_fit6, clustid = clustid, B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_felm1_", boot_algo), suppressWarnings(boottest(object = felm_fit1, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_felm2_", boot_algo), suppressWarnings(boottest(object = felm_fit2, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_felm3_", boot_algo), suppressWarnings(boottest(object = felm_fit3, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_felm4_", boot_algo), suppressWarnings(boottest(object = felm_fit4, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_felm5_", boot_algo), suppressWarnings(boottest(object = felm_fit5, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_felm6_", boot_algo), suppressWarnings(boottest(object = felm_fit6, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
 
-      assign(paste0("boot_felm4fe_", boot_algo), suppressWarnings(boottest(object = felm_fit4, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_felm5fe_", boot_algo), suppressWarnings(boottest(object = felm_fit5, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_felm6fe_", boot_algo), suppressWarnings(boottest(object = felm_fit6, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
-      assign(paste0("boot_felm7fe_", boot_algo), suppressWarnings(boottest(object = felm_fit7, clustid = clustid, fe = "Q2_defense", B = 9999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_felm4fe_", boot_algo), suppressWarnings(boottest(object = felm_fit4, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_felm5fe_", boot_algo), suppressWarnings(boottest(object = felm_fit5, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_felm6fe_", boot_algo), suppressWarnings(boottest(object = felm_fit6, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      assign(paste0("boot_felm7fe_", boot_algo), suppressWarnings(boottest(object = felm_fit7, clustid = clustid, fe = "Q2_defense", B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
 
       # mboottest()
 
       if (boot_algo == "WildBootTests.jl") {
         cat("mboottest()", "\n")
 
-        assign(paste0("wboot_lm_", boot_algo), suppressWarnings(mboottest(object = lm_fit, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_lm_", boot_algo), suppressWarnings(mboottest(object = lm_fit, R = R1, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
 
-        assign(paste0("wboot_fixest1_", boot_algo), suppressWarnings(mboottest(object = feols_fit1, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest2_", boot_algo), suppressWarnings(mboottest(object = feols_fit2, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest3_", boot_algo), suppressWarnings(mboottest(object = feols_fit3, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest4_", boot_algo), suppressWarnings(mboottest(object = feols_fit4, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest5_", boot_algo), suppressWarnings(mboottest(object = feols_fit5, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest1_", boot_algo), suppressWarnings(mboottest(object = feols_fit1, R = R1, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest2_", boot_algo), suppressWarnings(mboottest(object = feols_fit2, R = R1, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest3_", boot_algo), suppressWarnings(mboottest(object = feols_fit3, R = R1, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest4_", boot_algo), suppressWarnings(mboottest(object = feols_fit4, R = R1, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest5_", boot_algo), suppressWarnings(mboottest(object = feols_fit5, R = R1, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
         # why lm_fit? Because mboottest() estimates without fixed effects, so R needs to be of dimension of length(names(coef(object)))
-        assign(paste0("wboot_fixest6_", boot_algo), suppressWarnings(mboottest(object = feols_fit6, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest7_", boot_algo), suppressWarnings(mboottest(object = feols_fit7, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest8_", boot_algo), suppressWarnings(mboottest(object = feols_fit8, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest9_", boot_algo), suppressWarnings(mboottest(object = feols_fit9, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest10_", boot_algo), suppressWarnings(mboottest(object = feols_fit10, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest6_", boot_algo), suppressWarnings(mboottest(object = feols_fit6, R = R2, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest7_", boot_algo), suppressWarnings(mboottest(object = feols_fit7, R = R2, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest8_", boot_algo), suppressWarnings(mboottest(object = feols_fit8, R = R2, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest9_", boot_algo), suppressWarnings(mboottest(object = feols_fit9, R = R2, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest10_", boot_algo), suppressWarnings(mboottest(object = feols_fit10, R = R2, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
 
-        assign(paste0("wboot_fixest6fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit6, R = R_Q1, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest7fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit7, R = R_Q1, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest8fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit8, R = R_Q1, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest9fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit9, R = R_Q1, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_fixest10fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit10, R = R_Q1, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest6fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit6, R = R2, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest7fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit7, R = R2, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest8fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit8, R = R2, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest9fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit9, R = R2, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest10fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit10, R = R2, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
         # why suddenly fe = Q2_defense? Should give the same models
-        assign(paste0("wboot_fixest11fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit11, R = R_Q22, clustid = clustid, fe = "Q2_defense", B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_fixest11fe_", boot_algo), suppressWarnings(mboottest(object = feols_fit11, R = R3, clustid = clustid, fe = "Q2_defense", B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
 
-        assign(paste0("wboot_felm1_", boot_algo), suppressWarnings(mboottest(object = felm_fit1, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_felm2_", boot_algo), suppressWarnings(mboottest(object = felm_fit2, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_felm3_", boot_algo), suppressWarnings(mboottest(object = felm_fit3, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_felm4_", boot_algo), suppressWarnings(mboottest(object = felm_fit4, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_felm5_", boot_algo), suppressWarnings(mboottest(object = felm_fit5, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_felm6_", boot_algo), suppressWarnings(mboottest(object = felm_fit6, R = R_no_fixef, clustid = clustid, B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_felm1_", boot_algo), suppressWarnings(mboottest(object = felm_fit1, R = R1, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_felm2_", boot_algo), suppressWarnings(mboottest(object = felm_fit2, R = R1, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_felm3_", boot_algo), suppressWarnings(mboottest(object = felm_fit3, R = R1, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_felm4_", boot_algo), suppressWarnings(mboottest(object = felm_fit4, R = R2, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_felm5_", boot_algo), suppressWarnings(mboottest(object = felm_fit5, R = R2, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_felm6_", boot_algo), suppressWarnings(mboottest(object = felm_fit6, R = R2, clustid = clustid, B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
 
-        assign(paste0("wboot_felm4fe_", boot_algo), suppressWarnings(mboottest(object = felm_fit4, R = R_Q1, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_felm5fe_", boot_algo), suppressWarnings(mboottest(object = felm_fit5, R = R_Q1, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_felm6fe_", boot_algo), suppressWarnings(mboottest(object = felm_fit6, R = R_Q1, clustid = clustid, fe = "Q1_immigration", B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
-        assign(paste0("wboot_felm7fe_", boot_algo), suppressWarnings(mboottest(object = felm_fit7, R = R_Q1, clustid = clustid, fe = "Q2_defense", B = 9999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_felm4fe_", boot_algo), suppressWarnings(mboottest(object = felm_fit4, R = R2, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_felm5fe_", boot_algo), suppressWarnings(mboottest(object = felm_fit5, R = R2, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_felm6fe_", boot_algo), suppressWarnings(mboottest(object = felm_fit6, R = R2, clustid = clustid, fe = "Q1_immigration", B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
+        assign(paste0("wboot_felm7fe_", boot_algo), suppressWarnings(mboottest(object = felm_fit7, R = R3, clustid = clustid, fe = "Q2_defense", B = 19999, seed = 911, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), floattype = "Float64")), envir = .GlobalEnv)
       }
     }
   }
@@ -221,12 +222,12 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
     cat("test mboottest", "\n")
 
     # test wald models
-    for (x in c("p_val", "t_stat")) {
+    for (x in c("p_val", "teststat")) {
       for (model in all_wald_models) {
         if (print_results) {
           print(expect_equal(wboot_lm_WildBootTests.jl[[x]], get(model)[[x]], ignore_attr = TRUE))
         } else {
-          expect_equal(wboot_lm_WildBootTests.jl[[x]], get(model)[[x]], ignore_attr = TRUE)
+          expect_equal(wboot_lm_WildBootTests.jl[[x]], get(model)[[x]], tolerance = 0.02, ignore_attr = TRUE)
         }
       }
     }

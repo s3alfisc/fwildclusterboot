@@ -7,7 +7,7 @@ test_that("t-stat equivalence OLS", {
   library(sandwich)
   library(lmtest)
   library(data.table)
-  library(fwildclusterboot)
+  #library(fwildclusterboot)
 
   ols_test <- function(run_this_test) {
     if (run_this_test) {
@@ -25,7 +25,7 @@ test_that("t-stat equivalence OLS", {
           icc2 = 0.01,
           numb_fe1 = 10,
           numb_fe2 = 10,
-          seed = 97069
+          seed = 970691
         )
       )
 
@@ -35,6 +35,7 @@ test_that("t-stat equivalence OLS", {
       # cluster.adj= FALSE
       # cluster.df= "conventional"
       # impose_null= TRUE
+      # boot_algo = "R"
 
       for (boot_algo in c("R", "WildBootTests.jl")) {
         for (adj in c(TRUE, FALSE)) {
@@ -62,7 +63,7 @@ test_that("t-stat equivalence OLS", {
                     icc2 = 0.01,
                     numb_fe1 = 10,
                     numb_fe2 = 10,
-                    seed = 97069
+                    seed = 970691
                   ),
                   cluster = ~group_id1,
                   ssc = ssc(
@@ -72,7 +73,7 @@ test_that("t-stat equivalence OLS", {
                   )
                 )
 
-                dof_tstat <- fixest::coeftable(feols_fit)[c("treatment", "log_income", "ideology1"), 3]
+                dof_tstat <- fixest::tstat(feols_fit)[c("treatment", "log_income", "ideology1")]
 
 
                 boot1 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
@@ -140,7 +141,7 @@ test_that("t-stat equivalence OLS", {
                     icc2 = 0.01,
                     numb_fe1 = 10,
                     numb_fe2 = 10,
-                    seed = 97069
+                    seed = 970691
                   ),
                   cluster = ~ group_id1 + group_id2,
                   ssc = ssc(
@@ -152,8 +153,8 @@ test_that("t-stat equivalence OLS", {
                 )
 
 
-                dof_tstat <- fixest::coeftable(feols_fit)[c("treatment", "log_income", "ideology1"), 3]
-
+                dof_tstat <- fixest::coeftable(feols_fit)[c("treatment", "log_income", "ideology1"),3]
+                
 
                 boot1 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
                   clustid = c("group_id1", "group_id2"),
@@ -218,7 +219,7 @@ test_that("t-stat equivalence OLS", {
                                              icc2 = 0.01,
                                              numb_fe1 = 10,
                                              numb_fe2 = 10,
-                                             seed = 97069
+                                             seed = 970691
                                            ),
                                            cluster = ~group_id1,
                                            ssc = ssc(
@@ -228,7 +229,7 @@ test_that("t-stat equivalence OLS", {
                                            )
                 )
                 
-                dof_tstat <- fixest::coeftable(feols_fit)[c("treatment", "log_income", "ideology1"), 3]
+                dof_tstat <- fixest::tstat(feols_fit)[c("treatment", "log_income", "ideology1")]
                 
                 
                 boot1 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
@@ -294,7 +295,7 @@ test_that("t-stat equivalence OLS q > 1", {
   library(sandwich)
   library(lmtest)
   library(data.table)
-  library(fwildclusterboot)
+  #library(fwildclusterboot)
   
   wald_test <- function(run_this_test) {
     if (run_this_test) {
@@ -528,7 +529,7 @@ test_that("t-stat equivalence IV", {
   library(sandwich)
   library(lmtest)
   library(data.table)
-  library(fwildclusterboot)
+  #library(fwildclusterboot)
   
   iv_test <- function(run_this_test) {
     
