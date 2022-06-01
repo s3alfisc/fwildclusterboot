@@ -288,6 +288,7 @@ test_that("uncategorized tests", {
   
   expect_error(
     #boot2 <-
+    tmp <- 
     suppressWarnings(boottest(feols_fit_2,
       clustid = c("Q1_immigration"),
       B = 9999,

@@ -87,10 +87,11 @@ check_boottest_args_plus <- function(object, R, param, sign_level, B, clustid = 
   #   }
   # }
   # 
-  # if (inherits(object, "ivreg")) {
-  #   if (object$method != "OLS") {
-  #     stop("Currently, only 2SLS is supported. Please set the `ivreg` function argument `method` to `OLS`.")
-  #   }
+  if (inherits(object, "ivreg")) {
+    if (object$method != "OLS") {
+      stop("Currently, only 2SLS is supported. Please set the `ivreg` function argument `method` to `OLS`.")
+    }
+  }
   # 
   #   # throw error if specific function arguments are used in lm() call
   #   call_object <- names(object$call)[names(object$call) != ""]

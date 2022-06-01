@@ -550,22 +550,28 @@ get_cluster2 <- function(object, clustid_char, bootcluster, N, call_env) {
   # Step 1: create cluster df
 
   cluster_tmp <-
-    if("Formula" %in% loadedNamespaces()) { ## FIXME to suppress potential warnings due to | in Formula
-      suppressWarnings(expand.model.frame(
-        object,
-        clustid_fml, 
-        na.expand = FALSE, 
-        envir = call_env
+    try(
+      if("Formula" %in% loadedNamespaces()) { ## FIXME to suppress potential warnings due to | in Formula
+        suppressWarnings(expand.model.frame(
+          model = object,
+          extras = clustid_fml, 
+          na.expand = FALSE, 
+          envir = call_env
+        )
       )
+      } else {
+        expand.model.frame(
+          object, 
+          clustid_fml,
+          na.expand = FALSE, 
+          envir = call_env
+        )
+      }
     )
-    } else {
-      expand.model.frame(
-        object, 
-        clustid_fml,
-        na.expand = FALSE, 
-        envir = call_env
-      )
-    }
+  
+  if(inherits(cluster_tmp, "try-error") && grepl("non-numeric argument to binary operator$", attr(cluster_tmp, "condition")$message)){
+    stop("In your model, you have specified multiple fixed effects, none of which are of type factor. While `fixest::feols()` and `lfe::felm()` handle this case without any troubles,  `boottest()` currently cannot handle this case - please change the type of (at least one) fixed effect(s) to factor. If this does not solve the error, please report the issue at https://github.com/s3alfisc/fwildclusterboot.")
+  }
 
   cluster_df <- model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
   # without cluster intersection
@@ -763,9 +769,7 @@ transform_fe2 <- function(object, X, Y, fe, has_weights, N, boot_algo){
 
   all_fe <- model_matrix(object, type = "fixef", collin.rm = TRUE)
   # make sure all fixed effects variables are characters
-  i <- seq_along(all_fe)
-  all_fe[,i] <- lapply(i, function(x) factor(all_fe[,x]))
-
+  
   n_fe <- ncol(all_fe)
   all_fe_names <- names(all_fe)
   k2 <- Reduce("+",lapply(all_fe, function(x) length(unique(x))))

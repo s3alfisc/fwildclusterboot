@@ -1,12 +1,12 @@
 # fwildclusterboot 0.8.1
 
-+ Moves data pre-processing from `model.frame` methods to `model_matrix` methods, and thereby fix a multicollinearity bug that occured when `lm()` or `fixest()` silently deleted multicollinar variable(s). This also allows to use a range of so far 'forbidden' functionalities, in particular of `fixest::feols()` - it is now possible to run `boottest()` after `feols()` models that use syntactic sugar, e.g. 
++ Moves data pre-processing from `model.frame` methods to `model_matrix` methods, and thereby fixes a multicollinearity bug that occured when `lm()` or `fixest()` silently deleted multicollinar variable(s). This also allows to use a range of so far 'forbidden' functionalities, in particular of `fixest::feols()` - it is now possible to run `boottest()` after `feols()` models that use syntactic sugar, e.g. 
 
 ```
 library(fwildclusterboot)
 library(fixest)
 
-feols_fit <- feols(proposition_vote ~ i(treatment, ideology1) ,
+feols_fit <- feols(proposition_vote ~ i(treatment, ideology1) | ,
     data = voters
 )
 boot1 <- boottest(feols_fit,
