@@ -10,7 +10,7 @@ test_that("test fixest formula sugar", {
   res <- lapply(fit, \(x) boottest(x, B = 999, param = "treatment", clustid = "group_id1"))  
   summary(res[[1]])
   
-  fit <- fixest::feols(proposition_vote ~ sw(treatment, ideology1), data = voters)
+  fit <- fixest::feols(proposition_vote ~ csw(treatment, ideology1), data = voters)
   res <- lapply(fit, \(x) boottest(x, B = 999, param = "treatment", clustid = "group_id1"))  
   
   fit <- fixest::feols(proposition_vote ~ i(treatment, ideology1), data = voters)

@@ -2,7 +2,7 @@
 #'
 #' Inverts the bootstrap p-value and calculates confidence sets
 #'
-#' @param ABCD ...
+#' @param ABCD A list of precomputed objects
 #' @param small_sample_correction
 #' @param boot_iter An integer. Number of bootstrap iterations
 #' @param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model

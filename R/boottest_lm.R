@@ -204,7 +204,7 @@ boottest.lm <- function(object,
   dreamerr::validate_dots(stop = TRUE)
 
   check_arg(object, "MBT class(lm)")
-  check_arg(clustid, "NULL | character scalar | character vector")
+  check_arg(clustid, "NULL | character scalar | character vector | formula")
   check_arg(param, "MBT scalar character | character vector")
   check_arg(B, "MBT scalar integer")
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
@@ -214,7 +214,7 @@ boottest.lm <- function(object,
   check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
-  check_arg(bootcluster, "character vector")
+  check_arg(bootcluster, "character vector | formula")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer GT{5}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
@@ -298,7 +298,7 @@ boottest.lm <- function(object,
   #   boot_algo = boot_algo
   # )
   
-  preprocess <- preprocess2(
+  preprocess <- preprocess2.lm(
     object = object, 
     clustid = clustid, 
     R = R, 

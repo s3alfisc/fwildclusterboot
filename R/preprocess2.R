@@ -68,7 +68,7 @@ preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootclu
 
   if(has_fe){
     #if(!is.null(fe)){
-      get_fe <- transform_fe2(
+      get_fe <- transform_fe(
         object = object, 
         X = X,
         Y = Y, 
@@ -92,7 +92,7 @@ preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootclu
   # get cluster variable
   if(!is.null(clustid)){
 
-    clustid_list <- get_cluster2(
+    clustid_list <- get_cluster(
       object = object,
       clustid_char = clustid,
       N = N,
@@ -182,9 +182,6 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
   fml <- formula(object)
   fml <- Formula::as.Formula(fml)
 
-  # fe_names <- attr( terms( formula(fml, lhs = 0, rhs = 2)), "term.labels")
-  # X_names <- attr( terms( formula(fml, lhs = 0, rhs = 1)), "term.labels")
-
   N <- nobs(object)
   k <- length(coef(object))
   p <- object$p
@@ -214,7 +211,7 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
   }
 
   if(has_fe){
-    get_fe <- transform_fe2(
+    get_fe <- transform_fe(
       object = object, 
       X = X, Y = Y, 
       fe = fe,
@@ -234,12 +231,10 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
     W <- n_fe <- NULL
   }
 
-  # bread <- lfe:::bread.felm(object)
-
   # get cluster variable
   if(!is.null(clustid)){
 
-    clustid_list <- get_cluster2(
+    clustid_list <- get_cluster(
       object = object,
       clustid_char = clustid,
       N = N,
@@ -298,7 +293,6 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
     bootcluster = bootcluster,
     N_G_bootcluster = length(unique(bootcluster[[1]])),
     R0 = R0,
-    # model_frame = model_frame,
     X_exog = NULL,
     X_endog = NULL,
     instruments = NULL,
@@ -328,9 +322,6 @@ preprocess2.lm <- function(object, clustid, R, param, boot_algo, bootcluster){
   fml <- formula(object)
   fml <- Formula::as.Formula(fml)
 
-  # X_names <- attr( terms( formula(fml, lhs = 0, rhs = 1)), "term.labels")
-  # X_names <- attr( terms( formula(fml, lhs = 0, rhs = 1)), "term.labels")
-
   N <- nobs(object)
   k <- length(coef(object))
   p <- object$p
@@ -352,7 +343,7 @@ preprocess2.lm <- function(object, clustid, R, param, boot_algo, bootcluster){
   # get cluster variable
   if(!is.null(clustid)){
 
-    clustid_list <- get_cluster2(
+    clustid_list <- get_cluster(
       object = object,
       clustid_char = clustid,
       N = N,
@@ -412,7 +403,6 @@ preprocess2.lm <- function(object, clustid, R, param, boot_algo, bootcluster){
     bootcluster = bootcluster,
     N_G_bootcluster = length(unique(bootcluster[[1]])),
     R0 = R0,
-    # model_frame = model_frame,
     X_exog = NULL,
     X_endog = NULL,
     instruments = NULL,
@@ -439,7 +429,6 @@ preprocess2.ivreg <- function(object, clustid, R, param, boot_algo, bootcluster)
   fml <- formula(object)
   fml <- Formula::as.Formula(fml)
   is_iv <- TRUE
-  #X_names <- attr( terms( formula(fml, lhs = 0, rhs = 1)), "term.labels")
 
   N <- nobs(object)
   k <- length(coef(object))
@@ -468,7 +457,7 @@ preprocess2.ivreg <- function(object, clustid, R, param, boot_algo, bootcluster)
   # get cluster variable
   if(!is.null(clustid)){
 
-    clustid_list <- get_cluster2(
+    clustid_list <- get_cluster(
       object = object,
       clustid_char = clustid,
       N = N,
@@ -531,7 +520,7 @@ preprocess2.ivreg <- function(object, clustid, R, param, boot_algo, bootcluster)
 }
 
 
-get_cluster2 <- function(object, clustid_char, bootcluster, N, call_env) {
+get_cluster <- function(object, clustid_char, bootcluster, N, call_env) {
 
   # ---------------------------------------------------------------------------- #
   # Note: a large part of the following code was taken and adapted from the
@@ -649,6 +638,9 @@ get_cluster2 <- function(object, clustid_char, bootcluster, N, call_env) {
 
   if(NROW(bootcluster) != N) stop("number of observations in 'bootcluster' and 'nobs()' do not match")
 
+  if(any(is.na(cluster))) stop("`boottest()` cannot handle NAs in `clustid` variables that are not part of the estimated model object.")
+  if(any(is.na(bootcluster))) stop("`boottest()` cannot handle NAs in `bootcluster` variables that are not part of the estimated model object.")
+  
 
   clustid_dims <- length(clustid_char)
 
@@ -664,14 +656,10 @@ get_cluster2 <- function(object, clustid_char, bootcluster, N, call_env) {
   vcov_sign <- sapply(acc, function(i) (-1)^(length(i) + 1))
   acc <- acc[-1:-clustid_dims]
 
-  # paste_ <- function(...) paste(..., sep = "_")
-
   if (clustid_dims > 1) {
-
     for (i in acc) {
       cluster <- cbind(cluster, Reduce(paste, cluster[, i]))
       names(cluster)[length(names(cluster))] <- Reduce(paste, names(cluster[, i]))
-      # cluster_names <- cbind(cluster_names, Reduce(paste, clustid[,i]))
     }
   }
 
@@ -711,8 +699,6 @@ get_R0_iv <- function(object, param, R, n_exog, n_endog){
   if (!is.matrix(R)) {
     R0 <- rep(0, n_exog + n_endog)
     R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
-    # R0[1:n_exog][match(param, colnames(X_exog))] <- R
-    # R0[(n_exog +1):(n_exog + n_endog)][match(param, colnames(X_endog))] <- R
     names(R0) <- c(names(object$exogenous), names(object$endogenous))
   } else {
     q <- nrow(R)
@@ -726,7 +712,7 @@ get_R0_iv <- function(object, param, R, n_exog, n_endog){
 }
 
 
-demean_fe2 <- function(X, Y, fe, has_weights, N){
+demean_fe <- function(X, Y, fe, has_weights, N){
 
   g <- collapse::GRP(fe, call = FALSE)
   X <- collapse::fwithin(X, g)
@@ -759,7 +745,7 @@ demean_fe2 <- function(X, Y, fe, has_weights, N){
 }
 
 
-transform_fe2 <- function(object, X, Y, fe, has_weights, N, boot_algo){
+transform_fe <- function(object, X, Y, fe, has_weights, N, boot_algo){
 
   #' preprocess the model fixed effects. If is.null(fe) == TRUE, all
   #' fixed effects specified in the fixest or felm model are simply added 
@@ -796,7 +782,7 @@ transform_fe2 <- function(object, X, Y, fe, has_weights, N, boot_algo){
     # project out fe
     if(boot_algo == "R"){
       # WildBootTests.jl does demeaning internally
-      prep_fe <- demean_fe2(X, Y, fe_df, has_weights, N)
+      prep_fe <- demean_fe(X, Y, fe_df, has_weights, N)
       X <- prep_fe$X
       Y <- prep_fe$Y
       W <- prep_fe$W
