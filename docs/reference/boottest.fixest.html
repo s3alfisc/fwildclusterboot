@@ -16,7 +16,7 @@ implemented in the STATA package boottest."><meta property="og:image" content="h
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,7 @@ implemented in the STATA package boottest."><meta property="og:image" content="h
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/summary_tables.html">Summary Tables with modelsummary</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -88,7 +89,6 @@ implemented in the STATA package <code>boottest</code>.</p>
   p_val_type <span class="op">=</span> <span class="st">"two-tailed"</span>,
   tol <span class="op">=</span> <span class="fl">1e-06</span>,
   maxiter <span class="op">=</span> <span class="fl">10</span>,
-  na_omit <span class="op">=</span> <span class="cn">TRUE</span>,
   nthreads <span class="op">=</span> <span class="fu">getBoottest_nthreads</span><span class="op">(</span><span class="op">)</span>,
   ssc <span class="op">=</span> <span class="fu"><a href="boot_ssc.html">boot_ssc</a></span><span class="op">(</span>adj <span class="op">=</span> <span class="cn">TRUE</span>, fixef.K <span class="op">=</span> <span class="st">"none"</span>, cluster.adj <span class="op">=</span> <span class="cn">TRUE</span>, cluster.df <span class="op">=</span>
     <span class="st">"conventional"</span><span class="op">)</span>,
@@ -107,16 +107,16 @@ implemented in the STATA package <code>boottest</code>.</p>
     <dl><dt>object</dt>
 <dd><p>An object of class fixest and estimated via <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">fixest::feols()</a></code>. Non-linear models are not supported.</p></dd>
 <dt>param</dt>
-<dd><p>A character vector. The name of the regression
+<dd><p>A character vector or rhs formula. The name of the regression
 coefficient(s) for which the hypothesis is to be tested</p></dd>
 <dt>B</dt>
 <dd><p>Integer. The number of bootstrap iterations. When the number of clusters is low,
 increasing B adds little additional runtime.</p></dd>
 <dt>clustid</dt>
-<dd><p>A character vector containing the names of the cluster variables. If NULL,
+<dd><p>A character vector or rhs formula containing the names of the cluster variables. If NULL,
 a heteroskedasticity-robust (HC1) wild bootstrap is run.</p></dd>
 <dt>bootcluster</dt>
-<dd><p>A character vector. Specifies the bootstrap clustering variable or variables. If more
+<dd><p>A character vector or rhs formula of length 1. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
 clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
 the default is to cluster by the intersection of all the variables specified via the <code>clustid</code> argument,
@@ -124,7 +124,7 @@ even though that is not necessarily recommended (see the paper by Roodman et al 
 Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
 Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is supported - see the <code><a href="../articles/fwildclusterboot.html">vignette("fwildclusterboot", package = "fwildclusterboot")</a></code> for details.</p></dd>
 <dt>fe</dt>
-<dd><p>A character vector of length one which contains the name of the fixed effect to be projected
+<dd><p>A character vector or rhs formula of length one which contains the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.</p></dd>
 <dt>sign_level</dt>
@@ -165,11 +165,6 @@ By default "two-tailed". Other options include "equal-tailed", "&gt;" and "&lt;"
 <dt>maxiter</dt>
 <dd><p>Integer. Maximum number of iterations used in the root finding procedure to find the confidence interval.
 10 by default.</p></dd>
-<dt>na_omit</dt>
-<dd><p>Logical. If TRUE, <code><a href="boottest.html">boottest()</a></code> omits rows with missing
-variables in the cluster variable that have not previously been deleted
-when fitting the regression object (e.g. if the cluster variable was not used
-when fitting the regression model).</p></dd>
 <dt>nthreads</dt>
 <dd><p>The number of threads. Can be: a) an integer lower than,
 or equal to, the maximum number of threads; b) 0: meaning
@@ -254,8 +249,9 @@ interval.</p></dd>
     
 
 <p>To guarantee reproducibility, you can either use <code>boottest()'s</code> <code>seed</code> function argument, or
-set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>boot_algo = "R-lean"</code>), 2) the heteroskedastic wild bootstrap</p></li>
-<li><p>the wild cluster bootstrap via <code>boot_algo = "R"</code> with Mammen weights or 4) <code>boot_algo = "WildBootTests.jl"</code></p></li>
+set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>boot_algo = "R-lean"</code>) including the heteroskedastic wild bootstrap</p></li>
+<li><p>the wild cluster bootstrap via <code>boot_algo = "R"</code> with Mammen weights or</p></li>
+<li><p><code>boot_algo = "WildBootTests.jl"</code></p></li>
 </ol></li>
 <li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>boot_algo = "R"</code> for Rademacher, Webb or Normal weights</p></li>
 </ul></div>

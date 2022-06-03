@@ -582,18 +582,5 @@ For Rademacher, Normal and Webb weights and `boot_algo = "R"`, you need to set a
 
 In case of multi-way clustering, it is not guaranteed that the covariance matrix is positive definite, in which case the resulting bootstrap test statistics are invalid. `boottest()` follows the implementation in STATA and deletes invalid tests statistics, and informs the user with a note.
 
-## On the handling of missing values 
 
-`boottest()` retrieves both the design matrix $X$, the dependent variable $y$ and the cluster variables from the input object of type `lm`, `fixest` or `felm`. Because `boottest()` allows to add or delete clustering variables that are not employed in `lm()`, `feols()` and `felm()`, it may occur that 
-a cluster variable is added in `boottest()` that is not included in the regression model, either as a cluster variable or covariate. 
-
-In this case, boottest by default deletes the respective rows in the dependent variable, design matrix and in the cluster variables.  In consequence, estimation (in the modeling step) and inference (via `boottest()`) are done on a different sample. `boottest()` returns a warning. 
-
-This in turn has a consequence for the use of `boottest()` and `modelsummary`. `boottest()` simply calls the `glance()` methods for objects of types `fixest`, `felm` and `lm` from the `broom` package, and therefore, the number of observations reported via `msummary()` is the number of observations used in the modeling stage. 
-
-The default behavior of `boottest()` - to delete missings with a warning - can be set off via the `na_omit` function argument. If `na_omit` is set to FALSE, `boottest()` will not allow for missing values in the added cluster variables and throw an error. 
-
-## A note of caution
-
-The `feols()` function from `fixest` introduces several useful formula shortcuts. E.g. one can fit several regressions at once. All these advanced formula tools are not supported in `boottest()`. `boottest()` tries to catch any use of advanced formulas, but might fail to return errors in some cases. 
 
