@@ -226,8 +226,8 @@ boottest.felm <- function(object,
 
   # Step 1: check arguments of felm call
   check_arg(object, "MBT class(felm)")
-  check_arg(clustid, "NULL | character scalar | character vector")
-  check_arg(param, "MBT scalar character | character vector")
+  check_arg(clustid, "NULL | character scalar | character vector | formula")
+  check_arg(param, "MBT scalar character | character vector | formula")
   check_arg(B, "MBT scalar integer GT{99}")
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
@@ -238,7 +238,7 @@ boottest.felm <- function(object,
   check_arg(internal_seed, "scalar logical")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
-  check_arg(fe, "character scalar | NULL")
+  check_arg(fe, "character scalar | NULL |formula ")
   check_arg(bootcluster, "character vector")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer GT{5}")

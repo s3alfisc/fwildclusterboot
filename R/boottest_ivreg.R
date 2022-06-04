@@ -165,7 +165,7 @@ boottest.ivreg <- function(object,
   dreamerr::validate_dots(stop = TRUE)
 
   check_arg(object, "MBT class(ivreg)")
-  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(clustid, "NULL | character scalar | character vector | formula")
   check_arg(param, "MBT scalar character | character vector")
   check_arg(B, "MBT scalar integer GT{0}")
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
@@ -174,7 +174,7 @@ boottest.ivreg <- function(object,
   check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
-  check_arg(bootcluster, "character vector")
+  check_arg(bootcluster, "character vector | formula")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(t_boot, "scalar logical")

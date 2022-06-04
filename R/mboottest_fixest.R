@@ -138,7 +138,7 @@ mboottest.fixest <- function(object,
   
   # Step 1: check arguments of feols call
   check_arg(object, "MBT class(fixest)")
-  check_arg(clustid, "MBT character scalar | character vector")
+  check_arg(clustid, "character scalar | character vector | formula")
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric vector | numeric matrix")
   
@@ -147,8 +147,8 @@ mboottest.fixest <- function(object,
   
   check_arg(seed, "scalar integer | NULL")
   check_arg(r, "numeric vector | NULL")
-  check_arg(fe, "character scalar | NULL")
-  check_arg(bootcluster, "character vector")
+  check_arg(fe, "character scalar | NULL | formula")
+  check_arg(bootcluster, "character vector | formula")
   check_arg(tol, "numeric scalar GT{0}")
   # check_arg(maxiter, "scalar integer")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
