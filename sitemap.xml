@@ -10,6 +10,9 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/articles/index.html</loc>
   </url>
   <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/articles/summary_tables.html</loc>
+  </url>
+  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html</loc>
   </url>
   <url>
@@ -49,9 +52,6 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/boot_ssc.html</loc>
   </url>
   <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/check_deleted_obs.html</loc>
-  </url>
-  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/cpp_get_nb_threads.html</loc>
   </url>
   <url>
@@ -88,10 +88,25 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/mboottest.lm.html</loc>
   </url>
   <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/model_matrix.felm.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/model_matrix.fixest.html</loc>
+  </url>
+  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/model_matrix.html</loc>
   </url>
   <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/model_matrix.ivreg.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/model_matrix.lm.html</loc>
+  </url>
+  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/plot.boottest.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/preprocess2.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/setBoottest_boot_algo.html</loc>
@@ -110,6 +125,9 @@
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/to_integer.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/transform_fe.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/voters.html</loc>

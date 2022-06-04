@@ -51,6 +51,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/summary_tables.html">Summary Tables with `modelsummary`</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -172,7 +173,26 @@
             estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
            statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span>  
 <span class="op">}</span>
-<span class="co">#&gt; Loading required namespace: modelsummary</span></code></pre></div>
+<span class="co">#&gt; Loading required namespace: modelsummary</span>
+<span class="co">#&gt; Warning: `modelsummary could not extract goodness-of-fit statistics from a model</span>
+<span class="co">#&gt; of class "boottest". The package tried a sequence of 2 helper functions:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; broom::glance(model)</span>
+<span class="co">#&gt; performance::model_performance(model)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; One of these functions must return a one-row `data.frame`. The `modelsummary` website explains how to summarize unsupported models or add support for new models yourself:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html</span>
+
+<span class="co">#&gt; Warning: `modelsummary could not extract goodness-of-fit statistics from a model</span>
+<span class="co">#&gt; of class "boottest". The package tried a sequence of 2 helper functions:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; broom::glance(model)</span>
+<span class="co">#&gt; performance::model_performance(model)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; One of these functions must return a one-row `data.frame`. The `modelsummary` website explains how to summarize unsupported models or add support for new models yourself:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html</span></code></pre></div>
 <table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -215,78 +235,12 @@ Model 2
 </td>
 </tr>
 <tr>
-<td style="text-align:left;box-shadow: 0px 1px">
+<td style="text-align:left;">
 </td>
-<td style="text-align:center;box-shadow: 0px 1px">
+<td style="text-align:center;">
 </td>
-<td style="text-align:center;box-shadow: 0px 1px">
+<td style="text-align:center;">
 [−0.057, −0.019]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Num.Obs.
-</td>
-<td style="text-align:center;">
-300
-</td>
-<td style="text-align:center;">
-300
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R2
-</td>
-<td style="text-align:center;">
-0.316
-</td>
-<td style="text-align:center;">
-0.339
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R2 Adj.
-</td>
-<td style="text-align:center;">
-0.288
-</td>
-<td style="text-align:center;">
-0.311
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AIC
-</td>
-<td style="text-align:center;">
-−82.1
-</td>
-<td style="text-align:center;">
-−92.2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-BIC
-</td>
-<td style="text-align:center;">
-−30.2
-</td>
-<td style="text-align:center;">
-−40.4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Log.Lik.
-</td>
-<td style="text-align:center;">
-55.025
-</td>
-<td style="text-align:center;">
-60.102
 </td>
 </tr>
 </tbody>
@@ -314,7 +268,7 @@ Log.Lik.
 <span class="co">#&gt;  Number of Clusters: 40 20 253</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span>
-<span class="co">#&gt; 1 1*treatment = 0    0.073     4.039       0     0.04     0.107</span></code></pre></div>
+<span class="co">#&gt; 1 1*treatment = 0    0.073     3.842   0.004    0.031     0.115</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="the-heteroskedastic-bootstrap">The Heteroskedastic Bootstrap<a class="anchor" aria-label="anchor" href="#the-heteroskedastic-bootstrap"></a>
@@ -357,7 +311,26 @@ Log.Lik.
   <span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html" class="external-link">msummary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">boot_lm_rade</span>, <span class="va">boot_lm_webb</span><span class="op">)</span>, 
           estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
          statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<span class="op">}</span>
+<span class="co">#&gt; Warning: `modelsummary could not extract goodness-of-fit statistics from a model</span>
+<span class="co">#&gt; of class "boottest". The package tried a sequence of 2 helper functions:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; broom::glance(model)</span>
+<span class="co">#&gt; performance::model_performance(model)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; One of these functions must return a one-row `data.frame`. The `modelsummary` website explains how to summarize unsupported models or add support for new models yourself:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html</span>
+
+<span class="co">#&gt; Warning: `modelsummary could not extract goodness-of-fit statistics from a model</span>
+<span class="co">#&gt; of class "boottest". The package tried a sequence of 2 helper functions:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; broom::glance(model)</span>
+<span class="co">#&gt; performance::model_performance(model)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; One of these functions must return a one-row `data.frame`. The `modelsummary` website explains how to summarize unsupported models or add support for new models yourself:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html</span></code></pre></div>
 <table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -375,86 +348,20 @@ Model 2
 1*treatment = 0
 </td>
 <td style="text-align:center;">
-0.073 (0.000)
+0.073 (0.004)
 </td>
 <td style="text-align:center;">
-0.073 (0.000)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;box-shadow: 0px 1px">
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-[0.040, 0.107]
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-[0.040, 0.107]
+0.073 (0.002)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-Num.Obs.
 </td>
 <td style="text-align:center;">
-300
+[0.030, 0.115]
 </td>
 <td style="text-align:center;">
-300
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R2
-</td>
-<td style="text-align:center;">
-0.316
-</td>
-<td style="text-align:center;">
-0.316
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R2 Adj.
-</td>
-<td style="text-align:center;">
-0.288
-</td>
-<td style="text-align:center;">
-0.288
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AIC
-</td>
-<td style="text-align:center;">
-−82.1
-</td>
-<td style="text-align:center;">
-−82.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-BIC
-</td>
-<td style="text-align:center;">
-−30.2
-</td>
-<td style="text-align:center;">
-−30.2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Log.Lik.
-</td>
-<td style="text-align:center;">
-55.025
-</td>
-<td style="text-align:center;">
-55.025
+[0.032, 0.114]
 </td>
 </tr>
 </tbody>
@@ -479,7 +386,26 @@ Log.Lik.
   <span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html" class="external-link">msummary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">boot_lm_5</span>, <span class="va">boot_lm_10</span><span class="op">)</span>, 
           estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
          statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<span class="op">}</span>
+<span class="co">#&gt; Warning: `modelsummary could not extract goodness-of-fit statistics from a model</span>
+<span class="co">#&gt; of class "boottest". The package tried a sequence of 2 helper functions:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; broom::glance(model)</span>
+<span class="co">#&gt; performance::model_performance(model)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; One of these functions must return a one-row `data.frame`. The `modelsummary` website explains how to summarize unsupported models or add support for new models yourself:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html</span>
+
+<span class="co">#&gt; Warning: `modelsummary could not extract goodness-of-fit statistics from a model</span>
+<span class="co">#&gt; of class "boottest". The package tried a sequence of 2 helper functions:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; broom::glance(model)</span>
+<span class="co">#&gt; performance::model_performance(model)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; One of these functions must return a one-row `data.frame`. The `modelsummary` website explains how to summarize unsupported models or add support for new models yourself:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html</span></code></pre></div>
 <table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -497,86 +423,20 @@ Model 2
 1*treatment = 0
 </td>
 <td style="text-align:center;">
-0.073 (0.000)
+0.073 (0.001)
 </td>
 <td style="text-align:center;">
 0.073 (0.001)
 </td>
 </tr>
 <tr>
-<td style="text-align:left;box-shadow: 0px 1px">
+<td style="text-align:left;">
 </td>
-<td style="text-align:center;box-shadow: 0px 1px">
+<td style="text-align:center;">
 [0.033, 0.113]
 </td>
-<td style="text-align:center;box-shadow: 0px 1px">
+<td style="text-align:center;">
 [0.040, 0.106]
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Num.Obs.
-</td>
-<td style="text-align:center;">
-300
-</td>
-<td style="text-align:center;">
-300
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R2
-</td>
-<td style="text-align:center;">
-0.316
-</td>
-<td style="text-align:center;">
-0.316
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R2 Adj.
-</td>
-<td style="text-align:center;">
-0.288
-</td>
-<td style="text-align:center;">
-0.288
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AIC
-</td>
-<td style="text-align:center;">
-−82.1
-</td>
-<td style="text-align:center;">
-−82.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-BIC
-</td>
-<td style="text-align:center;">
-−30.2
-</td>
-<td style="text-align:center;">
-−30.2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Log.Lik.
-</td>
-<td style="text-align:center;">
-55.025
-</td>
-<td style="text-align:center;">
-55.025
 </td>
 </tr>
 </tbody>
@@ -600,7 +460,26 @@ Log.Lik.
   <span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html" class="external-link">msummary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">boot_lm1</span>, <span class="va">boot_lm2</span><span class="op">)</span>, 
           estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
          statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<span class="op">}</span>
+<span class="co">#&gt; Warning: `modelsummary could not extract goodness-of-fit statistics from a model</span>
+<span class="co">#&gt; of class "boottest". The package tried a sequence of 2 helper functions:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; broom::glance(model)</span>
+<span class="co">#&gt; performance::model_performance(model)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; One of these functions must return a one-row `data.frame`. The `modelsummary` website explains how to summarize unsupported models or add support for new models yourself:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html</span>
+
+<span class="co">#&gt; Warning: `modelsummary could not extract goodness-of-fit statistics from a model</span>
+<span class="co">#&gt; of class "boottest". The package tried a sequence of 2 helper functions:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; broom::glance(model)</span>
+<span class="co">#&gt; performance::model_performance(model)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; One of these functions must return a one-row `data.frame`. The `modelsummary` website explains how to summarize unsupported models or add support for new models yourself:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html</span></code></pre></div>
 <table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -618,86 +497,20 @@ Model 2
 1*treatment = 0
 </td>
 <td style="text-align:center;">
-0.073 (0.006)
+0.073 (0.004)
 </td>
 <td style="text-align:center;">
-0.073 (0.012)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;box-shadow: 0px 1px">
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-[0.029, 0.113]
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-[0.023, 0.121]
+0.073 (0.008)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-Num.Obs.
 </td>
 <td style="text-align:center;">
-300
+[0.031, 0.110]
 </td>
 <td style="text-align:center;">
-300
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R2
-</td>
-<td style="text-align:center;">
-0.316
-</td>
-<td style="text-align:center;">
-0.316
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R2 Adj.
-</td>
-<td style="text-align:center;">
-0.288
-</td>
-<td style="text-align:center;">
-0.288
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AIC
-</td>
-<td style="text-align:center;">
-−82.1
-</td>
-<td style="text-align:center;">
-−82.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-BIC
-</td>
-<td style="text-align:center;">
-−30.2
-</td>
-<td style="text-align:center;">
-−30.2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Log.Lik.
-</td>
-<td style="text-align:center;">
-55.025
-</td>
-<td style="text-align:center;">
-55.025
+[0.028, 0.116]
 </td>
 </tr>
 </tbody>
@@ -747,7 +560,26 @@ Log.Lik.
   <span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html" class="external-link">msummary</a></span><span class="op">(</span>model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">boot_min</span>, <span class="va">boot_2var</span><span class="op">)</span>, 
          estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
          statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<span class="op">}</span>
+<span class="co">#&gt; Warning: `modelsummary could not extract goodness-of-fit statistics from a model</span>
+<span class="co">#&gt; of class "boottest". The package tried a sequence of 2 helper functions:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; broom::glance(model)</span>
+<span class="co">#&gt; performance::model_performance(model)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; One of these functions must return a one-row `data.frame`. The `modelsummary` website explains how to summarize unsupported models or add support for new models yourself:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html</span>
+
+<span class="co">#&gt; Warning: `modelsummary could not extract goodness-of-fit statistics from a model</span>
+<span class="co">#&gt; of class "boottest". The package tried a sequence of 2 helper functions:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; broom::glance(model)</span>
+<span class="co">#&gt; performance::model_performance(model)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; One of these functions must return a one-row `data.frame`. The `modelsummary` website explains how to summarize unsupported models or add support for new models yourself:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; https://vincentarelbundock.github.io/modelsummary/articles/modelsummary.html</span></code></pre></div>
 <table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -765,86 +597,20 @@ Model 2
 1*treatment = 0
 </td>
 <td style="text-align:center;">
-0.073 (0.004)
+0.073 (0.005)
 </td>
 <td style="text-align:center;">
-0.073 (0.001)
-</td>
-</tr>
-<tr>
-<td style="text-align:left;box-shadow: 0px 1px">
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-[0.032, 0.112]
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-[0.040, 0.108]
+0.073 (0.009)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-Num.Obs.
 </td>
 <td style="text-align:center;">
-300
+[0.031, 0.110]
 </td>
 <td style="text-align:center;">
-300
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R2
-</td>
-<td style="text-align:center;">
-0.316
-</td>
-<td style="text-align:center;">
-0.316
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-R2 Adj.
-</td>
-<td style="text-align:center;">
-0.288
-</td>
-<td style="text-align:center;">
-0.288
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AIC
-</td>
-<td style="text-align:center;">
-−82.1
-</td>
-<td style="text-align:center;">
-−82.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-BIC
-</td>
-<td style="text-align:center;">
-−30.2
-</td>
-<td style="text-align:center;">
-−30.2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Log.Lik.
-</td>
-<td style="text-align:center;">
-55.025
-</td>
-<td style="text-align:center;">
-55.025
+[0.028, 0.117]
 </td>
 </tr>
 </tbody>
@@ -1130,19 +896,6 @@ Log.Lik.
 <h3 id="treatment-of-invalid-test-statistics-for-multiway-clustering">Treatment of Invalid Test Statistics for multiway clustering<a class="anchor" aria-label="anchor" href="#treatment-of-invalid-test-statistics-for-multiway-clustering"></a>
 </h3>
 <p>In case of multi-way clustering, it is not guaranteed that the covariance matrix is positive definite, in which case the resulting bootstrap test statistics are invalid. <code><a href="../reference/boottest.html">boottest()</a></code> follows the implementation in STATA and deletes invalid tests statistics, and informs the user with a note.</p>
-</div>
-<div class="section level3">
-<h3 id="on-the-handling-of-missing-values">On the handling of missing values<a class="anchor" aria-label="anchor" href="#on-the-handling-of-missing-values"></a>
-</h3>
-<p><code><a href="../reference/boottest.html">boottest()</a></code> retrieves both the design matrix <span class="math inline">\(X\)</span>, the dependent variable <span class="math inline">\(y\)</span> and the cluster variables from the input object of type <code>lm</code>, <code>fixest</code> or <code>felm</code>. Because <code><a href="../reference/boottest.html">boottest()</a></code> allows to add or delete clustering variables that are not employed in <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>, <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols()</a></code> and <code><a href="https://rdrr.io/pkg/lfe/man/felm.html" class="external-link">felm()</a></code>, it may occur that a cluster variable is added in <code><a href="../reference/boottest.html">boottest()</a></code> that is not included in the regression model, either as a cluster variable or covariate.</p>
-<p>In this case, boottest by default deletes the respective rows in the dependent variable, design matrix and in the cluster variables. In consequence, estimation (in the modeling step) and inference (via <code><a href="../reference/boottest.html">boottest()</a></code>) are done on a different sample. <code><a href="../reference/boottest.html">boottest()</a></code> returns a warning.</p>
-<p>This in turn has a consequence for the use of <code><a href="../reference/boottest.html">boottest()</a></code> and <code>modelsummary</code>. <code><a href="../reference/boottest.html">boottest()</a></code> simply calls the <code><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance()</a></code> methods for objects of types <code>fixest</code>, <code>felm</code> and <code>lm</code> from the <code>broom</code> package, and therefore, the number of observations reported via <code><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html" class="external-link">msummary()</a></code> is the number of observations used in the modeling stage.</p>
-<p>The default behavior of <code><a href="../reference/boottest.html">boottest()</a></code> - to delete missings with a warning - can be set off via the <code>na_omit</code> function argument. If <code>na_omit</code> is set to FALSE, <code><a href="../reference/boottest.html">boottest()</a></code> will not allow for missing values in the added cluster variables and throw an error.</p>
-</div>
-<div class="section level3">
-<h3 id="a-note-of-caution">A note of caution<a class="anchor" aria-label="anchor" href="#a-note-of-caution"></a>
-</h3>
-<p>The <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols()</a></code> function from <code>fixest</code> introduces several useful formula shortcuts. E.g. one can fit several regressions at once. All these advanced formula tools are not supported in <code><a href="../reference/boottest.html">boottest()</a></code>. <code><a href="../reference/boottest.html">boottest()</a></code> tries to catch any use of advanced formulas, but might fail to return errors in some cases.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
