@@ -673,28 +673,6 @@ test_that("error warning IV/WRE and q > 1", {
     )
   )
 
-  # # forbidden function arguments
-  # ivreg_fit2 <- ivreg(log(wage) ~ education + age +
-  #   ethnicity + smsa + south + parents14 |
-  #   nearcollege + age + ethnicity + smsa
-  #     + south + parents14,
-  # data = SchoolingReturns,
-  # subset = 1:100
-  # )
-  # 
-  # expect_error(
-  #   suppressMessages(
-  #     boottest(
-  #       object = ivreg_fit2,
-  #       clustid = "kww",
-  #       B = 999,
-  #       param = "education",
-  #       type = "rademacher",
-  #       conf_int = FALSE
-  #     )
-  #   )
-  # )
-
   # enumeration warning
   expect_warning(
     suppressMessages(
@@ -709,8 +687,6 @@ test_that("error warning IV/WRE and q > 1", {
     )
   )
 
-  # error when ivreg with other method than OLS
-  library(ivreg)
   # drop all NA values from SchoolingReturns
   SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
   ivreg_fit <- ivreg(log(wage) ~ education + age +
@@ -732,91 +708,17 @@ test_that("error warning IV/WRE and q > 1", {
     )
   )
 
-  # ivreg_fit <- ivreg(log(wage) ~ education + age +
-  #                      ethnicity + smsa + south + parents14 |
-  #                      nearcollege + age + ethnicity + smsa
-  #                    + south + parents14,
-  #                    data = SchoolingReturns,
-  #                    subset = 1:1000
-  # )
-  # 
-  # expect_error(
-  #   boottest(
-  #     object = ivreg_fit,
-  #     B = 999,
-  #     param = "education",
-  #     clustid = "kww",
-  #     type = "mammen",
-  #     impose_null = TRUE
-  #   )
-  # )
+
 
   # bannd args ivreg
-
+  library(fixest)
   # test for banned function arguments and syntax for fixest with mboottest
-  feols_fit <- feols(proposition_vote ~ treatment + ideology1 + i(log_income, Q1_immigration),
-                     data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
-  )
-  R <- clubSandwich::constrain_zero(1:2,coef(feols_fit))
-  # expect_error(mboottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, R = R))
 
   feols_fit <- feols(proposition_vote ~ treatment + ideology1 ,
                      data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   )
   R <- clubSandwich::constrain_zero(1:2,coef(feols_fit))
   expect_error(mboottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, R = R, r = 1:3))
-
-  # more mboottest() banned function arguments
-  felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-                   data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234),
-                   subset = sample(c(TRUE, FALSE), 1000, TRUE)
-  )
-  # expect_error(
-  #   mboottest(
-  #     object = felm_fit,
-  #     clustid = "group_id1",
-  #     B = 999, seed = 911,
-  #     R = R
-  #   )
-  # )
-
-  # 2) lm
-  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-               data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234),
-               subset = sample(c(TRUE, FALSE), 1000, TRUE)
-  )
-  # expect_error(mboottest(
-  #   object = lm_fit,
-  #   clustid = "group_id1",
-  #   B = 999, seed = 911,
-  #   R = R
-  # ))
-
-  # fixest
-  feols_fit <- feols(proposition_vote ~ treatment + ideology1 + i(log_income, Q1_immigration),
-                     data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
-  )
-  # expect_error(mboottest(
-  #   object = feols_fit,
-  #   clustid = "group_id1",
-  #   B = 999, seed = 911,
-  #   R = R
-  # ))
-  feols_fit <- feols(proposition_vote ~ treatment + ideology1,
-                     data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234),
-                     subset = sample(c(TRUE, FALSE), 1000, TRUE)
-  )
-  # expect_error(
-  #   mboottest(
-  #     object = feols_fit,
-  #     clustid = "group_id1",
-  #     B = 999, seed = 911,
-  #     R = R
-  #   )
-  # )
-
-
-  # check_r_lean
 
 
 
