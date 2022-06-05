@@ -145,6 +145,6 @@ glance.boottest <- function(x, ...) {
   #'         - lists characteristics of the input regression model
 
   stopifnot(inherits(x, "boottest"))
-  broom::glance(eval(x$call))
+  broom::glance(eval(x$call$object))
   
 }
