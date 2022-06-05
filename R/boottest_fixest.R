@@ -344,7 +344,7 @@ boottest.fixest <- function(object,
   B <- enumerate$B
 
   N <- preprocess$N
-  k <- length(coef(object))
+  k <- preprocess$k
   G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
   vcov_sign <- preprocess$vcov_sign
   

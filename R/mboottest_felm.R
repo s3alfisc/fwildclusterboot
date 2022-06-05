@@ -181,7 +181,7 @@ mboottest.felm <- function(object,
   
   fedfadj <- 0L
   
-  preprocess <- preprocess2(
+  preprocess <- preprocess2.felm(
     object = object, 
     clustid = clustid, 
     R = R, 

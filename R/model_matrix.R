@@ -22,7 +22,7 @@ model_matrix.lm <- function(object, collin.rm = TRUE, ...){
   X <- model.matrix(object)
   if(collin.rm == TRUE){
     bn <- names(na.omit(coef(object)))
-    X[,colnames(X) %in% bn]
+    X <- X[,colnames(X) %in% bn]
   }
 
   X
@@ -45,7 +45,7 @@ model_matrix.felm <- function(object, type, collin.rm = TRUE, ...){
       mm <- model.matrix(object)
       if(collin.rm == TRUE){
         bn <- names(na.omit(coef(object)))
-        mm[,colnames(mm) %in% bn]
+        mm <- mm[,colnames(mm) %in% bn]
       }
     } else if(type == "fixef"){
       mm <- as.data.frame(object$fe) 
@@ -54,7 +54,7 @@ model_matrix.felm <- function(object, type, collin.rm = TRUE, ...){
       mm[,i] <- lapply(i, function(x) factor(mm[,x]))
     } 
     
-    mm
+  mm
   
 }
 

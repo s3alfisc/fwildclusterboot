@@ -336,7 +336,7 @@ boottest.felm <- function(object,
   B <- enumerate$B
 
   N <- preprocess$N
-  k <- length(coef(object))
+  k <- preprocess$k
   G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
   vcov_sign <- preprocess$vcov_sign
   small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign, heteroskedastic = heteroskedastic)

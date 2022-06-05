@@ -31,8 +31,9 @@ preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootclu
   fml_full <- formula(fml, collapse = TRUE)
 
   N <- nobs(object)
-  k <- length(coef(object))
-
+  # lm and felm don't drop NAs due to multicollinearity, while fixest does
+  k <- length(na.omit(coef(object)))
+  
   method <- object$family
   is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
   has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
@@ -144,7 +145,7 @@ preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootclu
     W = W,
     n_fe = n_fe,
     N = N,
-    k =  length(coef(object)),
+    k =  k,
     k2 =  k2,
     clustid = clustid,
     vcov_sign = vcov_sign,
@@ -183,7 +184,8 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
   fml <- Formula::as.Formula(fml)
 
   N <- nobs(object)
-  k <- length(coef(object))
+  # lm and felm don't drop NAs due to multicollinearity, while fixest does
+  k <- length(na.omit(coef(object)))
   p <- object$p
 
   is_iv <- FALSE
@@ -283,7 +285,7 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
     W = W,
     n_fe = n_fe,
     N = N,
-    k = length(coef(object)),
+    k = k,
     k2 =  k2,
     clustid = clustid,
     vcov_sign = vcov_sign,
@@ -323,7 +325,8 @@ preprocess2.lm <- function(object, clustid, R, param, boot_algo, bootcluster){
   fml <- Formula::as.Formula(fml)
 
   N <- nobs(object)
-  k <- length(coef(object))
+  # lm and felm don't drop NAs due to multicollinearity, while fixest does
+  k <- length(na.omit(coef(object)))
   p <- object$p
 
   is_iv <- FALSE
@@ -393,7 +396,7 @@ preprocess2.lm <- function(object, clustid, R, param, boot_algo, bootcluster){
     W = NULL,
     n_fe = NULL,
     N = N,
-    k =  length(coef(object)),
+    k =  k,
     k2 =  0,
     clustid = clustid,
     vcov_sign = vcov_sign,
@@ -431,7 +434,8 @@ preprocess2.ivreg <- function(object, clustid, R, param, boot_algo, bootcluster)
   is_iv <- TRUE
 
   N <- nobs(object)
-  k <- length(coef(object))
+  # lm and felm don't drop NAs due to multicollinearity, while fixest does
+  k <- length(na.omit(coef(object)))
   p <- object$p
 
   is_iv <- FALSE
@@ -492,7 +496,7 @@ preprocess2.ivreg <- function(object, clustid, R, param, boot_algo, bootcluster)
     W = NULL,
     n_fe = NULL,
     N = N,
-    k =  length(coef(object)),
+    k =  k,
     k2 = 0,
     clustid = clustid,
     vcov_sign = vcov_sign,
