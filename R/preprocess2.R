@@ -7,10 +7,6 @@
 #' @param object An objectect of type lm, fixest, felm or ivreg
 #' @param ... other arguments
 #'
-#' @seealso \link[fwildclusterboot]{preprocess2.lm}, \link[fwildclusterboot]{preprocess2.fixest}, \link[fwildclusterboot]{preprocess2.felm}
-#'
-#' @export
-#'
 #' @return An object of class \code{preprocess2}.
 
 preprocess2 <- function(object, ...) {
@@ -35,6 +31,11 @@ preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootclu
   k <- length(na.omit(coef(object)))
   
   method <- object$family
+  # fixest specific checks
+  if (object$method != "feols") {
+    stop("boottest() only supports OLS estimation via fixest::feols() - it does not support non-linear models computed via e.g. fixest::fepois() or fixest::feglm.")
+  }
+  
   is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
   has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
 
@@ -119,12 +120,12 @@ preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootclu
 
 
   #iv prep
+  instruments <- X_exog <- X_endog <- NULL
   if(is_iv){
     R0 <- rep(0, n_exog + n_endog)
     R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
     names(R0) <- c(names(object$exogenous), names(object$endogenous))
   } else {
-    instruments <- X_exog <- X_endog <- NULL
     if (!is.matrix(R)) {
       R0 <- rep(0, length(colnames(X)))
       R0[match(param, colnames(X))] <- R
@@ -263,12 +264,12 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
   }
 
   #iv prep
+  instruments <- X_exog <- X_endog <- NULL
   if(is_iv){
     R0 <- rep(0, n_exog + n_endog)
     R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
     names(R0) <- c(names(object$exogenous), names(object$endogenous))
   } else {
-    instruments <- X_exog <- X_endog <- NULL
     if (!is.matrix(R)) {
       R0 <- rep(0, length(colnames(X)))
       R0[match(param, colnames(X))] <- R

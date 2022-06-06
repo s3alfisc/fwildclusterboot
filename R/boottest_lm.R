@@ -288,17 +288,6 @@ boottest.lm <- function(object,
   # now split into R, R-lean and WildBootTests.jl algos
   # different pre-processing and different algo-functions
 
-  # preprocess <- preprocess(
-  #   object = object,
-  #   cluster = clustid,
-  #   fe = NULL,
-  #   param = param,
-  #   bootcluster = bootcluster,
-  #   na_omit = na_omit,
-  #   R = R,
-  #   boot_algo = boot_algo
-  # )
-  
   preprocess <- preprocess2.lm(
     object = object, 
     clustid = clustid, 

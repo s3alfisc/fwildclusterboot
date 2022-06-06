@@ -314,7 +314,7 @@ boottest.felm <- function(object,
     fe = fe
   )
 
-  preprocess <- preprocess2(
+  preprocess <- preprocess2.felm(
     object = object, 
     clustid = clustid, 
     R = R, 
