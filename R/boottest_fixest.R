@@ -268,12 +268,6 @@ boottest.fixest <- function(object,
     type = type
   )
 
-
-  # fixest specific checks
-  if (object$method != "feols") {
-    stop("boottest() only supports OLS estimation via fixest::feols() - it does not support non-linear models computed via e.g. fixest::fepois() or fixest::feglm.")
-  }
-
   if (!is.null(object$fixef_removed)) {
     stop(paste("feols() removes fixed effects with the following values: ", object$fixef_removed, ". Currently, boottest()'s internal pre-processing does not account for this deletion. Therefore, please exclude such fixed effects prior to estimation with feols(). You can find them listed under '$fixef_removed' of your fixest object."))
   }

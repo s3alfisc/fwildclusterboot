@@ -18,6 +18,3 @@ An object of class \code{preprocess2}.
 \code{preprocess2} is a S3 method that fetches data from several model
 objectects for use with \code{boottest()}.
 }
-\seealso{
-\link[fwildclusterboot]{preprocess2.lm}, \link[fwildclusterboot]{preprocess2.fixest}, \link[fwildclusterboot]{preprocess2.felm}
-}
