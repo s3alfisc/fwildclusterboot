@@ -121,11 +121,11 @@ preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootclu
 
   #iv prep
   instruments <- X_exog <- X_endog <- NULL
-  if(is_iv){
-    R0 <- rep(0, n_exog + n_endog)
-    R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
-    names(R0) <- c(names(object$exogenous), names(object$endogenous))
-  } else {
+  #if(is_iv){
+  #  R0 <- rep(0, n_exog + n_endog)
+  #  R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
+  #  names(R0) <- c(names(object$exogenous), names(object$endogenous))
+  #} else {
     if (!is.matrix(R)) {
       R0 <- rep(0, length(colnames(X)))
       R0[match(param, colnames(X))] <- R
@@ -136,7 +136,7 @@ preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootclu
       R0 <- matrix(0, q, ncol(X))
       R0[,1:p] <- R 
     }
-  }
+  #}
 
 
 
@@ -265,11 +265,11 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
 
   #iv prep
   instruments <- X_exog <- X_endog <- NULL
-  if(is_iv){
-    R0 <- rep(0, n_exog + n_endog)
-    R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
-    names(R0) <- c(names(object$exogenous), names(object$endogenous))
-  } else {
+  #if(is_iv){
+  #  R0 <- rep(0, n_exog + n_endog)
+  #  R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
+  #  names(R0) <- c(names(object$exogenous), names(object$endogenous))
+  #} else {
     if (!is.matrix(R)) {
       R0 <- rep(0, length(colnames(X)))
       R0[match(param, colnames(X))] <- R
@@ -281,7 +281,7 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
       R0 <- matrix(0, q, ncol(X))
       R0[,1:p] <- R 
     }
-  }
+  #}
   
   res <- list(
     Y = Y,
@@ -638,13 +638,17 @@ get_cluster <- function(object, clustid_char, bootcluster, N, call_env) {
   if((N != NROW(cluster)) && !is.null(object$na.action) && (class(object$na.action) %in% c("exclude", "omit"))) {
     cluster <- cluster[-object$na.action, , drop = FALSE]
   }
-
-  if(NROW(cluster) != N) stop("number of observations in 'cluster' and 'nobs()' do not match")
-
+  
   if((N != NROW(bootcluster)) && !is.null(object$na.action) && (class(object$na.action) %in% c("exclude", "omit"))) {
     bootcluster <- bootcluster[-object$na.action, , drop = FALSE]
   }
+  
+  if(N != nrow(cluster) && inherits(object, "fixest")){
+    cluster <- cluster[unlist(object$obs_selection),,drop = FALSE]
+    bootcluster <- bootcluster[unlist(object$obs_selection),,drop = FALSE]
+  }
 
+  if(NROW(cluster) != N) stop("number of observations in 'cluster' and 'nobs()' do not match")
   if(NROW(bootcluster) != N) stop("number of observations in 'bootcluster' and 'nobs()' do not match")
 
   if(any(is.na(cluster))) stop("`boottest()` cannot handle NAs in `clustid` variables that are not part of the estimated model object.")

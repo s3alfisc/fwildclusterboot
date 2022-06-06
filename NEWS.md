@@ -1,8 +1,8 @@
 # fwildclusterboot 0.9
 
-+ Moves data pre-processing from `model.frame` methods to `model_matrix` methods. 
++ v0.9 moves data pre-processing from `model.frame` methods to `model_matrix` methods. 
 
-+ This unlocks a range of new functionalities for `boottest()` with `fixest` objects - it is now possible to run `boottest()` after `feols()` models that use syntactic sugar, e.g. 
++ This unlocks a range of new functionalities for `boottest()` with `fixest` objects - it is now possible to run `boottest()` after `feols()` models that use syntactic sugar, e.g. interacting fixed effects via `^`
 
 ```
 library(fwildclusterboot)
@@ -18,9 +18,13 @@ boot1 <- boottest(feols_fit,
     clustid = "group_id1"
 )
 
-feols_fits <- fixest::feols(proposition_vote ~ csw(treatment, ideology1) | sw(Q1_immigration, Q2_defense), data = voters)
+feols_fits <- fixest::feols(proposition_vote ~ treatment | sw(Q1_immigration, Q2_defense), data = voters)
 res <- lapply(feols_fits, \(x) boottest(x, B = 999, param = "treatment", clustid = "group_id1"))  
 
+voters$split <- sample(1:2, nrow(voters), TRUE)
+feols_fits <- fixest::feols(proposition_vote ~ treatment, split = ~split, data = voters)
+
+res <- lapply(feols_fits, \(x) boottest(x, B = 999, param = "treatment", clustid = "group_id1"))  
 ```
 
 Some formula sugar still leads to errors, e.g. 
