@@ -1,3 +1,9 @@
+## Submission of 0.9 
+
++ no errors, warnings or messages on github actions for ubuntu, mac, windows
++ no errors, warnings or messages on `rhub::check_for_cran`
++ no errors, warnings or messages on win-devel
+
 ## Re-submission of 0.8
 
 + "Found the following (possibly) invalid file URI:
