@@ -140,7 +140,7 @@ mboottest.felm <- function(object,
   check_arg(object, "MBT class(felm)")
   check_arg(clustid, "character scalar | character vector | formula")
   check_arg(B, "MBT scalar integer")
-  check_arg(R, "MBT numeric vector | numeric matrix")
+  check_arg(R, "MBT numeric matrix")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(seed, "scalar integer | NULL")
@@ -185,7 +185,7 @@ mboottest.felm <- function(object,
     object = object, 
     clustid = clustid, 
     R = R, 
-    param = param, 
+    param = NULL, 
     bootcluster = bootcluster, 
     fe = fe, 
     boot_algo = "WildBootTests.jl"

@@ -133,7 +133,7 @@ mboottest.lm <- function(object,
   
   check_arg(clustid, "character scalar | character vector | formula")
   check_arg(B, "MBT scalar integer")
-  check_arg(R, "MBT numeric vector | numeric matrix")
+  check_arg(R, "MBT numeric matrix")
   
   check_arg(seed, "scalar integer | NULL")
   check_arg(r, "numeric vector  | NULL")
@@ -177,11 +177,11 @@ mboottest.lm <- function(object,
   
   
   # preprocess data: X, Y, weights, fixed effects
-  preprocess <- preprocess2(
+  preprocess <- preprocess2.lm(
     object = object, 
     clustid = clustid, 
     R = R, 
-    param = param, 
+    param = NULL, 
     bootcluster = bootcluster, 
     boot_algo = "WildBootTests.jl"
   )

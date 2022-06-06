@@ -140,7 +140,7 @@ mboottest.fixest <- function(object,
   check_arg(object, "MBT class(fixest)")
   check_arg(clustid, "character scalar | character vector | formula")
   check_arg(B, "MBT scalar integer")
-  check_arg(R, "MBT numeric vector | numeric matrix")
+  check_arg(R, "MBT numeric matrix")
   
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
@@ -176,7 +176,6 @@ mboottest.fixest <- function(object,
     type = type
   )
   
-  
   # fixest specific checks
   if (object$method != "feols") {
     stop("mboottest() only supports OLS estimation via fixest::feols() - it does not support non-linear models computed via e.g. fixest::fepois() or fixest::feglm.")
@@ -199,7 +198,7 @@ mboottest.fixest <- function(object,
     object = object, 
     clustid = clustid, 
     R = R, 
-    param = param, 
+    param = NULL, 
     bootcluster = bootcluster, 
     fe = fe, 
     boot_algo = "WildBootTests.jl"

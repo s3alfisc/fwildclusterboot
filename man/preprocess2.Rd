@@ -19,5 +19,5 @@ An object of class \code{preprocess2}.
 objectects for use with \code{boottest()}.
 }
 \seealso{
-\link[fwildclusterboot]{preprocess2.lm}, \link[fwildclusterboot]{preprocess2.fixest}, \link[fwildclusterboot]{preprocess2.felm}, \link[fwildclusterboot]{preprocess2.ivreg}
+\link[fwildclusterboot]{preprocess2.lm}, \link[fwildclusterboot]{preprocess2.fixest}, \link[fwildclusterboot]{preprocess2.felm}
 }

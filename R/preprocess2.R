@@ -7,7 +7,7 @@
 #' @param object An objectect of type lm, fixest, felm or ivreg
 #' @param ... other arguments
 #'
-#' @seealso \link[fwildclusterboot]{preprocess2.lm}, \link[fwildclusterboot]{preprocess2.fixest}, \link[fwildclusterboot]{preprocess2.felm}, \link[fwildclusterboot]{preprocess2.ivreg}
+#' @seealso \link[fwildclusterboot]{preprocess2.lm}, \link[fwildclusterboot]{preprocess2.fixest}, \link[fwildclusterboot]{preprocess2.felm}
 #'
 #' @export
 #'
@@ -120,7 +120,9 @@ preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootclu
 
   #iv prep
   if(is_iv){
-    R0 <- get_R0_iv(object, param, R, n_exog, n_endog)
+    R0 <- rep(0, n_exog + n_endog)
+    R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
+    names(R0) <- c(names(object$exogenous), names(object$endogenous))
   } else {
     instruments <- X_exog <- X_endog <- NULL
     if (!is.matrix(R)) {
@@ -262,7 +264,9 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
 
   #iv prep
   if(is_iv){
-    R0 <- get_R0_iv(object, param, R, n_exog, n_endog)
+    R0 <- rep(0, n_exog + n_endog)
+    R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
+    names(R0) <- c(names(object$exogenous), names(object$endogenous))
   } else {
     instruments <- X_exog <- X_endog <- NULL
     if (!is.matrix(R)) {
@@ -270,6 +274,7 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
       R0[match(param, colnames(X))] <- R
       names(R0) <- colnames(X)
     } else {
+      # need matrix input for mboottest
       q <- nrow(R)
       p <- ncol(R)
       R0 <- matrix(0, q, ncol(X))
@@ -371,22 +376,19 @@ preprocess2.lm <- function(object, clustid, R, param, boot_algo, bootcluster){
   }
 
 
-  #iv prep
-  if(is_iv){
-    R0 <- get_R0_iv(object, param, R, n_exog, n_endog)
+  instruments <- X_exog <- X_endog <- NULL
+  if (!is.matrix(R)) {
+    R0 <- rep(0, length(colnames(X)))
+    R0[match(param, colnames(X))] <- R
+    names(R0) <- colnames(X)
   } else {
-    instruments <- X_exog <- X_endog <- NULL
-    if (!is.matrix(R)) {
-      R0 <- rep(0, length(colnames(X)))
-      R0[match(param, colnames(X))] <- R
-      names(R0) <- colnames(X)
-    } else {
-      q <- nrow(R)
-      p <- ncol(R)
-      R0 <- matrix(0, q, ncol(X))
-      R0[,1:p] <- R 
-    }
+    q <- nrow(R)
+    p <- ncol(R)
+    R0 <- matrix(0, q, ncol(X))
+    R0[,1:p] <- R 
   }
+
+
 
   res <- list(
     Y = Y,
@@ -486,7 +488,9 @@ preprocess2.ivreg <- function(object, clustid, R, param, boot_algo, bootcluster)
 
 
   #iv prep
-  R0 <- get_R0_iv(object, param, R, n_exog, n_endog)
+  R0 <- rep(0, n_exog + n_endog)
+  R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
+  names(R0) <- c(names(object$exogenous), names(object$endogenous))
 
   res <- list(
     Y = Y,
@@ -698,26 +702,10 @@ get_cluster <- function(object, clustid_char, bootcluster, N, call_env) {
 }
 
 
-get_R0_iv <- function(object, param, R, n_exog, n_endog){
-
-  if (!is.matrix(R)) {
-    R0 <- rep(0, n_exog + n_endog)
-    R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
-    names(R0) <- c(names(object$exogenous), names(object$endogenous))
-  } else {
-    q <- nrow(R)
-    p <- ncol(R)
-    R0 <- matrix(0, q, ncol(X))
-    R0[,1:p] <- R 
-  }
-
-  R0
-
-}
-
-
 demean_fe <- function(X, Y, fe, has_weights, N){
 
+  # function to demean X and y if !is.null(fe)
+  
   g <- collapse::GRP(fe, call = FALSE)
   X <- collapse::fwithin(X, g)
   Y <- collapse::fwithin(Y, g)
@@ -751,11 +739,11 @@ demean_fe <- function(X, Y, fe, has_weights, N){
 
 transform_fe <- function(object, X, Y, fe, has_weights, N, boot_algo){
 
-  #' preprocess the model fixed effects. If is.null(fe) == TRUE, all
-  #' fixed effects specified in the fixest or felm model are simply added 
-  #' as dummy variables to the design matrix X. If !is.null(fe), the fixed 
-  #' effect specified via fe is projected out in the bootstrap - all other 
-  #' fixed effects are added as dummy variables
+  # preprocess the model fixed effects. If is.null(fe) == TRUE, all
+  # fixed effects specified in the fixest or felm model are simply added 
+  # as dummy variables to the design matrix X. If !is.null(fe), the fixed 
+  # effect specified via fe is projected out in the bootstrap - all other 
+  # fixed effects are added as dummy variables
 
   all_fe <- model_matrix(object, type = "fixef", collin.rm = TRUE)
   # make sure all fixed effects variables are characters

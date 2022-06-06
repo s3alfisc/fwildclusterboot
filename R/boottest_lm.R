@@ -68,7 +68,7 @@
 #' @import JuliaConnectoR
 #' @importFrom dreamerr check_arg validate_dots
 #' @importFrom parallel detectCores
-#' @importFrom stats weights
+#' @importFrom stats weights terms expand.model.frame model.frame na.omit nobs formula na.pass reformulate
 #'
 #' @method boottest lm
 #'
@@ -239,6 +239,7 @@ boottest.lm <- function(object,
     param <- attr(terms(param), "term.labels")
   }
 
+  
   internal_seed <- set_seed(
     seed = seed, 
     boot_algo = boot_algo, 

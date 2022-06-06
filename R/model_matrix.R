@@ -66,6 +66,7 @@ model_matrix.fixest <- function(object, type, collin.rm = TRUE, ...){
   #' @method model_matrix fixest
   #' @export
   #' @param object An object of class fixest
+  #' @param type rhs lhs or fixef
   #' @param collin.rm Should collinear variables be dropped?
   #' @param ... Other arguments
   
@@ -85,23 +86,24 @@ model_matrix.fixest <- function(object, type, collin.rm = TRUE, ...){
 }
 
 
-model_matrix.ivreg <- function(object, collin.rm = TRUE, type){
-  
-  #' Enhanced model.matrix for objects of type ivreg
-  
-  dreamerr::check_arg(type, "charing(endo, exo)")
-  
-  if(type == "endo"){
-    mm <- model.matrix(object, component = "regressors", na.rm = TRUE)[, object$endogenous, drop = FALSE]
-  } else if(type == "exo"){
-    mm <- model.matrix(object, component = "instruments", na.rm = TRUE)[, object$exogenous, drop = FALSE]
-  } else{
-    stop("type needs to be 'endo' or 'exo'.")
-  }
-  
-  
-  
-
-  
-}
+#' model_matrix.ivreg <- function(object, type, collin.rm = TRUE){
+#'   
+#'   #' Enhanced model.matrix for objects of type ivreg
+#'   #' @method model_matrix fixest
+#'   #' @export
+#'   #' @param object An object of class fixest
+#'   #' @param collin.rm Should collinear variables be dropped?
+#'   #' @param ... Other arguments
+#'   
+#'   dreamerr::check_arg(type, "charing(endo, exo)")
+#'   
+#'   if(type == "endo"){
+#'     mm <- model.matrix(object, component = "regressors", na.rm = TRUE)[, object$endogenous, drop = FALSE]
+#'   } else if(type == "exo"){
+#'     mm <- model.matrix(object, component = "instruments", na.rm = TRUE)[, object$exogenous, drop = FALSE]
+#'   } else{
+#'     stop("type needs to be 'endo' or 'exo'.")
+#'   }
+#'   
+#' }
 
