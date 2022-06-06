@@ -633,6 +633,7 @@ test_that("error warning IV/WRE and q > 1", {
 
   library(ivreg)
   library(fwildclusterboot)
+  library(clubSandwich)
 
   # drop all NA values from SchoolingReturns
   SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
@@ -717,7 +718,8 @@ test_that("error warning IV/WRE and q > 1", {
   feols_fit <- feols(proposition_vote ~ treatment + ideology1 ,
                      data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
   )
-  R <- clubSandwich::constrain_zero(1:2,coef(feols_fit))
+  #R <- clubSandwich::constrain_zero(1:2,coef(feols_fit))
+  R <- matrix(c(1, 0, 0, 0, 1, 0), 2, 3)
   expect_error(mboottest(object = feols_fit, clustid = c("group_id1"), B = 999, seed = 911, R = R, r = 1:3))
 
 

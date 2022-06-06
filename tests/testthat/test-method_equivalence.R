@@ -98,7 +98,8 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
   create_models <- function(clustid) {
     
     R1 <- clubSandwich::constrain_zero(2:3, coefs = coef(lm_fit))
-    R2 <- clubSandwich::constrain_zero(1:2, coefs = coef(feols_fit6))
+    #R2 <- clubSandwich::constrain_zero(1:2, coefs = coef(feols_fit6))
+    R2 <- matrix(c(1, 0, 0, 0, 1, 0), 2, 3)
     R3 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit8))
     R4 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit7))
     
