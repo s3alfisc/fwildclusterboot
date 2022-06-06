@@ -55,9 +55,10 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.8.1" id="fwildclusterboot-081">fwildclusterboot 0.8.1<a class="anchor" aria-label="anchor" href="#fwildclusterboot-081"></a></h2>
-<ul><li>Moves data pre-processing from <code>model.frame</code> methods to <code>model_matrix</code> methods, and thereby fixes a multicollinearity bug that occured when <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> or <code><a href="https://lrberge.github.io/fixest/reference/fixest.html" class="external-link">fixest()</a></code> silently deleted multicollinar variable(s).</li></ul><p>This also allows to use a range of so far ‘forbidden’ functionalities, in particular of <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">fixest::feols()</a></code> - it is now possible to run <code><a href="../reference/boottest.html">boottest()</a></code> after <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols()</a></code> models that use syntactic sugar, e.g. </p>
-<pre><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span>
+<h2 class="pkg-version" data-toc-text="0.9" id="fwildclusterboot-09">fwildclusterboot 0.9<a class="anchor" aria-label="anchor" href="#fwildclusterboot-09"></a></h2>
+<ul><li><p>Moves data pre-processing from <code>model.frame</code> methods to <code>model_matrix</code> methods.</p></li>
+<li><p>This unlocks a range of new functionalities for <code><a href="../reference/boottest.html">boottest()</a></code> with <code>fixest</code> objects - it is now possible to run <code><a href="../reference/boottest.html">boottest()</a></code> after <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols()</a></code> models that use syntactic sugar, e.g. </p></li>
+</ul><pre><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/" class="external-link">fixest</a></span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span>
@@ -82,7 +83,8 @@
     param <span class="op">=</span> <span class="st">"treatment"</span>,
     clustid <span class="op">=</span> <span class="st">"group_id1"</span>
 <span class="op">)</span></code></pre>
-<ul><li><p>The <code>na_omit</code> function argument has been dropped. If the cluster variable is not included in the regression model, it is now not allowed to contain NA values.</p></li>
+<ul><li><p>The release further fixes a multicollinearity bug that occured when <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> or <code><a href="https://lrberge.github.io/fixest/reference/fixest.html" class="external-link">fixest()</a></code> silently deleted multicollinar variable(s). Thanks to Kurt Schmidtheiny for reporting!</p></li>
+<li><p>The <code>na_omit</code> function argument has been dropped. If the cluster variable is not included in the regression model, it is now not allowed to contain NA values.</p></li>
 <li><p>Several function arguments can now be fed to <code><a href="../reference/boottest.html">boottest()</a></code> as formulas (<code>param</code>, <code>clustid</code>, <code>bootcluster</code>, <code>fe</code>).</p></li>
 </ul><pre><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span>
 <span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> ,
