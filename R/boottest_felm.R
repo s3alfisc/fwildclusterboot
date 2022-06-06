@@ -239,7 +239,7 @@ boottest.felm <- function(object,
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL |formula ")
-  check_arg(bootcluster, "character vector")
+  check_arg(bootcluster, "character vector | formula")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer GT{5}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")

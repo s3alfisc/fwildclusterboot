@@ -166,7 +166,7 @@ boottest.ivreg <- function(object,
 
   check_arg(object, "MBT class(ivreg)")
   check_arg(clustid, "NULL | character scalar | character vector | formula")
-  check_arg(param, "MBT scalar character | character vector")
+  check_arg(param, "MBT scalar character | character vector | formula")
   check_arg(B, "MBT scalar integer GT{0}")
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")

@@ -4,6 +4,22 @@
 + no errors, warnings or messages on `rhub::check_for_cran`
 + no errors, warnings or messages on win-devel
 
+except for one note: "Found the following (possibly) invalid URLs:
+  URL: https://journals.sagepub.com/doi/full/10.1177/1536867X19830877
+    From: man/boottest.Rd
+          man/boottest.felm.Rd
+          man/boottest.fixest.Rd
+          man/boottest.ivreg.Rd
+          man/boottest.lm.Rd
+          man/mboottest.Rd
+          man/mboottest.felm.Rd
+          man/mboottest.fixest.Rd
+          man/mboottest.lm.Rd
+    Status: 503
+    Message: Service Unavailable"
+  
+which is a valid URL (I have checked it).
+
 ## Re-submission of 0.8
 
 + "Found the following (possibly) invalid file URI:
