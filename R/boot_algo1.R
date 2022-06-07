@@ -38,22 +38,13 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #' @importFrom gtools permutations
   #' @importFrom dqrng dqsample dqset.seed
 
-
-
-  # 1) preprocess
-  # preprocessed_object = preprocess
-
   X <- preprocessed_object$X
   Y <- preprocessed_object$Y
   N <- preprocessed_object$N
-  # k <- preprocessed_object$k
   fixed_effect <- preprocessed_object$fixed_effect
   N_G <- preprocessed_object$N_G
   W <- preprocessed_object$W
   clustid <- preprocessed_object$clustid
-  # n_fe <- preprocessed_object$n_fe
-  # bootcluster <- preprocessed_object$bootcluster
-  # vcov_sign <- preprocessed_object$vcov_sign
   weights <- preprocessed_object$weights
   R <- t(as.matrix(preprocessed_object$R0))
   vcov_sign <- preprocessed_object$vcov_sign
@@ -120,21 +111,11 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   t_stat <- boot_res[selector, 1]
   t_boot <- boot_res[selector, 2:(boot_iter + 1)]
 
-  # p_val_type <- "two-tailed symmetric"
-  if (p_val_type == "two-tailed") {
-    p_val <- mean(abs(t_stat) < abs(t_boot), na.rm = FALSE)
-  } else if (p_val_type == "equal-tailed") {
-    p_l <- mean(t_stat < t_boot, na.rm = FALSE)
-    p_h <- mean(t_stat > t_boot, na.rm = FALSE)
-    p_val <- 2 * min(p_l, p_h, na.rm = FALSE)
-  } else if (p_val_type == ">") {
-    p_l <- mean(t_stat < t_boot, na.rm = FALSE)
-    p_val <- p_l
-  } else if (p_val_type == "<") {
-    p_h <- mean(t_stat > t_boot, na.rm = FALSE)
-    p_val <- p_h
-  }
-
+  p_val <- get_bootstrap_pvalue(
+    p_val_type = p_val_type, 
+    t_stat = t_stat, 
+    t_boot= t_boot
+  )
 
   res <- list(
     p_val = p_val,

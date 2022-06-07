@@ -166,7 +166,9 @@ test_that("t-stat equivalence OLS", {
                     cluster.df = cluster.df
                   ),
                   impose_null = impose_null,
-                  boot_algo = boot_algo
+                  boot_algo = boot_algo, 
+                  type = "webb", 
+                  p_val_type = "equal_tailed"
                 ))
                 boot2 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
                   clustid = c("group_id1", "group_id2"),
@@ -178,7 +180,8 @@ test_that("t-stat equivalence OLS", {
                     cluster.df = cluster.df
                   ),
                   impose_null = impose_null,
-                  boot_algo = boot_algo
+                  boot_algo = boot_algo, 
+                  p_val_type = ">"
                 ))
                 boot3 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
                   clustid = c("group_id1", "group_id2"),
@@ -190,7 +193,8 @@ test_that("t-stat equivalence OLS", {
                     cluster.df = cluster.df
                   ),
                   impose_null = impose_null,
-                  boot_algo = boot_algo
+                  boot_algo = boot_algo, 
+                  p_val_type = "<"
                 ))
                 # skip_on_cran()
                 expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]), ignore_attr = TRUE)

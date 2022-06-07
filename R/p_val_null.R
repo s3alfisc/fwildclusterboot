@@ -56,20 +56,11 @@ p_val_null2 <- function(r, A, B, CC, CD, DD, clustid, boot_iter, small_sample_co
   }
 
 
-  # p_val_type <- "two-tailed symmetric"
-  if (p_val_type == "two-tailed") {
-    p_val <- mean(abs(t_stat) < abs(t_boot), na.rm = FALSE)
-  } else if (p_val_type == "equal-tailed") {
-    p_l <- mean(t_stat < t_boot, na.rm = FALSE)
-    p_h <- mean(t_stat > t_boot, na.rm = FALSE)
-    p_val <- 2 * min(p_l, p_h, na.rm = FALSE)
-  } else if (p_val_type == ">") {
-    p_l <- mean(t_stat < t_boot, na.rm = FALSE)
-    p_val <- p_l
-  } else if (p_val_type == "<") {
-    p_h <- mean(t_stat > t_boot, na.rm = FALSE)
-    p_val <- p_h
-  }
+  p_val <- get_bootstrap_pvalue(
+    p_val_type = p_val_type, 
+    t_stat = t_stat, 
+    t_boot= t_boot
+  )
 
   res <- list(
     p_val = p_val,
