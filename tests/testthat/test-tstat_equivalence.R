@@ -168,7 +168,7 @@ test_that("t-stat equivalence OLS", {
                   impose_null = impose_null,
                   boot_algo = boot_algo, 
                   type = "webb", 
-                  p_val_type = "equal_tailed"
+                  p_val_type = "equal-tailed"
                 ))
                 boot2 <- suppressWarnings(fwildclusterboot::boottest(lm_fit,
                   clustid = c("group_id1", "group_id2"),
