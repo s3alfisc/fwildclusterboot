@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,7 +27,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/summary_tables.html">Summary Tables with modelsummary</a>
+    <a class="dropdown-item" href="../articles/summary_tables.html">Summary Tables with `modelsummary`</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -126,6 +126,11 @@
         <dd>Matrix Multiplication via Eigen</dd>
       </dl><dl><dt>
           
+          <code><a href="get_bootstrap_pvalue.html">get_bootstrap_pvalue()</a></code> 
+        </dt>
+        <dd>get bootstrapped p-value based on bootstrapped t-stats</dd>
+      </dl><dl><dt>
+          
           <code><a href="get_seed.html">get_seed()</a></code> 
         </dt>
         <dd>creates an integer based on the global random seed set via set.seed()
@@ -171,11 +176,6 @@ blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/</dd>
           <code><a href="model_matrix.fixest.html">model_matrix(<i>&lt;fixest&gt;</i>)</a></code> 
         </dt>
         <dd>Enhanced model.matrix for objects of type fixest</dd>
-      </dl><dl><dt>
-          
-          <code><a href="model_matrix.ivreg.html">model_matrix(<i>&lt;ivreg&gt;</i>)</a></code> 
-        </dt>
-        <dd>Enhanced model.matrix for objects of type ivreg</dd>
       </dl><dl><dt>
           
           <code><a href="model_matrix.lm.html">model_matrix(<i>&lt;lm&gt;</i>)</a></code> 
@@ -228,15 +228,6 @@ blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/</dd>
         <dd>Transform vectors of all types safely to integer vectors</dd>
       </dl><dl><dt>
           
-          <code><a href="transform_fe.html">transform_fe()</a></code> 
-        </dt>
-        <dd>preprocess the model fixed effects. If is.null(fe) == TRUE, all
-fixed effects specified in the fixest or felm model are simply added
-as dummy variables to the design matrix X. If !is.null(fe), the fixed
-effect specified via fe is projected out in the bootstrap - all other
-fixed effects are added as dummy variables</dd>
-      </dl><dl><dt>
-          
           <code><a href="voters.html">voters</a></code> 
         </dt>
         <dd>Random example data set</dd>
@@ -249,7 +240,8 @@ fixed effects are added as dummy variables</dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
     </footer></div>
