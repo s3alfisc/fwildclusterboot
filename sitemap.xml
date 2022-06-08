@@ -10,9 +10,6 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/articles/summary_tables.html</loc>
-  </url>
-  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html</loc>
   </url>
   <url>
@@ -62,6 +59,9 @@
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/eigenMapMatMult.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/get_bootstrap_pvalue.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/get_seed.html</loc>

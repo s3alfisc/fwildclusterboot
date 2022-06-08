@@ -51,7 +51,6 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/summary_tables.html">Summary Tables with `modelsummary`</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -173,7 +172,26 @@
             estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
            statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span>  
 <span class="op">}</span>
-<span class="co">#&gt; Loading required namespace: modelsummary</span></code></pre></div>
+<span class="co">#&gt; Loading required namespace: modelsummary</span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = "group_id1")</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;   Bootstr. Type: rademacher</span>
+<span class="co">#&gt;  Clustering: 1-way</span>
+<span class="co">#&gt;  Confidence Sets: 95%</span>
+<span class="co">#&gt;  Number of Clusters: 40</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; boottest.lm(object = lm_fit_interact, param = "log_income:Q1_immigration1", </span>
+<span class="co">#&gt;     B = 9999, clustid = "group_id1")</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*log_income:Q1_immigration1 = 0</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;   Bootstr. Type: rademacher</span>
+<span class="co">#&gt;  Clustering: 1-way</span>
+<span class="co">#&gt;  Confidence Sets: 95%</span>
+<span class="co">#&gt;  Number of Clusters: 40</span>
+<span class="co">#&gt; </span></code></pre></div>
 <table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -358,7 +376,27 @@ Log.Lik.
   <span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html" class="external-link">msummary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">boot_lm_rade</span>, <span class="va">boot_lm_webb</span><span class="op">)</span>, 
           estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
          statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<span class="op">}</span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 999, clustid = c("group_id1", </span>
+<span class="co">#&gt;     "group_id2"), type = "rademacher")</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;   Bootstr. Type: rademacher</span>
+<span class="co">#&gt;  Clustering: 2-way</span>
+<span class="co">#&gt;  Confidence Sets: 95%</span>
+<span class="co">#&gt;  Number of Clusters: 40 20 253</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 999, clustid = c("group_id1", </span>
+<span class="co">#&gt;     "group_id2"), type = "webb")</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;   Bootstr. Type: webb</span>
+<span class="co">#&gt;  Clustering: 2-way</span>
+<span class="co">#&gt;  Confidence Sets: 95%</span>
+<span class="co">#&gt;  Number of Clusters: 40 20 253</span>
+<span class="co">#&gt; </span></code></pre></div>
 <table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -480,7 +518,27 @@ Log.Lik.
   <span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html" class="external-link">msummary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">boot_lm_5</span>, <span class="va">boot_lm_10</span><span class="op">)</span>, 
           estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
          statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<span class="op">}</span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1"), </span>
+<span class="co">#&gt;     sign_level = 0.05)</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;   Bootstr. Type: rademacher</span>
+<span class="co">#&gt;  Clustering: 1-way</span>
+<span class="co">#&gt;  Confidence Sets: 95%</span>
+<span class="co">#&gt;  Number of Clusters: 40</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1"), </span>
+<span class="co">#&gt;     sign_level = 0.1)</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;   Bootstr. Type: rademacher</span>
+<span class="co">#&gt;  Clustering: 1-way</span>
+<span class="co">#&gt;  Confidence Sets: 90%</span>
+<span class="co">#&gt;  Number of Clusters: 40</span>
+<span class="co">#&gt; </span></code></pre></div>
 <table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -601,7 +659,27 @@ Log.Lik.
   <span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html" class="external-link">msummary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">boot_lm1</span>, <span class="va">boot_lm2</span><span class="op">)</span>, 
           estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
          statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<span class="op">}</span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1", </span>
+<span class="co">#&gt;     "group_id2"), bootcluster = "min")</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;   Bootstr. Type: rademacher</span>
+<span class="co">#&gt;  Clustering: 2-way</span>
+<span class="co">#&gt;  Confidence Sets: 95%</span>
+<span class="co">#&gt;  Number of Clusters: 40 20 253</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1", </span>
+<span class="co">#&gt;     "group_id2"), bootcluster = "group_id1")</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;   Bootstr. Type: rademacher</span>
+<span class="co">#&gt;  Clustering: 2-way</span>
+<span class="co">#&gt;  Confidence Sets: 95%</span>
+<span class="co">#&gt;  Number of Clusters: 40 20 253</span>
+<span class="co">#&gt; </span></code></pre></div>
 <table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -748,7 +826,27 @@ Log.Lik.
   <span class="fu"><a href="https://vincentarelbundock.github.io/modelsummary/reference/msummary.html" class="external-link">msummary</a></span><span class="op">(</span>model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">boot_min</span>, <span class="va">boot_2var</span><span class="op">)</span>, 
          estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, 
          statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<span class="op">}</span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1", </span>
+<span class="co">#&gt;     "group_id2"), bootcluster = "min")</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;   Bootstr. Type: rademacher</span>
+<span class="co">#&gt;  Clustering: 2-way</span>
+<span class="co">#&gt;  Confidence Sets: 95%</span>
+<span class="co">#&gt;  Number of Clusters: 40 20 253</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1", </span>
+<span class="co">#&gt;     "group_id2"), bootcluster = c("group_id1", "Q1_immigration"))</span>
+<span class="co">#&gt;  </span>
+<span class="co">#&gt;  Hypothesis: 1*treatment = 0</span>
+<span class="co">#&gt;  Observations: 300</span>
+<span class="co">#&gt;   Bootstr. Type: rademacher</span>
+<span class="co">#&gt;  Clustering: 2-way</span>
+<span class="co">#&gt;  Confidence Sets: 95%</span>
+<span class="co">#&gt;  Number of Clusters: 40 20 253</span>
+<span class="co">#&gt; </span></code></pre></div>
 <table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
