@@ -171,8 +171,9 @@ mboottest.lm <- function(object,
   check_mboottest_args_plus(
     object = object,
     R = R,
-    r = r,
-    B = B
+    sign_level = sign_level,
+    B = B,
+    fe = NULL
   )
   
   

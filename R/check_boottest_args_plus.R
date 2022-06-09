@@ -63,7 +63,7 @@ check_boottest_args_plus <- function(object, R, param, sign_level, B, fe = NULL)
 }
 
 
-check_mboottest_args_plus <- function(object, R, r, B) {
+check_mboottest_args_plus <- function(object, R, r, B, sign_level, fe) {
 
   if (inherits(object, "felm")) {
     if(!is.null(fe)){
