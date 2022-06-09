@@ -11,6 +11,8 @@ test_that("errors and warnings q = 1", {
 
 
   for (boot_algo in c("R", "WildBootTests.jl", "R-lean")) {
+    
+  
     cat(boot_algo, "\n")
 
     # for(boot_algo in c("R-lean")){
@@ -31,6 +33,9 @@ test_that("errors and warnings q = 1", {
       data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
     )
 
+   
+    
+    
     # sign_level
     expect_error(boottest(
       object = lm_fit, clustid = "group_id1", B = 999, seed = 911, param = "treatment", conf_int = TRUE,
@@ -620,6 +625,67 @@ test_that("errors and warnings q = 1", {
       expect_error(boottest(felm_fit, param = "treatment", B = 999, clustid = "group_id1", boot_algo = "R-lean"))
       expect_error(boottest(feols_fit, param = "treatment", B = 999, clustid = "group_id1", boot_algo = "R-lean"))
 
+      
+      feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,
+                           data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+      )
+      felm_fit_c <- felm(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration,
+                         data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+      )
+      
+      expect_error(
+        boottest(
+          feols_fit_c, 
+          param = "treatment", 
+          B = 999, 
+          clustid = "group_id1", 
+          fe = "Q2_defense"
+        )
+      )
+      
+      expect_error(
+        boottest(
+          felm_fit_c, 
+          param = "treatment", 
+          B = 999, 
+          clustid = "group_id1", 
+          fe = "Q2_defense"
+        )
+      )
+      
+      expect_error(
+        boottest(
+          feols_fit_c, 
+          param = "treatment", 
+          B = 999, 
+          clustid = "group_id1", 
+          fe = "treatment"
+        )
+      )
+      
+      expect_error(
+        boottest(
+          felm_fit_c, 
+          param = "treatment", 
+          B = 999, 
+          clustid = "group_id1", 
+          fe = "treatment"
+        )
+      )
+      
+      feols_fit_c <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration^Q2_defense,
+                           data = fwildclusterboot:::create_data(N = 1000, N_G1 = 10, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 1234)
+      )
+      
+      expect_error(
+        boottest(
+          feols_fit_c, 
+          param = "treatment", 
+          B = 999, 
+          clustid = "group_id1", 
+          fe = "treatment"
+        )
+      )
 
     }
   }

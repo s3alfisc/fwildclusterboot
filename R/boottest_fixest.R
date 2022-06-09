@@ -311,7 +311,6 @@ boottest.fixest <- function(object,
     param = param,
     sign_level = sign_level,
     B = B,
-    clustid = clustid,
     fe = fe
   )
   

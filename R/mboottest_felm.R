@@ -172,11 +172,13 @@ mboottest.felm <- function(object,
     type = type
   )
   
-  check_mboottest_args_plus(
+  check_boottest_args_plus(
     object = object,
     R = R,
-    r = r,
-    B = B
+    param = param,
+    sign_level = sign_level,
+    B = B,
+    fe = fe
   )
   
   fedfadj <- 0L
