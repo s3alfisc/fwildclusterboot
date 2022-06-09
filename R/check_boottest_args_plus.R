@@ -63,7 +63,7 @@ check_boottest_args_plus <- function(object, R, param, sign_level, B, fe = NULL)
 }
 
 
-check_mboottest_args_plus <- function(object, R, r, B, sign_level, fe) {
+check_mboottest_args_plus <- function(object, R, r, fe) {
 
   if (inherits(object, "felm")) {
     if(!is.null(fe)){
@@ -102,13 +102,6 @@ check_mboottest_args_plus <- function(object, R, r, B, sign_level, fe) {
   
   if (nrow(R) != length(r)) {
      stop(paste("The dimensions of func args R and r do not match. The number of rows of R is ", nrow(R), ", but the length of r is", length(r), "."))
-  }
-  
-  if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
-    message(paste("Note: The bootstrap usually performs best when the
-                  confidence level (here,", 1 - sign_level, "%)
-                  times the number of replications plus 1
-                  (", B, "+ 1 = ", B + 1, ") is an integer."))
   }
   
 }

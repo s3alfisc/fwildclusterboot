@@ -175,8 +175,7 @@ mboottest.felm <- function(object,
   check_mboottest_args_plus(
     object = object,
     R = R,
-    sign_level = sign_level,
-    B = B,
+    r = r, 
     fe = fe
   )
   

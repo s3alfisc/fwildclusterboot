@@ -1,6 +1,6 @@
 # fwildclusterboot 0.9
 
-+ v0.9 moves data pre-processing from `model.frame` methods to `model_matrix` methods. I had wanted to do so for a while, but issue [#42](), as raised by Michael Topper, has finally convinced me to start this project. 
++ v0.9 moves data pre-processing from `model.frame` methods to `model_matrix` methods. I had wanted to do so for a while, but issue #42, as raised by Michael Topper, has finally convinced me to start working on this project. 
 
 + Moving to `model_matrix` methods unlocks new functionality for how `boottest()` plays with `fixest` objects - it is now possible to run `boottest()` after `feols()` models that use syntactic sugar:
 
