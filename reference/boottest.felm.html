@@ -105,15 +105,23 @@ implemented in the STATA package <code>boottest</code>.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>object</dt>
 <dd><p>An object of class felm</p></dd>
+
+
 <dt>param</dt>
 <dd><p>A character vector or rhs formula. The name of the regression
 coefficient(s) for which the hypothesis is to be tested</p></dd>
+
+
 <dt>B</dt>
 <dd><p>Integer. The number of bootstrap iterations. When the number of clusters is low,
 increasing B adds little additional runtime.</p></dd>
+
+
 <dt>clustid</dt>
 <dd><p>A character vector or rhs formula containing the names of the cluster variables. If NULL,
 a heteroskedasticity-robust (HC1) wild bootstrap is run.</p></dd>
+
+
 <dt>bootcluster</dt>
 <dd><p>A character vector or rhs formula of length 1. Specifies the bootstrap clustering variable or variables. If more
 than one variable is specified, then bootstrapping is clustered by the intersections of
@@ -122,26 +130,42 @@ the default is to cluster by the intersection of all the variables specified via
 even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
 Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is supported - see the <code><a href="../articles/fwildclusterboot.html">vignette("fwildclusterboot", package = "fwildclusterboot")</a></code> for details.</p></dd>
+
+
 <dt>fe</dt>
 <dd><p>A character vector or rhs formula of length one which contains the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.</p></dd>
+
+
 <dt>conf_int</dt>
 <dd><p>A logical vector. If TRUE, boottest computes confidence
 intervals by test inversion. If FALSE, only the p-value is returned.</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>An integer. Allows to set a random seed. For details, see below.</p></dd>
+
+
 <dt>R</dt>
 <dd><p>Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as <code>param</code>. If NULL, a vector of ones of length param.</p></dd>
+
+
 <dt>r</dt>
 <dd><p>A numeric. Shifts the null hypothesis
 H0: param = r vs H1: param != r</p></dd>
+
+
 <dt>beta0</dt>
 <dd><p>Deprecated function argument. Replaced by function argument 'r'.</p></dd>
+
+
 <dt>sign_level</dt>
 <dd><p>A numeric between 0 and 1 which sets the significance level
 of the inference procedure. E.g. sign_level = 0.05
 returns 0.95% confidence intervals. By default, sign_level = 0.05.</p></dd>
+
+
 <dt>type</dt>
 <dd><p>character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm"
@@ -150,29 +174,43 @@ wild bootstrap factors. "rademacher" by default.
 For the Rademacher distribution, if the number of replications B exceeds
 the number of possible draw ombinations, 2^(#number of clusters), then <code><a href="boottest.html">boottest()</a></code>
 will use each possible combination once (enumeration).</p></dd>
+
+
 <dt>impose_null</dt>
 <dd><p>Logical. Controls if the null hypothesis is imposed on
 the bootstrap dgp or not. Null imposed <code>(WCR)</code> by default.
 If FALSE, the null is not imposed <code>(WCU)</code></p></dd>
+
+
 <dt>p_val_type</dt>
 <dd><p>Character vector of length 1. Type of p-value.
 By default "two-tailed". Other options include "equal-tailed", "&gt;" and "&lt;".</p></dd>
+
+
 <dt>tol</dt>
 <dd><p>Numeric vector of length 1. The desired accuracy
 (convergence tolerance) used in the root finding procedure to find the confidence interval.
 1e-6 by default.</p></dd>
+
+
 <dt>maxiter</dt>
 <dd><p>Integer. Maximum number of iterations used in the root finding procedure to find the confidence interval.
 10 by default.</p></dd>
+
+
 <dt>nthreads</dt>
 <dd><p>The number of threads. Can be: a) an integer lower than,
 or equal to, the maximum number of threads; b) 0: meaning
 all available threads will be used; c) a number strictly
 between 0 and 1 which represents the fraction of all threads
 to use. The default is to use 1 core.</p></dd>
+
+
 <dt>ssc</dt>
 <dd><p>An object of class <code>boot_ssc.type</code> obtained with the function <code><a href="boot_ssc.html">boot_ssc</a></code>. Represents how the small sample adjustments are computed. The defaults are <code>adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"</code>.
 You can find more details in the help file for <code><a href="boot_ssc.html">boot_ssc()</a></code>. The function is purposefully designed to mimic fixest's <code><a href="https://lrberge.github.io/fixest/reference/ssc.html" class="external-link">ssc</a></code> function.</p></dd>
+
+
 <dt>boot_algo</dt>
 <dd><p>Character scalar. Either "R" or "WildBootTests.jl". Controls the algorithm employed by boottest.
 "R" is the default and implements the cluster bootstrap as in Roodman (2019). "WildBootTests.jl" executes the wild cluster bootstrap by via the WildBootTests.jl
@@ -182,67 +220,103 @@ For large number of clusters and large number of bootstrap iterations, the fast 
 occurs, the "lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
 Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. Note that you can set the employed algorithm globally by using the
 <code><a href="setBoottest_boot_algo.html">setBoottest_boot_algo()</a></code> function.</p></dd>
+
+
 <dt>floattype</dt>
 <dd><p>Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit? Only relevant when 'boot_algo = "WildBootTests.jl"'</p></dd>
+
+
 <dt>maxmatsize</dt>
 <dd><p>NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes. Only relevant when 'boot_algo = "WildBootTests.jl"'</p></dd>
+
+
 <dt>bootstrapc</dt>
 <dd><p>Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo = "WildBootTests.jl"'</p></dd>
+
+
 <dt>t_boot</dt>
 <dd><p>Logical. Should bootstrapped t-statistics be returned?</p></dd>
+
+
 <dt>getauxweights</dt>
 <dd><p>Logical. Whether to save auxilliary weight matrix (v)</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Further arguments passed to or from other methods.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An object of class <code>boottest</code></p>
+    
+
+<p>An object of class <code>boottest</code></p>
 <dl><dt>p_val</dt>
 <dd><p>The bootstrap p-value.</p></dd>
+
 <dt>conf_int</dt>
 <dd><p>The bootstrap confidence interval.</p></dd>
+
 <dt>param</dt>
 <dd><p>The tested parameter.</p></dd>
+
 <dt>N</dt>
 <dd><p>Sample size. Might differ from the regression sample size if
 the cluster variables contain NA values.</p></dd>
+
 <dt>boot_iter</dt>
 <dd><p>Number of Bootstrap Iterations.</p></dd>
+
 <dt>clustid</dt>
 <dd><p>Names of the cluster Variables.</p></dd>
+
 <dt>N_G</dt>
 <dd><p>Dimension of the cluster variables as used in boottest.</p></dd>
+
 <dt>sign_level</dt>
 <dd><p>Significance level used in boottest.</p></dd>
+
 <dt>type</dt>
 <dd><p>Distribution of the bootstrap weights.</p></dd>
+
 <dt>impose_null</dt>
 <dd><p>Whether the null was imposed on the bootstrap dgp or not.</p></dd>
+
 <dt>R</dt>
 <dd><p>The vector "R" in the null hypothesis of interest Rbeta = r.</p></dd>
+
 <dt>r</dt>
 <dd><p>The scalar "r" in the null hypothesis of interest Rbeta = r.</p></dd>
+
 <dt>point_estimate</dt>
 <dd><p>R'beta. A scalar: the constraints vector times the regression coefficients.</p></dd>
+
 <dt>grid_vals</dt>
 <dd><p>All t-statistics calculated while calculating the
 confidence interval.</p></dd>
+
 <dt>p_grid_vals</dt>
 <dd><p>All p-values calculated while calculating the confidence
 interval.</p></dd>
+
 <dt>t_stat</dt>
 <dd><p>The 'original' regression test statistics.</p></dd>
+
 <dt>t_boot</dt>
 <dd><p>All bootstrap t-statistics.</p></dd>
+
 <dt>regression</dt>
 <dd><p>The regression object used in boottest.</p></dd>
+
 <dt>call</dt>
 <dd><p>Function call of boottest.</p></dd>
+
 <dt>boot_algo</dt>
 <dd><p>The employed bootstrap algorithm.</p></dd>
+
 <dt>nthreads</dt>
 <dd><p>The number of threads employed.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="setting-seeds">Setting Seeds<a class="anchor" aria-label="anchor" href="#setting-seeds"></a></h2>
@@ -346,7 +420,7 @@ STATA using boottest", The STATA Journal.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
     </footer></div>

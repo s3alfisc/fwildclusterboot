@@ -83,22 +83,38 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>preprocessed_object</dt>
 <dd><p>A list: output of the preprocess2 function.</p></dd>
+
+
 <dt>boot_iter</dt>
 <dd><p>number of bootstrap iterations</p></dd>
+
+
 <dt>point_estimate</dt>
 <dd><p>The point estimate of the test parameter from the regression model.</p></dd>
+
+
 <dt>impose_null</dt>
 <dd><p>If TRUE, the null is not imposed on the bootstrap distribution.
 This is what Roodman et al call the "WCU" bootstrap. With impose_null = FALSE, the
 null is imposed ("WCR").</p></dd>
+
+
 <dt>r</dt>
 <dd><p>Shifts the null hypothesis.</p></dd>
+
+
 <dt>sign_level</dt>
 <dd><p>The significance level.</p></dd>
+
+
 <dt>param</dt>
 <dd><p>name of the test parameter.</p></dd>
+
+
 <dt>p_val_type</dt>
 <dd><p>type Type of p-value. By default "two-tailed". Other options: "equal-tailed", "&gt;", "&lt;"</p></dd>
+
+
 <dt>nthreads</dt>
 <dd><p>The number of threads. Can be: a) an integer lower than,
 or equal to, the maximum number of threads; b) 0: meaning
@@ -107,29 +123,44 @@ between 0 and 1 which represents the fraction of all threads
 to use. The default is to use 50\<!-- % of all threads. You can -->
 set permanently the number of threads used within this
 package using the function ...</p></dd>
+
+
 <dt>type</dt>
 <dd><p>character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm"
 and "webb". Alternatively, type can be a function(n) for drawing
 wild bootstrap factors. "rademacher" by default.</p></dd>
+
+
 <dt>full_enumeration</dt>
 <dd><p>Is full enumeration employed? Full enum. is used if
 N_G^2 &lt; boot_iter for Mammen and Rademacher weights</p></dd>
+
+
 <dt>small_sample_correction</dt>
 <dd><p>The small sample correction to be applied. See ssc().</p></dd>
+
+
 <dt>conf_int</dt>
 <dd><p>Logical. Should confidence intervals be calculated (by test inversion)?</p></dd>
+
+
 <dt>maxiter</dt>
 <dd><p>Integer. Maximum number of iterations used in the root finding procedure to find the confidence interval.
 10 by default.</p></dd>
+
+
 <dt>tol</dt>
 <dd><p>Numeric vector of length 1. The desired accuracy
 (convergence tolerance) used in the root finding procedure to find the confidence interval.
 1e-6 by default.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list of ...</p>
+    
+
+<p>A list of ...</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -141,7 +172,7 @@ N_G^2 &lt; boot_iter for Mammen and Rademacher weights</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
     </footer></div>
