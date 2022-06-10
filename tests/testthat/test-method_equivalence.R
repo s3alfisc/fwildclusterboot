@@ -264,3 +264,59 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
   create_models(clustid = c("group_id1", "group_id2"))
   run_tests()
 })
+
+
+
+test_that("clustid can be fe", {
+  
+  library(fixest)
+  library(lfe)
+  # library(fwildclusterboot)
+  
+  print_results <- FALSE
+  
+  data1 <<- fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 71986045)
+  sapply(data1, class)
+  
+  feols_fit1 <- feols(proposition_vote ~ treatment + ideology1 + log_income | group_id1,
+                      data = data1, 
+                      cluster = ~group_id1
+  )
+  
+  felm_fit1 <- felm(proposition_vote ~ treatment + ideology1 + log_income | group_id1,
+                      data = data1
+  )
+  
+  fit1 <- 
+  boottest(
+    feols_fit1, 
+    param = "treatment", 
+    B = 999,
+    clustid = "group_id1",
+    fe = "group_id1", 
+    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+  )
+  
+  fit2 <- 
+    boottest(
+      felm_fit1, 
+      param = "treatment", 
+      B = 999,
+      clustid = "group_id1",
+      fe = "group_id1",
+      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+    )
+  
+  expect_equal(
+    fit1$t_stat, 
+    tstat(feols_fit1, ssc = ssc(adj = FALSE, cluster.adj = FALSE))["treatment"], 
+    ignore_attr = TRUE
+  )
+  
+  expect_equal(
+    fit2$t_stat, 
+    tstat(feols_fit1, ssc = ssc(adj = FALSE, cluster.adj = FALSE))["treatment"], 
+    ignore_attr = TRUE
+  )
+  
+})
