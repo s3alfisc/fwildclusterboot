@@ -1,10 +1,12 @@
 ## Submission of 0.9 
 
 + no errors, warnings or messages on github actions for ubuntu, mac, windows
-+ no errors, warnings or messages on `rhub::check_for_cran`
-+ no errors, warnings or messages on win-devel
++ no errors, warnings on `rhub::check_for_cran`
++ no errors, warnings on win-devel
 
-except for one note: "Found the following (possibly) invalid URLs:
+but two notes, one of which I believe is a false positive & the other I don't understand: 
+
+Note 1: "Found the following (possibly) invalid URLs:
   URL: https://journals.sagepub.com/doi/full/10.1177/1536867X19830877
     From: man/boottest.Rd
           man/boottest.felm.Rd
@@ -19,6 +21,9 @@ except for one note: "Found the following (possibly) invalid URLs:
     Message: Service Unavailable"
   
 which is a valid URL (I have checked it).
+
+Note 2: "Found the following files/directories:
+  'lastMiKTeXException'" I don't know how to fix
 
 ## Re-submission of 0.8
 
