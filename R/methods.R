@@ -72,71 +72,204 @@ mboottest <- function(object,
   UseMethod("mboottest")
 }
 
+#' `pval` is a S3 method to collect pvalues for objects 
+#' of type `boottest` and `mboottest`
+#'
+#' @param object An object of type lm, fixest, felm or ivreg
+#' @param ... other arguments
+#'
+#' @export
+#' 
+#' @examples
+#' library(fwildclusterboot)
+#' data(voters)
+# lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#' data = voters
+#' )
+#' boot1 <- boottest(lm_fit,
+#'   B = 9999,
+#'  param = "treatment",
+#'    clustid = "group_id1"
+#'  )
+#' pval(boot1)
+
+pval <- function(object,
+                    ...) {
+  UseMethod("pval")
+}
+
+#' `teststat` is a S3 method to collect teststats for objects 
+#' of type `boottest` and `mboottest`
+#'
+#' @param object An object of type lm, fixest, felm or ivreg
+#' @param ... other arguments
+#'
+#' @export
+#' @examples
+#' library(fwildclusterboot)
+#' data(voters)
+# lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#' data = voters
+#' )
+#' boot1 <- boottest(lm_fit,
+#'   B = 9999,
+#'  param = "treatment",
+#'    clustid = "group_id1"
+#'  )
+#' teststat(boot1)
+teststat <- function(object,
+                 ...) {
+  UseMethod("teststat")
+}
+
+#' S3 method to obtain wild cluster bootstrapped confidence intervals
+#' @param object object of type boottest
+#' @param ... Further arguments passed to or from other methods.
+#' @export
+#' @method confint boottest
+#' @return A vector containing the boundaries of the wild cluster bootstrapped confidence interval
+#' @examples
+#' library(fwildclusterboot)
+#' data(voters)
+# lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#' data = voters
+#' )
+#' boot1 <- boottest(lm_fit,
+#'   B = 9999,
+#'  param = "treatment",
+#'    clustid = "group_id1"
+#'  )
+#' confint(boot1)
+confint.boottest <- function(object, ...){
+
+  stopifnot(inherits(object, "boottest"))
+
+  object$conf_int
+
+}
+
+#' S3 method to obtain the wild cluster bootstrapped p-value of an object of type boottest
+#' @param object object of type boottest
+#' @param ... Further arguments passed to or from other methods.
+#' @export
+#' @method pval boottest
+#' @return A vector containing the boundaries of the wild cluster bootstrapped p-value
+#' @examples
+#' library(fwildclusterboot)
+#' data(voters)
+# lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#' data = voters
+#' )
+#' boot1 <- boottest(lm_fit,
+#'   B = 9999,
+#'  param = "treatment",
+#'    clustid = "group_id1"
+#'  )
+#' pval(boot1)
+pval.boottest <- function(object, ...){
+  
+  stopifnot(inherits(object, "boottest"))
+  
+  object$p_val
+  
+}
+
+#' S3 method to obtain the non-bootstrapped t-statistic calculated via `boottest()` 
+#' @param ... Further arguments passed to or from other methods.
+#' @export
+#' @method teststat boottest
+#' @return A vector containing the non-bootstrapped t-statistic calculated in `boottest()`
+#' @examples
+#' library(fwildclusterboot)
+#' data(voters)
+# lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#' data = voters
+#' )
+#' boot1 <- boottest(lm_fit,
+#'   B = 9999,
+#'  param = "treatment",
+#'    clustid = "group_id1"
+#'  )
+#' teststat(boot1)
+teststat.boottest <- function(object, ...){
+  
+  stopifnot(inherits(object, "boottest"))
+  
+  object$t_stat
+  
+}
 
 
+#' S3 method to obtain the effective number of observation used in `boottest()`
+#' @param object object of type boottest
+#' @param ... Further arguments passed to or from other methods.
+#' @export
+#' @method nobs boottest
+#' @return A scalar containing the effective number of observations used in `boottest()`
+
+#' @examples
+#' library(fwildclusterboot)
+#' data(voters)
+# lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#' data = voters
+#' )
+#' boot1 <- boottest(lm_fit,
+#'   B = 9999,
+#'  param = "treatment",
+#'    clustid = "group_id1"
+#'  )
+#' nobs(boot1)
+nobs.boottest <- function(object, ...){
+
+  stopifnot(inherits(object, "boottest"))
+
+  object$N
+
+}
 
 
+#' S3 method to obtain the wild cluster bootstrapped p-value of an object of type mboottest
+#' @param object object of type mboottest
+#' @param ... Further arguments passed to or from other methods.
+#' @export
+#' @method pval mboottest
+#' @return A vector containing the boundaries of the wild cluster bootstrapped p-value
+#'
+pval.mboottest <- function(object, ...){
+  
+  stopifnot(inherits(object, "mboottest"))
+  
+  object$p_val
+  
+}
+
+#' S3 method to obtain the non-bootstrapped test statistic calculated via `mboottest()` 
+#' @param ... Further arguments passed to or from other methods.
+#' @export
+#' @method teststat mboottest
+#' @return A vector containing the non-bootstrapped t-statistic calculated in `mboottest()`
+#'
+teststat.mboottest <- function(object, ...){
+  
+  stopifnot(inherits(object, "mboottest"))
+  
+  object$teststat
+  
+}
 
 
+#' S3 method to obtain the effective number of observation used in `mboottest()`
+#' @param object object of type mboottest
+#' @param ... Further arguments passed to or from other methods.
+#' @export
+#' @method nobs mboottest
+#' @return A scalar containing the effective number of observations used in `mboottest()`
 
-#' #' S3 method to obtain wild cluster bootstrapped confidence intervals
-#' #' @param object object of type boottest
-#' #' @param ... Further arguments passed to or from other methods.
-#' #' @export
-#' #' @method confint boottest
-#' #' @return A vector containing the boundaries of the wild cluster bootstrapped confidence interval
-#' #'
-#' confint.boottest <- function(object, ...){
-#'
-#'   stopifnot(inherits(object, "boottest"))
-#'
-#'   object$conf_int
-#'
-#' }
-#'
-#' #' S3 method to obtain the effective number of observation used in `boottest()`
-#' #' @param object object of type boottest
-#' #' @param ... Further arguments passed to or from other methods.
-#' #' @export
-#' #' @method nobs boottest
-#' #' @return A scalar containing the effective number of observations used in `boottest()`
-#'
-#' nobs.boottest <- function(object, ...){
-#'
-#'   stopifnot(inherits(object, "boottest"))
-#'
-#'   object$N
-#'
-#' }
-
-
-#' #' S3 method to obtain wild cluster bootstrapped confidence intervals
-#' #' @param object object of type boottest
-#' #' @param ... Further arguments passed to or from other methods.
-#' #' @export
-#' #' @method confint boottest
-#' #' @return A vector containing the boundaries of the wild cluster bootstrapped confidence interval
-#' #'
-#' confint.boottest <- function(object, ...){
-#'
-#'   stopifnot(inherits(object, "boottest"))
-#'
-#'   object$conf_int
-#'
-#' }
-#'
-#' #' S3 method to obtain the effective number of observation used in `boottest()`
-#' #' @param object object of type boottest
-#' #' @param ... Further arguments passed to or from other methods.
-#' #' @export
-#' #' @method nobs boottest
-#' #' @return A scalar containing the effective number of observations used in `boottest()`
-#'
-#' nobs.boottest <- function(object, ...){
-#'
-#'   stopifnot(inherits(object, "boottest"))
-#'
-#'   object$N
-#'
-#' }
+nobs.mboottest <- function(object, ...){
+  
+  stopifnot(inherits(object, "mboottest"))
+  
+  object$N
+  
+}
 

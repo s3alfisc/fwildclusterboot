@@ -99,7 +99,7 @@
 #' @srrstatsNA {RE4.2} *Model coefficients (via `coeff()` / `coefficients()`)*
 #' @srrstatsTODO {RE4.3} *Confidence intervals on those coefficients (via `confint()`)*
 #' @srrstats {RE4.4} *The specification of the model, generally as a formula (via `formula()`)* Done as applicable.
-#' @srrstatsTODO {RE4.5} *Numbers of observations submitted to model (via `nobs()`)*
+#' @srrstats {RE4.5} *Numbers of observations submitted to model (via `nobs()`)* Done. 
 #' @srrstatsNA {RE4.6} *The variance-covariance matrix of the model parameters (via `vcov()`)* Inference based on p-values and t-stats, not vcov's.
 #' @srrstatsNA {RE4.7} *Where appropriate, convergence statistics* 
 #' @srrstatsNA {RE4.8} *Response variables, and associated "metadata" where applicable.*

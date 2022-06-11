@@ -47,9 +47,7 @@ test_that("test lean cpp boottest", {
     seed = 2, 
     type = "webb"
   )
-  boot_lm$p_val
-  boot_lm2$p_val
-  # pracma::toc()
+
 
   boot_feols <- boottest(feols_fit,
     param = "treatment",
@@ -120,9 +118,9 @@ test_that("test lean cpp boottest", {
   expect_equal(res$statistic / sqrt(ssc_corr), boot_feols$t_stat)
   expect_equal(res$statistic / sqrt(ssc_corr), boot_felm$t_stat)
 
-  expect_equal(res$p.value, boot_lm$p_val, tolerance = 0.05)
-  expect_equal(res$p.value, boot_feols$p_val, tolerance = 0.05)
-  expect_equal(res$p.value, boot_felm$p_val, tolerance = 0.05)
+  expect_equal(res$p.value, pval(boot_lm), tolerance = 0.05)
+  expect_equal(res$p.value, pval(boot_feols), tolerance = 0.05)
+  expect_equal(res$p.value, pval(boot_felm), tolerance = 0.05)
 
 
 
@@ -156,8 +154,8 @@ test_that("test lean cpp boottest", {
   )
   # pracma::toc()
 
-  expect_equal(boot_lm1$p_val, boot_lm2$p_val, tolerance = 0.05)
-  expect_equal(boot_lm1$t_stat, boot_lm2$t_stat)
+  expect_equal(pval(boot_lm1), pval(boot_lm2), tolerance = 0.05)
+  expect_equal(teststat(boot_lm1), teststat(boot_lm2))
 
 
   boot_lm1 <- boottest(feols_fit,
@@ -179,6 +177,6 @@ test_that("test lean cpp boottest", {
   )
   # pracma::toc()
 
-  expect_equal(boot_lm1$p_val, boot_lm2$p_val, tolerance = 0.05)
-  expect_equal(boot_lm1$t_stat, boot_lm2$t_stat)
+  expect_equal(pval(boot_lm1), pval(boot_lm2), tolerance = 0.05)
+  expect_equal(teststat(boot_lm1), teststat(boot_lm2))
 })

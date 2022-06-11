@@ -193,9 +193,9 @@ test_that("t-stat equivalence OLS", {
                   boot_algo = boot_algo
                 ))
                 # skip_on_cran()
-                expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]), ignore_attr = TRUE)
-                expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]), ignore_attr = TRUE)
-                expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]), ignore_attr = TRUE)
+                expect_equal(abs(teststat(boot1)), abs(dof_tstat[1]), ignore_attr = TRUE)
+                expect_equal(abs(teststat(boot2)), abs(dof_tstat[2]), ignore_attr = TRUE)
+                expect_equal(abs(teststat(boot3)), abs(dof_tstat[3]), ignore_attr = TRUE)
               }
             }
           }
@@ -271,9 +271,9 @@ test_that("t-stat equivalence OLS", {
                 ))
                 
                 # skip_on_cran()
-                expect_equal(abs(boot1$t_stat), abs(dof_tstat[1]), ignore_attr = TRUE)
-                expect_equal(abs(boot2$t_stat), abs(dof_tstat[2]), ignore_attr = TRUE)
-                expect_equal(abs(boot3$t_stat), abs(dof_tstat[3]), ignore_attr = TRUE)
+                expect_equal(abs(teststat(boot1)), abs(dof_tstat[1]), ignore_attr = TRUE)
+                expect_equal(abs(teststat(boot2)), abs(dof_tstat[2]), ignore_attr = TRUE)
+                expect_equal(abs(teststat(boot3)), abs(dof_tstat[3]), ignore_attr = TRUE)
               }
             }
           }
@@ -405,7 +405,7 @@ test_that("t-stat equivalence OLS q > 1", {
       )
       
       # skip_on_cran()
-      expect_equal(boot_jl$teststat, sqrt(wald_stat$stat), ignore_attr = TRUE)
+      expect_equal(teststat(boot_jl), sqrt(wald_stat$stat), ignore_attr = TRUE)
       
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit))
@@ -428,7 +428,7 @@ test_that("t-stat equivalence OLS q > 1", {
                                 cluster.df = "conventional"
       )
       # skip_on_cran()
-      expect_equal(boot_jl$teststat, wald_stat$stat, ignore_attr = TRUE)
+      expect_equal(teststat(boot_jl), wald_stat$stat, ignore_attr = TRUE)
       
       
       
@@ -445,7 +445,7 @@ test_that("t-stat equivalence OLS q > 1", {
       wald_stat <- fixest::wald(feols_fit_weights, "treatment", cluster = ~group_id1)
       
       # skip_on_cran()
-      expect_equal(boot_jl$teststat, sqrt(wald_stat$stat), ignore_attr = TRUE)
+      expect_equal(teststat(boot_jl), sqrt(wald_stat$stat), ignore_attr = TRUE)
       
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit_weights))
@@ -466,7 +466,7 @@ test_that("t-stat equivalence OLS q > 1", {
       wald_stat <- fixest::wald(feols_fit_weights, "Inter|treatment", cluster = ~group_id1)
       
       # skip_on_cran()
-      expect_equal(boot_jl$teststat, wald_stat$stat, ignore_attr = TRUE)
+      expect_equal(teststat(boot_jl), wald_stat$stat, ignore_attr = TRUE)
       
       
       # one hypothesis
@@ -490,7 +490,7 @@ test_that("t-stat equivalence OLS q > 1", {
       )
       
       # skip_on_cran()
-      expect_equal(boot_jl$teststat, sqrt(wald_stat$stat), ignore_attr = TRUE)
+      expect_equal(teststat(boot_jl), sqrt(wald_stat$stat), ignore_attr = TRUE)
       
       # two hypotheses
       R <- clubSandwich::constrain_zero(constraints = 1:2, coefs = coef(lm_fit_weights))
@@ -511,7 +511,7 @@ test_that("t-stat equivalence OLS q > 1", {
       )
       
       # skip_on_cran()
-      expect_equal(boot_jl$teststat, wald_stat$stat, ignore_attr = TRUE)
+      expect_equal(teststat(boot_jl), wald_stat$stat, ignore_attr = TRUE)
     }
   }
   
@@ -573,7 +573,7 @@ test_that("t-stat equivalence IV", {
       ))
       
       # skip_on_cran()
-      expect_equal(boot_ivreg1$t_stat, as.vector(res_df1[res_df1$term == "education", "statistic"]), ignore_attr = TRUE)
+      expect_equal(teststat(boot_ivreg1), as.vector(res_df1[res_df1$term == "education", "statistic"]), ignore_attr = TRUE)
       
       
       # two-way clustering currently fails
@@ -588,7 +588,7 @@ test_that("t-stat equivalence IV", {
       
       
       # skip_on_cran()
-      expect_equal(boot_ivreg2$t_stat, res_df2[res_df2$term == "education", "statistic"])
+      expect_equal(teststat(boot_ivreg2), res_df2[res_df2$term == "education", "statistic"])
     }
   }
   
