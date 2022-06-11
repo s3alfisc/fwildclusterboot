@@ -86,6 +86,26 @@ model_matrix.fixest <- function(object, type, collin.rm = TRUE, ...){
 }
 
 
+model_matrix.plm <- function(object, collin.rm = TRUE, ...){
+  
+  #' Enhanced model.matrix for objects of type plm
+  #' @method model_matrix plm
+  #' @export
+  #' @param object An object of class plm
+  #' @param collin.rm Should collinear variables be dropped?
+  #' @param ... Other arguments
+  
+  X <- model.matrix(object)
+  if(collin.rm == TRUE){
+    bn <- names(na.omit(coef(object)))
+    X <- X[,colnames(X) %in% bn]
+  }
+  
+  X
+  
+}
+
+
 #' model_matrix.ivreg <- function(object, type, collin.rm = TRUE){
 #'   
 #'   #' Enhanced model.matrix for objects of type ivreg

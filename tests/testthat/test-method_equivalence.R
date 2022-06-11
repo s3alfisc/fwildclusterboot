@@ -4,6 +4,7 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
   
   library(fixest)
   library(lfe)
+  library(plm)
   # library(fwildclusterboot)
 
   print_results <- FALSE
@@ -14,6 +15,12 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration + Q2_defense,
     data = data1
   )
+  
+  plm_fit <- plm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration + Q2_defense,
+               data = data1, 
+               model = "pooling"
+  )
+  
   feols_fit1 <- feols(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration + Q2_defense,
     data = data1
   )
@@ -109,6 +116,9 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
       cat("boottest()", "\n")
       assign(paste0("boot_lm_", boot_algo), suppressWarnings(boottest(object = lm_fit, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
 
+      assign(paste0("boot_plm_", boot_algo), suppressWarnings(boottest(object = plm_fit, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
+      
+      
       assign(paste0("boot_fixest1_", boot_algo), suppressWarnings(boottest(object = feols_fit1, clustid = clustid, B = 19999, seed = 911, param = ~treatment, conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
       assign(paste0("boot_fixest2_", boot_algo), suppressWarnings(boottest(object = feols_fit2, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
       assign(paste0("boot_fixest3_", boot_algo), suppressWarnings(boottest(object = feols_fit3, clustid = clustid, B = 19999, seed = 911, param = "treatment", conf_int = TRUE, ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), boot_algo = boot_algo, floattype = "Float64")), envir = .GlobalEnv)
@@ -235,6 +245,7 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
   }
 
   all_feols_felm_models_R <- c(
+    paste0("boot_plm", 1, "_R"),
     paste0("boot_fixest", 1:13, "_R"),
     paste0("boot_fixest", 6:13, "fe_R"),
     paste0("boot_felm", 1:6, "_R"),
@@ -242,6 +253,7 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
   )
 
   all_feols_felm_models_jl <- c(
+    paste0("boot_plm", 1, "_WildBootTests.jl"),
     paste0("boot_fixest", 1:13, "_WildBootTests.jl"),
     paste0("boot_fixest", 6:11, "fe_WildBootTests.jl"),
     paste0("boot_felm", 1:6, "_WildBootTests.jl"),

@@ -8,7 +8,7 @@
 #' @param object An object of type lm, fixest, felm or ivreg
 #' @param ... other arguments
 #'
-#' @seealso \link[fwildclusterboot]{boottest.lm}, \link[fwildclusterboot]{boottest.fixest}, \link[fwildclusterboot]{boottest.felm}, \link[fwildclusterboot]{boottest.ivreg}
+#' @seealso \link[fwildclusterboot]{boottest.lm}, \link[fwildclusterboot]{boottest.fixest}, \link[fwildclusterboot]{boottest.felm}, \link[fwildclusterboot]{boottest.plm}, \link[fwildclusterboot]{boottest.ivreg}
 #'
 #' @export
 #' 

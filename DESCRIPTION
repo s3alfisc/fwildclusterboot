@@ -41,7 +41,8 @@ Description: Implementation of the fast algorithm for wild cluster bootstrap
              are supported. Further, both restricted (WCR) and unrestricted
              (WCU) bootstrap are supported. Methods are provided for a variety 
              of fitted models, including 'lm()', 'feols()' 
-             (from package 'fixest') and 'felm()' (from package 'lfe'). 
+             (from package 'fixest'), 'plm()'  (from package 'plm') and 'felm()'
+             (from package 'lfe'). 
              Additionally implements a heteroskedasticity-robust (HC1) wild 
              bootstrap.
              Further, the package provides an R binding to 'WildBootTests.jl',
@@ -66,6 +67,7 @@ Imports:
 Suggests: 
     fixest,
     lfe,
+    plm,
     ivreg,
     clubSandwich,
     sandwich,

@@ -47,5 +47,5 @@ MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite eco
 Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 }
 \seealso{
-\link[fwildclusterboot]{boottest.lm}, \link[fwildclusterboot]{boottest.fixest}, \link[fwildclusterboot]{boottest.felm}, \link[fwildclusterboot]{boottest.ivreg}
+\link[fwildclusterboot]{boottest.lm}, \link[fwildclusterboot]{boottest.fixest}, \link[fwildclusterboot]{boottest.felm}, \link[fwildclusterboot]{boottest.plm}, \link[fwildclusterboot]{boottest.ivreg}
 }

@@ -425,6 +425,113 @@ preprocess2.lm <- function(object, clustid, R, param, boot_algo, bootcluster){
 }
 
 
+preprocess2.plm <- function(object, clustid, R, param, boot_algo, bootcluster){
+  
+  #' @method preprocess2 lm
+  
+  call <- object$call
+  call_env <- environment(formula(object))
+  fml <- formula(object)
+  fml <- Formula::as.Formula(fml)
+  
+  model <- object$call$model
+  
+  N <- nobs(object)
+  # lm and felm don't drop NAs due to multicollinearity, while fixest does
+  k <- length(na.omit(coef(object)))
+  #p <- object$p
+  
+  is_iv <- FALSE
+  
+  X <- model_matrix(object, collin.rm = TRUE)
+  Y <- model.response(model.frame(object))
+  has_fe <- FALSE
+  
+  weights <- weights(object)
+  if(is.null(weights)){
+    has_weights <- FALSE
+    weights <- rep(1, N)
+  } else {
+    has_weights <- TRUE
+  }
+  
+  # get cluster variable
+  if(!is.null(clustid)){
+    
+    clustid_list <- get_cluster(
+      object = object,
+      clustid_char = clustid,
+      N = N,
+      bootcluster = bootcluster, 
+      call_env = call_env
+    )
+    
+    vcov_sign <- clustid_list$vcov_sign
+    clustid <- clustid_list$clustid
+    clustid_dims <- ncol(clustid)
+    N_G <- clustid_list$N_G
+    cluster_names <- clustid_list$cluster_names
+    
+    cluster_bootcluster <- clustid_list$cluster_bootcluster
+    bootcluster <- clustid_list$bootcluster
+    all_c <- clustid_list$all_c
+    
+    
+  } else {
+    vcov_sign <- clustid_dims <- clustid <- bootcluster <- N_G <- cluster_names <- NULL
+    cluster_bootcluster <- bootcluster <- all_c <- NULL
+  }
+  
+  
+  instruments <- X_exog <- X_endog <- NULL
+  if (!is.matrix(R)) {
+    R0 <- rep(0, length(colnames(X)))
+    R0[match(param, colnames(X))] <- R
+    names(R0) <- colnames(X)
+  } else {
+    q <- nrow(R)
+    p <- ncol(R)
+    R0 <- matrix(0, q, ncol(X))
+    R0[,1:p] <- R 
+  }
+  
+  
+  
+  res <- list(
+    Y = Y,
+    X = X,
+    weights = weights,
+    fixed_effect = NULL,
+    W = NULL,
+    n_fe = NULL,
+    N = N,
+    k =  k,
+    k2 =  0,
+    clustid = clustid,
+    vcov_sign = vcov_sign,
+    clustid_dims = clustid_dims,
+    N_G = N_G,
+    cluster_bootcluster = cluster_bootcluster,
+    bootcluster = bootcluster,
+    N_G_bootcluster = length(unique(bootcluster[[1]])),
+    R0 = R0,
+    X_exog = NULL,
+    X_endog = NULL,
+    instruments = NULL,
+    has_fe = has_fe,
+    all_c = all_c
+  )
+  
+  class(res) <- c("preprocess", "ols")
+  
+  res
+  
+  
+  
+}
+
+
+
 
 preprocess2.ivreg <- function(object, clustid, R, param, boot_algo, bootcluster){
 
