@@ -153,9 +153,19 @@ Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.
 (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
 
+Roodman et al., 2019, "Fast and wild: Bootstrap inference in
+STATA using boottest", The STATA Journal.
+(\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+
 Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller. "Bootstrap-based improvements for inference with clustered errors." The Review of Economics and Statistics 90.3 (2008): 414-427.
 
+Cameron, A.Colin & Douglas L. Miller. "A practitioner's guide to cluster-robust inference" Journal of Human Resources (2015) \doi{doi: 10.3368/jhr.50.2.317}
+
+Davidson & MacKinnon. "Wild Bootstrap Tests for IV regression" Journal of Economics and Business Statistics (2010) \doi{https://doi.org/10.1198/jbes.2009.07221}
+
 MacKinnon, James G., and Matthew D. Webb. "The wild bootstrap for few (treated) clusters." The Econometrics Journal 21.2 (2018): 114-135.
+
+MacKinnon, James G., and Matthew D. Webb. "Cluster-robust inference: A guide to empirical practice" Journal of Econometrics (2022) \doi{https://doi.org/10.1016/j.jeconom.2022.04.001}
 
 MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite economique 91.1-2 (2015): 11-33.
 
