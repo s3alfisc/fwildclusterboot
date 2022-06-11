@@ -1,6 +1,4 @@
-#' Fast wild cluster bootstrap inference
-#'
-#'
+
 #' `preprocess2` is a S3 method that fetches data from several model
 #' objectects for use with `boottest()`.
 #'
@@ -16,7 +14,19 @@ preprocess2 <- function(object, ...) {
 
 
 preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootcluster){
-
+  
+  #' preprocess data for objects of type fixest
+  #' 
+  #' @param object an object of type fixest
+  #' @param clustid a character string containing the name(s) of the cluster variables
+  #' @param R Hypothesis Vector giving linear combinations of coefficients. 
+  #' @param fe character vector. name of the fixed effect to be projected out in the bootstrap
+  #' @param param character vector. names of the parameter(s) to test
+  #' @param boot_algo The bootstrap algorithm to run. Either "R" or "WildBootTests.jl"
+  #' @param bootcluster a character string containing the name(s) of the bootcluster variables. Alternatively, "min" or "max"
+  #'
+  #' @noRd
+  #'  
   #' @method preprocess2 fixest
 
   call <- object$call
@@ -179,6 +189,18 @@ preprocess2.fixest <- function(object, clustid, R, param, fe, boot_algo, bootclu
 
 preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootcluster){
 
+  #' preprocess data for objects of type felm
+  #' 
+  #' @param object an object of type felm
+  #' @param clustid a character string containing the name(s) of the cluster variables
+  #' @param R Hypothesis Vector giving linear combinations of coefficients.  #' @param fe 
+  #' @param fe character vector. name of the fixed effect to be projected out in the bootstrap
+  #' @param param character vector. names of the parameter(s) to test
+  #' @param boot_algo The bootstrap algorithm to run. Either "R" or "WildBootTests.jl"
+  #' @param bootcluster a character string containing the name(s) of the bootcluster variables. Alternatively, "min" or "max"
+  #' 
+  #' @noRd
+  #' 
   #' @method preprocess2 felm
 
   call <- object$call
@@ -323,8 +345,19 @@ preprocess2.felm <- function(object, clustid, R, param, fe, boot_algo, bootclust
 
 preprocess2.lm <- function(object, clustid, R, param, boot_algo, bootcluster){
 
+  #' preprocess data for objects of type lm
+  #' 
+  #' @param object an object of type lm
+  #' @param clustid a character string containing the name(s) of the cluster variables
+  #' @param R Hypothesis Vector giving linear combinations of coefficients.  #' @param fe 
+  #' @param param character vector. names of the parameter(s) to test
+  #' @param boot_algo The bootstrap algorithm to run. Either "R" or "WildBootTests.jl"
+  #' @param bootcluster a character string containing the name(s) of the bootcluster variables. Alternatively, "min" or "max"
+  #' 
+  #' @noRd
+  #' 
   #' @method preprocess2 lm
-
+  
   call <- object$call
   call_env <- environment(formula(object))
   fml <- formula(object)
@@ -428,8 +461,19 @@ preprocess2.lm <- function(object, clustid, R, param, boot_algo, bootcluster){
 
 preprocess2.ivreg <- function(object, clustid, R, param, boot_algo, bootcluster){
 
+  #' preprocess data for objects of type ivreg
+  #' 
+  #' @param object an object of type ivreg
+  #' @param clustid a character string containing the name(s) of the cluster variables
+  #' @param R Hypothesis Vector giving linear combinations of coefficients.  #' @param fe 
+  #' @param param character vector. names of the parameter(s) to test
+  #' @param boot_algo The bootstrap algorithm to run. Either "R" or "WildBootTests.jl"
+  #' @param bootcluster a character string containing the name(s) of the bootcluster variables. Alternatively, "min" or "max"
+  #' 
+  #' @noRd
+  #' 
   #' @method preprocess2 ivreg
-
+  
   call <- object$call
   call_env <- environment(formula(object))
   fml <- formula(object)
@@ -531,6 +575,19 @@ preprocess2.ivreg <- function(object, clustid, R, param, boot_algo, bootcluster)
 
 get_cluster <- function(object, clustid_char, bootcluster, N, call_env) {
 
+  #' function creates a data.frame with cluster variables
+  #' 
+  #' @param object An object of type lm, fixest, felm or ivreg
+  #' @param clustid_char the name of the cluster variable(s) as a character vector
+  #' @param bootcluster the name of the bootcluster variable(s) as a character vector, or "min" or "max" for multiway clustering
+  #' @param N the number of observations used in the bootstrap
+  #' @param call_env the environment in which the 'object' was evaluated
+  #' 
+  #' @noRd
+  #' 
+  #' @return a list, containing, among other things, a data.frame of the cluster variables, 
+  #'         a data.frame of the bootcluster variable(s), and a helper matrix, all_c, used in `boot_algo_julia()`
+  
   # ---------------------------------------------------------------------------- #
   # Note: a large part of the following code was taken and adapted from the
   # sandwich R package, which is distributed under GPL-2 | GPL-3
@@ -709,7 +766,18 @@ get_cluster <- function(object, clustid_char, bootcluster, N, call_env) {
 
 demean_fe <- function(X, Y, fe, has_weights, N){
 
-  # function to demean X and y if !is.null(fe)
+  
+  #' function deamens design matrix X and depvar Y if fe != NULL
+  #' 
+  #' @param X the design matrix X
+  #' @param Y the dependent variable Y as a numeric vector
+  #' @param fe the name of the fixed effect to be projected out
+  #' @param has_weights logical - have regression weights been used in the original model?
+  #' @param N the number of observations
+  #' 
+  #' @return A list that includes - among other things - the demeaned design matrix X and depvar Y
+  #' 
+  #' @noRd
   
   g <- collapse::GRP(fe, call = FALSE)
   X <- collapse::fwithin(X, g)
@@ -744,11 +812,24 @@ demean_fe <- function(X, Y, fe, has_weights, N){
 
 transform_fe <- function(object, X, Y, fe, has_weights, N, boot_algo){
 
-  # preprocess the model fixed effects. If is.null(fe) == TRUE, all
-  # fixed effects specified in the fixest or felm model are simply added 
-  # as dummy variables to the design matrix X. If !is.null(fe), the fixed 
-  # effect specified via fe is projected out in the bootstrap - all other 
-  # fixed effects are added as dummy variables
+  #' preprocess the model fixed effects
+  #' 
+  #'  If is.null(fe) == TRUE, all
+  #' fixed effects specified in the fixest or felm model are simply added 
+  #' as dummy variables to the design matrix X. If !is.null(fe), the fixed 
+  #' effect specified via fe is projected out in the bootstrap - all other 
+  #' fixed effects are added as dummy variables
+  #' @param object the regression object
+  #' @param X the design matrix of the regression object
+  #' @param fe character vector, name of the fe to be projected out, or NULL
+  #' @param has_weights logical - have regression weights been used in the original model?
+  #' @param N the number of observations
+  #' @param boot_algo bootstrap algorithm to run. Either "R" or "WildBootTests.jl"
+  #' 
+  #' @return a list containing X - the design matrix plus additionally attached fixed effects, and 
+  #'         fixed_effect - a data.frame containing the fixed effect to be projected out
+  #' 
+  #' @noRd
 
   all_fe <- model_matrix(object, type = "fixef", collin.rm = TRUE)
   # make sure all fixed effects variables are characters

@@ -2,7 +2,8 @@
 % Please edit documentation in R/preprocess2.R
 \name{preprocess2}
 \alias{preprocess2}
-\title{Fast wild cluster bootstrap inference}
+\title{\code{preprocess2} is a S3 method that fetches data from several model
+objectects for use with \code{boottest()}.}
 \usage{
 preprocess2(object, ...)
 }
