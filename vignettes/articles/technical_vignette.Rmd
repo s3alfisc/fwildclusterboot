@@ -1,0 +1,465 @@
+---
+title: "The (wild) cluster bootstrap and Implementation Details"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(fwildclusterboot)
+```
+
+This vignette presents several implementation details of the algorithms underlying `fwildclusterboot`. It introduces the wild (cluster) bootstrap, illustrates how `fwildclusterboot::boottest()` inverts p-values to obtain confidence intervals, and explains how the "fast wild cluster bootstrap algorithm" is implemented in `fwildclusterboot` for the "R" algorithm. 
+
+## The Wild (Cluster) Bootstrap 
+
+We want to test a hypothesis $R\beta = r$ for a linear regression model
+
+$$
+  Y = X\beta + u.
+$$
+
+with $E(u|X) = 0$ via a wild bootstrap. Following Roodman et al (2019), the wild bootstrap proceeds in the following steps: 
+
+1) - for the WCU (uncrestricted bootstrap): regress Y on X; obtain $\hat{\beta}$, $\hat{u}$ and $\hat{V}$. 
+   - for the WCR (restricted bootstrap): regress Y on X imposing the null (via restricted least squares), obtain $\tilde{\beta}$, $\tilde{u}$ and $\tilde{V}$
+2) calculate the (cluster) robust t-statistic for the null hypothesis of interest
+  $$
+    t = \frac{R\hat{\beta} - r}{\sqrt(R'\hat{V} R)}
+  $$
+  where $\beta$ is an estimate of the parameter of interest and $V$ the associated variance-covariance matrix.
+3) for all $b = 1, ..., B$ bootstrap iterations, create
+   - a set of bootstrap error terms $v_{b}^{*}$
+   - a new bootstrap sample $y_{b}^{*} = X \beta + f(\hat{u}) \times v_{b}^{*}$
+   - a bootstrapped t-statistic
+      $$
+        t_{b}^{*} = \frac{R\hat{\beta_{b}^{*}} - r}{\sqrt(R'\hat{V}_{b}^{*} R)}
+      $$
+      where $\beta_{b}^{*}$ is the OLS estimate of a regression of X on $y_{b}^{*}$ and 
+      $\hat{V}_{b}^{*}$ the associated (cluster) robust variance-covariance estimate
+4) based on all bootsrapped t-statistics, calculate a bootstrap p-value as 
+  
+  $$
+  \begin{align}
+    \text{left-tailed: } \hat{P}_{L}^{*} = \frac{1}{B} \sum_{b = 1}^{B} 1(t^{*^{b}}_{j} < t_j) && \text{right tailed: } \hat{P}_{R}^{*} = \frac{1}{B} \sum_{b = 1}^{B} 1(t^{*^{b}}_{j} > t_j)
+  \end{align}
+  $$
+
+
+  $$
+  \begin{align}
+   \text{two-tailed: }   \hat{P}_{S}^{*} = \frac{1}{B} \sum_{b = 1}^{B} 1(|t^{*^{b}}_{j}| > |t_j|) && \text{equal-tailed: } \hat{P}_{ET}^{*} = 2 min(\hat{P}_{L}^{*}, \hat{P}_{R}^{*})
+  \end{align}
+  $$
+For the **heteroskedastic wild bootstrap**, the variance-covariance matrices are calculated as 
+*robust* variance-covariance matrices. In the literature on the heteroskedastic wild bootstrap, three options are usually discussed: 
+
+$$
+  \begin{align}
+  HC1: f(\hat{u}) = \sqrt(\frac{n}{n-k}) \hat{u}; &&  HC2: f(\hat{u}) = \frac{\hat{u}}{(1-h_i)^{1/2}}; && HC3:  f(\hat{u}) = \frac{\hat{u}}{(1-h_i)}
+  \end{align}
+$$
+
+where $h_i$ is the i-th diagonal element of the "hat" matrix $P_x = X (X'X)^{-1}X'$. For the heteroskedastic wild bootstrap, `fwildclusterboot` implements the *HC1 estimator*. 
+
+The **wild cluster bootstrap** follows a similar scheme. The main difference to the heteroskedastic wild bootstrap is that all error terms of the same cluster are multiplied with the same bootstrap weight $v_{b}^{*}$ and that $\hat{V}$ is computed by using a cluster robust variance estimator (CRVE/CRV1) as 
+
+$$
+  \hat{V} = (X'X)^{-1} (\sum_{g=1}^{G} X_g' u_g u_g' X_g) (X'X)^{-1} 
+$$ 
+where and $m := f(G, N, k)$ is a small-sample correction factor, by default set to 
+
+$$
+  m = \sqrt(\frac{G}{G-1} \times \frac{N-1}{N-k})
+$$
+with $G$ the number of unique clusters, $N$ the number of observations and $k$ the number of estimated parameters. 
+
+## Different bootstrap weights 
+
+`fwildclusterboot` offers support for different bootstrap weights $v_{b}^{*}$. The following weight types are supported: 
+
+  + *Rademacher weights* take values $1$ and $-1$ with equal probability
+  + *Mammen weights* take values values $1-\psi$ with probability $\psi / \sqrt(5)$ 
+    and $\psi$ otherwise, with $\psi = (1+\sqrt(5))/2$
+  + *Normal weights* draw from the standard normal distribution
+  + *Webb weights* draw from a six-point distribution, each with probability $1/6$. 
+    Possible values are $+/-1.5, +/-1, +/-0.5$. 
+    
+Note that for Rademacher and Mammen weights, only $2^G$ unique draws exist. If G is small, it is therefore often recommended to use Webb weights with $6^G$ unique possible draws.  
+
+## Confidence Intervals by Test Inversion 
+
+The `boottest()` functions in `fwildclusterboot` does not compute standard errors, but it does compute confidence intervals. When I first used Stata's `boottest` command, which also computes confidence intervals, but no standard errors, I was really quite puzzled! How is it possible to compute confidence intervals without computing standard errors? After all, the textbook/cookbook instruction for calculating confidence intervals is to a) calculate a regression coeffiecient $\hat{\beta}$, its associated standard error $\hat{SE}(\beta)$ and then, the CI follows as 
+
+$$
+  [\hat\beta +/- \text{crit. value} + \hat{SE}(\beta)].
+$$
+
+So how is it possible to compute a confidence interval without explicitly computing standard errors? 
+
+In order to explain this, we need to go back to the definition of a confidence interval (we'll closely follow the exposition in [Hansen's probability and statistics lecture notes, Section 14.9](https://www.ssc.wisc.edu/~bhansen/probability/Probability.pdf)) and how it relates to p-values.
+
+### Confidence Intervals and p-values
+
+Suppose we have a parameter $\theta \in \Theta$ and a test statistic $T(\theta)$. We also have a critical value $c$ so that to test the null hypothesis $H_0: \theta = \theta_0$ againt $H_1: \theta \neq \theta_0$ at a level $\alpha$, we reject the null hypothesis if $T(\theta_0) > c$.
+
+In plain language, this means that we reject the null hypothesis if the test statistic of interest is larger than a specified critical value $c$. 
+
+We will now define a set that includes all values of $\theta$ for which the decision rule "reject the null hypothesis if $T(\theta)\geq c$" leads to an acceptance of the null hypothesis:
+
+$$
+  C = \{\theta \in \Theta: T(\theta)\leq c \}.
+$$
+
+<!-- Proposition:  -->
+
+If the test with critical value $c$ has (asymptotic) size $\alpha$, then C is an (asymptotic) **confidence interval** for $\theta$ at level $1-\alpha$.
+
+<!-- $$ -->
+<!-- \begin{align} -->
+<!--   P(\theta_0 \in C | H_0 \text{ true}) &= P(T(\theta_0) \leq c| H_0 \text{ true}) \\  -->
+<!--   &= 1 - P(T(\theta_0) \leq c| H_0 \text{ true}) \\ -->
+<!--   &= \alpha -->
+<!-- \end{align} -->
+<!-- $$ -->
+
+By definition of the p-value, the decision "reject $H_0$ if $T(\theta_0) \leq c$" is equivalent to the decision rule of "reject $H_0$ if for the p-value $p$ we have $p > \alpha$". 
+
+In consequence, we can also define the confidence interval at significance level $\alpha$ as 
+$$
+  C = \{\theta \in \Theta: p(\theta) \geq \alpha \}.
+$$
+
+The confidence interval is the set of all values $\theta \in \Theta$ with p-value larger than the chosen significance level $\alpha$. 
+
+All of this implies that if we have a function that calculates p-values for different values of $\theta$, $p(\theta)$, to obtain a confidence interval, we simply have to collect all values $\theta$ for which $p(\theta) > \alpha$. Or, in other words, we need to *invert* $p(\theta)$.  
+
+
+### Example: Inverting a p-value in practice
+
+We will illustrate how to calculate a confidence interval based on a simple linear regression model. 
+
+The data generating process will be 
+
+$$ 
+  Y = \beta_0 + \beta_1 X + u
+$$ 
+with $E[u|X] = 0$, and we are interested in testing the null hypothesis 
+
+$$
+  H_0: \beta_1 = 0    \textit{ vs } H_1: \beta_1 \neq 0.
+$$
+We start with simulating some data from a regression model:
+
+```{r}
+set.seed(21348534)
+
+N <- 10000
+X <- rnorm(N)
+y <- 1 + 0.01 * X + rnorm(N)
+df <- data.frame(X = X, y = y)
+
+fit <- (lm(y ~ 1 + X, data = df))
+```
+
+The estimated confidence interval of the regression model is 
+
+```{r}
+confint(fit)
+```
+
+Note that this confidence interval is build on *estimated standard errors*.
+
+This means that in order to calculate the confidence intervals above, `confint()` uses the plug-in formula for confidence intervals stated above. 
+
+#### Define a formula that calculates p-values under 'shifted' null hypotheses
+
+To compute a confidence without estimating standard errors, we first need to define a function that calculates p-values for different values of $\beta$ given the model and data. To do so, we will simply create a function that will allow us to test hypotheses of the form 
+
+$$
+  H_0: \beta_1 - r = 0    \textit{ vs } H_1: \beta_1 -r \neq 0.
+$$
+for different values of $r$, 
+which is of course equivalent to testing
+
+$$
+    H_0: \beta_1 = r     \textit{ vs } H_1: \beta_1  \neq r.
+$$
+
+Tests of such a form are implemented in the `car` package, via the `linearHypothesis` function, and we create a small wrapper function, `p_val(y, X, r)` around `car::linearHypothesis`: 
+
+```{r}
+p_val <- function(y, X, r){
+  res <- lm(y ~ 1 + X)
+  p_val <- car::linearHypothesis(model = res, hypothesis.matrix = c(0,1), rhs = r)$`Pr(>F)`[2]
+  p_val
+}
+
+#p_val(y = y, X = X, r = 0)
+```
+
+As can be seen in the plot below, for different values of $r$, `p_val()` returns a range of p-values: 
+
+```{r}
+p_val_r <- unlist(lapply(seq(-0.05, 0.05, 0.005), function(i) p_val(y = y, X = X, r = i)))
+p_val_df <- data.frame(r = seq(-0.05, 0.05, 0.005), p_val_r = p_val_r)
+plot(x = p_val_df$r, y = p_val_df$p_val_r,type = "b", pch = 20, lty = 2, xlab = "r", ylab = "p-value")
+lines(p_val_df$r, p_val_df$p_val_r, type = "l", lty = 1)
+abline(h = 0.05, col = "red") 
+abline(v = confint(fit)["X", ][1], col = "blue")
+text(x = confint(fit)["X", ][1] - 0.01, y = 0.8, "lower", srt=0.2, col = "blue")
+abline(v = confint(fit)["X", ][2], col = "blue")
+text(x = confint(fit)["X", ][2] + 0.01, y = 0.8, "upper", srt=0.2, col = "blue")
+abline(v = confint(fit)["X", ][1] - 0.01, col = "green", lty = 2)
+abline(v = confint(fit)["X", ][1] + 0.01, col = "green", lty = 2)
+abline(v = confint(fit)["X", ][2] - 0.01, col = "green", lty = 2)
+abline(v = confint(fit)["X", ][2] + 0.01, col = "green", lty = 2)
+```
+
+The p-value of course peaks for the "true" null hypothesis $\beta_1 = r = 0.01$ and decreases when moving further away from the true value. 
+
+The two points where the red line crosses with the black line - marked by a blue line - are the confidence interval for our hypothesis test of interest! 
+
+Our goal is to find the intersection of the blue, red, and black lines. 
+
+To do so, we need to find two starting values for the line search. Those are marked in green. In practice, `boottest()` needs to do some work to find these starting values, but for convenience, we will skip this step here. 
+
+#### Implementing the line search 
+
+We will start from the empirical confidence interval calculated by `confint()`: 
+
+```{r}
+confint(fit)
+```
+
+We create two sets of starting values by adding a value $\epsilon \neq 0$ to the confidence boundaries so that $p(\beta_1 + \epsilon)$ ... of the confidence set obtained by `confint()`: 
+
+```{r}
+epsilon <- 1
+
+startset1 <- confint(fit)["X",][1] + confint(fit)["X",][1] * c(-epsilon, epsilon)
+startset2 <- confint(fit)["X",][2] + confint(fit)["X",][1] * c(-epsilon, epsilon)
+cat("startset 1:"); startset1
+cat("startset 2:"); startset1
+
+```
+
+With these starting values at hand, we can invert $p(.)$ numerically by a root finding procedure - we will run a simple bisection. 
+
+```{r}
+invert_p_val <- function(X, y, startset1, startset2, alpha){
+  
+  # p-val - sign_level 
+  p_val_x_sign_level <- function(r) {
+    p_val(X = X, y = y, r) - alpha
+  }
+  
+  # bisection for both startset1, startset2
+  res <- lapply(list(startset1, startset2), function(x){ 
+                  
+          tmp <- suppressWarnings(stats::uniroot(f = p_val_x_sign_level,
+                                  lower = min(x),
+                                  upper = max(x),
+                                  tol = 1e-08,
+                                  maxiter = 10)$root)
+
+          })
+
+  unlist(res)
+  
+}
+```
+
+#### Results
+
+Now, which confidence interval do we get from the numerical p-value inversion?
+
+```{r}
+invert_p_val(X = X, y = y, startset1 = startset1, startset2 = startset2, alpha = 0.05)
+```
+
+As it turns out, this confidence interval is practically identical with the confidence interval based on estimated standard errors: 
+
+```{r}
+confint(fit)
+```
+
+We have successfully inverted p-values to obtain a confidence interval *without calculating a standard error*!
+
+
+## Test Inversion for the "Fast" Algorithm and its implementation when 'boot_algo = "R"'
+
+`fwildclusterboot` slightly deviates from the algorithm presented in "Fast \& Wild" to speed up the calculation of confidence intervals by test inversion (and so do implementations in Stata's `boottest` and in `WildBootTests.jl`, which both opt for a slightly different solution than the one presented here).
+
+The following notation is used in the derivations below (following notation in fast & wild):
+
++ $\hat{\beta}^{*}$: the bootstrap estimate of regression coefficient $\beta$
++ $\tilde{\beta}$ the original regression estimate if the null is imposed (WCR)
++ $X$ the regressions' design matrix
++ $Y$ the regression's dependent variable
++ $ü$ the regression residuals. For the WCR, $ü:=\tilde{u}$, for the WCU $ü:= \hat{u}$.
++ $W$ potential regression weights
++ $v^{*}$ the wild bootstrap weights
++ $\bar{W}$ is a diagonal matrix holding
+the weight shares of each observation within its FE group
++ $DX$ & $DY$: NxN matrix, left-multiplication by which partials out the FE dummies
++ $A := X'D'WDX^{-1}X'$
+
+### Exposition
+
+The starting point of this section are equations (56) and (62) in the fast & wild paper. You can find a full derivation of both expressions in the paper.
+
+Roodman et al show that the (vectorized) numerator of a wild cluster bootstrapped  test of the hypothesis $R\beta = r$ can be written as 
+
+$$
+  R(\hat{\beta}^{*} - \tilde{\beta}) = \{S_{c^{*}} [WDXAR' :* \tilde{u}] \}' v^{*}.
+$$
+
+The aligning denominator can be expressed as 
+
+$$
+  (R'\hat{V}R) = colsum(\sum_c m_c J_{c}^{*} :* J_{c}^{*})
+$$
+
+where $J_{c}^{*} := K_{c}^{*} v^{*}$ 
+
+and 
+
+$$
+  K_{c}^{*} = CT_{c,c^{*}}(WDXAR' :* ü) - CT_{c,FE}(WDXAR')CT_{c^{*},FE}(\bar{W}ü)' - 
+  S_{c}(WDXAR':*DX)A\{S_{c^{*}}(ü:*WDX) \}'
+$$
+
+$S_c$ and $CT_{a,b}$ denote the crosstab operator as defined in "Fast \& Wild". 
+
+In the following, we will show that the numerator of the bootstrapped test statistic can be written as 
+
+$$
+  R(\hat{\beta}^{*} - \tilde{\beta}) = A + B \times r
+$$
+
+where $\times$ denotes the Hadamard product of a matrix and scalar and that $K_{c}^{*}$ can be written as 
+
+$$
+K_{c}^{*} = (P_1 + P_2 + P_3) + (Q_1 + Q_2 + Q_3) \times r := C_{all} + D_{all} \times r.
+$$  
+
+In consequence $J_{c}^{*} = C_{all}v + D_{all}vr := C + Dr$ and 
+
+$$
+  J_{c}^{*} :* J_{c}^{*} = C^2 + CD\times r + D^2\times r^2.
+$$
+
+Hence, the vector of the bootstrapped test statistic can be written as
+
+$$
+  t^{*}_{b} = \frac{A + B \times r }{\sqrt{m(C^2 + CD \times + D^2 \times r^2)}}.
+$$
+
+where $m$ is a small sample adjustment factor. 
+
+This will facilitate the inversion of p-values needed to compute confidence intervals by a great deal because a) r is scalar and b) reduces the number of right-multiplications of objects with the large weights matrix v. All objects A,B, C, D need to be computed only once prior to inverting the p-values. 
+
+### Derivation
+
+Note that $r$ enters both the expression for denominator and numerator only through the regression error term $ü$ (and further only for the restricted bootstrap (WCR)).
+
+For the WCR, the regression error term $ü := \tilde{u}$ can be written as $\tilde{u} = (Y - X \hat{\beta}_{restricted})$. Note that the restricted least squares estimator is (e.g. Hansen, Chapter 8)
+
+$$
+  \hat{\beta}_{restricted} = \hat{\beta} - (X'X)^{-1} R'[R(X'X)^{-1}R']^{-1}(R\hat{\beta}-r)
+$$
+where $\hat{\beta}$ is the unrestricted OLS estimator. In consequence, it follows that 
+
+\begin{align}
+    \tilde{u} &= (Y - X \hat{\beta}_{restricted}) \\
+    &= Y - P_x Y + X(X'X)^{-1} R'[R(X'X)^{-1}R']^{-1}(R\hat{\beta}-r) \\
+    &= Y - P_x Y + Q (R\hat{\beta}-r) \\
+    &= [I - P_x] Y + Q(R(X'X)^{-1}X'y - r) \\
+    &= [I - P_x + Q(R(X'X)^{-1}X'] Y - Q \times r \\
+    &:= P - Q \times r
+\end{align}
+
+where $P_x = X(X'X)^{-1}X'$, $Q = X(X'X)^{-1} R'[R(X'X)^{-1}R']^{-1}$ and $P = [I - P_x - Q(R(X'X)^{-1}X']Y$. Note that if the null is not imposed, $Q = 0$, and in consequence $P = [I-P_x]Y$. 
+
+The order of matrix multiplication matters for performance - in fact, `fwildclusterboot` computes P as 
+
+```{r, eval = FALSE}
+weights_sq <- sqrt(weights)                           
+A <- solve(crossprod(weights_sq * X))         # k x k
+WX <- weights * X
+XAR <- X %*% (A %*% t(R))
+AWXY <- (A %*% (t(WX) %*% Y))
+Q <- - XAR %*% solve(R %*% A %*% t(R))        # N x 1
+P <- Y - X %*% AWXY - Q %*% (R %*% AWXY)
+```
+
+
+In the following, we will repeatedly used the fact that the crosstab operators $CT_{a,b}$ and $S_{c}$ are linear, e.g. 
+
+$$
+  CT_{a, b}(A + B) =    CT_{a, b}(A) +  CT_{a, b}(B).
+$$
+
+For the *numerator*, we have that 
+
+\begin{align}
+  R(\hat{\beta}^{*} - \tilde{\beta}) &= \{ S_{c^{*}} [WDXAR' :* \tilde{u}] \}' v^{*} \\
+  &= (\{ S_{c^{*}} [WDXAR' :* P] \}' + \{ S_{c^{*}} [WDXAR' :* Q] \}' \times r) v^{*} \\
+  &= \{ S_{c^{*}} [WDXAR' :* P] \}' v^{*} + \{ S_{c^{*}} [WDXAR' :* Q] \}' v^{*} \times r \\
+  &:= A + B \times r.
+\end{align}
+
+For the parts of the *denominator* that depend on $ü$, it follows that 
+
+\begin{align}
+  CT_{c^{*},c}(ü:*(WDX))' &= S_{c^{*}}((P+Qr) :* (WDX))' \\
+  &= S_{c^{*}}(P :* (WDX))' + S_{c^{*}}(Q :* (WDX))' \times r' \\
+  &= P_1 + Q_1 \times r
+\end{align}
+
+and 
+
+\begin{align}
+  S_{c,c^{*}}() &= S_{c,c^{*}}(WDXAR' :* P) + S_{c,c^{*}}(WDXAR' :* Q) \times r \\
+  &= P_2 + Q_2 \times r.
+\end{align}
+
+Finally, if a fixed effect is projected out, 
+
+\begin{align}
+  CT_{c^{*}, FE}(\bar{W}ü) &= CT_{c^{*}, FE}(\bar{W}P) + CT_{c^{*}, FE}(\bar{W}Q)r \\
+  &= P_3 + Q_3 \times r
+\end{align}
+
+Combining everything, we find that 
+
+$$
+  K_{c}^{*} = (P_1 + P_2 + P_3) + (Q_1 + Q_2 + Q_3) \times r  := C_{all} + D_{all} \times r, 
+$$
+$$
+  J_{c}^{*} = C_{all}v + D_{all}v \times r  := C+ D \times r.
+$$
+with $C = C_{all} v$ and $D = D_{all} v$ and $P_3 = Q_3 = 0$ if there is no fixed effect or the fixed effect is nested withing a cluster. 
+
+All in all, we find that 
+$$
+  J_{c}^{*} :* J_{c}^{*} = C^2 + CD \times r + D^2 \times r^2
+$$
+
+and we can compute all bootstrapped t-statistics at once as
+
+$$
+  t^{*}_{b} =  \frac{A + B \times r }{\sqrt{m(C^2 + CD \times + D^2 \times r^2)}}.
+$$
+
+This implies that we can invert the test by computing p-values for different values of r by computing A, B, $C^2$, CD and $D^2$ just once and then iterating over the scalar $r$ by employing a root finding procedure. In the entire operation - for one-way clustering - we right-multiply with the weight matrix $v$ only four times.
+
+
+## Details on the implementation in 'WildBootTests.jl'
+
+Details on the implementation of the wild cluster bootstrap in 'WildBootTests.jl' can be found ... 

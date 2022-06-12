@@ -27,6 +27,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/technical_vignette.html">Implementation Details</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -54,8 +55,8 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9" id="fwildclusterboot-09">fwildclusterboot 0.9<a class="anchor" aria-label="anchor" href="#fwildclusterboot-09"></a></h2>
-<ul><li><p>v0.9 moves data pre-processing from <code>model.frame</code> methods to <code>model_matrix</code> methods. I had wanted to do so for a while, but issue <a href="">#42</a>, as raised by Michael Topper, has finally convinced me to start this project.</p></li>
+<h2 class="pkg-version" data-toc-text="0.9" id="fwildclusterboot-09">fwildclusterboot 0.9<a class="anchor" aria-label="anchor" href="#fwildclusterboot-09"></a></h2><p class="text-muted">CRAN release: 2022-06-10</p>
+<ul><li><p>v0.9 moves data pre-processing from <code>model.frame</code> methods to <code>model_matrix</code> methods. I had wanted to do so for a while, but issue <a href="https://github.com/s3alfisc/fwildclusterboot/issues/42" class="external-link">#42</a>, as raised by Michael Topper, has finally convinced me to start working on this project.</p></li>
 <li><p>Moving to <code>model_matrix</code> methods unlocks new functionality for how <code><a href="../reference/boottest.html">boottest()</a></code> plays with <code>fixest</code> objects - it is now possible to run <code><a href="../reference/boottest.html">boottest()</a></code> after <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols()</a></code> models that use syntactic sugar:</p></li>
 </ul><pre><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/" class="external-link">fixest</a></span><span class="op">)</span>
