@@ -12,28 +12,28 @@
 #' @srrstats {G1.0} *`boottest()` links to multiple published papers.*
 #' @srrstats {G1.1} *The help files of all boottest methods document that the algorithm is already implemented in the STATA boottest package. The readme and descriptions also point to the WildBootTests.jl implementation.*.
 #' @srrstats {G1.2} *Life Cycle "Maturing".*
-#' @srrstatsTODO {G1.3} *All statistical terminology should be clarified and unambiguously defined.* 
+#' @srrstats {G1.3} *All statistical terminology should be clarified and unambiguously defined.* This is done in an extra vignette. 
 #' @srrstats {G1.4} *`roxygen2` is used throughout the package to document all functions.*
 #' @srrstats {G1.4a} *All internal (non-exported) functions should also be documented in standard [`roxygen2`](https://roxygen2.r-lib.org/) format, along with a final `@noRd` tag to suppress automatic generation of `.Rd` files.* Done.
-#' @srrstatsTODO {G1.5} *Software should include all code necessary to reproduce results which form the basis of performance claims made in associated publications.* 
+#' @srrstatsNA {G1.5} *Software should include all code necessary to reproduce results which form the basis of performance claims made in associated publications.* 
 #' @srrstatsTODO {G1.6} *Software should include code necessary to compare performance claims with alternative implementations in other R packages.* 
-#' @srrstats {G2.0} *Function argument checks are implemented throughout with via the `dreamerr` package.*
-#' @srrstatsTODO {G2.0a} Provide explicit secondary documentation of any expectations on lengths of inputs
-#' @srrstatsTODO {G2.1} *Implement assertions on types of inputs (see the initial point on nomenclature above).*
-#' @srrstatsTODO {G2.1a} *Provide explicit secondary documentation of expectations on data types of all vector inputs.*
-#' @srrstatsTODO {G2.2} *Appropriately prohibit or restrict submission of multivariate input to parameters expected to be univariate.*
-#' @srrstatsTODO {G2.3} *For univariate character input:*
-#' @srrstatsTODO {G2.3a} *Use `match.arg()` or equivalent where applicable to only permit expected values.*
-#' @srrstatsTODO {G2.3b} *Either: use `tolower()` or equivalent to ensure input of character parameters is not case dependent; or explicitly document that parameters are strictly case-sensitive.*
-#' @srrstatsTODO {G2.4} *Provide appropriate mechanisms to convert between different data types, potentially including:*
+#' @srrstats {G2.0} *Function argument checks are implemented throughout with via the `dreamerr` package.* Function values checked via dreamerr.
+#' @srrstats {G2.0a} Provide explicit secondary documentation of any expectations on lengths of inputs
+#' @srrstats {G2.1} *Implement assertions on types of inputs (see the initial point on nomenclature above).*Function values checked via dreamerr.
+#' @srrstats {G2.1a} *Provide explicit secondary documentation of expectations on data types of all vector inputs.*Function values checked via dreamerr.
+#' @srrstats {G2.2} *Appropriately prohibit or restrict submission of multivariate input to parameters expected to be univariate.*Function values checked via dreamerr.
+#' @srrstats {G2.3} *For univariate character input:*Function values checked via dreamerr.
+#' @srrstats {G2.3a} *Use `match.arg()` or equivalent where applicable to only permit expected values.*Function values checked via dreamerr.
+#' @srrstats {G2.3b} *Either: use `tolower()` or equivalent to ensure input of character parameters is not case dependent; or explicitly document that parameters are strictly case-sensitive.*Function values checked via dreamerr.
+#' @srrstats {G2.4} *Provide appropriate mechanisms to convert between different data types, potentially including:*Function values checked via dreamerr.
 #' @srrstats {G2.4a} *explicit conversion to `integer` via `as.integer()`* use custom function `as_integer()`
 #' @srrstatsNA {G2.4b} *explicit conversion to continuous via `as.numeric()`* Does not happen.
-#' @srrstatsTODO {G2.4c} *explicit conversion to character via `as.character()` (and not `paste` or `paste0`)*
+#' @srrstats {G2.4c} *explicit conversion to character via `as.character()` (and not `paste` or `paste0`)* Done
 #' @srrstats {G2.4d} *explicit conversion to factor via `as.factor()`* Yes.
-#' @srrstatsTODO {G2.4e} *explicit conversion from factor via `as...()` functions*
+#' @srrstatsNA {G2.4e} *explicit conversion from factor via `as...()` functions*
 #' @srrstatsNA {G2.5} *Where inputs are expected to be of `factor` type, secondary documentation should explicitly state whether these should be `ordered` or not, and those inputs should provide appropriate error or other routines to ensure inputs follow these expectations.* No input assumed to be of type factor
-#' @srrstatsTODO {G2.6} *Software which accepts one-dimensional input should ensure values are appropriately pre-processed regardless of class structures.* 
-#' @srrstatsTODO {G2.7} *Software should accept as input as many of the above standard tabular forms as possible, including extension to domain-specific forms.* 
+#' @srrstats {G2.6} *Software which accepts one-dimensional input should ensure values are appropriately pre-processed regardless of class structures.* (?) different methods are checked via 'check_methods_equivalence.R'
+#' @srrstats {G2.7} *Software should accept as input as many of the above standard tabular forms as possible, including extension to domain-specific forms.* I think the boottest() interface is rather permissive.
 #' @srrstats {G2.8} *Software should provide appropriate conversion or dispatch routines as part of initial pre-processing to ensure that all other sub-functions of a package receive inputs of a single defined class or type.* all formulas converted to characters, fixed effects converted to factors, cluster variables converterd to characters
 #' @srrstatsNA {G2.9} *Software should issue diagnostic messages for type conversion in which information is lost (such as conversion of variables from factor to character; standardisation of variable names; or removal of meta-data such as those associated with [`sf`-format](https://r-spatial.github.io/sf/) data) or added (such as insertion of variable or column names where none were provided).* Never happens. 
 #' @srrstats {G2.10} *Software should ensure that extraction or filtering of single columns from tabular inputs should not presume any particular default behaviour, and should ensure all column-extraction operations behave consistently regardless of the class of tabular data used as input.* all operations on data.frame include drop = FALSE
