@@ -45,8 +45,11 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
   # note that c("group_id1", NULL) == "group_id1"
   # clustid_mat <- data.frame(preprocess$model_frame[, all_c])
   # names(clustid_mat) <- all_c
-  clustid_mat <- base::as.matrix(sapply(clustid_df, to_integer))
+  #clustid_mat <- base::as.matrix(sapply(clustid_df, to_integer))
 
+  clustid_mat <- Reduce(cbind, lapply(clustid_df, to_integer))
+  colnames(clustid_mat) <- names(clustid_df)
+  
   # `nbootclustvar::Integer=1`: number of bootstrap-clustering variables
   # `nerrclustvar::Integer=nbootclustvar`: number of error-clustering variables
   nbootclustvar <- ifelse(bootcluster == "max", length(clustid), length(bootcluster))

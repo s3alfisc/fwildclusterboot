@@ -7,6 +7,8 @@
 \method{teststat}{boottest}(object, ...)
 }
 \arguments{
+\item{object}{An object of type boottest}
+
 \item{...}{Further arguments passed to or from other methods.}
 }
 \value{
