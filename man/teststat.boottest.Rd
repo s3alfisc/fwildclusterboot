@@ -15,15 +15,3 @@ A vector containing the non-bootstrapped t-statistic calculated in \code{boottes
 \description{
 S3 method to obtain the non-bootstrapped t-statistic calculated via \code{boottest()}
 }
-\examples{
-library(fwildclusterboot)
-data(voters)
-data = voters
-)
-boot1 <- boottest(lm_fit,
-  B = 9999,
- param = "treatment",
-   clustid = "group_id1"
- )
-teststat(boot1)
-}

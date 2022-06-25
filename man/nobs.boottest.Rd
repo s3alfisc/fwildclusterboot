@@ -17,15 +17,3 @@ A scalar containing the effective number of observations used in \code{boottest(
 \description{
 S3 method to obtain the effective number of observation used in \code{boottest()}
 }
-\examples{
-library(fwildclusterboot)
-data(voters)
-data = voters
-)
-boot1 <- boottest(lm_fit,
-  B = 9999,
- param = "treatment",
-   clustid = "group_id1"
- )
-nobs(boot1)
-}

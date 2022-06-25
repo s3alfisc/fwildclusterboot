@@ -375,4 +375,10 @@ test_that("uncategorized tests", {
   expect_equal(boot2$t_stat, boot3$t_stat)
   expect_equal(boot3$t_stat, boot4$t_stat)
   expect_equal(boot4$t_stat, boot1$t_stat)
+  
+  # all NA cluster variables
+  voters$group_id1 <- NA
+  lm_fit <- lm(proposition_vote ~ treatment, data = voters)
+  expect_error(boottest(lm_fit, B = 999, param = "treatment", clustid = "group_id1"))
+  
 })

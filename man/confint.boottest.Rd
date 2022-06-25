@@ -17,15 +17,3 @@ A vector containing the boundaries of the wild cluster bootstrapped confidence i
 \description{
 S3 method to obtain wild cluster bootstrapped confidence intervals
 }
-\examples{
-library(fwildclusterboot)
-data(voters)
-data = voters
-)
-boot1 <- boottest(lm_fit,
-  B = 9999,
- param = "treatment",
-   clustid = "group_id1"
- )
-confint(boot1)
-}

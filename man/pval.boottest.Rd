@@ -17,16 +17,3 @@ A vector containing the boundaries of the wild cluster bootstrapped p-value
 \description{
 S3 method to obtain the wild cluster bootstrapped p-value of an object of type boottest
 }
-\examples{
-library(fwildclusterboot)
-data(voters)
-data = voters
-)
-boot1 <- boottest(lm_fit,
-  B = 9999,
- param = "treatment",
-   clustid = "group_id1"
- )
-pval(boot1)
-
-}

@@ -16,15 +16,3 @@ pval(object, ...)
 \code{pval} is a S3 method to collect pvalues for objects
 of type \code{boottest} and \code{mboottest}
 }
-\examples{
-library(fwildclusterboot)
-data(voters)
-data = voters
-)
-boot1 <- boottest(lm_fit,
-  B = 9999,
- param = "treatment",
-   clustid = "group_id1"
- )
-pval(boot1)
-}
