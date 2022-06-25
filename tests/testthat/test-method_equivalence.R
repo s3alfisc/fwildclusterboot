@@ -1,7 +1,6 @@
 test_that("Do different, but equivalent ways to specify linear models lead to equivalent results?", {
-  
   skip_on_cran()
-  
+
   library(fixest)
   library(lfe)
   # library(fwildclusterboot)
@@ -96,13 +95,12 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
   # one-way clustering
 
   create_models <- function(clustid) {
-    
     R1 <- clubSandwich::constrain_zero(2:3, coefs = coef(lm_fit))
-    #R2 <- clubSandwich::constrain_zero(1:2, coefs = coef(feols_fit6))
+    # R2 <- clubSandwich::constrain_zero(1:2, coefs = coef(feols_fit6))
     R2 <- matrix(c(1, 0, 0, 1, 0, 0), 2, 3)
     R3 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit8))
     R4 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit7))
-    
+
     for (boot_algo in c("R", "WildBootTests.jl")) {
 
       # boottest()
@@ -268,55 +266,53 @@ test_that("Do different, but equivalent ways to specify linear models lead to eq
 
 
 test_that("clustid can be fe", {
-  
   library(fixest)
   library(lfe)
   # library(fwildclusterboot)
-  
+
   print_results <- FALSE
-  
+
   data1 <<- fwildclusterboot:::create_data(N = 10000, N_G1 = 20, icc1 = 0.01, N_G2 = 10, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 71986045)
   sapply(data1, class)
-  
+
   feols_fit1 <- feols(proposition_vote ~ treatment + ideology1 + log_income | group_id1,
-                      data = data1, 
-                      cluster = ~group_id1
+    data = data1,
+    cluster = ~group_id1
   )
-  
+
   felm_fit1 <- felm(proposition_vote ~ treatment + ideology1 + log_income | group_id1,
-                      data = data1
+    data = data1
   )
-  
-  fit1 <- 
-  boottest(
-    feols_fit1, 
-    param = "treatment", 
-    B = 999,
-    clustid = "group_id1",
-    fe = "group_id1", 
-    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
-  )
-  
-  fit2 <- 
+
+  fit1 <-
     boottest(
-      felm_fit1, 
-      param = "treatment", 
+      feols_fit1,
+      param = "treatment",
       B = 999,
       clustid = "group_id1",
       fe = "group_id1",
       ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
     )
-  
+
+  fit2 <-
+    boottest(
+      felm_fit1,
+      param = "treatment",
+      B = 999,
+      clustid = "group_id1",
+      fe = "group_id1",
+      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+    )
+
   expect_equal(
-    fit1$t_stat, 
-    tstat(feols_fit1, ssc = ssc(adj = FALSE, cluster.adj = FALSE))["treatment"], 
+    fit1$t_stat,
+    tstat(feols_fit1, ssc = ssc(adj = FALSE, cluster.adj = FALSE))["treatment"],
     ignore_attr = TRUE
   )
-  
+
   expect_equal(
-    fit2$t_stat, 
-    tstat(feols_fit1, ssc = ssc(adj = FALSE, cluster.adj = FALSE))["treatment"], 
+    fit2$t_stat,
+    tstat(feols_fit1, ssc = ssc(adj = FALSE, cluster.adj = FALSE))["treatment"],
     ignore_attr = TRUE
   )
-  
 })

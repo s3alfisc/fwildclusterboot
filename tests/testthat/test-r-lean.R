@@ -1,5 +1,4 @@
 test_that("test lean cpp boottest", {
-  
   set.seed(9809873)
   library(fixest)
   library(lfe)
@@ -36,7 +35,7 @@ test_that("test lean cpp boottest", {
     B = 999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1,
-    seed = 1, 
+    seed = 1,
     type = "webb"
   )
   boot_lm2 <- boottest(lm_fit,
@@ -44,7 +43,7 @@ test_that("test lean cpp boottest", {
     B = 999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1,
-    seed = 2, 
+    seed = 2,
     type = "webb"
   )
 

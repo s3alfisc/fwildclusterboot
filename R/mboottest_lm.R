@@ -15,7 +15,7 @@
 #'        even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
 #'        Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
 #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.
-#' @param seed An integer. Allows to set a random seed. For details, see below.  
+#' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
 #' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
@@ -69,16 +69,16 @@
 #' \item{boot_algo}{The employed bootstrap algorithm.}
 #' \item{nthreads}{The number of threads employed.}
 #' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.}
-#' 
+#'
 #' @export
 #' @method mboottest lm
-#' 
-#' @section Setting Seeds: 
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
-#' set a global random seed via 
+#'
+#' @section Setting Seeds:
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or
+#' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the heteroskedastic wild bootstrap 
-#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the heteroskedastic wild bootstrap
+#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or
 #'    3) `boot_algo = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
 #'
@@ -135,13 +135,13 @@ mboottest.lm <- function(object,
                          ...) {
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
-  
+
   check_arg(object, "MBT class(lm)")
-  
+
   check_arg(clustid, "character scalar | character vector | formula")
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric matrix")
-  
+
   check_arg(seed, "scalar integer | NULL")
   check_arg(r, "numeric vector  | NULL")
   check_arg(bootcluster, "character vector | formula")
@@ -155,44 +155,44 @@ mboottest.lm <- function(object,
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(teststat_boot, "logical scalar")
-  
-  if(inherits(clustid, "formula")){
+
+  if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-  
-  if(inherits(bootcluster, "formula")){
+
+  if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-  
+
   internal_seed <- set_seed(
-    seed = seed, 
-    boot_algo = "WildBootTests.jl", 
+    seed = seed,
+    boot_algo = "WildBootTests.jl",
     type = type
   )
-  
-  
+
+
   if (ssc[["fixef.K"]] != "none" || ssc[["cluster.df"]] != "conventional") {
     message(paste("Currently, boottest() only supports fixef.K = 'none' and cluster.df = 'conventional'."))
   }
-  
+
   check_mboottest_args_plus(
     object = object,
     R = R,
     r = r,
     fe = NULL
   )
-  
-  
+
+
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess2.lm(
-    object = object, 
-    clustid = clustid, 
-    R = R, 
-    param = NULL, 
-    bootcluster = bootcluster, 
+    object = object,
+    clustid = clustid,
+    R = R,
+    param = NULL,
+    bootcluster = bootcluster,
     boot_algo = "WildBootTests.jl"
   )
-  
+
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -202,16 +202,16 @@ mboottest.lm <- function(object,
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-  
+
   julia_ssc <- get_ssc_julia(ssc)
   small <- julia_ssc$small
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
-  
+
   if (ssc[["fixef.K"]] != "none") {
     message(paste("Currently, boottest() only supports fixef.K = 'none'."))
   }
-  
+
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -233,12 +233,12 @@ mboottest.lm <- function(object,
     maxmatsize = maxmatsize,
     # fweights = 1L,
     small = small,
-    clusteradj = clusteradj, 
+    clusteradj = clusteradj,
     clustermin = clustermin,
     fe = NULL,
     fedfadj = 0L
   )
-  
+
   # collect results
   res_final <- list(
     p_val = res$p_val,
@@ -253,12 +253,12 @@ mboottest.lm <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    boot_algo = "WildBootTests.jl", 
+    boot_algo = "WildBootTests.jl",
     internal_seed = internal_seed
   )
-  
-  
+
+
   class(res_final) <- "mboottest"
-  
+
   invisible(res_final)
 }

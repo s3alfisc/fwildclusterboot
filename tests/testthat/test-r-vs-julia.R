@@ -1,5 +1,4 @@
 test_that("test r against Julia I: stochastic tests", {
-
   skip_on_cran()
   # if not skipped, codecov fails after ~6h
   skip_on_ci()
@@ -171,7 +170,7 @@ test_that("test r against Julia I: stochastic tests", {
           # test subcluster bootstrap
 
 
-          if(p_val_type %in% c("two-tailed", "equal-tailed")){
+          if (p_val_type %in% c("two-tailed", "equal-tailed")) {
             # bootcluster variable not in clustid 1
             boot_r <- suppressWarnings(
               boottest(
@@ -199,18 +198,18 @@ test_that("test r against Julia I: stochastic tests", {
 
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
-            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+            if (p_val_type %in% c("two-tailed", "equal-tailed")) {
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
 
             # bootcluster variable not in clustid 2
             # currently: bug in fwildclusterboot when not all bootcluster variables \in clustid OR specified in lm() (e.g. drop Q2_defense from lm_fit -> error)
             boot_r <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "year"), B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type))
-            boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "year"),B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type))
+            boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = "group_id1", bootcluster = c("group_id1", "year"), B = 19999, param = "treatment", type = "rademacher", p_val_type = p_val_type))
 
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
-            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+            if (p_val_type %in% c("two-tailed", "equal-tailed")) {
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
 
@@ -241,7 +240,7 @@ test_that("test r against Julia I: stochastic tests", {
 
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
-            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+            if (p_val_type %in% c("two-tailed", "equal-tailed")) {
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
 
@@ -272,7 +271,7 @@ test_that("test r against Julia I: stochastic tests", {
 
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
-            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+            if (p_val_type %in% c("two-tailed", "equal-tailed")) {
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
 
@@ -304,21 +303,20 @@ test_that("test r against Julia I: stochastic tests", {
 
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
-            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+            if (p_val_type %in% c("two-tailed", "equal-tailed")) {
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
 
             # clustid variale not in bootcluster & bootcluster variable not in clustid
 
             boot_r <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"), B = 499999, param = "treatment"))
-            boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"),B = 499999, param = "treatment"))
+            boot_jl1 <- suppressWarnings(boottest(lm_fit, clustid = c("group_id1", "group_id2"), bootcluster = c("group_id1"), B = 499999, param = "treatment"))
 
             expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
             expect_equal(boot_r$t_stat, boot_jl1$t_stat)
-            if(p_val_type %in% c("two-tailed", "equal-tailed")){
+            if (p_val_type %in% c("two-tailed", "equal-tailed")) {
               expect_equal(boot_r$conf_int, boot_jl1$conf_int, tolerance = reltol)
             }
-
           }
         }
       }

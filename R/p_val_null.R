@@ -57,9 +57,9 @@ p_val_null2 <- function(r, A, B, CC, CD, DD, clustid, boot_iter, small_sample_co
 
 
   p_val <- get_bootstrap_pvalue(
-    p_val_type = p_val_type, 
-    t_stat = t_stat, 
-    t_boot= t_boot
+    p_val_type = p_val_type,
+    t_stat = t_stat,
+    t_boot = t_boot
   )
 
   res <- list(

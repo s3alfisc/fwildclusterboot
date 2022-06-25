@@ -23,7 +23,7 @@ tidy.boottest <- function(object, ...) {
   statistic <- object$t_stat
   p.value <- object$p_val
   # std.error <- NA
-  if(!is.null(object$conf_int)){
+  if (!is.null(object$conf_int)) {
     conf.low <- object$conf_int[1]
     conf.high <- object$conf_int[2]
   } else {
@@ -117,7 +117,7 @@ plot.boottest <- function(x, ...) {
   stopifnot(inherits(x, "boottest"))
   dreamerr::validate_dots(stop = TRUE)
 
-  if(is.null(x$conf_int)){
+  if (is.null(x$conf_int)) {
     stop("No plot method if boottest()'s function argument 'conf_int = FALSE'.")
   }
   test_vals <- x$grid_vals
@@ -146,5 +146,4 @@ glance.boottest <- function(x, ...) {
 
   stopifnot(inherits(x, "boottest"))
   broom::glance(eval(x$call$object))
-  
 }

@@ -60,7 +60,7 @@ check_set_nthreads <- function(nthreads) {
 
   dreamerr::check_value(nthreads, "integer scalar GE{0} | numeric scalar GT{0} LT{1}", .message = paste0("The argument 'nthreads' must be an integer lower or equal to the number of threads available (", max(cpp_get_nb_threads(), 1), "). It can be equal to 0 which means all threads. Alternatively, if equal to a number strictly between 0 and 1, it represents the fraction of all threads to be used."))
 
-  #max_threads <- parallel::detectCores()
+  # max_threads <- parallel::detectCores()
   max_threads <- cpp_get_nb_threads()
   # cat("max_threads \n")
   # print(max_threads)

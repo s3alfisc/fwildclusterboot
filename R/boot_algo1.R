@@ -112,9 +112,9 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   t_boot <- boot_res[selector, 2:(boot_iter + 1)]
 
   p_val <- get_bootstrap_pvalue(
-    p_val_type = p_val_type, 
-    t_stat = t_stat, 
-    t_boot= t_boot
+    p_val_type = p_val_type,
+    t_stat = t_stat,
+    t_boot = t_boot
   )
 
   res <- list(

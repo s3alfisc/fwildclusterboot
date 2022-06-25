@@ -18,7 +18,7 @@
 #' @param fe A character vector or rhs formula of length one which contains the name of the fixed effect to be projected
 #'        out in the bootstrap. Note: if regression weights are used, fe
 #'        needs to be NULL.
-#' @param seed An integer. Allows to set a random seed. For details, see below.  
+#' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of coefficients. Must be either a vector of length k or a matrix of dimension q x k, where q is the number
 #'        of joint hypotheses and k the number of estimated coefficients.
 #' @param r A vector of length q, where q is the number of tested hypotheses. Shifts the null hypothesis
@@ -76,16 +76,16 @@
 #' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.}
 
 #' @export
-#' 
-#' @section Setting Seeds: 
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
-#' set a global random seed via 
+#'
+#' @section Setting Seeds:
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or
+#' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the heteroskedastic wild bootstrap 
-#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the heteroskedastic wild bootstrap
+#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or
 #'    3) `boot_algo = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
-#' 
+#'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
 #'             (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
@@ -143,9 +143,9 @@ mboottest.felm <- function(object,
                            ),
                            ...) {
   call <- match.call()
-  
+
   dreamerr::validate_dots(stop = TRUE)
-  
+
   # Step 1: check arguments of feols call
   check_arg(object, "MBT class(felm)")
   check_arg(clustid, "character scalar | character vector | formula")
@@ -163,44 +163,44 @@ mboottest.felm <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   check_arg(teststat_boot, "logical scalar")
-  
-  if(inherits(clustid, "formula")){
+
+  if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-  
-  if(inherits(bootcluster, "formula")){
+
+  if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-  
-  if(inherits(fe, "formula")){
+
+  if (inherits(fe, "formula")) {
     fe <- attr(terms(fe), "term.labels")
   }
-  
+
   internal_seed <- set_seed(
-    seed = seed, 
-    boot_algo = "WildBootTests.jl", 
+    seed = seed,
+    boot_algo = "WildBootTests.jl",
     type = type
   )
-  
+
   check_mboottest_args_plus(
     object = object,
     R = R,
-    r = r, 
+    r = r,
     fe = fe
   )
-  
+
   fedfadj <- 0L
-  
+
   preprocess <- preprocess2.felm(
-    object = object, 
-    clustid = clustid, 
-    R = R, 
-    param = NULL, 
-    bootcluster = bootcluster, 
-    fe = fe, 
+    object = object,
+    clustid = clustid,
+    R = R,
+    param = NULL,
+    bootcluster = bootcluster,
+    fe = fe,
     boot_algo = "WildBootTests.jl"
   )
-  
+
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -208,19 +208,19 @@ mboottest.felm <- function(object,
       type = type,
       boot_algo = "WildBootTests.jl"
     )
-  
+
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-  
+
   julia_ssc <- get_ssc_julia(ssc)
   small <- julia_ssc$small
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
-  
+
   if (ssc[["fixef.K"]] != "none") {
     message(paste("Currently, boottest() only supports fixef.K = 'none'."))
   }
-  
+
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -242,7 +242,7 @@ mboottest.felm <- function(object,
     maxmatsize = maxmatsize,
     # fweights = 1L,
     small = small,
-    clusteradj = clusteradj, 
+    clusteradj = clusteradj,
     clustermin = clustermin,
     fe = fe,
     fedfadj = fedfadj
@@ -264,11 +264,11 @@ mboottest.felm <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    boot_algo = "WildBootTests.jl", 
+    boot_algo = "WildBootTests.jl",
     internal_seed = internal_seed
   )
-  
+
   class(res_final) <- "mboottest"
-  
+
   invisible(res_final)
 }

@@ -1,8 +1,7 @@
 test_that("uncategorized tests", {
-  
   skip_on_cran()
   library(fixest)
-  
+
   # see this issue: https://github.com/s3alfisc/fwildclusterboot/issues/26
 
   data1 <<- fwildclusterboot:::create_data(N = 500, N_G1 = 6, icc1 = 0.01, N_G2 = 4, icc2 = 0.01, numb_fe1 = 10, numb_fe2 = 10, seed = 9865)
@@ -141,7 +140,7 @@ test_that("uncategorized tests", {
       bootcluster = "min",
       seed = 123
     ))
-  
+
   expect_equal(boot1$t_stat, boot2$t_stat)
   expect_equal(boot2$t_stat, boot3$t_stat)
   expect_equal(boot3$t_stat, boot4$t_stat)
@@ -285,16 +284,16 @@ test_that("uncategorized tests", {
       param = "treatment",
       bootcluster = "min"
     ))
-  
+
   expect_error(
-    #boot2 <-
-    tmp <- 
-    suppressWarnings(boottest(feols_fit_2,
-      clustid = c("Q1_immigration"),
-      B = 9999,
-      param = "treatment",
-      bootcluster = "min"
-    ))
+    # boot2 <-
+    tmp <-
+      suppressWarnings(boottest(feols_fit_2,
+        clustid = c("Q1_immigration"),
+        B = 9999,
+        param = "treatment",
+        bootcluster = "min"
+      ))
   )
   boot3 <-
     suppressWarnings(boottest(lfe_fit,
@@ -304,13 +303,13 @@ test_that("uncategorized tests", {
       bootcluster = "min"
     ))
   expect_error(
-    #boot4 <-
-      suppressWarnings(boottest(lfe_fit_2,
-        clustid = c("Q1_immigration"),
-        B = 9999,
-        param = "treatment",
-        bootcluster = "min"
-      ))
+    # boot4 <-
+    suppressWarnings(boottest(lfe_fit_2,
+      clustid = c("Q1_immigration"),
+      B = 9999,
+      param = "treatment",
+      bootcluster = "min"
+    ))
   )
 
   expect_equal(boot1$t_stat, boot3$t_stat)
@@ -375,10 +374,9 @@ test_that("uncategorized tests", {
   expect_equal(boot2$t_stat, boot3$t_stat)
   expect_equal(boot3$t_stat, boot4$t_stat)
   expect_equal(boot4$t_stat, boot1$t_stat)
-  
+
   # all NA cluster variables
   voters$group_id1 <- NA
   lm_fit <- lm(proposition_vote ~ treatment, data = voters)
   expect_error(boottest(lm_fit, B = 999, param = "treatment", clustid = "group_id1"))
-  
 })

@@ -6,8 +6,8 @@
 #' implemented in the STATA package `boottest`.
 #'
 #' @param object An object of class fixest and estimated via `fixest::feols()`. Non-linear models are not supported.
-#' @param clustid A character vector or rhs formula containing the names of the cluster variables. If NULL, 
-#'        a heteroskedasticity-robust (HC1) wild bootstrap is run. 
+#' @param clustid A character vector or rhs formula containing the names of the cluster variables. If NULL,
+#'        a heteroskedasticity-robust (HC1) wild bootstrap is run.
 #' @param param A character vector or rhs formula. The name of the regression
 #'        coefficient(s) for which the hypothesis is to be tested
 #' @param B Integer. The number of bootstrap iterations. When the number of clusters is low,
@@ -29,11 +29,11 @@
 #'        intervals by test inversion. If FALSE, only the p-value is returned.
 #' @param boot_algo Character scalar. Either "R" or "WildBootTests.jl". Controls the algorithm employed by boottest().
 #'                  "R" is the default and implements the cluster bootstrap as in Roodman (2019). "WildBootTests.jl" executes the wild cluster bootstrap via the WildBootTests.jl
-#'                  package. For it to run, Julia and WildBootTests.jl need to be installed. 
+#'                  package. For it to run, Julia and WildBootTests.jl need to be installed.
 #                   The "R-lean" algorithm is a memory friendly, but less performant rcpp-armadillo based implementation of the wild cluster bootstrap.
 #'                  Note that if no cluster is provided, boottest() always defaults to the "lean" algorithm. You can set the employed algorithm globally by using the
 #'                  `setBoottest_boot_algo()` function.
-#' @param seed An integer. Allows to set a random seed. For details, see below.  
+#' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
@@ -98,19 +98,19 @@
 #' \item{boot_algo}{The employed bootstrap algorithm.}
 #' \item{nthreads}{The number of threads employed.}
 #' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.}
-#' 
+#'
 #' @export
 #' @method boottest fixest
-#' 
-#' @section Setting Seeds: 
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
-#' set a global random seed via 
+#'
+#' @section Setting Seeds:
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or
+#' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the heteroskedastic wild bootstrap 
-#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the heteroskedastic wild bootstrap
+#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or
 #'    3) `boot_algo = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
-#' 
+#'
 #' @section Confidence Intervals:
 #' \code{boottest} computes confidence intervals by inverting p-values.
 #'       In practice, the following procedure is used:
@@ -184,13 +184,13 @@
 #'     R = c(1, 1),
 #'     r = 2
 #'   )
-#' summary(boot1)
-#' print(boot1)
-#' plot(boot1)
-#' nobs(boot1)
-#' pval(boot1)
-#' confint(boot1)
-#' generics::tidy(boot1)
+#'   summary(boot1)
+#'   print(boot1)
+#'   plot(boot1)
+#'   nobs(boot1)
+#'   pval(boot1)
+#'   confint(boot1)
+#'   generics::tidy(boot1)
 #' }
 #' }
 #'
@@ -205,7 +205,7 @@ boottest.fixest <- function(object,
                             seed = NULL,
                             R = NULL,
                             r = 0,
-                            beta0 = NULL, 
+                            beta0 = NULL,
                             type = "rademacher",
                             impose_null = TRUE,
                             p_val_type = "two-tailed",
@@ -253,29 +253,29 @@ boottest.fixest <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
 
-  if(!is.null(beta0)){
+  if (!is.null(beta0)) {
     stop("The function argument 'beta0' is deprecated. Please use the function argument 'r' instead, by which it is replaced.")
   }
-  
-  if(inherits(clustid, "formula")){
+
+  if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-  
-  if(inherits(bootcluster, "formula")){
+
+  if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-  
-  if(inherits(param, "formula")){
+
+  if (inherits(param, "formula")) {
     param <- attr(terms(param), "term.labels")
   }
-  
-  if(inherits(fe, "formula")){
+
+  if (inherits(fe, "formula")) {
     fe <- attr(terms(fe), "term.labels")
   }
-  
+
   internal_seed <- set_seed(
-    seed = seed, 
-    boot_algo = boot_algo, 
+    seed = seed,
+    boot_algo = boot_algo,
     type = type
   )
 
@@ -324,15 +324,15 @@ boottest.fixest <- function(object,
     B = B,
     fe = fe
   )
-  
+
   # preprocess the data: Y, X, weights, fixed_effect
   preprocess <- preprocess2.fixest(
-    object = object, 
-    clustid = clustid, 
-    R = R, 
-    param = param, 
-    bootcluster = bootcluster, 
-    fe = fe, 
+    object = object,
+    clustid = clustid,
+    R = R,
+    param = param,
+    bootcluster = bootcluster,
+    fe = fe,
     boot_algo = boot_algo
   )
 
@@ -351,12 +351,12 @@ boottest.fixest <- function(object,
   k <- preprocess$k
   G <- vapply(preprocess$clustid, function(x) length(unique(x)), numeric(1))
   vcov_sign <- preprocess$vcov_sign
-  
+
   small_sample_correction <- get_ssc(boot_ssc_object = ssc, N = N, k = k, G = G, vcov_sign = vcov_sign, heteroskedastic = heteroskedastic)
-  
-  #clustermin, clusteradj
-  
-  
+
+  # clustermin, clusteradj
+
+
   clustid_dims <- preprocess$clustid_dims
   # R*beta;
   point_estimate <- as.vector(object$coefficients[param] %*% preprocess$R0[param])
@@ -382,13 +382,12 @@ boottest.fixest <- function(object,
       tol = tol
     )
   } else if (boot_algo == "R-lean") {
-    
     check_r_lean(
       weights = stats::weights(object),
-      clustid = clustid, 
+      clustid = clustid,
       fe = fe
     )
-    
+
     res <- boot_algo1(
       preprocessed_object = preprocess,
       boot_iter = B,
@@ -414,7 +413,7 @@ boottest.fixest <- function(object,
     small <- julia_ssc$small
     clusteradj <- julia_ssc$clusteradj
     clustermin <- julia_ssc$clustermin
-    
+
     if (ssc[["fixef.K"]] != "none") {
       message(paste("Currently, boottest() only supports fixef.K = 'none'."))
     }
@@ -440,7 +439,7 @@ boottest.fixest <- function(object,
       maxmatsize = maxmatsize,
       # fweights = 1L,
       small = small,
-      clusteradj = clusteradj, 
+      clusteradj = clusteradj,
       clustermin = clustermin,
       fe = fe,
       fedfadj = fedfadj
@@ -470,7 +469,7 @@ boottest.fixest <- function(object,
     R = R,
     r = r,
     boot_algo = boot_algo,
-    nthreads = nthreads, 
+    nthreads = nthreads,
     internal_seed = internal_seed
   )
 

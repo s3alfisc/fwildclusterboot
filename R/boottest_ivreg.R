@@ -23,7 +23,7 @@
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
 #' @param conf_int A logical vector. If TRUE, boottest computes confidence
 #'        intervals by test inversion. If FALSE, only the p-value is returned.
-#' @param seed An integer. Allows to set a random seed. For details, see below.  
+#' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as `param`. If NULL, a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
@@ -88,15 +88,15 @@
 #' \item{internal_seed}{The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.}
 #' @export
 #'
-#' @section Setting Seeds: 
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
-#' set a global random seed via 
+#' @section Setting Seeds:
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or
+#' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the heteroskedastic wild bootstrap 
-#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the heteroskedastic wild bootstrap
+#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or
 #'    3) `boot_algo = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
-#' 
+#'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
 #'             (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
@@ -129,13 +129,13 @@
 #'   type = "mammen",
 #'   impose_null = TRUE
 #' )
-#'   summary(boot_ivreg)
-#'   print(boot_ivreg)
-#'   plot(boot_ivreg)
-#'   nobs(boot_ivreg)
-#'   pval(boot_ivreg)
-#'   confint(boot_ivreg)
-#'   generics::tidy(boot_ivreg)
+#' summary(boot_ivreg)
+#' print(boot_ivreg)
+#' plot(boot_ivreg)
+#' nobs(boot_ivreg)
+#' pval(boot_ivreg)
+#' confint(boot_ivreg)
+#' generics::tidy(boot_ivreg)
 #' }
 #'
 boottest.ivreg <- function(object,
@@ -199,24 +199,24 @@ boottest.ivreg <- function(object,
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
 
 
-  if(inherits(clustid, "formula")){
+  if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-  
-  if(inherits(bootcluster, "formula")){
+
+  if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-  
-  if(inherits(param, "formula")){
+
+  if (inherits(param, "formula")) {
     param <- attr(terms(param), "term.labels")
   }
 
   # set random seed
   internal_seed <- set_seed(
-    seed = seed, 
-    boot_algo = "WildBootTests.jl", 
+    seed = seed,
+    boot_algo = "WildBootTests.jl",
     type = type
-  )  
+  )
   # translate ssc into small_sample_adjustment
   if (ssc[["adj"]] == TRUE && ssc[["cluster.adj"]] == TRUE) {
     small_sample_adjustment <- TRUE
@@ -252,11 +252,11 @@ boottest.ivreg <- function(object,
 
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess2.ivreg(
-    object = object, 
-    clustid = clustid, 
-    R = R, 
-    param = param, 
-    bootcluster = bootcluster, 
+    object = object,
+    clustid = clustid,
+    R = R,
+    param = param,
+    bootcluster = bootcluster,
     boot_algo = "WildBootTests.jl"
   )
   enumerate <-
@@ -276,7 +276,7 @@ boottest.ivreg <- function(object,
   small <- julia_ssc$small
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
-  
+
   if (ssc[["fixef.K"]] != "none") {
     message(paste("Currently, boottest() only supports fixef.K = 'none'."))
   }
@@ -302,7 +302,7 @@ boottest.ivreg <- function(object,
     maxmatsize = maxmatsize,
     # fweights = 1L,
     small = small,
-    clusteradj = clusteradj, 
+    clusteradj = clusteradj,
     clustermin = clustermin,
     fe = NULL,
     fedfadj = NULL
@@ -330,7 +330,7 @@ boottest.ivreg <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    boot_algo = "WildBootTests.jl", 
+    boot_algo = "WildBootTests.jl",
     internal_seed = internal_seed
   )
 

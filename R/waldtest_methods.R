@@ -82,4 +82,3 @@ summary.mboottest <- function(object, digits = 3, ...) {
 
   tidy(object)
 }
-

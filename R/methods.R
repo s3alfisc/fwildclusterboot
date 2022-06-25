@@ -11,12 +11,12 @@
 #' @seealso \link[fwildclusterboot]{boottest.lm}, \link[fwildclusterboot]{boottest.fixest}, \link[fwildclusterboot]{boottest.felm}, \link[fwildclusterboot]{boottest.ivreg}
 #'
 #' @export
-#' 
-#' @section Setting Seeds: 
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
-#' set a global random seed via 
+#'
+#' @section Setting Seeds:
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or
+#' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`), 2) the heteroskedastic wild bootstrap 
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`), 2) the heteroskedastic wild bootstrap
 #'    3) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 4) `boot_algo = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
 #'
@@ -50,14 +50,14 @@ boottest <- function(object,
 #'
 #' @export
 #'
-#' @section Setting Seeds: 
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or 
-#' set a global random seed via 
+#' @section Setting Seeds:
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed` function argument, or
+#' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`), 2) the heteroskedastic wild bootstrap 
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`), 2) the heteroskedastic wild bootstrap
 #'    3) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or 4) `boot_algo = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb or Normal weights
-#' 
+#'
 #' @return An object of class \code{mboottest}.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
@@ -72,7 +72,7 @@ mboottest <- function(object,
   UseMethod("mboottest")
 }
 
-#' `pval` is a S3 method to collect pvalues for objects 
+#' `pval` is a S3 method to collect pvalues for objects
 #' of type `boottest` and `mboottest`
 #'
 #' @param object An object of type lm, fixest, felm or ivreg
@@ -81,11 +81,11 @@ mboottest <- function(object,
 #' @export
 
 pval <- function(object,
-                    ...) {
+                 ...) {
   UseMethod("pval")
 }
 
-#' `teststat` is a S3 method to collect teststats for objects 
+#' `teststat` is a S3 method to collect teststats for objects
 #' of type `boottest` and `mboottest`
 #'
 #' @param object An object of type lm, fixest, felm or ivreg
@@ -94,7 +94,7 @@ pval <- function(object,
 #' @export
 
 teststat <- function(object,
-                 ...) {
+                     ...) {
   UseMethod("teststat")
 }
 
@@ -105,12 +105,10 @@ teststat <- function(object,
 #' @method confint boottest
 #' @return A vector containing the boundaries of the wild cluster bootstrapped confidence interval
 
-confint.boottest <- function(object, ...){
-  
+confint.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
 
   object$conf_int
-
 }
 
 #' S3 method to obtain the wild cluster bootstrapped p-value of an object of type boottest
@@ -120,27 +118,23 @@ confint.boottest <- function(object, ...){
 #' @method pval boottest
 #' @return A vector containing the boundaries of the wild cluster bootstrapped p-value
 
-pval.boottest <- function(object, ...){
-  
+pval.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
-  
+
   object$p_val
-  
 }
 
-#' S3 method to obtain the non-bootstrapped t-statistic calculated via `boottest()` 
+#' S3 method to obtain the non-bootstrapped t-statistic calculated via `boottest()`
 #' @param object An object of type boottest
 #' @param ... Further arguments passed to or from other methods.
 #' @export
 #' @method teststat boottest
 #' @return A vector containing the non-bootstrapped t-statistic calculated in `boottest()`
 
-teststat.boottest <- function(object, ...){
-  
+teststat.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
-  
+
   object$t_stat
-  
 }
 
 
@@ -152,12 +146,10 @@ teststat.boottest <- function(object, ...){
 #' @return A scalar containing the effective number of observations used in `boottest()`
 
 
-nobs.boottest <- function(object, ...){
-
+nobs.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
 
   object$N
-
 }
 
 
@@ -168,27 +160,23 @@ nobs.boottest <- function(object, ...){
 #' @method pval mboottest
 #' @return A vector containing the boundaries of the wild cluster bootstrapped p-value
 #'
-pval.mboottest <- function(object, ...){
-  
+pval.mboottest <- function(object, ...) {
   stopifnot(inherits(object, "mboottest"))
-  
+
   object$p_val
-  
 }
 
-#' S3 method to obtain the non-bootstrapped test statistic calculated via `mboottest()` 
+#' S3 method to obtain the non-bootstrapped test statistic calculated via `mboottest()`
 #' @param object An object of type 'mboottest'
 #' @param ... Further arguments passed to or from other methods.
 #' @export
 #' @method teststat mboottest
 #' @return A vector containing the non-bootstrapped t-statistic calculated in `mboottest()`
 #'
-teststat.mboottest <- function(object, ...){
-  
+teststat.mboottest <- function(object, ...) {
   stopifnot(inherits(object, "mboottest"))
-  
+
   object$teststat
-  
 }
 
 
@@ -199,12 +187,10 @@ teststat.mboottest <- function(object, ...){
 #' @method nobs mboottest
 #' @return A scalar containing the effective number of observations used in `mboottest()`
 
-nobs.mboottest <- function(object, ...){
-  
+nobs.mboottest <- function(object, ...) {
   stopifnot(inherits(object, "mboottest"))
-  
+
   object$N
-  
 }
 
 
@@ -216,20 +202,20 @@ nobs.mboottest <- function(object, ...){
 #' @method print boottest
 #' @return A scalar containing the effective number of observations used in `mboottest`
 
-print.boottest <- function(x, ..., digits = 4){
-  
+print.boottest <- function(x, ..., digits = 4) {
   stopifnot(inherits(x, "boottest"))
-  
+
   print(x$call)
   cat("", "\n")
-  
-  vals <- lapply(c("p_val", "conf_int", "t_stat"), 
-                 function(y) round(x[[y]], digits = digits))
-  
+
+  vals <- lapply(
+    c("p_val", "conf_int", "t_stat"),
+    function(y) round(x[[y]], digits = digits)
+  )
+
   cat("p value:", vals[[1]], "\n")
   cat("confidence interval:", vals[[2]], "\n")
   cat("test statistic", vals[[3]], "\n")
-  
 }
 
 
@@ -241,19 +227,17 @@ print.boottest <- function(x, ..., digits = 4){
 #' @method print mboottest
 #' @return A scalar containing the effective number of observations used in `mboottest`
 
-print.mboottest <- function(x, ..., digits = 4){
-  
+print.mboottest <- function(x, ..., digits = 4) {
   stopifnot(inherits(x, "mboottest"))
-  
+
   print(x$call)
   cat("", "\n")
-  
-  vals <- lapply(c("p_val", "teststat"), 
-                 function(y) round(x[[y]], digits = digits))
-  
+
+  vals <- lapply(
+    c("p_val", "teststat"),
+    function(y) round(x[[y]], digits = digits)
+  )
+
   cat("p value:", vals[[1]], "\n")
   cat("test statistic", vals[[2]], "\n")
-  
 }
-
-

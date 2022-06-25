@@ -1,13 +1,12 @@
 boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid, sign_level, conf_int, tol, p_val_type, type,
                             floattype, bootstrapc, getauxweights, fweights, internal_seed, maxmatsize, small, clusteradj, clustermin, fe = NULL, fedfadj = NULL, liml = NULL, arubin = NULL, fuller = NULL, kappa = NULL) {
-  
   resp <- as.numeric(preprocess$Y)
-  
-  if(inherits(preprocess, "iv")){
+
+  if (inherits(preprocess, "iv")) {
     predexog <- preprocess$X_exog
     predendog <- preprocess$X_endog
     inst <- preprocess$instruments
-  } else if(inherits(preprocess, "ols")){
+  } else if (inherits(preprocess, "ols")) {
     predexog <- preprocess$X
   }
 
@@ -24,13 +23,13 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
   # # 2. Variables used to define both bootstrapping and error clusters.
   # # 3. Variables only used to define error clusters.
   # # In the most common case, `clustid` is a single column of type 2.
-  # 
+  #
   # if (length(bootcluster == 1) && bootcluster == "max") {
   #   bootcluster_n <- clustid
   # } else if (length(bootcluster == 1) && bootcluster == "min") {
   #   bootcluster_n <- names(preprocess$N_G[which.min(preprocess$N_G)])
   # }
-  # 
+  #
   # # only bootstrapping cluster: in bootcluster and not in clustid
   # c1 <- bootcluster_n[which(!(bootcluster_n %in% clustid))]
   # # both bootstrapping and error cluster: all variables in clustid that are also in bootcluster
@@ -42,7 +41,7 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
 
   all_c <- preprocess$all_c
   clustid_df <- preprocess$cluster_bootcluster[, all_c, drop = FALSE]
-  
+
   # note that c("group_id1", NULL) == "group_id1"
   # clustid_mat <- data.frame(preprocess$model_frame[, all_c])
   # names(clustid_mat) <- all_c
@@ -100,19 +99,19 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     fweights = FALSE,
     bootstrapc = bootstrapc
   )
-  
-  if(!is.null(internal_seed)){
-    eval_list[["rng"]] <- internal_seed  
+
+  if (!is.null(internal_seed)) {
+    eval_list[["rng"]] <- internal_seed
   }
-  
+
   if (!is.null(small)) {
     eval_list[["small"]] <- small
   }
-  
+
   if (!is.null(clusteradj)) {
     eval_list[["clusteradj"]] <- clusteradj
   }
-  
+
   if (!is.null(clustermin)) {
     eval_list[["clustermin"]] <- clustermin
   }
@@ -126,29 +125,28 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
   if (!is.null(maxmatsize)) {
     eval_list[["maxmatsize"]] <- maxmatsize
   }
-  
-  if(!is.null(sign_level)){
+
+  if (!is.null(sign_level)) {
     eval_list[["level"]] <- 1 - sign_level
   }
 
-  if(inherits(preprocess, "iv")){
-      eval_list[["predendog"]] <- predendog
-      eval_list[["inst"]] <- inst
-      if(!is.null(liml)){
-        eval_list[["liml"]] <- liml
-      }
-      if(!is.null(arubin)){
-        eval_list[["arubin"]] <- arubin
-      }
-      if(!is.null(fuller)){
-        eval_list[["fuller"]] <- fuller
-      }
-      if(!is.null(kappa)){
-        eval_list[["kappa"]] <- kappa
-      }
-      
+  if (inherits(preprocess, "iv")) {
+    eval_list[["predendog"]] <- predendog
+    eval_list[["inst"]] <- inst
+    if (!is.null(liml)) {
+      eval_list[["liml"]] <- liml
+    }
+    if (!is.null(arubin)) {
+      eval_list[["arubin"]] <- arubin
+    }
+    if (!is.null(fuller)) {
+      eval_list[["fuller"]] <- fuller
+    }
+    if (!is.null(kappa)) {
+      eval_list[["kappa"]] <- kappa
+    }
   }
-  
+
   wildboottest_res <- do.call(WildBootTests$wildboottest, eval_list)
 
   # collect results:
@@ -177,8 +175,8 @@ boot_algo_julia <- function(preprocess, impose_null, r, B, bootcluster, clustid,
     t_stat = t_stat,
     t_boot = t_boot,
     auxweights = getauxweights,
-    grid_vals = plotpoints[,1],
-    p_grid_vals = plotpoints[,2]
+    grid_vals = plotpoints[, 1],
+    p_grid_vals = plotpoints[, 2]
   )
 
   res_final
