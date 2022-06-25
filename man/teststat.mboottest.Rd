@@ -7,6 +7,8 @@
 \method{teststat}{mboottest}(object, ...)
 }
 \arguments{
+\item{object}{An object of type 'mboottest'}
+
 \item{...}{Further arguments passed to or from other methods.}
 }
 \value{

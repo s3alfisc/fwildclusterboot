@@ -10,6 +10,8 @@
 \item{x}{object of type boottest}
 
 \item{...}{Further arguments passed to or from other methods.}
+
+\item{digits}{Number of rounding digits}
 }
 \value{
 A scalar containing the effective number of observations used in \code{mboottest}

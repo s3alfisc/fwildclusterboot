@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
 `r badger::badge_cran_download("fwildclusterboot", "grand-total", "blue")`
 `r badger::badge_cran_download("fwildclusterboot", "last-month", "green")`
-<!-- [![minimal R version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/) -->
+[![pkgcheck](https://github.com/<org>/<repo>/workflows/pkgcheck/badge.svg)](https://github.com/<org>/<repo>/actions?query=workflow%3Apkgcheck)
 
 <!-- badges: end -->
 
