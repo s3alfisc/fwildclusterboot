@@ -3,7 +3,7 @@
 #' Inverts the bootstrap p-value and calculates confidence sets
 #'
 #' @param ABCD A list of precomputed objects
-#' @param small_sample_correction
+#' @param small_sample_correction the small sample correction to be applied
 #' @param boot_iter An integer. Number of bootstrap iterations
 #' @param point_estimate A scalar. Point estimate of the coefficient of interest from the regression model
 #' @param se_guess A scalar vector of dimension 2. A guess of the standard error that initiates the p-value inversion.
@@ -20,7 +20,21 @@
 #'         and corresponding p-values used in the grid search.
 #' @noRd
 
-invert_p_val <- function(ABCD, small_sample_correction, boot_iter, point_estimate, se_guess, clustid, sign_level, vcov_sign, impose_null, p_val_type, tol, maxiter) {
+invert_p_val <- function(
+    ABCD, 
+    small_sample_correction,
+    boot_iter, 
+    point_estimate,
+    se_guess, 
+    clustid, 
+    sign_level, 
+    vcov_sign, 
+    impose_null,
+    p_val_type, 
+    tol, 
+    maxiter
+  ) {
+  
   check_arg(point_estimate, "numeric scalar")
   check_arg(se_guess, "numeric scalar")
   check_arg(clustid, "data.frame")
@@ -47,6 +61,10 @@ invert_p_val <- function(ABCD, small_sample_correction, boot_iter, point_estimat
   # function will be used to create grid points, and, based on the results
   # from the grid points, the root finding algorithm
   p_val_null2_x <- function(r, sign_level) {
+    
+    #' @param r Shifts the null hypothesis
+    #' @param sign_level the significance level 
+    #' @noRd
     p_val_null2(r, A = A, B = B, CC = CC, CD = CD, DD = DD, clustid = clustid, boot_iter = boot_iter, small_sample_correction = small_sample_correction, point_estimate = point_estimate, impose_null = impose_null, p_val_type = p_val_type)$p_val - sign_level
   }
 
@@ -72,6 +90,13 @@ invert_p_val <- function(ABCD, small_sample_correction, boot_iter, point_estimat
   # define functions to find boundaries separately
   get_start_vals <- function(point_estimate, se_guess, sign_level,
                              upper) {
+    
+    #' @param point_estimate the point estimate of the model
+    #' @param se_guess A guess for the standard deviation 
+    #' @param sign_level the significance / 1-coverage level of the confidence interval
+    #' @param upper logical. Should the upper or lower starting value be searched for?
+    #' @noRd
+    
     check <- FALSE
     inflate_se <- c(2^(0:100 / 2))
     len_inflate <- length(inflate_se)
