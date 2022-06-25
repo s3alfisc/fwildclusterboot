@@ -129,6 +129,7 @@ pval.boottest <- function(object, ...){
 }
 
 #' S3 method to obtain the non-bootstrapped t-statistic calculated via `boottest()` 
+#' @param object An object of type boottest
 #' @param ... Further arguments passed to or from other methods.
 #' @export
 #' @method teststat boottest
