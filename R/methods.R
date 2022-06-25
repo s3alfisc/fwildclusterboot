@@ -176,6 +176,7 @@ pval.mboottest <- function(object, ...){
 }
 
 #' S3 method to obtain the non-bootstrapped test statistic calculated via `mboottest()` 
+#' @param object An object of type 'mboottest'
 #' @param ... Further arguments passed to or from other methods.
 #' @export
 #' @method teststat mboottest
@@ -209,6 +210,7 @@ nobs.mboottest <- function(object, ...){
 #' S3 method to print key information for objects of type `bboottest`
 #' @param x object of type boottest
 #' @param ... Further arguments passed to or from other methods.
+#' @param digits Number of rounding digits
 #' @export
 #' @method print boottest
 #' @return A scalar containing the effective number of observations used in `mboottest`
@@ -233,6 +235,7 @@ print.boottest <- function(x, ..., digits = 4){
 #' S3 method to print key information for objects of type `mboottest`
 #' @param x object of type mboottest
 #' @param ... Further arguments passed to or from other methods.
+#' @param digits Number of rounding digits
 #' @export
 #' @method print mboottest
 #' @return A scalar containing the effective number of observations used in `mboottest`
