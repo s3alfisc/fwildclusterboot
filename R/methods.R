@@ -166,6 +166,7 @@ confint.boottest <- function(object, ...){
 #'    clustid = "group_id1"
 #'  )
 #' pval(boot1)
+#' 
 pval.boottest <- function(object, ...){
   
   stopifnot(inherits(object, "boottest"))
@@ -272,4 +273,52 @@ nobs.mboottest <- function(object, ...){
   object$N
   
 }
+
+
+#' S3 method to print key information for objects of type `bboottest`
+#' @param x object of type boottest
+#' @param ... Further arguments passed to or from other methods.
+#' @export
+#' @method print boottest
+#' @return A scalar containing the effective number of observations used in `mboottest`
+
+print.boottest <- function(x, ..., digits = 4){
+  
+  stopifnot(inherits(x, "boottest"))
+  
+  print(x$call)
+  cat("", "\n")
+  
+  vals <- lapply(c("p_val", "conf_int", "t_stat"), 
+                 function(y) round(x[[y]], digits = digits))
+  
+  cat("p value:", vals[[1]], "\n")
+  cat("confidence interval:", vals[[2]], "\n")
+  cat("test statistic", vals[[3]], "\n")
+  
+}
+
+
+#' S3 method to print key information for objects of type `mboottest`
+#' @param x object of type mboottest
+#' @param ... Further arguments passed to or from other methods.
+#' @export
+#' @method print mboottest
+#' @return A scalar containing the effective number of observations used in `mboottest`
+
+print.mboottest <- function(x, ..., digits = 4){
+  
+  stopifnot(inherits(x, "mboottest"))
+  
+  print(x$call)
+  cat("", "\n")
+  
+  vals <- lapply(c("p_val", "teststat"), 
+                 function(y) round(x[[y]], digits = digits))
+  
+  cat("p value:", vals[[1]], "\n")
+  cat("test statistic", vals[[2]], "\n")
+  
+}
+
 

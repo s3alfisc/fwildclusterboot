@@ -28,4 +28,5 @@ boot1 <- boottest(lm_fit,
    clustid = "group_id1"
  )
 pval(boot1)
+
 }

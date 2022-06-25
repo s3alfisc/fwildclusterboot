@@ -180,7 +180,13 @@ boot_ivreg <- boottest(
   type = "mammen",
   impose_null = TRUE
 )
-summary(boot_ivreg)
+  summary(boot_ivreg)
+  print(boot_ivreg)
+  plot(boot_ivreg)
+  nobs(boot_ivreg)
+  pval(boot_ivreg)
+  confint(boot_ivreg)
+  generics::tidy(boot_ivreg)
 }
 
 }

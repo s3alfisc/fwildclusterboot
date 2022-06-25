@@ -39,7 +39,6 @@
 #' @srrstats {G2.14a} *see G2.13*
 #' @srrstats {G2.14b} *see G2.13*
 #' @srrstats {G2.14c} *see G2.13*
-#' @srrstatsTODO {G2.16} *All functions should also provide options to handle undefined values (e.g., `NaN`, `Inf` and `-Inf`), including potentially ignoring or removing such values.* 
 #' @srrstats {G3.0} *No floating point numbers (rational numbers) are compared with equality.* Yes, checked.
 #' @srrstats {G3.1} *Statistical software which relies on covariance calculations should enable users to choose between different algorithms for calculating covariances, and should not rely solely on covariances from the `stats::cov` function.* The package deals with "clustered" covariances. Non-clustered tests based on HC1 covariances are also supported.
 #' @srrstats {G3.1a} *The ability to use arbitrarily specified covariance methods should be documented (typically in examples or vignettes).* See above.
@@ -68,21 +67,18 @@
 #' @srrstatsTODO {G5.9b} *Running under different random seeds or initial conditions does not meaningfully change results* 
 #' @srrstatsTODO {G5.10} *Extended tests should included and run under a common framework with other tests but be switched on by flags such as as a `<MYPKG>_EXTENDED_TESTS=1` environment variable.* TO do. Currently, I only run "test-julia-vs-r" locally as codecov fails (these tests take too long).
 #' @srrstats {RE1.0} *Regression Software should enable models to be specified via a formula interface, unless reasons for not doing so are explicitly documented.* key parameters can be specified as character vectors and formulas.
-#' @srrstatsTODO {RE1.1} *Regression Software should document how formula interfaces are converted to matrix representations of input data.* 
-#' @srrstatsTODO {RE1.2} *Regression Software should document expected format (types or classes) for inputting predictor variables, including descriptions of types or classes which are not accepted.* 
-#' @srrstatsTODO {RE1.3} *Regression Software which passes or otherwise transforms aspects of input data onto output structures should ensure that those output structures retain all relevant aspects of input data, notably including row and column names, and potentially information from other `attributes()`.*
-#' @srrstatsTODO {RE1.3a} *Where otherwise relevant information is not transferred, this should be explicitly documented.* 
+#' @srrstats {RE1.1} *Regression Software should document how formula interfaces are converted to matrix representations of input data.* 
 #' @srrstats {RE1.4} *Regression Software should document any assumptions made with regard to input data; for example distributional assumptions, or assumptions that predictor data have mean values of zero. Implications of violations of these assumptions should be both documented and tested.* The bootstrap weight options are described in a separate vignette article. 
-#' @srrstatsTODO {RE2.0} *Regression Software should document any transformations applied to input data, for example conversion of label-values to `factor`, and should provide ways to explicitly avoid any default transformations (with error or warning conditions where appropriate).* Cluster variables and fixed effects are transformed to factors, if required. This is not properly documented.
+#' @srrstats {RE2.0} *Regression Software should document any transformations applied to input data, for example conversion of label-values to `factor`, and should provide ways to explicitly avoid any default transformations (with error or warning conditions where appropriate).* Cluster variables and fixed effects are transformed to factors, if required. This is not properly documented.
 #' @srrstats {RE3.0} *Issue appropriate warnings or other diagnostic messages for models which fail to converge.* Sometimes, the confidence interval inversion might fail - I am not sure if I have written very clear error messages. Confidence interval calculation might need improvements (in terms of code quality) in general - it works, but the code is ugly. 
-#' @srrstatsTODO {RE3.1} *Enable such messages to be optionally suppressed, yet should ensure that the resultant model object nevertheless includes sufficient data to identify lack of convergence.*
+#' @srrstats {RE3.1} *Enable such messages to be optionally suppressed, yet should ensure that the resultant model object nevertheless includes sufficient data to identify lack of convergence.* In my experience, convergence is never a problem, but confidence interval inversion sometimes fails. I suspect that I can improve the error messageas :) 
 #' @srrstats {RE3.2} *Ensure that convergence thresholds have sensible default values, demonstrated through explicit documentation.* The convergence values set for the bisection used to invert p-values to calculate confidence intervals are documented & can be changed by the user. 
 #' @srrstats {RE3.3} *Allow explicit setting of convergence thresholds, unless reasons against doing so are explicitly documented.*  See above.
 #' @srrstats {RE4.0} *Regression Software should return some form of "model" object, generally through using or modifying existing class structures for model objects (such as `lm`, `glm`, or model objects from other packages), or creating a new class of model objects.* Objects of type boottest are returned.
-#' @srrstatsTODO {RE4.3} *Confidence intervals on those coefficients (via `confint()`)*
+#' @srrstats {RE4.3} *Confidence intervals on those coefficients (via `confint()`)* Done for objects of type boottest, not applicable for objects of type mboottest
 #' @srrstats {RE4.4} *The specification of the model, generally as a formula (via `formula()`)* Done as applicable.
 #' @srrstats {RE4.5} *Numbers of observations submitted to model (via `nobs()`)* Done. 
-#' @srrstatsTODO {RE4.17} *Model objects returned by Regression Software should implement or appropriately extend a default `print` method which provides an on-screen summary of model (input) parameters and (output) coefficients.*
+#' @srrstats {RE4.17} *Model objects returned by Regression Software should implement or appropriately extend a default `print` method which provides an on-screen summary of model (input) parameters and (output) coefficients.* Done.
 #' @srrstats {RE4.18} *Regression Software may also implement `summary` methods for model objects, and in particular should implement distinct `summary` methods for any cases in which calculation of summary statistics is computationally non-trivial (for example, for bootstrapped estimates of confidence intervals).* A summary method is implemented.
 #' @srrstats {RE5.0} *Scaling relationships between sizes of input data (numbers of observations, with potential extension to numbers of variables/columns) and speed of algorithm.* 
 #' @srrstats {RE6.0} *Model objects returned by Regression Software (see* **RE4***) should have default `plot` methods, either through explicit implementation, extension of methods for existing model objects, or through ensuring default methods work appropriately.* A default plot method is implemented.
@@ -90,12 +86,6 @@
 #' @srrstats {RE6.2} *The default `plot` method should produce a plot of the `fitted` values of the model, with optional visualisation of confidence intervals or equivalent.* 
 #' @srrstats {RE6.3} *Where a model object is used to generate a forecast (for example, through a `predict()` method), the default `plot` method should provide clear visual distinction between modelled (interpolated) and forecast (extrapolated) values.* 
 #' @srrstats {RE7.0} *Tests with noiseless, exact relationships between predictor (independent) data.*
-#' @srrstatsTODO {RE7.0a} In particular, these tests should confirm ability to reject perfectly noiseless input data.
-#' @srrstatsTODO {RE7.1} *Tests with noiseless, exact relationships between predictor (independent) and response (dependent) data.*
-#' @srrstatsTODO {RE7.1a} *In particular, these tests should confirm that model fitting is at least as fast or (preferably) faster than testing with equivalent noisy data (see RE2.4b).* 
-#' @srrstatsTODO {RE7.2} Demonstrate that output objects retain aspects of input data such as row or case names (see **RE1.3**).
-#' @srrstatsTODO {RE7.3} Demonstrate and test expected behaviour when objects returned from regression software are submitted to the accessor methods of **RE4.2**--**RE4.7**.
-#' @srrstatsTODO {RE7.4} Extending directly from **RE4.15**, where appropriate, tests should demonstrate and confirm that forecast errors, confidence intervals, or equivalent values increase with forecast horizons.
 #' @noRd
 NULL
 
@@ -116,12 +106,16 @@ NULL
 #' @srrstatsNA {G5.12} *Any conditions necessary to run extended tests such as platform requirements, memory, expected runtime, and artefacts produced that may need manual inspection, should be described in developer documentation such as a `CONTRIBUTING.md` or `tests/README.md` file.* There are no particular tests to run, but I should update the tests/readme.md for a potential review.
 #' @srrstatsNA {G5.4a} *For new methods, it can be difficult to separate out correctness of the method from the correctness of the implementation, as there may not be reference for comparison. In this case, testing may be implemented against simple, trivial cases or against multiple implementations such as an initial R implementation compared with results from a C/C++ implementation.*  Code is tested against WildBootTests.jl / fixest::feols().
 #' @srrstatsNA {G5.4c} *Where applicable, stored values may be drawn from published paper outputs when applicable and where code from original implementations is not available* Code is tested against WildBootTests.jl / fixest::feols().
+#' @srrstatsNA {RE1.2} *Regression Software should document expected format (types or classes) for inputting predictor variables, including descriptions of types or classes which are not accepted.* This is handled by the regression package, unless fixed effects are projected out - then boottest() might transform them into factors, if required. 
+#' @srrstatsNA {RE1.3} *Regression Software which passes or otherwise transforms aspects of input data onto output structures should ensure that those output structures retain all relevant aspects of input data, notably including row and column names, and potentially information from other `attributes()`.*
+#' @srrstatsNA {RE1.3a} *Where otherwise relevant information is not transferred, this should be explicitly documented.* 
 #' @srrstatsNA {RE2.1} *Regression Software should implement explicit parameters controlling the processing of missing values, ideally distinguishing `NA` or `NaN` values from `Inf` values (for example, through use of `na.omit()` and related functions from the `stats` package).* All of this should not be handled by fwildclusterboot::boottest() but the initial regression function.
 #' @srrstatsNA {RE2.2} *Regression Software should provide different options for processing missing values in predictor and response data. For example, it should be possible to fit a model with no missing predictor data in order to generate values for all associated response points, even where submitted response values may be missing.* NA as boottest() is not a proper regression package.
 #' @srrstatsNA {RE2.3} *Where applicable, Regression Software should enable data to be centred (for example, through converting to zero-mean equivalent values; or to z-scores) or offset (for example, to zero-intercept equivalent values) via additional parameters, with the effects of any such parameters clearly documented and tested.* If the regression package centers data, boottest() will use the centered data. 
 #' @srrstatsNA {RE2.4} *Regression Software should implement pre-processing routines to identify whether aspects of input data are perfectly collinear, notably including:* 
 #' @srrstatsNA {RE2.4a} *Perfect collinearity among predictor variables* Needs to be done by the regression package.
 #' @srrstatsNA {RE2.4b} *Perfect collinearity between independent and dependent variables*Needs to be done by the regression package.
+#' @srrstatsNA {G2.16} *All functions should also provide options to handle undefined values (e.g., `NaN`, `Inf` and `-Inf`), including potentially ignoring or removing such values.* This is handled by the regression modeling function.
 #' @srrstatsNA {RE4.1} *Regression Software may enable an ability to generate a model object without actually fitting values. This may be useful for controlling batch processing of computationally intensive fitting algorithms.* Not relevant (?)
 #' @srrstatsNA {RE4.2} *Model coefficients (via `coeff()` / `coefficients()`)* As boottest() is concerned with inference, a coef() method does not make sense to me :) 
 #' @srrstatsNA {RE4.6} *The variance-covariance matrix of the model parameters (via `vcov()`)* Inference based on p-values and t-stats, not vcov's.
@@ -135,5 +129,11 @@ NULL
 #' @srrstatsNA {RE4.14} *Where possible, values should also be provided for extrapolation or forecast *errors*.* 
 #' @srrstatsNA {RE4.15} *Sufficient documentation and/or testing should be provided to demonstrate that forecast errors, confidence intervals, or equivalent values increase with forecast horizons.* 
 #' @srrstatsNA {RE4.16} *Regression Software which models distinct responses for different categorical groups should include the ability to submit new groups to `predict()` methods.* 
+#' @srrstatsNA {RE7.0a} In particular, these tests should confirm ability to reject perfectly noiseless input data.
+#' @srrstatsNA {RE7.1} *Tests with noiseless, exact relationships between predictor (independent) and response (dependent) data.*
+#' @srrstatsNA {RE7.1a} *In particular, these tests should confirm that model fitting is at least as fast or (preferably) faster than testing with equivalent noisy data (see RE2.4b).* 
+#' @srrstatsNA {RE7.2} Demonstrate that output objects retain aspects of input data such as row or case names (see **RE1.3**).
+#' @srrstatsNA {RE7.3} Demonstrate and test expected behaviour when objects returned from regression software are submitted to the accessor methods of **RE4.2**--**RE4.7**.
+#' @srrstatsNA {RE7.4} Extending directly from **RE4.15**, where appropriate, tests should demonstrate and confirm that forecast errors, confidence intervals, or equivalent values increase with forecast horizons.
 
 NULL

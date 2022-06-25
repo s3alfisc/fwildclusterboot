@@ -111,6 +111,10 @@
 #'     B = 999,
 #'     R = R
 #'   )
+#' summary(wboottest)
+#' print(wboottest)
+#' nobs(wboottest)
+#' pval(wboottest)
 #' generics::tidy(wboottest)
 #' }
 #'

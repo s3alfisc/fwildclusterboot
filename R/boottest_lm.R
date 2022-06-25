@@ -170,7 +170,12 @@
 #'   r = 2
 #' )
 #' summary(boot1)
+#' print(boot1)
 #' plot(boot1)
+#' nobs(boot1)
+#' pval(boot1)
+#' confint(boot1)
+#' generics::tidy(boot1)
 #' }
 #'
 boottest.lm <- function(object,

@@ -61,8 +61,7 @@ Imports:
     Matrix.utils,
     generics,
     gtools,
-    dqrng, 
-    JuliaConnectoR
+    dqrng
 Suggests: 
     fixest,
     lfe,
@@ -80,8 +79,7 @@ Suggests:
     bench,
     testthat (>= 3.0.0), 
     tibble, 
-    autotest
-Remotes:  ropensci-review-tools/autotest
+    JuliaConnectoR
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
