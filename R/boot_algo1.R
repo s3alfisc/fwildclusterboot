@@ -35,7 +35,6 @@ boot_algo1 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #' @importFrom Matrix.utils aggregate.Matrix
   #' @importFrom collapse fsum GRP
   #' @importFrom stats as.formula coef model.matrix model.response model.weights residuals rlnorm rnorm update
-  #' @importFrom gtools permutations
   #' @importFrom dqrng dqsample dqset.seed
 
   X <- preprocessed_object$X
