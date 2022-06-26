@@ -1,5 +1,5 @@
 ---
-title: "The (wild) cluster bootstrap and Implementation Details"
+title: "The (Wild) Cluster Bootstrap and Implementation Details - Preliminary Draft"
 ---
 
 ```{r, include = FALSE}
@@ -96,7 +96,7 @@ Note that for Rademacher and Mammen weights, only $2^G$ unique draws exist. If G
 The `boottest()` functions in `fwildclusterboot` does not compute standard errors, but it does compute confidence intervals. When I first used Stata's `boottest` command, which also computes confidence intervals, but no standard errors, I was really quite puzzled! How is it possible to compute confidence intervals without computing standard errors? After all, the textbook/cookbook instruction for calculating confidence intervals is to a) calculate a regression coeffiecient $\hat{\beta}$, its associated standard error $\hat{SE}(\beta)$ and then, the CI follows as 
 
 $$
-  [\hat\beta +/- \text{crit. value} + \hat{SE}(\beta)].
+  [\hat\beta +/- \text{crit. value} \times \hat{SE}(\beta)].
 $$
 
 So how is it possible to compute a confidence interval without explicitly computing standard errors? 
@@ -462,4 +462,4 @@ This implies that we can invert the test by computing p-values for different val
 
 ## Details on the implementation in 'WildBootTests.jl'
 
-Details on the implementation of the wild cluster bootstrap in 'WildBootTests.jl' can be found ... 
+Details on the implementation of the wild cluster bootstrap in 'WildBootTests.jl' can be found on [github](https://github.com/droodman/WildBootTests.jl/tree/master/in-case-i-get-hit-by-a-bus).

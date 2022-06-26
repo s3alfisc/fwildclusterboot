@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,7 +27,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/technical_vignette.html">Implementation Details</a>
+    <a class="dropdown-item" href="../articles/technical_vignette.html">The (wild) cluster bootstrap and Implementation Details</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -212,6 +212,16 @@ blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/</dd>
         </dt>
         <dd><code>preprocess2</code> is a S3 method that fetches data from several model
 objectects for use with <code><a href="../reference/boottest.html">boottest()</a></code>.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="print.boottest.html">print(<i>&lt;boottest&gt;</i>)</a></code> 
+        </dt>
+        <dd>S3 method to print key information for objects of type <code>bboottest</code></dd>
+      </dl><dl><dt>
+          
+          <code><a href="print.mboottest.html">print(<i>&lt;mboottest&gt;</i>)</a></code> 
+        </dt>
+        <dd>S3 method to print key information for objects of type <code>mboottest</code></dd>
       </dl><dl><dt>
           
           <code><a href="pval.boottest.html">pval(<i>&lt;boottest&gt;</i>)</a></code> 

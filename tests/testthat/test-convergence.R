@@ -17,9 +17,9 @@ test_that("algorithm performance test", {
     weights = 1:N / N
   )
 
-  mc_res_p <- matrix(NA, 250, 3)
-  mc_res_cl <- matrix(NA, 250, 3)
-  mc_res_cu <- matrix(NA, 250, 3)
+  mc_res_p <- matrix(NA, 250, 2)
+  mc_res_cl <- matrix(NA, 250, 2)
+  mc_res_cu <- matrix(NA, 250, 2)
 
   bootstrap_iter <- c(199, 999)
 
