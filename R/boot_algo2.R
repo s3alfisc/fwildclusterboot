@@ -39,7 +39,6 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #' @importFrom Matrix.utils aggregate.Matrix
   #' @importFrom collapse fsum GRP
   #' @importFrom stats as.formula coef model.matrix model.response model.weights residuals rlnorm rnorm update
-  #' @importFrom gtools permutations
   #' @importFrom dqrng dqsample dqset.seed
 
 
@@ -82,7 +81,7 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   # B exceed number of possible permutations else random sampling
 
   if (type %in% c("rademacher") && full_enumeration == TRUE) {
-    v0 <- gtools::permutations(n = 2, r = N_G_bootcluster, v = c(1, -1), repeats.allowed = TRUE)
+    v0 <- gtools_permutations(n = 2, r = N_G_bootcluster, v = c(1, -1), repeats.allowed = TRUE)
     v <- cbind(1, t(v0))
   } else {
     # else: just draw with replacement - by chance, some permutations

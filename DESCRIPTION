@@ -59,7 +59,6 @@ Imports:
     Matrix,
     Matrix.utils,
     generics,
-    gtools,
     dqrng, 
     JuliaConnectoR
 Suggests: 
