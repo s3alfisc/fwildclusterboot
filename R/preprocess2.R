@@ -692,7 +692,7 @@ get_cluster <- function(object, clustid_char, bootcluster, N, call_env) {
 
   clustid_dims <- length(clustid_char)
 
-  i <- !vapply(cluster, is.numeric, logical(1))
+  i <- !sapply(cluster, is.numeric)
   cluster[i] <- lapply(cluster[i], as.character)
 
   # taken from multiwayvcov::cluster.boot
@@ -701,7 +701,7 @@ get_cluster <- function(object, clustid_char, bootcluster, N, call_env) {
     acc <- append(acc, utils::combn(1:clustid_dims, i, simplify = FALSE))
   }
 
-  vcov_sign <- vapply(acc, function(i) (-1)^(length(i) + 1), numeric(1))
+  vcov_sign <- sapply(acc, function(i) (-1)^(length(i) + 1))
   acc <- acc[-1:-clustid_dims]
 
   if (clustid_dims > 1) {
