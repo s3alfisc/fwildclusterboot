@@ -21,7 +21,7 @@ test_that("algorithm performance test", {
   mc_res_cl <- matrix(NA, 250, 3)
   mc_res_cu <- matrix(NA, 250, 3)
 
-  bootstrap_iter <- c(199, 499, 999)
+  bootstrap_iter <- c(199, 999)
 
   for (B in seq_along(bootstrap_iter)) {
     x <- bootstrap_iter[B]
