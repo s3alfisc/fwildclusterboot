@@ -69,7 +69,7 @@ where $h_i$ is the i-th diagonal element of the "hat" matrix $P_x = X (X'X)^{-1}
 The **wild cluster bootstrap** follows a similar scheme. The main difference to the heteroskedastic wild bootstrap is that all error terms of the same cluster are multiplied with the same bootstrap weight $v_{b}^{*}$ and that $\hat{V}$ is computed by using a cluster robust variance estimator (CRVE/CRV1) as 
 
 $$
-  \hat{V} = (X'X)^{-1} (\sum_{g=1}^{G} X_g' u_g u_g' X_g) (X'X)^{-1} 
+  \hat{V} = (X'X)^{-1} (\sum_{g=1}^{G} X_g' \hat{u}_g \hat{u}_g' X_g) (X'X)^{-1} 
 $$ 
 where and $m := f(G, N, k)$ is a small-sample correction factor, by default set to 
 

@@ -1,5 +1,8 @@
 test_that("test r against Julia I: stochastic tests", {
+  
   skip_on_cran()
+  skip_on_ci()
+  
   # if not skipped, codecov fails after ~6h
   skip_on_ci()
   reltol <- 0.05

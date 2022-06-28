@@ -1,0 +1,90 @@
+---
+title: "Literature on the Wild Cluster Bootstrap"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The following section compiles a list of papers, software implementations and blog posts on the Wild Cluster Bootstrap. Let me know if you have any suggestions for other papers / blog posts to include! 
+
+
+## Software
+
++ Stata: [boottest]()
+
++ Julia: [WildBootTests.jl]()
+
++ R: [fwildclusterboot]()
+
+  Other R implementations are included in the [sandwich]() and [clusterSEs]() packages. 
+  
+## Academic Papers
+
++ [Roodman, David, et al. "Fast and wild: Bootstrap inference in Stata using boottest." The Stata Journal 19.1 (2019): 4-60.](https://journals.sagepub.com/doi/pdf/10.1177/1536867X19830877?casa_token=vapijGHUIIoAAAAA:S9AOnL7mdY3yeteZf-gXg1miBS96qrT7X53H5FWDlqokdSiqc8oPa8scKwJeF2_WeGFMxpGJzAwTwA)
+
+The paper introduces the `boottest` Stata module, discusses its implementation, and suggests when and how to use the wild cluster bootstrap. 
+
++ [Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller. "Bootstrap-based improvements for inference with clustered errors." The review of economics and statistics 90.3 (2008): 414-427.](https://www.nber.org/system/files/working_papers/t0344/t0344.pdf) 
+
+The original simulation study that argued that the wild cluster bootstrap might be preferred to "standard" cluster robust sandwich estimators when the number of clusters is small.
+
++ [MacKinnon, James G., Morten Ørregaard Nielsen, and Matthew D. Webb. Fast and reliable jackknife and bootstrap methods for cluster-robust inference. No. 1485. 2022.](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf) 
+
+Suggests new fast jackknife methods to compute CRV2 and CRV3 estimators and variants of the wild cluster bootstrap based on these new estimators.
+
++ [Niccodemi, Gianmaria, and Tom Wansbeek. "A New Estimator for Standard Errors with Few Unbalanced Clusters." Econometrics 10.1 (2022): 6.](https://www.mdpi.com/2225-1146/10/1/6/htm) 
+
+Introduces new CRV2 and CRV3 estimators, which the paper by MNW above build upon. 
+
++ [MacKinnon, James G., Morten Ørregaard Nielsen, and Matthew D. Webb. "Cluster-robust inference: A guide to empirical practice." Journal of Econometrics (2022).](https://www.sciencedirect.com/science/article/pii/S0304407622000781)
+
+An up-to date survey paper on recent advances how to deal with clustered errors. 
+
++ [Cameron, A. Colin, and Douglas L. Miller. "A practitioner’s guide to cluster-robust inference." Journal of human resources 50.2 (2015): 317-372.](http://jhr.uwpress.org/content/50/2/317.full.pdf?casa_token=m_Akn2a2l1sAAAAA:96lg39sv-UbrK-p4TH2UEOpF2QGdxwNLQ32vbU8ig7LhDCKes_QeVZCsXBQvYfEhQmM1DATXqBw)
+
+The survey paper on inference with clustered errors I read during my masters program. 
+
++ [Davidson, Russell, and James G. MacKinnon. "Wild bootstrap tests for IV regression." Journal of Business & Economic Statistics 28.1 (2010): 128-144.](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221?journalCode=ubes20) 
+
+Introduces the WRE bootstrap for IV regressions. 
+
++ [MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualité économique 91.1-2 (2015): 11-33.](https://www.erudit.org/en/journals/ae/1900-v1-n1-ae02507/1036912ar.pdf) 
+
+Explains how to invert tests to obtain confidence intervals. 
+
++ [Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.](https://www.econstor.eu/bitstream/10419/97480/1/757403891.pdf) 
+
+This paper introduces the 6-point Webb weights distribution.
+
++ [Joshi, Megha, James E. Pustejovsky, and S. Natasha Beretvas. "Cluster wild bootstrapping to handle dependent effect sizes in meta‐analysis with a small number of studies." Research Synthesis Methods (2021).](file:///C:/Users/alexa/Downloads/CWB.pdf) 
+
+Simulation studies of the merits of wild cluster bootstrapping with a focus on meta analyses. In particular, argues that the wild cluster bootstrap works excellently for F-tests with few clusters. 
+
++ [MacKinnon, James G., and Matthew D. Webb. "Wild bootstrap inference for wildly different cluster sizes." Journal of Applied Econometrics 32.2 (2017): 233-254.](https://onlinelibrary.wiley.com/doi/abs/10.1002/jae.2508?casa_token=u5JFe9l80I4AAAAA%3Axyo3ON86qXJd1qJeAEzP7XAWNjYI-7cfLtmvHe9f78BowELJKRenhJ7tlJSC9r_aYSGEcmEwfPfnfzEW)
+
+Provides simulation evidence that the wild cluster bootstrap outperforms CRVE(1) estimators when the number of clusters is "reasonably" large (42 and higher), but cluster sizes vary wildy. 
+
++ [Kline, Patrick, and Andres Santos. "A score based approach to wild bootstrap inference." Journal of Econometric Methods 1.1 (2012): 23-41.](https://www.nber.org/system/files/working_papers/w16127/w16127.pdf)
+
+Introduces the score bootstrap for the class of M-estimators (e.g. ML and GMM). Applicable to non-linear models. Implemented in [boottest]() and [WildBootTests.jl]().
+
+<!-- + [Abadie, Alberto, et al. When should you adjust standard errors for clustering?. No. w24003. National Bureau of Economic Research, 2017.](https://www.nber.org/system/files/working_papers/w24003/w24003.pdf)  -->
+
+<!-- Suggestions on when to cluster standard errors, and when not do.  -->
+
+
+## Blog Posts, Tweets etc. 
+
++ [Twitter thread by Gordon Burtch on the merits of the Wild Cluster Bootstrap when the number of clusters is small](https://twitter.com/gburtch/status/1378520203689082886)
+
++ [A simulation study on the Wild Cluster Bootstrap against Satterthwaite Corrections, by myself](https://s3alfisc.github.io/blog/post/2022-01-29-cluster-robust-inference-when-the-number-of-clusters-is-small-a-horse-race/)
+
+<!-- + [Chris Blattman - Clusterjerk: Do you have to cluster if the treatment assignment is random at an individual level? The answer is no! -->
+<!--  II](https://chrisblattman.com/blog/2015/12/11/clusterjerk-the-much-anticipated-sequel/) -->
+
+<!-- + [Blog post by David MacKenzie on the Paper by Abadie et al ](https://blogs.worldbank.org/impactevaluations/when-should-you-cluster-standard-errors-new-wisdom-econometrics-oracle) -->
+

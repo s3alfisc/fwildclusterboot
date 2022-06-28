@@ -1,6 +1,8 @@
 test_that("t-stat equivalence OLS", {
+  
   skip_on_cran()
-
+  skip_on_ci()
+  
   library(fixest)
   library(ivreg)
   library(sandwich)
