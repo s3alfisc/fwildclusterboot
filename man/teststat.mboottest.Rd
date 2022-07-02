@@ -17,3 +17,17 @@ A vector containing the non-bootstrapped t-statistic calculated in \code{mbootte
 \description{
 S3 method to obtain the non-bootstrapped test statistic calculated via \code{mboottest()}
 }
+\examples{
+\dontrun{
+library(clubSandwich)
+R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+wboottest <-
+  mboottest(
+    object = lm_fit,
+    clustid = "group_id1",
+    B = 999,
+    R = R
+  )
+teststat(wboottest)
+}
+}

@@ -19,3 +19,16 @@ Returns result summaries for objects of type boottest
 \description{
 S3 method to summarize objects of class boottest
 }
+\examples{
+library(fwildclusterboot)
+data(voters)
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  data = voters
+)
+boot <- boottest(lm_fit,
+  B = 9999,
+  param = "treatment",
+  clustid = "group_id1"
+)
+summary(boot)
+}

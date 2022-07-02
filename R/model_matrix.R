@@ -4,6 +4,8 @@ model_matrix <- function(object, ...) {
   #' @param object An object of class `lm` or `felm``
   #' @param ... Other arguments
   #' @export
+  #' @noRd
+  
 
   UseMethod("model_matrix")
 }
@@ -17,6 +19,7 @@ model_matrix.lm <- function(object, collin.rm = TRUE, ...) {
   #' @param object An object of class lm
   #' @param collin.rm Should collinear variables be dropped?
   #' @param ... Other arguments
+  #' @noRd
 
   X <- model.matrix(object)
   if (collin.rm == TRUE) {
@@ -36,7 +39,8 @@ model_matrix.felm <- function(object, type, collin.rm = TRUE, ...) {
   #' @param collin.rm Should collinear variables be dropped?
   #' @param type 'rhs' for right-hand side variables, 'fixef' for fixed effects
   #' @param ... Other arguments
-
+  #' @noRd
+  
   dreamerr::check_arg(type, "charin(rhs, fixef)")
 
   if (type == "rhs") {
@@ -66,6 +70,8 @@ model_matrix.fixest <- function(object, type, collin.rm = TRUE, ...) {
   #' @param type rhs lhs or fixef
   #' @param collin.rm Should collinear variables be dropped?
   #' @param ... Other arguments
+  #' @noRd
+  
 
   dreamerr::check_arg(type, "charin(rhs, fixef)")
 

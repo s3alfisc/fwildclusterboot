@@ -15,3 +15,9 @@ No return value
 \description{
 Sets the bootstrap algo to be run via \code{boottest()} and \code{waldboottest()}
 }
+\examples{
+\dontrun{
+setBoottest_boot_algo(boot_algo = "R")
+setBoottest_boot_algo(boot_algo = "WildBootTests.jl")
+}
+}

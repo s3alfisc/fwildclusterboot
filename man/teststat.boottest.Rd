@@ -17,3 +17,16 @@ A vector containing the non-bootstrapped t-statistic calculated in \code{boottes
 \description{
 S3 method to obtain the non-bootstrapped t-statistic calculated via \code{boottest()}
 }
+\examples{
+library(fwildclusterboot)
+data(voters)
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  data = voters
+)
+boot <- boottest(lm_fit,
+  B = 9999,
+  param = "treatment",
+  clustid = "group_id1"
+)
+pval(boot)
+}

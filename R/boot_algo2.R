@@ -40,6 +40,8 @@ boot_algo2 <- function(preprocessed_object, boot_iter, point_estimate, impose_nu
   #' @importFrom collapse fsum GRP
   #' @importFrom stats as.formula coef model.matrix model.response model.weights residuals rlnorm rnorm update
   #' @importFrom dqrng dqsample dqset.seed
+  #' @noRd
+  
 
 
 

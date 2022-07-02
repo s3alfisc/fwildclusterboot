@@ -32,6 +32,24 @@ set a global random seed via
 }
 }
 
+\examples{
+\dontrun{
+library(clubSandwich)
+R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+wboottest <-
+  mboottest(
+    object = lm_fit,
+    clustid = "group_id1",
+    B = 999,
+    R = R
+  )
+summary(wboottest)
+print(wboottest)
+nobs(wboottest)
+pval(wboottest)
+generics::tidy(wboottest)
+}
+}
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.

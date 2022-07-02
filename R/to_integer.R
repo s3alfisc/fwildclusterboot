@@ -3,6 +3,7 @@ to_integer <- function(vec) {
   #' Transform vectors of all types safely to integer vectors
   #' @param vec A vector
   #' @return An integer vector
+  #' @noRd
 
   dreamerr::check_arg(vec, "MBT vector")
 

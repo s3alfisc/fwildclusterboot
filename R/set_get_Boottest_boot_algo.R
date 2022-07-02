@@ -4,6 +4,11 @@ setBoottest_boot_algo <- function(boot_algo) {
   #' @param boot_algo Character scalar. Either 'R' or 'WildBootTests.jl'. Default is 'R'
   #' @return No return value
   #' @export
+  #' @examples 
+  #' \dontrun{
+  #' setBoottest_boot_algo(boot_algo = "R")
+  #' setBoottest_boot_algo(boot_algo = "WildBootTests.jl")
+  #' }
 
   if (missing(boot_algo) || is.null(boot_algo)) {
     # New default: one cores used

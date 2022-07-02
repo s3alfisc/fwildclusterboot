@@ -40,6 +40,7 @@ get_ssc <- function(boot_ssc_object, N, k, G, vcov_sign, heteroskedastic = FALSE
   #' @param heteroskedastic Heteroskedastic wild bootstrap? FALSE by default. If
   #'        TRUE, cluster adjustments via G and vcov_sign will be ignored
   #' @return A small sample adjustment factor
+  #' @noRd
 
   adj <- boot_ssc_object$adj
   fixef.K <- boot_ssc_object$fixef.K
@@ -91,6 +92,11 @@ get_ssc <- function(boot_ssc_object, N, k, G, vcov_sign, heteroskedastic = FALSE
 
 get_ssc_julia <- function(boot_ssc_object) {
 
+  #' Computes small sample corrections for boot_algo_julia()
+  #' @param boot_ssc_object
+  #' @return A small sample adjustment factor
+  #' @noRd
+  
 
   # no small sample correction
   if (boot_ssc_object$adj == FALSE) {

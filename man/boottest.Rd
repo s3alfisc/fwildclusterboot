@@ -33,6 +33,25 @@ set a global random seed via
 }
 }
 
+\examples{
+library(fwildclusterboot)
+data(voters)
+lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  data = voters
+)
+boot <- boottest(lm_fit,
+  B = 9999,
+  param = "treatment",
+  clustid = "group_id1"
+)
+summary(boot)
+print(boot)
+plot(boot)
+nobs(boot)
+pval(boot)
+confint(boot)
+generics::tidy(boot)
+}
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.

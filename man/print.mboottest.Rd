@@ -19,3 +19,17 @@ A scalar containing the effective number of observations used in \code{mboottest
 \description{
 S3 method to print key information for objects of type \code{mboottest}
 }
+\examples{
+\dontrun{
+library(clubSandwich)
+R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+wboottest <-
+  mboottest(
+    object = lm_fit,
+    clustid = "group_id1",
+    B = 999,
+    R = R
+  )
+print(wboottest)
+}
+}

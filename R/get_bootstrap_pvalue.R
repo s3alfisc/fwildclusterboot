@@ -6,6 +6,7 @@ get_bootstrap_pvalue <- function(p_val_type, t_stat, t_boot) {
   #' @param t_stat The original t-statistic
   #' @param t_boot The bootstrapped t-statistics
   #' @return A bootstrapped p-value
+  #' @noRd
 
   if (p_val_type == "two-tailed") {
     p_val <- mean(abs(t_stat) < abs(t_boot), na.rm = FALSE)

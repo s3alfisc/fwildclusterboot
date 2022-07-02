@@ -7,6 +7,18 @@ tidy.boottest <- function(object, ...) {
   #' @method tidy boottest
   #' @return A tidy data.frame with estimation results for objects of type
   #'         boottest
+  #' @examples 
+  #' library(fwildclusterboot)
+  #' data(voters)
+  #' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  #'   data = voters
+  #' )
+  #' boot <- boottest(lm_fit,
+  #'   B = 9999,
+  #'   param = "treatment",
+  #'   clustid = "group_id1"
+  #' )
+  #' generics::tidy(boot)
 
   stopifnot(inherits(object, "boottest"))
   # dreamerr::validate_dots(stop = TRUE)
@@ -43,8 +55,18 @@ summary.boottest <- function(object, digits = 3, ...) {
   #' @method summary boottest
   #' @export
   #' @return Returns result summaries for objects of type boottest
-
-
+  #' @examples 
+  #' library(fwildclusterboot)
+  #' data(voters)
+  #' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  #'   data = voters
+  #' )
+  #' boot <- boottest(lm_fit,
+  #'   B = 9999,
+  #'   param = "treatment",
+  #'   clustid = "group_id1"
+  #' )
+  #' summary(boot)
 
   stopifnot(inherits(object, "boottest"))
   dreamerr::validate_dots(stop = TRUE)
@@ -112,8 +134,19 @@ plot.boottest <- function(x, ...) {
   #' @method plot boottest
   #' @export
   #' @return A plot of bootstrap t-statistics under different null hypotheses
-
-
+  #' @examples 
+  #' library(fwildclusterboot)
+  #' data(voters)
+  #' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  #'   data = voters
+  #' )
+  #' boot <- boottest(lm_fit,
+  #'   B = 9999,
+  #'   param = "treatment",
+  #'   clustid = "group_id1"
+  #' )
+  #' plot(boot)
+  
   stopifnot(inherits(x, "boottest"))
   dreamerr::validate_dots(stop = TRUE)
 
@@ -143,6 +176,18 @@ glance.boottest <- function(x, ...) {
   #' @export
   #' @return A single row summary "glance" of an object of type boottest
   #'         - lists characteristics of the input regression model
+  #' @examples 
+  #' library(fwildclusterboot)
+  #' data(voters)
+  #' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  #'   data = voters
+  #' )
+  #' boot <- boottest(lm_fit,
+  #'   B = 9999,
+  #'   param = "treatment",
+  #'   clustid = "group_id1"
+  #' )
+  #'generics::glance(boot)
 
   stopifnot(inherits(x, "boottest"))
   broom::glance(eval(x$call$object))

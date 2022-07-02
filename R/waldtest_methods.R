@@ -9,6 +9,24 @@ tidy.mboottest <- function(object, ...) {
   #' @method tidy mboottest
   #' @return A tidy data.frame with estimation results for objects of type
   #'         mboottest
+  #' #' @examples
+  #' \dontrun{
+  #' library(clubSandwich)
+  #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+  #' wboottest <-
+  #'   mboottest(
+  #'     object = lm_fit,
+  #'     clustid = "group_id1",
+  #'     B = 999,
+  #'     R = R
+  #'   )
+  #' summary(wboottest)
+  #' print(wboottest)
+  #' nobs(wboottest)
+  #' pval(wboottest)
+  #' generics::tidy(wboottest)
+  #' }
+  
 
   stopifnot(inherits(object, "mboottest"))
   # dreamerr::validate_dots(stop = TRUE)
@@ -31,7 +49,24 @@ summary.mboottest <- function(object, digits = 3, ...) {
   #' @export
   #'
   #' @return Returns result summaries for objects of type mboottest
-
+  #' @examples
+  #' \dontrun{
+  #' library(clubSandwich)
+  #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+  #' wboottest <-
+  #'   mboottest(
+  #'     object = lm_fit,
+  #'     clustid = "group_id1",
+  #'     B = 999,
+  #'     R = R
+  #'   )
+  #' summary(wboottest)
+  #' print(wboottest)
+  #' nobs(wboottest)
+  #' pval(wboottest)
+  #' generics::tidy(wboottest)
+  #' }
+  
 
 
   stopifnot(inherits(object, "mboottest"))

@@ -4,6 +4,7 @@
 #'
 #' @param object An objectect of type lm, fixest, felm or ivreg
 #' @param ... other arguments
+#' @noRd
 #'
 #' @return An object of class \code{preprocess2}.
 

@@ -14,7 +14,18 @@
 #' @param weights Possible regression weights to be used in estimation
 #' @return A simulated \code{data.frame} with specified numbers of clusters,
 #'         intra-cluster correlations and dimensionality of fixed effects.
-#'
+#' @examples
+#' df <- create_data(
+#'   N = 1000,
+#'   N_G1 = 1000,
+#'   icc1 = 0.5,
+#'   N_G2 = 10,
+#'   icc2 = 0.01,
+#'   numb_fe1 = 10,
+#'   numb_fe2 = 10,
+#'   seed = 2293
+#' )
+#' @noRd
 
 # This function very closely mirrors an example from the fabricatr package website
 # which can be found under the following link: https://declaredesign.org/r/fabricatr/articles/getting_started.html

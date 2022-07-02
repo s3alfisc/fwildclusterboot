@@ -10,6 +10,25 @@
 #'
 #' @seealso \link[fwildclusterboot]{boottest.lm}, \link[fwildclusterboot]{boottest.fixest}, \link[fwildclusterboot]{boottest.felm}, \link[fwildclusterboot]{boottest.ivreg}
 #'
+#' @examples 
+#' library(fwildclusterboot)
+#' data(voters)
+#' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   data = voters
+#' )
+#' boot <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
+#' )
+#' summary(boot)
+#' print(boot)
+#' plot(boot)
+#' nobs(boot)
+#' pval(boot)
+#' confint(boot)
+#' generics::tidy(boot)
+
 #' @export
 #'
 #' @section Setting Seeds:
@@ -66,6 +85,23 @@ boottest <- function(object,
 #' @references MacKinnon, James G., and Matthew D. Webb. "The wild bootstrap for few (treated) clusters." The Econometrics Journal 21.2 (2018): 114-135.
 #' @references MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite economique 91.1-2 (2015): 11-33.
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
+#' @examples
+#' \dontrun{
+#' library(clubSandwich)
+#' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+#' wboottest <-
+#'   mboottest(
+#'     object = lm_fit,
+#'     clustid = "group_id1",
+#'     B = 999,
+#'     R = R
+#'   )
+#' summary(wboottest)
+#' print(wboottest)
+#' nobs(wboottest)
+#' pval(wboottest)
+#' generics::tidy(wboottest)
+#' }
 
 mboottest <- function(object,
                       ...) {
@@ -79,6 +115,18 @@ mboottest <- function(object,
 #' @param ... other arguments
 #'
 #' @export
+#' #' library(fwildclusterboot)
+#' data(voters)
+#' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   data = voters
+#' )
+#' boot <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
+#' )
+#' pval(boot)
+
 
 pval <- function(object,
                  ...) {
@@ -104,6 +152,19 @@ teststat <- function(object,
 #' @export
 #' @method confint boottest
 #' @return A vector containing the boundaries of the wild cluster bootstrapped confidence interval
+#' @examples 
+#' library(fwildclusterboot)
+#' data(voters)
+#' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   data = voters
+#' )
+#' boot <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
+#' )
+#' teststat(boot)
+
 
 confint.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
@@ -117,6 +178,18 @@ confint.boottest <- function(object, ...) {
 #' @export
 #' @method pval boottest
 #' @return A vector containing the boundaries of the wild cluster bootstrapped p-value
+#' @examples 
+#' #' library(fwildclusterboot)
+#' data(voters)
+#' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   data = voters
+#' )
+#' boot <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
+#' )
+#' confint(boot)
 
 pval.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
@@ -130,6 +203,18 @@ pval.boottest <- function(object, ...) {
 #' @export
 #' @method teststat boottest
 #' @return A vector containing the non-bootstrapped t-statistic calculated in `boottest()`
+#' @examples 
+#' library(fwildclusterboot)
+#' data(voters)
+#' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   data = voters
+#' )
+#' boot <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
+#' )
+#' pval(boot)
 
 teststat.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
@@ -144,7 +229,17 @@ teststat.boottest <- function(object, ...) {
 #' @export
 #' @method nobs boottest
 #' @return A scalar containing the effective number of observations used in `boottest()`
-
+#' #' library(fwildclusterboot)
+#' data(voters)
+#' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   data = voters
+#' )
+#' boot <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
+#' )
+#' teststat(boot)
 
 nobs.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
@@ -159,7 +254,20 @@ nobs.boottest <- function(object, ...) {
 #' @export
 #' @method pval mboottest
 #' @return A vector containing the boundaries of the wild cluster bootstrapped p-value
-#'
+#' @examples
+#' \dontrun{
+#' library(clubSandwich)
+#' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+#' wboottest <-
+#'   mboottest(
+#'     object = lm_fit,
+#'     clustid = "group_id1",
+#'     B = 999,
+#'     R = R
+#'   )
+#' pval(wboottest)
+#' }
+
 pval.mboottest <- function(object, ...) {
   stopifnot(inherits(object, "mboottest"))
 
@@ -172,7 +280,20 @@ pval.mboottest <- function(object, ...) {
 #' @export
 #' @method teststat mboottest
 #' @return A vector containing the non-bootstrapped t-statistic calculated in `mboottest()`
-#'
+#' @examples
+#' \dontrun{
+#' library(clubSandwich)
+#' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+#' wboottest <-
+#'   mboottest(
+#'     object = lm_fit,
+#'     clustid = "group_id1",
+#'     B = 999,
+#'     R = R
+#'   )
+#' teststat(wboottest)
+#' }
+
 teststat.mboottest <- function(object, ...) {
   stopifnot(inherits(object, "mboottest"))
 
@@ -186,6 +307,19 @@ teststat.mboottest <- function(object, ...) {
 #' @export
 #' @method nobs mboottest
 #' @return A scalar containing the effective number of observations used in `mboottest()`
+#' @examples
+#' \dontrun{
+#' library(clubSandwich)
+#' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+#' wboottest <-
+#'   mboottest(
+#'     object = lm_fit,
+#'     clustid = "group_id1",
+#'     B = 999,
+#'     R = R
+#'   )
+#' nobs(wboottest)
+#' }
 
 nobs.mboottest <- function(object, ...) {
   stopifnot(inherits(object, "mboottest"))
@@ -201,6 +335,18 @@ nobs.mboottest <- function(object, ...) {
 #' @export
 #' @method print boottest
 #' @return A scalar containing the effective number of observations used in `mboottest`
+#' @examples 
+#' #' library(fwildclusterboot)
+#' data(voters)
+#' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   data = voters
+#' )
+#' boot <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
+#' )
+#' print(boot)
 
 print.boottest <- function(x, ..., digits = 4) {
   stopifnot(inherits(x, "boottest"))
@@ -226,6 +372,19 @@ print.boottest <- function(x, ..., digits = 4) {
 #' @export
 #' @method print mboottest
 #' @return A scalar containing the effective number of observations used in `mboottest`
+#' @examples
+#' \dontrun{
+#' library(clubSandwich)
+#' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+#' wboottest <-
+#'   mboottest(
+#'     object = lm_fit,
+#'     clustid = "group_id1",
+#'     B = 999,
+#'     R = R
+#'   )
+#' print(wboottest)
+#' }
 
 print.mboottest <- function(x, ..., digits = 4) {
   stopifnot(inherits(x, "mboottest"))

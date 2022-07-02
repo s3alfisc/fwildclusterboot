@@ -17,3 +17,17 @@ A vector containing the boundaries of the wild cluster bootstrapped p-value
 \description{
 S3 method to obtain the wild cluster bootstrapped p-value of an object of type mboottest
 }
+\examples{
+\dontrun{
+library(clubSandwich)
+R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+wboottest <-
+  mboottest(
+    object = lm_fit,
+    clustid = "group_id1",
+    B = 999,
+    R = R
+  )
+pval(wboottest)
+}
+}
