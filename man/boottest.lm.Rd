@@ -235,8 +235,8 @@ stops the procedure after 10 iterations.
 library(fwildclusterboot)
 data(voters)
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +
- Q1_immigration,
-  data = voters
+  Q1_immigration,
+data = voters
 )
 boot1 <- boottest(lm_fit,
   B = 9999,

@@ -118,37 +118,37 @@
 #' @export
 #'
 #' @section Setting Seeds:
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed` 
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed`
 #' function argument, or
 #' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the 
+#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the
 #'    heteroskedastic wild bootstrap
 #'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or
 #'    3) `boot_algo = "WildBootTests.jl"`
-#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, 
+#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher,
 #' Webb or Normal weights
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'    STATA using boottest", The STATA Journal.
 #'    (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
-#' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller. 
-#' "Bootstrap-based improvements for inference with clustered errors." 
+#' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
+#' "Bootstrap-based improvements for inference with clustered errors."
 #' The Review of Economics and Statistics 90.3 (2008): 414-427.
 #' @references Cameron, A.Colin & Douglas L. Miller. "A practitioner's
 #'  guide to cluster-robust inference" Journal of Human Resources (2015)
 #'   \doi{doi: 10.3368/jhr.50.2.317}
-#' @references Davidson & MacKinnon. "Wild Bootstrap Tests for IV regression" 
-#' Journal of Economics and Business Statistics (2010) 
+#' @references Davidson & MacKinnon. "Wild Bootstrap Tests for IV regression"
+#' Journal of Economics and Business Statistics (2010)
 #' \doi{https://doi.org/10.1198/jbes.2009.07221}
 #' @references MacKinnon, James G., and Matthew D. Webb.
-#'  "The wild bootstrap for few (treated) clusters." 
+#'  "The wild bootstrap for few (treated) clusters."
 #'  The Econometrics Journal 21.2 (2018): 114-135.
-#' @references MacKinnon, James G., and Matthew D. Webb. 
-#' "Cluster-robust inference: A guide to empirical practice" 
-#' Journal of Econometrics (2022) 
+#' @references MacKinnon, James G., and Matthew D. Webb.
+#' "Cluster-robust inference: A guide to empirical practice"
+#' Journal of Econometrics (2022)
 #' \doi{https://doi.org/10.1016/j.jeconom.2022.04.001}
-#' @references MacKinnon, James. "Wild cluster bootstrap confidence 
+#' @references MacKinnon, James. "Wild cluster bootstrap confidence
 #' intervals." L'Actualite economique 91.1-2 (2015): 11-33.
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference
 #'  for clustered errors. No. 1315. Queen's Economics Department Working
@@ -159,8 +159,7 @@
 #' library(fwildclusterboot)
 #'
 #' # drop all NA values from SchoolingReturns
-#' SchoolingReturns <- 
-#'     SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
+#' SchoolingReturns <- na.omit(SchoolingReturns)
 #' ivreg_fit <- ivreg(log(wage) ~ education + age +
 #'   ethnicity + smsa + south + parents14 |
 #'   nearcollege + age + ethnicity + smsa
@@ -218,7 +217,7 @@ boottest.ivreg <- function(object,
   # check inputs
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
-  
+
   check_arg(object, "MBT class(ivreg)")
   check_arg(clustid, "NULL | character scalar | character vector | formula")
   check_arg(param, "MBT scalar character | character vector | formula")
@@ -243,50 +242,56 @@ boottest.ivreg <- function(object,
   check_arg(arubin, "scalar logical")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
-  
-  
+
+
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-  
+
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-  
+
   if (inherits(param, "formula")) {
     param <- attr(terms(param), "term.labels")
   }
-  
+
   # set random seed
-  internal_seed <- set_seed(seed = seed,
-                            boot_algo = "WildBootTests.jl",
-                            type = type)
+  internal_seed <- set_seed(
+    seed = seed,
+    boot_algo = "WildBootTests.jl",
+    type = type
+  )
   # translate ssc into small_sample_adjustment
   if (ssc[["adj"]] == TRUE && ssc[["cluster.adj"]] == TRUE) {
     small_sample_adjustment <- TRUE
   } else {
     small_sample_adjustment <- FALSE
   }
-  
+
   if (ssc[["fixef.K"]] != "none" ||
-      ssc[["cluster.df"]] != "conventional") {
+    ssc[["cluster.df"]] != "conventional") {
     message(
       paste(
-        "Currently, boottest() only supports fixef.K = 'none' and 
+        "Currently, boottest() only supports fixef.K = 'none' and
         cluster.df = 'conventional'."
       )
     )
   }
-  
-  
-  check_params_in_model(object = object,
-                        param = param)
-  
-  
-  R <- process_R(R = R,
-                 param = param)
-  
-  
+
+
+  check_params_in_model(
+    object = object,
+    param = param
+  )
+
+
+  R <- process_R(
+    R = R,
+    param = param
+  )
+
+
   check_boottest_args_plus(
     object = object,
     R = R,
@@ -294,8 +299,8 @@ boottest.ivreg <- function(object,
     sign_level = sign_level,
     B = B
   )
-  
-  
+
+
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess2.ivreg(
     object = object,
@@ -312,22 +317,22 @@ boottest.ivreg <- function(object,
       type = type,
       boot_algo = "WildBootTests.jl"
     )
-  
+
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-  
+
   point_estimate <-
     as.vector(object$coefficients[param] %*% preprocess$R0[param])
-  
+
   julia_ssc <- get_ssc_julia(ssc)
   small <- julia_ssc$small
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
-  
+
   if (ssc[["fixef.K"]] != "none") {
     message(paste("Currently, boottest() only supports fixef.K = 'none'."))
   }
-  
+
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -354,7 +359,7 @@ boottest.ivreg <- function(object,
     fe = NULL,
     fedfadj = NULL
   )
-  
+
   # collect results
   res_final <- list(
     point_estimate = point_estimate,
@@ -380,8 +385,8 @@ boottest.ivreg <- function(object,
     boot_algo = "WildBootTests.jl",
     internal_seed = internal_seed
   )
-  
+
   class(res_final) <- "boottest"
-  
+
   invisible(res_final)
 }

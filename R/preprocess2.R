@@ -38,57 +38,61 @@ preprocess2.fixest <-
     #' @noRd
     #'
     #' @method preprocess2 fixest
-    
+
     call <- object$call
     call_env <- object$call_env
     fml <- formula(object)
     fml <- Formula::as.Formula(fml)
-    
+
     fml_full <- formula(fml, collapse = TRUE)
-    
+
     N <- nobs(object)
     # lm and felm don't drop NAs due to multicollinearity, while fixest does
     k <- length(na.omit(coef(object)))
-    
+
     method <- object$family
     # fixest specific checks
     if (object$method != "feols") {
       stop(
-        "boottest() only supports OLS estimation via fixest::feols() - it 
-        does not support non-linear models computed via e.g. fixest::fepois() 
+        "boottest() only supports OLS estimation via fixest::feols() - it
+        does not support non-linear models computed via e.g. fixest::fepois()
         or fixest::feglm."
       )
     }
-    
+
     is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
     has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
-    
+
     if (!is_iv) {
       X <-
         model.matrix(object,
-                     type = "rhs",
-                     na.rm = TRUE,
-                     collin.rm = TRUE)
+          type = "rhs",
+          na.rm = TRUE,
+          collin.rm = TRUE
+        )
     } else {
       X_endog <-
         model.matrix(object,
-                     type = "iv.endo",
-                     na.rm = TRUE,
-                     collin.rm = TRUE)
+          type = "iv.endo",
+          na.rm = TRUE,
+          collin.rm = TRUE
+        )
       X_exog <-
         model.matrix(object,
-                     type = "iv.exo",
-                     na.rm = TRUE,
-                     collin.rm = TRUE)
+          type = "iv.exo",
+          na.rm = TRUE,
+          collin.rm = TRUE
+        )
       instruments <-
         model.matrix(object,
-                     type = "iv.inst",
-                     na.rm = TRUE,
-                     collin.rm = TRUE)
+          type = "iv.inst",
+          na.rm = TRUE,
+          collin.rm = TRUE
+        )
     }
-    
+
     Y <- model.matrix(object, type = "lhs")
-    
+
     weights <- weights(object)
     if (is.null(weights)) {
       has_weights <- FALSE
@@ -96,7 +100,7 @@ preprocess2.fixest <-
     } else {
       has_weights <- TRUE
     }
-    
+
     if (has_weights) {
       if (!is.null(fe)) {
         stop(
@@ -105,12 +109,12 @@ preprocess2.fixest <-
         )
       }
     }
-    
+
     fixed_effect <- NULL
     k2 <- 0
     W <- n_fe <- NULL
-    
-    
+
+
     if (has_fe) {
       # if(!is.null(fe)){
       get_fe <- transform_fe(
@@ -122,8 +126,8 @@ preprocess2.fixest <-
         has_weights = has_weights,
         boot_algo = boot_algo
       )
-      
-      
+
+
       X <- get_fe$X
       Y <- get_fe$Y
       fixed_effect <- get_fe$fixed_effect
@@ -132,8 +136,8 @@ preprocess2.fixest <-
       k2 <- get_fe$k2
       # }
     }
-    
-    
+
+
     # get cluster variable
     if (!is.null(clustid)) {
       clustid_list <- get_cluster(
@@ -143,13 +147,13 @@ preprocess2.fixest <-
         bootcluster = bootcluster,
         call_env = call_env
       )
-      
+
       vcov_sign <- clustid_list$vcov_sign
       clustid <- clustid_list$clustid
       clustid_dims <- ncol(clustid)
       N_G <- clustid_list$N_G
       cluster_names <- clustid_list$cluster_names
-      
+
       cluster_bootcluster <- clustid_list$cluster_bootcluster
       bootcluster <- clustid_list$bootcluster
       all_c <- clustid_list$all_c
@@ -159,8 +163,8 @@ preprocess2.fixest <-
         clustid <- bootcluster <- N_G <- cluster_names <- NULL
       cluster_bootcluster <- bootcluster <- all_c <- NULL
     }
-    
-    
+
+
     # iv prep
     instruments <- X_exog <- X_endog <- NULL
     # if(is_iv){
@@ -180,9 +184,9 @@ preprocess2.fixest <-
       R0[, 1:p] <- R
     }
     # }
-    
-    
-    
+
+
+
     res <- list(
       Y = Y,
       X = X,
@@ -208,13 +212,13 @@ preprocess2.fixest <-
       has_fe = has_fe,
       all_c = all_c
     )
-    
+
     if (is_iv) {
       class(res) <- c("preprocess", "iv")
     } else {
       class(res) <- c("preprocess", "ols")
     }
-    
+
     res
   }
 
@@ -230,7 +234,7 @@ preprocess2.felm <-
     #' preprocess data for objects of type felm
     #'
     #' @param object an object of type felm
-    #' @param clustid a character string containing the name(s) of the 
+    #' @param clustid a character string containing the name(s) of the
     #' cluster variables
     #' @param R Hypothesis Vector giving linear combinations of coefficients.
     #' @param fe character vector. name of the fixed effect to be projected
@@ -244,17 +248,17 @@ preprocess2.felm <-
     #' @noRd
     #'
     #' @method preprocess2 felm
-    
+
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
     fml <- Formula::as.Formula(fml)
-    
+
     N <- nobs(object)
     # lm and felm don't drop NAs due to multicollinearity, while fixest does
     k <- length(na.omit(coef(object)))
     p <- object$p
-    
+
     is_iv <- FALSE
     if (
       suppressWarnings(
@@ -262,23 +266,24 @@ preprocess2.felm <-
           Formula::as.Formula(
             eval(
               object$formula
-              )
-            ), 
-          lhs = 0, 
-          rhs = 3)
-        ) != "~0") {
+            )
+          ),
+          lhs = 0,
+          rhs = 3
+        )
+      ) != "~0") {
       stop(
         "IV regression is currently not supported by boottest() for
-        objects of type 'felm'. You can either use 'fixest::feols()' 
+        objects of type 'felm'. You can either use 'fixest::feols()'
         or 'ivreg::ivreg' for IV-regression."
       )
       is_iv <- TRUE
     }
-    
+
     X <- model_matrix(object, type = "rhs", collin.rm = TRUE)
     Y <- model.response(model.frame(object))
     has_fe <- ifelse(length(names(object$fe)) > 0, TRUE, FALSE)
-    
+
     weights <- weights(object)
     if (is.null(weights)) {
       has_weights <- FALSE
@@ -286,7 +291,7 @@ preprocess2.felm <-
     } else {
       has_weights <- TRUE
     }
-    
+
     if (has_weights) {
       if (!is.null(fe)) {
         stop(
@@ -295,7 +300,7 @@ preprocess2.felm <-
         )
       }
     }
-    
+
     if (has_fe) {
       get_fe <- transform_fe(
         object = object,
@@ -318,7 +323,7 @@ preprocess2.felm <-
       W <- n_fe <- NULL
       W <- n_fe <- NULL
     }
-    
+
     # get cluster variable
     if (!is.null(clustid)) {
       clustid_list <- get_cluster(
@@ -328,13 +333,13 @@ preprocess2.felm <-
         bootcluster = bootcluster,
         call_env = call_env
       )
-      
+
       vcov_sign <- clustid_list$vcov_sign
       clustid <- clustid_list$clustid
       clustid_dims <- ncol(clustid)
       N_G <- clustid_list$N_G
       cluster_names <- clustid_list$cluster_names
-      
+
       cluster_bootcluster <- clustid_list$cluster_bootcluster
       bootcluster <- clustid_list$bootcluster
       all_c <- clustid_list$all_c
@@ -344,7 +349,7 @@ preprocess2.felm <-
         clustid <- bootcluster <- N_G <- cluster_names <- NULL
       cluster_bootcluster <- bootcluster <- all_c <- NULL
     }
-    
+
     # iv prep
     instruments <- X_exog <- X_endog <- NULL
     # if(is_iv){
@@ -365,7 +370,7 @@ preprocess2.felm <-
       R0[, 1:p] <- R
     }
     # }
-    
+
     res <- list(
       Y = Y,
       X = X,
@@ -390,13 +395,13 @@ preprocess2.felm <-
       has_fe = has_fe,
       all_c = all_c
     )
-    
+
     if (is_iv) {
       class(res) <- c("preprocess", "iv")
     } else {
       class(res) <- c("preprocess", "ols")
     }
-    
+
     res
   }
 
@@ -415,31 +420,31 @@ preprocess2.lm <-
     #'  cluster variables
     #' @param R Hypothesis Vector giving linear combinations of coefficients.
     #' @param param character vector. names of the parameter(s) to test
-    #' @param boot_algo The bootstrap algorithm to run. Either "R" or 
+    #' @param boot_algo The bootstrap algorithm to run. Either "R" or
     #' "WildBootTests.jl"
-    #' @param bootcluster a character string containing the name(s) of 
+    #' @param bootcluster a character string containing the name(s) of
     #' the bootcluster variables. Alternatively, "min" or "max"
     #'
     #' @noRd
     #'
     #' @method preprocess2 lm
-    
+
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
     fml <- Formula::as.Formula(fml)
-    
+
     N <- nobs(object)
     # lm and felm don't drop NAs due to multicollinearity, while fixest does
     k <- length(na.omit(coef(object)))
     p <- object$p
-    
+
     is_iv <- FALSE
-    
+
     X <- model_matrix(object, collin.rm = TRUE)
     Y <- model.response(model.frame(object))
     has_fe <- FALSE
-    
+
     weights <- weights(object)
     if (is.null(weights)) {
       has_weights <- FALSE
@@ -447,7 +452,7 @@ preprocess2.lm <-
     } else {
       has_weights <- TRUE
     }
-    
+
     # get cluster variable
     if (!is.null(clustid)) {
       clustid_list <- get_cluster(
@@ -457,13 +462,13 @@ preprocess2.lm <-
         bootcluster = bootcluster,
         call_env = call_env
       )
-      
+
       vcov_sign <- clustid_list$vcov_sign
       clustid <- clustid_list$clustid
       clustid_dims <- ncol(clustid)
       N_G <- clustid_list$N_G
       cluster_names <- clustid_list$cluster_names
-      
+
       cluster_bootcluster <- clustid_list$cluster_bootcluster
       bootcluster <- clustid_list$bootcluster
       all_c <- clustid_list$all_c
@@ -473,8 +478,8 @@ preprocess2.lm <-
         clustid <- bootcluster <- N_G <- cluster_names <- NULL
       cluster_bootcluster <- bootcluster <- all_c <- NULL
     }
-    
-    
+
+
     instruments <- X_exog <- X_endog <- NULL
     if (!is.matrix(R)) {
       R0 <- rep(0, length(colnames(X)))
@@ -486,9 +491,9 @@ preprocess2.lm <-
       R0 <- matrix(0, q, ncol(X))
       R0[, 1:p] <- R
     }
-    
-    
-    
+
+
+
     res <- list(
       Y = Y,
       X = X,
@@ -513,9 +518,9 @@ preprocess2.lm <-
       has_fe = has_fe,
       all_c = all_c
     )
-    
+
     class(res) <- c("preprocess", "ols")
-    
+
     res
   }
 
@@ -533,7 +538,7 @@ preprocess2.ivreg <-
     #' @param object an object of type ivreg
     #' @param clustid a character string containing the name(s) of the
     #'  cluster variables
-    #' @param R Hypothesis Vector giving linear combinations of coefficients.  
+    #' @param R Hypothesis Vector giving linear combinations of coefficients.
     #' @param param character vector. names of the parameter(s) to test
     #' @param boot_algo The bootstrap algorithm to run. Either "R" or
     #'  "WildBootTests.jl"
@@ -543,39 +548,42 @@ preprocess2.ivreg <-
     #' @noRd
     #'
     #' @method preprocess2 ivreg
-    
+
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
     fml <- Formula::as.Formula(fml)
     is_iv <- TRUE
-    
+
     N <- nobs(object)
     # lm and felm don't drop NAs due to multicollinearity, while fixest does
     k <- length(na.omit(coef(object)))
     p <- object$p
-    
+
     is_iv <- FALSE
     has_fe <- FALSE
-    
+
     X_endog <-
       model.matrix(
-        object, component = "regressors", na.rm = TRUE
+        object,
+        component = "regressors", na.rm = TRUE
       )[, object$endogenous, drop = FALSE]
     X_exog <-
       model.matrix(
-        object, component = "instruments", na.rm = TRUE
+        object,
+        component = "instruments", na.rm = TRUE
       )[, object$exogenous, drop = FALSE]
     instruments <-
       model.matrix(
-        object, component = "instruments", na.rm = TRUE
+        object,
+        component = "instruments", na.rm = TRUE
       )[, object$instruments, drop = FALSE]
     Y <- model.response(model.frame(object))
-    
+
     n_exog <- length(object$exogenous)
     n_endog <- length(object$endogenous)
     n_instruments <- length(object$instruments)
-    
+
     weights <- weights(object)
     if (is.null(weights)) {
       has_weights <- FALSE
@@ -583,7 +591,7 @@ preprocess2.ivreg <-
     } else {
       has_weights <- TRUE
     }
-    
+
     # get cluster variable
     if (!is.null(clustid)) {
       clustid_list <- get_cluster(
@@ -593,13 +601,13 @@ preprocess2.ivreg <-
         bootcluster = bootcluster,
         call_env = call_env
       )
-      
+
       vcov_sign <- clustid_list$vcov_sign
       clustid <- clustid_list$clustid
       clustid_dims <- ncol(clustid)
       N_G <- clustid_list$N_G
       cluster_names <- clustid_list$cluster_names
-      
+
       cluster_bootcluster <- clustid_list$cluster_bootcluster
       bootcluster <- clustid_list$bootcluster
       all_c <- clustid_list$all_c
@@ -609,14 +617,14 @@ preprocess2.ivreg <-
         clustid <- bootcluster <- N_G <- cluster_names <- NULL
       cluster_bootcluster <- bootcluster <- all_c <- NULL
     }
-    
-    
+
+
     # iv prep
     R0 <- rep(0, n_exog + n_endog)
     R0[match(param, c(names(object$exogenous), names(object$endogenous)))] <-
       R
     names(R0) <- c(names(object$exogenous), names(object$endogenous))
-    
+
     res <- list(
       Y = Y,
       X = NULL,
@@ -642,10 +650,10 @@ preprocess2.ivreg <-
       has_fe = has_fe,
       all_c = all_c
     )
-    
-    
+
+
     class(res) <- c("preprocess", "iv")
-    
+
     res
   }
 
@@ -659,7 +667,7 @@ get_cluster <-
     #' function creates a data.frame with cluster variables
     #'
     #' @param object An object of type lm, fixest, felm or ivreg
-    #' @param clustid_char the name of the cluster variable(s) as 
+    #' @param clustid_char the name of the cluster variable(s) as
     #' a character vector
     #' @param bootcluster the name of the bootcluster variable(s)
     #'  as a character vector, or "min" or "max" for multiway clustering
@@ -670,26 +678,26 @@ get_cluster <-
     #'
     #' @return a list, containing, among other things, a data.frame of the
     #'  cluster variables,
-    #'         a data.frame of the bootcluster variable(s), and a helper 
+    #'         a data.frame of the bootcluster variable(s), and a helper
     #'         matrix, all_c, used in `boot_algo_julia()`
-    
+
     # ----------------------------------------------------------------------- #
     # Note: a large part of the following code was taken and adapted from the
     # sandwich R package, which is distributed under GPL-2 | GPL-3
-    # Zeileis A, Köll S, Graham N (2020). "Various Versatile Variances: 
+    # Zeileis A, Köll S, Graham N (2020). "Various Versatile Variances:
     # An object-Oriented Implementation of Clustered Covariances in R."
-    # _Journal of Statistical Software_,  *95*(1), 1-36. 
+    # _Journal of Statistical Software_,  *95*(1), 1-36.
     # doi: 10.18637/jss.v095.i01 (URL: https://doi.org/10.18637/jss.v095.i01).
-    
+
     # changes by Alexander Fischer:
     # no essential changes, but slight reorganization of pieces of code
-    
+
     dreamerr::check_arg(clustid_char, "character scalar|charakter vector")
     dreamerr::check_arg(bootcluster, "character scalar | character vector")
-    
+
     clustid_fml <- reformulate(clustid_char)
     # Step 1: create cluster df
-    
+
     cluster_tmp <-
       try(if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
@@ -703,33 +711,37 @@ get_cluster <-
         )
       } else {
         expand.model.frame(object,
-                           clustid_fml,
-                           na.expand = FALSE,
-                           envir = call_env)
+          clustid_fml,
+          na.expand = FALSE,
+          envir = call_env
+        )
       })
-    
+
     if (inherits(cluster_tmp, "try-error") &&
-        grepl("non-numeric argument to binary operator$",
-              attr(cluster_tmp, "condition")$message)) {
+      grepl(
+        "non-numeric argument to binary operator$",
+        attr(cluster_tmp, "condition")$message
+      )) {
       stop(
-        "In your model, you have specified multiple fixed effects, none of 
+        "In your model, you have specified multiple fixed effects, none of
         which are of type factor. While `fixest::feols()` and `lfe::felm()`
         handle this case without any troubles,  `boottest()` currently cannot
         handle this case - please change the type of (at least one) fixed
-        effect(s) to factor. If this does not solve the error, please 
+        effect(s) to factor. If this does not solve the error, please
         report the issue at https://github.com/s3alfisc/fwildclusterboot."
       )
     }
-    
+
     cluster_df <-
       model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
     # without cluster intersection
     N_G <-
-      vapply(cluster_df, function(x)
-        length(unique(x)), numeric(1))
-    
+      vapply(cluster_df, function(x) {
+        length(unique(x))
+      }, numeric(1))
+
     # Step 1: decode bootcluster variable
-    
+
     # create a bootcluster vector
     if (length(bootcluster) == 1) {
       if (bootcluster == "max") {
@@ -744,17 +756,19 @@ get_cluster <-
     } else {
       bootcluster_char <- bootcluster
     }
-    
+
     # add bootcluster variable to formula of clusters
     cluster_bootcluster_fml <-
       update(
         clustid_fml, paste(
           "~ . +", paste(
-            bootcluster_char, collapse = " + ")
+            bootcluster_char,
+            collapse = " + "
           )
         )
-    
-    
+      )
+
+
     cluster_bootcluster_tmp <-
       if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
@@ -768,87 +782,94 @@ get_cluster <-
         )
       } else {
         expand.model.frame(object,
-                           cluster_bootcluster_fml,
-                           na.expand = FALSE,
-                           envir = call_env)
+          cluster_bootcluster_fml,
+          na.expand = FALSE,
+          envir = call_env
+        )
       }
-    
+
     # data.frame as needed for WildBootTests.jl
     cluster_bootcluster_df <- model.frame(cluster_bootcluster_fml,
-                                          cluster_bootcluster_tmp,
-                                          na.action = na.pass)
-    
+      cluster_bootcluster_tmp,
+      na.action = na.pass
+    )
+
     # data.frames with clusters, bootcluster
     cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
     bootcluster <-
       cluster_bootcluster_df[, bootcluster_char, drop = FALSE]
-    
+
     if (!any(bootcluster_char %in% clustid_char)) {
       is_subcluster <- TRUE
       if (!(any(names(bootcluster) %in% c(clustid_char, names(coef(
         object
       )))))) {
         stop(
-          "A bootcluster variable is neither contained in the cluster 
+          "A bootcluster variable is neither contained in the cluster
           variables nor in the model coefficients."
         )
       }
     } else {
       is_subcluster <- FALSE
     }
-    
+
     ## handle omitted or excluded observations (works for lfe, lm)
     if ((N != NROW(cluster)) &&
-        !is.null(object$na.action) &&
-        (class(object$na.action) %in% c("exclude", "omit"))) {
+      !is.null(object$na.action) &&
+      (class(object$na.action) %in% c("exclude", "omit"))) {
       cluster <- cluster[-object$na.action, , drop = FALSE]
     }
-    
+
     if ((N != NROW(bootcluster)) &&
-        !is.null(object$na.action) &&
-        (class(object$na.action) %in% c("exclude", "omit"))) {
+      !is.null(object$na.action) &&
+      (class(object$na.action) %in% c("exclude", "omit"))) {
       bootcluster <- bootcluster[-object$na.action, , drop = FALSE]
     }
-    
+
     if (N != nrow(cluster) && inherits(object, "fixest")) {
       cluster <- cluster[unlist(object$obs_selection), , drop = FALSE]
       bootcluster <-
         bootcluster[unlist(object$obs_selection), , drop = FALSE]
     }
-    
-    if (NROW(cluster) != N)
+
+    if (NROW(cluster) != N) {
       stop("number of observations in 'cluster' and 'nobs()' do not match")
-    if (NROW(bootcluster) != N)
+    }
+    if (NROW(bootcluster) != N) {
       stop("number of observations in 'bootcluster' and 'nobs()' do not match")
-    
-    if (any(is.na(cluster)))
+    }
+
+    if (any(is.na(cluster))) {
       stop(
         "`boottest()` cannot handle NAs in `clustid` variables that are not
         part of the estimated model object."
       )
-    if (any(is.na(bootcluster)))
+    }
+    if (any(is.na(bootcluster))) {
       stop(
         "`boottest()` cannot handle NAs in `bootcluster` variables that are
         not part of the estimated model object."
       )
-    
-    
+    }
+
+
     clustid_dims <- length(clustid_char)
-    
-    i <- !sapply(cluster, is.numeric)
+
+    i <- !vapply(cluster, is.numeric, logical(1))
     cluster[i] <- lapply(cluster[i], as.character)
-    
+
     # taken from multiwayvcov::cluster.boot
     acc <- list()
     for (i in 1:clustid_dims) {
       acc <-
         append(acc, utils::combn(1:clustid_dims, i, simplify = FALSE))
     }
-    
-    vcov_sign <- sapply(acc, function(i)
-      (-1) ^ (length(i) + 1))
+
+    vcov_sign <- vapply(acc, function(i) {
+      (-1)^(length(i) + 1)
+    }, numeric(1))
     acc <- acc[-1:-clustid_dims]
-    
+
     if (clustid_dims > 1) {
       for (i in acc) {
         cluster <- cbind(cluster, Reduce(paste, cluster[, i]))
@@ -856,26 +877,27 @@ get_cluster <-
           Reduce(paste, names(cluster[, i]))
       }
     }
-    
-    N_G <- vapply(cluster, function(x)
-      length(unique(x)), numeric(1))
-    
+
+    N_G <- vapply(cluster, function(x) {
+      length(unique(x))
+    }, numeric(1))
+
     # now do all the other bootcluster things
     c1 <-
       bootcluster_char[which(!(bootcluster_char %in% clustid_char))]
-    # both bootstrapping and error cluster: all variables in clustid_char that 
+    # both bootstrapping and error cluster: all variables in clustid_char that
     # are also in bootcluster
     c2 <- clustid_char[which(clustid_char %in% bootcluster_char)]
     # only error cluster: variables in clustid_char not in c1, c2
     c3 <- clustid_char[which(!(clustid_char %in% c(c1, c2)))]
     all_c <- c(c1, c2, c3)
-    
+
     if (length(bootcluster_char) > 1) {
       bootcluster <- as.data.frame(Reduce(paste, bootcluster))
       names(bootcluster) <- Reduce(paste, bootcluster_char)
     }
-    
-    
+
+
     res <- list(
       vcov_sign = vcov_sign,
       clustid_dims = clustid_dims,
@@ -886,7 +908,7 @@ get_cluster <-
       bootcluster = bootcluster,
       cluster_bootcluster = cluster_bootcluster_df
     )
-    
+
     res
   }
 
@@ -897,36 +919,36 @@ demean_fe <- function(X, Y, fe, has_weights, N) {
   #' @param X the design matrix X
   #' @param Y the dependent variable Y as a numeric vector
   #' @param fe the name of the fixed effect to be projected out
-  #' @param has_weights logical - have regression weights been used in the 
+  #' @param has_weights logical - have regression weights been used in the
   #' original model?
   #' @param N the number of observations
   #'
-  #' @return A list that includes - among other things - the demeaned 
+  #' @return A list that includes - among other things - the demeaned
   #' design matrix X and depvar Y
   #'
   #' @noRd
-  
+
   g <- collapse::GRP(fe, call = FALSE)
   X <- collapse::fwithin(X, g)
   Y <- collapse::fwithin(Y, g)
-  
+
   fixed_effect_W <- as.factor(fe[, 1])
-  
+
   if (!has_weights) {
     levels(fixed_effect_W) <-
       (1 / table(fe)) # because duplicate levels are forbidden
   } else {
     stop(
-      "Currently, boottest() does not jointly support regression weights / 
+      "Currently, boottest() does not jointly support regression weights /
       WLS and fixed effects. If you want to use
       boottest() for inference based on WLS, please set fe = NULL."
     )
     # levels(fixed_effect_W) <- 1 / table(fixed_effect)
   }
-  
+
   W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effect_W)))
   n_fe <- length(unique(fe[, 1]))
-  
+
   res <- list(
     X = X,
     Y = Y,
@@ -934,7 +956,7 @@ demean_fe <- function(X, Y, fe, has_weights, N) {
     W = W,
     n_fe = n_fe
   )
-  
+
   res
 }
 
@@ -954,53 +976,54 @@ transform_fe <-
     #' @param has_weights logical - have regression weights been used in the
     #'  original model?
     #' @param N the number of observations
-    #' @param boot_algo bootstrap algorithm to run. Either "R" or 
+    #' @param boot_algo bootstrap algorithm to run. Either "R" or
     #' "WildBootTests.jl"
     #'
     #' @return a list containing X - the design matrix plus additionally
     #'  attached fixed effects, and
-    #'         fixed_effect - a data.frame containing the fixed effect to 
+    #'         fixed_effect - a data.frame containing the fixed effect to
     #'         be projected out
     #'
     #' @noRd
-    
+
     all_fe <- model_matrix(object, type = "fixef", collin.rm = TRUE)
     # make sure all fixed effects variables are characters
-    
+
     n_fe <- ncol(all_fe)
     all_fe_names <- names(all_fe)
-    k2 <- Reduce("+", lapply(all_fe, function(x)
-      length(unique(x))))
-    
+    k2 <- Reduce("+", lapply(all_fe, function(x) {
+      length(unique(x))
+    }))
+
     fe_df <- W <- n_fe <- NULL
-    
+
     # if a fe is to be projected out in the bootstrap
     if (!is.null(fe)) {
       # add all fe except for fe to data frame
       fe_df <- all_fe[, fe, drop = FALSE]
       add_fe <- all_fe[, all_fe_names != fe, drop = FALSE]
       add_fe_names <- names(add_fe)
-      
+
       # nothing to add if only one fixed effect in model
       if (length(add_fe_names) != 0) {
         fml_fe <- reformulate(add_fe_names, response = NULL)
-        
+
         add_fe_dummies <-
           model.matrix(
             fml_fe, model.frame(
               fml_fe,
               data = as.data.frame(
                 add_fe
-                )
               )
             )
+          )
         # drop the intercept
         add_fe_dummies <-
-          add_fe_dummies[,-which(colnames(add_fe_dummies) == "(Intercept)")]
+          add_fe_dummies[, -which(colnames(add_fe_dummies) == "(Intercept)")]
         X <-
           as.matrix(collapse::add_vars(as.data.frame(X), add_fe_dummies))
       }
-      
+
       # project out fe
       if (boot_algo == "R") {
         # WildBootTests.jl does demeaning internally
@@ -1019,7 +1042,7 @@ transform_fe <-
       X <-
         as.matrix(collapse::add_vars(as.data.frame(X), add_fe_dummies))
     }
-    
+
     res <- list(
       X = X,
       Y = Y,
@@ -1028,6 +1051,6 @@ transform_fe <-
       k2 = k2,
       fixed_effect = fe_df
     )
-    
+
     res
   }

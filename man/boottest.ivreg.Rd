@@ -195,8 +195,7 @@ library(ivreg)
 library(fwildclusterboot)
 
 # drop all NA values from SchoolingReturns
-SchoolingReturns <- 
-    SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
+SchoolingReturns <- na.omit(SchoolingReturns)
 ivreg_fit <- ivreg(log(wage) ~ education + age +
   ethnicity + smsa + south + parents14 |
   nearcollege + age + ethnicity + smsa

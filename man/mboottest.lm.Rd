@@ -2,7 +2,8 @@
 % Please edit documentation in R/mboottest_lm.R
 \name{mboottest.lm}
 \alias{mboottest.lm}
-\title{Fast wild cluster bootstrap inference of joint hypotheses for object of class lm}
+\title{Fast wild cluster bootstrap inference of joint hypotheses for object of
+class lm}
 \usage{
 \method{mboottest}{lm}(
   object,
@@ -141,7 +142,8 @@ internal seed was created.}
 \description{
 \code{mboottest.lm} is a S3 method that allows for fast wild cluster
 bootstrap inference of multivariate hypotheses for objects of class lm by
-implementing the fast wild bootstrap algorithm developed in Roodman et al., 2019.
+implementing the fast wild bootstrap algorithm developed in
+Roodman et al., 2019.
 }
 \section{Setting Seeds}{
 

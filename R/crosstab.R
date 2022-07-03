@@ -46,8 +46,8 @@
 crosstab4 <- function(data, var1, var2) {
   dreamerr::check_arg(var1, "data.frame")
   dreamerr::check_arg(var2, "data.frame")
-  
-  
+
+
   length_var1 <- nrow(unique(var1))
   length_var2 <- nrow(unique(var2))
   res <-
@@ -100,7 +100,7 @@ crosstab4 <- function(data, var1, var2) {
 crosstab <- function(data, var1, var2) {
   dreamerr::check_arg(var1, "data.frame")
   dreamerr::check_arg(var2, "data.frame")
-  
+
   f1 <- collapse::qF(.subset2(var1, 1L), na.exclude = FALSE)
   f2 <- collapse::qF(.subset2(var2, 1L), na.exclude = FALSE)
   intact <- f1:f2

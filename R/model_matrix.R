@@ -4,8 +4,8 @@ model_matrix <- function(object, ...) {
   #' @param ... Other arguments
   #' @export
   #' @noRd
-  
-  
+
+
   UseMethod("model_matrix")
 }
 
@@ -18,13 +18,13 @@ model_matrix.lm <- function(object, collin.rm = TRUE, ...) {
   #' @param collin.rm Should collinear variables be dropped?
   #' @param ... Other arguments
   #' @noRd
-  
+
   X <- model.matrix(object)
   if (collin.rm == TRUE) {
     bn <- names(na.omit(coef(object)))
     X <- X[, colnames(X) %in% bn]
   }
-  
+
   X
 }
 
@@ -37,9 +37,9 @@ model_matrix.felm <- function(object, type, collin.rm = TRUE, ...) {
   #' @param type 'rhs' for right-hand side variables, 'fixef' for fixed effects
   #' @param ... Other arguments
   #' @noRd
-  
+
   dreamerr::check_arg(type, "charin(rhs, fixef)")
-  
+
   if (type == "rhs") {
     mm <- model.matrix(object)
     if (collin.rm == TRUE) {
@@ -50,10 +50,11 @@ model_matrix.felm <- function(object, type, collin.rm = TRUE, ...) {
     mm <- as.data.frame(object$fe)
     # make sure all fixed effect variables are factors
     i <- seq_along(mm)
-    mm[, i] <- lapply(i, function(x)
-      factor(mm[, x]))
+    mm[, i] <- lapply(i, function(x) {
+      factor(mm[, x])
+    })
   }
-  
+
   mm
 }
 
@@ -69,10 +70,10 @@ model_matrix.fixest <-
     #' @param collin.rm Should collinear variables be dropped?
     #' @param ... Other arguments
     #' @noRd
-    
-    
+
+
     dreamerr::check_arg(type, "charin(rhs, fixef)")
-    
+
     if (type == "rhs") {
       mm <-
         model.matrix(
@@ -93,10 +94,11 @@ model_matrix.fixest <-
         )
       # make sure that all fixef vars are of type factor
       i <- seq_along(mm)
-      mm[, i] <- lapply(i, function(x)
-        factor(mm[, x]))
+      mm[, i] <- lapply(i, function(x) {
+        factor(mm[, x])
+      })
     }
-    
+
     mm
   }
 

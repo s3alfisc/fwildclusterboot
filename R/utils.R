@@ -83,7 +83,7 @@ create_data <-
         )),
         # Q1_immigration_latent = rnorm(N),
         # Q1_immigration = ifelse(Q1_immigration_latent > 0.5, 1,
-        #  ifelse(Q1_immigration_latent <= 0.5 & 
+        #  ifelse(Q1_immigration_latent <= 0.5 &
         # Q1_immigration_latent > 0, 2, 3)
         # ),
         # Q2_defense_latent = rnorm(N, 0, 3),
@@ -101,17 +101,17 @@ create_data <-
         state = rep(1:(N / 20), 20),
         year = sort(rep(1:20, N / 20))
       )
-    
+
     voters$Q1_immigration <- as.factor(voters$Q1_immigration)
     voters$Q2_defense <- as.factor(voters$Q2_defense)
-    
-    
+
+
     voters$log_income <- log(voters$income)
     voters$Q1_immigration <- as.factor(voters$Q1_immigration)
-    
+
     # add weights
     voters$weights <- sample(1:10, N, replace = TRUE) / 10
-    
+
     voters
   }
 
@@ -129,13 +129,13 @@ gtools_permutations <-
     #' @param set logical flag for duplicates
     #' @param repeats.allowed logical flag
     #' @noRd
-    
+
     if (mode(n) != "numeric" || length(n) != 1 || n < 1 ||
-        (n %% 1) != 0) {
+      (n %% 1) != 0) {
       stop("bad value of n")
     }
     if (mode(r) != "numeric" || length(r) != 1 || r < 1 ||
-        (r %% 1) != 0) {
+      (r %% 1) != 0) {
       stop("bad value of r")
     }
     if (!is.atomic(v) || length(v) < n) {
@@ -159,13 +159,15 @@ gtools_permutations <-
           matrix(v, 1, r)
         } else {
           inner <- Recall(n, r - 1, v)
-          cbind(rep(v, rep(nrow(inner), n)),
-                matrix(
-                  t(inner),
-                  ncol = ncol(inner),
-                  nrow = nrow(inner) * n,
-                  byrow = TRUE
-                ))
+          cbind(
+            rep(v, rep(nrow(inner), n)),
+            matrix(
+              t(inner),
+              ncol = ncol(inner),
+              nrow = nrow(inner) * n,
+              byrow = TRUE
+            )
+          )
         }
       }
     } else {
@@ -178,7 +180,7 @@ gtools_permutations <-
           X <- NULL
           for (i in 1:n) {
             X <- rbind(X, cbind(v[i], Recall(n -
-                                               1, r - 1, v[-i])))
+              1, r - 1, v[-i])))
           }
           X
         }
@@ -199,16 +201,16 @@ setBoottest_boot_algo <- function(boot_algo) {
   #' setBoottest_boot_algo(boot_algo = "R")
   #' setBoottest_boot_algo(boot_algo = "WildBootTests.jl")
   #' }
-  
+
   if (missing(boot_algo) || is.null(boot_algo)) {
     # New default: one cores used
     boot_algo <- "R"
   }
-  
+
   boot_algo <- set_boot_algo(boot_algo)
-  
+
   options("boottest_boot_algo" = boot_algo)
-  
+
   invisible()
 }
 
@@ -216,11 +218,11 @@ getBoottest_boot_algo <- function() {
   #' get the bootstrap algorithm to be run via `boottest()` and `waldboottest()`
   #' @return The number of threads currently used by boottest as set in options
   #' @noRd
-  
+
   x <- getOption("boottest_boot_algo")
   if (!(x %in% c("R", "WildBootTests.jl"))) {
     stop(
-      "The value of getOption(\"boottest_boot_algo\") is currently not legal. 
+      "The value of getOption(\"boottest_boot_algo\") is currently not legal.
       Please use function setBoottest_boot_algo to set it to an appropriate
       value. "
     )
@@ -230,7 +232,7 @@ getBoottest_boot_algo <- function() {
 
 set_boot_algo <- function(boot_algo) {
   dreamerr::check_value(boot_algo, "charin(R, WildBootTests.jl)")
-  
+
   boot_algo
 }
 
@@ -245,29 +247,29 @@ set_boot_algo <- function(boot_algo) {
 # 2. the default number of threads in check_set_nthreads is set to 1
 
 setBoottest_nthreads <- function(nthreads) {
-  
+
   #' Set the number of threads for use with open mp via options
   #' By default, only one thread is used
   #' @param nthreads Integer. Number of threads to be used
   #' @return No return value
   #' @noRd
   #' @importFrom parallel detectCores
-  
+
   max_CRAN <- as.numeric(Sys.getenv("OMP_THREAD_LIMIT"))
   max_CRAN[is.na(max_CRAN)] <- 1000
-  
-  max_threads <- min(cpp_get_nb_threads(), 1000, max_CRAN) 
+
+  max_threads <- min(cpp_get_nb_threads(), 1000, max_CRAN)
   # we cap at 1k nthreads
-  
+
   if (missing(nthreads) || is.null(nthreads)) {
     # New default: one cores used
     nthreads <- 1
   }
-  
+
   nthreads <- check_set_nthreads(nthreads)
-  
+
   options("boottest_nthreads" = nthreads)
-  
+
   invisible()
 }
 
@@ -276,11 +278,11 @@ getBoottest_nthreads <- function() {
   #' get the number of threads for use with open mp
   #' @return The number of threads currently used by boottest as set in options
   #' @noRd
-  
+
   x <- getOption("boottest_nthreads")
   if (length(x) != 1 || !is.numeric(x) || is.na(x) || x %% 1 != 0 || x < 0) {
     stop("The value of getOption(\"boottest_nthreads\") is currently not legal.
-         Please use function setBoottest_nthreads to set it to an appropriate 
+         Please use function setBoottest_nthreads to set it to an appropriate
          value. ")
   }
   # cat("getBoottest nr threads \n")
@@ -294,45 +296,51 @@ check_set_nthreads <- function(nthreads) {
   #' @importFrom dreamerr set_up check_value warn_up
   #' @return Integer. The number of threads to be used.
   #' @noRd
-  
-  
+
+
   dreamerr::set_up(1)
-  
-  dreamerr::check_value(nthreads, 
-                        "integer scalar GE{0} | numeric scalar GT{0} LT{1}", 
-                        .message = paste0(
-                          "The argument 'nthreads' must be an integer 
-                          lower or equal to the number of threads available (", 
-                          max(cpp_get_nb_threads(), 1), "). 
-                          It can be equal to 0 which means all threads. 
+
+  dreamerr::check_value(nthreads,
+    "integer scalar GE{0} | numeric scalar GT{0} LT{1}",
+    .message = paste0(
+      "The argument 'nthreads' must be an integer
+                          lower or equal to the number of threads available (",
+      max(cpp_get_nb_threads(), 1), ").
+                          It can be equal to 0 which means all threads.
                           Alternatively, if equal to a number strictly between
                           0 and 1, it represents the fraction of all
-                          threads to be used."))
-  
+                          threads to be used."
+    )
+  )
+
   # max_threads <- parallel::detectCores()
   max_threads <- cpp_get_nb_threads()
   # cat("max_threads \n")
   # print(max_threads)
-  
+
   # # To add later
   # if(cpp_is_in_fork()) return(1)
-  
+
   if (nthreads == 0) {
     nthreads <- max(max_threads, 1)
   } else if (nthreads < 1) {
     nthreads <- max(ceiling(max_threads * nthreads), 1)
   } else if (nthreads > 1) {
     if (max_threads == 0) {
-      dreamerr::warn_up("OpenMP not detected: cannot use ", nthreads,
-                        " threads, single-threaded mode instead.")
+      dreamerr::warn_up(
+        "OpenMP not detected: cannot use ", nthreads,
+        " threads, single-threaded mode instead."
+      )
       nthreads <- 1
     } else if (nthreads > max_threads) {
-      dreamerr::warn_up("Asked for ", nthreads, 
-                        " threads while the maximum is ",
-                        max_threads,
-                        ". Set to ",
-                        max_threads, 
-                        " threads instead.")
+      dreamerr::warn_up(
+        "Asked for ", nthreads,
+        " threads while the maximum is ",
+        max_threads,
+        ". Set to ",
+        max_threads,
+        " threads instead."
+      )
       nthreads <- max_threads
     }
   }
@@ -346,7 +354,7 @@ get_seed <- function() {
   #' for using set.seed() for controlling rcpp's seed, see this
   #' blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/
   #' @noRd
-  
+
   # max_int <- .Machine$integer.max
   max_int <- 2147483647L
   x <- sample.int(max_int, 1)
@@ -383,20 +391,20 @@ set_seed <- function(seed, boot_algo, type) {
       internal_seed <- NULL
     }
   }
-  
+
   internal_seed
 }
 
 
 to_integer <- function(vec) {
-  
+
   #' Transform vectors of all types safely to integer vectors
   #' @param vec A vector
   #' @return An integer vector
   #' @noRd
-  
+
   dreamerr::check_arg(vec, "MBT vector")
-  
+
   unique_vec <- unique(vec)
   int_vec <- rep(NA, length(vec))
   for (x in seq_along(unique_vec)) {
@@ -404,4 +412,3 @@ to_integer <- function(vec) {
   }
   as.integer(int_vec)
 }
-

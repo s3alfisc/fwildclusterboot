@@ -61,7 +61,7 @@ Roodman et al cited below, section 4.2).
 Other options include "min", where bootstrapping is clustered by
 the cluster variable with the fewest clusters.
 Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
-supported - see the \code{vignette("fwildclusterboot", 
+supported - see the \code{vignette("fwildclusterboot",
         package = "fwildclusterboot")} for details.}
 
 \item{fe}{A character vector or rhs formula of length one which contains

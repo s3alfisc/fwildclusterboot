@@ -1,7 +1,7 @@
 test_that("test multicollinearity", {
   library(lfe)
   library(fixest)
-  
+
   N <- 1000
   X1 <- rnorm(N)
   X2 <- X1
@@ -12,11 +12,11 @@ test_that("test multicollinearity", {
     X2 = X2,
     clustid = sample(1:10, N, TRUE)
   )
-  
+
   lm_fit <- lm(Y ~ X1 + X2, data = data)
   feols_fit <- feols(Y ~ X1 + X2, data = data)
   felm_fit <- felm(Y ~ X1 + X2, data = data)
-  
+
   boot_lm <-
     boottest(
       object = lm_fit,
@@ -38,7 +38,7 @@ test_that("test multicollinearity", {
       B = 999,
       clustid = "clustid"
     )
-  
+
   expect_equal(boot_lm$t_stat, boot_felm$t_stat)
   expect_equal(boot_lm$t_stat, boot_feols$t_stat)
 })

@@ -8,8 +8,8 @@
 #' @param object An object of type lm, fixest, felm or ivreg
 #' @param ... other arguments
 #'
-#' @seealso \link[fwildclusterboot]{boottest.lm}, 
-#' \link[fwildclusterboot]{boottest.fixest}, 
+#' @seealso \link[fwildclusterboot]{boottest.lm},
+#' \link[fwildclusterboot]{boottest.fixest},
 #' \link[fwildclusterboot]{boottest.felm},
 #'  \link[fwildclusterboot]{boottest.ivreg}
 #'
@@ -17,7 +17,7 @@
 #' library(fwildclusterboot)
 #' data(voters)
 #' lm_fit <- lm(
-#' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
 #'   data = voters
 #' )
 #' boot <- boottest(lm_fit,
@@ -36,7 +36,7 @@
 #' @export
 #'
 #' @section Setting Seeds:
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed` 
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed`
 #' function argument, or
 #' set a global random seed via
 #' + `set.seed()` when using
@@ -44,7 +44,7 @@
 #'     wild bootstrap
 #'    3) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights
 #'     or 4) `boot_algo = "WildBootTests.jl"`
-#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb 
+#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb
 #' or Normal weights
 #'
 #' @return An object of class \code{boottest}.
@@ -52,24 +52,24 @@
 #' STATA using boottest", The STATA Journal.
 #' (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
-#'  "Bootstrap-based improvements for inference with clustered errors." 
+#'  "Bootstrap-based improvements for inference with clustered errors."
 #'  The Review of Economics and Statistics 90.3 (2008): 414-427.
-#' @references Cameron, A.Colin & Douglas L. Miller. 
-#' "A practitioner's guide to cluster-robust inference" 
+#' @references Cameron, A.Colin & Douglas L. Miller.
+#' "A practitioner's guide to cluster-robust inference"
 #' Journal of Human Resources (2015) \doi{doi: 10.3368/jhr.50.2.317}
-#' @references Davidson & MacKinnon. "Wild Bootstrap Tests for IV regression" 
-#' Journal of Economics and Business Statistics (2010) 
+#' @references Davidson & MacKinnon. "Wild Bootstrap Tests for IV regression"
+#' Journal of Economics and Business Statistics (2010)
 #' \doi{https://doi.org/10.1198/jbes.2009.07221}
-#' @references MacKinnon, James G., and Matthew D. Webb. 
+#' @references MacKinnon, James G., and Matthew D. Webb.
 #' "The wild bootstrap for few (treated) clusters."
 #'  The Econometrics Journal 21.2 (2018): 114-135.
-#' @references MacKinnon, James G., and Matthew D. Webb. 
+#' @references MacKinnon, James G., and Matthew D. Webb.
 #' "Cluster-robust inference: A guide to empirical practice"
-#'  Journal of Econometrics (2022) 
+#'  Journal of Econometrics (2022)
 #'  \doi{https://doi.org/10.1016/j.jeconom.2022.04.001}
 #' @references MacKinnon, James. "Wild cluster bootstrap confidence intervals."
 #'  L'Actualite economique 91.1-2 (2015): 11-33.
-#' @references Webb, Matthew D. 
+#' @references Webb, Matthew D.
 #' "Reworking wild bootstrap based inference for clustered errors"
 #' . No. 1315. Queen's Economics Department Working Paper, 2013.
 
@@ -82,7 +82,7 @@ boottest <- function(object,
 #' Arbitrary Linear Hypothesis Testing for Regression Models via Wald-Tests
 #'
 #'
-#' `mboottest` is a S3 method that allows for arbitrary linear 
+#' `mboottest` is a S3 method that allows for arbitrary linear
 #' hypothesis testing
 #' for objects of class lm, fixest, felm
 #'
@@ -90,7 +90,7 @@ boottest <- function(object,
 #' @param ... other arguments
 #'
 #' @seealso \link[fwildclusterboot]{mboottest.lm}
-#'  \link[fwildclusterboot]{mboottest.felm} 
+#'  \link[fwildclusterboot]{mboottest.felm}
 #'  \link[fwildclusterboot]{mboottest.fixest}
 #'
 #' @export
@@ -112,24 +112,24 @@ boottest <- function(object,
 #' STATA using boottest", The STATA Journal.
 #' (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
-#'  "Bootstrap-based improvements for inference with clustered errors." 
+#'  "Bootstrap-based improvements for inference with clustered errors."
 #'  The Review of Economics and Statistics 90.3 (2008): 414-427.
-#' @references Cameron, A.Colin & Douglas L. Miller. 
-#' "A practitioner's guide to cluster-robust inference" 
+#' @references Cameron, A.Colin & Douglas L. Miller.
+#' "A practitioner's guide to cluster-robust inference"
 #' Journal of Human Resources (2015) \doi{doi: 10.3368/jhr.50.2.317}
-#' @references Davidson & MacKinnon. "Wild Bootstrap Tests for IV regression" 
-#' Journal of Economics and Business Statistics (2010) 
+#' @references Davidson & MacKinnon. "Wild Bootstrap Tests for IV regression"
+#' Journal of Economics and Business Statistics (2010)
 #' \doi{https://doi.org/10.1198/jbes.2009.07221}
-#' @references MacKinnon, James G., and Matthew D. Webb. 
+#' @references MacKinnon, James G., and Matthew D. Webb.
 #' "The wild bootstrap for few (treated) clusters."
 #'  The Econometrics Journal 21.2 (2018): 114-135.
-#' @references MacKinnon, James G., and Matthew D. Webb. 
+#' @references MacKinnon, James G., and Matthew D. Webb.
 #' "Cluster-robust inference: A guide to empirical practice"
-#'  Journal of Econometrics (2022) 
+#'  Journal of Econometrics (2022)
 #'  \doi{https://doi.org/10.1016/j.jeconom.2022.04.001}
 #' @references MacKinnon, James. "Wild cluster bootstrap confidence intervals."
 #'  L'Actualite economique 91.1-2 (2015): 11-33.
-#' @references Webb, Matthew D. 
+#' @references Webb, Matthew D.
 #' "Reworking wild bootstrap based inference for clustered errors"
 #' . No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
@@ -162,7 +162,9 @@ mboottest <- function(object,
 #' @param ... other arguments
 #'
 #' @export
-#' #' library(fwildclusterboot)
+#' 
+#' @examples
+#' library(fwildclusterboot)
 #' data(voters)
 #' lm_fit <- lm(
 #' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -205,7 +207,7 @@ teststat <- function(object,
 #' library(fwildclusterboot)
 #' data(voters)
 #' lm_fit <- lm(
-#' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
 #'   data = voters
 #' )
 #' boot <- boottest(lm_fit,
@@ -217,7 +219,7 @@ teststat <- function(object,
 #'
 confint.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
-  
+
   object$conf_int
 }
 
@@ -233,7 +235,7 @@ confint.boottest <- function(object, ...) {
 #' #' library(fwildclusterboot)
 #' data(voters)
 #' lm_fit <- lm(
-#' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
 #'   data = voters
 #' )
 #' boot <- boottest(lm_fit,
@@ -245,11 +247,11 @@ confint.boottest <- function(object, ...) {
 #'
 pval.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
-  
+
   object$p_val
 }
 
-#' S3 method to obtain the non-bootstrapped t-statistic calculated 
+#' S3 method to obtain the non-bootstrapped t-statistic calculated
 #' via `boottest()`
 #' @param object An object of type boottest
 #' @param ... Further arguments passed to or from other methods.
@@ -261,7 +263,7 @@ pval.boottest <- function(object, ...) {
 #' library(fwildclusterboot)
 #' data(voters)
 #' lm_fit <- lm(
-#' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
 #'   data = voters
 #' )
 #' boot <- boottest(lm_fit,
@@ -273,7 +275,7 @@ pval.boottest <- function(object, ...) {
 #'
 teststat.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
-  
+
   object$t_stat
 }
 
@@ -300,7 +302,7 @@ teststat.boottest <- function(object, ...) {
 
 nobs.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
-  
+
   object$N
 }
 
@@ -326,10 +328,10 @@ tidy.boottest <- function(object, ...) {
   #'   clustid = "group_id1"
   #' )
   #' generics::tidy(boot)
-  
+
   stopifnot(inherits(object, "boottest"))
   # dreamerr::validate_dots(stop = TRUE)
-  
+
   if (object$boot_algo == "WildBootTests.jl") {
     R <- object$R[which(object$R != 0)]
     hypothesis <-
@@ -340,12 +342,14 @@ tidy.boottest <- function(object, ...) {
         paste0(
           paste0(
             object$R, "*"
-          ), 
-          object$param, 
-          collapse = "+")
-        , "=", object$r)
+          ),
+          object$param,
+          collapse = "+"
+        ),
+        "=", object$r
+      )
   }
-  
+
   term <- hypothesis
   estimate <- object$point_estimate
   statistic <- object$t_stat
@@ -357,10 +361,10 @@ tidy.boottest <- function(object, ...) {
   } else {
     conf.low <- conf.high <- NA
   }
-  
+
   res <-
     data.frame(term, estimate, statistic, p.value, conf.low, conf.high)
-  
+
   return(res)
 }
 
@@ -385,10 +389,10 @@ summary.boottest <- function(object, digits = 3, ...) {
   #'   clustid = "group_id1"
   #' )
   #' summary(boot)
-  
+
   stopifnot(inherits(object, "boottest"))
   dreamerr::validate_dots(stop = TRUE)
-  
+
   N <- object$N
   B <- object$B
   sign_level <- object$sign_level
@@ -398,34 +402,39 @@ summary.boottest <- function(object, digits = 3, ...) {
   B <- object$B
   type <-
     ifelse(object$type %in% c("rademacher", "mammen", "norm", "webb"),
-           object$type,
-           "custom")
+      object$type,
+      "custom"
+    )
   # clustid <-
   estim_function <- class(object$regression)
-  
+
   clustering_type <- paste0(length(object$clustid), "-way")
   numb_clusters <- object$N_G
-  
+
   tidy_names <-
-    c("term",
+    c(
+      "term",
       "estimate",
       "statistic",
       "p.value",
       "conf.low",
-      "conf.high")
-  
-  tidy_object <- lapply(tidy_names,
-                        function(x) {
-                          if (is.numeric(tidy.boottest(object)[[x]])) {
-                            round(tidy.boottest(object)[[x]], digits = digits)
-                          } else {
-                            tidy.boottest(object)[[x]]
-                          }
-                        })
-  
+      "conf.high"
+    )
+
+  tidy_object <- lapply(
+    tidy_names,
+    function(x) {
+      if (is.numeric(tidy.boottest(object)[[x]])) {
+        round(tidy.boottest(object)[[x]], digits = digits)
+      } else {
+        tidy.boottest(object)[[x]]
+      }
+    }
+  )
+
   tidy_object <- as.data.frame(tidy_object)
   names(tidy_object) <- tidy_names
-  
+
   if (object$boot_algo == "WildBootTests.jl") {
     R <- object$R[which(object$R != 0)]
     hypothesis <-
@@ -436,15 +445,15 @@ summary.boottest <- function(object, digits = 3, ...) {
         paste0(
           paste0(
             object$R, "*"
-          ), 
-          object$param, 
+          ),
+          object$param,
           collapse = "+"
         ),
-        "=", 
+        "=",
         object$r
       )
   }
-  
+
   print(call)
   cat(
     "\t\n",
@@ -455,11 +464,11 @@ summary.boottest <- function(object, digits = 3, ...) {
     sprintf("Clustering: %s\n", clustering_type),
     sprintf("Confidence Sets: %s\n", signif_level),
     sprintf("Number of Clusters: %s\n", Reduce(paste, numb_clusters)),
-    
+
     # sprintf("Adj. R-Squared: %s\n", round(adj_r_squared,6)),
     sprintf("%s\n", "")
   )
-  
+
   return(tidy_object)
 }
 
@@ -483,10 +492,10 @@ plot.boottest <- function(x, ...) {
   #'   clustid = "group_id1"
   #' )
   #' plot(boot)
-  
+
   stopifnot(inherits(x, "boottest"))
   dreamerr::validate_dots(stop = TRUE)
-  
+
   if (is.null(x$conf_int)) {
     stop("No plot method if boottest()'s function argument 'conf_int = FALSE'.")
   }
@@ -495,7 +504,7 @@ plot.boottest <- function(x, ...) {
   conf_int <- x$conf_int
   sign_level <- x$sign_level
   xlab <- x$param
-  
+
   graphics::plot(
     x = test_vals,
     y = p_test_vals,
@@ -533,20 +542,20 @@ glance.boottest <- function(x, ...) {
   #'   clustid = "group_id1"
   #' )
   #' generics::glance(boot)
-  
+
   stopifnot(inherits(x, "boottest"))
   broom::glance(eval(x$call$object))
 }
 
 
 
-#' S3 method to obtain the wild cluster bootstrapped p-value of an object 
+#' S3 method to obtain the wild cluster bootstrapped p-value of an object
 #' of type mboottest
 #' @param object object of type mboottest
 #' @param ... Further arguments passed to or from other methods.
 #' @export
 #' @method pval mboottest
-#' @return A vector containing the boundaries of the wild cluster 
+#' @return A vector containing the boundaries of the wild cluster
 #' bootstrapped p-value
 #' @examples
 #' \dontrun{
@@ -564,7 +573,7 @@ glance.boottest <- function(x, ...) {
 #'
 pval.mboottest <- function(object, ...) {
   stopifnot(inherits(object, "mboottest"))
-  
+
   object$p_val
 }
 
@@ -574,7 +583,7 @@ pval.mboottest <- function(object, ...) {
 #' @param ... Further arguments passed to or from other methods.
 #' @export
 #' @method teststat mboottest
-#' @return A vector containing the non-bootstrapped t-statistic calculated 
+#' @return A vector containing the non-bootstrapped t-statistic calculated
 #' in `mboottest()`
 #' @examples
 #' \dontrun{
@@ -592,12 +601,12 @@ pval.mboottest <- function(object, ...) {
 #'
 teststat.mboottest <- function(object, ...) {
   stopifnot(inherits(object, "mboottest"))
-  
+
   object$teststat
 }
 
 
-#' S3 method to obtain the effective number of observation used 
+#' S3 method to obtain the effective number of observation used
 #' in `mboottest()`
 #' @param object object of type mboottest
 #' @param ... Further arguments passed to or from other methods.
@@ -621,7 +630,7 @@ teststat.mboottest <- function(object, ...) {
 #'
 nobs.mboottest <- function(object, ...) {
   stopifnot(inherits(object, "mboottest"))
-  
+
   object$N
 }
 
@@ -632,13 +641,13 @@ nobs.mboottest <- function(object, ...) {
 #' @param digits Number of rounding digits
 #' @export
 #' @method print boottest
-#' @return A scalar containing the effective number of observations 
+#' @return A scalar containing the effective number of observations
 #' used in `mboottest`
 #' @examples
 #' #' library(fwildclusterboot)
 #' data(voters)
 #' lm_fit <- lm(
-#' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
 #'   data = voters
 #' )
 #' boot <- boottest(lm_fit,
@@ -650,14 +659,17 @@ nobs.mboottest <- function(object, ...) {
 #'
 print.boottest <- function(x, ..., digits = 4) {
   stopifnot(inherits(x, "boottest"))
-  
+
   print(x$call)
   cat("", "\n")
-  
-  vals <- lapply(c("p_val", "conf_int", "t_stat"),
-                 function(y)
-                   round(x[[y]], digits = digits))
-  
+
+  vals <- lapply(
+    c("p_val", "conf_int", "t_stat"),
+    function(y) {
+      round(x[[y]], digits = digits)
+    }
+  )
+
   cat("p value:", vals[[1]], "\n")
   cat("confidence interval:", vals[[2]], "\n")
   cat("test statistic", vals[[3]], "\n")
@@ -670,7 +682,7 @@ print.boottest <- function(x, ..., digits = 4) {
 #' @param digits Number of rounding digits
 #' @export
 #' @method print mboottest
-#' @return A scalar containing the effective number of observations used 
+#' @return A scalar containing the effective number of observations used
 #' in `mboottest`
 #' @examples
 #' \dontrun{
@@ -688,21 +700,24 @@ print.boottest <- function(x, ..., digits = 4) {
 #'
 print.mboottest <- function(x, ..., digits = 4) {
   stopifnot(inherits(x, "mboottest"))
-  
+
   print(x$call)
   cat("", "\n")
-  
-  vals <- lapply(c("p_val", "teststat"),
-                 function(y)
-                   round(x[[y]], digits = digits))
-  
+
+  vals <- lapply(
+    c("p_val", "teststat"),
+    function(y) {
+      round(x[[y]], digits = digits)
+    }
+  )
+
   cat("p value:", vals[[1]], "\n")
   cat("test statistic", vals[[2]], "\n")
 }
 
 
 tidy.mboottest <- function(object, ...) {
-  
+
   #' S3 method to summarize objects of class mboottest into tidy data.frame
   #' @param object object of type mboottest
   #' @param ... Further arguments passed to or from other methods.
@@ -730,16 +745,16 @@ tidy.mboottest <- function(object, ...) {
   #' pval(wboottest)
   #' generics::tidy(wboottest)
   #' }
-  
-  
+
+
   stopifnot(inherits(object, "mboottest"))
   # dreamerr::validate_dots(stop = TRUE)
-  
+
   statistic <- object$teststat
   p.value <- object$p_val
-  
+
   res <- data.frame(teststat = statistic, p_val = p.value)
-  
+
   return(res)
 }
 
@@ -770,27 +785,27 @@ summary.mboottest <- function(object, digits = 3, ...) {
   #' pval(wboottest)
   #' generics::tidy(wboottest)
   #' }
-  
-  
-  
+
+
+
   stopifnot(inherits(object, "mboottest"))
   dreamerr::validate_dots(stop = TRUE)
-  
+
   N <- object$N
   B <- object$B
   call <- object$call
   N_G <- object$N_G
   B <- object$B
   type <- ifelse(
-    object$type %in% c("rademacher", "mammen", "norm", "webb"), 
+    object$type %in% c("rademacher", "mammen", "norm", "webb"),
     object$type, "custom"
   )
-  
+
   clustering_type <- paste0(length(object$clustid), "-way")
   numb_clusters <- object$N_G
-  
+
   tidy_names <- c("teststat", "p_val")
-  
+
   # rounding
   tidy_object <- lapply(
     tidy_names,
@@ -802,12 +817,12 @@ summary.mboottest <- function(object, digits = 3, ...) {
       }
     }
   )
-  
+
   tidy_object <- as.data.frame(tidy_object)
   names(tidy_object) <- tidy_names
-  
+
   hypothesis <- "Multivariate mboottest"
-  
+
   print(call)
   cat(
     "\t\n",
@@ -817,10 +832,10 @@ summary.mboottest <- function(object, digits = 3, ...) {
     sprintf("Bootstr. Type: %s\n", type),
     sprintf("Clustering: %s\n", clustering_type),
     sprintf("Number of Clusters: %s\n", Reduce(paste, numb_clusters)),
-    
+
     # sprintf("Adj. R-Squared: %s\n", round(adj_r_squared,6)),
     sprintf("%s\n", "")
   )
-  
+
   tidy(object)
 }

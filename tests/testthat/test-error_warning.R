@@ -1,18 +1,18 @@
 test_that("errors and warnings q = 1", {
   skip_on_cran()
   skip_on_ci()
-  
+
   # ------------------------------------------------------------------ #
   # test for warnings and errors
   # ------------------------------------------------------------------ #
   library(fwildclusterboot)
   library(fixest)
   library(lfe)
-  
-  
+
+
   for (boot_algo in c("R", "WildBootTests.jl", "R-lean")) {
     cat(boot_algo, "\n")
-    
+
     # for(boot_algo in c("R-lean")){
     # test boottest function arguments for errors
     lm_fit <-
@@ -87,10 +87,10 @@ test_that("errors and warnings q = 1", {
           seed = 1234
         )
       )
-    
-    
-    
-    
+
+
+
+
     # sign_level
     expect_error(
       boottest(
@@ -164,7 +164,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     # B < 100
     if (boot_algo %in% c("R", "R-lean")) {
       expect_error(
@@ -201,7 +201,7 @@ test_that("errors and warnings q = 1", {
         )
       )
     }
-    
+
     # param not in data.frame
     expect_error(
       boottest(
@@ -236,7 +236,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     # rademacher enumeration case
     if (boot_algo != "R-lean") {
       suppressWarnings(expect_warning(
@@ -273,21 +273,21 @@ test_that("errors and warnings q = 1", {
         )
       ))
     }
-    
+
     suppressWarnings(expect_warning(
       boottest(
         object = lm_fit,
         clustid = "group_id1",
-        B = 2 ^ 10,
+        B = 2^10,
         seed = 911,
         param = "treatment",
         conf_int = TRUE,
         boot_algo = boot_algo
       )
     ))
-    
 
-    
+
+
     # test for banned function arguments and syntax for fixest
     feols_fit <-
       feols(
@@ -315,7 +315,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     feols_fit <-
       feols(
         proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -364,7 +364,7 @@ test_that("errors and warnings q = 1", {
           seed = 1234
         )
       )
-    
+
     # joint fe != NULL and weights = on
     if (boot_algo %in% c("R", "R-lean")) {
       expect_error(
@@ -392,9 +392,9 @@ test_that("errors and warnings q = 1", {
         )
       )
     }
-    
+
     # nthreads < 1
-    
+
     expect_error(
       boottest(
         object = lm_fit,
@@ -407,18 +407,18 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     # expect_warning(boottest(object = lm_fit,
     #                       clustid =  "group_id1",
     #                       B = 999, seed = 911,
     #                       ,
     #                       conf_int = TRUE,
     #                       nthreads = 20))
-    
+
     # Warning: In boottest.lm(object = lm_fit, clustid = "group_id1...:
     # Asked for 20 threads while the maximum is 8. Set to 8 threads instead.
     # will probably not run on cran, as max 2 cores
-    
+
     expect_error(
       boottest(
         object = feols_fit,
@@ -437,7 +437,7 @@ test_that("errors and warnings q = 1", {
     #                       ,
     #                       conf_int = TRUE,
     #                       nthreads = 20))
-    
+
     expect_error(
       boottest(
         object = felm_fit,
@@ -450,14 +450,14 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     # expect_warning(boottest(object = felm_fit,
     #                       clustid =  "group_id1",
     #                       B = 999, seed = 911,
     #                       ,
     #                       conf_int = TRUE,
     #                       nthreads = 20))
-    
+
     # maxiter
     expect_error(
       boottest(
@@ -483,7 +483,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     expect_error(
       boottest(
         object = feols_fit,
@@ -508,7 +508,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     expect_error(
       boottest(
         object = felm_fit,
@@ -533,8 +533,8 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
-    
+
+
     # tol
     expect_error(
       boottest(
@@ -548,7 +548,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     expect_error(
       boottest(
         object = feols_fit,
@@ -561,7 +561,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     expect_error(
       boottest(
         object = felm_fit,
@@ -574,7 +574,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     # p-val type
     expect_error(
       boottest(
@@ -588,7 +588,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     expect_error(
       boottest(
         object = feols_fit,
@@ -601,7 +601,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     expect_error(
       boottest(
         object = felm_fit,
@@ -614,7 +614,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     # B = 1000
     suppressWarnings(expect_message(
       boottest(
@@ -627,7 +627,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     ))
-    
+
     if (boot_algo != "R-lean") {
       suppressWarnings(expect_message(
         boottest(
@@ -640,7 +640,7 @@ test_that("errors and warnings q = 1", {
           boot_algo = boot_algo
         )
       ))
-      
+
       suppressWarnings(expect_message(
         boottest(
           object = felm_fit,
@@ -653,10 +653,10 @@ test_that("errors and warnings q = 1", {
         )
       ))
     }
-    
+
     # banned function arguments
-    
-    
+
+
     # evalute dots ... in methods
     # write sig_level instead of sign_level
     expect_error(
@@ -695,7 +695,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     lm_fit <-
       lm(
         proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -710,7 +710,7 @@ test_that("errors and warnings q = 1", {
           seed = 1234
         )
       )
-    
+
     res <- boottest(
       lm_fit,
       clustid = "group_id1",
@@ -721,27 +721,27 @@ test_that("errors and warnings q = 1", {
       sign_level = 0.1,
       boot_algo = boot_algo
     )
-    
+
     expect_error(summary(res, a = 1))
     # expect_error(tidy(res, a = 1))
     expect_error(plot(res, a = 1))
-    
-    
-    
-    
-    # if 2^(number of clusters) < B and rademacher or mammen weights are used, 
+
+
+
+
+    # if 2^(number of clusters) < B and rademacher or mammen weights are used,
     # boottest() switches
-    # to full enumeration. In consequence, only 2^(number of clusters - 1) 
+    # to full enumeration. In consequence, only 2^(number of clusters - 1)
     # unique t statistics can be computed (see Webb, "Reworking wild bootstrap
     # based inference for clustered errors", 2013)
     # This will cause trouble for the inversion of p-values, for two reasons:
     # a) the p-value function will not
     # be sufficiently smooth b) no appropriate starting value for the root
     # finding procedure will be found
-    # this set of tests checks if boottest() throws an error in the part 
+    # this set of tests checks if boottest() throws an error in the part
     # of the code that is responsible for
     # calculating p-values
-    
+
     lm_fit <-
       lm(
         proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -756,14 +756,14 @@ test_that("errors and warnings q = 1", {
           seed = 1
         )
       )
-    
+
     # no confidence intervals calculated: expect warning
     expect_warning(
       boottest(
         object = lm_fit,
         clustid = "group_id1",
         # guarantees that full enumeration is employed
-        B = 2 ^ 4 + 1,
+        B = 2^4 + 1,
         seed = 1,
         param = "treatment",
         type = "rademacher",
@@ -771,9 +771,9 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
-    
-    
+
+
+
     # with confidence intervals: expect_error because B < 100
     if (boot_algo == "R") {
       expect_error(
@@ -781,7 +781,7 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           # guarantees that full enumeration is employed
-          B = 2 ^ 4 + 1,
+          B = 2^4 + 1,
           seed = 1,
           param = "treatment",
           type = "rademacher",
@@ -790,8 +790,8 @@ test_that("errors and warnings q = 1", {
         )
       )
     }
-    
-    
+
+
     # with confidence intervals: expect_error because B < 100
     if (boot_algo == "R") {
       expect_error(
@@ -799,7 +799,7 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           # guarantees that full enumeration is employed
-          B = 2 ^ 4 + 1,
+          B = 2^4 + 1,
           seed = 1,
           param = "treatment",
           type = "mammen",
@@ -808,15 +808,15 @@ test_that("errors and warnings q = 1", {
         )
       )
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     # ----------------------------------------------------------------------- #
     # NA values in the cluster variables
     # ----------------------------------------------------------------------- #
-    
+
     data <-
       fwildclusterboot:::create_data(
         N = 100,
@@ -830,12 +830,13 @@ test_that("errors and warnings q = 1", {
       )
     data[1, "group_id1"] <- NA
     data2 <<- data
-    
+
     lm_fit <-
       lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-         data = data2)
-    
-    # expect error as na_omit = FALSE & missing variable in group_id1 
+        data = data2
+      )
+
+    # expect error as na_omit = FALSE & missing variable in group_id1
     # (the cluster variable)
     expect_error(
       boottest(
@@ -850,7 +851,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     expect_error(
       boottest(
         object = lm_fit,
@@ -864,13 +865,13 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     # NAs in a bootcluster variable
-    
+
     expect_error(
       boottest(
         object = lm_fit,
-        clustid = ~ group_id2,
+        clustid = ~group_id2,
         bootcluster = ~ group_id1 + group_id2,
         # guarantees that full enumeration is employed
         B = 999,
@@ -896,7 +897,7 @@ test_that("errors and warnings q = 1", {
     #     )
     # ))
     # expect_equal(res$N, 99)
-    
+
     # data[2, "group_id1"] <- NA
     # data3 <<- data
     # lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income
@@ -918,10 +919,10 @@ test_that("errors and warnings q = 1", {
     #     )
     # ))
     # expect_equal(res$N, 98)
-    
-    
+
+
     # expect error when length(R) != length(param)
-    
+
     expect_error(
       boottest(
         object = lm_fit,
@@ -958,10 +959,10 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
-    # specify a fixed effect that is also clustering variable OR test variable 
+
+    # specify a fixed effect that is also clustering variable OR test variable
     # -> error
-    
+
     expect_error(
       boottest(
         object = feols_fit_c,
@@ -988,7 +989,7 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
+
     expect_error(
       boottest(
         object = feols_fit_c,
@@ -1013,12 +1014,12 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
-    
+
+
     # test for p-val type & conf_int == TRUE (tba)
-    
+
     # check fixest for deleted singletons. boottest() should throw an error
-    
+
     base <- iris
     names(base) <- c("y", "x1", "x_endo_1", "x_inst_1", "fe")
     set.seed(2)
@@ -1030,14 +1031,14 @@ test_that("errors and warnings q = 1", {
     base$clustid[1] <- 11
     base$clustid[2] <- 12
     # unique singletons -> 11, 12
-    
+
     feols_fit <- feols(y ~ x1 | clustid, base, fixef.rm = "both")
     # lfe::felm - no such behavior
     # felm_fit = felm(y ~ x1 | clustid , base, keepX = TRUE, keepCX = TRUE)
     # dim(felm_fit$X)
     # dim(felm_fit$cX)
     # summary(felm_fit)
-    
+
     expect_error(boottest(
       feols_fit,
       param = "x1",
@@ -1045,8 +1046,8 @@ test_that("errors and warnings q = 1", {
       clustid = "clustid",
       boot_algo = boot_algo
     ))
-    
-    
+
+
     data <-
       fwildclusterboot:::create_data(
         N = 1000,
@@ -1059,7 +1060,7 @@ test_that("errors and warnings q = 1", {
         seed = 1234
       )
     weights_vec <- data$weights
-    
+
     lm_fit <-
       lm(
         proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -1078,7 +1079,7 @@ test_that("errors and warnings q = 1", {
         weights = weights_vec,
         data = data
       )
-    
+
     expect_error(
       boottest(
         lm_fit,
@@ -1106,18 +1107,20 @@ test_that("errors and warnings q = 1", {
         boot_algo = boot_algo
       )
     )
-    
-    
+
+
     # param not in clustid, fe
     feols_fit <-
       fixest::feols(proposition_vote ~ treatment + ideology1 + log_income |
-                      Q1_immigration,
-                    data = data)
+        Q1_immigration,
+      data = data
+      )
     lfe_fit <-
       lfe::felm(proposition_vote ~ treatment + ideology1 + log_income |
-                  Q1_immigration,
-                data = data)
-    
+        Q1_immigration,
+      data = data
+      )
+
     expect_error(
       boottest(
         feols_fit,
@@ -1139,8 +1142,8 @@ test_that("errors and warnings q = 1", {
       )
     )
 
-    
-    
+
+
     if (boot_algo %in% c("R", "R-lean")) {
       # R is matrix
       expect_error(
@@ -1176,7 +1179,7 @@ test_that("errors and warnings q = 1", {
           boot_algo = boot_algo
         )
       )
-      
+
       expect_error(
         boottest(
           lm_fit,
@@ -1214,8 +1217,8 @@ test_that("errors and warnings q = 1", {
         )
       )
     }
-    
-    
+
+
     # no support for R-lean with fe = on
     if (boot_algo == "R-lean") {
       feols_fit_c <-
@@ -1243,7 +1246,7 @@ test_that("errors and warnings q = 1", {
           boot_algo = "R-lean"
         )
       )
-      
+
       felm_fit_c <-
         felm(
           proposition_vote ~ treatment + ideology1 + log_income |
@@ -1269,7 +1272,7 @@ test_that("errors and warnings q = 1", {
           boot_algo = "R-lean"
         )
       )
-      
+
       # no support for R-lean with weights
       data1 <<-
         fwildclusterboot:::create_data(
@@ -1302,7 +1305,7 @@ test_that("errors and warnings q = 1", {
           weights = data1$weights,
           data = data1
         )
-      
+
       expect_error(
         boottest(
           lm_fit,
@@ -1330,8 +1333,8 @@ test_that("errors and warnings q = 1", {
           boot_algo = "R-lean"
         )
       )
-      
-      
+
+
       feols_fit_c <-
         feols(
           proposition_vote ~ treatment + ideology1 + log_income |
@@ -1362,7 +1365,7 @@ test_that("errors and warnings q = 1", {
             seed = 1234
           )
         )
-      
+
       expect_error(
         boottest(
           feols_fit_c,
@@ -1372,7 +1375,7 @@ test_that("errors and warnings q = 1", {
           fe = "Q2_defense"
         )
       )
-      
+
       expect_error(
         boottest(
           felm_fit_c,
@@ -1382,7 +1385,7 @@ test_that("errors and warnings q = 1", {
           fe = "Q2_defense"
         )
       )
-      
+
       expect_error(
         boottest(
           feols_fit_c,
@@ -1392,7 +1395,7 @@ test_that("errors and warnings q = 1", {
           fe = "treatment"
         )
       )
-      
+
       expect_error(
         boottest(
           felm_fit_c,
@@ -1402,11 +1405,11 @@ test_that("errors and warnings q = 1", {
           fe = "treatment"
         )
       )
-      
+
       feols_fit_c <-
         feols(
           proposition_vote ~ treatment + ideology1 + log_income |
-            Q1_immigration ^ Q2_defense,
+            Q1_immigration^Q2_defense,
           data = fwildclusterboot:::create_data(
             N = 1000,
             N_G1 = 10,
@@ -1418,7 +1421,7 @@ test_that("errors and warnings q = 1", {
             seed = 1234
           )
         )
-      
+
       expect_error(
         boottest(
           feols_fit_c,
@@ -1436,23 +1439,24 @@ test_that("errors and warnings q = 1", {
 
 test_that("error warning IV/WRE and q > 1", {
   skip_on_cran()
-  
+
   library(ivreg)
   library(fwildclusterboot)
   library(clubSandwich)
-  
+
   # drop all NA values from SchoolingReturns
-  SchoolingReturns <-
-    SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
+  #SchoolingReturns <-
+  #  SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
+  SchoolingReturns <- na.omit(SchoolingReturns)
   ivreg_fit <- ivreg(
     log(wage) ~ education + age +
       ethnicity + smsa + south + parents14 |
       nearcollege + age + ethnicity + smsa
-    + south + parents14,
+        + south + parents14,
     data = SchoolingReturns
   )
-  
-  
+
+
   # error because invalid param name
   expect_error(suppressMessages(
     boottest(
@@ -1464,7 +1468,7 @@ test_that("error warning IV/WRE and q > 1", {
       conf_int = FALSE
     )
   ))
-  
+
   # error due to length(R) != length(param)
   expect_error(suppressMessages(
     boottest(
@@ -1477,7 +1481,7 @@ test_that("error warning IV/WRE and q > 1", {
       conf_int = FALSE
     )
   ))
-  
+
   # enumeration warning
   expect_warning(suppressMessages(
     boottest(
@@ -1489,19 +1493,20 @@ test_that("error warning IV/WRE and q > 1", {
       conf_int = FALSE
     )
   ))
-  
+
   # drop all NA values from SchoolingReturns
-  SchoolingReturns <-
-    SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
+  # SchoolingReturns <-
+  #   SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
+  SchoolingReturns <- na.omit(SchoolingReturns)
   ivreg_fit <- ivreg(
     log(wage) ~ education + age +
       ethnicity + smsa + south + parents14 |
       nearcollege + age + ethnicity + smsa
-    + south + parents14,
+        + south + parents14,
     data = SchoolingReturns,
     method = "M"
   )
-  
+
   expect_error(
     boottest(
       object = ivreg_fit,
@@ -1512,13 +1517,13 @@ test_that("error warning IV/WRE and q > 1", {
       impose_null = TRUE
     )
   )
-  
-  
-  
+
+
+
   # bannd args ivreg
   library(fixest)
   # test for banned function arguments and syntax for fixest with mboottest
-  
+
   feols_fit <- feols(
     proposition_vote ~ treatment + ideology1,
     data = fwildclusterboot:::create_data(

@@ -11,22 +11,22 @@
 #'        a heteroskedasticity-robust (HC1) wild bootstrap is run.
 #' @param param A character vector or rhs formula. The name of the regression
 #'        coefficient(s) for which the hypothesis is to be tested
-#' @param B Integer. The number of bootstrap iterations. When the number of 
+#' @param B Integer. The number of bootstrap iterations. When the number of
 #' clusters is low,
 #'        increasing B adds little additional runtime.
 #' @param bootcluster A character vector or rhs formula of length 1. Specifies
 #'  the bootstrap clustering variable or variables. If more
-#'        than one variable is specified, then bootstrapping is clustered by 
+#'        than one variable is specified, then bootstrapping is clustered by
 #'        the intersections of
 #'        clustering implied by the listed variables. To mimic the behavior
 #'         of stata's boottest command,
-#'        the default is to cluster by the intersection of all the variables 
+#'        the default is to cluster by the intersection of all the variables
 #'        specified via the `clustid` argument,
-#'        even though that is not necessarily recommended (see the paper by 
+#'        even though that is not necessarily recommended (see the paper by
 #'        Roodman et al cited below, section 4.2).
-#'        Other options include "min", where bootstrapping is clustered by 
+#'        Other options include "min", where bootstrapping is clustered by
 #'        the cluster variable with the fewest clusters.
-#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is 
+#'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
 #'        supported - see the \code{vignette("fwildclusterboot",
 #'         package = "fwildclusterboot")} for details.
 #' @param sign_level A numeric between 0 and 1 which sets the significance level
@@ -37,19 +37,19 @@
 #' @param boot_algo Character scalar. Either "R" or "WildBootTests.jl".
 #'  Controls the algorithm employed by boottest().
 #'                  "R" is the default and implements the cluster bootstrap
-#'                   as in Roodman (2019). "WildBootTests.jl" executes the 
+#'                   as in Roodman (2019). "WildBootTests.jl" executes the
 #'                   wild cluster bootstrap via the WildBootTests.jl
-#'                  package. For it to run, Julia and WildBootTests.jl need 
+#'                  package. For it to run, Julia and WildBootTests.jl need
 #'                  to be installed.
-#'                   The "R-lean" algorithm is a memory friendly, but less 
-#'                  performant rcpp-armadillo based implementation of the wild 
+#'                   The "R-lean" algorithm is a memory friendly, but less
+#'                  performant rcpp-armadillo based implementation of the wild
 #'                  cluster bootstrap.
-#'                  Note that if no cluster is provided, boottest() always 
-#'                  defaults to the "lean" algorithm. You can set the employed 
+#'                  Note that if no cluster is provided, boottest() always
+#'                  defaults to the "lean" algorithm. You can set the employed
 #'                  algorithm globally by using the
 #'                  `setBoottest_boot_algo()` function.
 #' @param seed An integer. Allows to set a random seed. For details, see below.
-#' @param R Hypothesis Vector giving linear combinations of coefficients. 
+#' @param R Hypothesis Vector giving linear combinations of coefficients.
 #' Must be either NULL or a vector of the same length as `param`. If NULL,
 #'  a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
@@ -59,8 +59,8 @@
 #'        of boostrap to use: One of "rademacher", "mammen", "norm"
 #'        and "webb". Alternatively, type can be a function(n) for drawing
 #'        wild bootstrap factors. "rademacher" by default.
-#'        For the Rademacher distribution, if the number of replications B 
-#'        exceeds the number of possible draw ombinations, 2^(#number 
+#'        For the Rademacher distribution, if the number of replications B
+#'        exceeds the number of possible draw ombinations, 2^(#number
 #'        of clusters), then `boottest()`
 #'        will use each possible combination once (enumeration).
 #' @param impose_null Logical. Controls if the null hypothesis is imposed on
@@ -81,7 +81,7 @@
 #'                 all available threads will be used; c) a number strictly
 #'                 between 0 and 1 which represents the fraction of all threads
 #'                 to use. The default is to use 1 core.
-#' @param ssc An object of class `boot_ssc.type` obtained with the function 
+#' @param ssc An object of class `boot_ssc.type` obtained with the function
 #' \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample
 #'  adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none",
 #'   cluster.adj = "TRUE", cluster.df = "conventional"`.
@@ -90,13 +90,13 @@
 #'               \code{\link[fixest]{ssc}} function.
 #' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
 #' @param floattype Float64 by default. Other option: Float32. Should floating
-#'  point numbers in Julia be represented as 32 or 64 bit? Only relevant when 
+#'  point numbers in Julia be represented as 32 or 64 bit? Only relevant when
 #'  'boot_algo = "WildBootTests.jl"'
-#' @param maxmatsize NULL by default = no limit. Else numeric scalar to set 
+#' @param maxmatsize NULL by default = no limit. Else numeric scalar to set
 #' the maximum size of auxilliary weight matrix (v), in gigabytes. Only
 #'  relevant when 'boot_algo = "WildBootTests.jl"'
-#' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request 
-#' bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo = 
+#' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request
+#' bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo =
 #' "WildBootTests.jl"'
 #' @param t_boot Logical. Should bootstrapped t-statistics be returned?
 #' @param ... Further arguments passed to or from other methods.
@@ -141,7 +141,7 @@
 #' @export
 #'
 #' @section Setting Seeds:
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed` 
+#' To guarantee reproducibility, you can either use `boottest()'s` `seed`
 #' function argument, or
 #' set a global random seed via
 #' + `set.seed()` when using
@@ -149,7 +149,7 @@
 #'     heteroskedastic wild bootstrap
 #'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or
 #'    3) `boot_algo = "WildBootTests.jl"`
-#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, 
+#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher,
 #' Webb or Normal weights
 #'
 #' @section Confidence Intervals:
@@ -171,33 +171,33 @@
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'    STATA using boottest", The STATA Journal.
 #'    (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
-#' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller. 
-#' "Bootstrap-based improvements for inference with clustered errors." 
+#' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
+#' "Bootstrap-based improvements for inference with clustered errors."
 #' The Review of Economics and Statistics 90.3 (2008): 414-427.
-#' @references Cameron, A.Colin & Douglas L. Miller. "A practitioner's 
-#' guide to cluster-robust inference" Journal of Human Resources (2015) 
+#' @references Cameron, A.Colin & Douglas L. Miller. "A practitioner's
+#' guide to cluster-robust inference" Journal of Human Resources (2015)
 #' \doi{doi: 10.3368/jhr.50.2.317}
-#' @references Davidson & MacKinnon. "Wild Bootstrap Tests for IV 
-#' regression" Journal of Economics and Business Statistics (2010) 
+#' @references Davidson & MacKinnon. "Wild Bootstrap Tests for IV
+#' regression" Journal of Economics and Business Statistics (2010)
 #' \doi{https://doi.org/10.1198/jbes.2009.07221}
 #' @references MacKinnon, James G., and Matthew D. Webb.
-#'  "The wild bootstrap for few (treated) clusters." 
+#'  "The wild bootstrap for few (treated) clusters."
 #'  The Econometrics Journal 21.2 (2018): 114-135.
-#' @references MacKinnon, James G., and Matthew D. Webb. 
-#' "Cluster-robust inference: A guide to empirical practice" 
+#' @references MacKinnon, James G., and Matthew D. Webb.
+#' "Cluster-robust inference: A guide to empirical practice"
 #' Journal of Econometrics (2022)
 #'  \doi{https://doi.org/10.1016/j.jeconom.2022.04.001}
-#' @references MacKinnon, James. "Wild cluster bootstrap confidence intervals." 
+#' @references MacKinnon, James. "Wild cluster bootstrap confidence intervals."
 #' L'Actualite economique 91.1-2 (2015): 11-33.
-#' @references Webb, Matthew D. Reworking wild bootstrap based inference for 
+#' @references Webb, Matthew D. Reworking wild bootstrap based inference for
 #' clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
 #' \dontrun{
 #' library(fwildclusterboot)
 #' data(voters)
 #' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +
-#'  Q1_immigration,
-#'   data = voters
+#'   Q1_immigration,
+#' data = voters
 #' )
 #' boot1 <- boottest(lm_fit,
 #'   B = 9999,
@@ -266,7 +266,7 @@ boottest.lm <- function(object,
                         ...) {
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
-  
+
   check_arg(object, "MBT class(lm)")
   check_arg(clustid, "NULL | character scalar | character vector | formula")
   check_arg(param, "MBT scalar character | character vector | formula")
@@ -286,35 +286,37 @@ boottest.lm <- function(object,
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
-  
+
   if (!is.null(beta0)) {
     stop(
       "The function argument 'beta0' is deprecated. Please use the function
       argument 'r' instead, by which it is replaced."
     )
   }
-  
+
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-  
+
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-  
+
   if (inherits(param, "formula")) {
     param <- attr(terms(param), "term.labels")
   }
-  
-  
-  internal_seed <- set_seed(seed = seed,
-                            boot_algo = boot_algo,
-                            type = type)
-  
-  
+
+
+  internal_seed <- set_seed(
+    seed = seed,
+    boot_algo = boot_algo,
+    type = type
+  )
+
+
   # check appropriateness of nthreads
   nthreads <- check_set_nthreads(nthreads)
-  
+
   if (is.null(clustid)) {
     heteroskedastic <- TRUE
     if (boot_algo == "R") {
@@ -324,10 +326,12 @@ boottest.lm <- function(object,
   } else {
     heteroskedastic <- FALSE
   }
-  
-  R <- process_R(R = R,
-                 param = param)
-  
+
+  R <- process_R(
+    R = R,
+    param = param
+  )
+
   if (boot_algo != "WildBootTests.jl") {
     r_algo_checks(
       R = R,
@@ -336,10 +340,10 @@ boottest.lm <- function(object,
       B = B
     )
   }
-  
-  
+
+
   check_params_in_model(object = object, param = param)
-  
+
   check_boottest_args_plus(
     object = object,
     R = R,
@@ -347,10 +351,10 @@ boottest.lm <- function(object,
     sign_level = sign_level,
     B = B
   )
-  
+
   # now split into R, R-lean and WildBootTests.jl algos
   # different pre-processing and different algo-functions
-  
+
   preprocess <- preprocess2.lm(
     object = object,
     clustid = clustid,
@@ -359,7 +363,7 @@ boottest.lm <- function(object,
     bootcluster = bootcluster,
     boot_algo = boot_algo
   )
-  
+
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -370,13 +374,14 @@ boottest.lm <- function(object,
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-  
+
   # collect data from preprocess
   N <- preprocess$N
   k <- preprocess$k
   G <-
-    vapply(preprocess$clustid, function(x)
-      length(unique(x)), numeric(1))
+    vapply(preprocess$clustid, function(x) {
+      length(unique(x))
+    }, numeric(1))
   vcov_sign <- preprocess$vcov_sign
   small_sample_correction <-
     get_ssc(
@@ -391,8 +396,8 @@ boottest.lm <- function(object,
   # R*beta;
   point_estimate <-
     as.vector(object$coefficients[param] %*% preprocess$R0[param])
-  
-  
+
+
   if (boot_algo == "R") {
     res <- boot_algo2(
       preprocessed_object = preprocess,
@@ -418,7 +423,7 @@ boottest.lm <- function(object,
       clustid = clustid,
       fe = NULL
     )
-    
+
     res <- boot_algo1(
       preprocessed_object = preprocess,
       boot_iter = B,
@@ -441,11 +446,11 @@ boottest.lm <- function(object,
     small <- julia_ssc$small
     clusteradj <- julia_ssc$clusteradj
     clustermin <- julia_ssc$clustermin
-    
+
     if (ssc[["fixef.K"]] != "none") {
       message(paste("Currently, boottest() only supports fixef.K = 'none'."))
     }
-    
+
     res <- boot_algo_julia(
       preprocess = preprocess,
       impose_null = impose_null,
@@ -473,9 +478,9 @@ boottest.lm <- function(object,
       fedfadj = NULL
     )
   }
-  
-  
-  
+
+
+
   # collect results
   res_final <- list(
     point_estimate = point_estimate,
@@ -502,8 +507,8 @@ boottest.lm <- function(object,
     nthreads = nthreads,
     internal_seed = internal_seed
   )
-  
+
   class(res_final) <- "boottest"
-  
+
   invisible(res_final)
 }
