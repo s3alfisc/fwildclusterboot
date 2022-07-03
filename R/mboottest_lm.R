@@ -75,7 +75,6 @@
 #'             \code{\link[fixest]{ssc}} function.
 #' @param ... Further arguments passed to or from other methods.
 #'
-#' @import JuliaConnectoR
 #' @importFrom dreamerr check_arg validate_dots
 #' @importFrom stats as.formula coef model.matrix model.response model.weights
 #' residuals rlnorm rnorm update

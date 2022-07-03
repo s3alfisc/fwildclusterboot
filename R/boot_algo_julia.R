@@ -1,3 +1,53 @@
+#' run the wild cluster bootstrap via WildBootTests.jl and the 
+#' JuliaConnectoR package
+#' 
+#' @param preprocess A list: output of the preprocess2 function.
+#' @param impose_null A logical - should the null hypothesis be imposed or not?
+#' @param r Shifts the null hypothesis.
+#' @param B number of bootstrap iterations
+#' @param bootcluster
+#' @param clustid 
+#' @param sign_level The significance level.
+#' @param conf_int Logical. Should confidence intervals be calculated
+#'  (by test inversion)?
+#' @param tol Numeric vector of length 1. The desired accuracy
+#'        (convergence tolerance) used in the root finding procedure to
+#'        find the confidence interval.
+#'        1e-6 by default.
+#' @param p_val_type type Type of p-value. By default "two-tailed".
+#' Other options: "equal-tailed", ">", "<"
+#' @param type character or function. The character string specifies
+#'  the type
+#'        of boostrap to use: One of "rademacher", "mammen", "norm"
+#'        and "webb". Alternatively, type can be a function(n) for drawing
+#'        wild bootstrap factors. "rademacher" by default.
+#' @param floattype Should floating
+#' @param bootstrapc Logical scalar. TRUE  to request
+#' bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo =
+#' "WildBootTests.jl"'
+#' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
+#' @param fweights Should frequency weight or probability weights be used for 
+#' WLS? Currently, only frequency weights are supported
+#' @param internal_seed an integer. sets the seed used in Julia
+#' @param maxmatsize NULL by default = no limit. Else numeric scalar to set
+#' the maximum size of auxilliary weight matrix (v), in gigabytes. Only
+#'  relevant when 'boot_algo = "WildBootTests.jl"'
+#' @param small The small sample correction to be used
+#' @param clusteradj
+#' @param clustermin 
+#' @param fe 
+#' @param fedfadj
+#' @param liml 
+#' @param arubin
+#' @param fuller
+#' @param kappa 
+
+#'  point numbers in Julia be represented as 32 or 64 bit? Only relevant when
+#'  'boot_algo = "WildBootTests.jl"'
+
+#' @importFrom JuliaConnectoR juliaEval juliaImport
+#' @noRd
+
 boot_algo_julia <- function(preprocess,
                             impose_null,
                             r,
@@ -24,6 +74,7 @@ boot_algo_julia <- function(preprocess,
                             arubin = NULL,
                             fuller = NULL,
                             kappa = NULL) {
+  
   resp <- as.numeric(preprocess$Y)
 
   if (inherits(preprocess, "iv")) {
@@ -42,29 +93,6 @@ boot_algo_julia <- function(preprocess,
   r <- r
   reps <- as.integer(B) # WildBootTests.jl demands integer
 
-  # # Order the columns of `clustid` this way:
-  # # 1. Variables only used to define bootstrapping clusters, as in the
-  # # subcluster bootstrap.
-  # # 2. Variables used to define both bootstrapping and error clusters.
-  # # 3. Variables only used to define error clusters.
-  # # In the most common case, `clustid` is a single column of type 2.
-  #
-  # if (length(bootcluster == 1) && bootcluster == "max") {
-  #   bootcluster_n <- clustid
-  # } else if (length(bootcluster == 1) && bootcluster == "min") {
-  #   bootcluster_n <- names(preprocess$N_G[which.min(preprocess$N_G)])
-  # }
-  #
-  # # only bootstrapping cluster: in bootcluster and not in clustid
-  # c1 <- bootcluster_n[which(!(bootcluster_n %in% clustid))]
-  # # both bootstrapping and error cluster: all variables in clustid that are
-  # # also in bootcluster
-  # c2 <- clustid[which(clustid %in% bootcluster_n)]
-  # # only error cluster: variables in clustid not in c1, c2
-  # c3 <- clustid[which(!(clustid %in% c(c1, c2)))]
-  # all_c <- c(c1, c2, c3)
-  # # all_c <- lapply(all_c , function(x) ifelse(length(x) == 0, NULL, x))
-
   all_c <- preprocess$all_c
   clustid_df <-
     preprocess$cluster_bootcluster[, all_c, drop = FALSE]
@@ -74,9 +102,6 @@ boot_algo_julia <- function(preprocess,
   # names(clustid_mat) <- all_c
   nrow_df <- nrow(clustid_df)
   clustid_mat <- vapply(clustid_df, to_integer, integer(nrow_df))
-
-  #clustid_mat <- Reduce(cbind, lapply(clustid_df, to_integer))
-  #colnames(clustid_mat) <- names(clustid_df)
 
   # `nbootclustvar::Integer=1`: number of bootstrap-clustering variables
   # `nerrclustvar::Integer=nbootclustvar`: number of error-clustering variables

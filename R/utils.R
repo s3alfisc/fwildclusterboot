@@ -362,6 +362,10 @@ get_seed <- function() {
 }
 
 set_seed <- function(seed, boot_algo, type) {
+  
+  #' @importFrom JuliaConnectoR juliaEval
+  #' @noRd
+  
   if (!is.null(seed)) {
     if (boot_algo == "R") {
       if (type %in% c("rademacher", "webb", "norm")) {

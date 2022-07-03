@@ -100,7 +100,6 @@
 #' "WildBootTests.jl"'
 #' @param t_boot Logical. Should bootstrapped t-statistics be returned?
 #' @param ... Further arguments passed to or from other methods.
-#' @import JuliaConnectoR
 #' @importFrom dreamerr check_arg validate_dots
 #' @importFrom parallel detectCores
 #' @importFrom stats weights terms expand.model.frame model.frame na.omit

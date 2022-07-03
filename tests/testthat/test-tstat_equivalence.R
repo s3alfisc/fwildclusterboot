@@ -666,8 +666,7 @@ test_that("t-stat equivalence IV", {
       data("SchoolingReturns", package = "ivreg")
 
       # drop all NA values from SchoolingReturns
-      data1 <<-
-        SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
+      data1 <<- na.omit(SchoolingReturns)
       ivreg_fit <-
         ivreg(
           log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
