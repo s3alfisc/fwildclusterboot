@@ -22,7 +22,8 @@ S3 method to summarize objects of class boottest
 \examples{
 library(fwildclusterboot)
 data(voters)
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+lm_fit <- lm(
+proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
   data = voters
 )
 boot <- boottest(lm_fit,

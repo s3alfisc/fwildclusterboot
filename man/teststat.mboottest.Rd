@@ -2,7 +2,8 @@
 % Please edit documentation in R/methods.R
 \name{teststat.mboottest}
 \alias{teststat.mboottest}
-\title{S3 method to obtain the non-bootstrapped test statistic calculated via \code{mboottest()}}
+\title{S3 method to obtain the non-bootstrapped test statistic calculated
+via \code{mboottest()}}
 \usage{
 \method{teststat}{mboottest}(object, ...)
 }
@@ -12,10 +13,12 @@
 \item{...}{Further arguments passed to or from other methods.}
 }
 \value{
-A vector containing the non-bootstrapped t-statistic calculated in \code{mboottest()}
+A vector containing the non-bootstrapped t-statistic calculated
+in \code{mboottest()}
 }
 \description{
-S3 method to obtain the non-bootstrapped test statistic calculated via \code{mboottest()}
+S3 method to obtain the non-bootstrapped test statistic calculated
+via \code{mboottest()}
 }
 \examples{
 \dontrun{
@@ -30,4 +33,5 @@ wboottest <-
   )
 teststat(wboottest)
 }
+
 }

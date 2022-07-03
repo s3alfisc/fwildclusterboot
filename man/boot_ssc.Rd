@@ -12,13 +12,23 @@ boot_ssc(
 )
 }
 \arguments{
-\item{adj}{Logical scalar, defaults to TRUE. If TRUE, applies a small sample correction of (N-1) / (N-k) where N is the number of observations and k is the number of estimated coefficients excluding any fixed effects projected out in either fixest::feols() or lfe::felm().}
+\item{adj}{Logical scalar, defaults to TRUE. If TRUE, applies a small
+sample correction of (N-1) / (N-k) where N is the number of observations
+and k is the number of estimated coefficients excluding any fixed
+effects projected out in either fixest::feols() or lfe::felm().}
 
-\item{fixef.K}{Character scalar, equal to 'none': the fixed effects parameters are discarded when calculating k in (N-1) / (N-k).}
+\item{fixef.K}{Character scalar, equal to 'none': the fixed effects
+parameters are discarded when calculating k in (N-1) / (N-k).}
 
-\item{cluster.adj}{Logical scalar, defaults to TRUE. If TRUE, a cluster correction G/(G-1) is performed, with G the number of clusters.}
+\item{cluster.adj}{Logical scalar, defaults to TRUE. If TRUE, a cluster
+correction G/(G-1) is performed, with G the number of clusters.}
 
-\item{cluster.df}{Either "conventional"(the default) or "min". Controls how "G" is computed for multiway clustering if cluster.adj = TRUE. Note that the covariance matrix in the multiway clustering case is of the form V = V_1 + V_2 - V_12. If "conventional", then each summand G_i is multiplied with a small sample adjustment G_i / (G_i - 1). If "min", all summands are multiplied with the same value, min(G) / (min(G) - 1)}
+\item{cluster.df}{Either "conventional"(the default) or "min". Controls
+how "G" is computed for multiway clustering if cluster.adj = TRUE.
+Note that the covariance matrix in the multiway clustering case is of
+the form V = V_1 + V_2 - V_12. If "conventional", then each summand G_i
+is multiplied with a small sample adjustment G_i / (G_i - 1). If "min",
+all summands are multiplied with the same value, min(G) / (min(G) - 1)}
 }
 \description{
 set the small sample correction factor applied in \code{boottest()}

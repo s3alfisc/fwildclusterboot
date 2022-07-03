@@ -2,7 +2,8 @@
 % Please edit documentation in R/methods.R
 \name{nobs.mboottest}
 \alias{nobs.mboottest}
-\title{S3 method to obtain the effective number of observation used in \code{mboottest()}}
+\title{S3 method to obtain the effective number of observation used
+in \code{mboottest()}}
 \usage{
 \method{nobs}{mboottest}(object, ...)
 }
@@ -12,10 +13,12 @@
 \item{...}{Further arguments passed to or from other methods.}
 }
 \value{
-A scalar containing the effective number of observations used in \code{mboottest()}
+A scalar containing the effective number of observations
+used in \code{mboottest()}
 }
 \description{
-S3 method to obtain the effective number of observation used in \code{mboottest()}
+S3 method to obtain the effective number of observation used
+in \code{mboottest()}
 }
 \examples{
 \dontrun{
@@ -30,4 +33,5 @@ wboottest <-
   )
 nobs(wboottest)
 }
+
 }

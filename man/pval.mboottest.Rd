@@ -2,7 +2,8 @@
 % Please edit documentation in R/methods.R
 \name{pval.mboottest}
 \alias{pval.mboottest}
-\title{S3 method to obtain the wild cluster bootstrapped p-value of an object of type mboottest}
+\title{S3 method to obtain the wild cluster bootstrapped p-value of an object
+of type mboottest}
 \usage{
 \method{pval}{mboottest}(object, ...)
 }
@@ -12,10 +13,12 @@
 \item{...}{Further arguments passed to or from other methods.}
 }
 \value{
-A vector containing the boundaries of the wild cluster bootstrapped p-value
+A vector containing the boundaries of the wild cluster
+bootstrapped p-value
 }
 \description{
-S3 method to obtain the wild cluster bootstrapped p-value of an object of type mboottest
+S3 method to obtain the wild cluster bootstrapped p-value of an object
+of type mboottest
 }
 \examples{
 \dontrun{
@@ -30,4 +33,5 @@ wboottest <-
   )
 pval(wboottest)
 }
+
 }

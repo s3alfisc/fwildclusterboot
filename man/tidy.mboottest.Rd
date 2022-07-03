@@ -14,7 +14,11 @@
 \value{
 A tidy data.frame with estimation results for objects of type
 mboottest
-#' @examples
+}
+\description{
+S3 method to summarize objects of class mboottest into tidy data.frame
+}
+\examples{
 \dontrun{
 library(clubSandwich)
 R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
@@ -31,7 +35,4 @@ nobs(wboottest)
 pval(wboottest)
 generics::tidy(wboottest)
 }
-}
-\description{
-S3 method to summarize objects of class mboottest into tidy data.frame
 }

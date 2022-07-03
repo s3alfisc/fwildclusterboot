@@ -14,7 +14,8 @@
 \item{digits}{Number of rounding digits}
 }
 \value{
-A scalar containing the effective number of observations used in \code{mboottest}
+A scalar containing the effective number of observations used
+in \code{mboottest}
 }
 \description{
 S3 method to print key information for objects of type \code{mboottest}
@@ -32,4 +33,5 @@ wboottest <-
   )
 print(wboottest)
 }
+
 }

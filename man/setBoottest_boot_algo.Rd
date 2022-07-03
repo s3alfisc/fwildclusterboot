@@ -7,7 +7,8 @@
 setBoottest_boot_algo(boot_algo)
 }
 \arguments{
-\item{boot_algo}{Character scalar. Either 'R' or 'WildBootTests.jl'. Default is 'R'}
+\item{boot_algo}{Character scalar. Either 'R' or 'WildBootTests.jl'.
+Default is 'R'}
 }
 \value{
 No return value

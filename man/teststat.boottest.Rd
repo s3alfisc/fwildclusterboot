@@ -2,7 +2,8 @@
 % Please edit documentation in R/methods.R
 \name{teststat.boottest}
 \alias{teststat.boottest}
-\title{S3 method to obtain the non-bootstrapped t-statistic calculated via \code{boottest()}}
+\title{S3 method to obtain the non-bootstrapped t-statistic calculated
+via \code{boottest()}}
 \usage{
 \method{teststat}{boottest}(object, ...)
 }
@@ -12,15 +13,18 @@
 \item{...}{Further arguments passed to or from other methods.}
 }
 \value{
-A vector containing the non-bootstrapped t-statistic calculated in \code{boottest()}
+A vector containing the non-bootstrapped t-statistic
+calculated in \code{boottest()}
 }
 \description{
-S3 method to obtain the non-bootstrapped t-statistic calculated via \code{boottest()}
+S3 method to obtain the non-bootstrapped t-statistic calculated
+via \code{boottest()}
 }
 \examples{
 library(fwildclusterboot)
 data(voters)
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+lm_fit <- lm(
+proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
   data = voters
 )
 boot <- boottest(lm_fit,
@@ -29,4 +33,5 @@ boot <- boottest(lm_fit,
   clustid = "group_id1"
 )
 pval(boot)
+
 }

@@ -14,7 +14,8 @@
 \item{digits}{Number of rounding digits}
 }
 \value{
-A scalar containing the effective number of observations used in \code{mboottest}
+A scalar containing the effective number of observations
+used in \code{mboottest}
 }
 \description{
 S3 method to print key information for objects of type \code{bboottest}
@@ -22,7 +23,8 @@ S3 method to print key information for objects of type \code{bboottest}
 \examples{
 #' library(fwildclusterboot)
 data(voters)
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+lm_fit <- lm(
+proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
   data = voters
 )
 boot <- boottest(lm_fit,
@@ -31,4 +33,5 @@ boot <- boottest(lm_fit,
   clustid = "group_id1"
 )
 print(boot)
+
 }

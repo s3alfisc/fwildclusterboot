@@ -2,7 +2,8 @@
 % Please edit documentation in R/methods.R
 \name{pval.boottest}
 \alias{pval.boottest}
-\title{S3 method to obtain the wild cluster bootstrapped p-value of an object of type boottest}
+\title{S3 method to obtain the wild cluster bootstrapped p-value of an object
+of type boottest}
 \usage{
 \method{pval}{boottest}(object, ...)
 }
@@ -12,15 +13,18 @@
 \item{...}{Further arguments passed to or from other methods.}
 }
 \value{
-A vector containing the boundaries of the wild cluster bootstrapped p-value
+A vector containing the boundaries of the wild cluster
+bootstrapped p-value
 }
 \description{
-S3 method to obtain the wild cluster bootstrapped p-value of an object of type boottest
+S3 method to obtain the wild cluster bootstrapped p-value of an object
+of type boottest
 }
 \examples{
 #' library(fwildclusterboot)
 data(voters)
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+lm_fit <- lm(
+proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
   data = voters
 )
 boot <- boottest(lm_fit,
@@ -29,4 +33,5 @@ boot <- boottest(lm_fit,
   clustid = "group_id1"
 )
 confint(boot)
+
 }

@@ -12,7 +12,8 @@
 \item{...}{Further arguments passed to or from other methods.}
 }
 \value{
-A vector containing the boundaries of the wild cluster bootstrapped confidence interval
+A vector containing the boundaries of the wild cluster
+bootstrapped confidence interval
 }
 \description{
 S3 method to obtain wild cluster bootstrapped confidence intervals
@@ -20,7 +21,8 @@ S3 method to obtain wild cluster bootstrapped confidence intervals
 \examples{
 library(fwildclusterboot)
 data(voters)
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+lm_fit <- lm(
+proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
   data = voters
 )
 boot <- boottest(lm_fit,
@@ -29,4 +31,5 @@ boot <- boottest(lm_fit,
   clustid = "group_id1"
 )
 teststat(boot)
+
 }
