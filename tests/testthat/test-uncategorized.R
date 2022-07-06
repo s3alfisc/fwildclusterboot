@@ -1,6 +1,5 @@
 test_that("uncategorized tests", {
   skip_on_cran()
-  library(fixest)
 
   # see this issue: https://github.com/s3alfisc/fwildclusterboot/issues/26
 

@@ -1,7 +1,5 @@
 test_that("test fixest formula sugar", {
-  library(fwildclusterboot)
-  library(fixest)
-  library(modelsummary)
+  
 
   voters <- fwildclusterboot:::create_data(
     N = 10000,
@@ -76,4 +74,6 @@ test_that("test fixest formula sugar", {
   })),
   ignore_attr = TRUE
   )
+  
+  
 })

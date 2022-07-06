@@ -5,8 +5,8 @@
 #' @param impose_null A logical - should the null hypothesis be imposed or not?
 #' @param r Shifts the null hypothesis.
 #' @param B number of bootstrap iterations
-#' @param bootcluster
-#' @param clustid 
+#' @param bootcluster A data.frame containing the bootcluster
+#' @param clustid A data.frame containing the cluster variables
 #' @param sign_level The significance level.
 #' @param conf_int Logical. Should confidence intervals be calculated
 #'  (by test inversion)?
@@ -32,15 +32,20 @@
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set
 #' the maximum size of auxilliary weight matrix (v), in gigabytes. Only
 #'  relevant when 'boot_algo = "WildBootTests.jl"'
-#' @param small The small sample correction to be used
-#' @param clusteradj
-#' @param clustermin 
-#' @param fe 
-#' @param fedfadj
-#' @param liml 
-#' @param arubin
-#' @param fuller
-#' @param kappa 
+#' @param small Logical Should a small sample correction (N-1)/(N-k) be used?
+#' @param clusteradj Logical. Should a ssc G / (G-1) be used?
+#' @param clustermin Logical. Should G be computed as min(G) in case of multi-
+#' way clustering?
+#' @param fe Character string. The fixed effect to be projected out in the 
+#' bootstrap
+#' @param fedfadj Should fixed effects be included or excluded in k? Currently, 
+#' they are always excluded
+#' @param liml Logical. Should liml estimation be employed? Currntly always 
+#' FALSE
+#' @param arubin Shoud the Anderson-Rubin test be performed? Currently always
+#' FALSE
+#' @param fuller numeric - fuller parameter
+#' @param kappa numeric - kappa parameter
 
 #'  point numbers in Julia be represented as 32 or 64 bit? Only relevant when
 #'  'boot_algo = "WildBootTests.jl"'

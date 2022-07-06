@@ -1,8 +1,8 @@
 test_that("test lean cpp boottest", {
   set.seed(9809873)
-  library(fixest)
-  library(lfe)
-  library(fwildclusterboot)
+  # library(fixest)
+  # library(lfe)
+  # library(fwildclusterboot)
   # skip()
   # devtools::load_all()
   data1 <<- fwildclusterboot:::create_data(

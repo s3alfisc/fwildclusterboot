@@ -1,7 +1,6 @@
 test_that("test multicollinearity", {
-  library(lfe)
-  library(fixest)
 
+  
   N <- 1000
   X1 <- rnorm(N)
   X2 <- X1

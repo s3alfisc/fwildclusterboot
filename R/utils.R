@@ -231,6 +231,11 @@ getBoottest_boot_algo <- function() {
 }
 
 set_boot_algo <- function(boot_algo) {
+  
+  #' check the bootstrap algo
+  #' @param boot_algo character scalar
+  #' @noRd
+  
   dreamerr::check_value(boot_algo, "charin(R, WildBootTests.jl)")
 
   boot_algo

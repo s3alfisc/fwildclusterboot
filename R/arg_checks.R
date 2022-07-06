@@ -1,3 +1,8 @@
+#' several checks on the param input variable for 'boottest()'
+#' @param object an object of type lm, fixest or felm
+#' @param param character vector - boottest() function arg 'param'
+#' @noRd
+
 check_params_in_model <- function(object, param) {
   
   # for lm and fixest
@@ -40,8 +45,19 @@ check_params_in_model <- function(object, param) {
   }
 }
 
+#' several checks on the input args for 'boottest()'
+#' @param object an object of type lm, fixest or felm
+#' @param R Numeric vector defining the test
+#' @param param character vector - the parameters to be tested
+#' @param sign_level The significance level 
+#' @param B the number of bootstrap iterations
+#' @param fe NULL or numeric scalar - the fixed effect to be projected 
+#' out in the bootstrap
+#' @noRd
+#' 
 check_boottest_args_plus <- function(
     object, R, param, sign_level, B, fe = NULL) {
+  
   if (inherits(object, "ivreg")) {
     if (object$method != "OLS") {
       stop("Currently, only 2SLS is supported. Please set the `ivreg`
@@ -117,136 +133,13 @@ check_boottest_args_plus <- function(
 }
 
 
-check_mboottest_args_plus <- function(object, R, r, fe) {
-  if (inherits(object, "felm")) {
-    if (!is.null(fe)) {
-      if (!(fe %in% names(object$fe))) {
-        stop(paste(
-          "The fixed effect to be projected out in the bootstrap,",
-          fe, "is not included as a dedicated fixed effect in the
-                   estimated model."
-        ))
-      }
-    }
-  }
-
-  if (inherits(object, "fixest")) {
-    deparse_fml <- Reduce(
-      paste, as.character(as.formula(object$fml_all$linear))
-    )
-
-    if (
-      # '^' illegal in fixef argument, but legal in main formula -
-      # e.g. fml = y ~ x1 + I(x2^2) shold be possible
-      ("fixef_vars" %in% names(object) &&
-        grepl("^",
-          Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
-          fixed = TRUE
-        ))
-
-    ) {
-      stop("Advanced formula notation in fixest / fixest via ^ to interact
-          fixed effects is currently not supported in boottest().")
-    }
-
-
-    if (!is.null(fe)) {
-      if (!(fe %in% object$fixef_vars)) {
-        stop(paste(
-          "The fixed effect to be projected out in the bootstrap,",
-          fe, "is not included as a dedicated fixed effect in the
-                   estimated model."
-        ))
-      }
-    }
-  }
-
-  if (nrow(R) != length(r)) {
-    stop(paste(
-      "The dimensions of func args R and r do not match. The number
-               of rows of R is ", nrow(R), ", but the length of r is",
-      length(r), "."
-    ))
-  }
-}
-
-
-check_boottest_args_plus <- function(
-    object, R, param, sign_level, B, fe = NULL) {
-  if (inherits(object, "ivreg")) {
-    if (object$method != "OLS") {
-      stop("Currently, only 2SLS is supported. Please set the `ivreg`
-           function argument `method` to `OLS`.")
-    }
-  }
-
-
-  if (inherits(object, "felm")) {
-    if (!is.null(fe)) {
-      if (fe %in% param) {
-        stop(paste("The function argument fe =", fe, "is included in the
-                   hypothesis (via the `param` argument). This is not allowed.
-                   Please set fe to another factor variable or NULL."),
-          call. = FALSE
-        )
-      }
-      if (!(fe %in% names(object$fe))) {
-        stop(paste(
-          "The fixed effect to be projected out in the bootstrap,",
-          fe, "is not included as a dedicated fixed effect in the
-                   estimated model."
-        ))
-      }
-    }
-  }
-
-  if (inherits(object, "fixest")) {
-    deparse_fml <- Reduce(
-      paste, as.character(as.formula(object$fml_all$linear))
-    )
-
-    if (
-      # '^' illegal in fixef argument, but legal in main formula -
-      # e.g. fml = y ~ x1 + I(x2^2) shold be possible
-      ("fixef_vars" %in% names(object) &&
-        grepl("^",
-          Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
-          fixed = TRUE
-        ))
-      # note: whitespace ~ - for IV
-      # grepl("~", deparse_fml, fixed = TRUE)
-    ) {
-      stop("Advanced formula notation in fixest / fixest via ^ to interact
-          fixed effects is currently not supported in boottest().")
-    }
-
-
-    if (!is.null(fe)) {
-      if (fe %in% param) {
-        stop(paste("The function argument fe =", fe, "is included in the
-                   hypothesis (via the `param` argument). This is not allowed.
-                   Please set fe to another factor variable or NULL."),
-          call. = FALSE
-        )
-      }
-      if (!(fe %in% object$fixef_vars)) {
-        stop(paste(
-          "The fixed effect to be projected out in the bootstrap,",
-          fe, "is not included as a dedicated fixed effect
-                   in the estimated model."
-        ))
-      }
-    }
-  }
-
-  if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
-    message(paste("Note: The bootstrap usually performs best when the
-                  confidence level (here,", 1 - sign_level, "%)
-                  times the number of replications plus 1
-                  (", B, "+ 1 = ", B + 1, ") is an integer."))
-  }
-}
-
+#' input argument tests for 'mboottest()'
+#' 
+#' @param object an object of type lm, fixest or felm
+#' @param R Numeric vector defining the test
+#' @param r Numeric scalar, shifting the test
+#' @param fe NULL or numeric scalar - the fixed effect to be projected 
+#' out in the bootstrap
 
 check_mboottest_args_plus <- function(object, R, r, fe) {
   if (inherits(object, "felm")) {
@@ -301,6 +194,13 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
   }
 }
 
+
+
+
+#' some checks when 'boot_algo = R-lean"
+#' @param weights NULL or numeric vector
+#' @param clustid character vector 
+#' @param fe NULL or character scalar
 
 check_r_lean <- function(weights, clustid, fe) {
   if (length(clustid) > 1) {
@@ -321,7 +221,16 @@ check_r_lean <- function(weights, clustid, fe) {
 }
 
 
-# diverse helper functions
+#' check if full enumeration should be employed, provide message when it is
+#' @param heteroskedastic Logical. Is the heteroskedastic or a wild cluster 
+#' bootstrap being run? 
+#' @param preprocess A list created via the preprocess2 function
+#' @param B Integer. The number of bootstrap iterations
+#' @param type. The type of test to be run
+#' @param boot_algo. Character scalar, either "R", "WildBootTests.jl" or 
+#' "R-lean"
+#' @noRd
+
 check_set_full_enumeration <-
   function(heteroskedastic = FALSE,
            preprocess,
@@ -372,6 +281,13 @@ check_set_full_enumeration <-
     res
   }
 
+#' some checks on the chosen algorithm 
+#' @param R constraints vector
+#' @param p_val_type type of pvalue
+#' @param conf_int logical - TRUE or FALSE
+#' @param B number of bootstrap iterations
+#' @noRd
+
 r_algo_checks <- function(R, p_val_type, conf_int, B) {
   if (!is.null(R)) {
     if (length(nrow(R)) != 0) {
@@ -409,6 +325,11 @@ r_algo_checks <- function(R, p_val_type, conf_int, B) {
   }
 }
 
+#' some preprocessing of the constraint vector-matrix R
+#' @param R constraints vector
+#' @param param character vector - name of the parameters in the hypothesis
+#' test
+#' @noRd
 
 process_R <- function(R, param) {
   # check R & param
