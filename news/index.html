@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,48 +57,48 @@
 <h2 class="pkg-version" data-toc-text="0.9" id="fwildclusterboot-09">fwildclusterboot 0.9<a class="anchor" aria-label="anchor" href="#fwildclusterboot-09"></a></h2><p class="text-muted">CRAN release: 2022-06-10</p>
 <ul><li><p>v0.9 moves data pre-processing from <code>model.frame</code> methods to <code>model_matrix</code> methods. I had wanted to do so for a while, but issue <a href="https://github.com/s3alfisc/fwildclusterboot/issues/42" class="external-link">#42</a>, as raised by Michael Topper, has finally convinced me to start working on this project.</p></li>
 <li><p>Moving to <code>model_matrix</code> methods unlocks new functionality for how <code><a href="../reference/boottest.html">boottest()</a></code> plays with <code>fixest</code> objects - it is now possible to run <code><a href="../reference/boottest.html">boottest()</a></code> after <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols()</a></code> models that use syntactic sugar:</p></li>
-</ul><pre><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/" class="external-link">fixest</a></span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span>
-<span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/i.html" class="external-link">i</a></span><span class="op">(</span><span class="va">treatment</span>, <span class="va">ideology1</span><span class="op">)</span> ,
-    data <span class="op">=</span> <span class="va">voters</span>
-<span class="op">)</span>
-<span class="va">boot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">feols_fit</span>,
-    B <span class="op">=</span> <span class="fl">9999</span>,
-    param <span class="op">=</span> <span class="st">"treatment::0:ideology1"</span>,
-    clustid <span class="op">=</span> <span class="st">"group_id1"</span>
-<span class="op">)</span>
-
-<span class="va">feols_fits</span> <span class="op">&lt;-</span> <span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">|</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/stepwise.html" class="external-link">sw</a></span><span class="op">(</span><span class="va">Q1_immigration</span>, <span class="va">Q2_defense</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">feols_fits</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">x</span>, B <span class="op">=</span> <span class="fl">999</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span><span class="op">)</span><span class="op">)</span>  
-
-<span class="va">voters</span><span class="op">$</span><span class="va">split</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span>, <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">feols_fits</span> <span class="op">&lt;-</span> <span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span>, split <span class="op">=</span> <span class="op">~</span><span class="va">split</span>, data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
-
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">feols_fits</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">x</span>, B <span class="op">=</span> <span class="fl">999</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span><span class="op">)</span><span class="op">)</span></code></pre>
+</ul><pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/" class="external-link">fixest</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span></span>
+<span><span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/i.html" class="external-link">i</a></span><span class="op">(</span><span class="va">treatment</span>, <span class="va">ideology1</span><span class="op">)</span> ,</span>
+<span>    data <span class="op">=</span> <span class="va">voters</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">boot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">feols_fit</span>,</span>
+<span>    B <span class="op">=</span> <span class="fl">9999</span>,</span>
+<span>    param <span class="op">=</span> <span class="st">"treatment::0:ideology1"</span>,</span>
+<span>    clustid <span class="op">=</span> <span class="st">"group_id1"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">feols_fits</span> <span class="op">&lt;-</span> <span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">|</span> <span class="fu">sw</span><span class="op">(</span><span class="va">Q1_immigration</span>, <span class="va">Q2_defense</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">feols_fits</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">x</span>, B <span class="op">=</span> <span class="fl">999</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span><span class="op">)</span><span class="op">)</span>  </span>
+<span></span>
+<span><span class="va">voters</span><span class="op">$</span><span class="va">split</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span>, <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">feols_fits</span> <span class="op">&lt;-</span> <span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span>, split <span class="op">=</span> <span class="op">~</span><span class="va">split</span>, data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">feols_fits</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">x</span>, B <span class="op">=</span> <span class="fl">999</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span><span class="op">)</span><span class="op">)</span>  </span></code></pre>
 <p>Some formula sugar still leads to errors, e.g. </p>
-<pre><code><span class="va">feols_fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">|</span> <span class="va">Q1_immigration</span><span class="op">^</span><span class="va">Q2_defense</span>,
-    data <span class="op">=</span> <span class="va">voters</span>
-<span class="op">)</span>
-
-<span class="va">boot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">feols_fit2</span>,
-    B <span class="op">=</span> <span class="fl">9999</span>,
-    param <span class="op">=</span> <span class="st">"treatment"</span>,
-    clustid <span class="op">=</span> <span class="st">"group_id1"</span>
-<span class="op">)</span></code></pre>
-<ul><li><p>The release further fixes a multicollinearity bug that occured when <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> or <code><a href="https://lrberge.github.io/fixest/reference/fixest.html" class="external-link">fixest()</a></code> silently deleted multicollinar variable(s). Thanks to Kurt Schmidheiny for reporting!</p></li>
+<pre><code><span><span class="va">feols_fit2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">|</span> <span class="va">Q1_immigration</span><span class="op">^</span><span class="va">Q2_defense</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">voters</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">boot1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">feols_fit2</span>,</span>
+<span>    B <span class="op">=</span> <span class="fl">9999</span>,</span>
+<span>    param <span class="op">=</span> <span class="st">"treatment"</span>,</span>
+<span>    clustid <span class="op">=</span> <span class="st">"group_id1"</span></span>
+<span><span class="op">)</span></span></code></pre>
+<ul><li><p>The release further fixes a multicollinearity bug that occured when <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code> or <code>fixest()</code> silently deleted multicollinar variable(s). Thanks to Kurt Schmidheiny for reporting!</p></li>
 <li><p>The <code>na_omit</code> function argument has been dropped. If the cluster variable is not included in the regression model, it is now not allowed to contain NA values.</p></li>
 <li><p>Several function arguments can now be fed to <code><a href="../reference/boottest.html">boottest()</a></code> as formulas (<code>param</code>, <code>clustid</code>, <code>bootcluster</code>, <code>fe</code>).</p></li>
-</ul><pre><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span>
-<span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> ,
-    data <span class="op">=</span> <span class="va">voters</span>
-<span class="op">)</span>
-<span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">feols_fit</span>,
-    B <span class="op">=</span> <span class="fl">9999</span>,
-    param <span class="op">=</span> <span class="op">~</span> <span class="va">treatment</span>,
-    clustid <span class="op">=</span> <span class="op">~</span> <span class="va">group_id1</span>
-<span class="op">)</span></code></pre>
+</ul><pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span></span>
+<span><span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> ,</span>
+<span>    data <span class="op">=</span> <span class="va">voters</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">feols_fit</span>,</span>
+<span>    B <span class="op">=</span> <span class="fl">9999</span>,</span>
+<span>    param <span class="op">=</span> <span class="op">~</span> <span class="va">treatment</span>,</span>
+<span>    clustid <span class="op">=</span> <span class="op">~</span> <span class="va">group_id1</span></span>
+<span><span class="op">)</span></span></code></pre>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8" id="fwildclusterboot-08">fwildclusterboot 0.8<a class="anchor" aria-label="anchor" href="#fwildclusterboot-08"></a></h2><p class="text-muted">CRAN release: 2022-04-18</p>
@@ -107,57 +107,57 @@
 <div class="section level5">
 <h5 id="boot_algo--wildboottestsjl-0-8">boot_algo = ‘WildBootTests.jl’<a class="anchor" aria-label="anchor" href="#boot_algo--wildboottestsjl-0-8"></a></h5>
 <ul><li>
-<code>fwildclusterboot</code> now supports calling <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a>, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, <code>boot_algo</code>, through which it is possible to control the executed bootstrap algorithm.</li></ul><pre class="{r}"><code><span class="co"># load data set voters included in fwildclusterboot</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span>
-<span class="co"># estimate the regression model via lm</span>
-<span class="va">lm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span>
-<span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span>
-  <span class="va">lm_fit</span>, 
-  clustid <span class="op">=</span> <span class="st">"group_id1"</span>, 
-  param <span class="op">=</span> <span class="st">"treatment"</span>, 
-  B <span class="op">=</span> <span class="fl">9999</span>, 
-  boot_algo <span class="op">=</span> <span class="st">"WildBootTests.jl"</span>
-<span class="op">)</span></code></pre>
+<code>fwildclusterboot</code> now supports calling <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a>, which is a very fast Julia implementation of the wild cluster bootstrap algorithm. To do so, a new function argument is introduced, <code>boot_algo</code>, through which it is possible to control the executed bootstrap algorithm.</li></ul><pre class="{r}"><code><span><span class="co"># load data set voters included in fwildclusterboot</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span></span>
+<span><span class="co"># estimate the regression model via lm</span></span>
+<span><span class="va">lm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span></span>
+<span><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span></span>
+<span>  <span class="va">lm_fit</span>, </span>
+<span>  clustid <span class="op">=</span> <span class="st">"group_id1"</span>, </span>
+<span>  param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
+<span>  B <span class="op">=</span> <span class="fl">9999</span>, </span>
+<span>  boot_algo <span class="op">=</span> <span class="st">"WildBootTests.jl"</span></span>
+<span><span class="op">)</span></span></code></pre>
 <ul><li><p>WildBootTests.jl is (after compilation) orders of magnitudes faster than <code>fwildclusterboot's</code> native R implementation, and speed gains are particularly pronounced for large problems with a large number of clusters and many bootstrap iterations.</p></li>
 <li><p>Furthermore, <code>WildBootTests.jl</code> supports a range of models and tests that were previously not supported by <code>fwildclusterboot</code>: most importantly a) wild cluster bootstrap tests of multiple joint hypotheses and b) the WRE bootstrap by Davidson &amp; MacKinnon for instrumental variables estimation. On top of the cake … the WRE is really fast.</p></li>
-</ul><pre class="{r}"><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://john-d-fox.github.io/ivreg/" class="external-link">ivreg</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"SchoolingReturns"</span>, package <span class="op">=</span> <span class="st">"ivreg"</span><span class="op">)</span>
-<span class="co"># drop all NA values from SchoolingReturns</span>
-<span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="va">SchoolingReturns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">SchoolingReturns</span>, <span class="va">is.na</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>,<span class="op">]</span>
-<span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span>
-                           <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span>  <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>, data <span class="op">=</span> <span class="va">SchoolingReturns</span><span class="op">)</span>
-
-<span class="va">boot_ivreg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span>
-  object <span class="op">=</span> <span class="va">ivreg_fit</span>,
-  B <span class="op">=</span> <span class="fl">999</span>,
-  param <span class="op">=</span> <span class="st">"education"</span>,
-  clustid <span class="op">=</span> <span class="st">"kww"</span>,
-  type <span class="op">=</span> <span class="st">"mammen"</span>,
-  impose_null <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span>
-<span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span>
-<span class="co">#              term  estimate statistic   p.value    conf.low conf.high</span>
-<span class="co"># 1 1*education = 0 0.0638822  1.043969 0.2482482 -0.03152655 0.2128746</span></code></pre>
+</ul><pre class="{r}"><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://john-d-fox.github.io/ivreg/" class="external-link">ivreg</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"SchoolingReturns"</span>, package <span class="op">=</span> <span class="st">"ivreg"</span><span class="op">)</span></span>
+<span><span class="co"># drop all NA values from SchoolingReturns</span></span>
+<span><span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="va">SchoolingReturns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">SchoolingReturns</span>, <span class="va">is.na</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>,<span class="op">]</span></span>
+<span><span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span></span>
+<span>                           <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span>  <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>, data <span class="op">=</span> <span class="va">SchoolingReturns</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">boot_ivreg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span></span>
+<span>  object <span class="op">=</span> <span class="va">ivreg_fit</span>,</span>
+<span>  B <span class="op">=</span> <span class="fl">999</span>,</span>
+<span>  param <span class="op">=</span> <span class="st">"education"</span>,</span>
+<span>  clustid <span class="op">=</span> <span class="st">"kww"</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"mammen"</span>,</span>
+<span>  impose_null <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span></span>
+<span><span class="co">#              term  estimate statistic   p.value    conf.low conf.high</span></span>
+<span><span class="co"># 1 1*education = 0 0.0638822  1.043969 0.2482482 -0.03152655 0.2128746</span></span></code></pre>
 <ul><li><p>For guidance on how to install and run <code>WildBooTests.jl</code>, have a look at the associated <a href="https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html">article</a>.</p></li>
 <li><p>Also, note that running the wild cluster bootstrap through <code>WildBootTests.jl</code> is often very memory-efficient.</p></li>
 </ul></div>
 <div class="section level5">
 <h5 id="boot_algo--r-lean-0-8">boot_algo = ‘R-lean’<a class="anchor" aria-label="anchor" href="#boot_algo--r-lean-0-8"></a></h5>
 <p>A key limitation of the vectorized ‘fast’ cluster bootstrap algorithm as implemented in <code>fwildclusterboot</code> is that it is very memory-demanding. For ‘larger’ problems, running <code><a href="../reference/boottest.html">boottest()</a></code> might lead to out-of-memory errors. To offer an alternative, <code><a href="../reference/boottest.html">boottest()</a></code> now ships a ‘new’ rcpp- and loop-based implementation of the wild cluster bootstrap (the ‘wild2’ algorithm in Roodman et al).</p>
-<pre class="{r}"><code><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span>
-  <span class="va">lm_fit</span>, 
-  clustid <span class="op">=</span> <span class="st">"group_id1"</span>, 
-  param <span class="op">=</span> <span class="st">"treatment"</span>, 
-  B <span class="op">=</span> <span class="fl">9999</span>, 
-  boot_algo <span class="op">=</span> <span class="st">"R-lean"</span>
-<span class="op">)</span></code></pre>
+<pre class="{r}"><code><span><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span></span>
+<span>  <span class="va">lm_fit</span>, </span>
+<span>  clustid <span class="op">=</span> <span class="st">"group_id1"</span>, </span>
+<span>  param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
+<span>  B <span class="op">=</span> <span class="fl">9999</span>, </span>
+<span>  boot_algo <span class="op">=</span> <span class="st">"R-lean"</span></span>
+<span><span class="op">)</span></span></code></pre>
 </div>
 </div>
 <div class="section level4">
 <h4 id="heteroskeadstic-wild-bootstrap-0-8">Heteroskeadstic Wild Bootstrap<a class="anchor" aria-label="anchor" href="#heteroskeadstic-wild-bootstrap-0-8"></a></h4>
 <p>It is now possible to run <code><a href="../reference/boottest.html">boottest()</a></code> without specifying a <code>clustid</code> function argument. In this case, <code><a href="../reference/boottest.html">boottest()</a></code> runs a heteroskedasticity-robust wild bootstrap (HC1), which is implemented in c++.</p>
-<pre class="{r}"><code><span class="va">boot_hc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot_hc1</span><span class="op">)</span></code></pre>
+<pre class="{r}"><code><span><span class="va">boot_hc1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot_hc1</span><span class="op">)</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="boottest-function-argument-beta0-deprecated-0-8">
@@ -175,7 +175,7 @@
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7" id="fwildclusterboot-07">fwildclusterboot 0.7<a class="anchor" aria-label="anchor" href="#fwildclusterboot-07"></a></h2><p class="text-muted">CRAN release: 2022-01-03</p>
-<ul><li>Bug fixes, see issues <a href="https://github.com/s3alfisc/fwildclusterboot/issues/26" class="external-link"></a><a href="https://github.com/s3alfisc/fwildclusterboot/issues/26" class="external-link">#26</a> and <a href="https://github.com/s3alfisc/fwildclusterboot/issues/27" class="external-link"></a><a href="https://github.com/s3alfisc/fwildclusterboot/issues/27" class="external-link">#27</a> regarding preprocessing for fixest when weights are passed to feols() as a formula or when cluster is specified in fixest as a column vector.</li></ul></div>
+<ul><li>Bug fixes, see issues <a href="https://github.com/s3alfisc/fwildclusterboot/issues/26" class="external-link">#26</a> and <a href="https://github.com/s3alfisc/fwildclusterboot/issues/27" class="external-link">#27</a> regarding preprocessing for fixest when weights are passed to feols() as a formula or when cluster is specified in fixest as a column vector.</li></ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6" id="fwildclusterboot-06">fwildclusterboot 0.6<a class="anchor" aria-label="anchor" href="#fwildclusterboot-06"></a></h2>
 <ul><li><p>Bug fix: for one-sided hypotheses for the WRU bootstrap (if impose_null = FALSE), the returned p-values were incorrect - they were reported as ‘p’, but should have been ‘1-p’. E.g. if the reported p-values was reported as 0.4, it should have been reported as 0.6.</p></li>
@@ -251,7 +251,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>
