@@ -1575,3 +1575,74 @@ test_that("error warning IV/WRE and q > 1", {
     
   }
 })
+
+test_that("error message when character vars in felm and fixest", {
+  
+  library(lfe)
+  library(fixest)
+  library(sandwich)
+  
+  N <- 1000
+  
+  real_1000 <- runif(N, 1, 100)
+  Year_cont <- sample(1:10, N, replace = TRUE)
+  post1 <- sample(0:1, N, replace = TRUE)
+  post2 <- sample(0:1, N, replace = TRUE)
+  PWSID <- sample(LETTERS, N, TRUE)
+  Utility_state <- as.character(sample(1:10, N, TRUE))
+  SEclusters <- as.character(sample(1:10, N, TRUE))
+  
+  event_reg_data <- 
+    data.frame(real_1000 = real_1000, 
+               Year_cont = Year_cont, 
+               post1 = post1, 
+               post2 = post2, 
+               PWSID = PWSID, 
+               Utility_state = Utility_state, 
+               SEclusters = SEclusters)
+  
+  res1 <- feols(
+    real_1000 ~ post1 | SEclusters,
+    data = event_reg_data
+  )
+  
+  res2 <- felm(
+    real_1000 ~ post1 | 0 | 0 | SEclusters,
+    data = event_reg_data
+  )
+  
+  res3 <- felm(
+    real_1000 ~ post1 | Utility_state | 0 | 0,
+    data = event_reg_data
+  )
+  
+  expect_error(
+    boottest(
+      res1,
+      param = "post1",
+      clustid = "SEclusters",
+      B = 999
+    )    
+  )
+  
+  expect_error(
+    boottest(
+      res2,
+      param = "post1",
+      clustid = "SEclusters",
+      B = 999
+    )    
+  )
+  
+  expect_error(
+    boottest(
+      res3,
+      param = "post1",
+      clustid = "SEclusters",
+      B = 999
+    )    
+  )
+  
+  
+})
+
