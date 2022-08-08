@@ -223,10 +223,8 @@ boot_algo_julia <- function(preprocess,
     conf_int <- NA
   }
   t_stat <- WildBootTests$teststat(wildboottest_res)
-  t_boot <- FALSE
-  if (t_boot == TRUE) {
-    t_boot <- WildBootTests$dist(wildboottest_res)
-  }
+  
+  t_boot <- WildBootTests$dist(wildboottest_res)
 
   if (getauxweights == TRUE) {
     getauxweights <- WildBootTests$auxweights(wildboottest_res)

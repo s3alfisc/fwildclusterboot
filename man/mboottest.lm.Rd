@@ -19,7 +19,6 @@ class lm}
   tol = 1e-06,
   floattype = "Float64",
   getauxweights = FALSE,
-  teststat_boot = FALSE,
   maxmatsize = NULL,
   bootstrapc = FALSE,
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
@@ -94,9 +93,6 @@ point numbers in Julia be represented as 32 or 64 bit?}
 
 \item{getauxweights}{Logical. FALSE by default. Whether to save auxilliary
 weight matrix (v)}
-
-\item{teststat_boot}{Logical. Should bootstrapped test statistics be
-returned?}
 
 \item{maxmatsize}{NULL by default = no limit. Else numeric scalar to set
 the maximum size of auxilliary weight matrix (v), in gigabytes}

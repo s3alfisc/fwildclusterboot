@@ -21,7 +21,6 @@
   tol = 1e-06,
   floattype = "Float64",
   getauxweights = FALSE,
-  t_boot = FALSE,
   maxmatsize = NULL,
   bootstrapc = FALSE,
   liml = FALSE,
@@ -107,8 +106,6 @@ point numbers in Julia be represented as 32 or 64 bit?}
 
 \item{getauxweights}{Logical. FALSE by default. Whether to save auxilliary
 weight matrix (v)}
-
-\item{t_boot}{Logical. Should bootstrapped t-statistics be returned?}
 
 \item{maxmatsize}{NULL by default = no limit. Else numeric scalar to set
 the maximum size of auxilliary weight matrix (v), in gigabytes}

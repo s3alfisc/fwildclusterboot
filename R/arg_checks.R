@@ -201,25 +201,32 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
 #' @param weights NULL or numeric vector
 #' @param clustid character vector 
 #' @param fe NULL or character scalar
+#' @param impose_null Logical, whether the null is imposed
+#' on the bootstrap dgp or not
 
-check_r_lean <- function(weights, clustid, fe) {
-  if (length(clustid) > 1) {
+check_r_lean <- function(weights, clustid, fe, impose_null){
+  
+  if(length(clustid) > 1){
     stop("The R-lean algorithm currently only supports oneway clustering.")
   }
-
+  
   if (!is.null(fe)) {
-    stop("boottest() currently does not support fixed effects with
-         boot_algo = 'R-lean'.")
+    stop("boottest() currently does not support 
+         fixed effects with boot_algo = 'R-lean'.")
+  }
+  
+  if(!is.null(weights)){
+    stop("boottest() currently does not support regression
+         weights with boot_algo = 'R-lean'.")
+  }
+  
+  if(impose_null != TRUE){
+    stop("boottest() currently does not support the 'WCU' bootstrap 
+    - which does not impose the null on the 
+          bootstrap dgp - for boot_algo = 'R-lean'.")
   }
 
-  if (!is.null(weights)) {
-    stop(
-      "boottest() currently does not support regression weights with
-         boot_algo = 'R-lean'."
-    )
-  }
 }
-
 
 #' check if full enumeration should be employed, provide message when it is
 #' @param heteroskedastic Logical. Is the heteroskedastic or a wild cluster 

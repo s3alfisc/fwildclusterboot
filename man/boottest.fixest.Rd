@@ -29,7 +29,6 @@
   floattype = "Float64",
   maxmatsize = FALSE,
   bootstrapc = FALSE,
-  t_boot = FALSE,
   getauxweights = FALSE,
   ...
 )
@@ -153,8 +152,6 @@ relevant when 'boot_algo = "WildBootTests.jl"'}
 \item{bootstrapc}{Logical scalar, FALSE by default. TRUE  to request
 bootstrap-c instead of bootstrap-t. Only relevant when
 'boot_algo = "WildBootTests.jl"'}
-
-\item{t_boot}{Logical. Should bootstrapped t-statistics be returned?}
 
 \item{getauxweights}{Logical. Whether to save auxilliary weight matrix (v)}
 

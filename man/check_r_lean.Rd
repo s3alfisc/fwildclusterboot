@@ -4,7 +4,7 @@
 \alias{check_r_lean}
 \title{some checks when 'boot_algo = R-lean"}
 \usage{
-check_r_lean(weights, clustid, fe)
+check_r_lean(weights, clustid, fe, impose_null)
 }
 \arguments{
 \item{weights}{NULL or numeric vector}
@@ -12,6 +12,9 @@ check_r_lean(weights, clustid, fe)
 \item{clustid}{character vector}
 
 \item{fe}{NULL or character scalar}
+
+\item{impose_null}{Logical, whether the null is imposed
+on the bootstrap dgp or not}
 }
 \description{
 some checks when 'boot_algo = R-lean"

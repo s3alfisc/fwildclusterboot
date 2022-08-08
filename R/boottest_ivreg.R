@@ -63,7 +63,6 @@
 #'  point numbers in Julia be represented as 32 or 64 bit?
 #' @param getauxweights Logical. FALSE by default. Whether to save auxilliary
 #'  weight matrix (v)
-#' @param t_boot Logical. Should bootstrapped t-statistics be returned?
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set
 #' the maximum size of auxilliary weight matrix (v), in gigabytes
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request
@@ -200,7 +199,6 @@ boottest.ivreg <- function(object,
                            tol = 1e-6,
                            floattype = "Float64",
                            getauxweights = FALSE,
-                           t_boot = FALSE,
                            maxmatsize = NULL,
                            bootstrapc = FALSE,
                            liml = FALSE,
@@ -231,7 +229,6 @@ boottest.ivreg <- function(object,
   check_arg(bootcluster, "character vector | formula")
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(floattype, "charin(Float32, Float64)")
-  check_arg(t_boot, "scalar logical")
   check_arg(getauxweights, "scalar logical")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")

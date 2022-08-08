@@ -178,4 +178,9 @@ test_that("test lean cpp boottest", {
 
   expect_equal(pval(boot_lm1), pval(boot_lm2), tolerance = 0.05)
   expect_equal(teststat(boot_lm1), teststat(boot_lm2))
+  
+  
+  # test for non-standard hypotheses
+  
+  
 })

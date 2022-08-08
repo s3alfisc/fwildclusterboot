@@ -60,8 +60,6 @@
 #'  point numbers in Julia be represented as 32 or 64 bit?
 #' @param getauxweights Logical. FALSE by default. Whether to save auxilliary
 #'  weight matrix (v)
-#' @param teststat_boot Logical. Should bootstrapped test statistics be
-#' returned?
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set
 #'  the maximum size of auxilliary weight matrix (v), in gigabytes
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request
@@ -174,7 +172,6 @@ mboottest.lm <- function(object,
                          tol = 1e-6,
                          floattype = "Float64",
                          getauxweights = FALSE,
-                         teststat_boot = FALSE,
                          maxmatsize = NULL,
                          bootstrapc = FALSE,
                          ssc = boot_ssc(
@@ -199,7 +196,6 @@ mboottest.lm <- function(object,
   check_arg(tol, "numeric scalar")
   check_arg(floattype, "character scalar")
   check_arg(getauxweights, "scalar logical")
-  check_arg(teststat_boot, "scalar logical")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   check_arg(floattype, "charin(Float32, Float64")

@@ -1,6 +1,7 @@
 test_that("t-stat equivalence OLS", {
+  
   skip_on_cran()
-  skip_on_ci()
+  #skip_on_ci()
 
 
   if(juliaconnector_prepared){
@@ -652,7 +653,6 @@ test_that("t-stat equivalence IV", {
   skip_on_cran()
 
 
-
   if(juliaconnector_prepared){
     iv_test <- function(run_this_test) {
       # Note: Test with Float64 for exact match
@@ -664,7 +664,7 @@ test_that("t-stat equivalence IV", {
         # drop all NA values from SchoolingReturns
         data1 <<- na.omit(SchoolingReturns)
         ivreg_fit <-
-          ivreg(
+          ivreg::ivreg(
             log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
               nearcollege + age + ethnicity + smsa + south + parents14,
             data = data1
@@ -682,10 +682,10 @@ test_that("t-stat equivalence IV", {
           type = "HC1"
         )
   
-        res1 <- coeftest(ivreg_fit, vcov1)
+        res1 <- lmtest::coeftest(ivreg_fit, vcov1)
         res_df1 <- as.data.frame(broom::tidy(res1))
   
-        res2 <- coeftest(ivreg_fit, vcov2)
+        res2 <- lmtest::coeftest(ivreg_fit, vcov2)
         res_df2 <- as.data.frame(broom::tidy(res2))
   
         boot_ivreg1 <- suppressWarnings(
@@ -707,7 +707,6 @@ test_that("t-stat equivalence IV", {
         )
   
   
-        # two-way clustering currently fails
         boot_ivreg2 <- boottest(
           floattype = "Float64",
           object = ivreg_fit,
@@ -730,4 +729,12 @@ test_that("t-stat equivalence IV", {
   } else {
     message("test-stat_equivalence.R III skipped as JULIA_BINDR not found.")
   }
+})
+
+
+
+test_that("t-stat equivalence for heteroskedastic wild bootstrap", {
+  
+  
+  
 })

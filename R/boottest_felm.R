@@ -122,7 +122,6 @@
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request
 #' bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo =
 #' "WildBootTests.jl"'
-#' @param t_boot Logical. Should bootstrapped t-statistics be returned?
 #' @param ... Further arguments passed to or from other methods.
 #'
 #' @importFrom dreamerr check_arg validate_dots
@@ -290,7 +289,6 @@ boottest.felm <- function(object,
                           floattype = "Float64",
                           maxmatsize = FALSE,
                           bootstrapc = FALSE,
-                          t_boot = FALSE,
                           getauxweights = FALSE,
                           ...) {
   call <- match.call()
@@ -454,7 +452,8 @@ boottest.felm <- function(object,
     check_r_lean(
       weights = stats::weights(object),
       clustid = clustid,
-      fe = fe
+      fe = fe, 
+      impose_null = impose_null
     )
 
     res <- boot_algo1(

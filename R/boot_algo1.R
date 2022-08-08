@@ -59,7 +59,7 @@ boot_algo1 <-
     #' model.weights residuals rlnorm rnorm update
     #' @importFrom dqrng dqsample dqset.seed
     #' @noRd
-
+    
     X <- preprocessed_object$X
     Y <- preprocessed_object$Y
     N <- preprocessed_object$N
@@ -70,33 +70,80 @@ boot_algo1 <-
     weights <- preprocessed_object$weights
     R <- t(as.matrix(preprocessed_object$R0))
     vcov_sign <- preprocessed_object$vcov_sign
-
-    N_G_bootcluster <- N_G
-
+    bootcluster <- preprocessed_object$bootcluster
+    N_G_bootcluster <- length(unique(bootcluster[[1]]))
+    
+    wild_draw_fun <- switch(
+      type,
+      # note: for randemacher, create integer matrix
+      # (uses less memory than numeric)
+      rademacher = function(n)
+        dqrng::dqsample(
+          x = c(-1L, 1L),
+          size = n,
+          replace = TRUE
+        ),
+      mammen = function(n) {
+        sample(
+          c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2,
+          n,
+          replace = TRUE,
+          prob = (sqrt(5) + c(1,-1)) / (2 * sqrt(5))
+        )
+      },
+      norm = function(n)
+        dqrng::dqrnorm(n = n),
+      webb = function(n)
+        dqrng::dqsample(
+          x = c(-sqrt((3:1) / 2), sqrt((1:3) / 2)),
+          size = n,
+          replace = TRUE
+        ),
+      wild_draw_fun
+    )
+    
+    v <- NULL
     if (type == "rademacher") {
       type <- 0
+      if (full_enumeration == TRUE) {
+        v0 <-
+          gtools_permutations(
+            n = 2,
+            r = N_G_bootcluster,
+            v = c(1,-1),
+            repeats.allowed = TRUE
+          )
+        v <- cbind(1, t(v0))
+        boot_iter <- 2 ^ N_G_bootcluster
+      } else {
+        # else: just draw with replacement - by chance, some permutations
+        # might occur more than once
+        v <- wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1))
+        dim(v) <- c(N_G_bootcluster, boot_iter + 1)
+        v[, 1] <- 1
+      }
     } else if (type == "webb") {
       type <- 1
     } else {
-      stop("For the 'lean' bootstrap algorithm, only webb and rademacher
+      stop("For the 'lean' bootstrap algorithm, only webb and rademacher 
            weights are supported.")
     }
-
+    
     if (impose_null == FALSE) {
       stop(
         "The 'lean' bootstrap algorithm is currently not supported without
         imposing the null on the bootstrap dgp."
       )
     }
-
-    if (sum(R) > 1) {
+    
+    if ((length(R) - sum(R != 1)) > 1) {
       stop(
-        "The 'lean' bootstrap algorithm is currently not supported for
+        "The 'lean' bootstrap algorithm is currently not supported for 
         hypotheses about more than one parameter."
       )
     }
-
-
+    
+    
     if (heteroskedastic == TRUE) {
       boot_res <-
         wildboottestHC(
@@ -109,47 +156,63 @@ boot_algo1 <-
           cores = nthreads,
           type = type,
           small_sample_correction = small_sample_correction
-        )[[1]]
+        )[["t_boot"]]
     } else {
       bootcluster <- preprocessed_object$bootcluster[, 1]
-      # turn bootcluster into sequence of integers, starting at 0, 1, 2, ...,
-      # length(unique(bootcluster)) (required for cpp
+      # turn bootcluster into sequence of integers, starting 
+      # at 0, 1, 2, ..., length(unique(bootcluster)) (required for cpp
       # implementation)
       # if(!class(bootcluster) == "integer"){
       bootcluster <-
         to_integer(preprocessed_object$bootcluster[, 1])
       # }
-      # bootcluster must be integers, starting with 0
+      # bootcluster must be integers, starting with 0 
       # (due to cpp implementation)
       bootcluster <- bootcluster - min(bootcluster)
-
-      boot_res <-
-        wildboottestCL(
-          y = unname(Y),
-          X = unname(X),
-          R = t(unname(R)),
-          r = r,
-          B = boot_iter,
-          N_G_bootcluster = unname(N_G_bootcluster),
-          cores = nthreads,
-          type = type,
-          cluster = bootcluster,
-          small_sample_correction = small_sample_correction
-        )[[1]]
+      
+      if (is.null(v)) {
+        boot_res <-
+          wildboottestCL(
+            y = unname(Y),
+            X = unname(X),
+            R = t(unname(R)),
+            r = r,
+            B = boot_iter,
+            N_G_bootcluster = unname(N_G_bootcluster),
+            cores = nthreads,
+            type = type,
+            cluster = bootcluster,
+            small_sample_correction = small_sample_correction
+          )[["t_boot"]]
+      } else {
+        boot_res <-
+          wildboottestCL_enum(
+            y = Y,
+            X = X,
+            R = t(unname(R)),
+            r = r,
+            B = boot_iter,
+            N_G_bootcluster = unname(N_G_bootcluster),
+            cores = nthreads,
+            cluster = bootcluster,
+            small_sample_correction = small_sample_correction,
+            v = t(v)
+          )[["t_boot"]]
+      }
+      
     }
-
-
-    selector <- which(R == 1)
-    t_stat <- boot_res[selector, 1]
-    t_boot <- boot_res[selector, 2:(boot_iter + 1)]
-
-
-    p_val <- get_bootstrap_pvalue(
-      p_val_type = p_val_type,
-      t_stat = t_stat,
-      t_boot = t_boot
-    )
-
+    
+    
+    # selector <- which(R == 1)
+    t_stat <- boot_res[1]
+    t_boot <- boot_res[2:(boot_iter + 1)]
+    #t_stat <- boot_res[selector, 1]
+    #t_boot <- boot_res[selector, 2:(boot_iter + 1)]
+    
+    p_val <- get_bootstrap_pvalue(p_val_type = p_val_type,
+                                  t_stat = t_stat,
+                                  t_boot = t_boot)
+    
     res <- list(
       p_val = p_val,
       t_stat = t_stat,
@@ -163,8 +226,9 @@ boot_algo1 <-
       ABCD = NULL,
       small_sample_correction = small_sample_correction
     )
-
+    
     class(res) <- "boot_algo1"
-
+    
     invisible(res)
+    
   }
