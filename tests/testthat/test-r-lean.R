@@ -237,7 +237,7 @@ test_that("r-lean multi-param tests", {
     
     t <- (R %*% beta - r) / sqrt(t(R) %*% vcov %*% R)
     
-    expect_equal(t, teststat(boot))
+    expect_equal(c(t), teststat(boot))
 
 
   
