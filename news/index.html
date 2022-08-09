@@ -55,7 +55,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.10" id="fwildclusterboot-010">fwildclusterboot 0.10<a class="anchor" aria-label="anchor" href="#fwildclusterboot-010"></a></h2>
-<ul><li>multiple (internal) changes for ropensci standards alignment</li>
+<ul><li>introduces a range of new methods: <code><a href="https://rdrr.io/r/stats/nobs.html" class="external-link">nobs()</a></code>, <code><a href="../reference/pval.html">pval()</a></code>, <code><a href="../reference/teststat.html">teststat()</a></code>, <code><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint()</a></code> and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>
+</li>
+<li>multiple (internal) changes for ropensci standards alignment</li>
 <li>drop the <code>t_boot</code> (<code>teststat_boot</code>) function arguments -&gt; they are now TRUE by default</li>
 <li>fix a bug in the lean algorithms - it always tested hypotheses of the form beta = 0 instead of R’beta = r, even when R != 1 and r != 0</li>
 <li>enable full enumeration for R-lean tests</li>
