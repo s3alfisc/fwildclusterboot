@@ -16,7 +16,7 @@ for instrumental variable models (WRE, Davidson &amp;amp; McKinnon, 2010)"><meta
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,7 +87,6 @@ for instrumental variable models (WRE, Davidson &amp; McKinnon, 2010)</p>
 <span>  tol <span class="op">=</span> <span class="fl">1e-06</span>,</span>
 <span>  floattype <span class="op">=</span> <span class="st">"Float64"</span>,</span>
 <span>  getauxweights <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  t_boot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  maxmatsize <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bootstrapc <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  liml <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -107,27 +106,38 @@ for instrumental variable models (WRE, Davidson &amp; McKinnon, 2010)</p>
 
 
 <dt>clustid</dt>
-<dd><p>A character vector or rhs formula containing the names of the cluster variables</p></dd>
+<dd><p>A character vector or rhs formula containing the names of
+the cluster variables</p></dd>
 
 
 <dt>param</dt>
-<dd><p>A character vector or rhs formula of length one. The name of the regression
+<dd><p>A character vector or rhs formula of length one. The name of
+the regression
 coefficient for which the hypothesis is to be tested</p></dd>
 
 
 <dt>B</dt>
-<dd><p>Integer. The number of bootstrap iterations. When the number of clusters is low,
+<dd><p>Integer. The number of bootstrap iterations. When the number of
+clusters is low,
 increasing B adds little additional runtime</p></dd>
 
 
 <dt>bootcluster</dt>
-<dd><p>A character vector or rhs formula of length 1. Specifies the bootstrap clustering variable or variables. If more
-than one variable is specified, then bootstrapping is clustered by the intersections of
-clustering implied by the listed variables. To mimic the behavior of stata's boottest command,
-the default is to cluster by the intersection of all the variables specified via the <code>clustid</code> argument,
-even though that is not necessarily recommended (see the paper by Roodman et al cited below, section 4.2).
-Other options include "min", where bootstrapping is clustered by the cluster variable with the fewest clusters.
-Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is supported - see the <code><a href="../articles/fwildclusterboot.html">vignette("fwildclusterboot", package = "fwildclusterboot")</a></code> for details.</p></dd>
+<dd><p>A character vector or rhs formula of length 1. Specifies
+the bootstrap clustering variable or variables. If more
+than one variable is specified, then bootstrapping is clustered
+by the intersections of
+clustering implied by the listed variables. To mimic the behavior
+of stata's boottest command,
+the default is to cluster by the intersection of all the variables
+specified via the <code>clustid</code> argument,
+even though that is not necessarily recommended (see the paper by
+Roodman et al cited below, section 4.2).
+Other options include "min", where bootstrapping is clustered by
+the cluster variable with the fewest clusters.
+Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is
+supported - see the <code><a href="../articles/fwildclusterboot.html">vignette("fwildclusterboot",
+        package = "fwildclusterboot")</a></code> for details.</p></dd>
 
 
 <dt>conf_int</dt>
@@ -140,7 +150,9 @@ intervals by test inversion. If FALSE, only the p-value is returned.</p></dd>
 
 
 <dt>R</dt>
-<dd><p>Hypothesis Vector giving linear combinations of coefficients. Must be either NULL or a vector of the same length as <code>param</code>. If NULL, a vector of ones of length param.</p></dd>
+<dd><p>Hypothesis Vector giving linear combinations of coefficients.
+Must be either NULL or a vector of the same length as <code>param</code>. If NULL,
+a vector of ones of length param.</p></dd>
 
 
 <dt>r</dt>
@@ -159,8 +171,10 @@ returns 0.95% confidence intervals. By default, sign_level = 0.05.</p></dd>
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
 and "webb". Alternatively, type can be a function(n) for drawing
 wild bootstrap factors. "rademacher" by default.
-For the Rademacher and Mammen distribution, if the number of replications B exceeds
-the number of possible draw ombinations, 2^(#number of clusters), then <code><a href="boottest.html">boottest()</a></code>
+For the Rademacher and Mammen distribution, if the number of
+replications B exceeds
+the number of possible draw ombinations, 2^(#number of clusters),
+then <code><a href="boottest.html">boottest()</a></code>
 will use each possible combination once (enumeration).</p></dd>
 
 
@@ -172,33 +186,35 @@ If FALSE, the null is not imposed <code>(WCU)</code></p></dd>
 
 <dt>p_val_type</dt>
 <dd><p>Character vector of length 1. Type of p-value.
-By default "two-tailed". Other options include "equal-tailed", "&gt;" and "&lt;".</p></dd>
+By default "two-tailed". Other options include "equal-tailed",
+"&gt;" and "&lt;".</p></dd>
 
 
 <dt>tol</dt>
 <dd><p>Numeric vector of length 1. The desired accuracy
-(convergence tolerance) used in the root finding procedure to find the confidence interval.
+(convergence tolerance) used in the root finding procedure to find
+the confidence interval.
 Relative tolerance of 1e-6 by default.</p></dd>
 
 
 <dt>floattype</dt>
-<dd><p>Float64 by default. Other option: Float32. Should floating point numbers in Julia be represented as 32 or 64 bit?</p></dd>
+<dd><p>Float64 by default. Other option: Float32. Should floating
+point numbers in Julia be represented as 32 or 64 bit?</p></dd>
 
 
 <dt>getauxweights</dt>
-<dd><p>Logical. FALSE by default. Whether to save auxilliary weight matrix (v)</p></dd>
-
-
-<dt>t_boot</dt>
-<dd><p>Logical. Should bootstrapped t-statistics be returned?</p></dd>
+<dd><p>Logical. FALSE by default. Whether to save auxilliary
+weight matrix (v)</p></dd>
 
 
 <dt>maxmatsize</dt>
-<dd><p>NULL by default = no limit. Else numeric scalar to set the maximum size of auxilliary weight matrix (v), in gigabytes</p></dd>
+<dd><p>NULL by default = no limit. Else numeric scalar to set
+the maximum size of auxilliary weight matrix (v), in gigabytes</p></dd>
 
 
 <dt>bootstrapc</dt>
-<dd><p>Logical scalar, FALSE by default. TRUE  to request bootstrap-c instead of bootstrap-t</p></dd>
+<dd><p>Logical scalar, FALSE by default. TRUE  to request
+bootstrap-c instead of bootstrap-t</p></dd>
 
 
 <dt>liml</dt>
@@ -218,8 +234,12 @@ Relative tolerance of 1e-6 by default.</p></dd>
 
 
 <dt>ssc</dt>
-<dd><p>An object of class <code>boot_ssc.type</code> obtained with the function <code><a href="boot_ssc.html">boot_ssc</a></code>. Represents how the small sample adjustments are computed. The defaults are <code>adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"</code>.
-You can find more details in the help file for <code><a href="boot_ssc.html">boot_ssc()</a></code>. The function is purposefully designed to mimic fixest's <code><a href="https://lrberge.github.io/fixest/reference/ssc.html" class="external-link">ssc</a></code> function.</p></dd>
+<dd><p>An object of class <code>boot_ssc.type</code> obtained with the function
+<code><a href="boot_ssc.html">boot_ssc</a></code>. Represents how the small sample
+adjustments are computed. The defaults are <code>adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"</code>.
+You can find more details in the help file for <code><a href="boot_ssc.html">boot_ssc()</a></code>.
+The function is purposefully designed to mimic
+fixest's <code><a href="https://lrberge.github.io/fixest/reference/ssc.html" class="external-link">ssc</a></code> function.</p></dd>
 
 
 <dt>...</dt>
@@ -269,7 +289,8 @@ the cluster variables contain NA values.</p></dd>
 <dd><p>The scalar "r" in the null hypothesis of interest Rbeta = r.</p></dd>
 
 <dt>point_estimate</dt>
-<dd><p>R'beta. A scalar: the constraints vector times the regression coefficients.</p></dd>
+<dd><p>R'beta. A scalar: the constraints vector times the
+regression coefficients.</p></dd>
 
 <dt>grid_vals</dt>
 <dd><p>All t-statistics calculated while calculating the
@@ -298,29 +319,51 @@ interval.</p></dd>
 <dd><p>The number of threads employed.</p></dd>
 
 <dt>internal_seed</dt>
-<dd><p>The integer value -inherited from set.seed() - used within boottest() to set the random seed in either R or Julia. If NULL, no internal seed was created.</p></dd>
+<dd><p>The integer value -inherited from set.seed() - used
+within boottest() to set the random seed in either R or Julia. If NULL,
+no internal seed was created.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="setting-seeds">Setting Seeds<a class="anchor" aria-label="anchor" href="#setting-seeds"></a></h2>
     
 
-<p>To guarantee reproducibility, you can either use <code>boottest()'s</code> <code>seed</code> function argument, or
-set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>boot_algo = "R-lean"</code>) including the heteroskedastic wild bootstrap</p></li>
+<p>To guarantee reproducibility, you can either use <code>boottest()'s</code> <code>seed</code>
+function argument, or
+set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>boot_algo = "R-lean"</code>) including the
+heteroskedastic wild bootstrap</p></li>
 <li><p>the wild cluster bootstrap via <code>boot_algo = "R"</code> with Mammen weights or</p></li>
 <li><p><code>boot_algo = "WildBootTests.jl"</code></p></li>
 </ol></li>
-<li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>boot_algo = "R"</code> for Rademacher, Webb or Normal weights</p></li>
+<li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>boot_algo = "R"</code> for Rademacher,
+Webb or Normal weights</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.
 (<a href="https://journals.sagepub.com/doi/full/10.1177/1536867X19830877" class="external-link">https://journals.sagepub.com/doi/full/10.1177/1536867X19830877</a>)</p>
-<p>Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller. "Bootstrap-based improvements for inference with clustered errors." The Review of Economics and Statistics 90.3 (2008): 414-427.</p>
-<p>MacKinnon, James G., and Matthew D. Webb. "The wild bootstrap for few (treated) clusters." The Econometrics Journal 21.2 (2018): 114-135.</p>
-<p>MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite economique 91.1-2 (2015): 11-33.</p>
-<p>Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.</p>
+<p>Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
+"Bootstrap-based improvements for inference with clustered errors."
+The Review of Economics and Statistics 90.3 (2008): 414-427.</p>
+<p>Cameron, A.Colin &amp; Douglas L. Miller. "A practitioner's
+guide to cluster-robust inference" Journal of Human Resources (2015)
+<a href="https://doi.org/%2010.3368/jhr.50.2.317" class="external-link">doi: 10.3368/jhr.50.2.317</a></p>
+<p>Davidson &amp; MacKinnon. "Wild Bootstrap Tests for IV regression"
+Journal of Economics and Business Statistics (2010)
+<a href="https://doi.org/10.1198/jbes.2009.07221" class="external-link">doi:10.1198/jbes.2009.07221</a></p>
+<p>MacKinnon, James G., and Matthew D. Webb.
+"The wild bootstrap for few (treated) clusters."
+The Econometrics Journal 21.2 (2018): 114-135.</p>
+<p>MacKinnon, James G., and Matthew D. Webb.
+"Cluster-robust inference: A guide to empirical practice"
+Journal of Econometrics (2022)
+<a href="https://doi.org/10.1016/j.jeconom.2022.04.001" class="external-link">doi:10.1016/j.jeconom.2022.04.001</a></p>
+<p>MacKinnon, James. "Wild cluster bootstrap confidence
+intervals." L'Actualite economique 91.1-2 (2015): 11-33.</p>
+<p>Webb, Matthew D. Reworking wild bootstrap based inference
+for clustered errors. No. 1315. Queen's Economics Department Working
+Paper, 2013.</p>
     </div>
 
     <div class="section level2">
@@ -330,7 +373,7 @@ STATA using boottest", The STATA Journal.
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># drop all NA values from SchoolingReturns</span></span></span>
-<span class="r-in"><span><span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="va">SchoolingReturns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">SchoolingReturns</span>, <span class="va">is.na</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">SchoolingReturns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span></span></span>
 <span class="r-in"><span>  <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span></span></span>
@@ -347,6 +390,12 @@ STATA using boottest", The STATA Journal.
 <span class="r-in"><span>  impose_null <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/nobs.html" class="external-link">nobs</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="pval.html">pval</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">boot_ivreg</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,19 +90,24 @@
         <dd>Fast wild cluster bootstrap inference</dd>
       </dl><dl><dt>
           
-          <code><a href="boot_algo1.html">boot_algo1()</a></code> 
-        </dt>
-        <dd>Fast wild cluster bootstrap algorithm</dd>
-      </dl><dl><dt>
-          
-          <code><a href="boot_algo2.html">boot_algo2()</a></code> 
-        </dt>
-        <dd>Fast wild cluster bootstrap algorithm</dd>
-      </dl><dl><dt>
-          
           <code><a href="boot_ssc.html">boot_ssc()</a></code> 
         </dt>
         <dd>set the small sample correction factor applied in <code><a href="../reference/boottest.html">boottest()</a></code></dd>
+      </dl><dl><dt>
+          
+          <code><a href="check_mboottest_args_plus.html">check_mboottest_args_plus()</a></code> 
+        </dt>
+        <dd>input argument tests for 'mboottest()'</dd>
+      </dl><dl><dt>
+          
+          <code><a href="check_r_lean.html">check_r_lean()</a></code> 
+        </dt>
+        <dd>some checks when 'boot_algo = R-lean"</dd>
+      </dl><dl><dt>
+          
+          <code><a href="confint.boottest.html">confint(<i>&lt;boottest&gt;</i>)</a></code> 
+        </dt>
+        <dd>S3 method to obtain wild cluster bootstrapped confidence intervals</dd>
       </dl><dl><dt>
           
           <code><a href="cpp_get_nb_threads.html">cpp_get_nb_threads()</a></code> 
@@ -110,36 +115,9 @@
         <dd>Get maximum number of threads on hardware for open mp support</dd>
       </dl><dl><dt>
           
-          <code><a href="create_data.html">create_data()</a></code> 
-        </dt>
-        <dd>Simulate Data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="dot-onLoad.html">.onLoad()</a></code> 
-        </dt>
-        <dd>setting options for nthreads when package is loaded</dd>
-      </dl><dl><dt>
-          
           <code><a href="eigenMapMatMult.html">eigenMapMatMult()</a></code> 
         </dt>
         <dd>Matrix Multiplication via Eigen</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_bootstrap_pvalue.html">get_bootstrap_pvalue()</a></code> 
-        </dt>
-        <dd>get bootstrapped p-value based on bootstrapped t-stats</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_seed.html">get_seed()</a></code> 
-        </dt>
-        <dd>creates an integer based on the global random seed set via set.seed()
-for using set.seed() for controlling rcpp's seed, see this
-blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_ssc.html">get_ssc()</a></code> 
-        </dt>
-        <dd>Compute small sample adjustment factors</dd>
       </dl><dl><dt>
           
           <code><a href="glance.boottest.html">glance(<i>&lt;boottest&gt;</i>)</a></code> 
@@ -149,17 +127,20 @@ blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/</dd>
           
           <code><a href="mboottest.felm.html">mboottest(<i>&lt;felm&gt;</i>)</a></code> 
         </dt>
-        <dd>Fast wild cluster bootstrap inference for joint hypotheses for object of class felm</dd>
+        <dd>Fast wild cluster bootstrap inference for joint hypotheses for object of
+class felm</dd>
       </dl><dl><dt>
           
           <code><a href="mboottest.fixest.html">mboottest(<i>&lt;fixest&gt;</i>)</a></code> 
         </dt>
-        <dd>Fast wild cluster bootstrap inference for joint hypotheses for object of class fixest</dd>
+        <dd>Fast wild cluster bootstrap inference for joint hypotheses for object
+of class fixest</dd>
       </dl><dl><dt>
           
           <code><a href="mboottest.lm.html">mboottest(<i>&lt;lm&gt;</i>)</a></code> 
         </dt>
-        <dd>Fast wild cluster bootstrap inference of joint hypotheses for object of class lm</dd>
+        <dd>Fast wild cluster bootstrap inference of joint hypotheses for object of
+class lm</dd>
       </dl><dl><dt>
           
           <code><a href="mboottest.html">mboottest()</a></code> 
@@ -167,24 +148,20 @@ blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/</dd>
         <dd>Arbitrary Linear Hypothesis Testing for Regression Models via Wald-Tests</dd>
       </dl><dl><dt>
           
-          <code><a href="model_matrix.felm.html">model_matrix(<i>&lt;felm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Enhanced model.matrix for objects of type felm</dd>
-      </dl><dl><dt>
-          
-          <code><a href="model_matrix.fixest.html">model_matrix(<i>&lt;fixest&gt;</i>)</a></code> 
-        </dt>
-        <dd>Enhanced model.matrix for objects of type fixest</dd>
-      </dl><dl><dt>
-          
-          <code><a href="model_matrix.lm.html">model_matrix(<i>&lt;lm&gt;</i>)</a></code> 
-        </dt>
-        <dd>Enhanced model.matrix for objects of type lm</dd>
-      </dl><dl><dt>
-          
           <code><a href="model_matrix.html">model_matrix()</a></code> 
         </dt>
         <dd>enhanced model.matrix functionalities</dd>
+      </dl><dl><dt>
+          
+          <code><a href="nobs.boottest.html">nobs(<i>&lt;boottest&gt;</i>)</a></code> 
+        </dt>
+        <dd>S3 method to obtain the effective number of observation used in <code><a href="../reference/boottest.html">boottest()</a></code></dd>
+      </dl><dl><dt>
+          
+          <code><a href="nobs.mboottest.html">nobs(<i>&lt;mboottest&gt;</i>)</a></code> 
+        </dt>
+        <dd>S3 method to obtain the effective number of observation used
+in <code><a href="../reference/mboottest.html">mboottest()</a></code></dd>
       </dl><dl><dt>
           
           <code><a href="plot.boottest.html">plot(<i>&lt;boottest&gt;</i>)</a></code> 
@@ -192,9 +169,32 @@ blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/</dd>
         <dd>Plot the bootstrap distribution of t-statistics</dd>
       </dl><dl><dt>
           
-          <code><a href="preprocess2.html">preprocess2()</a></code> 
+          <code><a href="print.boottest.html">print(<i>&lt;boottest&gt;</i>)</a></code> 
         </dt>
-        <dd>Fast wild cluster bootstrap inference</dd>
+        <dd>S3 method to print key information for objects of type <code>bboottest</code></dd>
+      </dl><dl><dt>
+          
+          <code><a href="print.mboottest.html">print(<i>&lt;mboottest&gt;</i>)</a></code> 
+        </dt>
+        <dd>S3 method to print key information for objects of type <code>mboottest</code></dd>
+      </dl><dl><dt>
+          
+          <code><a href="pval.boottest.html">pval(<i>&lt;boottest&gt;</i>)</a></code> 
+        </dt>
+        <dd>S3 method to obtain the wild cluster bootstrapped p-value of an object
+of type boottest</dd>
+      </dl><dl><dt>
+          
+          <code><a href="pval.mboottest.html">pval(<i>&lt;mboottest&gt;</i>)</a></code> 
+        </dt>
+        <dd>S3 method to obtain the wild cluster bootstrapped p-value of an object
+of type mboottest</dd>
+      </dl><dl><dt>
+          
+          <code><a href="pval.html">pval()</a></code> 
+        </dt>
+        <dd><code>pval</code> is a S3 method to collect pvalues for objects
+of type <code>boottest</code> and <code>mboottest</code></dd>
       </dl><dl><dt>
           
           <code><a href="setBoottest_boot_algo.html">setBoottest_boot_algo()</a></code> 
@@ -212,6 +212,24 @@ blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/</dd>
         <dd>S3 method to summarize objects of class mboottest</dd>
       </dl><dl><dt>
           
+          <code><a href="teststat.boottest.html">teststat(<i>&lt;boottest&gt;</i>)</a></code> 
+        </dt>
+        <dd>S3 method to obtain the non-bootstrapped t-statistic calculated
+via <code><a href="../reference/boottest.html">boottest()</a></code></dd>
+      </dl><dl><dt>
+          
+          <code><a href="teststat.mboottest.html">teststat(<i>&lt;mboottest&gt;</i>)</a></code> 
+        </dt>
+        <dd>S3 method to obtain the non-bootstrapped test statistic calculated
+via <code><a href="../reference/mboottest.html">mboottest()</a></code></dd>
+      </dl><dl><dt>
+          
+          <code><a href="teststat.html">teststat()</a></code> 
+        </dt>
+        <dd><code>teststat</code> is a S3 method to collect teststats for objects
+of type <code>boottest</code> and <code>mboottest</code></dd>
+      </dl><dl><dt>
+          
           <code><a href="tidy.boottest.html">tidy(<i>&lt;boottest&gt;</i>)</a></code> 
         </dt>
         <dd>S3 method to summarize objects of class boottest into tidy data.frame</dd>
@@ -220,11 +238,6 @@ blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/</dd>
           <code><a href="tidy.mboottest.html">tidy(<i>&lt;mboottest&gt;</i>)</a></code> 
         </dt>
         <dd>S3 method to summarize objects of class mboottest into tidy data.frame</dd>
-      </dl><dl><dt>
-          
-          <code><a href="to_integer.html">to_integer()</a></code> 
-        </dt>
-        <dd>Transform vectors of all types safely to integer vectors</dd>
       </dl><dl><dt>
           
           <code><a href="voters.html">voters</a></code> 

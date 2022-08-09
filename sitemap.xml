@@ -16,6 +16,9 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/authors.html</loc>
   </url>
   <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/CONTRIBUTING.html</loc>
+  </url>
+  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/index.html</loc>
   </url>
   <url>
@@ -40,34 +43,22 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/boottest.lm.html</loc>
   </url>
   <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/boot_algo1.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/boot_algo2.html</loc>
-  </url>
-  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/boot_ssc.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/check_mboottest_args_plus.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/check_r_lean.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/confint.boottest.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/cpp_get_nb_threads.html</loc>
   </url>
   <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/create_data.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/dot-onLoad.html</loc>
-  </url>
-  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/eigenMapMatMult.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/get_bootstrap_pvalue.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/get_seed.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/get_ssc.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/glance.boottest.html</loc>
@@ -88,22 +79,31 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/mboottest.lm.html</loc>
   </url>
   <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/model_matrix.felm.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/model_matrix.fixest.html</loc>
-  </url>
-  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/model_matrix.html</loc>
   </url>
   <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/model_matrix.lm.html</loc>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/nobs.boottest.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/nobs.mboottest.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/plot.boottest.html</loc>
   </url>
   <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/preprocess2.html</loc>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/print.boottest.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/print.mboottest.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/pval.boottest.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/pval.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/pval.mboottest.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/setBoottest_boot_algo.html</loc>
@@ -115,13 +115,19 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/summary.mboottest.html</loc>
   </url>
   <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/teststat.boottest.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/teststat.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/teststat.mboottest.html</loc>
+  </url>
+  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/tidy.boottest.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/tidy.mboottest.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/to_integer.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/voters.html</loc>
