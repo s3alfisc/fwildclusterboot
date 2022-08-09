@@ -2,7 +2,7 @@ test_that("errors and warnings q = 1", {
   
   skip_on_cran()
 
-  if(juliaconnector_prepared){
+  if(is_juliaconnector_prepared()){
 
     # ------------------------------------------------------------------ #
     # test for warnings and errors
@@ -33,7 +33,7 @@ test_that("errors and warnings q = 1", {
           )
         )
       feols_fit <-
-        feols(
+        fixest::feols(
           proposition_vote ~ treatment + ideology1 + log_income 
           + Q1_immigration,
           data = fwildclusterboot:::create_data(
@@ -63,7 +63,7 @@ test_that("errors and warnings q = 1", {
           )
         )
       feols_fit_c <-
-        feols(
+        fixest::feols(
           proposition_vote ~ treatment + ideology1 + log_income |
             Q1_immigration,
           data = fwildclusterboot:::create_data(
@@ -295,7 +295,7 @@ test_that("errors and warnings q = 1", {
       
       # test for banned function arguments and syntax for fixest
       feols_fit <-
-        feols(
+        fixest::feols(
           proposition_vote ~ treatment + ideology1 +
             i(log_income, Q1_immigration),
           data = fwildclusterboot:::create_data(
@@ -322,7 +322,7 @@ test_that("errors and warnings q = 1", {
       )
       
       feols_fit <-
-        feols(
+        fixest::feols(
           proposition_vote ~ treatment + ideology1 + log_income
           + Q1_immigration,
           weights = fwildclusterboot:::create_data(
@@ -1042,7 +1042,7 @@ test_that("errors and warnings q = 1", {
       base$clustid[2] <- 12
       # unique singletons -> 11, 12
       
-      feols_fit <- feols(y ~ x1 | clustid, base, fixef.rm = "both")
+      feols_fit <- fixest::feols(y ~ x1 | clustid, base, fixef.rm = "both")
       # lfe::felm - no such behavior
       # felm_fit = felm(y ~ x1 | clustid , base, keepX = TRUE, keepCX = TRUE)
       # dim(felm_fit$X)
@@ -1462,13 +1462,13 @@ test_that("error warning IV/WRE and q > 1", {
   skip_on_cran()
 
   
-  if(juliaconnector_prepared){
+  if(is_juliaconnector_prepared()){
     
     # drop all NA values from SchoolingReturns
     #SchoolingReturns <-
     #  SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
     SchoolingReturns <- na.omit(SchoolingReturns)
-    ivreg_fit <- ivreg(
+    ivreg_fit <- ivreg::ivreg(
       log(wage) ~ education + age +
         ethnicity + smsa + south + parents14 |
         nearcollege + age + ethnicity + smsa
@@ -1518,7 +1518,7 @@ test_that("error warning IV/WRE and q > 1", {
     # SchoolingReturns <-
     #   SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
     SchoolingReturns <- na.omit(SchoolingReturns)
-    ivreg_fit <- ivreg(
+    ivreg_fit <- ivreg::ivreg(
       log(wage) ~ education + age +
         ethnicity + smsa + south + parents14 |
         nearcollege + age + ethnicity + smsa
@@ -1544,7 +1544,7 @@ test_that("error warning IV/WRE and q > 1", {
     library(fixest)
     # test for banned function arguments and syntax for fixest with mboottest
   
-    feols_fit <- feols(
+    feols_fit <- fixest::feols(
       proposition_vote ~ treatment + ideology1,
       data = fwildclusterboot:::create_data(
         N = 1000,
@@ -1600,7 +1600,7 @@ test_that("error message when character vars in felm and fixest", {
                Utility_state = Utility_state, 
                SEclusters = SEclusters)
   
-  res1 <- feols(
+  res1 <- fixest::feols(
     real_1000 ~ post1 | SEclusters,
     data = event_reg_data
   )
@@ -1670,7 +1670,7 @@ test_that("error message when character vars in felm and fixest", {
                Utility_state = Utility_state, 
                SEclusters = SEclusters)
   
-  res1 <- feols(
+  res1 <- fixest::feols(
     real_1000 ~ post1 | SEclusters,
     data = event_reg_data
   )
@@ -1742,7 +1742,7 @@ test_that("error message when character vars in felm and fixest", {
                Utility_state = Utility_state, 
                SEclusters = SEclusters)
   
-  res1 <- feols(
+  res1 <- fixest::feols(
     real_1000 ~ post1 | SEclusters,
     data = event_reg_data
   )

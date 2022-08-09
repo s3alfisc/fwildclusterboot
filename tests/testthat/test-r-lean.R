@@ -190,8 +190,7 @@ test_that("test lean cpp boottest", {
 test_that("r-lean multi-param tests", {
   
   
-  if(juliaconnector_prepared){
-    
+
     N <- 2000
     seed <- 7896
     
@@ -240,8 +239,6 @@ test_that("r-lean multi-param tests", {
     
     expect_equal(t, teststat(boot))
 
-    
-  }
 
   
   

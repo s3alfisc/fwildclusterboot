@@ -2,7 +2,7 @@ test_that("global boot_algo", {
   
   skip_on_cran()
 
-  if(juliaconnector_prepared){
+  if(is_juliaconnector_prepared()){
     data(voters)
     lm_fit <-
       lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,

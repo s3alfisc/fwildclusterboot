@@ -4,7 +4,7 @@ test_that("t-stat equivalence OLS", {
   #skip_on_ci()
 
 
-  if(juliaconnector_prepared){
+  if(is_juliaconnector_prepared()){
   
     ols_test <- function(run_this_test) {
       if (run_this_test) {
@@ -367,7 +367,7 @@ test_that("t-stat equivalence OLS q > 1", {
   skip_on_cran()
 
 
-  if(juliaconnector_prepared){
+  if(is_juliaconnector_prepared()){
     wald_test <- function(run_this_test) {
       if (run_this_test) {
         reltol <- 0.002
@@ -653,7 +653,7 @@ test_that("t-stat equivalence IV", {
   skip_on_cran()
 
 
-  if(juliaconnector_prepared){
+  if(is_juliaconnector_prepared()){
     iv_test <- function(run_this_test) {
       # Note: Test with Float64 for exact match
       if (run_this_test) {

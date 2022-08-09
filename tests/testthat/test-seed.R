@@ -2,7 +2,7 @@ test_that("seed works for OLS", {
   
   skip_on_cran()
 
-  if(juliaconnector_prepared){
+  if(is_juliaconnector_prepared()){
     data1 <<-
       fwildclusterboot:::create_data(
         N = 5000,

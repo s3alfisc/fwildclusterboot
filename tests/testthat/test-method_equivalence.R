@@ -3,7 +3,7 @@ test_that("Do different, but equivalent ways to specify
   skip_on_cran()
 
 
-  if(juliaconnector_prepared){
+  if(is_juliaconnector_prepared()){
     print_results <- FALSE
     
     data1 <<-
@@ -1243,7 +1243,7 @@ test_that("clustid can be fe", {
   ##library(lfe)
   # ##library(fwildclusterboot)
   
-  if(juliaconnector_prepared){
+  if(is_juliaconnector_prepared()){
     
   print_results <- FALSE
   
