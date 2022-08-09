@@ -1,6 +1,6 @@
 # fwildclusterboot 0.10
 
-+ multiple (internal) changes for ropensci standards alignments
++ multiple (internal) changes for ropensci standards alignment
 + drop the `t_boot` (`teststat_boot`) function arguments -> they are now
   TRUE by default
 + fix a bug in the lean algorithms - it always tested hypotheses of the form 
