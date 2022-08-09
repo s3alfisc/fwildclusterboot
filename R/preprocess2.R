@@ -802,6 +802,17 @@ get_cluster <-
       cluster_bootcluster_tmp,
       na.action = na.pass
     )
+  
+  if(inherits(cluster_tmp, "try-error")){
+    if(inherits(object, "fixest") || inherits(object, "felm")){
+      if(grepl("non-numeric argument to binary operator$", attr(cluster_tmp, "condition")$message)){
+        stop("In your model, you have specified multiple fixed effects, none of which are of type factor. While `fixest::feols()` and `lfe::felm()` handle this case without any troubles,  `boottest()` currently cannot handle this case - please change the type of (at least one) fixed effect(s) to factor. If this does not solve the error, please report the issue at https://github.com/s3alfisc/fwildclusterboot.")
+      }
+      if(grepl("operations are possible only for numeric, logical or complex types$", attr(cluster_tmp, "condition")$message)){
+        stop("Either a fixed effect or a cluster variable in your fixest() or felm() model is currently specified as a character. 'boottest()' relies on 'expand.model.frame', which can not handle these variable types in models. Please change these character variables to factors. ")
+      }
+    }
+  }
 
     # data.frames with clusters, bootcluster
     cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
