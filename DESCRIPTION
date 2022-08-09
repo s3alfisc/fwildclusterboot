@@ -1,6 +1,6 @@
 Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap Inference for Linear Models
-Version: 0.9.1
+Version: 0.10
 Authors@R: 
     c(
     person(given = "Alexander",
@@ -59,7 +59,6 @@ Imports:
     Matrix,
     Matrix.utils,
     generics,
-    gtools,
     dqrng, 
     JuliaConnectoR
 Suggests: 
@@ -81,7 +80,7 @@ Suggests:
     tibble
 Encoding: UTF-8
 LazyData: true
-Roxygen: list(markdown = TRUE)
+Roxygen: list(markdown = TRUE, roclets = c ("namespace", "rd", "srr::srr_stats_roclet"))
 RoxygenNote: 7.2.0
 LinkingTo: Rcpp,RcppArmadillo, RcppEigen
 VignetteBuilder: knitr

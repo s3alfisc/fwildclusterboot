@@ -2,9 +2,11 @@ pandoc: 2.17.1.1
 pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
+  literature: literature.html
+  technical_vignette: technical_vignette.html
   WildBootTests: WildBootTests.html
   fwildclusterboot: fwildclusterboot.html
-last_built: 2022-06-08T17:10Z
+last_built: 2022-08-09T17:01Z
 urls:
   reference: https://s3alfisc.github.io/fwildclusterboot/reference
   article: https://s3alfisc.github.io/fwildclusterboot/articles

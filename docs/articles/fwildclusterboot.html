@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,8 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/literature.html">Literature on the Wild Cluster Bootstrap</a>
+    <a class="dropdown-item" href="../articles/technical_vignette.html">The (Wild) Cluster Bootstrap and Implementation Details - Preliminary Draft</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -1006,7 +1008,7 @@ function:</p>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"SchoolingReturns"</span>, package <span class="op">=</span> <span class="st">"ivreg"</span><span class="op">)</span>
       
 <span class="co"># drop all NA values from SchoolingReturns</span>
-<span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="va">SchoolingReturns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">SchoolingReturns</span>, <span class="va">is.na</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>,<span class="op">]</span>
+<span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">SchoolingReturns</span><span class="op">)</span>
 <span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span>
                            <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span>  <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>, data <span class="op">=</span> <span class="va">SchoolingReturns</span><span class="op">)</span>
 
@@ -1146,7 +1148,7 @@ github</a>. Note that <code>fwildclusterboot</code> explicitly tests for
 t-stat equality against <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">fixest::feols()</a></code> <a href="https://github.com/s3alfisc/fwildclusterboot/blob/master/tests/testthat/test-tstat_equivalence.R" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> 
-<span class="fu">fwildclusterboot</span><span class="fu">:::</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, 
+<span class="fu">fwildclusterboot</span><span class="fu">:::</span><span class="fu">create_data</span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, 
                                N_G1 <span class="op">=</span> <span class="fl">20</span>, 
                                icc1 <span class="op">=</span> <span class="fl">0.81</span>,
                                N_G2 <span class="op">=</span> <span class="fl">10</span>,
@@ -1213,7 +1215,7 @@ memory-efficient.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://bench.r-lib.org/" class="external-link">bench</a></span><span class="op">)</span>
 
-<span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu">fwildclusterboot</span><span class="fu">:::</span><span class="fu"><a href="../reference/create_data.html">create_data</a></span><span class="op">(</span>
+<span class="va">dt</span> <span class="op">&lt;-</span> <span class="fu">fwildclusterboot</span><span class="fu">:::</span><span class="fu">create_data</span><span class="op">(</span>
   N <span class="op">=</span> <span class="fl">10000</span>, 
   N_G1 <span class="op">=</span> <span class="fl">250</span>, 
   icc1 <span class="op">=</span> <span class="fl">0.01</span>, 

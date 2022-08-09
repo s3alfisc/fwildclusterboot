@@ -14,7 +14,7 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019."><meta prop
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,8 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019."><meta prop
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/literature.html">Literature on the Wild Cluster Bootstrap</a>
+    <a class="dropdown-item" href="../articles/technical_vignette.html">The (Wild) Cluster Bootstrap and Implementation Details - Preliminary Draft</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -84,27 +86,96 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019.</p>
     <h2 id="setting-seeds">Setting Seeds<a class="anchor" aria-label="anchor" href="#setting-seeds"></a></h2>
     
 
-<p>To guarantee reproducibility, you can either use <code>boottest()'s</code> <code>seed</code> function argument, or
-set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>boot_algo = "R-lean"</code>), 2) the heteroskedastic wild bootstrap</p></li>
-<li><p>the wild cluster bootstrap via <code>boot_algo = "R"</code> with Mammen weights or 4) <code>boot_algo = "WildBootTests.jl"</code></p></li>
+<p>To guarantee reproducibility, you can either use <code>boottest()'s</code> <code>seed</code>
+function argument, or
+set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>boot_algo = "R-lean"</code>), 2) the heteroskedastic
+wild bootstrap</p></li>
+<li><p>the wild cluster bootstrap via <code>boot_algo = "R"</code> with Mammen weights
+or 4) <code>boot_algo = "WildBootTests.jl"</code></p></li>
 </ol></li>
-<li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>boot_algo = "R"</code> for Rademacher, Webb or Normal weights</p></li>
+<li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>boot_algo = "R"</code> for Rademacher, Webb
+or Normal weights</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.
 (<a href="https://journals.sagepub.com/doi/full/10.1177/1536867X19830877" class="external-link">https://journals.sagepub.com/doi/full/10.1177/1536867X19830877</a>)</p>
-<p>Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller. "Bootstrap-based improvements for inference with clustered errors." The Review of Economics and Statistics 90.3 (2008): 414-427.</p>
-<p>MacKinnon, James G., and Matthew D. Webb. "The wild bootstrap for few (treated) clusters." The Econometrics Journal 21.2 (2018): 114-135.</p>
-<p>MacKinnon, James. "Wild cluster bootstrap confidence intervals." L'Actualite economique 91.1-2 (2015): 11-33.</p>
-<p>Webb, Matthew D. Reworking wild bootstrap based inference for clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.</p>
+<p>Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
+"Bootstrap-based improvements for inference with clustered errors."
+The Review of Economics and Statistics 90.3 (2008): 414-427.</p>
+<p>Cameron, A.Colin &amp; Douglas L. Miller.
+"A practitioner's guide to cluster-robust inference"
+Journal of Human Resources (2015) doi: <a href="https://doi.org/%2010.3368/jhr.50.2.317" class="external-link"> 10.3368/jhr.50.2.317</a></p>
+<p>Davidson &amp; MacKinnon. "Wild Bootstrap Tests for IV regression"
+Journal of Economics and Business Statistics (2010)
+doi: <a href="https://doi.org/10.1198/jbes.2009.07221" class="external-link">10.1198/jbes.2009.07221</a></p>
+<p>MacKinnon, James G., and Matthew D. Webb.
+"The wild bootstrap for few (treated) clusters."
+The Econometrics Journal 21.2 (2018): 114-135.</p>
+<p>MacKinnon, James G., and Matthew D. Webb.
+"Cluster-robust inference: A guide to empirical practice"
+Journal of Econometrics (2022)
+doi: <a href="https://doi.org/10.1016/j.jeconom.2022.04.001" class="external-link">10.1016/j.jeconom.2022.04.001</a></p>
+<p>MacKinnon, James. "Wild cluster bootstrap confidence intervals."
+L'Actualite economique 91.1-2 (2015): 11-33.</p>
+<p>Webb, Matthew D.
+"Reworking wild bootstrap based inference for clustered errors"
+. No. 1315. Queen's Economics Department Working Paper, 2013.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><a href="boottest.lm.html">boottest.lm</a>, <a href="boottest.fixest.html">boottest.fixest</a>, <a href="boottest.felm.html">boottest.felm</a>, <a href="boottest.ivreg.html">boottest.ivreg</a></p></div>
+    <div class="dont-index"><p><a href="boottest.lm.html">boottest.lm</a>,
+<a href="boottest.fixest.html">boottest.fixest</a>,
+<a href="boottest.felm.html">boottest.felm</a>,
+<a href="boottest.ivreg.html">boottest.ivreg</a></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">lm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span></span>
+<span class="r-in">  <span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span>,</span>
+<span class="r-in">  data <span class="op">=</span> <span class="va">voters</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu">boottest</span><span class="op">(</span><span class="va">lm_fit</span>,</span>
+<span class="r-in">  B <span class="op">=</span> <span class="fl">9999</span>,</span>
+<span class="r-in">  param <span class="op">=</span> <span class="st">"treatment"</span>,</span>
+<span class="r-in">  clustid <span class="op">=</span> <span class="st">"group_id1"</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = "group_id1")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Hypothesis: 1*treatment = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Observations: 300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Bootstr. Type: rademacher</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Clustering: 1-way</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Confidence Sets: 95%</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Number of Clusters: 40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              term estimate statistic p.value conf.low conf.high</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1*treatment = 0    0.073     3.709   0.001    0.033     0.113</span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = "group_id1")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p value: 9e-04 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> confidence interval: 0.0328 0.1131 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> test statistic 3.7094 </span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span>
+<span class="r-plt img"><img src="boottest-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/nobs.html" class="external-link">nobs</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 300</span>
+<span class="r-in"><span class="fu"><a href="pval.html">pval</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00090009</span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03278542 0.11310841</span>
+<span class="r-in"><span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              term   estimate statistic    p.value   conf.low conf.high</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1*treatment = 0 0.07290769  3.709435 0.00090009 0.03278542 0.1131084</span>
+<span class="r-in"></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

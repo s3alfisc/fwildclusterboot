@@ -1,3 +1,13 @@
+# fwildclusterboot 0.10
+
++ multiple (internal) changes for ropensci standards alignment
++ drop the `t_boot` (`teststat_boot`) function arguments -> they are now
+  TRUE by default
++ fix a bug in the lean algorithms - it always tested hypotheses of the form 
+  beta = 0 instead of R'beta = r, even when R != 1 and r != 0
++ enable full enumeration for R-lean tests 
++ enable deterministic 'full enumeration tests' - these are exact
+
 # fwildclusterboot 0.9
 
 + v0.9 moves data pre-processing from `model.frame` methods to `model_matrix` methods. I had wanted to do so for a while, but issue #42, as raised by Michael Topper, has finally convinced me to start working on this project. 
@@ -88,7 +98,7 @@ boot_lm <- boottest(
 library(ivreg)
 data("SchoolingReturns", package = "ivreg")
 # drop all NA values from SchoolingReturns
-SchoolingReturns <- SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0,]
+SchoolingReturns <- na.omit(SchoolingReturns)
 ivreg_fit <- ivreg(log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
                            nearcollege + age  + ethnicity + smsa + south + parents14, data = SchoolingReturns)
 

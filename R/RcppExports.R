@@ -9,11 +9,16 @@
 #' @param R A matrix - the constraints matrix for a hypothesis test R'beta = r.
 #' @param r A vector - r in hypothesis test R'beta = r.
 #' @param B An integer - controls the number of bootstrap iterations.
-#' @param N_G_bootcluster - The number of bootstrap clusters. For heteroskesdatic wild bootstrap, N_G_bootcluster = N, where N is the number of observations.
+#' @param N_G_bootcluster - The number of bootstrap clusters. For 
+#' heteroskesdatic wild bootstrap, N_G_bootcluster = N, where N 
+#' is the number of observations.
 #' @param cores Integer: the number of cores to be used.
-#' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
-#' @param small_sample_correction: double. Small sample correction to be applied.
-#' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
+#' @param type : Integer. Should rademacher or webb weights be used? 
+#' For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
+#' @param small_sample_correction: double. Small sample correction to be 
+#' applied.
+#' @return A matrix of bootstrapped t-statistics, where the null is imposed 
+#' on the bootstrap dgp.
 NULL
 
 #' Implementation of the wild  cluster bootstrap. Computes
@@ -26,9 +31,27 @@ NULL
 #' @param B An integer - controls the number of bootstrap iterations.
 #' @param N_G_bootcluster - The number of bootstrap clusters.
 #' @param cores Integer: the number of cores to be used.
-#' @param type : Integer. Should rademacher or webb weights be used? For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
+#' @param type : Integer. Should rademacher or webb weights be used?
+#'  For rademacher weights, set 'type = 0'. For webb weights, set 'type = 1'.
 #' @param cluster: Integer Vector. Contains information on the clusters.
-#' @return A matrix of bootstrapped t-statistics, where the null is imposed on the bootstrap dgp.
+#' @return A matrix of bootstrapped t-statistics, where the null is 
+#' imposed on the bootstrap dgp.
+NULL
+
+#' Implementation of the wild  cluster bootstrap. Computes
+#' cluster robust variance estimators. For use in fwildclusterboot when
+#' the memory demands of the fast and wild algorithm are infeasible
+#' @param y A vector - the dependent variable
+#' @param X A matrix - the design matrix
+#' @param R A matrix - the constraints matrix for a hypothesis test R'beta = r.
+#' @param r A vector - r in hypothesis test R'beta = r.
+#' @param B An integer - controls the number of bootstrap iterations.
+#' @param N_G_bootcluster - The number of bootstrap clusters.
+#' @param cores Integer: the number of cores to be used.
+#' @param cluster: Integer Vector. Contains information on the clusters.
+#' @param v: enumerated weights matrix 
+#' @return A matrix of bootstrapped t-statistics, where the null is
+#'  imposed on the bootstrap dgp.
 NULL
 
 #' Matrix Multiplication via Eigen
@@ -55,5 +78,9 @@ wildboottestHC <- function(y, X, R, r, B, N_G_bootcluster, cores, type, small_sa
 
 wildboottestCL <- function(y, X, R, r, B, N_G_bootcluster, cores, type, cluster, small_sample_correction) {
     .Call('_fwildclusterboot_wildboottestCL', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type, cluster, small_sample_correction)
+}
+
+wildboottestCL_enum <- function(y, X, R, r, B, N_G_bootcluster, cores, cluster, small_sample_correction, v) {
+    .Call('_fwildclusterboot_wildboottestCL_enum', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, cluster, small_sample_correction, v)
 }
 

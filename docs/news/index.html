@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,8 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/literature.html">Literature on the Wild Cluster Bootstrap</a>
+    <a class="dropdown-item" href="../articles/technical_vignette.html">The (Wild) Cluster Bootstrap and Implementation Details - Preliminary Draft</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -54,8 +56,16 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9" id="fwildclusterboot-09">fwildclusterboot 0.9<a class="anchor" aria-label="anchor" href="#fwildclusterboot-09"></a></h2>
-<ul><li><p>v0.9 moves data pre-processing from <code>model.frame</code> methods to <code>model_matrix</code> methods. I had wanted to do so for a while, but issue <a href="">#42</a>, as raised by Michael Topper, has finally convinced me to start this project.</p></li>
+<h2 class="pkg-version" data-toc-text="0.10" id="fwildclusterboot-010">fwildclusterboot 0.10<a class="anchor" aria-label="anchor" href="#fwildclusterboot-010"></a></h2>
+<ul><li>multiple (internal) changes for ropensci standards alignment</li>
+<li>drop the <code>t_boot</code> (<code>teststat_boot</code>) function arguments -&gt; they are now TRUE by default</li>
+<li>fix a bug in the lean algorithms - it always tested hypotheses of the form beta = 0 instead of R’beta = r, even when R != 1 and r != 0</li>
+<li>enable full enumeration for R-lean tests</li>
+<li>enable deterministic ‘full enumeration tests’ - these are exact</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9" id="fwildclusterboot-09">fwildclusterboot 0.9<a class="anchor" aria-label="anchor" href="#fwildclusterboot-09"></a></h2><p class="text-muted">CRAN release: 2022-06-10</p>
+<ul><li><p>v0.9 moves data pre-processing from <code>model.frame</code> methods to <code>model_matrix</code> methods. I had wanted to do so for a while, but issue <a href="https://github.com/s3alfisc/fwildclusterboot/issues/42" class="external-link">#42</a>, as raised by Michael Topper, has finally convinced me to start working on this project.</p></li>
 <li><p>Moving to <code>model_matrix</code> methods unlocks new functionality for how <code><a href="../reference/boottest.html">boottest()</a></code> plays with <code>fixest</code> objects - it is now possible to run <code><a href="../reference/boottest.html">boottest()</a></code> after <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols()</a></code> models that use syntactic sugar:</p></li>
 </ul><pre><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/" class="external-link">fixest</a></span><span class="op">)</span>
@@ -124,7 +134,7 @@
 </ul><pre class="{r}"><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://john-d-fox.github.io/ivreg/" class="external-link">ivreg</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"SchoolingReturns"</span>, package <span class="op">=</span> <span class="st">"ivreg"</span><span class="op">)</span>
 <span class="co"># drop all NA values from SchoolingReturns</span>
-<span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="va">SchoolingReturns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">SchoolingReturns</span>, <span class="va">is.na</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span>,<span class="op">]</span>
+<span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">SchoolingReturns</span><span class="op">)</span>
 <span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span>
                            <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span>  <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>, data <span class="op">=</span> <span class="va">SchoolingReturns</span><span class="op">)</span>
 

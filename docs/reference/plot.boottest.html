@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,6 +27,8 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/literature.html">Literature on the Wild Cluster Bootstrap</a>
+    <a class="dropdown-item" href="../articles/technical_vignette.html">The (Wild) Cluster Bootstrap and Implementation Details - Preliminary Draft</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -50,7 +52,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot the bootstrap distribution of t-statistics</h1>
-      <small class="dont-index">Source: <a href="https://github.com/s3alfisc/fwildclusterboot/blob/HEAD/R/tidy_boottest.R" class="external-link"><code>R/tidy_boottest.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/s3alfisc/fwildclusterboot/blob/HEAD/R/methods.R" class="external-link"><code>R/methods.R</code></a></small>
       <div class="d-none name"><code>plot.boottest.Rd</code></div>
     </div>
 
@@ -76,6 +78,23 @@
     <p>A plot of bootstrap t-statistics under different null hypotheses</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">lm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span></span>
+<span class="r-in"><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span>,</span>
+<span class="r-in">  data <span class="op">=</span> <span class="va">voters</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>,</span>
+<span class="r-in">  B <span class="op">=</span> <span class="fl">9999</span>,</span>
+<span class="r-in">  param <span class="op">=</span> <span class="st">"treatment"</span>,</span>
+<span class="r-in">  clustid <span class="op">=</span> <span class="st">"group_id1"</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span>
+<span class="r-plt img"><img src="plot.boottest-1.png" alt="" width="700" height="433"></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
