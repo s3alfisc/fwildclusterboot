@@ -182,5 +182,69 @@ test_that("test lean cpp boottest", {
   
   # test for non-standard hypotheses
   
+})
+
+
+test_that("r-lean multi-param tests", {
+  
+  
+  if(juliaconnector_prepared){
+    
+    N <- 2000
+    seed <- 7896
+    
+    data1 <<- fwildclusterboot:::create_data(
+      N = N,
+      N_G1 = 8,
+      icc1 = 0.5,
+      N_G2 = 20,
+      icc2 = 0.2,
+      numb_fe1 = 10,
+      numb_fe2 = 10,
+      seed = seed
+      ,
+      weights = 1:N / N
+    )
+    
+    lm_fit <- lm(proposition_vote ~ treatment + log_income,
+                 data = data1
+    )
+    
+    boot <- suppressWarnings(
+      boottest(
+        lm_fit,
+        B = 999,
+        param = c("treatment", "log_income"),
+        R = c(-0.1, 0.1), 
+        r = -0.1,
+        conf_int = FALSE, 
+        ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+      )
+    )
+  
+
+    X <- model.matrix(lm_fit)
+    u <- resid(lm_fit)
+    y <- model.response(model.frame(lm_fit))
+    Omega <- diag(tcrossprod(u))
+    tXX <- solve(crossprod(X))
+    N <- nobs(lm_fit)
+    vcov <- tXX %*% (t(X) %*% diag(Omega) %*% X) %*% tXX 
+    R <- c(0, -0.1, 0.1)
+    r <- -0.1
+    beta <- coef(lm_fit)
+    
+    t <- (R %*% beta - r) / sqrt(t(R) %*% vcov %*% R)
+    
+    expect_equal(t, teststat(boot))
+
+    
+  }
+
+  
   
 })
+
+
+
+
