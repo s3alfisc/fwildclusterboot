@@ -1,5 +1,6 @@
 # fwildclusterboot 0.10
 
++ introduces a range of new methods: `nobs()`, `pval()`, `teststat()`, `confint()` and `print()`
 + multiple (internal) changes for ropensci standards alignment
 + drop the `t_boot` (`teststat_boot`) function arguments -> they are now
   TRUE by default

@@ -1,7 +1,6 @@
 test_that("global boot_algo", {
   
   skip_on_cran()
-  skip_on_ci()
 
   if(juliaconnector_prepared){
     data(voters)

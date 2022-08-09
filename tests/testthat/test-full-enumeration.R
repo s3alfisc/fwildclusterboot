@@ -4,8 +4,7 @@ test_that("test full enumeration cases", {
   
   skip_on_cran()
   # if not skipped, codecov fails after ~6h
-  skip_on_ci()
-  
+
   if(juliaconnector_prepared){
     reltol <- 0.05
     

@@ -1,7 +1,6 @@
 test_that("Do different, but equivalent ways to specify
           linear models lead to equivalent results?", {
   skip_on_cran()
-  skip_on_ci()
 
 
   if(juliaconnector_prepared){
