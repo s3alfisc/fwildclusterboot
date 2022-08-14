@@ -60,7 +60,8 @@ Imports:
     Matrix.utils,
     generics,
     dqrng, 
-    JuliaConnectoR
+    JuliaConnectoR, 
+    summclust
 Suggests: 
     fixest,
     lfe,

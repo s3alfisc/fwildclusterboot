@@ -263,7 +263,7 @@ boottest.lm <- function(object,
                         ...) {
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
-
+  
   check_arg(object, "MBT class(lm)")
   check_arg(clustid, "NULL | character scalar | character vector | formula")
   check_arg(param, "MBT scalar character | character vector | formula")
@@ -279,41 +279,41 @@ boottest.lm <- function(object,
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer GT{5}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
-  check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl)")
+  check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl, WCR13, WCR33, WCU13, WCU33, WCR11, WCR31, WCU11, WCU31)")
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
-
+  
   if (!is.null(beta0)) {
     stop(
       "The function argument 'beta0' is deprecated. Please use the function
       argument 'r' instead, by which it is replaced."
     )
   }
-
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-
+  
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-
+  
   if (inherits(param, "formula")) {
     param <- attr(terms(param), "term.labels")
   }
-
-
+  
+  
   internal_seed <- set_seed(
     seed = seed,
     boot_algo = boot_algo,
     type = type
   )
-
-
+  
+  
   # check appropriateness of nthreads
   nthreads <- check_set_nthreads(nthreads)
-
+  
   if (is.null(clustid)) {
     heteroskedastic <- TRUE
     if (boot_algo == "R") {
@@ -323,12 +323,12 @@ boottest.lm <- function(object,
   } else {
     heteroskedastic <- FALSE
   }
-
+  
   R <- process_R(
     R = R,
     param = param
   )
-
+  
   if (boot_algo != "WildBootTests.jl") {
     r_algo_checks(
       R = R,
@@ -337,10 +337,10 @@ boottest.lm <- function(object,
       B = B
     )
   }
-
-
+  
+  
   check_params_in_model(object = object, param = param)
-
+  
   check_boottest_args_plus(
     object = object,
     R = R,
@@ -348,10 +348,10 @@ boottest.lm <- function(object,
     sign_level = sign_level,
     B = B
   )
-
+  
   # now split into R, R-lean and WildBootTests.jl algos
   # different pre-processing and different algo-functions
-
+  
   preprocess <- preprocess2.lm(
     object = object,
     clustid = clustid,
@@ -360,7 +360,7 @@ boottest.lm <- function(object,
     bootcluster = bootcluster,
     boot_algo = boot_algo
   )
-
+  
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -371,7 +371,7 @@ boottest.lm <- function(object,
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-
+  
   # collect data from preprocess
   N <- preprocess$N
   k <- preprocess$k
@@ -393,8 +393,8 @@ boottest.lm <- function(object,
   # R*beta;
   point_estimate <-
     as.vector(object$coefficients[param] %*% preprocess$R0[param])
-
-
+  
+  
   if (boot_algo == "R") {
     res <- boot_algo2(
       preprocessed_object = preprocess,
@@ -421,7 +421,7 @@ boottest.lm <- function(object,
       fe = NULL, 
       impose_null = impose_null
     )
-
+    
     res <- boot_algo1(
       preprocessed_object = preprocess,
       boot_iter = B,
@@ -444,11 +444,11 @@ boottest.lm <- function(object,
     small <- julia_ssc$small
     clusteradj <- julia_ssc$clusteradj
     clustermin <- julia_ssc$clustermin
-
+    
     if (ssc[["fixef.K"]] != "none") {
       message(paste("Currently, boottest() only supports fixef.K = 'none'."))
     }
-
+    
     res <- boot_algo_julia(
       preprocess = preprocess,
       impose_null = impose_null,
@@ -475,10 +475,38 @@ boottest.lm <- function(object,
       fe = NULL,
       fedfadj = NULL
     )
+  } else if(boot_algo %in% c("WCR13", "WCR33", "WCU13", "WCU33", 
+                             "WCR11", "WCR31", "WCU11", "WCU31")){
+    
+    # need some function checks here ... 
+    check_boot_algo3(
+      weights = stats::weights(object), 
+      clustid = clustid,
+      fe = fe,
+      impose_null = impose_null)
+    
+    res <- boot_algo3(
+      preprocessed_object = preprocess,
+      boot_iter = B,
+      bootstrap_type = boot_algo,
+      r = r,
+      sign_level = sign_level,
+      param = param,
+      p_val_type = p_val_type,
+      nthreads = 1,
+      type = type,
+      full_enumeration = full_enumeration,
+      small_sample_correction = small_sample_correction,
+      heteroskedastic = heteroskedastic,
+      seed = internal_seed, 
+      object = object
+    )
+    conf_int <- p_grid_vals <- grid_vals <- FALSE
+    
   }
-
-
-
+  
+  
+  
   # collect results
   res_final <- list(
     point_estimate = point_estimate,
@@ -505,8 +533,8 @@ boottest.lm <- function(object,
     nthreads = nthreads,
     internal_seed = internal_seed
   )
-
+  
   class(res_final) <- "boottest"
-
+  
   invisible(res_final)
 }
