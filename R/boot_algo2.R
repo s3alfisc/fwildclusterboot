@@ -92,57 +92,16 @@ boot_algo2 <-
 
     N_G_bootcluster <- length(unique(bootcluster[[1]]))
 
-    wild_draw_fun <- switch(type,
-      # note: for randemacher, create integer matrix (uses less memory
-      # than numeric)
-      rademacher = function(n) {
-        dqrng::dqsample(
-          x = c(-1L, 1L),
-          size = n,
-          replace = TRUE
-        )
-      },
-      mammen = function(n) {
-        sample(
-          c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2,
-          n,
-          replace = TRUE,
-          prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))
-        )
-      },
-      norm = function(n) {
-        dqrng::dqrnorm(n = n)
-      },
-      webb = function(n) {
-        dqrng::dqsample(
-          x = c(-sqrt((3:1) / 2), sqrt((1:3) / 2)),
-          size = n,
-          replace = TRUE
-        )
-      },
-      wild_draw_fun
+    v <- get_weights(
+      type = type, 
+      full_enumeration = full_enumeration, 
+      N_G_bootcluster = N_G_bootcluster, 
+      boot_iter = boot_iter
     )
-
-    # do full enumeration for rademacher weights if bootstrap iterations
-    # B exceed number of possible permutations else random sampling
-
-    if (type %in% c("rademacher") && full_enumeration == TRUE) {
-      v0 <-
-        gtools_permutations(
-          n = 2,
-          r = N_G_bootcluster,
-          v = c(1, -1),
-          repeats.allowed = TRUE
-        )
-      v <- cbind(1, t(v0))
-    } else {
-      # else: just draw with replacement - by chance, some permutations
-      # might occur more than once
-      v <- wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1))
-      dim(v) <- c(N_G_bootcluster, boot_iter + 1)
-      v[, 1] <- 1
-    }
-
+    
+    v2 <<- v
+    print(v2)
+    
     # prepare "key" for use with collapse::fsum()
     g <- collapse::GRP(bootcluster[[1]], call = FALSE)
 
@@ -295,6 +254,8 @@ boot_algo2 <-
     A <- crossprod(as.matrix(numer_a), v) # q x (B+1) -> q = 1
     B <- crossprod(numer_b, v) # q x (B+1) -> q = 1
 
+    cat("p_val_type", p_val_type, "\n")
+    
     p_val_res <-
       p_val_null2(
         r = r,

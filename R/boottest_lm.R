@@ -482,8 +482,9 @@ boottest.lm <- function(object,
     check_boot_algo3(
       weights = stats::weights(object), 
       clustid = clustid,
-      fe = fe,
-      impose_null = impose_null)
+      fe = NULL,
+      impose_null = impose_null, 
+      boot_algo = boot_algo)
     
     res <- boot_algo3(
       preprocessed_object = preprocess,

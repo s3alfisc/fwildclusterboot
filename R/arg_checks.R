@@ -64,15 +64,15 @@ check_boottest_args_plus <- function(
            function argument `method` to `OLS`.")
     }
   }
-
-
+  
+  
   if (inherits(object, "felm")) {
     if (!is.null(fe)) {
       if (fe %in% param) {
         stop(paste("The function argument fe =", fe, "is included in the
                    hypothesis (via the `param` argument). This is not allowed.
                    Please set fe to another factor variable or NULL."),
-          call. = FALSE
+             call. = FALSE
         )
       }
       if (!(fe %in% names(object$fe))) {
@@ -84,34 +84,34 @@ check_boottest_args_plus <- function(
       }
     }
   }
-
+  
   if (inherits(object, "fixest")) {
     deparse_fml <- Reduce(
       paste, as.character(as.formula(object$fml_all$linear))
     )
-
+    
     if (
       # '^' illegal in fixef argument, but legal in main formula -
       # e.g. fml = y ~ x1 + I(x2^2) shold be possible
       ("fixef_vars" %in% names(object) &&
-        grepl("^",
-          Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
-          fixed = TRUE
-        ))
+       grepl("^",
+             Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
+             fixed = TRUE
+       ))
       # note: whitespace ~ - for IV
       # grepl("~", deparse_fml, fixed = TRUE)
     ) {
       stop("Advanced formula notation in fixest / fixest via ^ to interact
           fixed effects is currently not supported in boottest().")
     }
-
-
+    
+    
     if (!is.null(fe)) {
       if (fe %in% param) {
         stop(paste("The function argument fe =", fe, "is included in the
                    hypothesis (via the `param` argument). This is not allowed.
                    Please set fe to another factor variable or NULL."),
-          call. = FALSE
+             call. = FALSE
         )
       }
       if (!(fe %in% object$fixef_vars)) {
@@ -123,7 +123,7 @@ check_boottest_args_plus <- function(
       }
     }
   }
-
+  
   if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
     message(paste("Note: The bootstrap usually performs best when the
                   confidence level (here,", 1 - sign_level, "%)
@@ -153,27 +153,27 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
       }
     }
   }
-
+  
   if (inherits(object, "fixest")) {
     deparse_fml <- Reduce(
       paste, as.character(as.formula(object$fml_all$linear))
     )
-
+    
     if (
       # '^' illegal in fixef argument, but legal in main formula -
       # e.g. fml = y ~ x1 + I(x2^2) shold be possible
       ("fixef_vars" %in% names(object) &&
-        grepl("^",
-          Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
-          fixed = TRUE
-        ))
-
+       grepl("^",
+             Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
+             fixed = TRUE
+       ))
+      
     ) {
       stop("Advanced formula notation in fixest / fixest via ^ to interact
           fixed effects is currently not supported in boottest().")
     }
-
-
+    
+    
     if (!is.null(fe)) {
       if (!(fe %in% object$fixef_vars)) {
         stop(paste(
@@ -184,7 +184,7 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
       }
     }
   }
-
+  
   if (nrow(R) != length(r)) {
     stop(paste(
       "The dimensions of func args R and r do not match. The number
@@ -225,8 +225,47 @@ check_r_lean <- function(weights, clustid, fe, impose_null){
     - which does not impose the null on the 
           bootstrap dgp - for boot_algo = 'R-lean'.")
   }
-
+  
 }
+
+
+check_boot_algo3 <- function(weights, clustid, fe, impose_null, boot_algo){
+  
+  if(length(clustid) > 1){
+    stop("The WCR13, WCR33, WCU13 or WCU33 
+         algorithm currently only supports oneway clustering.")
+  }
+  
+  if (!is.null(fe)) {
+    stop("boottest() currently does not support 
+         fixed effects with boot_algo either WCR13, WCR33, WCU13 or WCU33.")
+  }
+  
+  if(!is.null(weights)){
+    stop("boottest() currently does not support regression
+         weights with boot_algo either WCR13, WCR33, WCU13 or WCU33.")
+  }
+  
+  if(impose_null == TRUE){
+    if(boot_algo %in% c("WCU11", "WCU13", "WCU31","WCU33")){
+      stop("You have specified 'impose_null = TRUE' and boot_algo = 'WCU'. 
+           This does not make sense - I will have to update the UI eventually. 
+           Sorry for the inconvenience! If you want to run the WRU, please 
+           set 'impose_null = FALSE'.")
+    }
+  }
+  
+  if(impose_null == FALSE){
+    if(boot_algo %in% c("WCR11","WCR13", "WCR31","WCR33")){
+      stop("You have specified 'impose_null = FALSE' and boot_algo = 'WCR'. 
+           This does not make sense - I will have to update the UI eventually. 
+           Sorry for the inconvenience! If you want to run the WRU, please 
+           set 'impose_null = TRUE'.")
+    }
+  }
+  
+}
+
 
 #' check if full enumeration should be employed, provide message when it is
 #' @param heteroskedastic Logical. Is the heteroskedastic or a wild cluster 
@@ -245,7 +284,7 @@ check_set_full_enumeration <-
            type,
            boot_algo) {
     full_enumeration <- FALSE
-
+    
     if (heteroskedastic == FALSE) {
       N_G_bootcluster <- preprocess$N_G_bootcluster
       N_G_2 <- 2^N_G_bootcluster
@@ -273,18 +312,18 @@ check_set_full_enumeration <-
           )
           full_enumeration <- TRUE
           if (boot_algo != "WildBootTests.jl") {
-            # this is handled internally by WildBootTests.jl
+            # this is handled internally by WildBootTests.jl, so don't update B
             B <- N_G_2
           }
         }
       }
     }
-
+    
     res <- list(
       B = B,
       full_enumeration = full_enumeration
     )
-
+    
     res
   }
 
@@ -304,7 +343,7 @@ r_algo_checks <- function(R, p_val_type, conf_int, B) {
       )
     }
   }
-
+  
   if (p_val_type %in% c(">", "<")) {
     if (conf_int == TRUE) {
       conf_int <- FALSE
@@ -317,8 +356,8 @@ r_algo_checks <- function(R, p_val_type, conf_int, B) {
       )
     }
   }
-
-
+  
+  
   if (conf_int == TRUE || is.null(conf_int)) {
     if (B <= 100) {
       stop(

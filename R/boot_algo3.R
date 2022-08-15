@@ -51,12 +51,10 @@ boot_algo3 <- function(preprocessed_object,
   # other checks: only test of one param, no weights, no fixed effects, 
   # ...
   
-  cat("ssc", small_sample_correction)
-  
-  if(bootstrap_type %in% c("WCR13", "WCR33", "WCU13", "WCU33")){
-    crv_type <- "crv3"  
+  if(substr(bootstrap_type, 5, 5) == 1){
+    crv_type <- "crv1"  
   } else {
-    crv_type <- "crv1"
+    crv_type <- "crv3"
   }
   
   #preprocessed_object <- preprocess
@@ -68,8 +66,7 @@ boot_algo3 <- function(preprocessed_object,
   clustid <- names(cluster_df)
   cluster <- as.factor(cluster_df[,1])
   bootcluster <- preprocessed_object$bootcluster
-  N_G_bootcluster <- length(unique(bootcluster[[1]]))
-  G <- N_G_bootcluster
+  G <- N_G_bootcluster <- length(unique(bootcluster[[1]]))
   k <- length(R)
   
   v <- get_weights(
@@ -79,7 +76,7 @@ boot_algo3 <- function(preprocessed_object,
     boot_iter = boot_iter
   )
   
-  B <- ncol(v)
+  v3 <<- v
   
   # X1: X without parameter beta for which hypothesis beta = 0 is tested
   X1 <- X[, which(R == 0)]
@@ -145,6 +142,11 @@ boot_algo3 <- function(preprocessed_object,
     function(g) MASS::ginv(tXX - tXgXg[[g]]) %*% (tXy - tXgyg[[g]])
   )
   
+  Ag <- lapply(
+    1:G, 
+    function(g) tXgXg[[g]] %*% tXXinv
+  )
+  
   if(crv_type == "crv1"){
     
     score_hat_g <- lapply(
@@ -154,7 +156,7 @@ boot_algo3 <- function(preprocessed_object,
     
   }
   
-  scores <- get_scores(
+  scores_list <- get_scores(
     bootstrap_type = bootstrap_type,
     G = G, 
     tXgyg = tXgyg, 
@@ -166,67 +168,39 @@ boot_algo3 <- function(preprocessed_object,
     beta_1g_tilde = beta_1g_tilde
   )
   
-  scores_num <- scores$score_num
-  scores_denom <- scores$score_denom
-  
-  if(bootstrap_type %in% c("WCR11", "WCR33", "WCU13", "WCU31")){
-    all.equal(scores_num, scores_denom)
-  }
-  
   # pre-allocate space for bootstrap 
   # start the bootstrap loop 
-  #delta_b_star <- vector(mode = "numeric",B)
-  #se <- vector(mode = "numeric",B)
-  t_boot <- vector(mode = "numeric", B)
+  t_boot <- vector(mode = "numeric", boot_iter + 1)
   dim(R) <- c(1, k) # turn R into matrix
   
+  print(colMeans(v[,1:5]))
   
-  for(b in 1:B){
+  for(b in 1:(boot_iter + 1)){
     
     # Step 1: get bootstrapped scores
     
-    score_num_g_boot <- score_denom_g_boot <- matrix(NA,G,k)
+    scores_g_boot <- matrix(NA,G,k)
     
-    if(bootstrap_type %in% c("WCR11", "WCR33", "WCU11", "WCU33")){
       for(g in 1:G){
-        # calculate bootstrapped score (24) - this could also be done outside of 
-        # the bootstrap loopin vectorized fashion
-        score_num_g_boot[g,] <- score_denom_g_boot[g,] <- scores_num[[g]] * v[g, b]
+        scores_g_boot[g,] <- scores_list[[g]] * v[g, b]
       }
-      score_num_boot <- score_denom_boot <- colSums(score_num_g_boot)
-      delta_num_b_star <- delta_denom_b_star <- tXXinv %*% score_num_boot 
-      
-    } else {
-      for(g in 1:G){
-        score_num_g_boot[g,] <- scores_num[[g]] * v[g, b]
-        score_denom_g_boot[g,] <- scores_denom[[g]] * v[g, b]
-      }
-      score_num_boot <- colSums(score_num_g_boot)
-      delta_num_b_star <- tXXinv %*% score_num_boot 
-      score_denom_boot <- colSums(score_denom_g_boot)
-      delta_denom_b_star <- tXXinv %*% score_denom_boot 
-    }
     
-    # Step 2: get bootstrapped denominator
+      # numerator (both for WCR, WCU)
+      scores_boot <- colSums(scores_g_boot)
+      delta_b_star <- tXXinv %*% scores_boot 
     
-    # tests
-    # if(bootstrap_type == "WCR" & b == 1){
-    #   all.equal(delta_num_b_star, beta_hat - beta_tilde)
-    # }
-    # if(bootstrap_type == "WCU" & b == 1){
-    #   all.equal(c(delta_num_b_star), rep(0, k))
-    # }
-    
-    # Step 3: calculate bootstrapped vcov's
+    # Step 2: get bootstrapped vcov's
     
     if(crv_type == "crv1"){
       
       score_hat_g_boot <- list()
       for(g in 1:G){
-        score_hat_g_boot[[g]] <- tcrossprod(score_denom_g_boot[g,])
+        # see MacKinnon (https://www.econstor.eu/bitstream/10419/247206/1/qed-wp-1465.pdf)
+        # equ (20), note this can be accelerated
+        score_hat_g_boot[[g]] <- tcrossprod(scores_g_boot[g,] - Ag[[g]] %*% scores_boot)
       }
-      # pretty obviously there is an error here!
-      score_hat_boot <- Reduce("+",score_hat_g_boot)
+      
+      score_hat_boot <- Reduce("+", score_hat_g_boot)
       
       # all.equal(tXXinv %*% score_hat_boot %*% tXXinv,
       #           sandwich::vcovCL(
@@ -236,42 +210,44 @@ boot_algo3 <- function(preprocessed_object,
       #             type = "HC0"
       #             )
       #           )
-      # 
+
+      # all.equal(tXXinv, solve(crossprod(X)))
       se <- se2 <- 
-        #small_sample_correction *
         sqrt(
+          small_sample_correction * 
           (R %*% tXXinv) %*% score_hat_boot %*% (tXXinv %*% t(R))
         )
       
-      t_boot[b] <- (c(delta_num_b_star)[which(R == 1)] / se)
+      t_boot[b] <- (c(delta_b_star)[which(R == 1)] / se)
       
     } else if (crv_type == "crv3"){
       
       delta_diff <- matrix(NA, G, k)
       
       for(g in 1:G){
-        score_diff <- score_denom_boot - score_denom_g_boot[g,]
+        score_diff <- scores_boot - scores_g_boot[g,]
         delta_diff[g,] <- 
+          
           (
-            (inv_tXX_tXgXg[[g]] %*% score_diff) - delta_denom_b_star
+            (inv_tXX_tXgXg[[g]] %*% score_diff) - delta_b_star
           )^2
       }
       
       se <- se3 <- 
-        #small_sample_correction * 
+         
         sqrt( 
+          ((G-1) / G) *
           colSums(
             delta_diff
           )
         )
       
-      t_boot[b] <- c(delta_num_b_star)[which(R == 1)] / se[which(R == 1)]
-      
+      t_boot[b] <- c(delta_b_star)[which(R == 1)] / se[which(R == 1)]
     }
-    
+ 
   }  
   
-  
+
   # get original t-stat
   if(crv_type == "crv1"){
     
@@ -295,18 +271,22 @@ boot_algo3 <- function(preprocessed_object,
     # because summclust uses small sample correction
   }
   
+  t_boot <- t_boot[-1]
+  
+  cat("p_val_type", p_val_type, "\n")
   
   p_val <- 
     get_bootstrap_pvalue(
       p_val_type = p_val_type, 
       t_stat = t_stat, 
-      t_boot = t_boot[-1]
+      t_boot = t_boot
     )
   
   res <- list(
     p_val = p_val,
+    # t_stat = t_stat,
     t_stat = t_stat,
-    t_boot = t_boot[-1],
+    t_boot = t_boot,
     B = boot_iter,
     R0 = R,
     param = param,

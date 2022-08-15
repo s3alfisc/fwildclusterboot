@@ -13,6 +13,13 @@ get_weights <- function(type,
   #' @param boot_iter The number of bootstrap iterations
   #' @return A matrix of dimension N_G_bootcluster x (boot_iter + 1)
   
+  
+  cat("type:", type, "\n")
+  cat("full_enumeration:", full_enumeration, "\n")
+  cat("N_G_bootcluster:", N_G_bootcluster, "\n")
+  cat("boot_iter:", boot_iter, "\n")
+  
+  
   wild_draw_fun <- switch(type,
                           # note: for randemacher, create integer matrix
                           # (uses less memory
