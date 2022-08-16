@@ -43,9 +43,6 @@ p_val_null2 <-
 
     numer <- A + B * r
     names_clustid <- names(clustid)
-
-    cat("numer: ", numer[3], "\n")
-    cat("ssc:", small_sample_correction, "\n")
     
     JJ <- list()
     for (x in seq_along(names_clustid)) {
@@ -62,8 +59,13 @@ p_val_null2 <-
     }
 
     denom <- suppressWarnings(sqrt(JJ_sum))
+
+    cat("ssc:", small_sample_correction, "\n")
+    cat("numer: ", numer[3], "\n")
     cat("denom:", denom[3], "\n")
 
+    numer_old <<- numer
+    
     t <- numer / denom
     t_boot <- t[2:(boot_iter + 1)]
 

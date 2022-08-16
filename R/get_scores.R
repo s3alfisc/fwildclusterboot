@@ -9,18 +9,18 @@ get_scores <- function(bootstrap_type,
                        beta_1g_tilde){
   
 
-  bootstrap_type <- substr(bootstrap_type, 1, 4)
+  bootstrap_type <- paste0(substr(bootstrap_type, 1, 4), "x")
   
   scores <- 
     switch(
       bootstrap_type, 
-      WCR1 = function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_tilde, 
+      WCR1x = function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_tilde, 
       # WCR13 = function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_tilde, 
-      WCU1 = function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_hat, 
+      WCU1x = function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_hat, #Xg'x u_g
       # WCU13 = function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_hat, 
-      WCR3 = function(g) tXgyg[[g]] - tXgX1g[[g]] %*% beta_1g_tilde[[g]], 
+      WCR3x = function(g) tXgyg[[g]] - tXgX1g[[g]] %*% beta_1g_tilde[[g]], 
       # WCR33 = function(g) tXgyg[[g]] - tXgX1g[[g]] %*% beta_1g_tilde[[g]], 
-      WCU3 = function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_g_hat[[g]],
+      WCU3x = function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_g_hat[[g]],
       # WCU33 = function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_g_hat[[g]]
     )
   

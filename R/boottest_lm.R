@@ -488,7 +488,7 @@ boottest.lm <- function(object,
     
     res <- boot_algo3(
       preprocessed_object = preprocess,
-      boot_iter = B,
+      B = B,
       bootstrap_type = boot_algo,
       r = r,
       sign_level = sign_level,

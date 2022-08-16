@@ -1,5 +1,5 @@
 boot_algo3 <- function(preprocessed_object, 
-                       boot_iter, 
+                       B, 
                        bootstrap_type, 
                        r = 0, 
                        sign_level, 
@@ -17,7 +17,7 @@ boot_algo3 <- function(preprocessed_object,
   #' reliable" 
   #'
   #' @param preprocessed_object A list: output of the preprocess2 function.
-  #' @param boot_iter number of bootstrap iterations
+  #' @param B number of bootstrap iterations
   #' @param r Shifts the null hypothesis.
   #' @param sign_level The significance level.
   #' @param param name of the test parameter.
@@ -35,7 +35,7 @@ boot_algo3 <- function(preprocessed_object,
   #'        and "webb". Alternatively, type can be a function(n) for drawing
   #'        wild bootstrap factors. "rademacher" by default.
   #' @param full_enumeration Is full enumeration employed? Full enum.
-  #' is used if N_G^2 < boot_iter for Mammen and Rademacher weights
+  #' is used if N_G^2 < B for Mammen and Rademacher weights
   #' @param small_sample_correction The small sample correction to be applied.
   #' See ssc().
   #' @param heteroskedastic Logical - if TRUE, run a heteroskedastic.
@@ -73,10 +73,8 @@ boot_algo3 <- function(preprocessed_object,
     type = type, 
     full_enumeration = full_enumeration, 
     N_G_bootcluster = N_G_bootcluster, 
-    boot_iter = boot_iter
+    boot_iter = B
   )
-  
-  v3 <<- v
   
   # X1: X without parameter beta for which hypothesis beta = 0 is tested
   X1 <- X[, which(R == 0)]
@@ -85,6 +83,8 @@ boot_algo3 <- function(preprocessed_object,
   X_list <- matrix_split(X, cluster, "row")
   X1_list <- matrix_split(X1, cluster, "row")
   y_list <- split(y, cluster, drop = FALSE)
+  
+  colnames(X_list)
   
   # precompute a range of other objects
   tXgXg <- lapply(
@@ -168,27 +168,34 @@ boot_algo3 <- function(preprocessed_object,
     beta_1g_tilde = beta_1g_tilde
   )
   
+  dim(R) <- c(1, k) # turn R into matrix
+
+  
   # pre-allocate space for bootstrap 
   # start the bootstrap loop 
-  t_boot <- vector(mode = "numeric", boot_iter + 1)
-  dim(R) <- c(1, k) # turn R into matrix
+  t_boot <- vector(mode = "numeric", B + 1)
+  delta_b_star1 <- vector(mode = "numeric", B + 1)
   
-  print(colMeans(v[,1:5]))
-  
-  for(b in 1:(boot_iter + 1)){
+  # numer <- (( R %*% tXXinv) %*%  (Reduce("cbind", scores_list) %*% v))
+
+for(b in 1:(B + 1)){
     
     # Step 1: get bootstrapped scores
     
     scores_g_boot <- matrix(NA,G,k)
     
+      v_ <- v[,b]
+    
       for(g in 1:G){
-        scores_g_boot[g,] <- scores_list[[g]] * v[g, b]
+        scores_g_boot[g,] <- scores_list[[g]] * v_[g] #* v[g, b]
       }
+      
+      # scores_g_boot1 <- Reduce("cbind", scores_list) %*% v_
     
       # numerator (both for WCR, WCU)
       scores_boot <- colSums(scores_g_boot)
       delta_b_star <- tXXinv %*% scores_boot 
-    
+
     # Step 2: get bootstrapped vcov's
     
     if(crv_type == "crv1"){
@@ -244,10 +251,9 @@ boot_algo3 <- function(preprocessed_object,
       
       t_boot[b] <- c(delta_b_star)[which(R == 1)] / se[which(R == 1)]
     }
- 
+    
   }  
   
-
   # get original t-stat
   if(crv_type == "crv1"){
     
@@ -273,8 +279,6 @@ boot_algo3 <- function(preprocessed_object,
   
   t_boot <- t_boot[-1]
   
-  cat("p_val_type", p_val_type, "\n")
-  
   p_val <- 
     get_bootstrap_pvalue(
       p_val_type = p_val_type, 
@@ -287,7 +291,7 @@ boot_algo3 <- function(preprocessed_object,
     # t_stat = t_stat,
     t_stat = t_stat,
     t_boot = t_boot,
-    B = boot_iter,
+    B = B,
     R0 = R,
     param = param,
     clustid = clustid,

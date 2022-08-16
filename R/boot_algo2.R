@@ -99,9 +99,6 @@ boot_algo2 <-
       boot_iter = boot_iter
     )
     
-    v2 <<- v
-    print(v2)
-    
     # prepare "key" for use with collapse::fsum()
     g <- collapse::GRP(bootcluster[[1]], call = FALSE)
 
@@ -254,8 +251,6 @@ boot_algo2 <-
     A <- crossprod(as.matrix(numer_a), v) # q x (B+1) -> q = 1
     B <- crossprod(numer_b, v) # q x (B+1) -> q = 1
 
-    cat("p_val_type", p_val_type, "\n")
-    
     p_val_res <-
       p_val_null2(
         r = r,
