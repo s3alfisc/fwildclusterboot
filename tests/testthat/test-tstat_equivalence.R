@@ -66,7 +66,7 @@ test_that("t-stat equivalence OLS", {
                         seed = 970691
                       ),
                       cluster = ~group_id1,
-                      ssc = ssc(
+                      ssc = fixest::ssc(
                         adj = adj,
                         cluster.adj = cluster.adj,
                         cluster.df = cluster.df
@@ -168,7 +168,7 @@ test_that("t-stat equivalence OLS", {
                         seed = 970691
                       ),
                       cluster = ~ group_id1 + group_id2,
-                      ssc = ssc(
+                      ssc =fixest::ssc(
                         adj = adj,
                         # fixef.K = "full",
                         cluster.adj = cluster.adj,
@@ -271,7 +271,7 @@ test_that("t-stat equivalence OLS", {
                         seed = 970691
                       ),
                       cluster = ~group_id1,
-                      ssc = ssc(
+                      ssc =fixest::ssc(
                         adj = adj,
                         cluster.adj = cluster.adj,
                         cluster.df = cluster.df
@@ -485,7 +485,7 @@ test_that("t-stat equivalence OLS q > 1", {
           feols_fit,
           "treatment",
           cluster = ~ group_id1 + group_id2,
-          ssc = ssc(cluster.df = "min")
+          ssc =fixest::ssc(cluster.df = "min")
         )
   
         # skip_on_cran()
@@ -606,7 +606,7 @@ test_that("t-stat equivalence OLS q > 1", {
           feols_fit_weights,
           "treatment",
           cluster = ~ group_id1 + group_id2,
-          ssc = ssc(cluster.df = "min")
+          ssc =fixest::ssc(cluster.df = "min")
         )
   
         # skip_on_cran()
