@@ -8,6 +8,8 @@ get_scores <- function(bootstrap_type,
                        beta_g_hat, 
                        beta_1g_tilde){
   
+  
+  #' @noRd
 
   scores <- 
     switch(

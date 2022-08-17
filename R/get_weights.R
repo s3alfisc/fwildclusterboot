@@ -12,6 +12,7 @@ get_weights <- function(type,
   #' @param N_G_bootcluster Integer. The number of bootstrap clusters
   #' @param boot_iter The number of bootstrap iterations
   #' @return A matrix of dimension N_G_bootcluster x (boot_iter + 1)
+  #' @noRd
   
   
   cat("type:", type, "\n")

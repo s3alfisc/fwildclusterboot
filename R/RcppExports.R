@@ -19,6 +19,7 @@
 #' applied.
 #' @return A matrix of bootstrapped t-statistics, where the null is imposed 
 #' on the bootstrap dgp.
+#' @noRd
 NULL
 
 #' Implementation of the wild  cluster bootstrap. Computes
@@ -36,6 +37,7 @@ NULL
 #' @param cluster: Integer Vector. Contains information on the clusters.
 #' @return A matrix of bootstrapped t-statistics, where the null is 
 #' imposed on the bootstrap dgp.
+#' @noRd
 NULL
 
 #' Implementation of the wild  cluster bootstrap. Computes
@@ -52,6 +54,7 @@ NULL
 #' @param v: enumerated weights matrix 
 #' @return A matrix of bootstrapped t-statistics, where the null is
 #'  imposed on the bootstrap dgp.
+#' @noRd
 NULL
 
 #' Matrix Multiplication via Eigen
@@ -59,15 +62,21 @@ NULL
 #' @param B A matrix.
 #' @param nthreads Integer. Number of threads to use for matrix multiplication.
 #' @return A matrix
+#' @noRd
 eigenMapMatMult <- function(A, B, nthreads) {
     .Call('_fwildclusterboot_eigenMapMatMult', PACKAGE = 'fwildclusterboot', A, B, nthreads)
 }
 
 #' Get maximum number of threads on hardware for open mp support
+#' @noRd
 cpp_get_nb_threads <- function() {
     .Call('_fwildclusterboot_cpp_get_nb_threads', PACKAGE = 'fwildclusterboot')
 }
 
+#'create bootstrap sample weights
+#' @param G the number of clusters
+#' @param type 0 for rademacher, 1 for webb
+#' @noRd
 sample_weights <- function(G, type) {
     .Call('_fwildclusterboot_sample_weights', PACKAGE = 'fwildclusterboot', G, type)
 }

@@ -19,6 +19,7 @@ using namespace Rcpp;
 //' @param B A matrix.
 //' @param nthreads Integer. Number of threads to use for matrix multiplication.
 //' @return A matrix
+//' @noRd
 // [[Rcpp::export]]
 SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A,
                      Eigen::Map<Eigen::MatrixXd> B,
@@ -31,18 +32,23 @@ SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A,
 }
 
 //' Get maximum number of threads on hardware for open mp support
+//' @noRd
 // [[Rcpp::export]]
 int cpp_get_nb_threads(){
   return omp_get_max_threads();
 }
 
 
+//'create bootstrap sample weights
+//' @param G the number of clusters
+//' @param type 0 for rademacher, 1 for webb
+//' @noRd
 // [[Rcpp::export]]
 arma::mat sample_weights(int G,
                          int type){
   
   // type == 0 for rademacher
-  // type == 1 for mammen
+  // type == 1 for webb
   arma::vec weights(G);
   
   if(type == 0){
@@ -97,6 +103,8 @@ arma::mat sample_weights(int G,
 //' applied.
 //' @return A matrix of bootstrapped t-statistics, where the null is imposed 
 //' on the bootstrap dgp.
+//' @noRd
+
 
 // [[Rcpp::export]]
 List wildboottestHC(const arma::vec & y,
@@ -189,6 +197,8 @@ List wildboottestHC(const arma::vec & y,
 //' @param cluster: Integer Vector. Contains information on the clusters.
 //' @return A matrix of bootstrapped t-statistics, where the null is 
 //' imposed on the bootstrap dgp.
+//' @noRd
+
 
 // [[Rcpp::export]]
 List wildboottestCL(const arma::vec & y,
@@ -303,6 +313,8 @@ List wildboottestCL(const arma::vec & y,
 //' @param v: enumerated weights matrix 
 //' @return A matrix of bootstrapped t-statistics, where the null is
 //'  imposed on the bootstrap dgp.
+//' @noRd
+
 
 // [[Rcpp::export]]
 List wildboottestCL_enum(const arma::vec & y,

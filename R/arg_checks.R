@@ -140,6 +140,8 @@ check_boottest_args_plus <- function(
 #' @param r Numeric scalar, shifting the test
 #' @param fe NULL or numeric scalar - the fixed effect to be projected 
 #' out in the bootstrap
+#' @noRd
+
 
 check_mboottest_args_plus <- function(object, R, r, fe) {
   if (inherits(object, "felm")) {
@@ -203,6 +205,8 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
 #' @param fe NULL or character scalar
 #' @param impose_null Logical, whether the null is imposed
 #' on the bootstrap dgp or not
+#' @noRd
+
 
 check_r_lean <- function(weights, clustid, fe, impose_null){
   
@@ -230,6 +234,15 @@ check_r_lean <- function(weights, clustid, fe, impose_null){
 
 
 check_boot_algo3 <- function(weights, clustid, fe, impose_null, boot_algo){
+  
+  #' function to check input arguments passed to `boot_algo3()`
+  #' @param weights NULL or numeric vector
+  #' @param clustid character vector 
+  #' @param fe NULL or character scalar
+  #' @param impose_null Logical, whether the null is imposed
+  #' @param boot_algo either 'WCR11', ..., 'WCU33'
+  #' @noRd
+  
   
   if(length(clustid) > 1){
     stop("The WCR13, WCR33, WCU13 or WCU33 

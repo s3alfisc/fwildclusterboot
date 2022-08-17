@@ -9,7 +9,6 @@ boot_algo3 <- function(preprocessed_object,
                        type,
                        full_enumeration,
                        small_sample_correction,
-                       heteroskedastic,
                        seed, 
                        object){
   
@@ -38,13 +37,11 @@ boot_algo3 <- function(preprocessed_object,
   #' is used if N_G^2 < B for Mammen and Rademacher weights
   #' @param small_sample_correction The small sample correction to be applied.
   #' See ssc().
-  #' @param heteroskedastic Logical - if TRUE, run a heteroskedastic.
   #' If FALSE, run wild cluster bootstrap.
   #' @param seed Integer scalar. Either set via boottest()'s seed argument
   #' or inherited from R's global seed (set via set.seed)
   #' @param object the regression object
   #' @return A list of ...
-  #' @importFrom summclust summclust coeftable
   #' @noRd
   
   #check_arg(bootstrap_type, "charin(WCR13, WCR33, WCU13, WCU33)")
@@ -138,13 +135,14 @@ boot_algo3 <- function(preprocessed_object,
   
   if(bootstrap_type == "WCR1x"){
     
-    beta_hat <- tXXinv %*% tXy # mean(c(beta_hat) - coef(object)) #essentially zero
-    beta_tilde <- beta_hat - tXXinv %*% R %*% solve(t(R) %*% tXXinv %*% R) %*% (R %*% beta_hat - 0)
+    beta_hat <- tXXinv %*% tXy 
+    beta_tilde <- beta_hat - 
+      tXXinv %*% R %*% solve(t(R) %*% tXXinv %*% R) %*% (R %*% beta_hat - 0)
   
   } else if (bootstrap_type == "WCU1x"){
     
-    beta_hat <- tXXinv %*% tXy # mean(c(beta_hat) - coef(object)) #essentially zero
-  
+    beta_hat <- tXXinv %*% tXy 
+
   } else if (bootstrap_type == "WCR3x"){
     
     inv_tXX_tXgXg <- lapply(
@@ -230,9 +228,11 @@ for(b in 1:(B + 1)){
       
       score_hat_g_boot <- list()
       for(g in 1:G){
-        # see MacKinnon (https://www.econstor.eu/bitstream/10419/247206/1/qed-wp-1465.pdf)
+        # see MacKinnon 
+        # (https://www.econstor.eu/bitstream/10419/247206/1/qed-wp-1465.pdf)
         # equ (20), note this can be accelerated
-        score_hat_g_boot[[g]] <- tcrossprod(scores_g_boot[g,] - Ag[[g]] %*% scores_boot)
+        score_hat_g_boot[[g]] <- 
+          tcrossprod(scores_g_boot[g,] - Ag[[g]] %*% scores_boot)
       }
       
       score_hat_boot <- Reduce("+", score_hat_g_boot)

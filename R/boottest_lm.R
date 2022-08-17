@@ -498,7 +498,6 @@ boottest.lm <- function(object,
       type = type,
       full_enumeration = full_enumeration,
       small_sample_correction = small_sample_correction,
-      heteroskedastic = heteroskedastic,
       seed = internal_seed, 
       object = object
     )

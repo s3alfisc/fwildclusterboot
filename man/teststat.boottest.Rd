@@ -32,6 +32,6 @@ boot <- boottest(lm_fit,
   param = "treatment",
   clustid = "group_id1"
 )
-pval(boot)
+teststat(boot)
 
 }

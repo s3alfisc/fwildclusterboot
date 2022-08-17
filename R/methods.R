@@ -190,6 +190,19 @@ pval <- function(object,
 #' @param ... other arguments
 #'
 #' @export
+#' @examples
+#' library(fwildclusterboot)
+#' data(voters)
+#' lm_fit <- lm(
+#'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   data = voters
+#' )
+#' boot <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
+#' )
+#' teststat(boot)
 
 teststat <- function(object,
                      ...) {
@@ -271,7 +284,7 @@ pval.boottest <- function(object, ...) {
 #'   param = "treatment",
 #'   clustid = "group_id1"
 #' )
-#' pval(boot)
+#' teststat(boot)
 #'
 teststat.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
@@ -287,7 +300,8 @@ teststat.boottest <- function(object, ...) {
 #' @method nobs boottest
 #' @return A scalar containing the effective number of observations
 #'  used in `boottest()`
-#' #' library(fwildclusterboot)
+#' @examples
+#' library(fwildclusterboot)
 #' data(voters)
 #' lm_fit <- lm(
 #' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -298,7 +312,7 @@ teststat.boottest <- function(object, ...) {
 #'   param = "treatment",
 #'   clustid = "group_id1"
 #' )
-#' teststat(boot)
+#' nobs(boot)
 
 nobs.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
