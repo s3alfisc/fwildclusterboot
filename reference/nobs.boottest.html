@@ -82,20 +82,212 @@
 used in <code><a href="boottest.html">boottest()</a></code></p>
 
 
-<p>#' library(fwildclusterboot)
-data(voters)
-lm_fit &lt;- lm(
-proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-data = voters
-)
-boot &lt;- boottest(lm_fit,
-B = 9999,
-param = "treatment",
-clustid = "group_id1"
-)
-teststat(boot)</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">voters</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">lm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="va">Q1_immigration</span>,</span></span>
+<span class="r-in"><span>  data <span class="op">=</span> <span class="va">voters</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>,</span></span>
+<span class="r-in"><span>  B <span class="op">=</span> <span class="fl">9999</span>,</span></span>
+<span class="r-in"><span>  param <span class="op">=</span> <span class="st">"treatment"</span>,</span></span>
+<span class="r-in"><span>  clustid <span class="op">=</span> <span class="st">"group_id1"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> type: rademacher </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> full_enumeration: FALSE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> N_G_bootcluster: 40 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> boot_iter: 9999 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0004828042 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02300694 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0001575758 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02067553 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002138998 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02102972 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002935539 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.0216723 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0004062019 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02283842 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0001143804 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02025192 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0001707044 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02043845 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002503585 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02085699 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0003630064 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02173835 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0003322381 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02146575 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0003014698 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02121664 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002707014 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02099186 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002399331 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.0207922 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002091648 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02061838 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0001783965 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02047107 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0001476281 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02035084 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0001168598 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02025817 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -8.609145e-05 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02019345 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -5.532312e-05 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02015694 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -2.455479e-05 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02014879 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  6.213543e-06 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02016905 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  3.698188e-05 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02021762 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  6.775021e-05 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02029429 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  9.851854e-05 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02039877 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0001292869 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02053061 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0001600552 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.0206893 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0001908235 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02087422 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002215919 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02108469 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002523602 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02131995 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002831285 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02157918 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0003138969 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02186153 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0003446652 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02216613 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0003754335 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02249206 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002707014 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02099186 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002399331 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.0207922 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002537593 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02087876 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002523591 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02086976 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002516926 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02086549 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002514854 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02086417 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002515942 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02086486 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002515398 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02086452 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002515432 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02086454 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002515687 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.0208647 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002515467 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02086456 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002515577 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02086463 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002515632 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02086467 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  -0.0002515632 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02086467 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002831285 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02157918 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0003138969 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02186153 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0003009623 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02174007 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002990153 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02172214 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002910719 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02164989 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002982882 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02171546 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002946801 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02168252 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.00029774 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02171044 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002979273 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02171215 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.000297932 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02171219 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002981101 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02171383 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002979409 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02171228 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002980255 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02171305 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ssc: 1.068525 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> numer:  0.0002980255 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> denom: 0.02171305 </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/nobs.html" class="external-link">nobs</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 300</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

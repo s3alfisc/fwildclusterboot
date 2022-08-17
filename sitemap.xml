@@ -46,22 +46,7 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/boot_ssc.html</loc>
   </url>
   <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/check_mboottest_args_plus.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/check_r_lean.html</loc>
-  </url>
-  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/confint.boottest.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/cpp_get_nb_threads.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/eigenMapMatMult.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/get_weights.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/glance.boottest.html</loc>
@@ -80,9 +65,6 @@
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/mboottest.lm.html</loc>
-  </url>
-  <url>
-    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/model_matrix.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/nobs.boottest.html</loc>
