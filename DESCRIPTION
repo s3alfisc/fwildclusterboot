@@ -67,6 +67,7 @@ Suggests:
     lfe,
     ivreg,
     clubSandwich,
+    sandwich,
     lmtest,
     data.table,
     fabricatr,

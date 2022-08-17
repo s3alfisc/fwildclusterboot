@@ -201,7 +201,6 @@ mboottest.lm <- function(object,
   check_arg(floattype, "charin(Float32, Float64")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(tol, "numeric scalar GT{0}")
-  check_arg(teststat_boot, "logical scalar")
 
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
