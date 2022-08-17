@@ -60,7 +60,8 @@ Imports:
     generics,
     dqrng, 
     JuliaConnectoR, 
-    MASS
+    MASS, 
+    Rcpp
 Suggests: 
     fixest,
     lfe,
