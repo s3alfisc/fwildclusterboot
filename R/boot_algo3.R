@@ -51,14 +51,17 @@ boot_algo3 <- function(preprocessed_object,
   # other checks: only test of one param, no weights, no fixed effects, 
   # ...
   
+  #here for debugging
+  #preprocessed_object <- preprocess
+  
+  
   if(substr(bootstrap_type, 5, 5) == 1){
     crv_type <- "crv1"  
   } else {
     crv_type <- "crv3"
   }
   
-  #preprocessed_object <- preprocess
-  
+
   X <- preprocessed_object$X
   y <- preprocessed_object$Y
   R <- preprocessed_object$R0
@@ -68,6 +71,8 @@ boot_algo3 <- function(preprocessed_object,
   bootcluster <- preprocessed_object$bootcluster
   G <- N_G_bootcluster <- length(unique(bootcluster[[1]]))
   k <- length(R)
+
+  bootstrap_type <- paste0(substr(bootstrap_type, 1, 4), "x")
   
   v <- get_weights(
     type = type, 
@@ -76,30 +81,14 @@ boot_algo3 <- function(preprocessed_object,
     boot_iter = B
   )
   
-  # X1: X without parameter beta for which hypothesis beta = 0 is tested
-  X1 <- X[, which(R == 0)]
-  
   # create X_g's, X1_g's, y_g's etc 
   X_list <- matrix_split(X, cluster, "row")
-  X1_list <- matrix_split(X1, cluster, "row")
   y_list <- split(y, cluster, drop = FALSE)
-  
-  colnames(X_list)
   
   # precompute a range of other objects
   tXgXg <- lapply(
-    seq_along(1:G),
+    seq_along(1:G), 
     function(g) crossprod(X_list[[g]])
-  )
-  
-  tX1gX1g <- lapply(
-    seq_along(1:G),
-    function(g) crossprod(X1_list[[g]])
-  )
-  
-  tX1gyg <- lapply(
-    seq_along(1:G),
-    function(g) t(X1_list[[g]]) %*% y_list[[g]]
   )
   
   tXgyg <- lapply(
@@ -108,54 +97,94 @@ boot_algo3 <- function(preprocessed_object,
   )
   
   
-  tXgX1g <- lapply(
-    seq_along(1:G),
-    function(g) t(X_list[[g]]) %*% X1_list[[g]]
-  )
-  
   tXX <- Reduce("+", tXgXg) # crossprod(X)  
-  tX1X1 <- Reduce("+", tX1gX1g) # crossprod(X1)
-  tX1y <- Reduce("+", tX1gyg) #t(X1) %*% y
   tXy <- Reduce("+", tXgyg) # t(X) %*% y
-  
   tXXinv <- solve(tXX)
-  tX1X1inv <- solve(tX1X1)
   
-  # OLS estimate, ROLS estimate
-  beta_hat <- tXXinv %*% tXy # mean(c(beta_hat) - coef(object)) #essentially zero
-  beta_tilde <- beta_hat - tXXinv %*% R %*% solve(t(R) %*% tXXinv %*% R) %*% (R %*% beta_hat - 0)
   
-  # precompute more objects 
+  tXgX1g <- NULL 
+  beta_hat <- NULL
+  beta_tilde <- NULL
+  beta_g_hat <- NULL
+  beta_1g_tilde <- NULL
+  inv_tXX_tXgXg <- NULL
   
-  inv_tXX_tXgXg <- lapply(
-    1:G,
-    function(x) MASS::ginv(tXX - tXgXg[[x]])
-  )
   
-  beta_1g_tilde <- lapply(
-    1:G, 
-    function(g) MASS::ginv(tX1X1 - tX1gX1g[[g]]) %*% (tX1y - tX1gyg[[g]])
-  )
-  
-  beta_g_hat <- lapply(
-    1:G, 
-    function(g) MASS::ginv(tXX - tXgXg[[g]]) %*% (tXy - tXgyg[[g]])
-  )
-  
-  Ag <- lapply(
-    1:G, 
-    function(g) tXgXg[[g]] %*% tXXinv
-  )
-  
-  if(crv_type == "crv1"){
+  if(bootstrap_type %in% c("WCR3x", "WCU3x")){
+    # X1: X without parameter beta for which hypothesis beta = 0 is tested
+    X1 <- X[, which(R == 0)]
+    X1_list <- matrix_split(X1, cluster, "row")
     
-    score_hat_g <- lapply(
+    tX1gX1g <- lapply(
+      seq_along(1:G),
+      function(g) crossprod(X1_list[[g]])
+    )
+    
+    tX1gyg <- lapply(
+      seq_along(1:G),
+      function(g) t(X1_list[[g]]) %*% y_list[[g]]
+    )
+    
+    tXgX1g <- lapply(
+      seq_along(1:G),
+      function(g) t(X_list[[g]]) %*% X1_list[[g]]
+    )
+    
+    tX1X1 <- Reduce("+", tX1gX1g) # crossprod(X1)
+    tX1y <- Reduce("+", tX1gyg) #t(X1) %*% y
+    tX1X1inv <- solve(tX1X1)
+    
+  }
+  
+  if(bootstrap_type == "WCR1x"){
+    
+    beta_hat <- tXXinv %*% tXy # mean(c(beta_hat) - coef(object)) #essentially zero
+    beta_tilde <- beta_hat - tXXinv %*% R %*% solve(t(R) %*% tXXinv %*% R) %*% (R %*% beta_hat - 0)
+  
+  } else if (bootstrap_type == "WCU1x"){
+    
+    beta_hat <- tXXinv %*% tXy # mean(c(beta_hat) - coef(object)) #essentially zero
+  
+  } else if (bootstrap_type == "WCR3x"){
+    
+    inv_tXX_tXgXg <- lapply(
+      1:G,
+      function(x) MASS::ginv(tXX - tXgXg[[x]])
+    )
+    
+    beta_1g_tilde <- lapply(
       1:G, 
-      function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_hat
+      function(g) MASS::ginv(tX1X1 - tX1gX1g[[g]]) %*% (tX1y - tX1gyg[[g]])
+    )
+    
+  } else if(bootstrap_type == "WCU3x"){
+    
+    beta_g_hat <- lapply(
+      1:G, 
+      function(g) MASS::ginv(tXX - tXgXg[[g]]) %*% (tXy - tXgyg[[g]])
     )
     
   }
   
+  if(crv_type == "crv1"){
+    
+    Ag <- lapply(
+      1:G, 
+      function(g) tXgXg[[g]] %*% tXXinv
+    )
+    
+  } else {
+    if(is.null(inv_tXX_tXgXg)){
+      inv_tXX_tXgXg <- lapply(
+        1:G,
+        function(x) MASS::ginv(tXX - tXgXg[[x]])
+      )
+    }
+  }
+  
+
+  
+  # compute scores 
   scores_list <- get_scores(
     bootstrap_type = bootstrap_type,
     G = G, 
@@ -168,16 +197,15 @@ boot_algo3 <- function(preprocessed_object,
     beta_1g_tilde = beta_1g_tilde
   )
   
-  dim(R) <- c(1, k) # turn R into matrix
-
   
   # pre-allocate space for bootstrap 
   # start the bootstrap loop 
   t_boot <- vector(mode = "numeric", B + 1)
-  delta_b_star1 <- vector(mode = "numeric", B + 1)
-  
+
   # numer <- (( R %*% tXXinv) %*%  (Reduce("cbind", scores_list) %*% v))
 
+  dim(R) <- c(1, k) # turn R into matrix
+  
 for(b in 1:(B + 1)){
     
     # Step 1: get bootstrapped scores
@@ -190,8 +218,6 @@ for(b in 1:(B + 1)){
         scores_g_boot[g,] <- scores_list[[g]] * v_[g] #* v[g, b]
       }
       
-      # scores_g_boot1 <- Reduce("cbind", scores_list) %*% v_
-    
       # numerator (both for WCR, WCU)
       scores_boot <- colSums(scores_g_boot)
       delta_b_star <- tXXinv %*% scores_boot 
@@ -254,18 +280,23 @@ for(b in 1:(B + 1)){
     
   }  
   
-  # get original t-stat
+  
+  # get original t-stat. 
+  # this can also be handled by using t_boot[1] approriately instead
+  # of simply depending on sandwich and summclust
+  
   if(crv_type == "crv1"){
     
     vcov <- 
-      #small_sample_correction * 
+
       sandwich::vcovCL(
         object, 
         cluster = reformulate(clustid), 
         cadjust = FALSE, 
         type = "HC0"
       )
-    t_stat <- coef(object)[which(R == 1)] / sqrt(diag(vcov)[which(R == 1)])
+    t_stat <- coef(object)[which(R == 1)] / sqrt(diag(vcov)[which(R == 1)]) / 
+      sqrt(small_sample_correction)
     
   } else if (crv_type == "crv3"){
     t_stat <- summclust::summclust(
@@ -273,7 +304,7 @@ for(b in 1:(B + 1)){
     )
     t_stat <- summclust:::coeftable(
       t_stat, param = param
-    )[,"tstat"] * sqrt(G / (G-1)) 
+    )[,"tstat"] * sqrt(G / (G-1)) / sqrt(small_sample_correction)
     # because summclust uses small sample correction
   }
   

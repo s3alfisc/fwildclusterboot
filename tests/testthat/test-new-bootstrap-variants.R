@@ -2,11 +2,11 @@ test_that("new bootstrap variants", {
   
   # run Library(testthat) and library(fwildclusterboot) prior
   
-  B <- 999 
-  type <- "rademacher"
-  N_G1 <- 25
+  B <- 9999
+  type <- "mammen"
+  N_G1 <- 21
   
-  data2 <- fwildclusterboot:::create_data(N = 10000,
+  data2 <- fwildclusterboot:::create_data(N = 1000,
                                           N_G1 = N_G1,
                                           icc1 = 0.8,
                                           N_G2 = N_G1,
