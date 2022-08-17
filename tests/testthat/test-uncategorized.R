@@ -471,7 +471,7 @@ test_that("uncategorized tests", {
     data = voters
     )
   feols_fit_2 <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q1_immigration + Q2_defense,
     data = voters_1
     )

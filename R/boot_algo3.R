@@ -289,8 +289,8 @@ for(b in 1:(B + 1)){
   # of simply depending on sandwich and summclust
   
   t_stat <- coef(object)[which(R == 1)] / se[1]
-  print(t_stat)
-  print(t_boot[1])
+  # print(t_stat)
+  # print(t_boot[1])
   # if(crv_type == "crv1"){
   #   
   #   vcov <- 
