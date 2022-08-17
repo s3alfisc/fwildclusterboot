@@ -40,7 +40,7 @@ test_that("test fixest formula sugar", {
     )
 
   fit <-
-    fixest::feols(proposition_vote ~ i(treatment, ideology1), data = voters)
+    fixest::feols(proposition_vote ~ fixest::i(treatment, ideology1), data = voters)
   res <-
     boottest(fit,
       B = 999,
@@ -70,7 +70,7 @@ test_that("test fixest formula sugar", {
     x$t_stat
   })),
   unlist(lapply(fit, function(x) {
-    tstat(x)["treatment"]
+    fixest::tstat(x)["treatment"]
   })),
   ignore_attr = TRUE
   )

@@ -17,26 +17,26 @@ test_that("uncategorized tests", {
     )
 
   feols1 <-
-    feols(
+    fixest::feols(
       proposition_vote ~ treatment + ideology1 + log_income + group_id2,
       data = data1,
       weights = ~weights
     )
   feols2 <-
-    feols(
+    fixest::feols(
       proposition_vote ~ treatment + ideology1 + log_income + group_id2,
       data = data1,
       weights = data1$weights
     )
 
   feols3 <-
-    feols(
+    fixest::feols(
       proposition_vote ~ treatment + ideology1 + log_income + group_id2,
       data = data1,
       cluster = ~group_id1
     )
   feols4 <-
-    feols(
+    fixest::feols(
       proposition_vote ~ treatment + ideology1 + log_income + group_id2,
       data = data1,
       cluster = data1$group_id1
@@ -99,10 +99,10 @@ test_that("uncategorized tests", {
   #sapply(voters_1[, to_char], class)
 
   feols_fit <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q2_defense, data = voters)
   feols_fit_2 <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q2_defense, data = voters_1)
   lfe_fit <-
     lfe::felm(proposition_vote ~ treatment + log_income |
@@ -162,10 +162,10 @@ test_that("uncategorized tests", {
   #sapply(voters_1[, to_char], class)
 
   feols_fit <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q2_defense, data = voters)
   feols_fit_2 <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q2_defense, data = voters_1)
   lfe_fit <-
     lfe::felm(proposition_vote ~ treatment + log_income |
@@ -240,10 +240,10 @@ test_that("uncategorized tests", {
   #sapply(voters_1[, to_char], class)
 
   feols_fit <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q2_defense, data = voters)
   feols_fit_2 <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q2_defense, data = voters_1)
   lfe_fit <-
     lfe::felm(proposition_vote ~ treatment + log_income |
@@ -307,12 +307,12 @@ test_that("uncategorized tests", {
   #sapply(voters_1[, to_char], class)
 
   feols_fit <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q1_immigration + Q2_defense,
     data = voters
     )
   feols_fit_2 <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q1_immigration + Q2_defense,
     data = voters_1
     )
@@ -382,12 +382,12 @@ test_that("uncategorized tests", {
   #sapply(voters_1[, to_char], class)
 
   feols_fit <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q1_immigration + Q2_defense,
     data = voters
     )
   feols_fit_2 <-
-    feols(
+    fixest::feols(
       proposition_vote ~ treatment + log_income,
       fixef = c("Q1_immigration", "Q2_defense"),
       data = voters_1
@@ -466,7 +466,7 @@ test_that("uncategorized tests", {
   #sapply(voters_1[, to_char], class)
 
   feols_fit <-
-    feols(proposition_vote ~ treatment + log_income |
+    fixest::feols(proposition_vote ~ treatment + log_income |
       Q1_immigration + Q2_defense,
     data = voters
     )

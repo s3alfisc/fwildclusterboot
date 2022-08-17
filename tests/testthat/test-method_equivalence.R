@@ -26,89 +26,89 @@ test_that("Do different, but equivalent ways to specify
         data = data1
       )
     feols_fit1 <-
-      feols(
+      fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration + Q2_defense,
         data = data1
       )
     feols_fit2 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration + Q2_defense,
         data = data1,
         cluster = "group_id1"
       )
     feols_fit3 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration + Q2_defense,
         data = data1,
         cluster = ~group_id1
       )
     feols_fit4 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration + Q2_defense,
         data = data1,
         cluster = c("group_id1", "group_id2")
       )
     feols_fit5 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration + Q2_defense,
         data = data1,
         cluster = ~ group_id1 + group_id2
       )
     feols_fit6 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income |
           Q1_immigration + Q2_defense,
         data = data1
       )
     feols_fit7 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income |
           Q1_immigration + Q2_defense,
         data = data1,
         cluster = "group_id1"
       )
     feols_fit8 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income |
           Q1_immigration + Q2_defense,
         data = data1,
         cluster = ~group_id1
       )
     feols_fit9 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income |
           Q1_immigration + Q2_defense,
         data = data1,
         cluster = c("group_id1", "group_id2")
       )
     feols_fit10 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income |
           Q1_immigration + Q2_defense,
         data = data1,
         cluster = ~ group_id1 + group_id2
       )
     feols_fit11 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration |
           Q2_defense,
         data = data1
       )
     feols_fit12 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration,
         fixef = "Q2_defense",
         data = data1
       )
     feols_fit13 <-
-      feols(
+     fixest::feols(
         proposition_vote ~ treatment + ideology1 + log_income,
         fixef = c("Q1_immigration", "Q2_defense"),
         data = data1
@@ -117,52 +117,52 @@ test_that("Do different, but equivalent ways to specify
     # can also assign fixed effects via fixef = c("") arguments ...
     
     felm_fit1 <-
-      felm(
+     lfe::felm(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration + Q2_defense,
         data = data1
       )
     felm_fit2 <-
-      felm(
+     lfe::felm(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration + Q2_defense |
           0 | 0 | group_id1,
         data = data1
       )
     felm_fit3 <-
-      felm(
+     lfe::felm(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration + Q2_defense |
           0 | 0 | group_id1 + group_id2,
         data = data1
       )
     felm_fit4 <-
-      felm(
+     lfe::felm(
         proposition_vote ~ treatment + ideology1 + log_income |
           Q1_immigration + Q2_defense | 0 | 0,
         data = data1
       )
     felm_fit5 <-
-      felm(
+     lfe::felm(
         proposition_vote ~ treatment + ideology1 + log_income |
           Q1_immigration + Q2_defense | 0 | group_id1,
         data = data1
       )
     felm_fit6 <-
-      felm(
+     lfe::felm(
         proposition_vote ~ treatment + ideology1 + log_income |
           Q1_immigration + Q2_defense | 0 | group_id1 + group_id2,
         data = data1
       )
     felm_fit7 <-
-      felm(
+     lfe::felm(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q1_immigration |
           Q2_defense | 0 | group_id1 + group_id2,
         data = data1
       )
     felm_fit8 <-
-      felm(
+     lfe::felm(
         proposition_vote ~ treatment + ideology1 + log_income +
           Q2_defense |
           Q1_immigration | 0 | group_id1 + group_id2,
@@ -1261,14 +1261,14 @@ test_that("clustid can be fe", {
   #sapplydata1, class)
   
   feols_fit1 <-
-    feols(
+   fixest::feols(
       proposition_vote ~ treatment + ideology1 + log_income | group_id1,
       data = data1,
       cluster = ~group_id1
     )
   
   felm_fit1 <-
-    felm(proposition_vote ~ treatment + ideology1 + log_income |
+   lfe::felm(proposition_vote ~ treatment + ideology1 + log_income |
            group_id1,
          data = data1
     )

@@ -1541,7 +1541,7 @@ test_that("error warning IV/WRE and q > 1", {
   
   
     # bannd args ivreg
-    library(fixest)
+    # library(fixest)
     # test for banned function arguments and syntax for fixest with mboottest
   
     feols_fit <- fixest::feols(
@@ -1577,9 +1577,9 @@ test_that("error warning IV/WRE and q > 1", {
 
 test_that("error message when character vars in felm and fixest", {
   
-  library(lfe)
-  library(fixest)
-  library(sandwich)
+  # library(lfe)
+  # library(fixest)
+  # library(sandwich)
   
   N <- 1000
   
@@ -1605,12 +1605,12 @@ test_that("error message when character vars in felm and fixest", {
     data = event_reg_data
   )
   
-  res2 <- felm(
+  res2 <- lfe::felm(
     real_1000 ~ post1 | 0 | 0 | SEclusters,
     data = event_reg_data
   )
   
-  res3 <- felm(
+  res3 <- lfe::felm(
     real_1000 ~ post1 | Utility_state | 0 | 0,
     data = event_reg_data
   )
@@ -1647,9 +1647,9 @@ test_that("error message when character vars in felm and fixest", {
 
 test_that("error message when character vars in felm and fixest", {
   
-  library(lfe)
-  library(fixest)
-  library(sandwich)
+  # library(lfe)
+  # library(fixest)
+  # library(sandwich)
   
   N <- 1000
   
@@ -1675,12 +1675,12 @@ test_that("error message when character vars in felm and fixest", {
     data = event_reg_data
   )
   
-  res2 <- felm(
+  res2 <- lfe::felm(
     real_1000 ~ post1 | 0 | 0 | SEclusters,
     data = event_reg_data
   )
   
-  res3 <- felm(
+  res3 <- lfe::felm(
     real_1000 ~ post1 | Utility_state | 0 | 0,
     data = event_reg_data
   )
@@ -1719,9 +1719,9 @@ test_that("error message when character vars in felm and fixest", {
 
 test_that("error message when character vars in felm and fixest", {
   
-  library(lfe)
-  library(fixest)
-  library(sandwich)
+  # library(lfe)
+  # library(fixest)
+  # library(sandwich)
   
   N <- 1000
   
@@ -1747,12 +1747,12 @@ test_that("error message when character vars in felm and fixest", {
     data = event_reg_data
   )
   
-  res2 <- felm(
+  res2 <- lfe::felm(
     real_1000 ~ post1 | 0 | 0 | SEclusters,
     data = event_reg_data
   )
   
-  res3 <- felm(
+  res3 <- lfe::felm(
     real_1000 ~ post1 | Utility_state | 0 | 0,
     data = event_reg_data
   )

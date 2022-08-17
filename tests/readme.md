@@ -12,6 +12,7 @@
 - `test-r-lean.R` tests the 'lean' implementation of the wild cluster bootstrap 
    for correctness
 - `test-seed.R` tests how seed behavior affects `boottest()` output
+- `test-new-bootstrap-variants` tests the WCR11 and WCU11 wild cluster bootstrap implementations of `boot_algo3()` (from "fast and reliable") against those of `boot_algo2()` (from "fast and wild")
 
 
 
