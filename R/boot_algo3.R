@@ -201,6 +201,8 @@ boot_algo3 <- function(preprocessed_object,
   # pre-allocate space for bootstrap 
   # start the bootstrap loop 
   t_boot <- vector(mode = "numeric", B + 1)
+  se <- vector(mode = "numeric", B + 1)
+  
 
   # numer <- (( R %*% tXXinv) %*%  (Reduce("cbind", scores_list) %*% v))
 
@@ -245,13 +247,13 @@ for(b in 1:(B + 1)){
       #           )
 
       # all.equal(tXXinv, solve(crossprod(X)))
-      se <- se2 <- 
+      se[b] <-  
         sqrt(
           small_sample_correction * 
           (R %*% tXXinv) %*% score_hat_boot %*% (tXXinv %*% t(R))
         )
       
-      t_boot[b] <- (c(delta_b_star)[which(R == 1)] / se)
+      t_boot[b] <- (c(delta_b_star)[which(R == 1)] / se[b])
       
     } else if (crv_type == "crv3"){
       
@@ -266,7 +268,7 @@ for(b in 1:(B + 1)){
           )^2
       }
       
-      se <- se3 <- 
+      se[b] <-  
          
         sqrt( 
           ((G-1) / G) *
@@ -285,28 +287,31 @@ for(b in 1:(B + 1)){
   # this can also be handled by using t_boot[1] approriately instead
   # of simply depending on sandwich and summclust
   
-  if(crv_type == "crv1"){
-    
-    vcov <- 
-
-      sandwich::vcovCL(
-        object, 
-        cluster = reformulate(clustid), 
-        cadjust = FALSE, 
-        type = "HC0"
-      )
-    t_stat <- coef(object)[which(R == 1)] / sqrt(diag(vcov)[which(R == 1)]) / 
-      sqrt(small_sample_correction)
-    
-  } else if (crv_type == "crv3"){
-    t_stat <- summclust::summclust(
-      object, type = "CRV3", cluster = reformulate(clustid)
-    )
-    t_stat <- summclust:::coeftable(
-      t_stat, param = param
-    )[,"tstat"] * sqrt(G / (G-1)) / sqrt(small_sample_correction)
-    # because summclust uses small sample correction
-  }
+  t_stat <- coef(object)[which(R == 1)] / se[1]
+  print(t_stat)
+  print(t_boot[1])
+  # if(crv_type == "crv1"){
+  #   
+  #   vcov <- 
+  # 
+  #     sandwich::vcovCL(
+  #       object, 
+  #       cluster = reformulate(clustid), 
+  #       cadjust = FALSE, 
+  #       type = "HC0"
+  #     )
+  #   t_stat <- coef(object)[which(R == 1)] / sqrt(diag(vcov)[which(R == 1)]) / 
+  #     sqrt(small_sample_correction)
+  #   
+  # } else if (crv_type == "crv3"){
+  #   t_stat <- summclust::summclust(
+  #     object, type = "CRV3", cluster = reformulate(clustid)
+  #   )
+  #   t_stat <- summclust:::coeftable(
+  #     t_stat, param = param
+  #   )[,"tstat"] * sqrt(G / (G-1)) / sqrt(small_sample_correction)
+  #   # because summclust uses small sample correction
+  # }
   
   t_boot <- t_boot[-1]
   
