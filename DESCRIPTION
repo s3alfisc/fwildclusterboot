@@ -54,13 +54,13 @@ License: GPL-3
 Imports: 
     collapse,
     Formula,
-    Rcpp,
     dreamerr,
     Matrix,
     Matrix.utils,
     generics,
     dqrng, 
-    JuliaConnectoR
+    JuliaConnectoR, 
+    MASS
 Suggests: 
     fixest,
     lfe,

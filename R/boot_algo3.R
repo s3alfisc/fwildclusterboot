@@ -41,6 +41,7 @@ boot_algo3 <- function(preprocessed_object,
   #' @param seed Integer scalar. Either set via boottest()'s seed argument
   #' or inherited from R's global seed (set via set.seed)
   #' @param object the regression object
+  #' @importFrom MASS ginv
   #' @return A list of ...
   #' @noRd
   
