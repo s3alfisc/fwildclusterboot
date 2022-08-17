@@ -13,8 +13,8 @@ test_that("test multicollinearity", {
   )
 
   lm_fit <- lm(Y ~ X1 + X2, data = data)
-  feols_fit <- feols(Y ~ X1 + X2, data = data)
-  felm_fit <- felm(Y ~ X1 + X2, data = data)
+  feols_fit <- fixest::feols(Y ~ X1 + X2, data = data)
+  felm_fit <- lfe::felm(Y ~ X1 + X2, data = data)
 
   boot_lm <-
     boottest(

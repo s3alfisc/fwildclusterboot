@@ -44,7 +44,7 @@ test_that("test fixest formula sugar", {
   res <-
     boottest(fit,
       B = 999,
-      param = "treatment::0:ideology1",
+      param = "fixest::treatment::0:ideology1",
       clustid = "group_id1"
     )
 
