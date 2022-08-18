@@ -147,8 +147,8 @@
 #' . No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
 #' \dontrun{
-#' library(fwildclusterboot)
-#' library(clubSandwich)
+#' requireNamespace("fwildclusterboot")
+#' requireNamespace("clubSandwich")
 #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 #' wboottest <-
 #'   mboottest(
@@ -188,18 +188,18 @@ mboottest.fixest <- function(object,
                              ),
                              ...) {
   call <- match.call()
-
+  
   dreamerr::validate_dots(stop = TRUE)
-
+  
   # Step 1: check arguments of feols call
   check_arg(object, "MBT class(fixest)")
   check_arg(clustid, "character scalar | character vector | formula")
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric matrix")
-
+  
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
-
+  
   check_arg(seed, "scalar integer | NULL")
   check_arg(r, "numeric vector | NULL")
   check_arg(fe, "character scalar | NULL | formula")
@@ -207,36 +207,36 @@ mboottest.fixest <- function(object,
   check_arg(tol, "numeric scalar GT{0}")
   # check_arg(maxiter, "scalar integer")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
-
+  
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
-
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-
+  
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-
+  
   if (inherits(fe, "formula")) {
     fe <- attr(terms(fe), "term.labels")
   }
-
+  
   internal_seed <- set_seed(
     seed = seed,
     boot_algo = "WildBootTests.jl",
     type = type
   )
-
+  
   # fixest specific checks
   if (object$method != "feols") {
     stop("mboottest() only supports OLS estimation via fixest::feols() - it
          does not support non-linear models computed via e.g.
          fixest::fepois() or fixest::feglm.")
   }
-
+  
   if (!is.null(object$fixef_removed)) {
     stop(paste(
       "feols() removes fixed effects with the following values: ",
@@ -247,16 +247,16 @@ mboottest.fixest <- function(object,
                '$fixef_removed' of your fixest object."
     ))
   }
-
+  
   fedfadj <- 0L
-
+  
   check_mboottest_args_plus(
     object = object,
     R = R,
     r = r,
     fe = fe
   )
-
+  
   preprocess <- preprocess2.fixest(
     object = object,
     clustid = clustid,
@@ -266,7 +266,7 @@ mboottest.fixest <- function(object,
     fe = fe,
     boot_algo = "WildBootTests.jl"
   )
-
+  
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -276,7 +276,7 @@ mboottest.fixest <- function(object,
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-
+  
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -286,16 +286,16 @@ mboottest.fixest <- function(object,
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-
+  
   julia_ssc <- get_ssc_julia(ssc)
   small <- julia_ssc$small
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
-
+  
   if (ssc[["fixef.K"]] != "none") {
     message(paste("Currently, boottest() only supports fixef.K = 'none'."))
   }
-
+  
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -322,7 +322,7 @@ mboottest.fixest <- function(object,
     fe = fe,
     fedfadj = fedfadj
   )
-
+  
   # collect results
   res_final <- list(
     p_val = res$p_val,
@@ -340,8 +340,8 @@ mboottest.fixest <- function(object,
     boot_algo = "WildBootTests.jl",
     internal_seed = internal_seed
   )
-
+  
   class(res_final) <- "mboottest"
-
+  
   invisible(res_final)
 }

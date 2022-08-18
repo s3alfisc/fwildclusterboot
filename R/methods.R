@@ -14,7 +14,7 @@
 #'  \link[fwildclusterboot]{boottest.ivreg}
 #'
 #' @examples
-#' library(fwildclusterboot)
+#' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(
 #'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -134,7 +134,7 @@ boottest <- function(object,
 #' . No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
 #' \dontrun{
-#' library(clubSandwich)
+#' requireNamespace("clubSandwich")
 #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 #' wboottest <-
 #'   mboottest(
@@ -164,7 +164,7 @@ mboottest <- function(object,
 #' @export
 #' 
 #' @examples
-#' library(fwildclusterboot)
+#' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(
 #' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -191,7 +191,7 @@ pval <- function(object,
 #'
 #' @export
 #' @examples
-#' library(fwildclusterboot)
+#' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(
 #'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -217,7 +217,7 @@ teststat <- function(object,
 #' @return A vector containing the boundaries of the wild cluster
 #'  bootstrapped confidence interval
 #' @examples
-#' library(fwildclusterboot)
+#' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(
 #'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -245,7 +245,7 @@ confint.boottest <- function(object, ...) {
 #' @return A vector containing the boundaries of the wild cluster
 #'  bootstrapped p-value
 #' @examples
-#' #' library(fwildclusterboot)
+#' #' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(
 #'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -273,7 +273,7 @@ pval.boottest <- function(object, ...) {
 #' @return A vector containing the non-bootstrapped t-statistic
 #'  calculated in `boottest()`
 #' @examples
-#' library(fwildclusterboot)
+#' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(
 #'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -301,7 +301,7 @@ teststat.boottest <- function(object, ...) {
 #' @return A scalar containing the effective number of observations
 #'  used in `boottest()`
 #' @examples
-#' library(fwildclusterboot)
+#' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(
 #' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -330,7 +330,7 @@ tidy.boottest <- function(object, ...) {
   #' @return A tidy data.frame with estimation results for objects of type
   #'         boottest
   #' @examples
-  #' library(fwildclusterboot)
+  #' requireNamespace("fwildclusterboot")
   #' data(voters)
   #' lm_fit <- lm(
   #' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -391,7 +391,7 @@ summary.boottest <- function(object, digits = 3, ...) {
   #' @export
   #' @return Returns result summaries for objects of type boottest
   #' @examples
-  #' library(fwildclusterboot)
+  #' requireNamespace("fwildclusterboot")
   #' data(voters)
   #' lm_fit <- lm(
   #' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -494,7 +494,7 @@ plot.boottest <- function(x, ...) {
   #' @export
   #' @return A plot of bootstrap t-statistics under different null hypotheses
   #' @examples
-  #' library(fwildclusterboot)
+  #' requireNamespace("fwildclusterboot")
   #' data(voters)
   #' lm_fit <- lm(
   #' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -544,7 +544,7 @@ glance.boottest <- function(x, ...) {
   #' @return A single row summary "glance" of an object of type boottest
   #'         - lists characteristics of the input regression model
   #' @examples
-  #' library(fwildclusterboot)
+  #' requireNamespace("fwildclusterboot")
   #' data(voters)
   #' lm_fit <- lm(
   #' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -573,7 +573,7 @@ glance.boottest <- function(x, ...) {
 #' bootstrapped p-value
 #' @examples
 #' \dontrun{
-#' library(clubSandwich)
+#' requireNamespace("clubSandwich")
 #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 #' wboottest <-
 #'   mboottest(
@@ -601,7 +601,7 @@ pval.mboottest <- function(object, ...) {
 #' in `mboottest()`
 #' @examples
 #' \dontrun{
-#' library(clubSandwich)
+#' requireNamespace("clubSandwich")
 #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 #' wboottest <-
 #'   mboottest(
@@ -630,7 +630,7 @@ teststat.mboottest <- function(object, ...) {
 #'  used in `mboottest()`
 #' @examples
 #' \dontrun{
-#' library(clubSandwich)
+#' requireNamespace("clubSandwich")
 #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 #' wboottest <-
 #'   mboottest(
@@ -658,7 +658,7 @@ nobs.mboottest <- function(object, ...) {
 #' @return A scalar containing the effective number of observations
 #' used in `mboottest`
 #' @examples
-#' #' library(fwildclusterboot)
+#' #' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(
 #'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -700,7 +700,7 @@ print.boottest <- function(x, ..., digits = 4) {
 #' in `mboottest`
 #' @examples
 #' \dontrun{
-#' library(clubSandwich)
+#' requireNamespace("clubSandwich")
 #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 #' wboottest <-
 #'   mboottest(
@@ -744,7 +744,7 @@ tidy.mboottest <- function(object, ...) {
   #'         mboottest
   #' @examples
   #' \dontrun{
-  #' library(clubSandwich)
+  #' requireNamespace("clubSandwich")
   #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
   #' wboottest <-
   #'   mboottest(
@@ -784,7 +784,7 @@ summary.mboottest <- function(object, digits = 3, ...) {
   #' @return Returns result summaries for objects of type mboottest
   #' @examples
   #' \dontrun{
-  #' library(clubSandwich)
+  #' requireNamespace("clubSandwich")
   #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
   #' wboottest <-
   #'   mboottest(

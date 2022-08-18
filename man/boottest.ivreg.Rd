@@ -188,8 +188,8 @@ Webb or Normal weights
 
 \examples{
 \dontrun{
-library(ivreg)
-library(fwildclusterboot)
+requireNamespace("ivreg")
+requireNamespace("fwildclusterboot")
 
 # drop all NA values from SchoolingReturns
 SchoolingReturns <- na.omit(SchoolingReturns)

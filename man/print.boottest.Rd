@@ -21,7 +21,7 @@ used in \code{mboottest}
 S3 method to print key information for objects of type \code{bboottest}
 }
 \examples{
-#' library(fwildclusterboot)
+#' requireNamespace("fwildclusterboot")
 data(voters)
 lm_fit <- lm(
   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,

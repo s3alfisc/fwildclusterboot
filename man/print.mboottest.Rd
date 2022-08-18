@@ -22,7 +22,7 @@ S3 method to print key information for objects of type \code{mboottest}
 }
 \examples{
 \dontrun{
-library(clubSandwich)
+requireNamespace("clubSandwich")
 R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 wboottest <-
   mboottest(

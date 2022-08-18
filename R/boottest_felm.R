@@ -210,8 +210,7 @@
 #'   2013.
 #' @examples
 #' \dontrun{
-#' if (requireNamespace("lfe")) {
-#'   library(lfe)
+#'   requireNamespace("lfe") 
 #'   data(voters)
 #'   felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income |
 #'     Q1_immigration,
@@ -258,7 +257,6 @@
 #'   confint(boot1)
 #'   generics::tidy(boot1)
 #' }
-#' }
 #'
 boottest.felm <- function(object,
                           # clustid,
@@ -292,9 +290,9 @@ boottest.felm <- function(object,
                           getauxweights = FALSE,
                           ...) {
   call <- match.call()
-
+  
   dreamerr::validate_dots(stop = TRUE)
-
+  
   # Step 1: check arguments of felm call
   check_arg(object, "MBT class(felm)")
   check_arg(clustid, "NULL | character scalar | character vector | formula")
@@ -303,7 +301,7 @@ boottest.felm <- function(object,
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
-
+  
   check_arg(conf_int, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
   check_arg(internal_seed, "scalar logical")
@@ -315,43 +313,43 @@ boottest.felm <- function(object,
   check_arg(maxiter, "scalar integer GT{5}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
   check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl)")
-
+  
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
-
+  
   if (!is.null(beta0)) {
     stop(
       "The function argument 'beta0' is deprecated. Please use the
       function argument 'r' instead, by which it is replaced."
     )
   }
-
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-
+  
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-
+  
   if (inherits(param, "formula")) {
     param <- attr(terms(param), "term.labels")
   }
-
+  
   if (inherits(fe, "formula")) {
     fe <- attr(terms(fe), "term.labels")
   }
-
+  
   internal_seed <- set_seed(
     seed = seed,
     boot_algo = boot_algo,
     type = type
   )
-
+  
   # check appropriateness and assign nthreads
   nthreads <- check_set_nthreads(nthreads)
-
+  
   if (is.null(clustid)) {
     heteroskedastic <- TRUE
     if (boot_algo == "R") {
@@ -361,12 +359,12 @@ boottest.felm <- function(object,
   } else {
     heteroskedastic <- FALSE
   }
-
+  
   R <- process_R(
     R = R,
     param = param
   )
-
+  
   if (boot_algo != "WildBootTests.jl") {
     r_algo_checks(
       R = R,
@@ -375,9 +373,9 @@ boottest.felm <- function(object,
       B = B
     )
   }
-
+  
   check_params_in_model(object = object, param = param)
-
+  
   check_boottest_args_plus(
     object = object,
     R = R,
@@ -386,7 +384,7 @@ boottest.felm <- function(object,
     B = B,
     fe = fe
   )
-
+  
   preprocess <- preprocess2.felm(
     object = object,
     clustid = clustid,
@@ -396,7 +394,7 @@ boottest.felm <- function(object,
     fe = fe,
     boot_algo = boot_algo
   )
-
+  
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -407,7 +405,7 @@ boottest.felm <- function(object,
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-
+  
   N <- preprocess$N
   k <- preprocess$k
   G <-
@@ -427,8 +425,8 @@ boottest.felm <- function(object,
   clustid_dims <- preprocess$clustid_dims
   point_estimate <-
     as.vector(object$coefficients[param, ] %*% preprocess$R0[param])
-
-
+  
+  
   if (boot_algo == "R") {
     res <- boot_algo2(
       preprocessed_object = preprocess,
@@ -455,7 +453,7 @@ boottest.felm <- function(object,
       fe = fe, 
       impose_null = impose_null
     )
-
+    
     res <- boot_algo1(
       preprocessed_object = preprocess,
       boot_iter = B,
@@ -476,16 +474,16 @@ boottest.felm <- function(object,
     conf_int <- p_grid_vals <- grid_vals <- FALSE
   } else if (boot_algo == "WildBootTests.jl") {
     fedfadj <- 0L
-
+    
     julia_ssc <- get_ssc_julia(ssc)
     small <- julia_ssc$small
     clusteradj <- julia_ssc$clusteradj
     clustermin <- julia_ssc$clustermin
-
+    
     if (ssc[["fixef.K"]] != "none") {
       message(paste("Currently, boottest() only supports fixef.K = 'none'."))
     }
-
+    
     res <- boot_algo_julia(
       preprocess = preprocess,
       impose_null = impose_null,
@@ -513,7 +511,7 @@ boottest.felm <- function(object,
       fedfadj = fedfadj
     )
   }
-
+  
   # collect results
   res_final <- list(
     point_estimate = point_estimate,
@@ -540,9 +538,9 @@ boottest.felm <- function(object,
     nthreads = nthreads,
     internal_seed = internal_seed
   )
-
-
+  
+  
   class(res_final) <- "boottest"
-
+  
   invisible(res_final)
 }

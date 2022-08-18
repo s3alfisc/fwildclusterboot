@@ -239,8 +239,7 @@ stops the procedure after 10 iterations.
 
 \examples{
 \dontrun{
-if (requireNamespace("lfe")) {
-  library(lfe)
+  requireNamespace("lfe") 
   data(voters)
   felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income |
     Q1_immigration,
@@ -286,7 +285,6 @@ if (requireNamespace("lfe")) {
   pval(boot1)
   confint(boot1)
   generics::tidy(boot1)
-}
 }
 
 }

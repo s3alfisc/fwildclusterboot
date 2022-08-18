@@ -72,7 +72,6 @@ test_that("global boot_algo", {
 #   skip_on_ci()
 #   skip_on_cran()
 #
-#   library(fwildclusterboot)
 #   data(voters)
 #   lm_fit <-
 #     lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,

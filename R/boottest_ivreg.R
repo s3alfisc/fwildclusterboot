@@ -154,8 +154,8 @@
 #'   Paper, 2013.
 #' @examples
 #' \dontrun{
-#' library(ivreg)
-#' library(fwildclusterboot)
+#' requireNamespace("ivreg")
+#' requireNamespace("fwildclusterboot")
 #'
 #' # drop all NA values from SchoolingReturns
 #' SchoolingReturns <- na.omit(SchoolingReturns)
@@ -215,7 +215,7 @@ boottest.ivreg <- function(object,
   # check inputs
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
-
+  
   check_arg(object, "MBT class(ivreg)")
   check_arg(clustid, "NULL | character scalar | character vector | formula")
   check_arg(param, "MBT scalar character | character vector | formula")
@@ -239,20 +239,20 @@ boottest.ivreg <- function(object,
   check_arg(arubin, "scalar logical")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
-
-
+  
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-
+  
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-
+  
   if (inherits(param, "formula")) {
     param <- attr(terms(param), "term.labels")
   }
-
+  
   # set random seed
   internal_seed <- set_seed(
     seed = seed,
@@ -265,9 +265,9 @@ boottest.ivreg <- function(object,
   } else {
     small_sample_adjustment <- FALSE
   }
-
+  
   if (ssc[["fixef.K"]] != "none" ||
-    ssc[["cluster.df"]] != "conventional") {
+      ssc[["cluster.df"]] != "conventional") {
     message(
       paste(
         "Currently, boottest() only supports fixef.K = 'none' and
@@ -275,20 +275,20 @@ boottest.ivreg <- function(object,
       )
     )
   }
-
-
+  
+  
   check_params_in_model(
     object = object,
     param = param
   )
-
-
+  
+  
   R <- process_R(
     R = R,
     param = param
   )
-
-
+  
+  
   check_boottest_args_plus(
     object = object,
     R = R,
@@ -296,8 +296,8 @@ boottest.ivreg <- function(object,
     sign_level = sign_level,
     B = B
   )
-
-
+  
+  
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess2.ivreg(
     object = object,
@@ -314,22 +314,22 @@ boottest.ivreg <- function(object,
       type = type,
       boot_algo = "WildBootTests.jl"
     )
-
+  
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-
+  
   point_estimate <-
     as.vector(object$coefficients[param] %*% preprocess$R0[param])
-
+  
   julia_ssc <- get_ssc_julia(ssc)
   small <- julia_ssc$small
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
-
+  
   if (ssc[["fixef.K"]] != "none") {
     message(paste("Currently, boottest() only supports fixef.K = 'none'."))
   }
-
+  
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -356,7 +356,7 @@ boottest.ivreg <- function(object,
     fe = NULL,
     fedfadj = NULL
   )
-
+  
   # collect results
   res_final <- list(
     point_estimate = point_estimate,
@@ -382,8 +382,8 @@ boottest.ivreg <- function(object,
     boot_algo = "WildBootTests.jl",
     internal_seed = internal_seed
   )
-
+  
   class(res_final) <- "boottest"
-
+  
   invisible(res_final)
 }

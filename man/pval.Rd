@@ -17,7 +17,7 @@ pval(object, ...)
 of type \code{boottest} and \code{mboottest}
 }
 \examples{
-library(fwildclusterboot)
+requireNamespace("fwildclusterboot")
 data(voters)
 lm_fit <- lm(
 proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,

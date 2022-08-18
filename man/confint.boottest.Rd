@@ -19,7 +19,7 @@ bootstrapped confidence interval
 S3 method to obtain wild cluster bootstrapped confidence intervals
 }
 \examples{
-library(fwildclusterboot)
+requireNamespace("fwildclusterboot")
 data(voters)
 lm_fit <- lm(
   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,

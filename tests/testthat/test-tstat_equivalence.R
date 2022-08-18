@@ -657,7 +657,6 @@ test_that("t-stat equivalence IV", {
     iv_test <- function(run_this_test) {
       # Note: Test with Float64 for exact match
       if (run_this_test) {
-        #library(data.table)
         set.seed(123)
         data("SchoolingReturns", package = "ivreg")
   

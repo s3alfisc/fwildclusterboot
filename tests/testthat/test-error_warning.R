@@ -1543,7 +1543,6 @@ test_that("error warning IV/WRE and q > 1", {
   
   
     # bannd args ivreg
-    # library(fixest)
     # test for banned function arguments and syntax for fixest with mboottest
   
     feols_fit <- fixest::feols(

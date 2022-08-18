@@ -22,7 +22,7 @@ of type mboottest
 }
 \examples{
 \dontrun{
-library(clubSandwich)
+requireNamespace("clubSandwich")
 R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 wboottest <-
   mboottest(

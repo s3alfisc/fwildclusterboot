@@ -229,7 +229,7 @@ stops the procedure after 10 iterations.
 
 \examples{
 \dontrun{
-library(fwildclusterboot)
+requireNamespace("fwildclusterboot")
 data(voters)
 lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +
   Q1_immigration,

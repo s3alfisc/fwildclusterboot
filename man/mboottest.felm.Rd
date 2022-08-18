@@ -166,8 +166,8 @@ Normal weights
 
 \examples{
 \dontrun{
-library(lfe)
-library(clubSandwich)
+requireNamespace("lfe")
+requireNamespace("clubSandwich")
 R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 wboottest <-
   mboottest(

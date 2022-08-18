@@ -18,7 +18,7 @@ A plot of bootstrap t-statistics under different null hypotheses
 Plot the bootstrap distribution of t-statistics
 }
 \examples{
-library(fwildclusterboot)
+requireNamespace("fwildclusterboot")
 data(voters)
 lm_fit <- lm(
 proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,

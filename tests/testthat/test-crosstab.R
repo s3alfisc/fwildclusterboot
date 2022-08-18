@@ -1,8 +1,6 @@
 test_that("crosstab works", {
   if (requireNamespace("data.table")) {
-    # library(fwildclusterboot)
-    # library(data.table)
-
+  
     a <- sample(1:10, 10, replace = TRUE)
     b <- sample(1:4, 10, replace = TRUE)
     y <- matrix(rnorm(10), 10, 1)

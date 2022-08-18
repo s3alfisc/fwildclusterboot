@@ -237,55 +237,53 @@ stops the procedure after 10 iterations.
 
 \examples{
 \dontrun{
-if (requireNamespace("fixest")) {
-  library(fwildclusterboot)
-  library(fixest)
-  data(voters)
-  feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income,
-    fixef = "Q1_immigration",
-    data = voters
-  )
-  boot1 <- boottest(feols_fit,
-    B = 9999,
-    param = "treatment",
-    clustid = "group_id1"
-  )
-  boot2 <- boottest(feols_fit,
-    B = 9999,
-    param = "treatment",
-    clustid = c("group_id1", "group_id2")
-  )
-  boot3 <- boottest(feols_fit,
-    B = 9999,
-    param = "treatment",
-    clustid = c("group_id1", "group_id2"),
-    fe = "Q1_immigration"
-  )
-  boot4 <- boottest(feols_fit,
-    B = 9999,
-    param = "treatment",
-    clustid = c("group_id1", "group_id2"),
-    fe = "Q1_immigration",
-    sign_level = 0.2,
-    seed = 8,
-    r = 2
-  )
-  # test treatment + ideology1 = 2
-  boot5 <- boottest(feols_fit,
-    B = 9999,
-    clustid = c("group_id1", "group_id2"),
-    param = c("treatment", "ideology1"),
-    R = c(1, 1),
-    r = 2
-  )
-  summary(boot1)
-  print(boot1)
-  plot(boot1)
-  nobs(boot1)
-  pval(boot1)
-  confint(boot1)
-  generics::tidy(boot1)
-}
+requireNamespace("fixest")
+requireNamespace("fwildclusterboot")
+data(voters)
+feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income,
+ fixef = "Q1_immigration",
+ data = voters
+)
+boot1 <- boottest(feols_fit,
+ B = 9999,
+ param = "treatment",
+ clustid = "group_id1"
+)
+boot2 <- boottest(feols_fit,
+ B = 9999,
+ param = "treatment",
+ clustid = c("group_id1", "group_id2")
+)
+boot3 <- boottest(feols_fit,
+  B = 9999,
+  param = "treatment",
+  clustid = c("group_id1", "group_id2"),
+  fe = "Q1_immigration"
+)
+boot4 <- boottest(feols_fit,
+  B = 9999,
+  param = "treatment",
+  clustid = c("group_id1", "group_id2"),
+  fe = "Q1_immigration",
+  sign_level = 0.2,
+  seed = 8,
+  r = 2
+)
+# test treatment + ideology1 = 2
+boot5 <- boottest(feols_fit,
+  B = 9999,
+  clustid = c("group_id1", "group_id2"),
+  param = c("treatment", "ideology1"),
+  R = c(1, 1),
+  r = 2
+)
+summary(boot1)
+print(boot1)
+plot(boot1)
+nobs(boot1)
+pval(boot1)
+confint(boot1)
+generics::tidy(boot1)
 }
 
 }

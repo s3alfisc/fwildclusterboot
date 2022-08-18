@@ -1,7 +1,6 @@
 test_that("new bootstrap variants", {
   
-  # run Library(testthat) and library(fwildclusterboot) prior
-  
+
   B <- 999
   type <- "mammen"
   N_G1 <- 21

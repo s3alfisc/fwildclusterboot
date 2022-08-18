@@ -21,7 +21,7 @@ S3 method to obtain the non-bootstrapped t-statistic calculated
 via \code{boottest()}
 }
 \examples{
-library(fwildclusterboot)
+requireNamespace("fwildclusterboot")
 data(voters)
 lm_fit <- lm(
   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,

@@ -143,7 +143,8 @@
 #' . No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
 #' \dontrun{
-#' library(clubSandwich)
+#' requireNamespace("clubSandwich")
+#' requireNamespace("fwildclusterboot")
 #' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
 #' wboottest <-
 #'   mboottest(

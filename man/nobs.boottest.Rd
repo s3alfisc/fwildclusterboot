@@ -19,7 +19,7 @@ used in \code{boottest()}
 S3 method to obtain the effective number of observation used in \code{boottest()}
 }
 \examples{
-library(fwildclusterboot)
+requireNamespace("fwildclusterboot")
 data(voters)
 lm_fit <- lm(
 proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,

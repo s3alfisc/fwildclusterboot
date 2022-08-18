@@ -196,55 +196,53 @@
 
 #' @examples
 #' \dontrun{
-#' if (requireNamespace("fixest")) {
-#'   library(fwildclusterboot)
-#'   library(fixest)
-#'   data(voters)
-#'   feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income,
-#'     fixef = "Q1_immigration",
-#'     data = voters
-#'   )
-#'   boot1 <- boottest(feols_fit,
-#'     B = 9999,
-#'     param = "treatment",
-#'     clustid = "group_id1"
-#'   )
-#'   boot2 <- boottest(feols_fit,
-#'     B = 9999,
-#'     param = "treatment",
-#'     clustid = c("group_id1", "group_id2")
-#'   )
-#'   boot3 <- boottest(feols_fit,
-#'     B = 9999,
-#'     param = "treatment",
-#'     clustid = c("group_id1", "group_id2"),
-#'     fe = "Q1_immigration"
-#'   )
-#'   boot4 <- boottest(feols_fit,
-#'     B = 9999,
-#'     param = "treatment",
-#'     clustid = c("group_id1", "group_id2"),
-#'     fe = "Q1_immigration",
-#'     sign_level = 0.2,
-#'     seed = 8,
-#'     r = 2
-#'   )
-#'   # test treatment + ideology1 = 2
-#'   boot5 <- boottest(feols_fit,
-#'     B = 9999,
-#'     clustid = c("group_id1", "group_id2"),
-#'     param = c("treatment", "ideology1"),
-#'     R = c(1, 1),
-#'     r = 2
-#'   )
-#'   summary(boot1)
-#'   print(boot1)
-#'   plot(boot1)
-#'   nobs(boot1)
-#'   pval(boot1)
-#'   confint(boot1)
-#'   generics::tidy(boot1)
-#' }
+#' requireNamespace("fixest")
+#' requireNamespace("fwildclusterboot")
+#' data(voters)
+#' feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income,
+#'  fixef = "Q1_immigration",
+#'  data = voters
+#' )
+#' boot1 <- boottest(feols_fit,
+#'  B = 9999,
+#'  param = "treatment",
+#'  clustid = "group_id1"
+#' )
+#' boot2 <- boottest(feols_fit,
+#'  B = 9999,
+#'  param = "treatment",
+#'  clustid = c("group_id1", "group_id2")
+#' )
+#' boot3 <- boottest(feols_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = c("group_id1", "group_id2"),
+#'   fe = "Q1_immigration"
+#' )
+#' boot4 <- boottest(feols_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = c("group_id1", "group_id2"),
+#'   fe = "Q1_immigration",
+#'   sign_level = 0.2,
+#'   seed = 8,
+#'   r = 2
+#' )
+#' # test treatment + ideology1 = 2
+#' boot5 <- boottest(feols_fit,
+#'   B = 9999,
+#'   clustid = c("group_id1", "group_id2"),
+#'   param = c("treatment", "ideology1"),
+#'   R = c(1, 1),
+#'   r = 2
+#' )
+#' summary(boot1)
+#' print(boot1)
+#' plot(boot1)
+#' nobs(boot1)
+#' pval(boot1)
+#' confint(boot1)
+#' generics::tidy(boot1)
 #' }
 #'
 boottest.fixest <- function(object,
@@ -278,9 +276,9 @@ boottest.fixest <- function(object,
                             getauxweights = FALSE,
                             ...) {
   call <- match.call()
-
+  
   dreamerr::validate_dots(stop = TRUE)
-
+  
   # Step 1: check arguments of feols call
   check_arg(object, "MBT class(fixest)")
   check_arg(clustid, "NULL | character scalar | character vector | formula")
@@ -289,7 +287,7 @@ boottest.fixest <- function(object,
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
-
+  
   check_arg(conf_int, "logical scalar")
   check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
@@ -300,40 +298,40 @@ boottest.fixest <- function(object,
   check_arg(maxiter, "scalar integer GT{5}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
   check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl)")
-
+  
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
-
+  
   if (!is.null(beta0)) {
     stop(
       "The function argument 'beta0' is deprecated. Please use the
       function argument 'r' instead, by which it is replaced."
     )
   }
-
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-
+  
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-
+  
   if (inherits(param, "formula")) {
     param <- attr(terms(param), "term.labels")
   }
-
+  
   if (inherits(fe, "formula")) {
     fe <- attr(terms(fe), "term.labels")
   }
-
+  
   internal_seed <- set_seed(
     seed = seed,
     boot_algo = boot_algo,
     type = type
   )
-
+  
   if (!is.null(object$fixef_removed)) {
     stop(
       paste(
@@ -346,12 +344,12 @@ boottest.fixest <- function(object,
       )
     )
   }
-
+  
   # --------------------------------------------
-
+  
   # check appropriateness of nthreads
   nthreads <- check_set_nthreads(nthreads)
-
+  
   if (is.null(clustid)) {
     heteroskedastic <- TRUE
     if (boot_algo == "R") {
@@ -361,14 +359,14 @@ boottest.fixest <- function(object,
   } else {
     heteroskedastic <- FALSE
   }
-
-
+  
+  
   R <- process_R(
     R = R,
     param = param
   )
-
-
+  
+  
   if (boot_algo != "WildBootTests.jl") {
     r_algo_checks(
       R = R,
@@ -377,9 +375,9 @@ boottest.fixest <- function(object,
       B = B
     )
   }
-
+  
   check_params_in_model(object = object, param = param)
-
+  
   check_boottest_args_plus(
     object = object,
     R = R,
@@ -388,7 +386,7 @@ boottest.fixest <- function(object,
     B = B,
     fe = fe
   )
-
+  
   # preprocess the data: Y, X, weights, fixed_effect
   preprocess <- preprocess2.fixest(
     object = object,
@@ -399,7 +397,7 @@ boottest.fixest <- function(object,
     fe = fe,
     boot_algo = boot_algo
   )
-
+  
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -410,7 +408,7 @@ boottest.fixest <- function(object,
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-
+  
   N <- preprocess$N
   k <- preprocess$k
   G <-
@@ -418,7 +416,7 @@ boottest.fixest <- function(object,
       length(unique(x))
     }, numeric(1))
   vcov_sign <- preprocess$vcov_sign
-
+  
   small_sample_correction <-
     get_ssc(
       boot_ssc_object = ssc,
@@ -428,16 +426,16 @@ boottest.fixest <- function(object,
       vcov_sign = vcov_sign,
       heteroskedastic = heteroskedastic
     )
-
+  
   # clustermin, clusteradj
-
-
+  
+  
   clustid_dims <- preprocess$clustid_dims
   # R*beta;
   point_estimate <-
     as.vector(object$coefficients[param] %*% preprocess$R0[param])
-
-
+  
+  
   if (boot_algo == "R") {
     res <- boot_algo2(
       preprocessed_object = preprocess,
@@ -464,7 +462,7 @@ boottest.fixest <- function(object,
       fe = fe, 
       impose_null = impose_null
     )
-
+    
     res <- boot_algo1(
       preprocessed_object = preprocess,
       boot_iter = B,
@@ -485,16 +483,16 @@ boottest.fixest <- function(object,
     conf_int <- p_grid_vals <- grid_vals <- FALSE
   } else if (boot_algo == "WildBootTests.jl") {
     fedfadj <- 0L
-
+    
     julia_ssc <- get_ssc_julia(ssc)
     small <- julia_ssc$small
     clusteradj <- julia_ssc$clusteradj
     clustermin <- julia_ssc$clustermin
-
+    
     if (ssc[["fixef.K"]] != "none") {
       message(paste("Currently, boottest() only supports fixef.K = 'none'."))
     }
-
+    
     res <- boot_algo_julia(
       preprocess = preprocess,
       impose_null = impose_null,
@@ -522,7 +520,7 @@ boottest.fixest <- function(object,
       fedfadj = fedfadj
     )
   }
-
+  
   # collect results
   res_final <- list(
     point_estimate = point_estimate,
@@ -549,8 +547,8 @@ boottest.fixest <- function(object,
     nthreads = nthreads,
     internal_seed = internal_seed
   )
-
-
+  
+  
   class(res_final) <- "boottest"
   invisible(res_final)
 }

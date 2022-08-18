@@ -191,7 +191,7 @@
 #' clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.
 #' @examples
 #' \dontrun{
-#' library(fwildclusterboot)
+#' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +
 #'   Q1_immigration,
