@@ -440,7 +440,9 @@ matrix_split <- function (x, fac, dim) {
 }
 
 sub_f <- function (x, fac, dim){
-  function(f) switch(dim, row = x[fac == f, , drop = FALSE], 
-                     col = x[, fac == f, drop = FALSE], both = x[fac == f, 
-                                                                 fac == f, drop = FALSE])
+  function(f) switch(dim, 
+                     row = x[fac == f, , drop = FALSE], 
+                     col = x[, fac == f, drop = FALSE],
+                     both = x[fac == f, 
+                     fac == f, drop = FALSE])
 }

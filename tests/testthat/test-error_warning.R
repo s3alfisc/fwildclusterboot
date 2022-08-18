@@ -1043,7 +1043,8 @@ test_that("errors and warnings q = 1", {
       
       feols_fit <- fixest::feols(y ~ x1 | clustid, base, fixef.rm = "both")
       # lfe::felm - no such behavior
-      # felm_fit =lfe::felm(y ~ x1 | clustid , base, keepX = TRUE, keepCX = TRUE)
+      # felm_fit =lfe::felm(y ~ x1 | clustid , 
+      # base, keepX = TRUE, keepCX = TRUE)
       # dim(felm_fit$X)
       # dim(felm_fit$cX)
       # summary(felm_fit)

@@ -19,7 +19,12 @@ is_juliaconnector_prepared <- function(){
     }
   )
   
-  is_juliaconnector_prepared <- ifelse(is_juliaconnector_prepared != FALSE, TRUE, FALSE)
+  is_juliaconnector_prepared <- 
+    ifelse(
+      is_juliaconnector_prepared != FALSE, 
+      TRUE, 
+      FALSE
+      )
   
   is_juliaconnector_prepared <- TRUE
   is_juliaconnector_prepared

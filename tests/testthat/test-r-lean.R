@@ -20,7 +20,8 @@ test_that("test lean cpp boottest", {
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income,
     data = data1
   )
-  feols_fit <-fixest::feols(proposition_vote ~ treatment + ideology1 + log_income,
+  feols_fit <-fixest::feols(
+    proposition_vote ~ treatment + ideology1 + log_income,
     data = data1
   )
   felm_fit <-lfe::felm(proposition_vote ~ treatment + ideology1 + log_income,

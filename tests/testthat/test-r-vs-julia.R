@@ -320,7 +320,11 @@ test_that("test r against Julia I: stochastic tests", {
                   )
                 )
               res <-
-                expect_equal(boot_r$p_val, boot_jl$p_val[1], tolerance = reltol)
+                expect_equal(
+                  boot_r$p_val,
+                  boot_jl$p_val[1], 
+                  tolerance = reltol
+                )
               # if(res == FALSE){print(res)}
               rm(res)
               res <-
