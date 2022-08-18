@@ -126,26 +126,14 @@
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># boottest on an object of type lm</span></span>
-<span><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 40 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span></code></pre></div>
+<span><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span></code></pre></div>
 <p>To tests for an interaction, it is important to use the coefficient names that are internally created by the modeling function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#names(coef(lm_fit_interact))</span></span>
-<span><span class="va">boot_lm_interact</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit_interact</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="st">"log_income:Q1_immigration1"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 40 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span></code></pre></div>
+<span><span class="va">boot_lm_interact</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit_interact</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="st">"log_income:Q1_immigration1"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="../reference/boottest.html">boottest()</a></code> further allows for multivariable tests. Suppose we’re interested in testing the null hypothesis <span class="math inline">\(0.6*treatment + 0.2*ideology1 = 0.02\)</span>. To test such a hypothesis, one would have to specify the hypothesis via the <code>param</code>, <code>R</code> and <code>r</code> arguments:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">boot_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment"</span>, <span class="st">"ideology1"</span><span class="op">)</span>, R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.2</span><span class="op">)</span>, r <span class="op">=</span> <span class="fl">0.02</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 40 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">boot_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, clustid <span class="op">=</span> <span class="st">"group_id1"</span>, param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment"</span>, <span class="st">"ideology1"</span><span class="op">)</span>, R <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">0.2</span><span class="op">)</span>, r <span class="op">=</span> <span class="fl">0.02</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span></code></pre></div>
 <p>To access the estimation results, <code><a href="../reference/boottest.html">boottest()</a></code> comes with <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code>, <code><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy()</a></code> and <code><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance()</a></code> methods. The <code><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy()</a></code> method returns the estimation results in a data.frame. <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> returns additional information on top of the test statistics reported by <code><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy()</a></code>. The<code><a href="https://generics.r-lib.org/reference/glance.html" class="external-link">glance()</a></code> method enables the use of output formatting tools from the <code>modelsummary</code> package.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># fwildclusterboot's internal summary() method</span></span>
@@ -314,10 +302,6 @@ Log.Lik.
 <p>The <code><a href="../reference/boottest.html">boottest()</a></code> function supports clustering of any dimension. E.g. for two-way clustering, one simply needs to specify the names of the cluster variables in a character vector.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">boot_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 253 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot_lm</span><span class="op">)</span></span>
 <span><span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1", </span></span>
 <span><span class="co">#&gt;     "group_id2"))</span></span>
@@ -362,19 +346,11 @@ Log.Lik.
 <span>                    param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
 <span>                    B <span class="op">=</span> <span class="fl">999</span>,</span>
 <span>                    type <span class="op">=</span> <span class="st">"rademacher"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 253 </span></span>
-<span><span class="co">#&gt; boot_iter: 999</span></span>
 <span><span class="va">boot_lm_webb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, </span>
 <span>                    clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, </span>
 <span>                    param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
 <span>                    B <span class="op">=</span> <span class="fl">999</span>,</span>
 <span>                    type <span class="op">=</span> <span class="st">"webb"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: webb </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 253 </span></span>
-<span><span class="co">#&gt; boot_iter: 999</span></span>
 <span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"modelsummary"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/modelsummary/" class="external-link">modelsummary</a></span><span class="op">)</span></span>
@@ -493,18 +469,10 @@ Log.Lik.
 <span>                    clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span><span class="op">)</span>,</span>
 <span>                    param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span>, </span>
 <span>                    sign_level <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 40 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span>
 <span><span class="va">boot_lm_10</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, </span>
 <span>                    clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span><span class="op">)</span>,</span>
 <span>                    param <span class="op">=</span> <span class="st">"treatment"</span>, B <span class="op">=</span> <span class="fl">9999</span>, </span>
 <span>                    sign_level <span class="op">=</span> <span class="fl">0.10</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 40 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span>
 <span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"modelsummary"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/modelsummary/" class="external-link">modelsummary</a></span><span class="op">)</span></span>
@@ -620,20 +588,12 @@ Log.Lik.
 <span>                    param <span class="op">=</span> <span class="st">"treatment"</span>,</span>
 <span>                    B <span class="op">=</span> <span class="fl">9999</span>, </span>
 <span>                    bootcluster <span class="op">=</span> <span class="st">"min"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 20 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span>
 <span></span>
 <span><span class="va">boot_lm2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, </span>
 <span>                    clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, </span>
 <span>                    param <span class="op">=</span> <span class="st">"treatment"</span>,</span>
 <span>                    B <span class="op">=</span> <span class="fl">9999</span>, </span>
 <span>                    bootcluster <span class="op">=</span> <span class="st">"group_id1"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 40 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span>
 <span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"modelsummary"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/modelsummary/" class="external-link">modelsummary</a></span><span class="op">)</span></span>
@@ -759,11 +719,7 @@ Log.Lik.
 <span>                         B <span class="op">=</span> <span class="fl">9999</span>, </span>
 <span>                         fe <span class="op">=</span> <span class="st">"Q1_immigration"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co">#&gt; Loading required namespace: fixest</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 40 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span></code></pre></div>
+<span><span class="co">#&gt; Loading required namespace: fixest</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="the-subcluster-bootstrap">The Subcluster Bootstrap<a class="anchor" aria-label="anchor" href="#the-subcluster-bootstrap"></a>
@@ -775,28 +731,16 @@ Log.Lik.
 <span>                    param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
 <span>                    B <span class="op">=</span> <span class="fl">9999</span>, </span>
 <span>                    bootcluster <span class="op">=</span> <span class="st">"min"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 20 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span>
 <span><span class="va">boot_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>,</span>
 <span>                    clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, </span>
 <span>                    param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
 <span>                    B <span class="op">=</span> <span class="fl">9999</span>, </span>
 <span>                    bootcluster <span class="op">=</span> <span class="st">"group_id1"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 40 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span>
 <span><span class="va">boot_2var</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>,</span>
 <span>                    clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>, </span>
 <span>                    param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
 <span>                    B <span class="op">=</span> <span class="fl">9999</span>, </span>
 <span>                    bootcluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"Q1_immigration"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 208 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span>
 <span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"modelsummary"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/modelsummary/" class="external-link">modelsummary</a></span><span class="op">)</span></span>
@@ -917,11 +861,7 @@ Log.Lik.
 <span><span class="va">boot_w_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_w_fit</span>, </span>
 <span>                       clustid <span class="op">=</span> <span class="st">"group_id1"</span>, </span>
 <span>                       param <span class="op">=</span> <span class="st">"treatment"</span>, </span>
-<span>                       B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 40 </span></span>
-<span><span class="co">#&gt; boot_iter: 9999</span></span></code></pre></div>
+<span>                       B <span class="op">=</span> <span class="fl">9999</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="parallel-execution">Parallel Execution<a class="anchor" aria-label="anchor" href="#parallel-execution"></a>
@@ -1121,18 +1061,6 @@ Log.Lik.
 <span>                                                               cluster.df <span class="op">=</span> <span class="st">'conventional'</span><span class="op">)</span>,  </span>
 <span>                                    impose_null <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">t_stat</span></span>
 <span><span class="op">}</span><span class="op">)</span>        </span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 20 </span></span>
-<span><span class="co">#&gt; boot_iter: 999 </span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 20 </span></span>
-<span><span class="co">#&gt; boot_iter: 999 </span></span>
-<span><span class="co">#&gt; type: rademacher </span></span>
-<span><span class="co">#&gt; full_enumeration: FALSE </span></span>
-<span><span class="co">#&gt; N_G_bootcluster: 20 </span></span>
-<span><span class="co">#&gt; boot_iter: 999</span></span>
 <span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">feols_tstats</span>, <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">boot_tstats</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"feols tstat"</span>, <span class="st">"boottest tstat"</span><span class="op">)</span></span>
