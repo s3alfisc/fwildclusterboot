@@ -1,7 +1,10 @@
 test_that("seed works for OLS", {
   
   skip_on_cran()
-
+  
+  requireNamespace("fixest")
+  requireNamespace("dqrng")
+  
   if(is_juliaconnector_prepared()){
     data1 <<-
       fwildclusterboot:::create_data(
@@ -83,7 +86,7 @@ test_that("seed works for OLS", {
       )
   
       expect_equal(boot_lm_s1$p_val, boot_lm_s2$p_val)
-  
+
   
       # Case 3: seed outside and within
   
@@ -124,6 +127,7 @@ test_that("seed works for OLS", {
   
       set.seed(9)
       dqrng::dqset.seed(9)
+      
       boot_lm_s1 <- suppressMessages(
         boottest(
           object = lm_fit,

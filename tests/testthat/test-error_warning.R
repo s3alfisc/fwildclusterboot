@@ -7,9 +7,8 @@ test_that("errors and warnings q = 1", {
     # ------------------------------------------------------------------ #
     # test for warnings and errors
     # ------------------------------------------------------------------ #
-    # library(fwildclusterboot)
-    # library(fixest)
-    # library(lfe)
+    requireNamespace(lfe)
+    requireNamespace(fixest)
     
     
     for (boot_algo in c("R", "WildBootTests.jl", "R-lean")) {
@@ -1460,6 +1459,9 @@ test_that("errors and warnings q = 1", {
 test_that("error warning IV/WRE and q > 1", {
   
   skip_on_cran()
+  requireNamespace("ivreg")
+  requireNamespace("fixest")
+  requireNamespace("clubSandwich")
 
   
   if(is_juliaconnector_prepared()){
@@ -1576,11 +1578,10 @@ test_that("error warning IV/WRE and q > 1", {
 })
 
 test_that("error message when character vars in felm and fixest", {
-  
-  # library(lfe)
-  # library(fixest)
-  # library(sandwich)
-  
+
+  requireNamespace("lfe")
+  requireNamespace("fixest")
+
   N <- 1000
   
   real_1000 <- runif(N, 1, 100)
@@ -1647,10 +1648,9 @@ test_that("error message when character vars in felm and fixest", {
 
 test_that("error message when character vars in felm and fixest", {
   
-  # library(lfe)
-  # library(fixest)
-  # library(sandwich)
-  
+  requireNamespace(lfe)
+  requireNamespace(fixest)
+
   N <- 1000
   
   real_1000 <- runif(N, 1, 100)
@@ -1719,9 +1719,8 @@ test_that("error message when character vars in felm and fixest", {
 
 test_that("error message when character vars in felm and fixest", {
   
-  # library(lfe)
-  # library(fixest)
-  # library(sandwich)
+  requireNamespace(lfe)
+  requireNamespace(fixest)
   
   N <- 1000
   

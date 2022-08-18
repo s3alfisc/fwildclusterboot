@@ -1,6 +1,7 @@
 test_that("test fixest formula sugar", {
   
-
+  requireNamespace("fixest")
+  
   voters <- fwildclusterboot:::create_data(
     N = 10000,
     N_G1 = 20,

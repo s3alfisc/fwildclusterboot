@@ -14,12 +14,7 @@ get_weights <- function(type,
   #' @return A matrix of dimension N_G_bootcluster x (boot_iter + 1)
   #' @noRd
   
-  
-  cat("type:", type, "\n")
-  cat("full_enumeration:", full_enumeration, "\n")
-  cat("N_G_bootcluster:", N_G_bootcluster, "\n")
-  cat("boot_iter:", boot_iter, "\n")
-  
+
   
   wild_draw_fun <- switch(type,
                           # note: for randemacher, create integer matrix
@@ -56,15 +51,17 @@ get_weights <- function(type,
   # do full enumeration for rademacher weights if bootstrap iterations
   # B exceed number of possible permutations else random sampling
   
-  if (type %in% c("rademacher") && full_enumeration == TRUE) {
-    v0 <-
-      gtools_permutations(
-        n = 2,
-        r = N_G_bootcluster,
-        v = c(1, -1),
-        repeats.allowed = TRUE
-      )
-    v <- cbind(1, t(v0))
+  # full_enumeration only for rademacher weights (set earlier)
+  if (full_enumeration) {
+      type <- 0
+      v0 <-
+        gtools_permutations(
+          n = 2,
+          r = N_G_bootcluster,
+          v = c(1, -1),
+          repeats.allowed = TRUE
+        )
+      v <- cbind(1, t(v0))
   } else {
     # else: just draw with replacement - by chance, some permutations
     # might occur more than once

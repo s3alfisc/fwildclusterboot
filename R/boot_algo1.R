@@ -115,19 +115,14 @@ boot_algo1 <-
           )
         v <- cbind(1, t(v0))
         boot_iter <- 2 ^ N_G_bootcluster
-      } else {
-        # else: just draw with replacement - by chance, some permutations
-        # might occur more than once
-        v <- wild_draw_fun(n = N_G_bootcluster * (boot_iter + 1))
-        dim(v) <- c(N_G_bootcluster, boot_iter + 1)
-        v[, 1] <- 1
-      }
+      } 
     } else if (type == "webb") {
       type <- 1
     } else {
       stop("For the 'lean' bootstrap algorithm, only webb and rademacher 
            weights are supported.")
     }
+    
     
     if (impose_null == FALSE) {
       stop(
