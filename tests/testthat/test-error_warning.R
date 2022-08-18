@@ -7,8 +7,8 @@ test_that("errors and warnings q = 1", {
     # ------------------------------------------------------------------ #
     # test for warnings and errors
     # ------------------------------------------------------------------ #
-    requireNamespace(lfe)
-    requireNamespace(fixest)
+    requireNamespace("lfe")
+    requireNamespace("fixest")
     
     
     for (boot_algo in c("R", "WildBootTests.jl", "R-lean")) {
@@ -1719,8 +1719,8 @@ test_that("error message when character vars in felm and fixest", {
 
 test_that("error message when character vars in felm and fixest", {
   
-  requireNamespace(lfe)
-  requireNamespace(fixest)
+  requireNamespace("lfe")
+  requireNamespace("fixest")
   
   N <- 1000
   

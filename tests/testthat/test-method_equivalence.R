@@ -2,7 +2,10 @@ test_that("Do different, but equivalent ways to specify
           linear models lead to equivalent results?", {
   skip_on_cran()
 
-
+  requireNamespace("fixest")
+  requireNamespace("lfe")
+            
+            
   if(is_juliaconnector_prepared()){
     print_results <- FALSE
     
@@ -1239,9 +1242,9 @@ test_that("Do different, but equivalent ways to specify
 
 
 test_that("clustid can be fe", {
-  ##library(fixest)
-  ##library(lfe)
-  # ##library(fwildclusterboot)
+  
+  requireNamespace("fixest")
+  requireNamespace("lfe")
   
   if(is_juliaconnector_prepared()){
     
