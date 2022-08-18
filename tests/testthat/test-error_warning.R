@@ -47,7 +47,7 @@ test_that("errors and warnings q = 1", {
           )
         )
       felm_fit <-
-        felm(
+       lfe::felm(
           proposition_vote ~ treatment + ideology1 + log_income 
           + Q1_immigration,
           data = fwildclusterboot:::create_data(
@@ -77,7 +77,7 @@ test_that("errors and warnings q = 1", {
           )
         )
       felm_fit_c <-
-        felm(
+       lfe::felm(
           proposition_vote ~ treatment + ideology1 + log_income |
             Q1_immigration,
           data = fwildclusterboot:::create_data(
@@ -346,7 +346,7 @@ test_that("errors and warnings q = 1", {
           )
         )
       felm_fit <-
-        felm(
+       lfe::felm(
           proposition_vote ~ treatment + ideology1 + log_income 
           + Q1_immigration,
           weights = fwildclusterboot:::create_data(
@@ -1043,7 +1043,7 @@ test_that("errors and warnings q = 1", {
       
       feols_fit <- fixest::feols(y ~ x1 | clustid, base, fixef.rm = "both")
       # lfe::felm - no such behavior
-      # felm_fit = felm(y ~ x1 | clustid , base, keepX = TRUE, keepCX = TRUE)
+      # felm_fit =lfe::felm(y ~ x1 | clustid , base, keepX = TRUE, keepCX = TRUE)
       # dim(felm_fit$X)
       # dim(felm_fit$cX)
       # summary(felm_fit)
@@ -1234,7 +1234,7 @@ test_that("errors and warnings q = 1", {
       # no support for R-lean with fe = on
       if (boot_algo == "R-lean") {
         feols_fit_c <-
-          feols(
+         fixest::feols(
             proposition_vote ~ treatment + ideology1 + log_income |
               Q1_immigration,
             data = fwildclusterboot:::create_data(
@@ -1260,7 +1260,7 @@ test_that("errors and warnings q = 1", {
         )
         
         felm_fit_c <-
-          felm(
+         lfe::felm(
             proposition_vote ~ treatment + ideology1 + log_income |
               Q1_immigration,
             data = fwildclusterboot:::create_data(
@@ -1304,14 +1304,14 @@ test_that("errors and warnings q = 1", {
             data = data1
           )
         feols_fit <-
-          feols(
+         fixest::feols(
             proposition_vote ~ treatment + ideology1 + log_income |
               Q1_immigration,
             weights = data1$weights,
             data = data1
           )
         felm_fit <-
-          felm(
+         lfe::felm(
             proposition_vote ~ treatment + ideology1 + log_income |
               Q1_immigration,
             weights = data1$weights,
@@ -1348,7 +1348,7 @@ test_that("errors and warnings q = 1", {
         
         
         feols_fit_c <-
-          feols(
+         fixest::feols(
             proposition_vote ~ treatment + ideology1 + log_income |
               Q1_immigration,
             data = fwildclusterboot:::create_data(
@@ -1363,7 +1363,7 @@ test_that("errors and warnings q = 1", {
             )
           )
         felm_fit_c <-
-          felm(
+         lfe::felm(
             proposition_vote ~ treatment + ideology1 + log_income |
               Q1_immigration,
             data = fwildclusterboot:::create_data(
@@ -1419,7 +1419,7 @@ test_that("errors and warnings q = 1", {
         )
         
         feols_fit_c <-
-          feols(
+         fixest::feols(
             proposition_vote ~ treatment + ideology1 + log_income |
               Q1_immigration^Q2_defense,
             data = fwildclusterboot:::create_data(
@@ -1469,7 +1469,7 @@ test_that("error warning IV/WRE and q > 1", {
     # drop all NA values from SchoolingReturns
     #SchoolingReturns <-
     #  SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
-    SchoolingReturns <- na.omit(SchoolingReturns)
+    SchoolingReturns <- na.omit(ivreg::SchoolingReturns)
     ivreg_fit <- ivreg::ivreg(
       log(wage) ~ education + age +
         ethnicity + smsa + south + parents14 |
@@ -1648,8 +1648,8 @@ test_that("error message when character vars in felm and fixest", {
 
 test_that("error message when character vars in felm and fixest", {
   
-  requireNamespace(lfe)
-  requireNamespace(fixest)
+  requireNamespace("lfe")
+  requireNamespace("fixest")
 
   N <- 1000
   

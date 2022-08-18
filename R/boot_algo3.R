@@ -59,7 +59,6 @@ boot_algo3 <- function(preprocessed_object,
     crv_type <- "crv3"
   }
   
-
   X <- preprocessed_object$X
   y <- preprocessed_object$Y
   R <- preprocessed_object$R0
@@ -69,7 +68,7 @@ boot_algo3 <- function(preprocessed_object,
   bootcluster <- preprocessed_object$bootcluster
   G <- N_G_bootcluster <- length(unique(bootcluster[[1]]))
   k <- length(R)
-
+  
   bootstrap_type <- paste0(substr(bootstrap_type, 1, 4), "x")
   
   v <- get_weights(
@@ -139,11 +138,11 @@ boot_algo3 <- function(preprocessed_object,
     beta_hat <- tXXinv %*% tXy 
     beta_tilde <- beta_hat - 
       tXXinv %*% R %*% solve(t(R) %*% tXXinv %*% R) %*% (R %*% beta_hat - 0)
-  
+    
   } else if (bootstrap_type == "WCU1x"){
     
     beta_hat <- tXXinv %*% tXy 
-
+    
   } else if (bootstrap_type == "WCR3x"){
     
     inv_tXX_tXgXg <- lapply(
@@ -181,7 +180,7 @@ boot_algo3 <- function(preprocessed_object,
     }
   }
   
-
+  
   
   # compute scores 
   scores_list <- get_scores(
@@ -202,27 +201,26 @@ boot_algo3 <- function(preprocessed_object,
   t_boot <- vector(mode = "numeric", B + 1)
   se <- vector(mode = "numeric", B + 1)
   
-
   # numer <- (( R %*% tXXinv) %*%  (Reduce("cbind", scores_list) %*% v))
-
+  
   dim(R) <- c(1, k) # turn R into matrix
   
-for(b in 1:(B + 1)){
+  for(b in 1:(B + 1)){
     
     # Step 1: get bootstrapped scores
     
     scores_g_boot <- matrix(NA,G,k)
     
-      v_ <- v[,b]
+    v_ <- v[,b]
     
-      for(g in 1:G){
-        scores_g_boot[g,] <- scores_list[[g]] * v_[g] #* v[g, b]
-      }
-      
-      # numerator (both for WCR, WCU)
-      scores_boot <- colSums(scores_g_boot)
-      delta_b_star <- tXXinv %*% scores_boot 
-
+    for(g in 1:G){
+      scores_g_boot[g,] <- scores_list[[g]] * v_[g] #* v[g, b]
+    }
+    
+    # numerator (both for WCR, WCU)
+    scores_boot <- colSums(scores_g_boot)
+    delta_b_star <- tXXinv %*% scores_boot 
+    
     # Step 2: get bootstrapped vcov's
     
     if(crv_type == "crv1"){
@@ -238,20 +236,10 @@ for(b in 1:(B + 1)){
       
       score_hat_boot <- Reduce("+", score_hat_g_boot)
       
-      # all.equal(tXXinv %*% score_hat_boot %*% tXXinv,
-      #           sandwich::vcovCL(
-      #             object,
-      #             cluster = reformulate(clustid),
-      #             cadjust = FALSE,
-      #             type = "HC0"
-      #             )
-      #           )
-
-      # all.equal(tXXinv, solve(crossprod(X)))
       se[b] <-  
         sqrt(
           small_sample_correction * 
-          (R %*% tXXinv) %*% score_hat_boot %*% (tXXinv %*% t(R))
+            (R %*% tXXinv) %*% score_hat_boot %*% (tXXinv %*% t(R))
         )
       
       t_boot[b] <- (c(delta_b_star)[which(R == 1)] / se[b])
@@ -270,12 +258,12 @@ for(b in 1:(B + 1)){
       }
       
       se[b] <-  
-         
+        
         sqrt( 
           ((G-1) / G) *
-          colSums(
-            delta_diff
-          )
+            colSums(
+              delta_diff
+            )
         )
       
       t_boot[b] <- c(delta_b_star)[which(R == 1)] / se[which(R == 1)]
@@ -289,30 +277,6 @@ for(b in 1:(B + 1)){
   # of simply depending on sandwich and summclust
   
   t_stat <- coef(object)[which(R == 1)] / se[1]
-  # print(t_stat)
-  # print(t_boot[1])
-  # if(crv_type == "crv1"){
-  #   
-  #   vcov <- 
-  # 
-  #     sandwich::vcovCL(
-  #       object, 
-  #       cluster = reformulate(clustid), 
-  #       cadjust = FALSE, 
-  #       type = "HC0"
-  #     )
-  #   t_stat <- coef(object)[which(R == 1)] / sqrt(diag(vcov)[which(R == 1)]) / 
-  #     sqrt(small_sample_correction)
-  #   
-  # } else if (crv_type == "crv3"){
-  #   t_stat <- summclust::summclust(
-  #     object, type = "CRV3", cluster = reformulate(clustid)
-  #   )
-  #   t_stat <- summclust:::coeftable(
-  #     t_stat, param = param
-  #   )[,"tstat"] * sqrt(G / (G-1)) / sqrt(small_sample_correction)
-  #   # because summclust uses small sample correction
-  # }
   
   t_boot <- t_boot[-1]
   
@@ -332,7 +296,6 @@ for(b in 1:(B + 1)){
     R0 = R,
     param = param,
     clustid = clustid,
-    # v = v,
     invalid_t = NULL,
     ABCD = NULL,
     small_sample_correction = small_sample_correction
@@ -343,4 +306,3 @@ for(b in 1:(B + 1)){
   invisible(res)
   
 }
-

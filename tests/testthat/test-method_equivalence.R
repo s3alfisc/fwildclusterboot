@@ -1294,14 +1294,14 @@ test_that("clustid can be fe", {
     )
   
   expect_equal(fit1$t_stat,
-               tstat(feols_fit1, ssc = ssc(
+               fixest::tstat(feols_fit1, ssc = ssc(
                  adj = FALSE, cluster.adj = FALSE
                ))["treatment"],
                ignore_attr = TRUE
   )
   
   expect_equal(fit2$t_stat,
-               tstat(feols_fit1, ssc = ssc(
+               fixest::tstat(feols_fit1, ssc = ssc(
                  adj = FALSE, cluster.adj = FALSE
                ))["treatment"],
                ignore_attr = TRUE
