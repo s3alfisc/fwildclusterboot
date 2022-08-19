@@ -174,7 +174,7 @@
 #' The Review of Economics and Statistics 90.3 (2008): 414-427.
 #' @references Cameron, A.Colin & Douglas L. Miller. "A practitioner's
 #' guide to cluster-robust inference" Journal of Human Resources (2015)
-#' \doi{doi: 10.3368/jhr.50.2.317}
+#' \doi{doi:10.3368/jhr.50.2.317}
 #' @references Davidson & MacKinnon. "Wild Bootstrap Tests for IV
 #' regression" Journal of Economics and Business Statistics (2010)
 #' \doi{https://doi.org/10.1198/jbes.2009.07221}
@@ -279,10 +279,7 @@ boottest.lm <- function(object,
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer GT{5}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
-  check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl)")
-  check_arg(
-    boot_algo, 
-    "charin(WCR13, WCR33, WCU13, WCU33, WCR11, WCR31, WCU11, WCU31)")
+  check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl, WCR13, WCR33, WCU13, WCU33, WCR11, WCR31, WCU11, WCU31)")
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
