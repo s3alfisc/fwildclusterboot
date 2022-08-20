@@ -26,7 +26,7 @@ is_juliaconnector_prepared <- function(){
       FALSE
       )
   
-  is_juliaconnector_prepared <- TRUE
+  is_juliaconnector_prepared <- FALSE
   is_juliaconnector_prepared
   
 }
