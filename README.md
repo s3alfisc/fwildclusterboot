@@ -27,6 +27,10 @@ the fast wild cluster bootstrap algorithm developed in [Roodman et al
 (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for
 regression objects in R.
 
+Additionally, it provides support for multiple wild cluster bootstrap
+variants as described in [MacKinnon, Nielsen & Webb
+(2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf).
+
 It also ports functionality of
 [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) to R
 via the
@@ -159,5 +163,5 @@ citation("fwildclusterboot")
 ```
 
 Alternatively, if you prefer to cite the “Fast & Wild” paper by Roodman
-et al, I would be super happy if you mentioned `{fwildclusterboot}` in a
-footnote!
+et al, it would be great if you mentioned `{fwildclusterboot}` in a
+footnote =) !

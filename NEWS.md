@@ -1,3 +1,21 @@
+# fwildclusterboot 0.11
+
++ This release introduces new wild cluster bootstrap variants as described in [MacKinnon, Nielsen & Webb (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf). The implementation is still quite bare-bone: it only allows to test hypotheses of the form $\beta_k = 0$ vs $\beta_k \neq 0$, does not allow for regression weights or fixed effects, and further does not compute confidence intervals. 
+
+You can run one of the 'new' variants - e.g. the "WCR13", by specifying the `boot_algo` function argument accordingly: 
+
+```
+boottest(
+  lm_fit, 
+  param = ~treatment, 
+  clustid = ~group_id1,
+  B = 9999, 
+  impose_null = TRUE,
+  boot_algo = "WCR13"
+)
+```
+
+
 # fwildclusterboot 0.10
 
 + introduces a range of new methods: `nobs()`, `pval()`, `teststat()`, `confint()` and `print()`
