@@ -258,15 +258,14 @@ boot_algo3 <- function(preprocessed_object,
       }
       
       se[b] <-  
-        
         sqrt( 
           ((G-1) / G) *
             colSums(
               delta_diff
             )
-        )
+        )[which(R == 1)]
       
-      t_boot[b] <- c(delta_b_star)[which(R == 1)] / se[which(R == 1)]
+      t_boot[b] <- c(delta_b_star)[which(R == 1)] / se[b]
     }
     
   }  
