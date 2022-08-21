@@ -97,7 +97,7 @@ boot_algo3 <- function(preprocessed_object,
   tXX <- Reduce("+", tXgXg) # crossprod(X)  
   tXy <- Reduce("+", tXgyg) # t(X) %*% y
   tXXinv <- solve(tXX)
-  
+  RtXXinv <- R %*% tXXinv
   
   tXgX1g <- NULL 
   beta_hat <- NULL
@@ -239,7 +239,7 @@ boot_algo3 <- function(preprocessed_object,
       se[b] <-  
         sqrt(
           small_sample_correction * 
-            (R %*% tXXinv) %*% score_hat_boot %*% (tXXinv %*% t(R))
+            RtXXinv %*% score_hat_boot %*% t(RtXXinv)
         )
       
       t_boot[b] <- (c(delta_b_star)[which(R == 1)] / se[b])
@@ -275,7 +275,27 @@ boot_algo3 <- function(preprocessed_object,
   # this can also be handled by using t_boot[1] approriately instead
   # of simply depending on sandwich and summclust
   
-  t_stat <- coef(object)[which(R == 1)] / se[1]
+  if(crv_type == "crv1"){
+    vcov <- sandwich::vcovCL(
+      object, 
+      reformulate(clustid), 
+      type = "HC0", 
+      cadjust = FALSE
+    )
+  } else if(crv_type == "crv3"){
+    vcov <- 
+      summclust::vcov_CR3J(
+        obj = object, 
+        cluster = clustid
+      )
+  }
+  
+  se0 <- sqrt(small_sample_correction * R %*% vcov %*% t(R))
+  se0 <- as.vector(se0)
+  
+  t_stat <- as.vector(
+    coef(object)[which(R == 1)] / sqrt(se0)
+  )
   
   t_boot <- t_boot[-1]
   

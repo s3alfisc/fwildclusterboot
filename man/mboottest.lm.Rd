@@ -190,7 +190,7 @@ The Review of Economics and Statistics 90.3 (2008): 414-427.
 
 Cameron, A.Colin & Douglas L. Miller.
 "A practitioner's guide to cluster-robust inference"
-Journal of Human Resources (2015) \doi{doi: 10.3368/jhr.50.2.317}
+Journal of Human Resources (2015) \doi{doi:10.3368/jhr.50.2.317}
 
 Davidson & MacKinnon. "Wild Bootstrap Tests for IV regression"
 Journal of Economics and Business Statistics (2010)

@@ -61,13 +61,14 @@ Imports:
     dqrng, 
     JuliaConnectoR, 
     MASS, 
-    Rcpp
+    Rcpp, 
+    summclust, 
+    sandwich
 Suggests: 
     fixest,
     lfe,
     ivreg,
     clubSandwich,
-    sandwich,
     lmtest,
     data.table,
     fabricatr,

@@ -18,12 +18,12 @@ status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-p
 coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/fwildclusterboot?color=blue)](https://cran.r-project.org/package=fwildclusterboot)
 [![](http://cranlogs.r-pkg.org/badges/last-month/fwildclusterboot?color=green)](https://cran.r-project.org/package=fwildclusterboot)
-<!-- [![minimal R version](https://img.shields.io/badge/R%3E%3D-4.0.0-6666ff.svg)](https://cran.r-project.org/) -->
+[![pkgcheck](https://github.com/%3Corg%3E/%3Crepo%3E/workflows/pkgcheck/badge.svg)](https://github.com/%3Corg%3E/%3Crepo%3E/actions?query=workflow%3Apkgcheck)
 
 <!-- badges: end -->
 
-The `fwildclusterboot` package provides a native R implementation of the
-fast wild cluster bootstrap algorithm developed in [Roodman et al
+The `{fwildclusterboot}` package provides a native R implementation of
+the fast wild cluster bootstrap algorithm developed in [Roodman et al
 (2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for
 regression objects in R.
 
@@ -41,7 +41,7 @@ iterations in less than a second!
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
-`fwildclusterboot` supports the following features:
+`{fwildclusterboot}` supports the following features:
 
 -   The wild bootstrap for OLS (Wu 1986).
 -   The wild cluster bootstrap for OLS (Cameron, Gelbach & Miller 2008,
@@ -55,18 +55,18 @@ iterations in less than a second!
 Additional features are provided through `WildBootTests.jl`:
 
 -   The Wild Restricted Efficient bootstrap (WRE) for IV/2SLS/LIML
-    [(Davidson &
-    MacKinnon, 2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221).
+    [(Davidson & MacKinnon,
+    2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221).
 -   Arbitrary and multiple linear hypotheses in the parameters.
 
-`fwildclusterboot` supports the following models:
+`{fwildclusterboot}` supports the following models:
 
 -   OLS: `lm` (from stats), `fixest` (from fixest), `felm` from (lfe)
 -   IV: `ivreg` (from ivreg).
 
 ### The `boottest()` function
 
-For a longer introduction to `fwildclusterboot`, take a look at the
+For a longer introduction to `{fwildclusterboot}`, take a look at the
 [vignette](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
 ``` r
@@ -100,9 +100,9 @@ summary(lm_boot)
 
 ### Installation
 
-You can install compiled versions of`fwildclusterboot` from CRAN and the
-development version from R-universe (compiled) or github by following
-one of the steps below:
+You can install compiled versions of`{fwildclusterboot}` from CRAN and
+the development version from R-universe (compiled) or github by
+following one of the steps below:
 
 ``` r
 # from CRAN 
@@ -115,7 +115,7 @@ library(devtools)
 install_github("s3alfisc/fwildclusterboot")
 ```
 
-To run `WildBootTests.jl` through `fwildclusterboot`, `Julia` and
+To run `WildBootTests.jl` through `{fwildclusterboot}`, `Julia` and
 `WildBootTests.jl` need to be installed.
 
 You can install Julia by following the steps described on the official
@@ -133,3 +133,31 @@ connect_julia_r() # instructions to connect Julia and R
 install_julia_packages("WildBootTests.jl") # install WildBootTests.jl
 set_julia_nthreads() # instructions to set nthreads for Julia
 ```
+
+## Citation
+
+If you are in `R`, you can simply run the following command to get the
+BibTeX citation for `{fwildclusterboot}`:
+
+``` r
+citation("fwildclusterboot")
+#> 
+#> To cite 'fwildclusterboot' in publications use:
+#> 
+#>   Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster
+#>   Bootstrap Inference for Linear Regression Models. Available from
+#>   https://cran.r-project.org/package=fwildclusterboot.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Misc{,
+#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.10)},
+#>     author = {Alexander Fischer and David Roodman},
+#>     year = {2021},
+#>     url = {https://cran.r-project.org/package=fwildclusterboot},
+#>   }
+```
+
+Alternatively, if you prefer to cite the “Fast & Wild” paper by Roodman
+et al, I would be super happy if you mentioned `{fwildclusterboot}` in a
+footnote!
