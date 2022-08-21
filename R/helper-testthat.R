@@ -1,6 +1,6 @@
 is_juliaconnector_prepared <- function(){
   
-  is_juliaconnector_prepared <- tryCatch(
+  find_julia_bindir <- tryCatch(
     expr = {
       # has JULIA_BINDIR env variable been set?
       Sys.getenv()[["JULIA_BINDIR"]]
@@ -21,12 +21,11 @@ is_juliaconnector_prepared <- function(){
   
   is_juliaconnector_prepared <- 
     ifelse(
-      is_juliaconnector_prepared != FALSE, 
+      find_julia_bindir != FALSE, 
       TRUE, 
       FALSE
       )
   
-  is_juliaconnector_prepared <- FALSE
   is_juliaconnector_prepared
   
 }
