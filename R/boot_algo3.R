@@ -42,6 +42,8 @@ boot_algo3 <- function(preprocessed_object,
   #' or inherited from R's global seed (set via set.seed)
   #' @param object the regression object
   #' @importFrom MASS ginv
+  #' @importFrom sandwich vcovCL
+  #' @importFrom summclust vcov_CR3J
   #' @return A list of ...
   #' @noRd
   
@@ -294,7 +296,7 @@ boot_algo3 <- function(preprocessed_object,
   se0 <- as.vector(se0)
   
   t_stat <- as.vector(
-    coef(object)[which(R == 1)] / sqrt(se0)
+    coef(object)[which(R == 1)] / se0
   )
   
   t_boot <- t_boot[-1]
