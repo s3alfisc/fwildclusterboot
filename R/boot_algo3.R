@@ -274,9 +274,7 @@ boot_algo3 <- function(preprocessed_object,
   
   
   # get original t-stat. 
-  # this can also be handled by using t_boot[1] approriately instead
-  # of simply depending on sandwich and summclust
-  
+
   if(crv_type == "crv1"){
     vcov <- sandwich::vcovCL(
       object, 
@@ -310,7 +308,6 @@ boot_algo3 <- function(preprocessed_object,
   
   res <- list(
     p_val = p_val,
-    # t_stat = t_stat,
     t_stat = t_stat,
     t_boot = t_boot,
     B = B,
