@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   WildBootTests: WildBootTests.html
   fwildclusterboot: fwildclusterboot.html
-last_built: 2022-08-20T09:03Z
+last_built: 2022-08-21T13:31Z
 urls:
   reference: https://s3alfisc.github.io/fwildclusterboot/reference
   article: https://s3alfisc.github.io/fwildclusterboot/articles
