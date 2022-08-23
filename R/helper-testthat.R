@@ -26,6 +26,9 @@ is_juliaconnector_prepared <- function(){
       FALSE
       )
   
+  # hard code to always run Julia tests
+  is_juliaconnector_prepared <- TRUE
+  
   is_juliaconnector_prepared
   
 }
