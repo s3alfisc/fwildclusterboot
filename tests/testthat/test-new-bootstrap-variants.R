@@ -211,6 +211,8 @@ test_that("new bootstrap variants II - t_stat equivalence", {
 
 test_that("variants 31 R vs Julia", {
   
+  skip_on_cran()
+  skip_on_ci()
   
   # fully enumerated - deterministic - tests
   N_G1 <- 10
@@ -226,8 +228,7 @@ test_that("variants 31 R vs Julia", {
                                           seed = 41224,
                                           #seed = 123,
                                           weights = 1:N / N)
-  
-  
+
   
   
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +
@@ -278,6 +279,7 @@ test_that("variants 31 R vs Julia", {
                         impose_null = FALSE, 
                         boot_algo = "WildBootTests.jl-31"
   )
+  pval(boot31_jl)
   
   boot31_r <- boottest(lm_fit,
                        B = 9999,

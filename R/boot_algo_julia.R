@@ -81,7 +81,7 @@ boot_algo_julia <- function(preprocess,
                             arubin = NULL,
                             fuller = NULL,
                             kappa = NULL, 
-                            boot_algo = NULL) {
+                            boot_algo = "WildBootTests.jl") {
   
   resp <- as.numeric(preprocess$Y)
 
