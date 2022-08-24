@@ -214,98 +214,100 @@ test_that("variants 31 R vs Julia", {
   skip_on_cran()
   skip_on_ci()
   
-  # fully enumerated - deterministic - tests
-  N_G1 <- 10
-  B <- 9999 
+  if(is_juliaconnector_prepared()){
+    
+    # fully enumerated - deterministic - tests
+    N_G1 <- 10
+    B <- 9999 
+    
+    data2 <- fwildclusterboot:::create_data(N = 1000,
+                                            N_G1 = N_G1,
+                                            icc1 = 0.8,
+                                            N_G2 = N_G1,
+                                            icc2 = 0.8,
+                                            numb_fe1 = 10,
+                                            numb_fe2 = 5,
+                                            seed = 41224,
+                                            #seed = 123,
+                                            weights = 1:N / N)
   
-  data2 <- fwildclusterboot:::create_data(N = 1000,
-                                          N_G1 = N_G1,
-                                          icc1 = 0.8,
-                                          N_G2 = N_G1,
-                                          icc2 = 0.8,
-                                          numb_fe1 = 10,
-                                          numb_fe2 = 5,
-                                          seed = 41224,
-                                          #seed = 123,
-                                          weights = 1:N / N)
-
-  
-  
-  lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +
-                 Q1_immigration,
-               data = data2
-  )
-  
-  
-  
-  # 1) test WCR31 
-  
-  boot31_jl <- boottest(lm_fit,
-                     B = 9999,
-                     param = "treatment",
-                     clustid = "group_id1", 
-                     boot_algo = "WildBootTests.jl-31"
-  )
-  
-  boot31_r <- boottest(lm_fit,
-                        B = 9999,
-                        param = "treatment",
-                        clustid = "group_id1", 
-                        boot_algo = "WCR31"
-  )
-  
-  
-  testthat::expect_equal(
-    pval(boot31_jl), 
-    pval(boot31_r)
-  )
-  
-  testthat::expect_equal(
-    sort(boot31_jl$t_boot), 
-    sort(boot31_r$t_boot) 
-  )
-  
-  testthat::expect_equal(
-    teststat(boot31_jl), 
-    teststat(boot31_r)
-  )
-  
-  #2) WCU31
-  
-  boot31_jl <- boottest(lm_fit,
-                        B = 9999,
-                        param = "treatment",
-                        clustid = "group_id1",
-                        impose_null = FALSE, 
-                        boot_algo = "WildBootTests.jl-31"
-  )
-  pval(boot31_jl)
-  
-  boot31_r <- boottest(lm_fit,
+    
+    
+    lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +
+                   Q1_immigration,
+                 data = data2
+    )
+    
+    
+    
+    # 1) test WCR31 
+    
+    boot31_jl <- boottest(lm_fit,
                        B = 9999,
                        param = "treatment",
                        clustid = "group_id1", 
-                       impose_null = FALSE, 
-                       boot_algo = "WCU31"
-  )
+                       boot_algo = "WildBootTests.jl-31"
+    )
+    
+    boot31_r <- boottest(lm_fit,
+                          B = 9999,
+                          param = "treatment",
+                          clustid = "group_id1", 
+                          boot_algo = "WCR31"
+    )
+    
+    
+    testthat::expect_equal(
+      pval(boot31_jl), 
+      pval(boot31_r)
+    )
+    
+    testthat::expect_equal(
+      sort(boot31_jl$t_boot), 
+      sort(boot31_r$t_boot) 
+    )
+    
+    testthat::expect_equal(
+      teststat(boot31_jl), 
+      teststat(boot31_r)
+    )
+    
+    #2) WCU31
+    
+    boot31_jl <- boottest(lm_fit,
+                          B = 9999,
+                          param = "treatment",
+                          clustid = "group_id1",
+                          impose_null = FALSE, 
+                          boot_algo = "WildBootTests.jl-31"
+    )
+    pval(boot31_jl)
+    
+    boot31_r <- boottest(lm_fit,
+                         B = 9999,
+                         param = "treatment",
+                         clustid = "group_id1", 
+                         impose_null = FALSE, 
+                         boot_algo = "WCU31"
+    )
+    
+    
+    testthat::expect_equal(
+      pval(boot31_jl), 
+      pval(boot31_r)
+    )
+    
+    testthat::expect_equal(
+      sort(boot31_jl$t_boot), 
+      sort(boot31_r$t_boot) 
+    )
+    
+    testthat::expect_equal(
+      teststat(boot31_jl), 
+      teststat(boot31_r)
+    )
   
-  
-  testthat::expect_equal(
-    pval(boot31_jl), 
-    pval(boot31_r)
-  )
-  
-  testthat::expect_equal(
-    sort(boot31_jl$t_boot), 
-    sort(boot31_r$t_boot) 
-  )
-  
-  testthat::expect_equal(
-    teststat(boot31_jl), 
-    teststat(boot31_r)
-  )
-  
-  
+  }
   
 })
 

@@ -5,8 +5,7 @@ test_that("test r against Julia I: stochastic tests", {
   skip_on_ci()
 
 
-  #if(is_juliaconnector_prepared()){
-  if(FALSE){
+  if(is_juliaconnector_prepared()){
     reltol <- 0.05
     
     N <- 10000

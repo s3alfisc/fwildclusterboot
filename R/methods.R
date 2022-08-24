@@ -176,6 +176,10 @@ mboottest <- function(object,
 #'   clustid = "group_id1"
 #' )
 #' pval(boot)
+#' @return 
+#' A scalar with the bootstrapped p-value. 
+
+
 
 
 pval <- function(object,
@@ -203,6 +207,8 @@ pval <- function(object,
 #'   clustid = "group_id1"
 #' )
 #' teststat(boot)
+#' @return A scalar with containing the non-bootstrapped
+#' test statistic of interest
 
 teststat <- function(object,
                      ...) {
@@ -258,6 +264,7 @@ confint.boottest <- function(object, ...) {
 #' )
 #' confint(boot)
 #'
+
 pval.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
 
