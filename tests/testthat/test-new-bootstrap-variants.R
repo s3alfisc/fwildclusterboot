@@ -105,8 +105,6 @@ test_that("new bootstrap variants I", {
 
 test_that("new bootstrap variants II - t_stat equivalence", {
   
-  library(fwildclusterboot)
-  
   N <- 1000
   N_G1 <- 17
   data <- fwildclusterboot:::create_data(

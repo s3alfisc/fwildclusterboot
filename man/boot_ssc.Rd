@@ -30,6 +30,9 @@ the form V = V_1 + V_2 - V_12. If "conventional", then each summand G_i
 is multiplied with a small sample adjustment G_i / (G_i - 1). If "min",
 all summands are multiplied with the same value, min(G) / (min(G) - 1)}
 }
+\value{
+A list with encoded info on how to form small sample corrections
+}
 \description{
 set the small sample correction factor applied in \code{boottest()}
 }

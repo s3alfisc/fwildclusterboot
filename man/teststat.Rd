@@ -12,6 +12,10 @@ teststat(object, ...)
 
 \item{...}{other arguments}
 }
+\value{
+A scalar with containing the non-bootstrapped
+test statistic of interest
+}
 \description{
 \code{teststat} is a S3 method to collect teststats for objects
 of type \code{boottest} and \code{mboottest}

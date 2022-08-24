@@ -12,6 +12,9 @@ pval(object, ...)
 
 \item{...}{other arguments}
 }
+\value{
+A scalar with the bootstrapped p-value.
+}
 \description{
 \code{pval} is a S3 method to collect pvalues for objects
 of type \code{boottest} and \code{mboottest}
