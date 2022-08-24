@@ -46,6 +46,8 @@
 #' FALSE
 #' @param fuller numeric - fuller parameter
 #' @param kappa numeric - kappa parameter
+#' @param boot_algo Either 'WildBootTests.jl' - the default, or 
+#' 'WildBootTests.jl-31'
 
 #'  point numbers in Julia be represented as 32 or 64 bit? Only relevant when
 #'  'boot_algo = "WildBootTests.jl"'
@@ -78,7 +80,8 @@ boot_algo_julia <- function(preprocess,
                             liml = NULL,
                             arubin = NULL,
                             fuller = NULL,
-                            kappa = NULL) {
+                            kappa = NULL, 
+                            boot_algo = NULL) {
   
   resp <- as.numeric(preprocess$Y)
 
@@ -163,7 +166,8 @@ boot_algo_julia <- function(preprocess,
     ptype = ptype,
     reps = reps,
     fweights = FALSE,
-    bootstrapc = bootstrapc
+    bootstrapc = bootstrapc, 
+    jk = FALSE
   )
 
   if (!is.null(internal_seed)) {
@@ -211,6 +215,10 @@ boot_algo_julia <- function(preprocess,
     if (!is.null(kappa)) {
       eval_list[["kappa"]] <- kappa
     }
+  }
+  
+  if(boot_algo == "WildBootTests.jl-31"){
+    eval_list[["jk"]] <- TRUE
   }
 
   wildboottest_res <- do.call(WildBootTests$wildboottest, eval_list)

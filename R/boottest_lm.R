@@ -281,7 +281,7 @@ boottest.lm <- function(object,
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
   check_arg(
     boot_algo,
-    "charin(R, R-lean, WildBootTests.jl, WCR13, WCR33, WCU13, WCU33, WCR11, WCR31, WCU11, WCU31)"
+    "charin(R, R-lean, WildBootTests.jl, WildBootTests.jl-31, WCR13, WCR33, WCU13, WCU33, WCR11, WCR31, WCU11, WCU31)"
     )
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
@@ -441,7 +441,7 @@ boottest.lm <- function(object,
       seed = internal_seed
     )
     conf_int <- p_grid_vals <- grid_vals <- FALSE
-  } else if (boot_algo == "WildBootTests.jl") {
+  } else if (boot_algo %in% c("WildBootTests.jl", "WildBootTests.jl-31")) {
     julia_ssc <- get_ssc_julia(ssc)
     small <- julia_ssc$small
     clusteradj <- julia_ssc$clusteradj
@@ -475,7 +475,8 @@ boottest.lm <- function(object,
       clusteradj = clusteradj,
       clustermin = clustermin,
       fe = NULL,
-      fedfadj = NULL
+      fedfadj = NULL, 
+      boot_algo = boot_algo
     )
   } else if(boot_algo %in% c("WCR13", "WCR33", "WCU13", "WCU33", 
                              "WCR11", "WCR31", "WCU11", "WCU31")){

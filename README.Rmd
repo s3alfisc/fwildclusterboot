@@ -36,7 +36,7 @@ The `{fwildclusterboot}` package provides a native R implementation of the fast 
 
 Additionally, it provides support for multiple wild cluster bootstrap variants as described in [MacKinnon, Nielsen & Webb (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf).
 
-It also ports functionality of [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) to R via the [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR).
+Via the [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR), `{fwildclusterboot}` further ports functionality of [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) - which provides a very fast implementation of the wild cluster bootstrap for OLS, IV, and tests of multiple joint hypotheses - to R.
 
 The package's central function is `boottest()`. It allows to test univariate hypotheses using a wild cluster bootstrap at extreme speed: via the 'fast' algorithm, it is possible to run a wild cluster bootstrap with $B = 100.000$ iterations in less than a second!
 
