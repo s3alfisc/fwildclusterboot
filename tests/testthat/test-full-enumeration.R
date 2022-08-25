@@ -212,7 +212,7 @@ test_that("test full enumeration cases: r and julia", {
   skip_on_ci()
   # if not skipped, codecov fails after ~6h
   
-  if(is_juliaconnector_prepared()){
+  if(fwildclusterboot:::is_juliaconnector_prepared()){
     reltol <- 0.05
     
     N <- 2000
@@ -413,6 +413,6 @@ test_that("test full enumeration cases: r and julia", {
         }
       }
     }
-  #}
+  }
 })
 
