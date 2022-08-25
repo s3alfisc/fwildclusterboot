@@ -209,9 +209,10 @@ test_that("test full enumeration cases: r and julia", {
   # note: these tests are deterministic! therefore exact.
   
   skip_on_cran()
+  skip_on_ci()
   # if not skipped, codecov fails after ~6h
   
-  # if(is_juliaconnector_prepared()){
+  if(is_juliaconnector_prepared()){
     reltol <- 0.05
     
     N <- 2000
