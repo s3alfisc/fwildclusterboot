@@ -262,7 +262,7 @@ test_that("test full enumeration cases: r and julia", {
       # type <- "rademacher"
       for (type in c("rademacher")) {
         for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
-          for (impose_null in c(TRUE)) {
+          for (impose_null in c(TRUE, FALSE)) {
             
             cat(
               paste(

@@ -212,7 +212,7 @@ test_that("variants 31 R vs Julia", {
   skip_on_cran()
   skip_on_ci()
   
-  if(is_juliaconnector_prepared()){
+  if(fwildclusterboot:::is_juliaconnector_prepared()){
     
     # fully enumerated - deterministic - tests
     N_G1 <- 10
