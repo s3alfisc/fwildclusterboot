@@ -29,5 +29,5 @@ jobs:
         run: julia -e 'using Pkg; Pkg.add("WildBootTests")'
         # use shell bash to ensure consistent behavior across OS
         shell: bash
-      run pkgcheck action
+      # run pkgcheck action
       - uses: ropensci-review-tools/pkgcheck-action@main
