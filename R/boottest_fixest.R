@@ -58,7 +58,8 @@
 #' run. Options are "fnw11","11", "13", "31" and "33". For more information, see the
 #' details section. "fnw11" is the default, which runs a "11" type wild cluster 
 #' bootstrap via the algorithm outlined in "fast and wild" 
-#' (Roodman et al (2019)). #' @param seed An integer. Allows to set a random seed. For details, see below.
+#' (Roodman et al (2019)). 
+#' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector giving linear combinations of coefficients.
 #' Must be either NULL or a vector of the same length as `param`. If NULL,
 #' a vector of ones of length param.
@@ -181,8 +182,6 @@
 #' @references MacKinnon, James G., Morten Ørregaard Nielsen, and 
 #' Matthew D. Webb. Fast and reliable jackknife and bootstrap
 #'  methods for cluster-robust inference. No. 1485. 2022. 
-#'  (\url{https://www.econ.queensu.ca
-#'  /sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf})
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 #' "Bootstrap-based improvements for inference with clustered errors."
 #' The Review of Economics and Statistics 90.3 (2008): 414-427.
@@ -484,8 +483,7 @@ boottest.fixest <- function(object,
         fe = fe,
         bootstrap_type = bootstrap_type, 
         R = R_long, 
-        r = r, 
-        impose_null = impose_null
+        r = r
       )
       
       res <- boot_algo3(

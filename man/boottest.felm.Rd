@@ -72,6 +72,8 @@ needs to be NULL.}
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence
 intervals by test inversion. If FALSE, only the p-value is returned.}
 
+\item{seed}{An integer. Allows to set a random seed. For details, see below.}
+
 \item{R}{Hypothesis Vector giving linear combinations of coefficients.
 Must be either NULL or a vector of the same length as \code{param}. If NULL,
 a vector of ones of length param.}
@@ -102,7 +104,7 @@ If FALSE, the null is not imposed \code{(WCU)}}
 run. Options are "fnw11","11", "13", "31" and "33". For more information, see the
 details section. "fnw11" is the default, which runs a "11" type wild cluster
 bootstrap via the algorithm outlined in "fast and wild"
-(Roodman et al (2019)). #' @param seed An integer. Allows to set a random seed. For details, see below.}
+(Roodman et al (2019)).}
 
 \item{p_val_type}{Character vector of length 1. Type of p-value.
 By default "two-tailed". Other options include "equal-tailed",
@@ -301,8 +303,6 @@ STATA using boottest", The STATA Journal.
 MacKinnon, James G., Morten Ørregaard Nielsen, and
 Matthew D. Webb. Fast and reliable jackknife and bootstrap
 methods for cluster-robust inference. No. 1485. 2022.
-(\url{https://www.econ.queensu.ca
- /sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf})
 
 Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 "Bootstrap-based improvements for inference with clustered errors."

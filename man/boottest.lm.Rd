@@ -291,8 +291,6 @@ STATA using boottest", The STATA Journal.
 MacKinnon, James G., Morten Ørregaard Nielsen, and
 Matthew D. Webb. Fast and reliable jackknife and bootstrap
 methods for cluster-robust inference. No. 1485. 2022.
-(\url{https://www.econ.queensu.ca
- /sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf})
 
 Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 "Bootstrap-based improvements for inference with clustered errors."
