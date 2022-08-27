@@ -353,8 +353,8 @@ test_that("t-stat equivalence OLS - WildBootTests", {
   #skip_on_ci()
   
   
-  if(is_juliaconnector_prepared()){
-    
+  #if(is_juliaconnector_prepared()){
+  if(TRUE){
         # data(voters)
         # adj <- cluster.adj <- TRUE; cluster.df <- "conventional";
         # impose_null = TRUE
@@ -607,7 +607,9 @@ test_that("t-stat equivalence OLS q > 1", {
   skip_on_cran()
 
 
-  if(is_juliaconnector_prepared()){
+  #if(is_juliaconnector_prepared()){
+  if(TRUE){
+    
     wald_test <- function(run_this_test) {
       if (run_this_test) {
         reltol <- 0.002
@@ -893,7 +895,9 @@ test_that("t-stat equivalence IV", {
   skip_on_cran()
 
 
-  if(is_juliaconnector_prepared()){
+  #if(is_juliaconnector_prepared()){
+  if(TRUE){
+    
     iv_test <- function(run_this_test) {
       # Note: Test with Float64 for exact match
       if (run_this_test) {
