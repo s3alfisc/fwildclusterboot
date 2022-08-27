@@ -6,28 +6,21 @@ editor_options:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
+
 
 # fwildclusterboot 
 
 <img src="man/figures/logo.png" width="200px" align="right" />
 
 <!-- badges: start -->
-<!-- [![packageversion](https://img.shields.io/badge/Package%20version-`r version`-orange.svg?style=flat-square)](commits/master) -->
+<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 1.3, 2022, 03, 10, 81868, R, R version 4.1.3 (2022-03-10), One Push-Up-orange.svg?style=flat-square)](commits/master) -->
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![CRAN status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-project.org/package=fwildclusterboot)
 ![runiverse-package](https://s3alfisc.r-universe.dev/badges/fwildclusterboot)
 [![R-CMD-check](https://github.com/s3alfisc/fwildclusterboot/workflows/R-CMD-check/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions)
 [![Codecov test coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
-`r badger::badge_cran_download("fwildclusterboot", "grand-total", "blue")`
-`r badger::badge_cran_download("fwildclusterboot", "last-month", "green")`
+[![](http://cranlogs.r-pkg.org/badges/grand-total/fwildclusterboot?color=blue)](https://cran.r-project.org/package=fwildclusterboot)
+[![](http://cranlogs.r-pkg.org/badges/last-month/fwildclusterboot?color=green)](https://cran.r-project.org/package=fwildclusterboot)
 [![pkgcheck](https://github.com/s3alfisc/fwildclusterboot/workflows/pkgcheck/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions?query=workflow%3Apkgcheck)
 
 <!-- badges: end -->
@@ -40,26 +33,9 @@ Via the [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR), `{fwi
 
 The package's central function is `boottest()`. It allows to test univariate hypotheses using a wild cluster bootstrap at extreme speed: via the 'fast' algorithm, it is possible to run a wild cluster bootstrap with $B = 100.000$ iterations in less than a second!
 
-```{r, fig.width=10, fig.height=3, echo = FALSE, warning = FALSE, message = FALSE}
-library(ggplot2)
-df <- readRDS("C:/Users/alexa/Dropbox/R package development/fwildclusterboot develop/benchmarks/r_comparions.rds")
 
-df$B <- factor(df$B, levels = c("10K", "100K"))
-df$N_G <- factor(df$N_G, levels = c("N_G = 20", "N_G = 50", "N_G = 100", "N_G = 500", "N_G = 1000"))
-df$`boot algo` <- df$type
-```
 
-```{r, fig.width=10, fig.height=3, echo = FALSE, warning = FALSE, message = FALSE}
-ggplot(data = df, aes(x = B, y = time, color = `boot algo`)) + 
-  facet_wrap(~N_G, nrow = 1) + 
-  geom_point() + 
-scale_y_continuous(trans='log10') + 
-  labs(title = "Benchmarks", caption = "N = 10_000, k = 20 covariates and one cluster of dimension N_G (3 iterations each, median runtime is plotted).")+
-  #theme_bw() + 
-  xlab("Bootstrap iterations") + 
-  ylab("time in seconds, log scale") + 
-  theme_bw()
-```
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 
 `{fwildclusterboot}` supports the following features:
@@ -87,7 +63,8 @@ Additional features are provided through `WildBootTests.jl`:
 
 For a longer introduction to `{fwildclusterboot}`, take a look at the [vignette](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
-```{r}
+
+```r
 library(fwildclusterboot)
 
 # set seed via dqset.seed for engine = "R" & Rademacher, Webb & Normal weights
@@ -102,13 +79,26 @@ lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigrati
 # bootstrap inference via boottest()
 lm_boot <- boottest(lm_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
 summary(lm_boot)
+#> boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1"), 
+#>     seed = 1)
+#> 	
+#>  Hypothesis: 1*treatment = 0
+#>  Observations: 300
+#>   Bootstr. Type: rademacher
+#>  Clustering: 1-way
+#>  Confidence Sets: 95%
+#>  Number of Clusters: 40
+#> 
+#>              term estimate statistic p.value conf.low conf.high
+#> 1 1*treatment = 0    0.079     3.983       0     0.04     0.118
 ```
 
 ### Installation
 
 You can install compiled versions of`{fwildclusterboot}` from CRAN and the development version from R-universe (compiled) or github by following one of the steps below:
 
-```{r, eval = FALSE}
+
+```r
 # from CRAN 
 install.packages("fwildclusterboot")
 # from r-universe (windows & mac, compiled R > 4.0 required)
@@ -126,7 +116,8 @@ You can install Julia by following the steps described on the official [`Julia` 
 
 To help you connect Julia and R via the `JuliaConnectoR` and to install `WildBootTests.jl` from within R, you can alternatively use the `JuliaConnectoR.utils` package.
 
-```{r, eval = FALSE}
+
+```r
 devtools::install_github("s3alfisc/JuliaConnectoR.utils")
 library(JuliaConnectoR.utils)
 connect_julia_r() # instructions to connect Julia and R
@@ -139,8 +130,24 @@ set_julia_nthreads() # instructions to set nthreads for Julia
 
 If you are in `R`, you can simply run the following command to get the BibTeX citation for `{fwildclusterboot}`:
 
-```{r, warning = FALSE, message = FALSE}
+
+```r
 citation("fwildclusterboot")
+#> 
+#> To cite 'fwildclusterboot' in publications use:
+#> 
+#>   Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster
+#>   Bootstrap Inference for Linear Regression Models. Available from
+#>   https://cran.r-project.org/package=fwildclusterboot.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Misc{,
+#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.11.1)},
+#>     author = {Alexander Fischer and David Roodman},
+#>     year = {2021},
+#>     url = {https://cran.r-project.org/package=fwildclusterboot},
+#>   }
 ```
 
 Alternatively, if you prefer to cite the "Fast & Wild" paper by Roodman et al, it would be great if you mentioned `{fwildclusterboot}` in a footnote =) ! 

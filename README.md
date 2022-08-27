@@ -52,7 +52,10 @@ iterations in less than a second!
 
 -   The wild bootstrap for OLS (Wu 1986).
 -   The wild cluster bootstrap for OLS (Cameron, Gelbach & Miller 2008,
-    Roodman et al, 2019)
+    Roodman et al, 2019).
+-   Multiple new versions of the wild cluster bootstrap as described in
+    MacKinnon, Nielsen & Webb (2022), including the WCR13, WCR31, WCR33,
+    WCU13, WCU31 and WCU33.
 -   The subcluster bootstrap (MacKinnon and Webb 2018).
 -   Confidence intervals formed by inverting the test and iteratively
     searching for bounds.
@@ -61,8 +64,10 @@ iterations in less than a second!
 
 Additional features are provided through `WildBootTests.jl`:
 
--   The Wild Restricted Efficient bootstrap (WRE) for IV/2SLS/LIML
-    [(Davidson & MacKinnon,
+-   Highly optimized versions of the ‘11’ and ‘31’ wild cluster
+    bootstrap variants
+-   A highly optimized version of the Wild Restricted Efficient
+    bootstrap (WRE) for IV/2SLS/LIML [(Davidson & MacKinnon,
     2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221).
 -   Arbitrary and multiple linear hypotheses in the parameters.
 
