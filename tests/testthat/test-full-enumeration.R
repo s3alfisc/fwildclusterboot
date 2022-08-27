@@ -53,7 +53,7 @@ test_that("test full enumeration cases: r and r-lean", {
       # type <- "rademacher"
       for (type in c("rademacher")) {
         for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
-          for (impose_null in c(TRUE, FALSE)) {
+          for (impose_null in c(TRUE)) {
             
             cat(
               paste(
