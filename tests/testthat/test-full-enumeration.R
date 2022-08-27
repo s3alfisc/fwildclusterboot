@@ -304,18 +304,22 @@ test_that("test full enumeration cases: r and julia", {
             )
             
             # note: difference in p-values due to discrete jumps: 
-            # t-statistics are not directly identical (discrepancies at order e-14)
-            # therefore, the actual t-statistic t can be smaller, larger, or lie within
+            # t-statistics are not directly identical 
+            # (discrepancies at order e-14)
+            # therefore, the actual t-statistic t can be smaller, larger, 
+            # or lie within
             # the bootstrapped test statisics for which all weights are 1 or -1
             # as there are only 2^N_G_bootcluster t-stats and only 
             # 2^(N_G_bootcluster -1 )
             # different t-stats in abs values, the p-value needs to be 
             # x / (2^N_G_bootcluster), 
             # with x any integer
-            # and depending where t lies (smaller, larger, or within), the p-value can 
+            # and depending where t lies (smaller, larger, or within), 
+            # the p-value can 
             # be x / (2^N_G_bootcluster), (x-1) / (2^N_G_bootcluster), 
             # (x+1) / (2^N_G_bootcluster)
-            # I therefore set the tolerance to 1 / (2^N_G_bootcluster) for all p-values
+            # I therefore set the tolerance to 1 / (2^N_G_bootcluster) for
+            # all p-values
             # see sum(sort(boot_r$t_boot) - sort(boot_jl$t_boot)) != 0L
             
             expect_true(

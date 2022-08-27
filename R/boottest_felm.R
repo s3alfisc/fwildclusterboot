@@ -54,9 +54,9 @@
 #'  algorithm globally by using the
 #'  `setBoottest_engine()` function.
 #' @param bootstrap_type Determines which wild cluster bootstrap type should be 
-#' run. Options are "fnw11","11", "13", "31" and "33". For more information, see the
-#' details section. "fnw11" is the default, which runs a "11" type wild cluster 
-#' bootstrap via the algorithm outlined in "fast and wild" 
+#' run. Options are "fnw11","11", "13", "31" and "33". For more information,
+#' see the details section. "fnw11" is the default, which runs a "11" type 
+#' wild cluster bootstrap via the algorithm outlined in "fast and wild" 
 #' (Roodman et al (2019)). 
 #' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector giving linear combinations of coefficients.
