@@ -3,7 +3,7 @@ check_engine_btype <- function(
     bootstrap_type){
   
   if(engine == "WildBootTests.jl"){
-    if(!(bootstrap_type %in% c("11", "31"))){
+    if(!(bootstrap_type %in% c("11", "fnw11", "31"))){
       stop(
         paste(
           "The bootstrap of type", 
@@ -13,7 +13,7 @@ check_engine_btype <- function(
       )
     }
   } else if(engine == "R-lean"){
-    if(bootstrap_type != "11"){
+    if(bootstrap_type != "fnw11"){
       if(bootstrap_type == "31"){
         stop(
           paste(

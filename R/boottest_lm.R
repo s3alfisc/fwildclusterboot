@@ -350,14 +350,14 @@ boottest.lm <- function(object,
     heteroskedastic <- FALSE
   }
   
-  R <- process_R(
+  R_long <- process_R(
     R = R,
     param = param
   )
   
   if (engine != "WildBootTests.jl") {
     r_algo_checks(
-      R = R,
+      R = R_long,
       p_val_type = p_val_type,
       conf_int = conf_int,
       B = B
@@ -368,7 +368,7 @@ boottest.lm <- function(object,
   
   check_boottest_args_plus(
     object = object,
-    R = R,
+    R = R_long,
     param = param,
     sign_level = sign_level,
     B = B
@@ -380,7 +380,7 @@ boottest.lm <- function(object,
   preprocess <- preprocess2.lm(
     object = object,
     clustid = clustid,
-    R = R,
+    R = R_long,
     param = param,
     bootcluster = bootcluster,
     engine = engine
@@ -451,7 +451,9 @@ boottest.lm <- function(object,
         weights = stats::weights(object), 
         clustid = clustid,
         fe = NULL,
-        bootstrap_type = bootstrap_type
+        bootstrap_type = bootstrap_type, 
+        R = R_long, 
+        r = r
       )
       
       res <- boot_algo3(
@@ -467,7 +469,8 @@ boottest.lm <- function(object,
         full_enumeration = full_enumeration,
         small_sample_correction = small_sample_correction,
         seed = internal_seed, 
-        object = object
+        object = object, 
+        impose_null = impose_null
       )
       conf_int <- p_grid_vals <- grid_vals <- FALSE
       
@@ -560,7 +563,7 @@ boottest.lm <- function(object,
     call = call,
     type = type,
     impose_null = impose_null,
-    R = R,
+    R = R_long,
     r = r,
     engine = engine,
     nthreads = nthreads,

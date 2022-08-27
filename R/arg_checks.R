@@ -237,15 +237,27 @@ check_boot_algo3 <- function(
     weights,
     clustid, 
     fe,
-    bootstrap_type){
+    bootstrap_type,
+    R, 
+    r){
   
   #' function to check input arguments passed to `boot_algo3()`
   #' @param weights NULL or numeric vector
   #' @param clustid character vector 
   #' @param fe NULL or character scalar
-  #' @param bootstrap_type either 'fnr_11', '13', '31, '33'
+  #' @param bootstrap_type either '11', '13', '31, '33'
+  #' @param R the constraints vector as specified in the 'boottest()' call
+  #' @param r parameter in hypothesis test, as set in 'boottest()' call
+  #' @param param character vector. the parameters included in the hypothesis
   #' @noRd
   
+
+  if(R != 1L || r != 0){
+
+      stop("Bootstraps of type '11', '13', '31', '33' currently
+           only support hypotheses of the form R * beta = 0 vs beta <> 0, 
+           where R is a scalar equal to 1.")
+  }
   
   if(length(clustid) > 1){
     stop("The '13', '31', and '33'

@@ -376,7 +376,7 @@ boottest.fixest <- function(object,
   }
   
   
-  R <- process_R(
+  R_long <- process_R(
     R = R,
     param = param
   )
@@ -384,7 +384,7 @@ boottest.fixest <- function(object,
   
   if (engine != "WildBootTests.jl") {
     r_algo_checks(
-      R = R,
+      R = R_long,
       p_val_type = p_val_type,
       conf_int = conf_int,
       B = B
@@ -395,7 +395,7 @@ boottest.fixest <- function(object,
   
   check_boottest_args_plus(
     object = object,
-    R = R,
+    R = R_long,
     param = param,
     sign_level = sign_level,
     B = B,
@@ -406,7 +406,7 @@ boottest.fixest <- function(object,
   preprocess <- preprocess2.fixest(
     object = object,
     clustid = clustid,
-    R = R,
+    R = R_long,
     param = param,
     bootcluster = bootcluster,
     fe = fe,
@@ -482,7 +482,10 @@ boottest.fixest <- function(object,
         weights = stats::weights(object), 
         clustid = clustid,
         fe = fe,
-        bootstrap_type = bootstrap_type
+        bootstrap_type = bootstrap_type, 
+        R = R_long, 
+        r = r, 
+        impose_null = impose_null
       )
       
       res <- boot_algo3(
@@ -509,7 +512,7 @@ boottest.fixest <- function(object,
     check_r_lean(
       weights = stats::weights(object),
       clustid = clustid,
-      fe = NULL, 
+      fe = fe, 
       impose_null = impose_null
     )
     
@@ -535,6 +538,7 @@ boottest.fixest <- function(object,
     small <- julia_ssc$small
     clusteradj <- julia_ssc$clusteradj
     clustermin <- julia_ssc$clustermin
+    fedfadj <- 0L
     
     if (ssc[["fixef.K"]] != "none") {
       message(paste("Currently, boottest() only supports fixef.K = 'none'."))
@@ -591,7 +595,7 @@ boottest.fixest <- function(object,
     call = call,
     type = type,
     impose_null = impose_null,
-    R = R,
+    R = R_long,
     r = r,
     engine = engine,
     nthreads = nthreads,

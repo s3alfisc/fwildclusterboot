@@ -10,7 +10,8 @@ boot_algo3 <- function(preprocessed_object,
                        full_enumeration,
                        small_sample_correction,
                        seed, 
-                       object){
+                       object, 
+                       impose_null){
   
   #' WRE13, WRE33, WRU13 and WRU33 bootstraps as in MNW (2022) "Fast and 
   #' reliable" 
@@ -41,6 +42,8 @@ boot_algo3 <- function(preprocessed_object,
   #' @param seed Integer scalar. Either set via boottest()'s seed argument
   #' or inherited from R's global seed (set via set.seed)
   #' @param object the regression object
+  #' @param impose_null logical scalar. Should the null be imposed on the
+  #' bootstrap dgp or not?
   #' @importFrom MASS ginv
   #' @importFrom sandwich vcovCL
   #' @importFrom summclust vcov_CR3J

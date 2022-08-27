@@ -24,6 +24,7 @@ test_that("test tidiers with q = 1", {
                            B = 9999,
                            clustid = "group_id1"
     )
+    
     boottest_rlean <- boottest(
       lm_fit,
       param = "treatment",
