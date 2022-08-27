@@ -1,6 +1,6 @@
 # fwildclusterboot 0.11.1
 
-+ The `boot_algo` function argument is renamed to `engine`. + A new function argument has been added `bootstrap_type`. In combination with the `impose_null` function argument, it allows to choose which wild cluster bootstrap type should be run - WCx11, WCx13, WCx31, WCx33. 
++ The `boot_algo` function argument is renamed to `engine`. + A new function argument has been added - `bootstrap_type`. In combination with the `impose_null` function argument, it allows to choose which wild cluster bootstrap type should be run - WCx11, WCx13, WCx31, WCx33. 
 + The `setBoottest_boot_algo()` function has been renamed to `setBoottest_engine()`.
 In consequence, the syntax introduced in 0.11 changes to 
 

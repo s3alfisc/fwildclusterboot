@@ -207,7 +207,6 @@ boot_algo3 <- function(preprocessed_object,
     beta_1g_tilde = beta_1g_tilde
   )
   
-  beta_2g_tilde <<- beta_1g_tilde
   # pre-allocate space for bootstrap 
   # start the bootstrap loop 
   t_boot <- vector(mode = "numeric", B + 1)
