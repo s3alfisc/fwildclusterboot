@@ -27,12 +27,12 @@ set a global random seed via
 \itemize{
 \item \code{set.seed()} when using
 \enumerate{
-\item the lean algorithm (via \code{boot_algo = "R-lean"}),
+\item the lean algorithm (via \code{engine = "R-lean"}),
 \item the heteroskedastic wild bootstrap
-\item the wild cluster bootstrap via \code{boot_algo = "R"} with Mammen weights or
-\item \code{boot_algo = "WildBootTests.jl"}
+\item the wild cluster bootstrap via \code{engine = "R"} with Mammen weights or
+\item \code{engine = "WildBootTests.jl"}
 }
-\item \code{dqrng::dqset.seed()} when using \code{boot_algo = "R"} for Rademacher,
+\item \code{dqrng::dqset.seed()} when using \code{engine = "R"} for Rademacher,
 Webb or Normal weights
 }
 }

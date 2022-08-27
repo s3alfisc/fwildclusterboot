@@ -109,7 +109,7 @@
 #'  \item{t_boot}{All bootstrap t-statistics.}
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
-#' \item{boot_algo}{The employed bootstrap algorithm.}
+#' \item{engine}{The employed bootstrap algorithm.}
 #' \item{nthreads}{The number of threads employed.}
 #' \item{internal_seed}{The integer value -inherited from set.seed() - used
 #'  within boottest() to set the random seed in either R or Julia. If NULL,
@@ -121,11 +121,11 @@
 #' function argument, or
 #' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the
+#'    1) the lean algorithm (via `engine = "R-lean"`) including the
 #'    heteroskedastic wild bootstrap
-#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or
-#'    3) `boot_algo = "WildBootTests.jl"`
-#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher,
+#'    2) the wild cluster bootstrap via `engine = "R"` with Mammen weights or
+#'    3) `engine = "WildBootTests.jl"`
+#' + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher,
 #' Webb or Normal weights
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
@@ -256,7 +256,7 @@ boottest.ivreg <- function(object,
   # set random seed
   internal_seed <- set_seed(
     seed = seed,
-    boot_algo = "WildBootTests.jl",
+    engine = "WildBootTests.jl",
     type = type
   )
   # translate ssc into small_sample_adjustment
@@ -305,14 +305,14 @@ boottest.ivreg <- function(object,
     R = R,
     param = param,
     bootcluster = bootcluster,
-    boot_algo = "WildBootTests.jl"
+    engine = "WildBootTests.jl"
   )
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
       B = B,
       type = type,
-      boot_algo = "WildBootTests.jl"
+      engine = "WildBootTests.jl"
     )
   
   full_enumeration <- enumerate$full_enumeration
@@ -379,7 +379,7 @@ boottest.ivreg <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    boot_algo = "WildBootTests.jl",
+    engine = "WildBootTests.jl",
     internal_seed = internal_seed
   )
   

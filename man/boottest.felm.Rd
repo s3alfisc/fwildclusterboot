@@ -19,13 +19,14 @@
   sign_level = 0.05,
   type = "rademacher",
   impose_null = TRUE,
+  bootstrap_type = "fnw11",
   p_val_type = "two-tailed",
   tol = 1e-06,
   maxiter = 10,
   nthreads = getBoottest_nthreads(),
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
-  boot_algo = getBoottest_boot_algo(),
+  engine = getBoottest_engine(),
   floattype = "Float64",
   maxmatsize = FALSE,
   bootstrapc = FALSE,
@@ -71,8 +72,6 @@ needs to be NULL.}
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence
 intervals by test inversion. If FALSE, only the p-value is returned.}
 
-\item{seed}{An integer. Allows to set a random seed. For details, see below.}
-
 \item{R}{Hypothesis Vector giving linear combinations of coefficients.
 Must be either NULL or a vector of the same length as \code{param}. If NULL,
 a vector of ones of length param.}
@@ -98,6 +97,12 @@ will use each possible combination once (enumeration).}
 \item{impose_null}{Logical. Controls if the null hypothesis is imposed on
 the bootstrap dgp or not. Null imposed \code{(WCR)} by default.
 If FALSE, the null is not imposed \code{(WCU)}}
+
+\item{bootstrap_type}{Determines which wild cluster bootstrap type should be
+run. Options are "fnw11","11", "13", "31" and "33". For more information, see the
+details section. "fnw11" is the default, which runs a "11" type wild cluster
+bootstrap via the algorithm outlined in "fast and wild"
+(Roodman et al (2019)). #' @param seed An integer. Allows to set a random seed. For details, see below.}
 
 \item{p_val_type}{Character vector of length 1. Type of p-value.
 By default "two-tailed". Other options include "equal-tailed",
@@ -126,7 +131,7 @@ cluster.df = "conventional". You can find more details in the help
 file for \code{boot_ssc()}. The function is purposefully designed to mimic
 fixest's \code{\link[fixest]{ssc}} function.}
 
-\item{boot_algo}{Character scalar. Either "R" or "WildBootTests.jl".
+\item{engine}{Character scalar. Either "R" or "WildBootTests.jl".
 Controls the algorithm employed by boottest.
 "R" is the default and implements the cluster bootstrap
 as in Roodman (2019). "WildBootTests.jl" executes the wild
@@ -145,18 +150,18 @@ cluster bootstrap.
 Note that if no cluster is provided, boottest() always
 defaults to the "lean" algorithm. Note that you can set the
 employed algorithm globally by using the
-\code{setBoottest_boot_algo()} function.}
+\code{setBoottest_engine()} function.}
 
 \item{floattype}{Float64 by default. Other option: Float32. Should floating
 point numbers in Julia be represented as 32 or 64 bit? Only relevant when
-'boot_algo = "WildBootTests.jl"'}
+'engine = "WildBootTests.jl"'}
 
 \item{maxmatsize}{NULL by default = no limit. Else numeric scalar to set the
 maximum size of auxilliary weight matrix (v), in gigabytes. Only relevant
-when 'boot_algo = "WildBootTests.jl"'}
+when 'engine = "WildBootTests.jl"'}
 
 \item{bootstrapc}{Logical scalar, FALSE by default. TRUE  to request
-bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo =
+bootstrap-c instead of bootstrap-t. Only relevant when 'engine =
 "WildBootTests.jl"'}
 
 \item{getauxweights}{Logical. Whether to save auxilliary weight matrix (v)}
@@ -188,7 +193,7 @@ interval.}
 \item{t_boot}{All bootstrap t-statistics.}
 \item{regression}{The regression object used in boottest.}
 \item{call}{Function call of boottest.}
-\item{boot_algo}{The employed bootstrap algorithm.}
+\item{engine}{The employed bootstrap algorithm.}
 \item{nthreads}{The number of threads employed.}
 }
 \description{
@@ -205,12 +210,12 @@ set a global random seed via
 \itemize{
 \item \code{set.seed()} when using
 \enumerate{
-\item the lean algorithm (via \code{boot_algo = "R-lean"}) including the
+\item the lean algorithm (via \code{engine = "R-lean"}) including the
 heteroskedastic wild bootstrap
-\item the wild cluster bootstrap via \code{boot_algo = "R"} with Mammen weights or
-\item \code{boot_algo = "WildBootTests.jl"}
+\item the wild cluster bootstrap via \code{engine = "R"} with Mammen weights or
+\item \code{engine = "WildBootTests.jl"}
 }
-\item \code{dqrng::dqset.seed()} when using \code{boot_algo = "R"} for Rademacher, Webb
+\item \code{dqrng::dqset.seed()} when using \code{engine = "R"} for Rademacher, Webb
 or Normal weights
 }
 }
@@ -292,6 +297,12 @@ stops the procedure after 10 iterations.
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.
 (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+
+MacKinnon, James G., Morten Ørregaard Nielsen, and
+Matthew D. Webb. Fast and reliable jackknife and bootstrap
+methods for cluster-robust inference. No. 1485. 2022.
+(\url{https://www.econ.queensu.ca
+ /sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf})
 
 Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 "Bootstrap-based improvements for inference with clustered errors."

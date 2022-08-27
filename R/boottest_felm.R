@@ -38,21 +38,26 @@
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
 #' @param conf_int A logical vector. If TRUE, boottest computes confidence
 #'        intervals by test inversion. If FALSE, only the p-value is returned.
-#' @param boot_algo Character scalar. Either "R" or "WildBootTests.jl".
-#' Controls the algorithm employed by boottest().
-#'                  "R" is the default and implements the cluster bootstrap
-#'                  as in Roodman (2019). "WildBootTests.jl" executes the
-#'                  wild cluster bootstrap via the WildBootTests.jl
-#'                  package. For it to run, Julia and WildBootTests.jl
-#'                  need to be installed.
-#'                  The "R-lean" algorithm is a memory friendly, but less
-#'                  performant rcpp-armadillo based implementation of the
-#'                  wild cluster bootstrap.
-#'                  Note that if no cluster is provided, boottest() always
-#'                  defaults to the "lean" algorithm. You can set the employed
-#'                   algorithm globally by using the
-#'                  `setBoottest_boot_algo()` function.
-#' @param seed An integer. Allows to set a random seed. For details, see below.
+#' @param engine Character scalar. Either "R", "R-lean" or "WildBootTests.jl".
+#'  Controls if `boottest()` should run via its native R implementation 
+#'  or `WildBootTests.jl`.
+#'  "R" is the default and implements the cluster bootstrap
+#'  as in Roodman (2019). "WildBootTests.jl" executes the
+#'  wild cluster bootstrap via the WildBootTests.jl
+#'  package. For it to run, Julia and WildBootTests.jl need
+#'  to be installed.
+#'  The "R-lean" algorithm is a memory friendly, but less
+#'  performant rcpp-armadillo based implementation of the wild
+#'  cluster bootstrap.
+#'  Note that if no cluster is provided, boottest() always
+#'  defaults to the "lean" algorithm. You can set the employed
+#'  algorithm globally by using the
+#'  `setBoottest_engine()` function.
+#' @param bootstrap_type Determines which wild cluster bootstrap type should be 
+#' run. Options are "fnw11","11", "13", "31" and "33". For more information, see the
+#' details section. "fnw11" is the default, which runs a "11" type wild cluster 
+#' bootstrap via the algorithm outlined in "fast and wild" 
+#' (Roodman et al (2019)). #' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector giving linear combinations of coefficients.
 #'  Must be either NULL or a vector of the same length as `param`. If NULL,
 #'   a vector of ones of length param.
@@ -93,7 +98,7 @@
 #'  file for `boot_ssc()`. The function is purposefully designed to mimic
 #'  fixest's \code{\link[fixest]{ssc}} function.
 #' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
-#' @param boot_algo Character scalar. Either "R" or "WildBootTests.jl".
+#' @param engine Character scalar. Either "R" or "WildBootTests.jl".
 #'  Controls the algorithm employed by boottest.
 #'                  "R" is the default and implements the cluster bootstrap
 #'                  as in Roodman (2019). "WildBootTests.jl" executes the wild
@@ -112,15 +117,15 @@
 #'                  Note that if no cluster is provided, boottest() always
 #'                   defaults to the "lean" algorithm. Note that you can set the
 #'                    employed algorithm globally by using the
-#'                  `setBoottest_boot_algo()` function.
+#'                  `setBoottest_engine()` function.
 #' @param floattype Float64 by default. Other option: Float32. Should floating
 #' point numbers in Julia be represented as 32 or 64 bit? Only relevant when
-#' 'boot_algo = "WildBootTests.jl"'
+#' 'engine = "WildBootTests.jl"'
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set the
 #'  maximum size of auxilliary weight matrix (v), in gigabytes. Only relevant
-#'   when 'boot_algo = "WildBootTests.jl"'
+#'   when 'engine = "WildBootTests.jl"'
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request
-#' bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo =
+#' bootstrap-c instead of bootstrap-t. Only relevant when 'engine =
 #' "WildBootTests.jl"'
 #' @param ... Further arguments passed to or from other methods.
 #'
@@ -150,7 +155,7 @@
 #'  \item{t_boot}{All bootstrap t-statistics.}
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
-#' \item{boot_algo}{The employed bootstrap algorithm.}
+#' \item{engine}{The employed bootstrap algorithm.}
 #' \item{nthreads}{The number of threads employed.}
 #'
 #' @export
@@ -161,11 +166,11 @@
 #' function argument, or
 #' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`) including the
+#'    1) the lean algorithm (via `engine = "R-lean"`) including the
 #'     heteroskedastic wild bootstrap
-#'    2) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or
-#'    3) `boot_algo = "WildBootTests.jl"`
-#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb
+#'    2) the wild cluster bootstrap via `engine = "R"` with Mammen weights or
+#'    3) `engine = "WildBootTests.jl"`
+#' + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher, Webb
 #'  or Normal weights
 #'
 #' @section Confidence Intervals:
@@ -187,6 +192,11 @@
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
 #'      (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+#' @references MacKinnon, James G., Morten Ørregaard Nielsen, and 
+#' Matthew D. Webb. Fast and reliable jackknife and bootstrap
+#'  methods for cluster-robust inference. No. 1485. 2022. 
+#'  (\url{https://www.econ.queensu.ca
+#'  /sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf})
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 #' "Bootstrap-based improvements for inference with clustered errors."
 #' The Review of Economics and Statistics 90.3 (2008): 414-427.
@@ -273,6 +283,7 @@ boottest.felm <- function(object,
                           sign_level = 0.05,
                           type = "rademacher",
                           impose_null = TRUE,
+                          bootstrap_type = "fnw11",
                           p_val_type = "two-tailed",
                           tol = 1e-6,
                           maxiter = 10,
@@ -283,7 +294,7 @@ boottest.felm <- function(object,
                             cluster.adj = TRUE,
                             cluster.df = "conventional"
                           ),
-                          boot_algo = getBoottest_boot_algo(),
+                          engine = getBoottest_engine(),
                           floattype = "Float64",
                           maxmatsize = FALSE,
                           bootstrapc = FALSE,
@@ -298,6 +309,9 @@ boottest.felm <- function(object,
   check_arg(clustid, "NULL | character scalar | character vector | formula")
   check_arg(param, "MBT scalar character | character vector | formula")
   check_arg(B, "MBT scalar integer GT{99}")
+  check_arg(impose_null, "logical scalar")
+  check_arg(bootstrap_type, "charin(11, 13, 31, 33, fnw11)")
+  
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
@@ -312,7 +326,7 @@ boottest.felm <- function(object,
   check_arg(tol, "numeric scalar GT{0}")
   check_arg(maxiter, "scalar integer GT{5}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
-  check_arg(boot_algo, "charin(R, R-lean, WildBootTests.jl)")
+  check_arg(engine, "charin(R, R-lean, WildBootTests.jl)")
   
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
@@ -343,7 +357,7 @@ boottest.felm <- function(object,
   
   internal_seed <- set_seed(
     seed = seed,
-    boot_algo = boot_algo,
+    engine = engine,
     type = type
   )
   
@@ -352,9 +366,9 @@ boottest.felm <- function(object,
   
   if (is.null(clustid)) {
     heteroskedastic <- TRUE
-    if (boot_algo == "R") {
+    if (engine == "R") {
       # heteroskedastic models should always be run through R-lean
-      boot_algo <- "R-lean"
+      engine <- "R-lean"
     }
   } else {
     heteroskedastic <- FALSE
@@ -365,7 +379,7 @@ boottest.felm <- function(object,
     param = param
   )
   
-  if (boot_algo != "WildBootTests.jl") {
+  if (engine != "WildBootTests.jl") {
     r_algo_checks(
       R = R,
       p_val_type = p_val_type,
@@ -392,7 +406,7 @@ boottest.felm <- function(object,
     param = param,
     bootcluster = bootcluster,
     fe = fe,
-    boot_algo = boot_algo
+    engine = engine
   )
   
   enumerate <-
@@ -401,7 +415,7 @@ boottest.felm <- function(object,
       heteroskedastic = heteroskedastic,
       B = B,
       type = type,
-      boot_algo = boot_algo
+      engine = engine
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
@@ -427,30 +441,65 @@ boottest.felm <- function(object,
     as.vector(object$coefficients[param, ] %*% preprocess$R0[param])
   
   
-  if (boot_algo == "R") {
-    res <- boot_algo2(
-      preprocessed_object = preprocess,
-      boot_iter = B,
-      point_estimate = point_estimate,
-      impose_null = impose_null,
-      r = r,
-      sign_level = sign_level,
-      param = param,
-      # seed = seed,
-      p_val_type = p_val_type,
-      nthreads = nthreads,
-      type = type,
-      full_enumeration = full_enumeration,
-      small_sample_correction = small_sample_correction,
-      conf_int = conf_int,
-      maxiter = maxiter,
-      tol = tol
-    )
-  } else if (boot_algo == "R-lean") {
+  if (engine == "R") {
+    
+    if(bootstrap_type == "fnw11"){
+      
+      res <- boot_algo2(
+        preprocessed_object = preprocess,
+        boot_iter = B,
+        point_estimate = point_estimate,
+        impose_null = impose_null,
+        r = r,
+        sign_level = sign_level,
+        param = param,
+        # seed = seed,
+        p_val_type = p_val_type,
+        nthreads = nthreads,
+        type = type,
+        full_enumeration = full_enumeration,
+        small_sample_correction = small_sample_correction,
+        conf_int = conf_int,
+        maxiter = maxiter,
+        tol = tol
+      )
+      
+      
+    } else {
+      
+      # need some function checks here ... 
+      check_boot_algo3(
+        weights = stats::weights(object), 
+        clustid = clustid,
+        fe = fe,
+        bootstrap_type = bootstrap_type
+      )
+      
+      res <- boot_algo3(
+        preprocessed_object = preprocess,
+        B = B,
+        bootstrap_type = bootstrap_type,
+        r = r,
+        sign_level = sign_level,
+        param = param,
+        p_val_type = p_val_type,
+        nthreads = 1,
+        type = type,
+        full_enumeration = full_enumeration,
+        small_sample_correction = small_sample_correction,
+        seed = internal_seed, 
+        object = object
+      )
+      conf_int <- p_grid_vals <- grid_vals <- FALSE
+      
+      
+    }
+    
+  } else if (engine == "R-lean") {
     check_r_lean(
       weights = stats::weights(object),
       clustid = clustid,
-      fe = fe, 
+      fe = NULL, 
       impose_null = impose_null
     )
     
@@ -462,7 +511,6 @@ boottest.felm <- function(object,
       r = r,
       sign_level = sign_level,
       param = param,
-      # seed = seed,
       p_val_type = p_val_type,
       nthreads = nthreads,
       type = type,
@@ -472,9 +520,7 @@ boottest.felm <- function(object,
       seed = internal_seed
     )
     conf_int <- p_grid_vals <- grid_vals <- FALSE
-  } else if (boot_algo == "WildBootTests.jl") {
-    fedfadj <- 0L
-    
+  } else if (engine == "WildBootTests.jl") {
     julia_ssc <- get_ssc_julia(ssc)
     small <- julia_ssc$small
     clusteradj <- julia_ssc$clusteradj
@@ -508,9 +554,10 @@ boottest.felm <- function(object,
       clusteradj = clusteradj,
       clustermin = clustermin,
       fe = fe,
-      fedfadj = fedfadj
+      fedfadj = fedfadj, 
+      bootstrap_type = bootstrap_type
     )
-  }
+  } 
   
   # collect results
   res_final <- list(
@@ -534,7 +581,7 @@ boottest.felm <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    boot_algo = boot_algo,
+    engine = engine,
     nthreads = nthreads,
     internal_seed = internal_seed
   )

@@ -23,7 +23,7 @@ test_that("seed works for OLS", {
       )
   
   
-    for (boot_algo in c("R", "R-lean", "WildBootTests.jl")) {
+    for (engine in c("R", "R-lean", "WildBootTests.jl")) {
       # Case 1: seed set, no internal seeds
       set.seed(123)
       dqrng::dqset.seed(123)
@@ -36,7 +36,7 @@ test_that("seed works for OLS", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -48,7 +48,7 @@ test_that("seed works for OLS", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -67,7 +67,7 @@ test_that("seed works for OLS", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -81,7 +81,7 @@ test_that("seed works for OLS", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -102,7 +102,7 @@ test_that("seed works for OLS", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -116,7 +116,7 @@ test_that("seed works for OLS", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -137,7 +137,7 @@ test_that("seed works for OLS", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -151,7 +151,7 @@ test_that("seed works for OLS", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -170,7 +170,7 @@ test_that("seed works for OLS", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -184,7 +184,7 @@ test_that("seed works for OLS", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -202,7 +202,7 @@ test_that("seed works for OLS", {
           type = "rademacher",
           conf_int = FALSE,
           seed = 1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
   
@@ -217,7 +217,7 @@ test_that("seed works for OLS", {
           type = "rademacher",
           conf_int = FALSE,
           seed = 2,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_true(boot_lm_s1$p_val != boot_lm_s2$p_val)

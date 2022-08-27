@@ -134,7 +134,7 @@ regression coefficients.}
 \item{teststat_boot}{All bootstrap t-statistics.}
 \item{regression}{The regression object used in boottest.}
 \item{call}{Function call of boottest.}
-\item{boot_algo}{The employed bootstrap algorithm.}
+\item{engine}{The employed bootstrap algorithm.}
 \item{nthreads}{The number of threads employed.}
 \item{internal_seed}{The integer value -inherited from set.seed() - used
 within boottest() to set the random seed in either R or Julia. If NULL,
@@ -154,12 +154,12 @@ set a global random seed via
 \itemize{
 \item \code{set.seed()} when using
 \enumerate{
-\item the lean algorithm (via \code{boot_algo = "R-lean"}) including the
+\item the lean algorithm (via \code{engine = "R-lean"}) including the
 heteroskedastic wild bootstrap
-\item the wild cluster bootstrap via \code{boot_algo = "R"} with Mammen weights or
-\item \code{boot_algo = "WildBootTests.jl"}
+\item the wild cluster bootstrap via \code{engine = "R"} with Mammen weights or
+\item \code{engine = "WildBootTests.jl"}
 }
-\item \code{dqrng::dqset.seed()} when using \code{boot_algo = "R"} for Rademacher, Webb
+\item \code{dqrng::dqset.seed()} when using \code{engine = "R"} for Rademacher, Webb
 or Normal weights
 }
 }

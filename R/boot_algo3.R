@@ -55,7 +55,7 @@ boot_algo3 <- function(preprocessed_object,
   #preprocessed_object <- preprocess
   
   
-  if(substr(bootstrap_type, 5, 5) == 1){
+  if(substr(bootstrap_type, 2, 2) == 1){
     crv_type <- "crv1"  
   } else {
     crv_type <- "crv3"
@@ -70,9 +70,16 @@ boot_algo3 <- function(preprocessed_object,
   bootcluster <- preprocessed_object$bootcluster
   G <- N_G_bootcluster <- length(unique(bootcluster[[1]]))
   k <- length(R)
-  
-  bootstrap_type <- paste0(substr(bootstrap_type, 1, 4), "x")
-  
+
+  bootstrap_type_x <- paste0(substr(bootstrap_type, 1, 1), "x")
+  if(impose_null){
+    # WCR1x or WCR3x
+    bootstrap_type <- paste0("WCR", bootstrap_type_x)
+  } else {
+    # WCU1x or WCU3x
+    bootstrap_type <- paste0("WCU", bootstrap_type_x)
+  }
+
   v <- get_weights(
     type = type, 
     full_enumeration = full_enumeration, 

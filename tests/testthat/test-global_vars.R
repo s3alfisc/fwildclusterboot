@@ -1,4 +1,4 @@
-test_that("global boot_algo", {
+test_that("global engine", {
   
   skip_on_cran()
 
@@ -22,17 +22,17 @@ test_that("global boot_algo", {
           param = "treatment",
           B = 999,
           clustid = "group_id1",
-          boot_algo = "WildBootTests.jl"
+          engine = "WildBootTests.jl"
         )
       )
     
-    expect_equal(boot1$boot_algo, "R")
-    expect_equal(boot2$boot_algo, "WildBootTests.jl")
+    expect_equal(boot1$engine, "R")
+    expect_equal(boot2$engine, "WildBootTests.jl")
     
     # leave state of global variables clean
-    setBoottest_boot_algo(boot_algo = "WildBootTests.jl")
+    setBoottest_engine(engine = "WildBootTests.jl")
     # switch back to "R" as global variable at end of function
-    on.exit(setBoottest_boot_algo(boot_algo = "R"), add = TRUE)
+    on.exit(setBoottest_engine(engine = "R"), add = TRUE)
     boot1 <-
       suppressWarnings(boottest(
         lm_fit,
@@ -53,12 +53,12 @@ test_that("global boot_algo", {
         param = "treatment",
         B = 999,
         clustid = "group_id1",
-        boot_algo = "R"
+        engine = "R"
       )
     
-    expect_equal(boot1$boot_algo, "WildBootTests.jl")
-    expect_equal(boot2$boot_algo, "WildBootTests.jl")
-    expect_equal(boot3$boot_algo, "R")
+    expect_equal(boot1$engine, "WildBootTests.jl")
+    expect_equal(boot2$engine, "WildBootTests.jl")
+    expect_equal(boot3$engine, "R")
   } else {
     message("test-global_vars.R skipped as JULIA_BINDR not found.")
   }

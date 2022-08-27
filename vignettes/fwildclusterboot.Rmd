@@ -35,7 +35,7 @@ The `fwildclusterboot` package consists of one key function, `boottest()`. It im
 To start, we create a random data set with two cluster variables (group_id1 \& group_id2), two fixed effects and a set of covariates. The `icc_` arguments control the cluster variable's intra-cluster correlation.
 
 ```{r, error = FALSE, warning = FALSE, message = FALSE}
-# set seed via dqset.seed for boot_algo = "R" & Rademacher, Webb & Normal weights
+# set seed via dqset.seed for engine = "R" & Rademacher, Webb & Normal weights
 dqrng::dqset.seed(2352342)
 # set 'familiar' seed for all other algorithms and weight types 
 set.seed(23325)
@@ -120,7 +120,7 @@ If you drop the `clustid` argument, `boottest()` will run a heteroskedasticity r
 ```{r}
 boot_lm <- boottest(lm_fit, param = "treatment", B = 9999)
 summary(boot_lm)
-boot_lm$boot_algo
+boot_lm$engine
 ```
 
 
@@ -282,14 +282,14 @@ boot_lm <- boottest(lm_fit,
 
 For guidance on how to install `Julia` and `WildBootTests.jl` and how to connect R and Julia, please take a look at the [running WildBootTests.jl through fwildclusterboot](https://s3alfisc.github.io/fwildclusterboot/articles/WildBootTests.html) vignette. 
 
-You can tell `boottest()` to run `WildBootTests.jl` by using the `boot_algo` function argument: 
+You can tell `boottest()` to run `WildBootTests.jl` by using the `engine` function argument: 
 
 ```{r, eval = FALSE, message = FALSE, warning = FALSE}
 boot_lm <- boottest(lm_fit, 
                        clustid = "group_id1", 
                        param = "treatment", 
                        B = 9999, 
-                       boot_algo = "WildBootTests.jl")
+                       engine = "WildBootTests.jl")
 generics::tidy(boot_lm)
 #             term   estimate statistic    p.value   conf.low conf.high
 #1 1*treatment = 0 0.07290769  3.709435 0.00060006 0.03326969 0.1134117
@@ -299,10 +299,10 @@ The seed used within Julia is linked to R's global seed, which you can set throu
 If you decide to run all your bootstraps through `WildBootTests.jl`, you can set a global variable via 
 
 ```{r, eval = FALSE, message = FALSE, warning = FALSE}
-setBoottest_boot_algo("WildBootTests.jl")
+setBoottest_engine("WildBootTests.jl")
 ```
 
-Calling `boottest()` without specifying `boot_algo = "WildBootTests.jl"` will now automatically run the bootstrap through `WildBootTests.jl`.
+Calling `boottest()` without specifying `engine = "WildBootTests.jl"` will now automatically run the bootstrap through `WildBootTests.jl`.
 
 ## The WRE bootstrap for IV models 
 
@@ -420,7 +420,7 @@ generics::tidy(wboottest)
 <!-- $$ -->
 <!--   Q = ((1 :- P_{xr})  X_{0}). -->
 <!-- $$ -->
-<!-- Both quantities, $P$ and $Q$, are explicitely computed as such in the boot_algo2 function. Q summarizes all terms that vary in $r$, while P summarizes constant terms.  -->
+<!-- Both quantities, $P$ and $Q$, are explicitely computed as such in the engine2 function. Q summarizes all terms that vary in $r$, while P summarizes constant terms.  -->
 
 <!-- Note that in the case of the WCU, $X_r = X$, $P_{xr} = P_{x}$, and $X_0$ is a vector of length N, containing zeros.  -->
 
@@ -552,20 +552,20 @@ bench::mark(
            clustid = "group_id1", 
            param = "treatment", 
            B = 9999, 
-           boot_algo = "R", 
+           engine = "R", 
            nthreads = 4), 
   "R-lean" = boottest(lm_fit, 
            clustid = "group_id1", 
            param = "treatment", 
            B = 9999, 
-           boot_algo = "R-lean", 
+           engine = "R-lean", 
            nthreads = 4),
   "WildBootTests.jl" = 
     boottest(lm_fit, 
            clustid = "group_id1", 
            param = "treatment", 
            B = 9999, 
-           boot_algo = "WildBootTests.jl"), 
+           engine = "WildBootTests.jl"), 
   iterations = 1, 
   check = FALSE
 )
@@ -576,7 +576,7 @@ res
 
 ## Seeds
 
-For Rademacher, Normal and Webb weights and `boot_algo = "R"`, you need to set a global seed via `dqrng::dqset.seed()`. For all other options - Mammen weights with `boot_algo = "R"`, `boot_algo = "R-lean"` or `boot_algo = "WildBootTests.jl"`, you can set a global seed via the familiar`set.seed()`. 
+For Rademacher, Normal and Webb weights and `engine = "R"`, you need to set a global seed via `dqrng::dqset.seed()`. For all other options - Mammen weights with `engine = "R"`, `engine = "R-lean"` or `engine = "WildBootTests.jl"`, you can set a global seed via the familiar`set.seed()`. 
 
 ## Treatment of Invalid Test Statistics for multiway clustering
 

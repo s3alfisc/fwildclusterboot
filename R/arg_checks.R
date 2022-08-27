@@ -199,7 +199,7 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
 
 
 
-#' some checks when 'boot_algo = R-lean"
+#' some checks when 'engine = R-lean"
 #' @param weights NULL or numeric vector
 #' @param clustid character vector 
 #' @param fe NULL or character scalar
@@ -216,66 +216,56 @@ check_r_lean <- function(weights, clustid, fe, impose_null){
   
   if (!is.null(fe)) {
     stop("boottest() currently does not support 
-         fixed effects with boot_algo = 'R-lean'.")
+         fixed effects with engine = 'R-lean'.")
   }
   
   if(!is.null(weights)){
     stop("boottest() currently does not support regression
-         weights with boot_algo = 'R-lean'.")
+         weights with engine = 'R-lean'.")
   }
   
   if(impose_null != TRUE){
     stop("boottest() currently does not support the 'WCU' bootstrap 
     - which does not impose the null on the 
-          bootstrap dgp - for boot_algo = 'R-lean'.")
+          bootstrap dgp - for engine = 'R-lean'.")
   }
   
 }
 
 
-check_boot_algo3 <- function(weights, clustid, fe, impose_null, boot_algo){
+check_boot_algo3 <- function(
+    weights,
+    clustid, 
+    fe,
+    bootstrap_type){
   
   #' function to check input arguments passed to `boot_algo3()`
   #' @param weights NULL or numeric vector
   #' @param clustid character vector 
   #' @param fe NULL or character scalar
-  #' @param impose_null Logical, whether the null is imposed
-  #' @param boot_algo either 'WCR11', ..., 'WCU33'
+  #' @param bootstrap_type either 'fnr_11', '13', '31, '33'
   #' @noRd
   
   
   if(length(clustid) > 1){
-    stop("The WCR13, WCR33, WCU13 or WCU33 
-         algorithm currently only supports oneway clustering.")
+    stop("The '13', '31', and '33'
+         bootstrap variants currently only
+         support oneway clustering when 'boot_engine' == 'R'."
+         )
   }
   
   if (!is.null(fe)) {
-    stop("boottest() currently does not support 
-         fixed effects with boot_algo either WCR13, WCR33, WCU13 or WCU33.")
+    stop("The '13', '31', and '33'
+         bootstrap variants currently only
+         support oneway clustering when 'boot_engine' == 'R'.")
   }
   
   if(!is.null(weights)){
-    stop("boottest() currently does not support regression
-         weights with boot_algo either WCR13, WCR33, WCU13 or WCU33.")
+    stop("The '13', '31', and '33'
+         bootstrap variants currently only
+         support oneway clustering when 'boot_engine' == 'R'.")
   }
   
-  if(impose_null == TRUE){
-    if(boot_algo %in% c("WCU11", "WCU13", "WCU31","WCU33")){
-      stop("You have specified 'impose_null = TRUE' and boot_algo = 'WCU'. 
-           This does not make sense - I will have to update the UI eventually. 
-           Sorry for the inconvenience! If you want to run the WRU, please 
-           set 'impose_null = FALSE'.")
-    }
-  }
-  
-  if(impose_null == FALSE){
-    if(boot_algo %in% c("WCR11","WCR13", "WCR31","WCR33")){
-      stop("You have specified 'impose_null = FALSE' and boot_algo = 'WCR'. 
-           This does not make sense - I will have to update the UI eventually. 
-           Sorry for the inconvenience! If you want to run the WRU, please 
-           set 'impose_null = TRUE'.")
-    }
-  }
   
 }
 
@@ -286,7 +276,7 @@ check_boot_algo3 <- function(weights, clustid, fe, impose_null, boot_algo){
 #' @param preprocess A list created via the preprocess2 function
 #' @param B Integer. The number of bootstrap iterations
 #' @param type. The type of test to be run
-#' @param boot_algo. Character scalar, either "R", "WildBootTests.jl" or 
+#' @param engine. Character scalar, either "R", "WildBootTests.jl" or 
 #' "R-lean"
 #' @noRd
 
@@ -295,7 +285,7 @@ check_set_full_enumeration <-
            preprocess,
            B,
            type,
-           boot_algo) {
+           engine) {
     full_enumeration <- FALSE
     
     if (heteroskedastic == FALSE) {
@@ -324,7 +314,7 @@ check_set_full_enumeration <-
             noBreaks. = TRUE
           )
           full_enumeration <- TRUE
-          if (boot_algo != "WildBootTests.jl") {
+          if (engine != "WildBootTests.jl") {
             # this is handled internally by WildBootTests.jl, so don't update B
             B <- N_G_2
           }
@@ -352,7 +342,7 @@ r_algo_checks <- function(R, p_val_type, conf_int, B) {
     if (length(nrow(R)) != 0) {
       stop(
         "Hypotheses with q>1 are currently only supported via WildBootTests.jl.
-        Please set the function argument 'boot_algo = WildBootTests.jl'."
+        Please set the function argument 'engine = WildBootTests.jl'."
       )
     }
   }
@@ -363,7 +353,7 @@ r_algo_checks <- function(R, p_val_type, conf_int, B) {
       warning(
         paste(
           "Currently, boottest() calculates confidence intervals for one-sided
-          hypotheses only for boot_algo = 'WildBootTests.jl'."
+          hypotheses only for engine = 'WildBootTests.jl'."
         ),
         call. = FALSE
       )

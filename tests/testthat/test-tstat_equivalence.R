@@ -22,9 +22,9 @@ test_that("t-stat equivalence OLS - R and R-lean", {
         # cluster.adj= FALSE
         # cluster.df= "conventional"
         # impose_null= TRUE
-        # boot_algo = "R"
+        # engine = "R"
   
-        for (boot_algo in c("R")) {
+        for (engine in c("R")) {
           for (adj in c(TRUE, FALSE)) {
             for (cluster.adj in c(TRUE, FALSE)) {
               for (cluster.df in c("conventional", "min")) {
@@ -81,7 +81,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
   
@@ -98,7 +98,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot3 <-
@@ -114,7 +114,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
   
@@ -138,7 +138,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                   # cat("--------------------------------", "\n")
   
   
-                  if (boot_algo != "R-lean") {
+                  if (engine != "R-lean") {
   
                   }
                   # twoway clustering
@@ -185,7 +185,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot2 <-
@@ -201,7 +201,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot3 <-
@@ -217,7 +217,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   # skip_on_cran()
@@ -239,7 +239,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
           }
         }
   
-        for (boot_algo in c("R-lean")) {
+        for (engine in c("R-lean")) {
           for (adj in c(TRUE, FALSE)) {
             for (cluster.adj in c(TRUE, FALSE)) {
               for (cluster.df in c("conventional", "min")) {
@@ -286,7 +286,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
   
@@ -303,7 +303,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot3 <-
@@ -319,7 +319,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
   
@@ -381,9 +381,9 @@ test_that("t-stat equivalence OLS - WildBootTests", {
         # cluster.adj= FALSE
         # cluster.df= "conventional"
         # impose_null= TRUE
-        # boot_algo = "R"
+        # engine = "R"
         
-        for (boot_algo in c("WildBootTests.jl")) {
+        for (engine in c("WildBootTests.jl")) {
           for (adj in c(TRUE, FALSE)) {
             for (cluster.adj in c(TRUE, FALSE)) {
               for (cluster.df in c("conventional", "min")) {
@@ -440,7 +440,7 @@ test_that("t-stat equivalence OLS - WildBootTests", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   
@@ -457,7 +457,7 @@ test_that("t-stat equivalence OLS - WildBootTests", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot3 <-
@@ -473,7 +473,7 @@ test_that("t-stat equivalence OLS - WildBootTests", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   
@@ -542,7 +542,7 @@ test_that("t-stat equivalence OLS - WildBootTests", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot2 <-
@@ -558,7 +558,7 @@ test_that("t-stat equivalence OLS - WildBootTests", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot3 <-
@@ -574,7 +574,7 @@ test_that("t-stat equivalence OLS - WildBootTests", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   # skip_on_cran()

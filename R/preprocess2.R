@@ -19,7 +19,7 @@ preprocess2.fixest <-
            R,
            param,
            fe,
-           boot_algo,
+           engine,
            bootcluster) {
     #' preprocess data for objects of type fixest
     #'
@@ -30,7 +30,7 @@ preprocess2.fixest <-
     #' @param fe character vector. name of the fixed effect to be projected
     #'  out in the bootstrap
     #' @param param character vector. names of the parameter(s) to test
-    #' @param boot_algo The bootstrap algorithm to run. Either "R" or
+    #' @param engine The bootstrap algorithm to run. Either "R" or
     #'  "WildBootTests.jl"
     #' @param bootcluster a character string containing the name(s) of the
     #'  bootcluster variables. Alternatively, "min" or "max"
@@ -124,7 +124,7 @@ preprocess2.fixest <-
         fe = fe,
         N = N,
         has_weights = has_weights,
-        boot_algo = boot_algo
+        engine = engine
       )
 
 
@@ -229,7 +229,7 @@ preprocess2.felm <-
            R,
            param,
            fe,
-           boot_algo,
+           engine,
            bootcluster) {
     #' preprocess data for objects of type felm
     #'
@@ -240,7 +240,7 @@ preprocess2.felm <-
     #' @param fe character vector. name of the fixed effect to be projected
     #'  out in the bootstrap
     #' @param param character vector. names of the parameter(s) to test
-    #' @param boot_algo The bootstrap algorithm to run. Either "R" or
+    #' @param engine The bootstrap algorithm to run. Either "R" or
     #'  "WildBootTests.jl"
     #' @param bootcluster a character string containing the name(s) of the
     #'  bootcluster variables. Alternatively, "min" or "max"
@@ -309,7 +309,7 @@ preprocess2.felm <-
         fe = fe,
         N = N,
         has_weights = has_weights,
-        boot_algo = boot_algo
+        engine = engine
       )
       X <- get_fe$X
       Y <- get_fe$Y
@@ -411,7 +411,7 @@ preprocess2.lm <-
            clustid,
            R,
            param,
-           boot_algo,
+           engine,
            bootcluster) {
     #' preprocess data for objects of type lm
     #'
@@ -420,7 +420,7 @@ preprocess2.lm <-
     #'  cluster variables
     #' @param R Hypothesis Vector giving linear combinations of coefficients.
     #' @param param character vector. names of the parameter(s) to test
-    #' @param boot_algo The bootstrap algorithm to run. Either "R" or
+    #' @param engine The bootstrap algorithm to run. Either "R" or
     #' "WildBootTests.jl"
     #' @param bootcluster a character string containing the name(s) of
     #' the bootcluster variables. Alternatively, "min" or "max"
@@ -531,7 +531,7 @@ preprocess2.ivreg <-
            clustid,
            R,
            param,
-           boot_algo,
+           engine,
            bootcluster) {
     #' preprocess data for objects of type ivreg
     #'
@@ -540,7 +540,7 @@ preprocess2.ivreg <-
     #'  cluster variables
     #' @param R Hypothesis Vector giving linear combinations of coefficients.
     #' @param param character vector. names of the parameter(s) to test
-    #' @param boot_algo The bootstrap algorithm to run. Either "R" or
+    #' @param engine The bootstrap algorithm to run. Either "R" or
     #'  "WildBootTests.jl"
     #' @param bootcluster a character string containing the name(s) of
     #' the bootcluster variables. Alternatively, "min" or "max"
@@ -688,7 +688,7 @@ get_cluster <-
     #' @return a list, containing, among other things, a data.frame of the
     #'  cluster variables,
     #'         a data.frame of the bootcluster variable(s), and a helper
-    #'         matrix, all_c, used in `boot_algo_julia()`
+    #'         matrix, all_c, used in `engine_julia()`
 
     # ----------------------------------------------------------------------- #
     # Note: a large part of the following code was taken and adapted from the
@@ -1018,7 +1018,7 @@ demean_fe <- function(X, Y, fe, has_weights, N) {
 
 
 transform_fe <-
-  function(object, X, Y, fe, has_weights, N, boot_algo) {
+  function(object, X, Y, fe, has_weights, N, engine) {
     #' preprocess the model fixed effects
     #'
     #'  If is.null(fe) == TRUE, all
@@ -1032,7 +1032,7 @@ transform_fe <-
     #' @param has_weights logical - have regression weights been used in the
     #'  original model?
     #' @param N the number of observations
-    #' @param boot_algo bootstrap algorithm to run. Either "R" or
+    #' @param engine bootstrap algorithm to run. Either "R" or
     #' "WildBootTests.jl"
     #'
     #' @return a list containing X - the design matrix plus additionally
@@ -1081,7 +1081,7 @@ transform_fe <-
       }
 
       # project out fe
-      if (boot_algo == "R") {
+      if (engine == "R") {
         # WildBootTests.jl does demeaning internally
         prep_fe <- demean_fe(X, Y, fe_df, has_weights, N)
         X <- prep_fe$X

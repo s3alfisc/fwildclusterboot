@@ -23,15 +23,14 @@
 #'        wild bootstrap factors. "rademacher" by default.
 #' @param floattype Should floating
 #' @param bootstrapc Logical scalar. TRUE  to request
-#' bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo =
-#' "WildBootTests.jl"'
+#' bootstrap-c instead of bootstrap-t. 
 #' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
 #' @param fweights Should frequency weight or probability weights be used for 
 #' WLS? Currently, only frequency weights are supported
 #' @param internal_seed an integer. sets the seed used in Julia
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set
 #' the maximum size of auxilliary weight matrix (v), in gigabytes. Only
-#'  relevant when 'boot_algo = "WildBootTests.jl"'
+#'  relevant when 'engine = "WildBootTests.jl"'
 #' @param small Logical Should a small sample correction (N-1)/(N-k) be used?
 #' @param clusteradj Logical. Should a ssc G / (G-1) be used?
 #' @param clustermin Logical. Should G be computed as min(G) in case of multi-
@@ -46,11 +45,8 @@
 #' FALSE
 #' @param fuller numeric - fuller parameter
 #' @param kappa numeric - kappa parameter
-#' @param boot_algo Either 'WildBootTests.jl' - the default, or 
-#' 'WildBootTests.jl-31'
-
-#'  point numbers in Julia be represented as 32 or 64 bit? Only relevant when
-#'  'boot_algo = "WildBootTests.jl"'
+#' @param bootstrap_type Either '11' - the default, or 
+#' '31'
 
 #' @importFrom JuliaConnectoR juliaEval juliaImport
 #' @noRd
@@ -81,7 +77,7 @@ boot_algo_julia <- function(preprocess,
                             arubin = NULL,
                             fuller = NULL,
                             kappa = NULL, 
-                            boot_algo = "WildBootTests.jl") {
+                            bootstrap_type = "11") {
   
   resp <- as.numeric(preprocess$Y)
 
@@ -217,7 +213,7 @@ boot_algo_julia <- function(preprocess,
     }
   }
   
-  if(boot_algo == "WildBootTests.jl-31"){
+  if(bootstrap_type == "31"){
     eval_list[["jk"]] <- TRUE
   }
 

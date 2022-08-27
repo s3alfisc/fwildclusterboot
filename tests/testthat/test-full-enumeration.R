@@ -89,7 +89,7 @@ test_that("test full enumeration cases: r and r-lean", {
                 type = type,
                 p_val_type = p_val_type,
                 impose_null = impose_null,
-                boot_algo = "R-lean", 
+                engine = "R-lean", 
                 conf_int = FALSE
               )
             )
@@ -164,7 +164,7 @@ test_that("test full enumeration cases: r and r-lean", {
                 type = type,
                 p_val_type = p_val_type,
                 impose_null = impose_null,
-                boot_algo = "R-lean", 
+                engine = "R-lean", 
                 conf_int = FALSE
               )
             )
@@ -298,7 +298,7 @@ test_that("test full enumeration cases: r and julia", {
                        type = type, 
                        p_val_type = p_val_type, 
                        impose_null = impose_null,
-                       boot_algo = "WildBootTests.jl", 
+                       engine = "WildBootTests.jl", 
                        conf_int = FALSE
               )
             )
@@ -376,7 +376,7 @@ test_that("test full enumeration cases: r and julia", {
                 type = type,
                 p_val_type = p_val_type,
                 impose_null = impose_null,
-                boot_algo = "WildBootTests.jl",
+                engine = "WildBootTests.jl",
                 conf_int = FALSE
               )
             )

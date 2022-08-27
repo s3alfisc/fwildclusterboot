@@ -29,14 +29,14 @@ test_that("test tidiers with q = 1", {
       param = "treatment",
       B = 9999,
       clustid = "group_id1",
-      boot_algo = "R-lean"
+      engine = "R-lean"
     )
     boottest_julia <- boottest(
       lm_fit,
       param = "treatment",
       B = 9999,
       clustid = "group_id1",
-      boot_algo = "WildBootTests.jl"
+      engine = "WildBootTests.jl"
     )
     
     

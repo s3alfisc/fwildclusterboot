@@ -1,8 +1,9 @@
-# fwildclusterboot 0.11
+# fwildclusterboot 0.11.1
 
-+ This release introduces new wild cluster bootstrap variants as described in [MacKinnon, Nielsen & Webb (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf). The implementation is still quite bare-bone: it only allows to test hypotheses of the form $\beta_k = 0$ vs $\beta_k \neq 0$, does not allow for regression weights or fixed effects, and further does not compute confidence intervals. 
++ The `boot_algo` function argument is renamed to `engine`. + A new function argument has been added `bootstrap_type`. In combination with the `impose_null` function argument, it allows to choose which wild cluster bootstrap type should be run - WCx11, WCx13, WCx31, WCx33. 
++ The `setBoottest_boot_algo()` function has been renamed to `setBoottest_engine()`.
+In consequence, the syntax introduced in 0.11 changes to 
 
-You can run one of the 'new' variants - e.g. the "WCR13", by specifying the `boot_algo` function argument accordingly: 
 
 ```
 boottest(
@@ -11,7 +12,41 @@ boottest(
   clustid = ~group_id1,
   B = 9999, 
   impose_null = TRUE,
-  boot_algo = "WCR13"
+  engine = "R", 
+  bootstrap_type = "11"
+)
+```
+
+To run everything through `WildBootTests.jl`, one would have to specify 
+
+```
+boottest(
+  lm_fit, 
+  param = ~treatment, 
+  clustid = ~group_id1,
+  B = 9999, 
+  impose_null = TRUE,
+  engine = "WildBootTests.jl", 
+  bootstrap_type = "11"
+)
+```
+
+
+# fwildclusterboot 0.11
+
++ This release introduces new wild cluster bootstrap variants as described in [MacKinnon, Nielsen & Webb (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf). The implementation is still quite bare-bone: it only allows to test hypotheses of the form $\beta_k = 0$ vs $\beta_k \neq 0$, does not allow for regression weights or fixed effects, and further does not compute confidence intervals. 
+
+You can run one of the 'new' variants - e.g. the "WCR13", by specifying the `bootstrap_type` function argument accordingly: 
+
+```
+boottest(
+  lm_fit, 
+  param = ~treatment, 
+  clustid = ~group_id1,
+  B = 9999, 
+  impose_null = TRUE,
+  engine = "R", 
+  bootstrap_type = "31"
 )
 ```
 

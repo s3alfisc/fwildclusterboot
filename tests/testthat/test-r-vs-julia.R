@@ -93,7 +93,7 @@ test_that("test r against Julia I: stochastic tests", {
                     type = type,
                     p_val_type = p_val_type,
                     impose_null = impose_null,
-                    boot_algo = "WildBootTests.jl"
+                    engine = "WildBootTests.jl"
                   )
                 )
               # pracma::toc()
@@ -149,7 +149,7 @@ test_that("test r against Julia I: stochastic tests", {
                     p_val_type = p_val_type,
                     impose_null = impose_null,
                     conf_int = FALSE,
-                    boot_algo = "WildBootTests.jl"
+                    engine = "WildBootTests.jl"
                   )
                 )
               res <-
@@ -205,7 +205,7 @@ test_that("test r against Julia I: stochastic tests", {
                     type = type,
                     p_val_type = p_val_type,
                     impose_null = impose_null,
-                    boot_algo = "WildBootTests.jl"
+                    engine = "WildBootTests.jl"
                   )
                 )
               res <-
@@ -264,7 +264,7 @@ test_that("test r against Julia I: stochastic tests", {
                     p_val_type = p_val_type,
                     impose_null = impose_null,
                     conf_int = FALSE,
-                    boot_algo = "WildBootTests.jl"
+                    engine = "WildBootTests.jl"
                   )
                 )
               res <-
@@ -316,7 +316,7 @@ test_that("test r against Julia I: stochastic tests", {
                     type = type,
                     p_val_type = p_val_type,
                     impose_null = impose_null,
-                    boot_algo = "WildBootTests.jl"
+                    engine = "WildBootTests.jl"
                   )
                 )
               res <-
@@ -371,7 +371,7 @@ test_that("test r against Julia I: stochastic tests", {
                     p_val_type = p_val_type,
                     impose_null = impose_null,
                     conf_int = FALSE,
-                    boot_algo = "WildBootTests.jl"
+                    engine = "WildBootTests.jl"
                   )
                 )
               res <-
@@ -425,7 +425,7 @@ test_that("test r against Julia I: stochastic tests", {
                     type = type,
                     p_val_type = p_val_type,
                     impose_null = impose_null,
-                    boot_algo = "WildBootTests.jl"
+                    engine = "WildBootTests.jl"
                   )
                 )
               res <-
@@ -483,7 +483,7 @@ test_that("test r against Julia I: stochastic tests", {
                     p_val_type = p_val_type,
                     impose_null = impose_null,
                     conf_int = FALSE,
-                    boot_algo = "WildBootTests.jl"
+                    engine = "WildBootTests.jl"
                   )
                 )
               res <-

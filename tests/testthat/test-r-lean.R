@@ -133,7 +133,7 @@ test_that("test lean cpp boottest", {
     param = "treatment",
     clustid = "group_id1",
     B = 2999,
-    boot_algo = "R-lean",
+    engine = "R-lean",
     nthreads = 1,
     ssc = boot_ssc(
       adj = FALSE,
@@ -147,7 +147,7 @@ test_that("test lean cpp boottest", {
     param = "treatment",
     clustid = "group_id1",
     B = 2999,
-    boot_algo = "R",
+    engine = "R",
     nthreads = 1,
     ssc = boot_ssc(
       adj = FALSE,
@@ -164,7 +164,7 @@ test_that("test lean cpp boottest", {
     param = "treatment",
     clustid = "group_id1",
     B = 9999,
-    boot_algo = "R-lean",
+    engine = "R-lean",
     nthreads = 1
   )
   # pracma::toc()
@@ -174,7 +174,7 @@ test_that("test lean cpp boottest", {
     param = "treatment",
     clustid = "group_id1",
     B = 9999,
-    boot_algo = "R",
+    engine = "R",
     nthreads = 1
   )
   # pracma::toc()

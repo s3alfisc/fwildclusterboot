@@ -9,7 +9,7 @@
   # setBoottest_nthreads()
 
   setBoottest_nthreads()
-  setBoottest_boot_algo()
+  setBoottest_engine()
 
   invisible()
 }
