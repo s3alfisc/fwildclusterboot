@@ -18,7 +18,7 @@ status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-p
 coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/fwildclusterboot?color=blue)](https://cran.r-project.org/package=fwildclusterboot)
 [![](http://cranlogs.r-pkg.org/badges/last-month/fwildclusterboot?color=green)](https://cran.r-project.org/package=fwildclusterboot)
-[![pkgcheck](https://github.com/%3Corg%3E/%3Crepo%3E/workflows/pkgcheck/badge.svg)](https://github.com/%3Corg%3E/%3Crepo%3E/actions?query=workflow%3Apkgcheck)
+[![pkgcheck](https://github.com/s3alfisc/fwildclusterboot/workflows/pkgcheck/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions?query=workflow%3Apkgcheck)
 
 <!-- badges: end -->
 
@@ -31,10 +31,13 @@ Additionally, it provides support for multiple wild cluster bootstrap
 variants as described in [MacKinnon, Nielsen & Webb
 (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf).
 
-It also ports functionality of
-[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) to R
-via the
-[JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR).
+Via the
+[JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR),
+`{fwildclusterboot}` further ports functionality of
+[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) - which
+provides an even faster implementation of the wild cluster bootstrap for
+OLS and supports the WRE bootstrap for IV and tests of multiple joint
+hypotheses.
 
 The package’s central function is `boottest()`. It allows to test
 univariate hypotheses using a wild cluster bootstrap at extreme speed:
@@ -76,7 +79,7 @@ For a longer introduction to `{fwildclusterboot}`, take a look at the
 ``` r
 library(fwildclusterboot)
 
-# set seed via dqset.seed for boot_algo = "R" & Rademacher, Webb & Normal weights
+# set seed via dqset.seed for engine = "R" & Rademacher, Webb & Normal weights
 dqrng::dqset.seed(2352342)
 # set 'familiar' seed for all other algorithms and weight types 
 set.seed(23325)
@@ -155,7 +158,7 @@ citation("fwildclusterboot")
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Misc{,
-#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.10)},
+#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.11.1)},
 #>     author = {Alexander Fischer and David Roodman},
 #>     year = {2021},
 #>     url = {https://cran.r-project.org/package=fwildclusterboot},
