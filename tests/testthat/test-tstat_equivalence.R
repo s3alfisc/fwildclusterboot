@@ -351,8 +351,8 @@ test_that("t-stat equivalence OLS - WildBootTests", {
   julia_prep <- is_juliaconnector_prepared()
   cat("julia connector prepared? ", julia_prep, "\n")
   
-  if(julia_prep){
-  #if(TRUE){
+  #if(julia_prep){
+  if(TRUE){
         # data(voters)
         # adj <- cluster.adj <- TRUE; cluster.df <- "conventional";
         # impose_null = TRUE
@@ -606,10 +606,8 @@ test_that("t-stat equivalence OLS q > 1", {
   julia_prep <- is_juliaconnector_prepared()
   cat("julia connector prepared? ", julia_prep, "\n")
   
-  cat("julia connector prepared? ", julia_prep, "\n")
-  
-  if(julia_prep){
-  # if(TRUE){
+  #if(julia_prep){
+  if(TRUE){
     
     wald_test <- function(run_this_test) {
       if (run_this_test) {
@@ -894,8 +892,8 @@ test_that("t-stat equivalence IV", {
   julia_prep <- is_juliaconnector_prepared()
   cat("julia connector prepared? ", julia_prep, "\n")
   
-  if(julia_prep){
-  #if(TRUE){
+  #if(julia_prep){
+  if(TRUE){
     
     iv_test <- function(run_this_test) {
       # Note: Test with Float64 for exact match

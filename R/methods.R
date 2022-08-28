@@ -863,3 +863,12 @@ summary.mboottest <- function(object, digits = 3, ...) {
 
   tidy(object)
 }
+
+
+#' @importFrom generics tidy
+#' @export
+generics::tidy
+
+#' @importFrom generics tidy
+#' @export
+generics::tidy

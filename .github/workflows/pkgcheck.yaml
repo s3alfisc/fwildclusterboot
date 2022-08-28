@@ -46,10 +46,12 @@ jobs:
       - name: Run pkgcheck
         id: pkgcheck
         shell: Rscript {0}
+        
       - uses: actions/upload-artifact@v2
         with:
           name: visual-network
           path: "${{ steps.pkgcheck.outputs.visnet_path }}"
+          
       - uses: actions/upload-artifact@v2
         with:
           name: results
