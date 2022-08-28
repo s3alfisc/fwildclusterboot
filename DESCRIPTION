@@ -1,6 +1,6 @@
 Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap Inference for Linear Models
-Version: 0.11
+Version: 0.11.1
 Authors@R: 
     c(
     person(given = "Alexander",
@@ -88,5 +88,5 @@ RoxygenNote: 7.2.0
 LinkingTo: Rcpp,RcppArmadillo, RcppEigen
 VignetteBuilder: knitr
 Language: en-US
-SystemRequirements: Julia (>= 1.7), WildBootTests.jl (>=0.7.13)
+SystemRequirements: Julia (>= 1.7), WildBootTests.jl (>=0.8.0)
 Config/testthat/edition: 3

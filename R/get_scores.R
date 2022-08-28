@@ -19,13 +19,12 @@ get_scores <- function(bootstrap_type,
       WCR3x = function(g) tXgyg[[g]] - tXgX1g[[g]] %*% beta_1g_tilde[[g]], 
       WCU3x = function(g) tXgyg[[g]] - tXgXg[[g]] %*% beta_g_hat[[g]],
     )
-  
+
 
   scores_list <- lapply(
     1:G, 
     function(g) eval(scores(g))
   )
-
   
   scores_list
   

@@ -40,17 +40,20 @@
 #' function argument, or
 #' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`), 2) the heteroskedastic
+#'    1) the lean algorithm (via `engine = "R-lean"`), 2) the heteroskedastic
 #'     wild bootstrap
-#'    3) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights
-#'     or 4) `boot_algo = "WildBootTests.jl"`
-#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher, Webb
+#'    3) the wild cluster bootstrap via `engine = "R"` with Mammen weights
+#'     or 4) `engine = "WildBootTests.jl"`
+#' + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher, Webb
 #' or Normal weights
 #'
 #' @return An object of class \code{boottest}.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
 #' (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+#' @references MacKinnon, James G., Morten Ørregaard Nielsen, and 
+#' Matthew D. Webb. Fast and reliable jackknife and bootstrap
+#'  methods for cluster-robust inference. No. 1485. 2022. 
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 #'  "Bootstrap-based improvements for inference with clustered errors."
 #'  The Review of Economics and Statistics 90.3 (2008): 414-427.
@@ -100,11 +103,11 @@ boottest <- function(object,
 #'  function argument, or
 #' set a global random seed via
 #' + `set.seed()` when using
-#'    1) the lean algorithm (via `boot_algo = "R-lean"`),
+#'    1) the lean algorithm (via `engine = "R-lean"`),
 #'    2) the heteroskedastic wild bootstrap
-#'    3) the wild cluster bootstrap via `boot_algo = "R"` with Mammen weights or
-#'     4) `boot_algo = "WildBootTests.jl"`
-#' + `dqrng::dqset.seed()` when using `boot_algo = "R"` for Rademacher,
+#'    3) the wild cluster bootstrap via `engine = "R"` with Mammen weights or
+#'     4) `engine = "WildBootTests.jl"`
+#' + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher,
 #'  Webb or Normal weights
 #'
 #' @return An object of class \code{mboottest}.
@@ -176,6 +179,10 @@ mboottest <- function(object,
 #'   clustid = "group_id1"
 #' )
 #' pval(boot)
+#' @return 
+#' A scalar with the bootstrapped p-value. 
+
+
 
 
 pval <- function(object,
@@ -203,6 +210,8 @@ pval <- function(object,
 #'   clustid = "group_id1"
 #' )
 #' teststat(boot)
+#' @return A scalar with containing the non-bootstrapped
+#' test statistic of interest
 
 teststat <- function(object,
                      ...) {
@@ -258,6 +267,7 @@ confint.boottest <- function(object, ...) {
 #' )
 #' confint(boot)
 #'
+
 pval.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
 
@@ -346,7 +356,7 @@ tidy.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
   # dreamerr::validate_dots(stop = TRUE)
 
-  if (object$boot_algo == "WildBootTests.jl") {
+  if (object$engine == "WildBootTests.jl") {
     R <- object$R[which(object$R != 0)]
     hypothesis <-
       paste(paste0(paste0(R, "*"), object$param, collapse = "+"), "=", object$r)
@@ -449,7 +459,7 @@ summary.boottest <- function(object, digits = 3, ...) {
   tidy_object <- as.data.frame(tidy_object)
   names(tidy_object) <- tidy_names
 
-  if (object$boot_algo == "WildBootTests.jl") {
+  if (object$engine == "WildBootTests.jl") {
     R <- object$R[which(object$R != 0)]
     hypothesis <-
       paste(paste0(paste0(R, "*"), object$param, collapse = "+"), "=", object$r)

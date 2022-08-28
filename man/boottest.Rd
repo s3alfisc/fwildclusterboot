@@ -27,12 +27,12 @@ set a global random seed via
 \itemize{
 \item \code{set.seed()} when using
 \enumerate{
-\item the lean algorithm (via \code{boot_algo = "R-lean"}), 2) the heteroskedastic
+\item the lean algorithm (via \code{engine = "R-lean"}), 2) the heteroskedastic
 wild bootstrap
-\item the wild cluster bootstrap via \code{boot_algo = "R"} with Mammen weights
-or 4) \code{boot_algo = "WildBootTests.jl"}
+\item the wild cluster bootstrap via \code{engine = "R"} with Mammen weights
+or 4) \code{engine = "WildBootTests.jl"}
 }
-\item \code{dqrng::dqset.seed()} when using \code{boot_algo = "R"} for Rademacher, Webb
+\item \code{dqrng::dqset.seed()} when using \code{engine = "R"} for Rademacher, Webb
 or Normal weights
 }
 }
@@ -62,6 +62,10 @@ generics::tidy(boot)
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.
 (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+
+MacKinnon, James G., Morten Ørregaard Nielsen, and
+Matthew D. Webb. Fast and reliable jackknife and bootstrap
+methods for cluster-robust inference. No. 1485. 2022.
 
 Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 "Bootstrap-based improvements for inference with clustered errors."

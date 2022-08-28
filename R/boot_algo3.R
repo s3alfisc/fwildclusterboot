@@ -10,7 +10,8 @@ boot_algo3 <- function(preprocessed_object,
                        full_enumeration,
                        small_sample_correction,
                        seed, 
-                       object){
+                       object, 
+                       impose_null){
   
   #' WRE13, WRE33, WRU13 and WRU33 bootstraps as in MNW (2022) "Fast and 
   #' reliable" 
@@ -41,6 +42,8 @@ boot_algo3 <- function(preprocessed_object,
   #' @param seed Integer scalar. Either set via boottest()'s seed argument
   #' or inherited from R's global seed (set via set.seed)
   #' @param object the regression object
+  #' @param impose_null logical scalar. Should the null be imposed on the
+  #' bootstrap dgp or not?
   #' @importFrom MASS ginv
   #' @importFrom sandwich vcovCL
   #' @importFrom summclust vcov_CR3J
@@ -55,7 +58,7 @@ boot_algo3 <- function(preprocessed_object,
   #preprocessed_object <- preprocess
   
   
-  if(substr(bootstrap_type, 5, 5) == 1){
+  if(substr(bootstrap_type, 2, 2) == 1){
     crv_type <- "crv1"  
   } else {
     crv_type <- "crv3"
@@ -70,9 +73,16 @@ boot_algo3 <- function(preprocessed_object,
   bootcluster <- preprocessed_object$bootcluster
   G <- N_G_bootcluster <- length(unique(bootcluster[[1]]))
   k <- length(R)
-  
-  bootstrap_type <- paste0(substr(bootstrap_type, 1, 4), "x")
-  
+
+  bootstrap_type_x <- paste0(substr(bootstrap_type, 1, 1), "x")
+  if(impose_null){
+    # WCR1x or WCR3x
+    bootstrap_type <- paste0("WCR", bootstrap_type_x)
+  } else {
+    # WCU1x or WCU3x
+    bootstrap_type <- paste0("WCU", bootstrap_type_x)
+  }
+
   v <- get_weights(
     type = type, 
     full_enumeration = full_enumeration, 
@@ -197,13 +207,14 @@ boot_algo3 <- function(preprocessed_object,
     beta_1g_tilde = beta_1g_tilde
   )
   
-  
   # pre-allocate space for bootstrap 
   # start the bootstrap loop 
   t_boot <- vector(mode = "numeric", B + 1)
   se <- vector(mode = "numeric", B + 1)
   
   # numer <- (( R %*% tXXinv) %*%  (Reduce("cbind", scores_list) %*% v))
+  
+
   
   dim(R) <- c(1, k) # turn R into matrix
   

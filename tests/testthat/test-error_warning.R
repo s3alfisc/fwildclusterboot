@@ -11,10 +11,10 @@ test_that("errors and warnings q = 1", {
     requireNamespace("fixest")
     
     
-    for (boot_algo in c("R", "WildBootTests.jl", "R-lean")) {
-      cat(boot_algo, "\n")
+    for (engine in c("R", "WildBootTests.jl", "R-lean")) {
+      cat(engine, "\n")
       
-      # for(boot_algo in c("R-lean")){
+      # for(engine in c("R-lean")){
       # test boottest function arguments for errors
       lm_fit <-
         lm(
@@ -105,7 +105,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           sign_level = 1.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -117,7 +117,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           sign_level = 1.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -129,7 +129,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           sign_level = 1.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -141,7 +141,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           sign_level = -1.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -153,7 +153,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           sign_level = -1.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -165,12 +165,12 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           sign_level = -1.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
       # B < 100
-      if (boot_algo %in% c("R", "R-lean")) {
+      if (engine %in% c("R", "R-lean")) {
         expect_error(
           boottest(
             object = lm_fit,
@@ -179,7 +179,7 @@ test_that("errors and warnings q = 1", {
             seed = 911,
             param = "treatment",
             conf_int = TRUE,
-            boot_algo = boot_algo
+            engine = engine
           )
         )
         expect_error(
@@ -190,7 +190,7 @@ test_that("errors and warnings q = 1", {
             seed = 911,
             param = "treatment",
             conf_int = TRUE,
-            boot_algo = boot_algo
+            engine = engine
           )
         )
         expect_error(
@@ -201,7 +201,7 @@ test_that("errors and warnings q = 1", {
             seed = 911,
             param = "treatment",
             conf_int = TRUE,
-            boot_algo = boot_algo
+            engine = engine
           )
         )
       }
@@ -215,7 +215,7 @@ test_that("errors and warnings q = 1", {
           seed = 911,
           param = "treatment1",
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -226,7 +226,7 @@ test_that("errors and warnings q = 1", {
           seed = 911,
           param = "treatment1",
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -237,12 +237,12 @@ test_that("errors and warnings q = 1", {
           seed = 911,
           param = "treatment1",
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
       # rademacher enumeration case
-      if (boot_algo != "R-lean") {
+      if (engine != "R-lean") {
         suppressWarnings(expect_warning(
           boottest(
             object = lm_fit,
@@ -251,7 +251,7 @@ test_that("errors and warnings q = 1", {
             seed = 911,
             param = "treatment",
             conf_int = TRUE,
-            boot_algo = boot_algo
+            engine = engine
           )
         ))
         suppressWarnings(expect_warning(
@@ -262,7 +262,7 @@ test_that("errors and warnings q = 1", {
             seed = 911,
             param = "treatment",
             conf_int = TRUE,
-            boot_algo = boot_algo
+            engine = engine
           )
         ))
         suppressWarnings(expect_warning(
@@ -273,7 +273,7 @@ test_that("errors and warnings q = 1", {
             seed = 911,
             param = "treatment",
             conf_int = TRUE,
-            boot_algo = boot_algo
+            engine = engine
           )
         ))
       }
@@ -286,7 +286,7 @@ test_that("errors and warnings q = 1", {
           seed = 911,
           param = "treatment",
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       ))
       
@@ -316,7 +316,7 @@ test_that("errors and warnings q = 1", {
           seed = 911,
           param = "treatment1",
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -372,7 +372,7 @@ test_that("errors and warnings q = 1", {
         )
       
       # joint fe != NULL and weights = on
-      if (boot_algo %in% c("R", "R-lean")) {
+      if (engine %in% c("R", "R-lean")) {
         expect_error(
           boottest(
             object = felm_fit,
@@ -382,7 +382,7 @@ test_that("errors and warnings q = 1", {
             param = "treatment",
             conf_int = TRUE,
             fe = "Q1_immigration",
-            boot_algo = boot_algo
+            engine = engine
           )
         )
         expect_error(
@@ -394,7 +394,7 @@ test_that("errors and warnings q = 1", {
             param = "treatment",
             conf_int = TRUE,
             fe = "Q1_immigration",
-            boot_algo = boot_algo
+            engine = engine
           )
         )
       }
@@ -410,7 +410,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           nthreads = -1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -434,7 +434,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           nthreads = -1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       # expect_warning(boottest(object = feols_fit,
@@ -453,7 +453,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           nthreads = -1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -474,7 +474,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           maxiter = -1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -486,7 +486,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           maxiter = 0.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -499,7 +499,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           maxiter = -1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -511,7 +511,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           maxiter = 0.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -524,7 +524,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           maxiter = -1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -536,7 +536,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           maxiter = 0.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -551,7 +551,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           tol = -1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -564,7 +564,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           tol = -1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -577,7 +577,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           tol = -1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -591,7 +591,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           p_val_type = "equaltail",
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -604,7 +604,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           p_val_type = "equaltail",
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -617,7 +617,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           p_val_type = "equaltail",
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -630,11 +630,11 @@ test_that("errors and warnings q = 1", {
           seed = 911,
           param = "treatment",
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       ))
       
-      if (boot_algo != "R-lean") {
+      if (engine != "R-lean") {
         suppressWarnings(expect_message(
           boottest(
             object = feols_fit,
@@ -643,7 +643,7 @@ test_that("errors and warnings q = 1", {
             seed = 911,
             param = "treatment",
             conf_int = TRUE,
-            boot_algo = boot_algo
+            engine = engine
           )
         ))
         
@@ -655,7 +655,7 @@ test_that("errors and warnings q = 1", {
             seed = 911,
             param = "treatment",
             conf_int = TRUE,
-            boot_algo = boot_algo
+            engine = engine
           )
         ))
       }
@@ -674,7 +674,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           sig_level = 0.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -686,7 +686,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           sig_level = 0.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -698,7 +698,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           conf_int = TRUE,
           sig_level = 0.1,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -726,7 +726,7 @@ test_that("errors and warnings q = 1", {
         param = "treatment",
         conf_int = TRUE,
         sign_level = 0.1,
-        boot_algo = boot_algo
+        engine = engine
       )
       
       expect_error(summary(res, a = 1))
@@ -776,14 +776,14 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
       
       
       # with confidence intervals: expect_error because B < 100
-      if (boot_algo == "R") {
+      if (engine == "R") {
         expect_error(
           boottest(
             object = lm_fit,
@@ -794,14 +794,14 @@ test_that("errors and warnings q = 1", {
             param = "treatment",
             type = "rademacher",
             conf_int = TRUE,
-            boot_algo = boot_algo
+            engine = engine
           )
         )
       }
       
       
       # with confidence intervals: expect_error because B < 100
-      if (boot_algo == "R") {
+      if (engine == "R") {
         expect_error(
           boottest(
             object = lm_fit,
@@ -812,7 +812,7 @@ test_that("errors and warnings q = 1", {
             param = "treatment",
             type = "mammen",
             conf_int = TRUE,
-            boot_algo = boot_algo
+            engine = engine
           )
         )
       }
@@ -857,7 +857,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           type = "rademacher",
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -871,7 +871,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           type = "rademacher",
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -888,7 +888,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           type = "rademacher",
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       # suppressWarnings(expect_warning(
@@ -902,7 +902,7 @@ test_that("errors and warnings q = 1", {
       #       param = "treatment",
       #       type = "rademacher",
       #       conf_int = TRUE,
-      #       na_omit = TRUE, boot_algo = boot_algo
+      #       na_omit = TRUE, engine = engine
       #     )
       # ))
       # expect_equal(res$N, 99)
@@ -924,7 +924,7 @@ test_that("errors and warnings q = 1", {
       #       param = "treatment",
       #       type = "rademacher",
       #       conf_int = TRUE,
-      #       na_omit = TRUE, boot_algo = boot_algo
+      #       na_omit = TRUE, engine = engine
       #     )
       # ))
       # expect_equal(res$N, 98)
@@ -941,7 +941,7 @@ test_that("errors and warnings q = 1", {
           param = c("treatment", "ideology1"),
           R = 1,
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -953,7 +953,7 @@ test_that("errors and warnings q = 1", {
           param = c("treatment", "ideology1"),
           R = 1,
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -965,7 +965,7 @@ test_that("errors and warnings q = 1", {
           param = c("treatment", "ideology1"),
           R = 1,
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -982,7 +982,7 @@ test_that("errors and warnings q = 1", {
           param = c("treatment", "ideology1"),
           R = 1,
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -995,7 +995,7 @@ test_that("errors and warnings q = 1", {
           param = c("treatment", "ideology1"),
           R = 1,
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -1008,7 +1008,7 @@ test_that("errors and warnings q = 1", {
           param = c("Q1_immigration"),
           R = 1,
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -1020,7 +1020,7 @@ test_that("errors and warnings q = 1", {
           param = c("Q1_immigration"),
           R = 1,
           conf_int = TRUE,
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -1054,7 +1054,7 @@ test_that("errors and warnings q = 1", {
         param = "x1",
         B = 999,
         clustid = "clustid",
-        boot_algo = boot_algo
+        engine = engine
       ))
       
       
@@ -1099,7 +1099,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           B = 999,
           clustid = "clustid",
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -1108,7 +1108,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           B = 999,
           clustid = "clustid",
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -1117,7 +1117,7 @@ test_that("errors and warnings q = 1", {
           param = "treatment",
           B = 999,
           clustid = "clustid",
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
@@ -1141,7 +1141,7 @@ test_that("errors and warnings q = 1", {
           fe = "treatment",
           B = 999,
           clustid = "group_id1",
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       expect_error(
@@ -1151,13 +1151,13 @@ test_that("errors and warnings q = 1", {
           fe = "treatment",
           B = 999,
           clustid = "group_id1",
-          boot_algo = boot_algo
+          engine = engine
         )
       )
       
       
       
-      if (boot_algo %in% c("R", "R-lean")) {
+      if (engine %in% c("R", "R-lean")) {
         # R is matrix
         expect_error(
           boottest(
@@ -1167,7 +1167,7 @@ test_that("errors and warnings q = 1", {
             fe = "treatment",
             B = 999,
             clustid = "group_id1",
-            boot_algo = boot_algo
+            engine = engine
           )
         )
         expect_error(
@@ -1178,7 +1178,7 @@ test_that("errors and warnings q = 1", {
             fe = "treatment",
             B = 999,
             clustid = "group_id1",
-            boot_algo = boot_algo
+            engine = engine
           )
         )
         expect_error(
@@ -1189,7 +1189,7 @@ test_that("errors and warnings q = 1", {
             fe = "treatment",
             B = 999,
             clustid = "group_id1",
-            boot_algo = boot_algo
+            engine = engine
           )
         )
         
@@ -1200,7 +1200,7 @@ test_that("errors and warnings q = 1", {
             fe = "treatment",
             B = 999,
             clustid = "group_id1",
-            boot_algo = boot_algo,
+            engine = engine,
             p_val_type = ">",
             conf_int = TRUE
           )
@@ -1212,7 +1212,7 @@ test_that("errors and warnings q = 1", {
             fe = "treatment",
             B = 999,
             clustid = "group_id1",
-            boot_algo = boot_algo,
+            engine = engine,
             p_val_type = ">",
             conf_int = TRUE
           )
@@ -1224,7 +1224,7 @@ test_that("errors and warnings q = 1", {
             fe = "treatment",
             B = 999,
             clustid = "group_id1",
-            boot_algo = boot_algo,
+            engine = engine,
             p_val_type = ">",
             conf_int = TRUE
           )
@@ -1233,7 +1233,7 @@ test_that("errors and warnings q = 1", {
       
       
       # no support for R-lean with fe = on
-      if (boot_algo == "R-lean") {
+      if (engine == "R-lean") {
         feols_fit_c <-
          fixest::feols(
             proposition_vote ~ treatment + ideology1 + log_income |
@@ -1256,7 +1256,7 @@ test_that("errors and warnings q = 1", {
             fe = "Q1_immigration",
             B = 999,
             clustid = "group_id1",
-            boot_algo = "R-lean"
+            engine = "R-lean"
           )
         )
         
@@ -1282,7 +1282,7 @@ test_that("errors and warnings q = 1", {
             fe = "Q1_immigration",
             B = 999,
             clustid = "group_id1",
-            boot_algo = "R-lean"
+            engine = "R-lean"
           )
         )
         
@@ -1325,7 +1325,7 @@ test_that("errors and warnings q = 1", {
             param = "treatment",
             B = 999,
             clustid = "group_id1",
-            boot_algo = "R-lean"
+            engine = "R-lean"
           )
         )
         expect_error(
@@ -1334,7 +1334,7 @@ test_that("errors and warnings q = 1", {
             param = "treatment",
             B = 999,
             clustid = "group_id1",
-            boot_algo = "R-lean"
+            engine = "R-lean"
           )
         )
         expect_error(
@@ -1343,7 +1343,7 @@ test_that("errors and warnings q = 1", {
             param = "treatment",
             B = 999,
             clustid = "group_id1",
-            boot_algo = "R-lean"
+            engine = "R-lean"
           )
         )
         

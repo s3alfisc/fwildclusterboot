@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
 `r badger::badge_cran_download("fwildclusterboot", "grand-total", "blue")`
 `r badger::badge_cran_download("fwildclusterboot", "last-month", "green")`
-[![pkgcheck](https://github.com/<org>/<repo>/workflows/pkgcheck/badge.svg)](https://github.com/<org>/<repo>/actions?query=workflow%3Apkgcheck)
+[![pkgcheck](https://github.com/s3alfisc/fwildclusterboot/workflows/pkgcheck/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions?query=workflow%3Apkgcheck)
 
 <!-- badges: end -->
 
@@ -36,7 +36,7 @@ The `{fwildclusterboot}` package provides a native R implementation of the fast 
 
 Additionally, it provides support for multiple wild cluster bootstrap variants as described in [MacKinnon, Nielsen & Webb (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf).
 
-It also ports functionality of [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) to R via the [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR).
+Via the [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR), `{fwildclusterboot}` further ports functionality of [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) - which provides an even faster implementation of the wild cluster bootstrap for OLS and supports the WRE bootstrap for IV and tests of multiple joint hypotheses.
 
 The package's central function is `boottest()`. It allows to test univariate hypotheses using a wild cluster bootstrap at extreme speed: via the 'fast' algorithm, it is possible to run a wild cluster bootstrap with $B = 100.000$ iterations in less than a second!
 
@@ -65,7 +65,8 @@ scale_y_continuous(trans='log10') +
 `{fwildclusterboot}` supports the following features:
 
 + The wild bootstrap for OLS (Wu 1986).
-+ The wild cluster bootstrap for OLS (Cameron, Gelbach & Miller 2008, Roodman et al, 2019)
++ The wild cluster bootstrap for OLS (Cameron, Gelbach & Miller 2008, Roodman et al, 2019).
++ Multiple new versions of the wild cluster bootstrap as described in MacKinnon, Nielsen & Webb (2022), including the WCR13, WCR31, WCR33, WCU13, WCU31 and WCU33.
 + The subcluster bootstrap (MacKinnon and Webb 2018).
 + Confidence intervals formed by inverting the test and iteratively searching for bounds.
 + Multiway clustering.
@@ -73,7 +74,8 @@ scale_y_continuous(trans='log10') +
 
 Additional features are provided through `WildBootTests.jl`:
 
-+ The Wild Restricted Efficient bootstrap (WRE) for IV/2SLS/LIML [(Davidson & MacKinnon, 2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221).
++ Highly optimized versions of the '11' and '31' wild cluster bootstrap variants
++ A highly optimized version of the Wild Restricted Efficient bootstrap (WRE) for IV/2SLS/LIML [(Davidson & MacKinnon, 2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221).
 + Arbitrary and multiple linear hypotheses in the parameters.
 
 `{fwildclusterboot}` supports the following models: 
@@ -88,7 +90,7 @@ For a longer introduction to `{fwildclusterboot}`, take a look at the [vignette]
 ```{r}
 library(fwildclusterboot)
 
-# set seed via dqset.seed for boot_algo = "R" & Rademacher, Webb & Normal weights
+# set seed via dqset.seed for engine = "R" & Rademacher, Webb & Normal weights
 dqrng::dqset.seed(2352342)
 # set 'familiar' seed for all other algorithms and weight types 
 set.seed(23325)

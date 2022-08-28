@@ -181,10 +181,10 @@ test_that("Do different, but equivalent ways to specify
       R3 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit8))
       R4 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit7))
       
-      for (boot_algo in c("R", "WildBootTests.jl")) {
+      for (engine in c("R", "WildBootTests.jl")) {
         # boottest()
         cat("boottest()", "\n")
-        assign(paste0("boot_lm_", boot_algo),
+        assign(paste0("boot_lm_", engine),
                suppressWarnings(
                  boottest(
                    object = lm_fit,
@@ -194,14 +194,14 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
         
-        assign(paste0("boot_fixest1_", boot_algo),
+        assign(paste0("boot_fixest1_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit1,
@@ -211,13 +211,13 @@ test_that("Do different, but equivalent ways to specify
                    param = ~treatment,
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest2_", boot_algo),
+        assign(paste0("boot_fixest2_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit2,
@@ -227,13 +227,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest3_", boot_algo),
+        assign(paste0("boot_fixest3_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit3,
@@ -243,13 +243,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest4_", boot_algo),
+        assign(paste0("boot_fixest4_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit4,
@@ -259,13 +259,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest5_", boot_algo),
+        assign(paste0("boot_fixest5_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit5,
@@ -275,13 +275,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest6_", boot_algo),
+        assign(paste0("boot_fixest6_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit6,
@@ -291,13 +291,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest7_", boot_algo),
+        assign(paste0("boot_fixest7_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit7,
@@ -307,13 +307,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest8_", boot_algo),
+        assign(paste0("boot_fixest8_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit8,
@@ -323,13 +323,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest9_", boot_algo),
+        assign(paste0("boot_fixest9_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit9,
@@ -339,13 +339,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest10_", boot_algo),
+        assign(paste0("boot_fixest10_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit10,
@@ -355,13 +355,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest11_", boot_algo),
+        assign(paste0("boot_fixest11_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit11,
@@ -371,13 +371,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest12_", boot_algo),
+        assign(paste0("boot_fixest12_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit12,
@@ -387,13 +387,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest13_", boot_algo),
+        assign(paste0("boot_fixest13_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit13,
@@ -403,14 +403,14 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
         
-        assign(paste0("boot_fixest6fe_", boot_algo),
+        assign(paste0("boot_fixest6fe_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit10,
@@ -421,13 +421,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest7fe_", boot_algo),
+        assign(paste0("boot_fixest7fe_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit10,
@@ -438,13 +438,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest8fe_", boot_algo),
+        assign(paste0("boot_fixest8fe_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit10,
@@ -455,13 +455,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest9fe_", boot_algo),
+        assign(paste0("boot_fixest9fe_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit10,
@@ -472,13 +472,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest10fe_", boot_algo),
+        assign(paste0("boot_fixest10fe_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit10,
@@ -489,14 +489,14 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
         # why suddenly fe = Q2_defense? Should give the same models
-        assign(paste0("boot_fixest11fe_", boot_algo),
+        assign(paste0("boot_fixest11fe_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit11,
@@ -507,13 +507,13 @@ test_that("Do different, but equivalent ways to specify
                    param = ~treatment,
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest12fe_", boot_algo),
+        assign(paste0("boot_fixest12fe_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit12,
@@ -524,13 +524,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_fixest13fe_", boot_algo),
+        assign(paste0("boot_fixest13fe_", engine),
                suppressWarnings(
                  boottest(
                    object = feols_fit13,
@@ -541,14 +541,14 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
         
-        assign(paste0("boot_felm1_", boot_algo),
+        assign(paste0("boot_felm1_", engine),
                suppressWarnings(
                  boottest(
                    object = felm_fit1,
@@ -558,13 +558,13 @@ test_that("Do different, but equivalent ways to specify
                    param = ~treatment,
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_felm2_", boot_algo),
+        assign(paste0("boot_felm2_", engine),
                suppressWarnings(
                  boottest(
                    object = felm_fit2,
@@ -574,13 +574,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_felm3_", boot_algo),
+        assign(paste0("boot_felm3_", engine),
                suppressWarnings(
                  boottest(
                    object = felm_fit3,
@@ -590,13 +590,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_felm4_", boot_algo),
+        assign(paste0("boot_felm4_", engine),
                suppressWarnings(
                  boottest(
                    object = felm_fit4,
@@ -606,13 +606,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_felm5_", boot_algo),
+        assign(paste0("boot_felm5_", engine),
                suppressWarnings(
                  boottest(
                    object = felm_fit5,
@@ -622,13 +622,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_felm6_", boot_algo),
+        assign(paste0("boot_felm6_", engine),
                suppressWarnings(
                  boottest(
                    object = felm_fit6,
@@ -638,14 +638,14 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
         
-        assign(paste0("boot_felm4fe_", boot_algo),
+        assign(paste0("boot_felm4fe_", engine),
                suppressWarnings(
                  boottest(
                    object = felm_fit4,
@@ -656,13 +656,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_felm5fe_", boot_algo),
+        assign(paste0("boot_felm5fe_", engine),
                suppressWarnings(
                  boottest(
                    object = felm_fit5,
@@ -673,13 +673,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_felm6fe_", boot_algo),
+        assign(paste0("boot_felm6fe_", engine),
                suppressWarnings(
                  boottest(
                    object = felm_fit6,
@@ -690,13 +690,13 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
                envir = .GlobalEnv
         )
-        assign(paste0("boot_felm7fe_", boot_algo),
+        assign(paste0("boot_felm7fe_", engine),
                suppressWarnings(
                  boottest(
                    object = felm_fit7,
@@ -707,7 +707,7 @@ test_that("Do different, but equivalent ways to specify
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
-                   boot_algo = boot_algo,
+                   engine = engine,
                    floattype = "Float64"
                  )
                ),
@@ -716,10 +716,10 @@ test_that("Do different, but equivalent ways to specify
         
         # mboottest()
         
-        if (boot_algo == "WildBootTests.jl") {
+        if (engine == "WildBootTests.jl") {
           cat("mboottest()", "\n")
           
-          assign(paste0("wboot_lm_", boot_algo),
+          assign(paste0("wboot_lm_", engine),
                  suppressWarnings(
                    mboottest(
                      object = lm_fit,
@@ -734,7 +734,7 @@ test_that("Do different, but equivalent ways to specify
                  envir = .GlobalEnv
           )
           
-          assign(paste0("wboot_fixest1_", boot_algo),
+          assign(paste0("wboot_fixest1_", engine),
                  suppressWarnings(
                    mboottest(
                      object = feols_fit1,
@@ -748,7 +748,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_fixest2_", boot_algo),
+          assign(paste0("wboot_fixest2_", engine),
                  suppressWarnings(
                    mboottest(
                      object = feols_fit2,
@@ -762,7 +762,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_fixest3_", boot_algo),
+          assign(paste0("wboot_fixest3_", engine),
                  suppressWarnings(
                    mboottest(
                      object = feols_fit3,
@@ -776,7 +776,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_fixest4_", boot_algo),
+          assign(paste0("wboot_fixest4_", engine),
                  suppressWarnings(
                    mboottest(
                      object = feols_fit4,
@@ -790,7 +790,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_fixest5_", boot_algo),
+          assign(paste0("wboot_fixest5_", engine),
                  suppressWarnings(
                    mboottest(
                      object = feols_fit5,
@@ -807,7 +807,7 @@ test_that("Do different, but equivalent ways to specify
           # why lm_fit? Because mboottest() estimates without fixed
           # effects, so R needs to be of dimension of
           # length(names(coef(object)))
-          assign(paste0("wboot_fixest6_", boot_algo),
+          assign(paste0("wboot_fixest6_", engine),
                  suppressWarnings(
                    mboottest(
                      object = feols_fit6,
@@ -821,7 +821,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_fixest7_", boot_algo),
+          assign(paste0("wboot_fixest7_", engine),
                  suppressWarnings(
                    mboottest(
                      object = feols_fit7,
@@ -835,7 +835,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_fixest8_", boot_algo),
+          assign(paste0("wboot_fixest8_", engine),
                  suppressWarnings(
                    mboottest(
                      object = feols_fit8,
@@ -849,7 +849,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_fixest9_", boot_algo),
+          assign(paste0("wboot_fixest9_", engine),
                  suppressWarnings(
                    mboottest(
                      object = feols_fit9,
@@ -864,7 +864,7 @@ test_that("Do different, but equivalent ways to specify
                  envir = .GlobalEnv
           )
           assign(
-            paste0("wboot_fixest10_", boot_algo),
+            paste0("wboot_fixest10_", engine),
             suppressWarnings(
               mboottest(
                 object = feols_fit10,
@@ -880,7 +880,7 @@ test_that("Do different, but equivalent ways to specify
           )
           
           assign(
-            paste0("wboot_fixest6fe_", boot_algo),
+            paste0("wboot_fixest6fe_", engine),
             suppressWarnings(
               mboottest(
                 object = feols_fit6,
@@ -896,7 +896,7 @@ test_that("Do different, but equivalent ways to specify
             envir = .GlobalEnv
           )
           assign(
-            paste0("wboot_fixest7fe_", boot_algo),
+            paste0("wboot_fixest7fe_", engine),
             suppressWarnings(
               mboottest(
                 object = feols_fit7,
@@ -912,7 +912,7 @@ test_that("Do different, but equivalent ways to specify
             envir = .GlobalEnv
           )
           assign(
-            paste0("wboot_fixest8fe_", boot_algo),
+            paste0("wboot_fixest8fe_", engine),
             suppressWarnings(
               mboottest(
                 object = feols_fit8,
@@ -928,7 +928,7 @@ test_that("Do different, but equivalent ways to specify
             envir = .GlobalEnv
           )
           assign(
-            paste0("wboot_fixest9fe_", boot_algo),
+            paste0("wboot_fixest9fe_", engine),
             suppressWarnings(
               mboottest(
                 object = feols_fit9,
@@ -944,7 +944,7 @@ test_that("Do different, but equivalent ways to specify
             envir = .GlobalEnv
           )
           assign(
-            paste0("wboot_fixest10fe_", boot_algo),
+            paste0("wboot_fixest10fe_", engine),
             suppressWarnings(
               mboottest(
                 object = feols_fit10,
@@ -961,7 +961,7 @@ test_that("Do different, but equivalent ways to specify
           )
           # why suddenly fe = Q2_defense? Should give the same models
           assign(
-            paste0("wboot_fixest11fe_", boot_algo),
+            paste0("wboot_fixest11fe_", engine),
             suppressWarnings(
               mboottest(
                 object = feols_fit11,
@@ -977,7 +977,7 @@ test_that("Do different, but equivalent ways to specify
             envir = .GlobalEnv
           )
           
-          assign(paste0("wboot_felm1_", boot_algo),
+          assign(paste0("wboot_felm1_", engine),
                  suppressWarnings(
                    mboottest(
                      object = felm_fit1,
@@ -991,7 +991,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_felm2_", boot_algo),
+          assign(paste0("wboot_felm2_", engine),
                  suppressWarnings(
                    mboottest(
                      object = felm_fit2,
@@ -1005,7 +1005,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_felm3_", boot_algo),
+          assign(paste0("wboot_felm3_", engine),
                  suppressWarnings(
                    mboottest(
                      object = felm_fit3,
@@ -1019,7 +1019,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_felm4_", boot_algo),
+          assign(paste0("wboot_felm4_", engine),
                  suppressWarnings(
                    mboottest(
                      object = felm_fit4,
@@ -1033,7 +1033,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_felm5_", boot_algo),
+          assign(paste0("wboot_felm5_", engine),
                  suppressWarnings(
                    mboottest(
                      object = felm_fit5,
@@ -1047,7 +1047,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_felm6_", boot_algo),
+          assign(paste0("wboot_felm6_", engine),
                  suppressWarnings(
                    mboottest(
                      object = felm_fit6,
@@ -1062,7 +1062,7 @@ test_that("Do different, but equivalent ways to specify
                  envir = .GlobalEnv
           )
           
-          assign(paste0("wboot_felm4fe_", boot_algo),
+          assign(paste0("wboot_felm4fe_", engine),
                  suppressWarnings(
                    mboottest(
                      object = felm_fit4,
@@ -1077,7 +1077,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_felm5fe_", boot_algo),
+          assign(paste0("wboot_felm5fe_", engine),
                  suppressWarnings(
                    mboottest(
                      object = felm_fit5,
@@ -1092,7 +1092,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_felm6fe_", boot_algo),
+          assign(paste0("wboot_felm6fe_", engine),
                  suppressWarnings(
                    mboottest(
                      object = felm_fit6,
@@ -1107,7 +1107,7 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
-          assign(paste0("wboot_felm7fe_", boot_algo),
+          assign(paste0("wboot_felm7fe_", engine),
                  suppressWarnings(
                    mboottest(
                      object = felm_fit7,

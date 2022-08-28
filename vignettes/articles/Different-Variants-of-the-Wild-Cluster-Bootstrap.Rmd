@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 In a recent working paper, [MacKinnon, Nielsen and Webb (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf) suggest multiple new variants of the wild cluster bootstrap. The methods differ in a) how the bootstrap scores are computed and b) if a CRV1 or CRV3 variance matrix is used when computing bootstrapped t-statistics. 
 
-All new bootstrap variants are implemented in `{fwildclusterboot}` and can be called by using the `boot_algo` function argument of `boottest()`. The implementation is still quite bare-bone: it only allows to test hypotheses of the form $\beta_k = 0$ vs $\beta_k \neq 0$, does not allow for regression weights or fixed effects, and further does not compute confidence intervals. 
+All new bootstrap variants are implemented in `{fwildclusterboot}` and can be called by using the `engine` function argument of `boottest()`. The implementation is still quite bare-bone: it only allows to test hypotheses of the form $\beta_k = 0$ vs $\beta_k \neq 0$, does not allow for regression weights or fixed effects, and further does not compute confidence intervals. 
 
 To run e.g. the `WCR13` bootstrap, you would have to specify 
 
@@ -52,7 +52,8 @@ for(x in wcr_algos){
       clustid = ~group_id1,
       B = 9999, 
       impose_null = TRUE,
-      boot_algo = x, 
+      engine = "R",
+      bootstrap_type = x,
       seed = 123, 
       ssc = boot_ssc(
         adj = FALSE, 

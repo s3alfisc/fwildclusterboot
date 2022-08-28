@@ -190,55 +190,55 @@ gtools_permutations <-
   }
 
 
-setBoottest_boot_algo <- function(boot_algo) {
+setBoottest_engine <- function(engine) {
   #' Sets the bootstrap algo to be run via `boottest()` and `waldboottest()`
-  #' @param boot_algo Character scalar. Either 'R' or 'WildBootTests.jl'.
+  #' @param engine Character scalar. Either 'R' or 'WildBootTests.jl'.
   #'  Default is 'R'
   #' @return No return value
   #' @export
   #' @examples
   #' \dontrun{
-  #' setBoottest_boot_algo(boot_algo = "R")
-  #' setBoottest_boot_algo(boot_algo = "WildBootTests.jl")
+  #' setBoottest_engine(engine = "R")
+  #' setBoottest_engine(engine = "WildBootTests.jl")
   #' }
   
-  if (missing(boot_algo) || is.null(boot_algo)) {
+  if (missing(engine) || is.null(engine)) {
     # New default: one cores used
-    boot_algo <- "R"
+    engine <- "R"
   }
   
-  boot_algo <- set_boot_algo(boot_algo)
+  engine <- set_engine(engine)
   
-  options("boottest_boot_algo" = boot_algo)
+  options("boottest_engine" = engine)
   
   invisible()
 }
 
-getBoottest_boot_algo <- function() {
+getBoottest_engine <- function() {
   #' get the bootstrap algorithm to be run via `boottest()` and `waldboottest()`
   #' @return The number of threads currently used by boottest as set in options
   #' @noRd
   
-  x <- getOption("boottest_boot_algo")
+  x <- getOption("boottest_engine")
   if (!(x %in% c("R", "WildBootTests.jl"))) {
     stop(
-      "The value of getOption(\"boottest_boot_algo\") is currently not legal.
-      Please use function setBoottest_boot_algo to set it to an appropriate
+      "The value of getOption(\"boottest_engine\") is currently not legal.
+      Please use function setBoottest_engine to set it to an appropriate
       value. "
     )
   }
   x
 }
 
-set_boot_algo <- function(boot_algo) {
+set_engine <- function(engine) {
   
   #' check the bootstrap algo
-  #' @param boot_algo character scalar
+  #' @param engine character scalar
   #' @noRd
   
-  dreamerr::check_value(boot_algo, "charin(R, WildBootTests.jl)")
+  dreamerr::check_value(engine, "charin(R, WildBootTests.jl)")
   
-  boot_algo
+  engine
 }
 
 
@@ -366,13 +366,13 @@ get_seed <- function() {
   x
 }
 
-set_seed <- function(seed, boot_algo, type) {
+set_seed <- function(seed, engine, type) {
   
   #' @importFrom JuliaConnectoR juliaEval
   #' @noRd
   
   if (!is.null(seed)) {
-    if (boot_algo %in% c("R", "WCR33", "WCR13", "WCU33", "WCU13", 
+    if (engine %in% c("R", "WCR33", "WCR13", "WCU33", "WCU13", 
                          "WCR31", "WCR11", "WCU31", "WCU11")) {
       if (type %in% c("rademacher", "webb", "norm")) {
         dqrng::dqset.seed(seed)
@@ -381,10 +381,10 @@ set_seed <- function(seed, boot_algo, type) {
         set.seed(seed)
         internal_seed <- NULL
       }
-    } else if (boot_algo == "R-lean") {
+    } else if (engine == "R-lean") {
       set.seed(seed)
       internal_seed <- NULL
-    } else if (boot_algo == "WildBootTests.jl") {
+    } else if (engine == "WildBootTests.jl") {
       JuliaConnectoR::juliaEval("using StableRNGs")
       set.seed(seed)
       seed <- get_seed()
@@ -392,7 +392,7 @@ set_seed <- function(seed, boot_algo, type) {
         JuliaConnectoR::juliaEval(paste0("rng = StableRNG(", seed, ")"))
     }
   } else if (is.null(seed)) {
-    if (boot_algo == "WildBootTests.jl") {
+    if (engine == "WildBootTests.jl") {
       seed <- get_seed()
       JuliaConnectoR::juliaEval("using StableRNGs")
       internal_seed <-

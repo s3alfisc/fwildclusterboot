@@ -1,16 +1,4 @@
-test_that("t-stat equivalence OLS", {
-  
-  skip_on_cran()
-  #skip_on_ci()
-
-
-  if(is_juliaconnector_prepared()){
-  
-    ols_test <- function(run_this_test) {
-      if (run_this_test) {
-        # data(voters)
-        # adj <- cluster.adj <- TRUE; cluster.df <- "conventional";
-        # impose_null = TRUE
+test_that("t-stat equivalence OLS - R and R-lean", {
   
   
         lm_fit <-
@@ -34,9 +22,9 @@ test_that("t-stat equivalence OLS", {
         # cluster.adj= FALSE
         # cluster.df= "conventional"
         # impose_null= TRUE
-        # boot_algo = "R"
+        # engine = "R"
   
-        for (boot_algo in c("R", "WildBootTests.jl")) {
+        for (engine in c("R")) {
           for (adj in c(TRUE, FALSE)) {
             for (cluster.adj in c(TRUE, FALSE)) {
               for (cluster.df in c("conventional", "min")) {
@@ -93,7 +81,7 @@ test_that("t-stat equivalence OLS", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
   
@@ -110,7 +98,7 @@ test_that("t-stat equivalence OLS", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot3 <-
@@ -126,11 +114,10 @@ test_that("t-stat equivalence OLS", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
   
-                  # skip_on_cran()
                   expect_equal(abs(boot1$t_stat),
                     abs(dof_tstat[1]),
                     ignore_attr = TRUE
@@ -150,7 +137,7 @@ test_that("t-stat equivalence OLS", {
                   # cat("--------------------------------", "\n")
   
   
-                  if (boot_algo != "R-lean") {
+                  if (engine != "R-lean") {
   
                   }
                   # twoway clustering
@@ -197,7 +184,7 @@ test_that("t-stat equivalence OLS", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot2 <-
@@ -213,7 +200,7 @@ test_that("t-stat equivalence OLS", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot3 <-
@@ -229,10 +216,9 @@ test_that("t-stat equivalence OLS", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
-                  # skip_on_cran()
                   expect_equal(abs(teststat(boot1)),
                     abs(dof_tstat[1]),
                     ignore_attr = TRUE
@@ -251,7 +237,7 @@ test_that("t-stat equivalence OLS", {
           }
         }
   
-        for (boot_algo in c("R-lean")) {
+        for (engine in c("R-lean")) {
           for (adj in c(TRUE, FALSE)) {
             for (cluster.adj in c(TRUE, FALSE)) {
               for (cluster.df in c("conventional", "min")) {
@@ -298,7 +284,7 @@ test_that("t-stat equivalence OLS", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
   
@@ -315,7 +301,7 @@ test_that("t-stat equivalence OLS", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
                   boot3 <-
@@ -331,11 +317,10 @@ test_that("t-stat equivalence OLS", {
                           cluster.df = cluster.df
                         ),
                         impose_null = impose_null,
-                        boot_algo = boot_algo
+                        engine = engine
                       )
                     )
   
-                  # skip_on_cran()
                   expect_equal(abs(teststat(boot1)),
                     abs(dof_tstat[1]),
                     ignore_attr = TRUE
@@ -353,21 +338,279 @@ test_that("t-stat equivalence OLS", {
             }
           }
         }
-      }
-    }
+        
   
-    ols_test(run_this_test = TRUE)
-  } else {
-    message("test-tstat_equivalence.R I skipped as JULIA_BINDR not found.")
-  }
+
 })
 
-# exact tests
-test_that("t-stat equivalence OLS q > 1", {
+
+test_that("t-stat equivalence OLS - WildBootTests", {
+  
   skip_on_cran()
 
+  julia_prep <- is_juliaconnector_prepared()
+  cat("julia connector prepared? ", julia_prep, "\n")
+  
+  if(julia_prep){
+  #if(TRUE){
+        # data(voters)
+        # adj <- cluster.adj <- TRUE; cluster.df <- "conventional";
+        # impose_null = TRUE
+        
+        
+        lm_fit <-
+          lm(
+            proposition_vote ~ treatment + ideology1 + log_income,
+            data = fwildclusterboot:::create_data(
+              N = 1000,
+              N_G1 = 20,
+              icc1 = 0.81,
+              N_G2 = 10,
+              icc2 = 0.01,
+              numb_fe1 = 10,
+              numb_fe2 = 10,
+              seed = 970691
+            )
+          )
+        
+        B <- 999
+        
+        # adj= FALSE
+        # cluster.adj= FALSE
+        # cluster.df= "conventional"
+        # impose_null= TRUE
+        # engine = "R"
+        
+        for (engine in c("WildBootTests.jl")) {
+          for (adj in c(TRUE, FALSE)) {
+            for (cluster.adj in c(TRUE, FALSE)) {
+              for (cluster.df in c("conventional", "min")) {
+                for (impose_null in c(TRUE, FALSE)) {
+                  # cat("--------------------------------", "\n")
+                  #
+                  # cat("adj:", adj, "\n")
+                  # cat("cluster.adj:", cluster.adj, "\n")
+                  # cat("cluster.df:", cluster.df, "\n")
+                  # #cat("impose_null:", impose_null, "\n")
+                  #
+                  # cat("--------------------------------", "\n")
+                  # cat("oneway:", "\n")
+                  
+                  # oneway clustering
+                  feols_fit <-
+                    fixest::feols(
+                      proposition_vote ~ treatment + ideology1 + log_income,
+                      data = fwildclusterboot:::create_data(
+                        N = 1000,
+                        N_G1 = 20,
+                        icc1 = 0.81,
+                        N_G2 = 10,
+                        icc2 = 0.01,
+                        numb_fe1 = 10,
+                        numb_fe2 = 10,
+                        seed = 970691
+                      ),
+                      cluster = ~group_id1,
+                      ssc = fixest::ssc(
+                        adj = adj,
+                        cluster.adj = cluster.adj,
+                        cluster.df = cluster.df
+                      )
+                    )
+                  
+                  dof_tstat <-
+                    fixest::tstat(feols_fit)[c(
+                      "treatment", "log_income",
+                      "ideology1"
+                    )]
+                  
+                  
+                  boot1 <-
+                    suppressWarnings(
+                      fwildclusterboot::boottest(
+                        lm_fit,
+                        clustid = c("group_id1"),
+                        B = B,
+                        param = "treatment",
+                        ssc = boot_ssc(
+                          adj = adj,
+                          cluster.adj = cluster.adj,
+                          cluster.df = cluster.df
+                        ),
+                        impose_null = impose_null,
+                        engine = engine
+                      )
+                    )
+                  
+                  boot2 <-
+                    suppressWarnings(
+                      fwildclusterboot::boottest(
+                        lm_fit,
+                        clustid = c("group_id1"),
+                        B = B,
+                        param = "log_income",
+                        ssc = boot_ssc(
+                          adj = adj,
+                          cluster.adj = cluster.adj,
+                          cluster.df = cluster.df
+                        ),
+                        impose_null = impose_null,
+                        engine = engine
+                      )
+                    )
+                  boot3 <-
+                    suppressWarnings(
+                      fwildclusterboot::boottest(
+                        lm_fit,
+                        clustid = c("group_id1"),
+                        B = B,
+                        param = "ideology1",
+                        ssc = boot_ssc(
+                          adj = adj,
+                          cluster.adj = cluster.adj,
+                          cluster.df = cluster.df
+                        ),
+                        impose_null = impose_null,
+                        engine = engine
+                      )
+                    )
+                  
+                  expect_equal(abs(boot1$t_stat),
+                               abs(dof_tstat[1]),
+                               ignore_attr = TRUE
+                  )
+                  expect_equal(abs(boot2$t_stat),
+                               abs(dof_tstat[2]),
+                               ignore_attr = TRUE
+                  )
+                  expect_equal(abs(boot3$t_stat),
+                               abs(dof_tstat[3]),
+                               ignore_attr = TRUE
+                  )
+                  
+                  
+                  # cat("--------------------------------", "\n")
+                  # cat("twoway:", "\n")
+                  # cat("--------------------------------", "\n")
+                  
+                  
+                  
+                  # twoway clustering
+                  feols_fit <-
+                    fixest::feols(
+                      proposition_vote ~ treatment + ideology1 + log_income,
+                      data = fwildclusterboot:::create_data(
+                        N = 1000,
+                        N_G1 = 20,
+                        icc1 = 0.81,
+                        N_G2 = 10,
+                        icc2 = 0.01,
+                        numb_fe1 = 10,
+                        numb_fe2 = 10,
+                        seed = 970691
+                      ),
+                      cluster = ~ group_id1 + group_id2,
+                      ssc =fixest::ssc(
+                        adj = adj,
+                        # fixef.K = "full",
+                        cluster.adj = cluster.adj,
+                        cluster.df = cluster.df
+                      )
+                    )
+                  
+                  
+                  dof_tstat <-
+                    fixest::coeftable(feols_fit)[c(
+                      "treatment", "log_income",
+                      "ideology1"
+                    ), 3]
+                  
+                  
+                  boot1 <-
+                    suppressWarnings(
+                      fwildclusterboot::boottest(
+                        lm_fit,
+                        clustid = c("group_id1", "group_id2"),
+                        B = B,
+                        param = "treatment",
+                        ssc = boot_ssc(
+                          adj = adj,
+                          cluster.adj = cluster.adj,
+                          cluster.df = cluster.df
+                        ),
+                        impose_null = impose_null,
+                        engine = engine
+                      )
+                    )
+                  boot2 <-
+                    suppressWarnings(
+                      fwildclusterboot::boottest(
+                        lm_fit,
+                        clustid = c("group_id1", "group_id2"),
+                        B = B,
+                        param = "log_income",
+                        ssc = boot_ssc(
+                          adj = adj,
+                          cluster.adj = cluster.adj,
+                          cluster.df = cluster.df
+                        ),
+                        impose_null = impose_null,
+                        engine = engine
+                      )
+                    )
+                  boot3 <-
+                    suppressWarnings(
+                      fwildclusterboot::boottest(
+                        lm_fit,
+                        clustid = c("group_id1", "group_id2"),
+                        B = B,
+                        param = "ideology1",
+                        ssc = boot_ssc(
+                          adj = adj,
+                          cluster.adj = cluster.adj,
+                          cluster.df = cluster.df
+                        ),
+                        impose_null = impose_null,
+                        engine = engine
+                      )
+                    )
 
-  if(is_juliaconnector_prepared()){
+                  expect_equal(abs(teststat(boot1)),
+                               abs(dof_tstat[1]),
+                               ignore_attr = TRUE
+                  )
+                  expect_equal(abs(teststat(boot2)),
+                               abs(dof_tstat[2]),
+                               ignore_attr = TRUE
+                  )
+                  expect_equal(abs(teststat(boot3)),
+                               abs(dof_tstat[3]),
+                               ignore_attr = TRUE
+                  )
+                }
+              }
+            }
+          }
+        }
+        
+    } else {
+      message("test-tstat_equivalence.R I skipped as JULIA_BINDR not found.")
+  }
+})
+# exact tests
+
+test_that("t-stat equivalence OLS q > 1", {
+  
+  skip_on_cran()
+  
+  julia_prep <- is_juliaconnector_prepared()
+  cat("julia connector prepared? ", julia_prep, "\n")
+  
+  cat("julia connector prepared? ", julia_prep, "\n")
+  
+  if(julia_prep){
+  # if(TRUE){
+    
     wald_test <- function(run_this_test) {
       if (run_this_test) {
         reltol <- 0.002
@@ -439,7 +682,6 @@ test_that("t-stat equivalence OLS q > 1", {
         wald_stat <-
           fixest::wald(feols_fit, "treatment", cluster = ~group_id1)
   
-        # skip_on_cran()
         expect_equal(boot_jl$teststat, sqrt(wald_stat$stat), ignore_attr = TRUE)
   
         # two hypotheses
@@ -461,7 +703,7 @@ test_that("t-stat equivalence OLS q > 1", {
   
         wald_stat <-
           fixest::wald(feols_fit, "Inter|treatment", cluster = ~group_id1)
-        # skip_on_cran()
+
         expect_equal(boot_jl$teststat, wald_stat$stat, ignore_attr = TRUE)
   
   
@@ -488,7 +730,6 @@ test_that("t-stat equivalence OLS q > 1", {
           ssc =fixest::ssc(cluster.df = "min")
         )
   
-        # skip_on_cran()
         expect_equal(teststat(boot_jl), sqrt(wald_stat$stat), 
                      ignore_attr = TRUE)
   
@@ -515,7 +756,7 @@ test_that("t-stat equivalence OLS q > 1", {
           cluster = ~group_id1,
           cluster.df = "conventional"
         )
-        # skip_on_cran()
+
         expect_equal(teststat(boot_jl), wald_stat$stat, ignore_attr = TRUE)
   
   
@@ -547,7 +788,7 @@ test_that("t-stat equivalence OLS q > 1", {
         wald_stat <-
           fixest::wald(feols_fit_weights, "treatment", cluster = ~group_id1)
   
-        # skip_on_cran()
+
         expect_equal(teststat(boot_jl), sqrt(wald_stat$stat), 
                      ignore_attr = TRUE)
   
@@ -577,7 +818,6 @@ test_that("t-stat equivalence OLS q > 1", {
             cluster = ~group_id1
           )
   
-        # skip_on_cran()
         expect_equal(teststat(boot_jl), wald_stat$stat, ignore_attr = TRUE)
   
   
@@ -609,7 +849,6 @@ test_that("t-stat equivalence OLS q > 1", {
           ssc =fixest::ssc(cluster.df = "min")
         )
   
-        # skip_on_cran()
         expect_equal(teststat(boot_jl), sqrt(wald_stat$stat), 
                      ignore_attr = TRUE)
   
@@ -638,7 +877,6 @@ test_that("t-stat equivalence OLS q > 1", {
             cluster.df = "conventional"
           )
   
-        # skip_on_cran()
         expect_equal(teststat(boot_jl), wald_stat$stat, ignore_attr = TRUE)
       }
     }
@@ -650,10 +888,15 @@ test_that("t-stat equivalence OLS q > 1", {
 })
 
 test_that("t-stat equivalence IV", {
+  
   skip_on_cran()
 
-
-  if(is_juliaconnector_prepared()){
+  julia_prep <- is_juliaconnector_prepared()
+  cat("julia connector prepared? ", julia_prep, "\n")
+  
+  if(julia_prep){
+  #if(TRUE){
+    
     iv_test <- function(run_this_test) {
       # Note: Test with Float64 for exact match
       if (run_this_test) {
@@ -699,7 +942,6 @@ test_that("t-stat equivalence IV", {
           )
         )
   
-        # skip_on_cran()
         expect_equal(teststat(boot_ivreg1),
           as.vector(res_df1[res_df1$term == "education", "statistic"]),
           ignore_attr = TRUE
@@ -716,7 +958,6 @@ test_that("t-stat equivalence IV", {
         )
   
   
-        # skip_on_cran()
         expect_equal(teststat(boot_ivreg2), res_df2[
           res_df2$term == "education",
           "statistic"
@@ -731,9 +972,3 @@ test_that("t-stat equivalence IV", {
 })
 
 
-
-test_that("t-stat equivalence for heteroskedastic wild bootstrap", {
-  
-  
-  
-})
