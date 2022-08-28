@@ -118,7 +118,6 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                       )
                     )
   
-                  # skip_on_cran()
                   expect_equal(abs(boot1$t_stat),
                     abs(dof_tstat[1]),
                     ignore_attr = TRUE
@@ -220,7 +219,6 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                         engine = engine
                       )
                     )
-                  # skip_on_cran()
                   expect_equal(abs(teststat(boot1)),
                     abs(dof_tstat[1]),
                     ignore_attr = TRUE
@@ -323,7 +321,6 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                       )
                     )
   
-                  # skip_on_cran()
                   expect_equal(abs(teststat(boot1)),
                     abs(dof_tstat[1]),
                     ignore_attr = TRUE
@@ -350,11 +347,12 @@ test_that("t-stat equivalence OLS - R and R-lean", {
 test_that("t-stat equivalence OLS - WildBootTests", {
   
   skip_on_cran()
-  #skip_on_ci()
+
+  julia_prep <- is_juliaconnector_prepared()
+  cat("julia connector prepared? ", julia_prep, "\n")
   
-  
-  #if(is_juliaconnector_prepared()){
-  if(TRUE){
+  if(julia_prep){
+  #if(TRUE){
         # data(voters)
         # adj <- cluster.adj <- TRUE; cluster.df <- "conventional";
         # impose_null = TRUE
@@ -477,7 +475,6 @@ test_that("t-stat equivalence OLS - WildBootTests", {
                       )
                     )
                   
-                  # skip_on_cran()
                   expect_equal(abs(boot1$t_stat),
                                abs(dof_tstat[1]),
                                ignore_attr = TRUE
@@ -577,7 +574,7 @@ test_that("t-stat equivalence OLS - WildBootTests", {
                         engine = engine
                       )
                     )
-                  # skip_on_cran()
+
                   expect_equal(abs(teststat(boot1)),
                                abs(dof_tstat[1]),
                                ignore_attr = TRUE
@@ -605,10 +602,14 @@ test_that("t-stat equivalence OLS - WildBootTests", {
 test_that("t-stat equivalence OLS q > 1", {
   
   skip_on_cran()
-
-
-  #if(is_juliaconnector_prepared()){
-  if(TRUE){
+  
+  julia_prep <- is_juliaconnector_prepared()
+  cat("julia connector prepared? ", julia_prep, "\n")
+  
+  cat("julia connector prepared? ", julia_prep, "\n")
+  
+  if(julia_prep){
+  # if(TRUE){
     
     wald_test <- function(run_this_test) {
       if (run_this_test) {
@@ -681,7 +682,6 @@ test_that("t-stat equivalence OLS q > 1", {
         wald_stat <-
           fixest::wald(feols_fit, "treatment", cluster = ~group_id1)
   
-        # skip_on_cran()
         expect_equal(boot_jl$teststat, sqrt(wald_stat$stat), ignore_attr = TRUE)
   
         # two hypotheses
@@ -703,7 +703,7 @@ test_that("t-stat equivalence OLS q > 1", {
   
         wald_stat <-
           fixest::wald(feols_fit, "Inter|treatment", cluster = ~group_id1)
-        # skip_on_cran()
+
         expect_equal(boot_jl$teststat, wald_stat$stat, ignore_attr = TRUE)
   
   
@@ -730,7 +730,6 @@ test_that("t-stat equivalence OLS q > 1", {
           ssc =fixest::ssc(cluster.df = "min")
         )
   
-        # skip_on_cran()
         expect_equal(teststat(boot_jl), sqrt(wald_stat$stat), 
                      ignore_attr = TRUE)
   
@@ -757,7 +756,7 @@ test_that("t-stat equivalence OLS q > 1", {
           cluster = ~group_id1,
           cluster.df = "conventional"
         )
-        # skip_on_cran()
+
         expect_equal(teststat(boot_jl), wald_stat$stat, ignore_attr = TRUE)
   
   
@@ -789,7 +788,7 @@ test_that("t-stat equivalence OLS q > 1", {
         wald_stat <-
           fixest::wald(feols_fit_weights, "treatment", cluster = ~group_id1)
   
-        # skip_on_cran()
+
         expect_equal(teststat(boot_jl), sqrt(wald_stat$stat), 
                      ignore_attr = TRUE)
   
@@ -819,7 +818,6 @@ test_that("t-stat equivalence OLS q > 1", {
             cluster = ~group_id1
           )
   
-        # skip_on_cran()
         expect_equal(teststat(boot_jl), wald_stat$stat, ignore_attr = TRUE)
   
   
@@ -851,7 +849,6 @@ test_that("t-stat equivalence OLS q > 1", {
           ssc =fixest::ssc(cluster.df = "min")
         )
   
-        # skip_on_cran()
         expect_equal(teststat(boot_jl), sqrt(wald_stat$stat), 
                      ignore_attr = TRUE)
   
@@ -880,7 +877,6 @@ test_that("t-stat equivalence OLS q > 1", {
             cluster.df = "conventional"
           )
   
-        # skip_on_cran()
         expect_equal(teststat(boot_jl), wald_stat$stat, ignore_attr = TRUE)
       }
     }
@@ -892,11 +888,14 @@ test_that("t-stat equivalence OLS q > 1", {
 })
 
 test_that("t-stat equivalence IV", {
+  
   skip_on_cran()
 
-
-  #if(is_juliaconnector_prepared()){
-  if(TRUE){
+  julia_prep <- is_juliaconnector_prepared()
+  cat("julia connector prepared? ", julia_prep, "\n")
+  
+  if(julia_prep){
+  #if(TRUE){
     
     iv_test <- function(run_this_test) {
       # Note: Test with Float64 for exact match
@@ -943,7 +942,6 @@ test_that("t-stat equivalence IV", {
           )
         )
   
-        # skip_on_cran()
         expect_equal(teststat(boot_ivreg1),
           as.vector(res_df1[res_df1$term == "education", "statistic"]),
           ignore_attr = TRUE
@@ -960,7 +958,6 @@ test_that("t-stat equivalence IV", {
         )
   
   
-        # skip_on_cran()
         expect_equal(teststat(boot_ivreg2), res_df2[
           res_df2$term == "education",
           "statistic"
