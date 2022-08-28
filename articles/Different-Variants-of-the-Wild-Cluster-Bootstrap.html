@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,8 +91,8 @@
     
     
 <p>In a recent working paper, <a href="https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf" class="external-link">MacKinnon, Nielsen and Webb (2022)</a> suggest multiple new variants of the wild cluster bootstrap. The methods differ in a) how the bootstrap scores are computed and b) if a CRV1 or CRV3 variance matrix is used when computing bootstrapped t-statistics.</p>
-<p>All new bootstrap variants are implemented in <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> and can be called by using the <code>boot_algo</code> function argument of <code><a href="../reference/boottest.html">boottest()</a></code>. The implementation is still quite bare-bone: it only allows to test hypotheses of the form <span class="math inline">\(\beta_k = 0\)</span> vs <span class="math inline">\(\beta_k \neq 0\)</span>, does not allow for regression weights or fixed effects, and further does not compute confidence intervals.</p>
-<p>To run e.g. the <code>WCR13</code> bootstrap, you would have to specify</p>
+<p>All new bootstrap variants are implemented in <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> and can be called by using the <code>engine</code> function argument of <code><a href="../reference/boottest.html">boottest()</a></code>. The implementation is still quite bare-bone: it only allows to test hypotheses of the form <span class="math inline">\(\beta_k = 0\)</span> vs <span class="math inline">\(\beta_k \neq 0\)</span>, does not allow for regression weights or fixed effects, and further does not compute confidence intervals.</p>
+<p>To run all bootstrap types with the null hypothesis imposed on the bootstrap data generating process, you would have to specify the <code>bootstrap_type</code> function argument:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span>
 <span></span>
@@ -116,7 +116,7 @@
 <span>  data <span class="op">=</span> <span class="va">data</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">wcr_algos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"R"</span>, <span class="st">"WCR11"</span>, <span class="st">"WCR13"</span>, <span class="st">"WCR31"</span>, <span class="st">"WCR33"</span><span class="op">)</span></span>
+<span><span class="va">wcr_algos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"11"</span>, <span class="st">"13"</span>, <span class="st">"31"</span>, <span class="st">"33"</span><span class="op">)</span></span>
 <span><span class="va">p_val</span> <span class="op">&lt;-</span> <span class="va">t_stat</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -130,7 +130,8 @@
 <span>      clustid <span class="op">=</span> <span class="op">~</span><span class="va">group_id1</span>,</span>
 <span>      B <span class="op">=</span> <span class="fl">9999</span>, </span>
 <span>      impose_null <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>      boot_algo <span class="op">=</span> <span class="va">x</span>, </span>
+<span>      engine <span class="op">=</span> <span class="st">"R"</span>,</span>
+<span>      bootstrap_type <span class="op">=</span> <span class="va">x</span>,</span>
 <span>      seed <span class="op">=</span> <span class="fl">123</span>, </span>
 <span>      ssc <span class="op">=</span> <span class="fu"><a href="../reference/boot_ssc.html">boot_ssc</a></span><span class="op">(</span></span>
 <span>        adj <span class="op">=</span> <span class="cn">FALSE</span>, </span>
@@ -150,12 +151,11 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">df</span></span>
-<span><span class="co">#&gt;        p.values t.statistics</span></span>
-<span><span class="co">#&gt; R     0.5731573    0.5745034</span></span>
-<span><span class="co">#&gt; WCR11 0.5731573    0.5745034</span></span>
-<span><span class="co">#&gt; WCR13 0.5725573    0.5664214</span></span>
-<span><span class="co">#&gt; WCR31 0.5709571    0.5745034</span></span>
-<span><span class="co">#&gt; WCR33 0.5715572    0.5664214</span></span></code></pre></div>
+<span><span class="co">#&gt;     p.values t.statistics</span></span>
+<span><span class="co">#&gt; 11 0.5731573    0.5745034</span></span>
+<span><span class="co">#&gt; 13 0.5725573    0.5664214</span></span>
+<span><span class="co">#&gt; 31 0.5709571    0.5745034</span></span>
+<span><span class="co">#&gt; 33 0.5715572    0.5664214</span></span></code></pre></div>
   </main>
 </div>
 

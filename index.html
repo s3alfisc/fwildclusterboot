@@ -67,7 +67,7 @@
     
     <a class="navbar-brand me-2" href="index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -120,13 +120,14 @@
 <!-- badges: start --><!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 1.3, 2022, 03, 10, 81868, R, R version 4.1.3 (2022-03-10), One Push-Up-orange.svg?style=flat-square)](commits/master) -->
 <!-- badges: end --><p>The <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> package provides a native R implementation of the fast wild cluster bootstrap algorithm developed in <a href="https://econpapers.repec.org/paper/qedwpaper/1406.htm" class="external-link">Roodman et al (2019)</a> for regression objects in R.</p>
 <p>Additionally, it provides support for multiple wild cluster bootstrap variants as described in <a href="https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf" class="external-link">MacKinnon, Nielsen &amp; Webb (2022)</a>.</p>
-<p>It also ports functionality of <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a> to R via the <a href="https://github.com/stefan-m-lenz/JuliaConnectoR" class="external-link">JuliaConnectoR</a>.</p>
+<p>Via the <a href="https://github.com/stefan-m-lenz/JuliaConnectoR" class="external-link">JuliaConnectoR</a>, <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> further ports functionality of <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a> - which provides an even faster implementation of the wild cluster bootstrap for OLS and supports the WRE bootstrap for IV and tests of multiple joint hypotheses.</p>
 <p>The package’s central function is <code><a href="reference/boottest.html">boottest()</a></code>. It allows to test univariate hypotheses using a wild cluster bootstrap at extreme speed: via the ‘fast’ algorithm, it is possible to run a wild cluster bootstrap with <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;B%20%3D%20100.000" title="B = 100.000" alt="B = 100.000"> iterations in less than a second!</p>
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
 <p><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> supports the following features:</p>
 <ul>
 <li>The wild bootstrap for OLS (Wu 1986).</li>
-<li>The wild cluster bootstrap for OLS (Cameron, Gelbach &amp; Miller 2008, Roodman et al, 2019)</li>
+<li>The wild cluster bootstrap for OLS (Cameron, Gelbach &amp; Miller 2008, Roodman et al, 2019).</li>
+<li>Multiple new versions of the wild cluster bootstrap as described in MacKinnon, Nielsen &amp; Webb (2022), including the WCR13, WCR31, WCR33, WCU13, WCU31 and WCU33.</li>
 <li>The subcluster bootstrap (MacKinnon and Webb 2018).</li>
 <li>Confidence intervals formed by inverting the test and iteratively searching for bounds.</li>
 <li>Multiway clustering.</li>
@@ -134,7 +135,8 @@
 </ul>
 <p>Additional features are provided through <code>WildBootTests.jl</code>:</p>
 <ul>
-<li>The Wild Restricted Efficient bootstrap (WRE) for IV/2SLS/LIML <a href="https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221" class="external-link">(Davidson &amp; MacKinnon, 2010)</a>.</li>
+<li>Highly optimized versions of the ‘11’ and ‘31’ wild cluster bootstrap variants</li>
+<li>A highly optimized version of the Wild Restricted Efficient bootstrap (WRE) for IV/2SLS/LIML <a href="https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221" class="external-link">(Davidson &amp; MacKinnon, 2010)</a>.</li>
 <li>Arbitrary and multiple linear hypotheses in the parameters.</li>
 </ul>
 <p><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> supports the following models:</p>
@@ -149,7 +151,7 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># set seed via dqset.seed for boot_algo = "R" &amp; Rademacher, Webb &amp; Normal weights</span></span>
+<span><span class="co"># set seed via dqset.seed for engine = "R" &amp; Rademacher, Webb &amp; Normal weights</span></span>
 <span><span class="fu">dqrng</span><span class="fu">::</span><span class="fu"><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqset.seed</a></span><span class="op">(</span><span class="fl">2352342</span><span class="op">)</span></span>
 <span><span class="co"># set 'familiar' seed for all other algorithms and weight types </span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">23325</span><span class="op">)</span></span>
@@ -213,7 +215,7 @@
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   @Misc{,</span></span>
-<span><span class="co">#&gt;     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.10)},</span></span>
+<span><span class="co">#&gt;     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.11.1)},</span></span>
 <span><span class="co">#&gt;     author = {Alexander Fischer and David Roodman},</span></span>
 <span><span class="co">#&gt;     year = {2021},</span></span>
 <span><span class="co">#&gt;     url = {https://cran.r-project.org/package=fwildclusterboot},</span></span>
@@ -270,7 +272,7 @@
 <li><a href="https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master" class="external-link"><img src="https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://cran.r-project.org/package=fwildclusterboot" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/grand-total/fwildclusterboot?color=blue"></a></li>
 <li><a href="https://cran.r-project.org/package=fwildclusterboot" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/last-month/fwildclusterboot?color=green"></a></li>
-<li><a href="https://github.com/%3Corg%3E/%3Crepo%3E/actions?query=workflow%3Apkgcheck" class="external-link"><img src="https://github.com/%3Corg%3E/%3Crepo%3E/workflows/pkgcheck/badge.svg" alt="pkgcheck"></a></li>
+<li><a href="https://github.com/s3alfisc/fwildclusterboot/actions?query=workflow%3Apkgcheck" class="external-link"><img src="https://github.com/s3alfisc/fwildclusterboot/workflows/pkgcheck/badge.svg" alt="pkgcheck"></a></li>
 </ul>
 </div>
 

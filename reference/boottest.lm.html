@@ -14,7 +14,7 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019."><meta prop
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,13 +82,14 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019.</p>
 <span>  sign_level <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"rademacher"</span>,</span>
 <span>  impose_null <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  bootstrap_type <span class="op">=</span> <span class="st">"fnw11"</span>,</span>
 <span>  p_val_type <span class="op">=</span> <span class="st">"two-tailed"</span>,</span>
 <span>  tol <span class="op">=</span> <span class="fl">1e-06</span>,</span>
 <span>  maxiter <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  nthreads <span class="op">=</span> <span class="fu">getBoottest_nthreads</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  ssc <span class="op">=</span> <span class="fu"><a href="boot_ssc.html">boot_ssc</a></span><span class="op">(</span>adj <span class="op">=</span> <span class="cn">TRUE</span>, fixef.K <span class="op">=</span> <span class="st">"none"</span>, cluster.adj <span class="op">=</span> <span class="cn">TRUE</span>, cluster.df <span class="op">=</span></span>
 <span>    <span class="st">"conventional"</span><span class="op">)</span>,</span>
-<span>  boot_algo <span class="op">=</span> <span class="fu">getBoottest_boot_algo</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  engine <span class="op">=</span> <span class="fu">getBoottest_engine</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  floattype <span class="op">=</span> <span class="st">"Float64"</span>,</span>
 <span>  maxmatsize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  bootstrapc <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -185,6 +186,14 @@ the bootstrap dgp or not. Null imposed <code>(WCR)</code> by default.
 If FALSE, the null is not imposed <code>(WCU)</code></p></dd>
 
 
+<dt>bootstrap_type</dt>
+<dd><p>Determines which wild cluster bootstrap type should be
+run. Options are "fnw11","11", "13", "31" and "33". For more information,
+see the details section. "fnw11" is the default, which runs a "11" type
+wild cluster bootstrap via the algorithm outlined in "fast and wild"
+(Roodman et al (2019)).</p></dd>
+
+
 <dt>p_val_type</dt>
 <dd><p>Character vector of length 1. Type of p-value.
 By default "two-tailed". Other options include "equal-tailed",
@@ -221,9 +230,10 @@ The function is purposefully designed to mimic fixest's
 <code><a href="https://lrberge.github.io/fixest/reference/ssc.html" class="external-link">ssc</a></code> function.</p></dd>
 
 
-<dt>boot_algo</dt>
-<dd><p>Character scalar. Either "R" or "WildBootTests.jl".
-Controls the algorithm employed by boottest().
+<dt>engine</dt>
+<dd><p>Character scalar. Either "R", "R-lean" or "WildBootTests.jl".
+Controls if <code><a href="boottest.html">boottest()</a></code> should run via its native R implementation
+or <code>WildBootTests.jl</code>.
 "R" is the default and implements the cluster bootstrap
 as in Roodman (2019). "WildBootTests.jl" executes the
 wild cluster bootstrap via the WildBootTests.jl
@@ -235,24 +245,24 @@ cluster bootstrap.
 Note that if no cluster is provided, boottest() always
 defaults to the "lean" algorithm. You can set the employed
 algorithm globally by using the
-<code><a href="setBoottest_boot_algo.html">setBoottest_boot_algo()</a></code> function.</p></dd>
+<code><a href="setBoottest_engine.html">setBoottest_engine()</a></code> function.</p></dd>
 
 
 <dt>floattype</dt>
 <dd><p>Float64 by default. Other option: Float32. Should floating
 point numbers in Julia be represented as 32 or 64 bit? Only relevant when
-'boot_algo = "WildBootTests.jl"'</p></dd>
+'engine= "WildBootTests.jl"'</p></dd>
 
 
 <dt>maxmatsize</dt>
 <dd><p>NULL by default = no limit. Else numeric scalar to set
 the maximum size of auxilliary weight matrix (v), in gigabytes. Only
-relevant when 'boot_algo = "WildBootTests.jl"'</p></dd>
+relevant when 'engine= "WildBootTests.jl"'</p></dd>
 
 
 <dt>bootstrapc</dt>
 <dd><p>Logical scalar, FALSE by default. TRUE  to request
-bootstrap-c instead of bootstrap-t. Only relevant when 'boot_algo =
+bootstrap-c instead of bootstrap-t. Only relevant when 'engine =
 "WildBootTests.jl"'</p></dd>
 
 
@@ -330,7 +340,7 @@ interval.</p></dd>
 <dt>call</dt>
 <dd><p>Function call of boottest.</p></dd>
 
-<dt>boot_algo</dt>
+<dt>engine</dt>
 <dd><p>The employed bootstrap algorithm.</p></dd>
 
 <dt>nthreads</dt>
@@ -348,14 +358,17 @@ no internal seed was created.</p></dd>
 
 <p>To guarantee reproducibility, you can either use <code>boottest()'s</code> <code>seed</code>
 function argument, or
-set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>boot_algo = "R-lean"</code>) including the
+set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>engine = "R-lean"</code>) including the
 heteroskedastic wild bootstrap</p></li>
-<li><p>the wild cluster bootstrap via <code>boot_algo = "R"</code> with Mammen weights or</p></li>
-<li><p><code>boot_algo = "WildBootTests.jl"</code></p></li>
+<li><p>the wild cluster bootstrap via <code>engine = "R"</code> with Mammen weights or</p></li>
+<li><p><code>engine = "WildBootTests.jl"</code></p></li>
 </ol></li>
-<li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>boot_algo = "R"</code> for Rademacher,
+<li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>engine = "R"</code> for Rademacher,
 Webb or Normal weights</p></li>
-</ul></div>
+</ul><p>Via the <code>engine</code> function argument, it is possible to specify different
+variants of the wild cluster bootstrap, and if the algorithm should
+be run via R or <code>WildBootTests.jl</code>.</p>
+    </div>
     <div class="section level2">
     <h2 id="confidence-intervals">Confidence Intervals<a class="anchor" aria-label="anchor" href="#confidence-intervals"></a></h2>
     
@@ -382,6 +395,9 @@ stops the procedure after 10 iterations.</p></li>
     <p>Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.
 (<a href="https://journals.sagepub.com/doi/full/10.1177/1536867X19830877" class="external-link">https://journals.sagepub.com/doi/full/10.1177/1536867X19830877</a>)</p>
+<p>MacKinnon, James G., Morten Ørregaard Nielsen, and
+Matthew D. Webb. Fast and reliable jackknife and bootstrap
+methods for cluster-robust inference. No. 1485. 2022.</p>
 <p>Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 "Bootstrap-based improvements for inference with clustered errors."
 The Review of Economics and Statistics 90.3 (2008): 414-427.</p>

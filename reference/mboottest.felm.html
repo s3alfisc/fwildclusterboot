@@ -18,7 +18,7 @@ Roodman et al., 2019."><meta property="og:image" content="https://s3alfisc.githu
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -273,7 +273,7 @@ regression coefficients.</p></dd>
 <dt>call</dt>
 <dd><p>Function call of boottest.</p></dd>
 
-<dt>boot_algo</dt>
+<dt>engine</dt>
 <dd><p>The employed bootstrap algorithm.</p></dd>
 
 <dt>nthreads</dt>
@@ -291,12 +291,12 @@ If NULL, no internal seed was created.</p></dd>
 
 <p>To guarantee reproducibility, you can either use <code>boottest()'s</code> <code>seed</code>
 function argument, or
-set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>boot_algo = "R-lean"</code>) including the
+set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>engine = "R-lean"</code>) including the
 heteroskedastic wild bootstrap</p></li>
-<li><p>the wild cluster bootstrap via <code>boot_algo = "R"</code> with Mammen weights or</p></li>
-<li><p><code>boot_algo = "WildBootTests.jl"</code></p></li>
+<li><p>the wild cluster bootstrap via <code>engine = "R"</code> with Mammen weights or</p></li>
+<li><p><code>engine = "WildBootTests.jl"</code></p></li>
 </ol></li>
-<li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>boot_algo = "R"</code> for Rademacher, Webb or
+<li><p><code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> when using <code>engine = "R"</code> for Rademacher, Webb or
 Normal weights</p></li>
 </ul></div>
     <div class="section level2">
