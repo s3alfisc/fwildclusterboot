@@ -13,7 +13,7 @@ In a recent working paper, [MacKinnon, Nielsen and Webb (2022)](https://www.econ
 
 All new bootstrap variants are implemented in `{fwildclusterboot}` and can be called by using the `engine` function argument of `boottest()`. The implementation is still quite bare-bone: it only allows to test hypotheses of the form $\beta_k = 0$ vs $\beta_k \neq 0$, does not allow for regression weights or fixed effects, and further does not compute confidence intervals. 
 
-To run e.g. the `WCR13` bootstrap, you would have to specify 
+To run all bootstrap types with the null hypothesis imposed on the bootstrap data generating process, you would have to specify the `bootstrap_type` function argument: 
 
 ```{r setup}
 library(fwildclusterboot)
@@ -38,7 +38,7 @@ lm_fit <- lm(
   data = data
 )
 
-wcr_algos <- c("R", "WCR11", "WCR13", "WCR31", "WCR33")
+wcr_algos <- c("11", "13", "31", "33")
 p_val <- t_stat <- 
   list()
 
