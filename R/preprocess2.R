@@ -59,6 +59,15 @@ preprocess2.fixest <-
         or fixest::feglm."
       )
     }
+    
+    if (!is.null(object$is_sunab)) {
+      if(object$is_sunab == TRUE){
+        stop(
+          "boottest() does not support the Sun-Abrams
+          estimator via `sunab()`."
+        )
+      }
+    }
 
     is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
     has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
@@ -1110,3 +1119,6 @@ transform_fe <-
 
     res
   }
+
+
+# sunab <- fixest:::sunab

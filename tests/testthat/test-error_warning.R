@@ -1782,6 +1782,24 @@ test_that("error message when character vars in felm and fixest", {
       B = 999
     )    
   )
+  
+    data(base_stagg)
+    res_sunab = feols(
+      y ~ x1 + sunab(year_treated, year) | id + year,
+      base_stagg,
+      cluster = ~year,
+      ssc = ssc(adj = TRUE, cluster.adj = TRUE)
+    )
+    
+    expect_error(
+      boottest(
+        res_sunab, 
+        param = "year::5", 
+        cluster = "year", 
+        B = 999
+      )
+    )
+
 
 
 })
