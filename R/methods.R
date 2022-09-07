@@ -869,6 +869,6 @@ summary.mboottest <- function(object, digits = 3, ...) {
 #' @export
 generics::tidy
 
-#' @importFrom generics tidy
+#' @importFrom generics glance
 #' @export
-generics::tidy
+generics::glance
