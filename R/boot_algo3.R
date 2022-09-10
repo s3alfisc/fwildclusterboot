@@ -245,12 +245,23 @@ boot_algo3 <- function(preprocessed_object,
     
     t_boot <- c(delta_b_star[which(R == 1), ] / se)
     
-    vcov <- sandwich::vcovCL(
-      object, 
-      reformulate(clustid), 
-      type = "HC0", 
-      cadjust = FALSE
+    # non-bootstrapped crv1 vcov
+    tXgug <- lapply(1:G, 
+                   function(g){
+                     t(X_list[[g]]) %*% 
+                       (y_list[[g]] - X_list[[g]] %*% beta_hat)
+    })
+    meat_list <- lapply(1:G,
+                   function(g)
+                     tcrossprod(tXgug[[g]])
     )
+    meat <- Reduce("+", meat_list)
+    vcov <- tXXinv %*% meat %*% tXXinv
+    
+    #vcov2 <- sandwich::vcovCL(object, 
+    # cluster = ~year, cadjust = FALSE, type = "HC0")
+    #coef_selector <- which(rownames(vcov2) %in% rownames(vcov))
+    #all.equal(vcov[coef_selector, coef_selector], vcov2)
     
   } else if(crv_type == "crv3"){
     

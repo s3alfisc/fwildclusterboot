@@ -7,6 +7,7 @@ bootagg = function(
     bootstrap_type = "11", 
     clustid,
     nthreads = 1,
+    alpha = 0.05,
     ...){
   
   #' Aggregates the value of coefficients. Inference via a wild cluster
@@ -74,7 +75,8 @@ bootagg = function(
   #'     B = 9999,
   #'     bootstrap_type = "11",
   #'     clustid = ~ time,
-  #'     nthreads = 8
+  #'     nthreads = 8, 
+  #'     alpha = 0.05
   #'   )
   #' 
   #' 
@@ -164,24 +166,35 @@ bootagg = function(
 
   cat("Step 1: run wild bootstrap", "\n")
   boot_fit <-
-  boottest(
-    object = x,
-    param = param,
-    clustid = clustid,
-    B = B,
-    impose_null = FALSE,
-    bootstrap_type= bootstrap_type, 
-    nthreads = nthreads
-  )
+    boottest(
+      object = x,
+      param = param,
+      clustid = clustid,
+      B = B,
+      impose_null = FALSE,
+      bootstrap_type= bootstrap_type, 
+      nthreads = nthreads
+    )
 
   B <- boot_fit$boot_iter
   #V <- boot_fit$vcov_boot
   V_boot <- boot_fit$boot_vcov
   V = x$cov.scaled
-  coef <- x$coefficients
   coef_boot <- boot_fit$boot_coef
 
-  #V = x$cov.scaled
+  # note: because feols() allows for outprojection of fixed effects, 
+  # but boottest() currently does not, V_boot and coef_boot will have
+  # different dims than coef and V - need to pick appropriate sub matrices
+  
+  # if(length(coef) != nrow(coef_boot)){
+  #   coef_selector <- which(names(coef) %in% rownames(coef_boot))
+  #   coef_boot <- coef_boot[coef_selector, ]
+  #   V_boot2 <- array(NA, c(length(coef_selector), length(coef_selector), B+1))
+  #   for(b in 1:(B+1)){
+  #     V_boot2[,,b] <- V_boot[coef_selector,coef_selector,b]
+  #   }
+  #   V_boot <- V_boot2
+  # }
 
 
   name_df = unique(data.frame(root, val, stringsAsFactors = FALSE))
@@ -253,9 +266,21 @@ bootagg = function(
 
     pvalue <- rowMeans(abs(zvalue) < abs(zvalue_boot))
 
-    pvalue
+    crit_vals <- t(
+      apply(
+        zvalue_boot, 
+        1,
+        function(x)
+          quantile(x, c(alpha/2, 1-alpha/2), na.rm = TRUE)
+        )
+      )
+    
+    conf_int <- c_all +  crit_vals * se_all
+
+    res <- cbind(pvalue, conf_int)
+    res
     #pvalue(summary(x, agg = "TRUE"))
-    #summary(x, agg = "TRUE")
+    #confint(summary(x, agg = "TRUE"))
 
     
 
