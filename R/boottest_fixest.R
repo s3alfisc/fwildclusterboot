@@ -390,7 +390,7 @@ boottest.fixest <- function(object,
     )
   }
   
-  check_params_in_model(object = object, param = param)
+  # check_params_in_model(object = object, param = param)
   
   check_boottest_args_plus(
     object = object,
@@ -494,13 +494,19 @@ boottest.fixest <- function(object,
         sign_level = sign_level,
         param = param,
         p_val_type = p_val_type,
-        nthreads = 1,
+        nthreads = nthreads,
         type = type,
         full_enumeration = full_enumeration,
         small_sample_correction = small_sample_correction,
         seed = internal_seed, 
-        object = object
+        object = object, 
+        impose_null = impose_null
       )
+      
+      boot_vcov <- boot_coef <- NULL
+      boot_vcov <- res$boot_vcov
+      boot_coef <- res$boot_coef
+      
       conf_int <- p_grid_vals <- grid_vals <- FALSE
       
       
@@ -597,10 +603,17 @@ boottest.fixest <- function(object,
     r = r,
     engine = engine,
     nthreads = nthreads,
-    internal_seed = internal_seed
+    internal_seed = internal_seed, 
+    boot_vcov = boot_vcov, 
+    boot_coef = boot_coef
   )
   
   
   class(res_final) <- "boottest"
   invisible(res_final)
 }
+
+#' this is a trick - actually not need
+#' it's just that something called sunab() needs to be 
+#' found, else cluster creation funs confused
+sunab <- function(){1}

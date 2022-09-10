@@ -207,99 +207,105 @@ boot_algo3 <- function(preprocessed_object,
     beta_1g_tilde = beta_1g_tilde
   )
   
-  # pre-allocate space for bootstrap 
-  # start the bootstrap loop 
-  t_boot <- vector(mode = "numeric", B + 1)
-  se <- vector(mode = "numeric", B + 1)
   
-  # numer <- (( R %*% tXXinv) %*%  (Reduce("cbind", scores_list) %*% v))
+  #numer <- (( R %*% tXXinv) %*%  (Reduce("cbind", scores_list) %*% v))
+  scores_boot <- Reduce("cbind", scores_list) %*% v
+  delta_b_star <- numer <- tXXinv %*%  scores_boot
   
-
+  scores_mat <- Reduce("cbind", scores_list)
   
   dim(R) <- c(1, k) # turn R into matrix
-  
-  for(b in 1:(B + 1)){
-    
-    # Step 1: get bootstrapped scores
-    
-    scores_g_boot <- matrix(NA,G,k)
-    
-    v_ <- v[,b]
-    
-    for(g in 1:G){
-      scores_g_boot[g,] <- scores_list[[g]] * v_[g] #* v[g, b]
-    }
-    
-    # numerator (both for WCR, WCU)
-    scores_boot <- colSums(scores_g_boot)
-    delta_b_star <- tXXinv %*% scores_boot 
-    
-    # Step 2: get bootstrapped vcov's
-    
-    if(crv_type == "crv1"){
-      
-      score_hat_g_boot <- list()
-      for(g in 1:G){
-        # see MacKinnon 
-        # (https://www.econstor.eu/bitstream/10419/247206/1/qed-wp-1465.pdf)
-        # equ (20), note this can be accelerated
-        score_hat_g_boot[[g]] <- 
-          tcrossprod(scores_g_boot[g,] - Ag[[g]] %*% scores_boot)
-      }
-      
-      score_hat_boot <- Reduce("+", score_hat_g_boot)
-      
-      se[b] <-  
-        sqrt(
-          small_sample_correction * 
-            RtXXinv %*% score_hat_boot %*% t(RtXXinv)
-        )
-      
-      t_boot[b] <- (c(delta_b_star)[which(R == 1)] / se[b])
-      
-    } else if (crv_type == "crv3"){
-      
-      delta_diff <- matrix(NA, G, k)
-      
-      for(g in 1:G){
-        score_diff <- scores_boot - scores_g_boot[g,]
-        delta_diff[g,] <- 
-          
-          (
-            (inv_tXX_tXgXg[[g]] %*% score_diff) - delta_b_star
-          )^2
-      }
-      
-      se[b] <-  
-        sqrt( 
-          ((G-1) / G) *
-            colSums(
-              delta_diff
-            )
-        )[which(R == 1)]
-      
-      t_boot[b] <- c(delta_b_star)[which(R == 1)] / se[b]
-    }
-    
-  }  
+  #delta_b_star <- matrix(NA,k, B+1)
   
   
-  # get original t-stat. 
-
   if(crv_type == "crv1"){
+    
+    Ag2 <- array(NA, c(k, k, G))
+    for(g in seq_along(Ag)){
+      Ag2[,,g] <- Ag[[g]]
+    }
+    
+    boot_fit <-
+      boot_algo3_crv1(
+        B = B,
+        G = G, 
+        k = k, 
+        v = v, 
+        scores_mat = scores_mat, 
+        scores_boot = scores_boot, 
+        tXXinv = tXXinv, 
+        Ag = Ag2, 
+        ssc = small_sample_correction, 
+        cores = nthreads, 
+        R = R
+      )
+    
+    boot_vcov <- boot_fit$boot_vcov
+    se <- boot_fit$se
+    
+    t_boot <- c(delta_b_star[which(R == 1), ] / se)
+    
     vcov <- sandwich::vcovCL(
       object, 
       reformulate(clustid), 
       type = "HC0", 
       cadjust = FALSE
     )
+    
   } else if(crv_type == "crv3"){
+    
+    # pre-allocate space for bootstrap 
+    # start the bootstrap loop 
+    t_boot <- vector(mode = "numeric", B + 1)
+    se <- vector(mode = "numeric", B + 1)
+    boot_vcov <- array(NA, c(k, k, B+1))
+    
+    for(b in 1:(B + 1)){
+      
+      # Step 1: get bootstrapped scores
+      scores_g_boot <- matrix(NA,G,k)
+      
+      v_ <- v[,b]
+      
+      for(g in 1:G){
+        scores_g_boot[g,] <- scores_list[[g]] * v_[g] #* v[g, b]
+      }
+      
+      
+      delta_diff <- matrix(NA, G, k)
+      
+      for(g in 1:G){
+        score_diff <- scores_boot[,b] - scores_g_boot[g,]
+        delta_diff[g,] <-
+          
+          (
+            (inv_tXX_tXgXg[[g]] %*% score_diff) - delta_b_star[,b]
+          )^2
+      }
+      
+      se[b] <-
+        sqrt(
+          ((G-1) / G) *
+            colSums(
+              delta_diff
+            )
+        )[which(R == 1)]
+      
+      t_boot[b] <- c(delta_b_star[,b])[which(R == 1)] / se[b]
+      
+      
+    } 
+    
     vcov <- 
       summclust::vcov_CR3J(
         obj = object, 
         cluster = clustid
       )
+    
+
+    
   }
+  
   
   se0 <- sqrt(small_sample_correction * R %*% vcov %*% t(R))
   se0 <- as.vector(se0)
@@ -327,7 +333,9 @@ boot_algo3 <- function(preprocessed_object,
     clustid = clustid,
     invalid_t = NULL,
     ABCD = NULL,
-    small_sample_correction = small_sample_correction
+    small_sample_correction = small_sample_correction, 
+    boot_vcov = boot_vcov, 
+    boot_coef = delta_b_star
   )
   
   class(res) <- "boot_algo3"

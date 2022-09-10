@@ -268,8 +268,8 @@ check_boot_algo3 <- function(
   
   if (!is.null(fe)) {
     stop("The '13', '31', and '33'
-         bootstrap variants currently only
-         support oneway clustering when 'boot_engine' == 'R'.")
+         bootstrap variants currently don't support fixed 
+         effects in the bootstrap. Please set 'fe = NULL'.")
   }
   
   if(!is.null(weights)){

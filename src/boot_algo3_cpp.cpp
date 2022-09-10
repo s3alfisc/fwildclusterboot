@@ -7,7 +7,56 @@
 #define omp_get_max_threads() 0
 #endif
 
+
 using namespace Rcpp;
+
+// [[Rcpp::export]]
+List boot_algo3_crv1(
+    const int B,
+    const int G, 
+    const int k, 
+    arma::mat v, 
+    arma::mat scores_mat, 
+    arma::mat scores_boot, 
+    arma::mat tXXinv, 
+    arma::cube Ag, 
+    double ssc, 
+    int cores, 
+    arma::mat R
+    ){
+
+  arma::vec se(B+1);
+  arma::cube boot_vcov(k, k, B+1);
+  
+#pragma omp parallel for num_threads(cores)
+  for(int b = 0; b < (B+1); b++){
+
+    arma::mat score_hat_boot(k, k); 
+    
+    for(int g = 0; g < G; g++){
+
+      arma::vec scores_g_boot = scores_mat.col(g) * v(g, b);
+      arma::mat score_hat_boot_sq = scores_g_boot - 
+        Ag.slice(g) * scores_boot.col(b);
+      score_hat_boot += score_hat_boot_sq * score_hat_boot_sq.t();
+
+    }
+    
+    boot_vcov.slice(b) = ssc * tXXinv * score_hat_boot * tXXinv;
+    se(b) = arma::as_scalar(R * boot_vcov.slice(b) * R.t());
+  }
+  
+  List res_list; 
+  res_list["boot_vcov"] = boot_vcov; 
+  res_list["se"] = se; 
+  
+  return res_list; 
+
+
+}
+
+
+
 // 
 // // This is a simple example of exporting a C++ function to R. You can
 // // source this function into an R session using the Rcpp::sourceCpp
@@ -154,35 +203,50 @@ using namespace Rcpp;
 //   
 // }
 
-List matrix_to_arma_list(List x, int G){
-  
-  List res(G);
-  for(int g = 0; g < G; g++){
-     res[g] = as<arma::mat>(x[g]);
-    }
-  
-  return res; 
-  
-}
+// List matrix_to_arma_list(List x, int G){
+//   
+//   List res(G);
+//   for(int g = 0; g < G; g++){
+//      res[g] = as<arma::mat>(x[g]);
+//     }
+//   
+//   return res; 
+//   
+// }
 
 
 /*** R
-res <- boot_algo3cpp(
-  G = G,
-  B = 2,
-  X = X,
-  scores_list2 = scores_list2,
-  RtXXinv = R %*% tXXinv,
-  Ag = Ag, 
+pracma::tic()
+boot_algo3_crv1(
+  B = B,
+  G = G, 
+  k = k, 
   v = v, 
+  scores_mat = scores_mat, 
+  scores_boot = scores_boot, 
+  tXXinv = tXXinv, 
+  Ag = Ag2, 
   ssc = small_sample_correction, 
-  crv_type = 1, 
-  inv_tXX_tXgXg = inv_tXX_tXgXg, 
+  cores = 1, 
   R = R
 )
+pracma::toc()
 
-
-
+pracma::tic()
+res <- boot_algo3_crv1(
+  B = B,
+  G = G, 
+  k = k, 
+  v = v, 
+  scores_mat = scores_mat, 
+  scores_boot = scores_boot, 
+  tXXinv = tXXinv, 
+  Ag = Ag2, 
+  ssc = small_sample_correction, 
+  cores = 8, 
+  R = R
+)
+pracma::toc()
 
 
 */
