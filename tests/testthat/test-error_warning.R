@@ -257,7 +257,7 @@ test_that("errors and warnings q = 1", {
         suppressWarnings(expect_warning(
           boottest(
             object = feols_fit,
-            clustid = c("group_id1"),
+            clustid = "group_id1",
             B = 9999,
             seed = 911,
             param = "treatment",
@@ -1783,7 +1783,8 @@ test_that("error message when character vars in felm and fixest", {
     )    
   )
   
-    data(fixest::base_stagg)
+  requireNamespace("fixest")
+    data(base_stagg)
     res_sunab = fixest::feols(
       y ~ x1 + fixest:::sunab(year_treated, year) | id + year,
       base_stagg,

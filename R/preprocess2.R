@@ -860,14 +860,20 @@ get_cluster <-
     # Step 1: create cluster df
     
     cluster_tmp <-
-      try(if ("Formula" %in% loadedNamespaces()) {
+      if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
         suppressWarnings(
           expand.model.frame(
-            model = ifelse(
-              isTRUE(object$is_sunab), 
-              update(object, . ~ + 1 | . + 1), 
-              object)[[1]],  
+            model = 
+              if(inherits(object, "fixest")){
+                if(!is.null(object$fixef_vars)){
+                  update(object, . ~ + 1 | . + 1)
+                } else {
+                  update(object, . ~ + 1 )
+                }
+              } else {
+                object
+              },
             extras = clustid_fml,
             na.expand = FALSE,
             envir = call_env
@@ -875,39 +881,45 @@ get_cluster <-
         )
       } else {
         expand.model.frame(
-          model = ifelse(
-            isTRUE(object$is_sunab), 
-            update(object, . ~ + 1 | . + 1), 
-            object)[[1]],  
+          model = 
+            if(inherits(object, "fixest")){
+              if(!is.null(object$fixef_vars)){
+                update(object, . ~ + 1 | . + 1)
+              } else {
+                update(object, . ~ + 1 )
+              }
+            } else {
+              object
+            },
           extras = clustid_fml,
           na.expand = FALSE,
           envir = call_env
         )
-      })
-    
-    if(inherits(cluster_tmp, "try-error")){
-      if(inherits(object, "fixest") || inherits(object, "felm")){
-        if(grepl("non-numeric argument to binary operator$", 
-                 attr(cluster_tmp, "condition")$message)){
-          stop("In your model, you have specified multiple fixed effects,
-               none of which are of type factor. While `fixest::feols()` and
-               `lfe::felm()` handle this case without any troubles,  
-               `boottest()` currently cannot handle this case - please 
-               change the type of (at least one) fixed effect(s) to factor.
-               If this does not solve the error, please report the issue
-               at https://github.com/s3alfisc/fwildclusterboot.")
-        }
-        if(grepl("operations are possible only for numeric, logical
-                 or complex types$", 
-                 attr(cluster_tmp, "condition")$message)){
-          stop("Either a fixed effect or a cluster variable in your fixest()
-               or felm() model is currently specified as a character. 
-               'boottest()' relies on 'expand.model.frame',
-               which can not handle these variable types in models.
-               Please change these character variables to factors. ")
-        }
       }
-    }
+    
+    # if(inherits(cluster_tmp, "try-error")){
+    #   if(inherits(object, "fixest") || inherits(object, "felm")){
+    #     if(grepl("non-numeric argument to binary operator$", 
+    #              attr(cluster_tmp, "condition")$message)){
+    #       stop("In your model, you have specified multiple fixed effects,
+    #            none of which are of type factor. While `fixest::feols()` and
+    #            `lfe::felm()` handle this case without any troubles,  
+    #            `boottest()` currently cannot handle this case - please 
+    #            change the type of (at least one) fixed effect(s) to factor.
+    #            If this does not solve the error, please report the issue
+    #            at https://github.com/s3alfisc/fwildclusterboot.")
+    #     }
+    #     if(grepl("operations are possible only for numeric, logical
+    #              or complex types$", 
+    #              attr(cluster_tmp, "condition")$message)){
+    #       stop("Either a fixed effect or a cluster variable in your fixest()
+    #            or felm() model is currently specified as a character. 
+    #            'boottest()' relies on 'expand.model.frame',
+    #            which can not handle these variable types in models.
+    #            Please change these character variables to factors. ")
+    #     }
+    #   }
+    # }
     
     cluster_df <-
       model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
@@ -951,10 +963,16 @@ get_cluster <-
         ## FIXME to suppress potential warnings due to | in Formula
         suppressWarnings(
           expand.model.frame(
-            model = ifelse(
-              isTRUE(object$is_sunab), 
-              update(object, . ~ + 1 | . + 1), 
-              object)[[1]], 
+            model = 
+              if(inherits(object, "fixest")){
+                if(!is.null(object$fixef_vars)){
+                  update(object, . ~ + 1 | . + 1)
+                } else {
+                  update(object, . ~ + 1 )
+                }
+              } else {
+                object
+              },
             extras = cluster_bootcluster_fml,
             na.expand = FALSE,
             envir = call_env
@@ -962,10 +980,16 @@ get_cluster <-
         )
       } else {
         expand.model.frame(
-          model = ifelse(
-            isTRUE(object$is_sunab), 
-            update(object, . ~ + 1 | . + 1), 
-            object)[[1]],  
+          model = 
+            if(inherits(object, "fixest")){
+              if(!is.null(object$fixef_vars)){
+                update(object, . ~ + 1 | . + 1)
+              } else {
+                update(object, . ~ + 1 )
+              }
+            } else {
+              object
+            },
           extras = cluster_bootcluster_fml,
           na.expand = FALSE,
           envir = call_env
@@ -979,43 +1003,43 @@ get_cluster <-
       na.action = na.pass
     )
     
-    if(inherits(cluster_tmp, "try-error")){
-      if(inherits(object, "fixest") || inherits(object, "felm")){
-        if(
-          grepl(
-            "non-numeric argument to binary operator$",
-            attr(
-              cluster_tmp, "condition"
-            )$message
-          )
-        ){
-          stop(
-            "In your model, you have specified multiple fixed effects, 
-          none of which are of type factor. While `fixest::feols()` and 
-          `lfe::felm()` handle this case without any troubles,  `boottest()`
-          currently cannot handle this case - please change the type of
-          (at least one) fixed effect(s) to factor. If this does not solve
-          the error, please report the issue at 
-          https://github.com/s3alfisc/fwildclusterboot."
-          )
-        }
-        if(
-          grepl(
-            "operations are possible only for numeric, logical or complex types$",
-            attr(
-              cluster_tmp,
-              "condition")$message
-          )
-        ){
-          stop(
-            "Either a fixed effect or a cluster variable in your fixest() or
-          felm() model is currently specified as a character. 'boottest()' 
-          relies on 'expand.model.frame', which can not handle these variable
-          types in models. Please change these character variables to factors."
-          )
-        }
-      }
-    }
+    # if(inherits(cluster_tmp, "try-error")){
+    #   if(inherits(object, "fixest") || inherits(object, "felm")){
+    #     if(
+    #       grepl(
+    #         "non-numeric argument to binary operator$",
+    #         attr(
+    #           cluster_tmp, "condition"
+    #         )$message
+    #       )
+    #     ){
+    #       stop(
+    #         "In your model, you have specified multiple fixed effects, 
+    #       none of which are of type factor. While `fixest::feols()` and 
+    #       `lfe::felm()` handle this case without any troubles,  `boottest()`
+    #       currently cannot handle this case - please change the type of
+    #       (at least one) fixed effect(s) to factor. If this does not solve
+    #       the error, please report the issue at 
+    #       https://github.com/s3alfisc/fwildclusterboot."
+    #       )
+    #     }
+    #     if(
+    #       grepl(
+    #         "operations are possible only for numeric, logical or complex types$",
+    #         attr(
+    #           cluster_tmp,
+    #           "condition")$message
+    #       )
+    #     ){
+    #       stop(
+    #         "Either a fixed effect or a cluster variable in your fixest() or
+    #       felm() model is currently specified as a character. 'boottest()' 
+    #       relies on 'expand.model.frame', which can not handle these variable
+    #       types in models. Please change these character variables to factors."
+    #       )
+    #     }
+    #   }
+    # }
     
     # data.frames with clusters, bootcluster
     cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
