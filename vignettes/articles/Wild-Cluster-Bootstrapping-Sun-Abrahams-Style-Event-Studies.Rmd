@@ -1,0 +1,136 @@
+---
+title: "Wild Cluster Bootstrapping Sun-Abrahams Style Event Studies"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup,message = FALSE, warning = FALSE}
+library(fwildclusterboot)
+library(fixest)
+library(did2s)
+```
+
+
+load some data
+```{r,message = FALSE, warning = FALSE}
+data("df_het", package = "did2s")
+```
+
+estimate via `did2s` (just for comparison)
+
+```{r,message = FALSE, warning = FALSE}
+static <- did2s(df_het, 
+                yname = "dep_var", first_stage = ~ 0 | state + year, 
+                second_stage = ~i(treat, ref=FALSE), treatment = "treat", 
+                cluster_var = "state")
+
+es <- did2s(df_het,
+            yname = "dep_var", first_stage = ~ 0 | state + year, 
+            second_stage = ~i(rel_year, ref=c(-1, Inf)), treatment = "treat", 
+            cluster_var = "state")
+
+
+#summary(static)
+#summary(es)
+
+```
+
+estimate via fixest 
+
+```{r,message = FALSE, warning = FALSE}
+fit = feols(
+  dep_var ~ sunab(year - rel_year, year) + as.factor(state) + as.factor(year), 
+  df_het, 
+  cluster = ~state)
+
+twfe = feols(dep_var ~ i(rel_year, ref=c(-1, Inf)) | unit + year, data = df_het, cluster = ~state) 
+
+fixest::iplot(list(fit, twfe), sep = 0.2, ref.line = -0.5,
+      col = c("steelblue", "#82b446"), pt.pch = c(20, 18), 
+      xlab = "Relative time to treatment", 
+      main = "Event study: Staggered treatment (comparison)")
+```
+
+inference via the wild cluster bootstrap
+
+- the att 
+
+```{r,message = FALSE, warning = FALSE}
+# required as fixest not exported
+sunab <- fixest:::sunab
+pracma::tic()
+wcb_agg <- fwildclusterboot:::bootagg(
+  fit,
+  agg = "att",
+  full = FALSE,
+  B = 9999, 
+  bootstrap_type = "11", 
+  clustid = ~ state,
+  nthreads = 8
+)
+pracma::toc()
+```
+
+inference for the att
+
+p-values 
+
+```{r,message = FALSE, warning = FALSE}
+head(wcb_agg)
+head(pvalue(summary(fit, agg = "att")))
+head(confint(summary(fit, agg = "att")))
+
+```
+
+
+inference for event study
+
+```{r,message = FALSE, warning = FALSE}
+pracma::tic()
+wcb_agg_event <- fwildclusterboot:::bootagg(
+  fit,
+  agg = TRUE,
+  full = FALSE,
+  B = 9999, 
+  bootstrap_type = "11", 
+  clustid = ~ state,
+  nthreads = 8
+)
+pracma::toc()
+```
+
+wcb
+
+```{r,message = FALSE, warning = FALSE}
+wcb_agg_event[1:10, ]
+```
+
+crv1
+
+```{r,message = FALSE, warning = FALSE}
+head(pvalue(summary(fit, agg = TRUE))[-1])
+head(confint(summary(fit, agg = TRUE))[-1, ])
+
+```
+
+# Why does it work? 
+
+Easy version: assume s is fixed (this is what `fixest` does): 
+
+- estimate a more fully interacted model via OLS, get 
+  vector of coefficients $\beta_{sunab}$
+- sum up coefficients in $\beta_{sunab}$ with set of weigts $s$, where $s$ is a vector of the same length
+- inference for $\sqrt{n} (s'\hat{\beta} - s'\beta) \rightarrow N(0, s'\Sigma s)$
+
+- bootstrap then: calculate bootstrap stats for $\hat{\beta}_{b}$ and $\hat{\Sigma}_{b}$, calculate t-stats etc
+- WCU: don't impose null on bootstrap dgp
+- WCR: impose $s'\beta = r$
+
+Paper version: assume $s$ is a random variable - independent of bootstrap (?) complicates inference as $\sqrt{n} (s'\hat{\beta} - s'\beta) \rightarrow N(0, s'\Sigma s)$ no longer holds
+  
+

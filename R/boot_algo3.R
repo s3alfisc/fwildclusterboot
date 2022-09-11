@@ -265,6 +265,11 @@ boot_algo3 <- function(preprocessed_object,
     
   } else if(crv_type == "crv3"){
     
+    inv_tXX_tXgXg2 <- array(NA, c(k, k, G))
+    for(g in seq_along(inv_tXX_tXgXg)){
+      inv_tXX_tXgXg2[,,g] <- inv_tXX_tXgXg[[g]]
+    }
+    
     # pre-allocate space for bootstrap 
     # start the bootstrap loop 
     t_boot <- vector(mode = "numeric", B + 1)

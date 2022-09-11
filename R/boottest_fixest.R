@@ -449,6 +449,7 @@ boottest.fixest <- function(object,
   point_estimate <-
     as.vector(object$coefficients[param] %*% preprocess$R0[param])
   
+  boot_vcov <- boot_coef <- NULL
   
   if (engine == "R") {
     

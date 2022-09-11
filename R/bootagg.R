@@ -1,94 +1,134 @@
 bootagg = function(
     x,
     agg,
+    clustid = NULL, 
+    bootcluster = "max",
     full = FALSE,
     use_weights = TRUE,
     B = 999, 
-    bootstrap_type = "11", 
-    clustid,
+    impose_null = TRUE,
+    fe = NULL,
     nthreads = 1,
     alpha = 0.05,
     ...){
   
-  #' Aggregates the value of coefficients. Inference via a wild cluster
-  #' bootstrap 
+  #' Simple tool that aggregates the value of CATT coefficients in
+  #' staggered difference-in-difference setups with inference based on 
+  #' a wild cluster bootstrap (see details) - similar to `fixest::aggregate()`
+  #' 
+  #' This is a function helping to replicate the estimator from Sun and
+  #' Abraham (2021, Journal of Econometrics). You first need to perform 
+  #' an estimation with cohort and relative periods dummies 
+  #' (typically using the function i), this leads to estimators of the 
+  #' cohort average treatment effect on the treated (CATT). Then you can
+  #' use this function to retrieve the average treatment effect on each 
+  #' relative period,or for any other way you wish to aggregate the CATT.
+  #' 
+  #' Note that contrary to the SA article, here the cohort share 
+  #' in the sample is considered to be a perfect measure for the 
+  #' cohort share in the population.
+  
+  
   #' Most of this function is written by Laurent Bergé and used 
   #' in the fixest package published under GPL-3, 
   #' https://cran.r-project.org/web/packages/fixest/index.html
   #' minor changes by Alexander Fischer
   #' 
+  #' @param x An object of type fixest estimated using `sunab()`
+  #' @param agg A character scalar describing the variable names to be aggregated, it is pattern-based. All variables that match the pattern will be aggregated. It must be of the form `"(root)"`, the parentheses must be there and the resulting variable name will be `"root"`. You can add another root with parentheses: `"(root1)regex(root2)"`, in which case the resulting name is `"root1::root2"`. To name the resulting variable differently you can pass a named vector: `c("name" = "pattern")` or `c("name" = "pattern(root2)")`. It's a bit intricate sorry, please see the examples.
+  #' @param full Logical scalar, defaults to `FALSE`. If `TRUE`, then all coefficients are returned, not only the aggregated coefficients.
+  #' @param use_weights Logical, default is `TRUE`. If the estimation was weighted, whether the aggregation should take into account the weights. Basically if the weights reflected frequency it should be `TRUE`.
+  #' @param clustid A character vector or rhs formula containing the names of the
+  #' cluster variables. If NULL,
+  #'        a heteroskedasticity-robust (HC1) wild bootstrap is run.
+  #' @param B Integer. The number of bootstrap iterations. When the number of
+  #'  clusters is low,
+  #'        increasing B adds little additional runtime.  
+  #' @param fe A character vector or rhs formula of length one which contains
+  #' the name of the fixed effect to be projected
+  #'        out in the bootstrap. Note: if regression weights are used, fe
+  #'        needs to be NULL.
+  #' @param alpha A numeric between 0 and 1 which sets the significance level
+  #'        of the inference procedure. E.g. sign_level = 0.05
+  #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
+  #' @param impose_null Logical. Controls if the null hypothesis is imposed on
+  #'        the bootstrap dgp or not. Null imposed `(WCR)` by default.
+  #'        If FALSE, the null is not imposed `(WCU)`
+  #' @param bootcluster A character vector or rhs formula of length 1. Specifies
+  #' the bootstrap clustering variable or variables. If more
+  #'        than one variable is specified, then bootstrapping is clustered by the
+  #'         intersections of
+  #'        clustering implied by the listed variables. To mimic the behavior of
+  #'        stata's boottest command,
+  #'        the default is to cluster by the intersection of all the variables
+  #'        specified via the `clustid` argument,
+  #'        even though that is not necessarily recommended (see the paper by
+  #'         Roodman et al cited below, section 4.2).
+  #'        Other options include "min", where bootstrapping is clustered by
+  #'        the cluster variable with the fewest clusters.
+  #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
+  #'         supported - see the \code{vignette("fwildclusterboot", package =
+  #'          "fwildclusterboot")} for details.
+  #' @param ... misc arguments
+  #' 
+  #' @export
+  #' 
+  #' @return A data frame with aggregated coefficients, p-values and 
+  #' confidence intervals. 
+  #' 
   #' @importFrom dreamerr check_value_plus
+  #' 
   #' @examples 
   #' 
-  #' #' library(fixest)
-  #' #' library(fwildclusterboot)
-  #' 
-  #' set.seed(123456L)
-  #' 
-  #' # code by Grant McDermott
-  #' # 60 time periods, 30 individuals, and 5 waves of treatment
-  #' tmax = 22; imax = 500; nlvls = 5
-  #' 
-  #' dat =
-  #'   expand.grid(time = 1:tmax, id = 1:imax) |>
-  #'   within({
-  #' 
-  #'     cohort      = NA
-  #'     effect      = NA
-  #'     first_treat = NA
-  #' 
-  #'     for (chrt in 1:imax) {
-  #'       cohort = ifelse(id==chrt, sample.int(nlvls, 1), cohort)
-  #'     }
-  #' 
-  #'     for (lvls in 1:nlvls) {
-  #'       effect      = ifelse(cohort==lvls, sample(2:10 , 1), effect)
-  #'       first_treat = ifelse(cohort==lvls, sample(1:(tmax+20), 1), first_treat)
-  #'     }
-  #' 
-  #'     first_treat = ifelse(first_treat>tmax, Inf, first_treat)
-  #'     treat       = time>=first_treat
-  #'     rel_time    = time - first_treat
-  #'     y           = id + time + ifelse(treat, effect*rel_time, 0) + rnorm(imax*tmax)
-  #' 
-  #'     rm(chrt, lvls, cohort, effect)
-  #'   })
-  #' 
-  #' head(dat)
-  #' dim(dat)
-  #' length(unique(dat$time))
-  #' dat <- na.omit(dat)
-  #' 
+  #' library(fwildclusterboot)
+  #' library(fixest)
+  #' library(did2s)
+  #' data("df_het", package = "did2s")
   #' object = feols(
-  #'   y ~ sunab(first_treat, rel_time) + id + time,
-  #'   data = dat, vcov = ~id
+  #'   dep_var ~ sunab(year - rel_year, year) | state + year, 
+  #'   df_het, 
+  #'   cluster = ~state
   #' )
   #' 
-  #' # run - else error in expand.data.frame
-  #' sunab <- fixest:::sunab
-  #' res <-
-  #'   fwildclusterboot:::bootagg(
-  #'     object,
-  #'     agg = TRUE,
-  #'     full = FALSE,
-  #'     use_weights = TRUE,
-  #'     B = 9999,
-  #'     bootstrap_type = "11",
-  #'     clustid = ~ time,
-  #'     nthreads = 8, 
-  #'     alpha = 0.05
-  #'   )
+  #' #sunab <- fixest:::sunab
   #' 
-  #' 
-  #' res
-  #' sunab_p <- pvalue(summary(object, agg = TRUE))
-  #' nparams <- length(sunab_p)
-  #' cbind(
-  #'   res,
-  #'   round(sunab_p[-nparams][-(nparams-1)][-1], 3)
+  #' agg1 = fwildclusterboot:::bootagg(
+  #'   x = object,
+  #'   agg = TRUE,
+  #'   full = FALSE,
+  #'   use_weights = TRUE,
+  #'   B = 9999, 
+  #'   clustid = ~state,
+  #'   nthreads = 1,
+  #'   alpha = 0.05,
+  #'   impose_null = TRUE,
+  #'   fe = ~ state
   #' )
+  #' 
+  #' agg1 |> head()
+  #' pvalue(summary(object, agg = TRUE)) |> head()
+  #' confint(summary(object, agg = TRUE)) |> head()
+  #' 
+  #' agg1 = fwildclusterboot:::bootagg(
+  #'   x = object,
+  #'   agg = "att",
+  #'   full = FALSE,
+  #'   use_weights = TRUE,
+  #'   B = 9999, 
+  #'   clustid = ~state,
+  #'   nthreads = 1,
+  #'   alpha = 0.05,
+  #'   impose_null = TRUE,
+  #'   fe = ~ state
+  #' )
+  #' 
+  #' agg1 |> head()
+  #' pvalue(summary(object, agg = "att")) |> head()
+  #' confint(summary(object, agg = "att")) |> head()
 
 
+  # dreamerr::check_arg(bootstrap_type, "charin(fnw11)")
+  
   check_arg(x, "class(fixest) mbt")
   if(isTRUE(x$is_sunab)){
     check_arg(agg, "scalar(character, logical)")
@@ -132,6 +172,8 @@ bootagg = function(
 
   coef = x$coefficients
   cname = names(coef)
+  V = x$cov.scaled
+  
 
   qui = grepl(agg, cname, perl = TRUE)
   if(!any(qui)){
@@ -164,23 +206,25 @@ bootagg = function(
   mm = model.matrix(x)
   param = colnames(mm)[1]
 
-  cat("Step 1: run wild bootstrap", "\n")
-  boot_fit <-
-    boottest(
-      object = x,
-      param = param,
-      clustid = clustid,
-      B = B,
-      impose_null = FALSE,
-      bootstrap_type= bootstrap_type, 
-      nthreads = nthreads
-    )
+  cat("Run the wild bootstrap: this might take some time...(but 
+      hopefully not too much time =) ).", "\n")
+  # pracma::tic()
+  # boot_fit <-
+  #   boottest(
+  #     object = x,
+  #     param = param,
+  #     clustid = clustid,
+  #     B = B,
+  #     impose_null = impose_null,
+  #     bootstrap_type= bootstrap_type, 
+  #     nthreads = nthreads
+  #   )
+  # pracma::toc()
 
-  B <- boot_fit$boot_iter
-  #V <- boot_fit$vcov_boot
-  V_boot <- boot_fit$boot_vcov
-  V = x$cov.scaled
-  coef_boot <- boot_fit$boot_coef
+  # B <- boot_fit$boot_iter
+  # #V <- boot_fit$vcov_boot
+  # V_boot <- boot_fit$boot_vcov
+  # coef_boot <- boot_fit$boot_coef
 
   # note: because feols() allows for outprojection of fixed effects, 
   # but boottest() currently does not, V_boot and coef_boot will have
@@ -202,11 +246,20 @@ bootagg = function(
   nk <- nrow(name_df)
   c_all = vector(mode = "numeric", length = nk)
   se_all = vector(mode = "numeric", length = nk)
-  c_all_boot <- matrix(NA, nk, B+1)
-  se_all_boot <- matrix(NA, nk, B+1)
+  #c_all_boot <- matrix(NA, nk, B+1)
+  #se_all_boot <- matrix(NA, nk, B+1)
 
-  cat("Step 2: compute weighted estimator"," \n")
+  pvalues <- c_all 
+  conf_int <- matrix(NA, nk, 2)
+  
+  # zvalue_boot <- matrix(NA, B, nk)
+  
+  pb = txtProgressBar(min = 0, max = nk, initial = 0, style = 3) 
+  
   for(i in 1:nk){
+    
+    setTxtProgressBar(pb,i)
+    
     r = name_df[i, 1]
     v = name_df[i, 2]
     v_names = cname_select[root == r & val == v]
@@ -240,12 +293,12 @@ bootagg = function(
 
     # create weighted bootstrap coefs and ses
    
-    c_all_boot[i,] <- get_c_all_boot_cpp(
-      coef_boot = coef_boot[v_names_pos,], 
-      shares= shares, 
-      B = B, 
-      cores = nthreads
-    )
+    # c_all_boot[i,] <- get_c_all_boot_cpp(
+    #   coef_boot = coef_boot[v_names_pos,], 
+    #   shares= shares, 
+    #   B = B, 
+    #   cores = nthreads
+    # )
     # se_all_boot[i,] <- get_se_all_boot_cpp(
     #   V_boot = V_boot[v_names_pos, v_names_pos, ],
     #   s= s,
@@ -253,35 +306,65 @@ bootagg = function(
     #   cores = nthreads
     # )
     
-    for(b in 1:(B+1)){
-      var_value = sum(s * V_boot[v_names_pos, v_names_pos,b])
-      se_all_boot[i,b] = sqrt(var_value)
-    }
+    # for(b in 1:(B+1)){
+    #   var_value = sum(s * V_boot[v_names_pos, v_names_pos,b])
+    #   se_all_boot[i,b] = sqrt(var_value)
+    # }
     
-
+    param <- names(shares)
+    R <- shares
+    
+    
+    boot_fit <- 
+      boottest(
+        object = x,
+        param = param,
+        R = shares,
+        clustid = clustid,
+        B = B,
+        impose_null = TRUE,
+        # bootstrap_type= bootstrap_type, 
+        nthreads = nthreads, 
+        fe = fe, 
+        bootcluster = bootcluster
+      )
+    
+    pvalues[i] <- pval(boot_fit)
+    conf_int[i,] <- confint(boot_fit)
+    
   }
     # th z & p values
     zvalue = c_all/se_all
-    zvalue_boot <- c_all_boot / se_all_boot
+    #zvalue_boot <- c_all_boot / se_all_boot
 
-    pvalue <- rowMeans(abs(zvalue) < abs(zvalue_boot))
+    #pvalue <- rowMeans(abs(zvalue) < abs(zvalue_boot))
 
-    crit_vals <- t(
-      apply(
-        zvalue_boot, 
-        1,
-        function(x)
-          quantile(x, c(alpha/2, 1-alpha/2), na.rm = TRUE)
-        )
-      )
-    
-    conf_int <- c_all +  crit_vals * se_all
+    # crit_vals <- t(
+    #   apply(
+    #     zvalue_boot, 
+    #     1,
+    #     function(x)
+    #       quantile(x, c(alpha/2, 1-alpha/2), na.rm = TRUE)
+    #     )
+    #   )
+    # 
+    # conf_int <- c_all +  crit_vals * se_all
 
-    res <- cbind(pvalue, conf_int)
-    res
+    res <- cbind(
+      c_all,
+      pvalues, 
+      conf_int
+    )
+    colnames(res) <- c(
+      "Estimate",
+      "Pr(>|t|)", 
+      paste0("[",alpha / 2, "%"),
+      paste0(1 - alpha / 2, "%","]")
+    )
     #pvalue(summary(x, agg = "TRUE"))
     #confint(summary(x, agg = "TRUE"))
-
+  
+    res
     
 
   # res = cbind(c_all, se_all, zvalue, pvalue)

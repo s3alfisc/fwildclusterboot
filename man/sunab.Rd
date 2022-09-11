@@ -6,18 +6,7 @@
 it's just that something called sunab() needs to be
 found, else cluster creation funs confused}
 \usage{
-sunab(
-  cohort,
-  period,
-  ref.c = NULL,
-  ref.p = -1,
-  bin,
-  bin.rel,
-  bin.c,
-  bin.p,
-  att = FALSE,
-  no_agg = FALSE
-)
+sunab()
 }
 \description{
 this is a trick - actually not need

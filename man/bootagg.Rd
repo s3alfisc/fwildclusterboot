@@ -2,101 +2,140 @@
 % Please edit documentation in R/bootagg.R
 \name{bootagg}
 \alias{bootagg}
-\title{Aggregates the value of coefficients. Inference via a wild cluster
-bootstrap
-Most of this function is written by Laurent Bergé and used
-in the fixest package published under GPL-3,
-https://cran.r-project.org/web/packages/fixest/index.html
-minor changes by Alexander Fischer}
+\title{Simple tool that aggregates the value of CATT coefficients in
+staggered difference-in-difference setups with inference based on
+a wild cluster bootstrap (see details) - similar to \code{fixest::aggregate()}}
 \usage{
 bootagg(
   x,
   agg,
+  clustid = NULL,
+  bootcluster = "max",
   full = FALSE,
   use_weights = TRUE,
   B = 999,
-  bootstrap_type = "11",
-  clustid,
+  impose_null = TRUE,
+  fe = NULL,
   nthreads = 1,
+  alpha = 0.05,
   ...
 )
 }
+\arguments{
+\item{x}{An object of type fixest estimated using \code{sunab()}}
+
+\item{agg}{A character scalar describing the variable names to be aggregated, it is pattern-based. All variables that match the pattern will be aggregated. It must be of the form \code{"(root)"}, the parentheses must be there and the resulting variable name will be \code{"root"}. You can add another root with parentheses: \code{"(root1)regex(root2)"}, in which case the resulting name is \code{"root1::root2"}. To name the resulting variable differently you can pass a named vector: \code{c("name" = "pattern")} or \code{c("name" = "pattern(root2)")}. It's a bit intricate sorry, please see the examples.}
+
+\item{clustid}{A character vector or rhs formula containing the names of the
+cluster variables. If NULL,
+a heteroskedasticity-robust (HC1) wild bootstrap is run.}
+
+\item{bootcluster}{A character vector or rhs formula of length 1. Specifies
+the bootstrap clustering variable or variables. If more
+than one variable is specified, then bootstrapping is clustered by the
+intersections of
+clustering implied by the listed variables. To mimic the behavior of
+stata's boottest command,
+the default is to cluster by the intersection of all the variables
+specified via the \code{clustid} argument,
+even though that is not necessarily recommended (see the paper by
+Roodman et al cited below, section 4.2).
+Other options include "min", where bootstrapping is clustered by
+the cluster variable with the fewest clusters.
+Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
+supported - see the \code{vignette("fwildclusterboot", package =
+         "fwildclusterboot")} for details.}
+
+\item{full}{Logical scalar, defaults to \code{FALSE}. If \code{TRUE}, then all coefficients are returned, not only the aggregated coefficients.}
+
+\item{use_weights}{Logical, default is \code{TRUE}. If the estimation was weighted, whether the aggregation should take into account the weights. Basically if the weights reflected frequency it should be \code{TRUE}.}
+
+\item{B}{Integer. The number of bootstrap iterations. When the number of
+clusters is low,
+increasing B adds little additional runtime.}
+
+\item{impose_null}{Logical. Controls if the null hypothesis is imposed on
+the bootstrap dgp or not. Null imposed \code{(WCR)} by default.
+If FALSE, the null is not imposed \code{(WCU)}}
+
+\item{fe}{A character vector or rhs formula of length one which contains
+the name of the fixed effect to be projected
+out in the bootstrap. Note: if regression weights are used, fe
+needs to be NULL.}
+
+\item{alpha}{A numeric between 0 and 1 which sets the significance level
+of the inference procedure. E.g. sign_level = 0.05
+returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
+
+\item{...}{misc arguments}
+}
+\value{
+A data frame with aggregated coefficients, p-values and
+confidence intervals.
+}
 \description{
-Aggregates the value of coefficients. Inference via a wild cluster
-bootstrap
+This is a function helping to replicate the estimator from Sun and
+Abraham (2021, Journal of Econometrics). You first need to perform
+an estimation with cohort and relative periods dummies
+(typically using the function i), this leads to estimators of the
+cohort average treatment effect on the treated (CATT). Then you can
+use this function to retrieve the average treatment effect on each
+relative period,or for any other way you wish to aggregate the CATT.
+}
+\details{
+Note that contrary to the SA article, here the cohort share
+in the sample is considered to be a perfect measure for the
+cohort share in the population.
 Most of this function is written by Laurent Bergé and used
 in the fixest package published under GPL-3,
 https://cran.r-project.org/web/packages/fixest/index.html
 minor changes by Alexander Fischer
 }
 \examples{
-library(fixest)
+
 library(fwildclusterboot)
-
-set.seed(123456L)
-
-# code by Grant McDermott
-# 60 time periods, 30 individuals, and 5 waves of treatment
-tmax = 60; imax = 30; nlvls = 5
-
-dat = 
-  expand.grid(time = 1:tmax, id = 1:imax) |>
-  within({
-    
-    cohort      = NA
-    effect      = NA
-    first_treat = NA
-    
-    for (chrt in 1:imax) {
-      cohort = ifelse(id==chrt, sample.int(nlvls, 1), cohort)
-    }
-    
-    for (lvls in 1:nlvls) {
-      effect      = ifelse(cohort==lvls, sample(2:10, 1), effect)
-      first_treat = ifelse(cohort==lvls, sample(1:(tmax+20), 1), first_treat)
-    }
-    
-    first_treat = ifelse(first_treat>tmax, Inf, first_treat)
-    treat       = time>=first_treat
-    rel_time    = time - first_treat
-    y           = id + time + ifelse(treat, effect*rel_time, 0) + rnorm(imax*tmax)
-    
-    rm(chrt, lvls, cohort, effect)
-  })
-
-head(dat)
-dim(dat)
-
+library(fixest)
+library(did2s)
+data("df_het", package = "did2s")
 object = feols(
-  y ~ sunab(first_treat, rel_time) + id + time, 
-  data = dat, vcov = ~id
+  dep_var ~ sunab(year - rel_year, year) | state + year, 
+  df_het, 
+  cluster = ~state
 )
 
-x = object
-agg = TRUE
-full = FALSE
-use_weights = TRUE
-B = 999
-clustid = ~time
-bootstrap_type = "11"
-nthreads = 2
+#sunab <- fixest:::sunab
 
-res <- 
-  bootagg(
-    x,
-    agg = TRUE,
-    full = FALSE,
-    use_weights = TRUE,
-    B = 999, 
-    bootstrap_type = "11", 
-    clustid,
-    nthreads = 8
-  )
-
-res
-sunab_p <- pvalue(summary(x, agg = TRUE))
-cbind(
-  res, 
-  round(sunab_p[-94][-93][-1], 3)
+agg1 = fwildclusterboot:::bootagg(
+  x = object,
+  agg = TRUE,
+  full = FALSE,
+  use_weights = TRUE,
+  B = 9999, 
+  clustid = ~state,
+  nthreads = 1,
+  alpha = 0.05,
+  impose_null = TRUE,
+  fe = ~ state
 )
+
+agg1 |> head()
+pvalue(summary(object, agg = TRUE)) |> head()
+confint(summary(object, agg = TRUE)) |> head()
+
+agg1 = fwildclusterboot:::bootagg(
+  x = object,
+  agg = "att",
+  full = FALSE,
+  use_weights = TRUE,
+  B = 9999, 
+  clustid = ~state,
+  nthreads = 1,
+  alpha = 0.05,
+  impose_null = TRUE,
+  fe = ~ state
+)
+
+agg1 |> head()
+pvalue(summary(object, agg = "att")) |> head()
+confint(summary(object, agg = "att")) |> head()
 }
