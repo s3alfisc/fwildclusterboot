@@ -1783,23 +1783,7 @@ test_that("error message when character vars in felm and fixest", {
     )    
   )
   
-  requireNamespace("fixest")
-    data(base_stagg)
-    res_sunab = fixest::feols(
-      y ~ x1 + fixest:::sunab(year_treated, year) | id + year,
-      base_stagg,
-      ssc = fixest::ssc(adj = TRUE, cluster.adj = TRUE)
-    )
-    
-    expect_error(
-      boottest(
-        res_sunab, 
-        param = "year::5", 
-        clustid = "year", 
-        B = 999
-      )
-    )
-
+ 
 
 
 })

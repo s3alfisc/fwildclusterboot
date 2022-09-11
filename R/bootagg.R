@@ -82,6 +82,8 @@ bootagg = function(
   #' 
   #' @export
   #' 
+  #' @importFrom utils setTxtProgressBar txtProgressBar
+  #' 
   #' @return A data frame with aggregated coefficients, p-values and 
   #' confidence intervals. 
   #' 
@@ -339,7 +341,7 @@ bootagg = function(
       )
     
     pvalues[i] <- pval(boot_fit)
-    conf_int[i,] <- confint(boot_fit)
+    conf_int[i,] <- confint.boottest(boot_fit)
     
   }
     # th z & p values
