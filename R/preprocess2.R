@@ -859,21 +859,26 @@ get_cluster <-
     clustid_fml <- reformulate(clustid_char)
     # Step 1: create cluster df
     
+    
+    manipulate_object <- function(object){
+      if(inherits(object, "fixest")){
+        if(!is.null(object$fixef_vars)){
+          update(object, . ~ + 1 | . + 1)
+        } else {
+          update(object, . ~ + 1 )
+        }
+      } else {
+        object
+      }
+    }
+    
     cluster_tmp <-
       if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
         suppressWarnings(
           expand.model.frame(
             model = 
-              if(inherits(object, "fixest")){
-                if(!is.null(object$fixef_vars)){
-                  update(object, . ~ + 1 | . + 1)
-                } else {
-                  update(object, . ~ + 1 )
-                }
-              } else {
-                object
-              },
+              manipulate_object(object),
             extras = clustid_fml,
             na.expand = FALSE,
             envir = call_env
@@ -882,15 +887,7 @@ get_cluster <-
       } else {
         expand.model.frame(
           model = 
-            if(inherits(object, "fixest")){
-              if(!is.null(object$fixef_vars)){
-                update(object, . ~ + 1 | . + 1)
-              } else {
-                update(object, . ~ + 1 )
-              }
-            } else {
-              object
-            },
+            manipulate_object(object),
           extras = clustid_fml,
           na.expand = FALSE,
           envir = call_env
@@ -964,15 +961,7 @@ get_cluster <-
         suppressWarnings(
           expand.model.frame(
             model = 
-              if(inherits(object, "fixest")){
-                if(!is.null(object$fixef_vars)){
-                  update(object, . ~ + 1 | . + 1)
-                } else {
-                  update(object, . ~ + 1 )
-                }
-              } else {
-                object
-              },
+              manipulate_object(object),
             extras = cluster_bootcluster_fml,
             na.expand = FALSE,
             envir = call_env
@@ -981,15 +970,7 @@ get_cluster <-
       } else {
         expand.model.frame(
           model = 
-            if(inherits(object, "fixest")){
-              if(!is.null(object$fixef_vars)){
-                update(object, . ~ + 1 | . + 1)
-              } else {
-                update(object, . ~ + 1 )
-              }
-            } else {
-              object
-            },
+            manipulate_object(object),
           extras = cluster_bootcluster_fml,
           na.expand = FALSE,
           envir = call_env

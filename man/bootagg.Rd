@@ -16,7 +16,7 @@ bootagg(
   B = 999,
   impose_null = TRUE,
   fe = NULL,
-  nthreads = 1,
+  nthreads = getBoottest_nthreads(),
   alpha = 0.05,
   ...
 )
@@ -62,6 +62,12 @@ If FALSE, the null is not imposed \code{(WCU)}}
 the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.}
+
+\item{nthreads}{The number of threads. Can be: a) an integer lower than,
+or equal to, the maximum number of threads; b) 0: meaning
+all available threads will be used; c) a number strictly
+between 0 and 1 which represents the fraction of all threads
+to use. The default is to use 1 core.}
 
 \item{alpha}{A numeric between 0 and 1 which sets the significance level
 of the inference procedure. E.g. sign_level = 0.05

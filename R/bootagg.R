@@ -8,7 +8,7 @@ bootagg = function(
     B = 999, 
     impose_null = TRUE,
     fe = NULL,
-    nthreads = 1,
+    nthreads = getBoottest_nthreads(),
     alpha = 0.05,
     ...){
   
@@ -69,6 +69,15 @@ bootagg = function(
   #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
   #'         supported - see the \code{vignette("fwildclusterboot", package =
   #'          "fwildclusterboot")} for details.
+  #' @param fe A character vector or rhs formula of length one which contains
+  #' the name of the fixed effect to be projected
+  #'        out in the bootstrap. Note: if regression weights are used, fe
+  #'        needs to be NULL.
+  #' @param nthreads The number of threads. Can be: a) an integer lower than,
+  #'                 or equal to, the maximum number of threads; b) 0: meaning
+  #'                 all available threads will be used; c) a number strictly
+  #'                 between 0 and 1 which represents the fraction of all threads
+  #'                 to use. The default is to use 1 core.
   #' @param ... misc arguments
   #' 
   #' @export
