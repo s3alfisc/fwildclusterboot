@@ -10,6 +10,7 @@ bootagg = function(
     fe = NULL,
     nthreads = getBoottest_nthreads(),
     alpha = 0.05,
+    engine = "R",
     ...){
   
   #' Simple tool that aggregates the value of CATT coefficients in
@@ -78,6 +79,7 @@ bootagg = function(
   #'                 all available threads will be used; c) a number strictly
   #'                 between 0 and 1 which represents the fraction of all threads
   #'                 to use. The default is to use 1 core.
+  #' @param engine either "R" or "WildBootTests.jl"                 
   #' @param ... misc arguments
   #' 
   #' @export
@@ -139,6 +141,7 @@ bootagg = function(
 
 
   # dreamerr::check_arg(bootstrap_type, "charin(fnw11)")
+  dreamerr::check_arg(engine, "charin(R, WildBootTests.jl)")
   
   check_arg(x, "class(fixest) mbt")
   if(isTRUE(x$is_sunab)){
@@ -337,7 +340,8 @@ bootagg = function(
         # bootstrap_type= bootstrap_type, 
         nthreads = nthreads, 
         fe = fe, 
-        bootcluster = bootcluster
+        bootcluster = bootcluster, 
+        engine = engine
       )
     
     pvalues[i] <- pval(boot_fit)

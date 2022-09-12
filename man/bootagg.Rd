@@ -18,6 +18,7 @@ bootagg(
   fe = NULL,
   nthreads = getBoottest_nthreads(),
   alpha = 0.05,
+  engine = "R",
   ...
 )
 }
@@ -72,6 +73,8 @@ to use. The default is to use 1 core.}
 \item{alpha}{A numeric between 0 and 1 which sets the significance level
 of the inference procedure. E.g. sign_level = 0.05
 returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
+
+\item{engine}{either "R" or "WildBootTests.jl"}
 
 \item{...}{misc arguments}
 }
