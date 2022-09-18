@@ -23,8 +23,8 @@ boot_aggregate(
   bootstrap_type = "fnw11",
   p_val_type = "two-tailed",
   nthreads = getBoottest_nthreads(),
-  tol = tol,
-  maxiter = maxiter,
+  tol = 1e-06,
+  maxiter = 10,
   ssc = boot_ssc(adj = TRUE, fixef.K = "none", cluster.adj = TRUE, cluster.df =
     "conventional"),
   engine = getBoottest_engine(),
