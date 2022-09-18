@@ -5,6 +5,10 @@ boot_algo3_crv1 <- function(B, G, k, v, scores_mat, scores_boot, tXXinv, Ag, ssc
     .Call('_fwildclusterboot_boot_algo3_crv1', PACKAGE = 'fwildclusterboot', B, G, k, v, scores_mat, scores_boot, tXXinv, Ag, ssc, cores, R)
 }
 
+boot_algo3_crv3 <- function(B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, cores, R, delta_b_star) {
+    .Call('_fwildclusterboot_boot_algo3_crv3', PACKAGE = 'fwildclusterboot', B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, cores, R, delta_b_star)
+}
+
 get_c_all_boot_cpp <- function(coef_boot, shares, B, cores) {
     .Call('_fwildclusterboot_get_c_all_boot_cpp', PACKAGE = 'fwildclusterboot', coef_boot, shares, B, cores)
 }

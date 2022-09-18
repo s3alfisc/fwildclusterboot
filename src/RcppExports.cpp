@@ -34,6 +34,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// boot_algo3_crv3
+List boot_algo3_crv3(const int B, const int G, const int k, arma::mat v, arma::mat scores_mat, arma::mat scores_boot, arma::cube inv_tXX_tXgXg, int cores, arma::mat R, arma::mat delta_b_star);
+RcppExport SEXP _fwildclusterboot_boot_algo3_crv3(SEXP BSEXP, SEXP GSEXP, SEXP kSEXP, SEXP vSEXP, SEXP scores_matSEXP, SEXP scores_bootSEXP, SEXP inv_tXX_tXgXgSEXP, SEXP coresSEXP, SEXP RSEXP, SEXP delta_b_starSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< const int >::type G(GSEXP);
+    Rcpp::traits::input_parameter< const int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type v(vSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type scores_mat(scores_matSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type scores_boot(scores_bootSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type inv_tXX_tXgXg(inv_tXX_tXgXgSEXP);
+    Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type R(RSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type delta_b_star(delta_b_starSEXP);
+    rcpp_result_gen = Rcpp::wrap(boot_algo3_crv3(B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, cores, R, delta_b_star));
+    return rcpp_result_gen;
+END_RCPP
+}
 // get_c_all_boot_cpp
 NumericVector get_c_all_boot_cpp(NumericVector coef_boot, NumericVector shares, int B, int cores);
 RcppExport SEXP _fwildclusterboot_get_c_all_boot_cpp(SEXP coef_bootSEXP, SEXP sharesSEXP, SEXP BSEXP, SEXP coresSEXP) {
@@ -159,6 +179,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_fwildclusterboot_boot_algo3_crv1", (DL_FUNC) &_fwildclusterboot_boot_algo3_crv1, 11},
+    {"_fwildclusterboot_boot_algo3_crv3", (DL_FUNC) &_fwildclusterboot_boot_algo3_crv3, 10},
     {"_fwildclusterboot_get_c_all_boot_cpp", (DL_FUNC) &_fwildclusterboot_get_c_all_boot_cpp, 4},
     {"_fwildclusterboot_get_se_all_boot_cpp", (DL_FUNC) &_fwildclusterboot_get_se_all_boot_cpp, 4},
     {"_fwildclusterboot_eigenMapMatMult", (DL_FUNC) &_fwildclusterboot_eigenMapMatMult, 3},
