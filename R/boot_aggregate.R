@@ -71,8 +71,6 @@ boot_aggregate = function(
   #' @param clustid A character vector or rhs formula containing the names of the
   #' cluster variables. If NULL,
   #'        a heteroskedasticity-robust (HC1) wild bootstrap is run.
-  #' @param param A character vector or rhs formula. The name of the regression
-  #'        coefficient(s) for which the hypothesis is to be tested
   #' @param B Integer. The number of bootstrap iterations. When the number of
   #'  clusters is low,
   #'        increasing B adds little additional runtime.

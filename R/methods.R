@@ -337,6 +337,7 @@ tidy.boottest <- function(object, ...) {
   #' @importFrom generics tidy
   #' @export
   #' @method tidy boottest
+  #' @rdname tidy.boottest
   #' @return A tidy data.frame with estimation results for objects of type
   #'         boottest
   #' @examples
@@ -746,7 +747,7 @@ tidy.mboottest <- function(object, ...) {
   #' @param object object of type mboottest
   #' @param ... Further arguments passed to or from other methods.
   #' @importFrom generics tidy
-  #'
+  #' @rdname tidy.mboottest
   #' @export
   #'
   #' @method tidy mboottest
