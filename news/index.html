@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,8 +55,18 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.11.1" id="fwildclusterboot-0111">fwildclusterboot 0.11.1<a class="anchor" aria-label="anchor" href="#fwildclusterboot-0111"></a></h2>
-<ul><li>The <code>boot_algo</code> function argument is renamed to <code>engine</code>. + A new function argument has been added - <code>bootstrap_type</code>. In combination with the <code>impose_null</code> function argument, it allows to choose which wild cluster bootstrap type should be run - WCx11, WCx13, WCx31, WCx33.</li>
+<h2 class="pkg-version" data-toc-text="0.11.1" id="fwildclusterboot-0111-development-version">fwildclusterboot 0.11.1 (development version)<a class="anchor" aria-label="anchor" href="#fwildclusterboot-0111-development-version"></a></h2>
+<div class="section level4">
+<h4 id="new-bootstrap-algorithms-following-mnw-0-11-1">New bootstrap algorithms following MNW (2022)<a class="anchor" aria-label="anchor" href="#new-bootstrap-algorithms-following-mnw-0-11-1"></a></h4>
+<ul><li>A new function argument has been added - <code>bootstrap_type</code>. In combination with the <code>impose_null</code> function argument, it allows to choose between different cluster bootstrap types - WCx11, WCx13, WCx31, WCx33. For more details on these methods, see the working paper by <a href="https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf" class="external-link">MacKinnon, Nielsen &amp; Webb (2022)</a>.</li></ul></div>
+<div class="section level4">
+<h4 id="boot_aggregate-method-for-sun-abrahams-event-studies-0-11-1">
+<code>boot_aggregate()</code> method for Sun-Abrahams Event Studies<a class="anchor" aria-label="anchor" href="#boot_aggregate-method-for-sun-abrahams-event-studies-0-11-1"></a></h4>
+<p>A <code><a href="../reference/boot_aggregate.html">boot_aggregate()</a></code> method to supports the aggregation of coefficients in staggered difference-in-differences following the methods by <a href="https://arxiv.org/pdf/1804.05785.pdf" class="external-link">Sun &amp; Abraham (2021, Journal of Econometrics)</a> in combination with the <code><a href="../reference/sunab.html">sunab()</a></code> function from <a href="https://lrberge.github.io/fixest/reference/sunab.html" class="external-link"><code>fixest</code></a>has been added. Essentially, <code><a href="../reference/boot_aggregate.html">boot_aggregate()</a></code> is a copy of <a href="https://lrberge.github.io/fixest/reference/aggregate.fixest.html" class="external-link"><code>aggregate.fixest</code></a>: the only difference is that inference is powered by a wild bootstrap.</p>
+</div>
+<div class="section level4">
+<h4 id="other-syntax-changes-0-11-1">Other syntax changes<a class="anchor" aria-label="anchor" href="#other-syntax-changes-0-11-1"></a></h4>
+<ul><li>The <code>boot_algo</code> function argument has been renamed to <code>engine</code>.</li>
 <li>The <code>setBoottest_boot_algo()</code> function has been renamed to <code><a href="../reference/setBoottest_engine.html">setBoottest_engine()</a></code>. In consequence, the syntax introduced in 0.11 changes to</li>
 </ul><pre><code><span><span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span></span>
 <span>  <span class="va">lm_fit</span>, </span>
@@ -67,7 +77,7 @@
 <span>  engine <span class="op">=</span> <span class="st">"R"</span>, </span>
 <span>  bootstrap_type <span class="op">=</span> <span class="st">"11"</span></span>
 <span><span class="op">)</span></span></code></pre>
-<p>To run everything through <code>WildBootTests.jl</code>, one would have to specify</p>
+<p>To run everything through <code>WildBootTests.jl</code>, you would have to specify</p>
 <pre><code><span><span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span></span>
 <span>  <span class="va">lm_fit</span>, </span>
 <span>  param <span class="op">=</span> <span class="op">~</span><span class="va">treatment</span>, </span>
@@ -77,6 +87,7 @@
 <span>  engine <span class="op">=</span> <span class="st">"WildBootTests.jl"</span>, </span>
 <span>  bootstrap_type <span class="op">=</span> <span class="st">"11"</span></span>
 <span><span class="op">)</span></span></code></pre>
+</div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.11" id="fwildclusterboot-011">fwildclusterboot 0.11<a class="anchor" aria-label="anchor" href="#fwildclusterboot-011"></a></h2>

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,6 +91,13 @@
         <dd>Fast wild cluster bootstrap inference</dd>
       </dl><dl><dt>
           
+          <code><a href="boot_aggregate.html">boot_aggregate()</a></code> 
+        </dt>
+        <dd>Simple tool that aggregates the value of CATT coefficients in
+staggered difference-in-difference setups with inference based on
+a wild cluster bootstrap (see details) - similar to <code>fixest::aggregate()</code></dd>
+      </dl><dl><dt>
+          
           <code><a href="boot_ssc.html">boot_ssc()</a></code> 
         </dt>
         <dd>set the small sample correction factor applied in <code><a href="../reference/boottest.html">boottest()</a></code></dd>
@@ -99,6 +106,11 @@
           <code><a href="confint.boottest.html">confint(<i>&lt;boottest&gt;</i>)</a></code> 
         </dt>
         <dd>S3 method to obtain wild cluster bootstrapped confidence intervals</dd>
+      </dl><dl><dt>
+          
+          <code><a href="format_message.html">format_message()</a></code> <code><a href="format_message.html">format_alert()</a></code> <code><a href="format_message.html">format_warning()</a></code> <code><a href="format_message.html">format_error()</a></code> 
+        </dt>
+        <dd>Format messages and warnings</dd>
       </dl><dl><dt>
           
           <code><a href="glance.boottest.html">glance(<i>&lt;boottest&gt;</i>)</a></code> 
@@ -186,6 +198,13 @@ of type <code>boottest</code> and <code>mboottest</code></dd>
           <code><a href="summary.mboottest.html">summary(<i>&lt;mboottest&gt;</i>)</a></code> 
         </dt>
         <dd>S3 method to summarize objects of class mboottest</dd>
+      </dl><dl><dt>
+          
+          <code><a href="sunab.html">sunab()</a></code> 
+        </dt>
+        <dd>this is a trick - actually not need
+it's just that something called sunab() needs to be
+found, else cluster creation funs confused</dd>
       </dl><dl><dt>
           
           <code><a href="teststat.boottest.html">teststat(<i>&lt;boottest&gt;</i>)</a></code> 

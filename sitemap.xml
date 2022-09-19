@@ -46,10 +46,16 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/boottest.lm.html</loc>
   </url>
   <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/boot_aggregate.html</loc>
+  </url>
+  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/boot_ssc.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/confint.boottest.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/format_message.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/glance.boottest.html</loc>
@@ -94,6 +100,9 @@
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/pval.mboottest.html</loc>
   </url>
   <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/reexports.html</loc>
+  </url>
+  <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/setBoottest_engine.html</loc>
   </url>
   <url>
@@ -101,6 +110,9 @@
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/summary.mboottest.html</loc>
+  </url>
+  <url>
+    <loc>https://s3alfisc.github.io/fwildclusterboot/reference/sunab.html</loc>
   </url>
   <url>
     <loc>https://s3alfisc.github.io/fwildclusterboot/reference/teststat.boottest.html</loc>
