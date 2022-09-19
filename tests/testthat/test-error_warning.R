@@ -647,7 +647,8 @@ test_that("errors and warnings q = 1", {
           )
         ))
         
-        suppressWarnings(expect_message(
+        suppressWarnings(
+          expect_message(
           boottest(
             object = felm_fit,
             clustid = "group_id1",
@@ -656,8 +657,9 @@ test_that("errors and warnings q = 1", {
             param = "treatment",
             conf_int = TRUE,
             engine = engine
+           )
           )
-        ))
+        )
       }
       
       # banned function arguments

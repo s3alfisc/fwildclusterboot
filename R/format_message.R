@@ -177,12 +177,12 @@ format_error <- function(...) {
   which_tokens <- .find_tokens(string)
   
   # check ansi-colors are supported by system. if not, remove tokens from string
-  if (!.supports_color() && !is.null(which_tokens)) {
-    for (i in token_pattern[which_tokens]) {
-      string <- gsub(i, "\\1", string)
-    }
-    which_tokens <- NULL
-  }
+  # if (!.supports_color() && !is.null(which_tokens)) {
+  #   for (i in token_pattern[which_tokens]) {
+  #     string <- gsub(i, "\\1", string)
+  #   }
+  #   which_tokens <- NULL
+  # }
   
   # remove tokens from temporary string, so we can detect the "real" line length
   if (!is.null(which_tokens)) {
@@ -258,47 +258,4 @@ format_error <- function(...) {
   } else {
     return(NULL)
   }
-}
-
-.supports_color <- function() {
-  enabled <- getOption("crayon.enabled")
-  if (!is.null(enabled)) {
-    return(isTRUE(enabled))
-  }
-  if (.rstudio_with_ansi_support() && sink.number() == 0) {
-    return(TRUE)
-  }
-  if (!isatty(stdout())) {
-    return(FALSE)
-  }
-  if (Sys.info()["sysname"] == "windows") {
-    if (Sys.getenv("ConEmuANSI") == "ON") {
-      return(TRUE)
-    }
-    if (Sys.getenv("CMDER_ROOT") != "") {
-      return(TRUE)
-    }
-    return(FALSE)
-  }
-  if ("COLORTERM" %in% names(Sys.getenv())) {
-    return(TRUE)
-  }
-  if (Sys.getenv("TERM") == "dumb") {
-    return(FALSE)
-  }
-  grepl("^screen|^xterm|^vt100|color|ansi|cygwin|linux", Sys.getenv("TERM"),
-        ignore.case = TRUE, perl = TRUE
-  )
-}
-
-.rstudio_with_ansi_support <- function() {
-  if (Sys.getenv("RSTUDIO", "") == "") {
-    return(FALSE)
-  }
-  if ((cols <- Sys.getenv("RSTUDIO_CONSOLE_COLOR", "")) !=
-      "" && !is.na(as.numeric(cols))) {
-    return(TRUE)
-  }
-  requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable() &&
-    rstudioapi::hasFun("getConsoleHasColor")
 }
