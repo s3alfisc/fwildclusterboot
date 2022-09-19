@@ -202,9 +202,13 @@ and the formatting no longer works (messing up the message-string).</p>
 <span class="r-in"><span>  <span class="st">"This is {.i italic}, visit {.url easystats.github.io/easystats}"</span>,</span></span>
 <span class="r-in"><span>  line_length <span class="op">=</span> <span class="fl">30</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .italic(gsub(pattern, "\\2", string)):</span> could not find function ".italic"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="va">msg</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This is italic, visit</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   easystats.github.io/easystats</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Much too long string for just</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   one line, I guess!</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> First new line</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Second new line</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> (not indented)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu">format_alert</span><span class="op">(</span><span class="st">"This is a message."</span><span class="op">)</span></span></span>
