@@ -2,7 +2,7 @@ test_that("global engine", {
   
   skip_on_cran()
 
-  if(is_juliaconnector_prepared()){
+  if(TRUE){
     data(voters)
     lm_fit <-
       lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,

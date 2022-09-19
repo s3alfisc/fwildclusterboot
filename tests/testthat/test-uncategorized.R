@@ -37,7 +37,7 @@ test_that("uncategorized tests", {
     )
   feols4 <-
     fixest::feols(
-      proposition_vote ~ treatment + ideology1 + log_income + group_id2,
+      proposition_vote ~ treatment + ideology1 +log_income + group_id2,
       data = data1,
       cluster = data1$group_id1
     )

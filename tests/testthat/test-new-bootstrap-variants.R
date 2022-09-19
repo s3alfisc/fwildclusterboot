@@ -1,8 +1,8 @@
 test_that("test r-fnw vs r-, stochastic", {
-  
+
       reltol <- 0.05
       B <- 999
-      
+
       data1 <<- fwildclusterboot:::create_data(
         N = 10000,
         N_G1 = 20,
@@ -14,30 +14,30 @@ test_that("test r-fnw vs r-, stochastic", {
         seed = 908361239,
         weights = 1:N / N
       )
-      
+
       lm_fit <- lm(proposition_vote ~ treatment + log_income,
                    data = data1
       )
-      
+
       lm_fit_weights <- lm(
         proposition_vote ~ treatment + log_income,
         weights = data1$weights,
         data = data1
       )
       lm_fits <- list(
-        ols = lm_fit#, 
+        ols = lm_fit#,
         #  wls = lm_fit_weights
       )
-    
-      
+
+
       for (object in lm_fits) {
         cat("start ols/wls", "\n")
         set.seed(12391786)
         # type <- "rademacher"
         for (type in c("rademacher", "webb", "mammen", "norm")) {
-          
+
           for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
-            
+
             # test the wcr
             boot1 <- boottest(object,
                               param = "log_income",
@@ -51,7 +51,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-            
+
             boot2 <- boottest(object,
                               param = "log_income",
                               clustid = c("group_id2"),
@@ -64,7 +64,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-            
+
             expect_equal(
               teststat(boot1), teststat(boot2), ignore_attr = TRUE
             )
@@ -73,13 +73,13 @@ test_that("test r-fnw vs r-, stochastic", {
             )
             expect_equal(
               boot1$t_boot, boot2$t_boot, ignore_attr = TRUE
-            )  
-            
+            )
+
             # test the wcu
-            
+
             # new WCU11 ("fast and reliable") vs old WCR11 ("fast and wild")
-            
-            
+
+
             boot1 <- boottest(object,
                               param = "log_income",
                               clustid = c("group_id2"),
@@ -92,7 +92,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-            
+
             boot2 <- boottest(object,
                               param = "log_income",
                               clustid = c("group_id2"),
@@ -105,7 +105,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-            
+
             expect_equal(
               teststat(boot1), teststat(boot2), ignore_attr = TRUE
             )
@@ -115,13 +115,13 @@ test_that("test r-fnw vs r-, stochastic", {
             expect_equal(
               boot1$t_boot, boot2$t_boot, ignore_attr = TRUE
             )
-            
-            
-            
+
+
+
           }
         }
       }
-      
+
 })
 
 
@@ -149,7 +149,7 @@ test_that("new bootstrap variants II - t_stat equivalence", {
 
   # WCR
   wcr_algos <- wcu_algos <- c(
-    "fnw11", 
+    "fnw11",
     "11",
     "13",
     "31",
@@ -240,7 +240,7 @@ test_that("variants 31 R vs Julia", {
   skip_on_cran()
   skip_on_ci()
 
-  if(fwildclusterboot:::is_juliaconnector_prepared()){
+  if(TRUE){
 
     # fully enumerated - deterministic - tests
     N_G1 <- 10
@@ -272,7 +272,7 @@ test_that("variants 31 R vs Julia", {
                        B = 9999,
                        param = "treatment",
                        clustid = "group_id1",
-                       engine = "WildBootTests.jl", 
+                       engine = "WildBootTests.jl",
                        bootstrap_type = "31"
     )
 
@@ -280,7 +280,7 @@ test_that("variants 31 R vs Julia", {
                          B = 9999,
                          param = "treatment",
                          clustid = "group_id1",
-                         engine = "R", 
+                         engine = "R",
                          bootstrap_type = "31"
     )
 
@@ -307,7 +307,7 @@ test_that("variants 31 R vs Julia", {
                           param = "treatment",
                           clustid = "group_id1",
                           impose_null = FALSE,
-                          engine = "WildBootTests.jl", 
+                          engine = "WildBootTests.jl",
                           bootstrap_type = "31"
     )
     pval(boot31_jl)
@@ -317,9 +317,9 @@ test_that("variants 31 R vs Julia", {
                          param = "treatment",
                          clustid = "group_id1",
                          impose_null = FALSE,
-                         engine = "WildBootTests.jl", 
+                         engine = "WildBootTests.jl",
                          bootstrap_type = "31"
-                         
+
     )
 
 

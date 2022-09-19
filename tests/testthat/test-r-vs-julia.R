@@ -1,16 +1,16 @@
 test_that("test r against Julia I: stochastic tests", {
-  
-  
+
+
   skip_on_cran()
   skip_on_ci()
 
 
-  if(is_juliaconnector_prepared()){
+  if(TRUE){
     reltol <- 0.05
-    
+
     N <- 10000
     seed <- 875784
-    
+
     data1 <<- fwildclusterboot:::create_data(
       N = 10000,
       N_G1 = 20,
@@ -22,29 +22,29 @@ test_that("test r against Julia I: stochastic tests", {
       seed = 908369,
       weights = 1:N / N
     )
-    
+
     lm_fit <- lm(proposition_vote ~ treatment + log_income,
                  data = data1
     )
-    
-    
-    
+
+
+
     lm_fit_weights <- lm(
       proposition_vote ~ treatment + log_income,
       weights = data1$weights,
       data = data1
     )
     lm_fits <- list(ols = lm_fit, wls = lm_fit_weights)
-    
+
     # object = lm_fit
     # impose_null = FALSE
     # type = "rademacher"
     # p_val_type = "two-tailed"
-    
-    
+
+
     cat("Part 1: Large B Tests", "\n")
-    
-    
+
+
     for (object in lm_fits) {
       cat("start ols/wls", "\n")
       set.seed(12391786)
@@ -63,11 +63,11 @@ test_that("test r against Julia I: stochastic tests", {
               ),
               "\n"
             )
-            
+
             cat(type, "\n")
             cat(p_val_type, "\n")
             cat(impose_null, "\n")
-            
+
             # cat("Check 1:", "\n")
             if (p_val_type %in% c("two-tailed", "equal-tailed")) {
               boot_r <-
@@ -171,11 +171,11 @@ test_that("test r against Julia I: stochastic tests", {
               # if(res == FALSE){print(res)}
               rm(res)
             }
-            
+
             rm(boot_r, boot_jl)
-            
-            
-            
+
+
+
             # multi-param hypotheses
             # cat("Check 2:", "\n")
             if (p_val_type %in% c("two-tailed", "equal-tailed")) {
@@ -286,9 +286,9 @@ test_that("test r against Julia I: stochastic tests", {
               # if(res == FALSE){print(res)}
               rm(res)
             }
-            
+
             rm(boot_r, boot_jl)
-            
+
             # --------------------------------------------------
             # and all with twoway clustering:
             # cat("Check 3:", "\n")
@@ -322,7 +322,7 @@ test_that("test r against Julia I: stochastic tests", {
               res <-
                 expect_equal(
                   boot_r$p_val,
-                  boot_jl$p_val[1], 
+                  boot_jl$p_val[1],
                   tolerance = reltol
                 )
               # if(res == FALSE){print(res)}
@@ -393,11 +393,11 @@ test_that("test r against Julia I: stochastic tests", {
               # if(res == FALSE){print(res)}
               rm(res)
             }
-            
+
             rm(boot_r, boot_jl)
-            
+
             # multi-param hypotheses
-            
+
             # cat("Check 4:", "\n")
             if (p_val_type %in% c("two-tailed", "equal-tailed")) {
               boot_r <-
@@ -505,13 +505,13 @@ test_that("test r against Julia I: stochastic tests", {
               # if(res == FALSE){print(res)}
               rm(res)
             }
-            
+
             rm(boot_r, boot_jl)
-            
+
             # --------------------------------------------------------------- #
             # test subcluster bootstrap
-            
-            
+
+
             if (p_val_type %in% c("two-tailed", "equal-tailed")) {
               # bootcluster variable not in clustid 1
               boot_r <- suppressWarnings(
@@ -525,7 +525,7 @@ test_that("test r against Julia I: stochastic tests", {
                   p_val_type = p_val_type
                 )
               )
-              
+
               boot_jl1 <- suppressWarnings(
                 boottest(
                   lm_fit,
@@ -537,7 +537,7 @@ test_that("test r against Julia I: stochastic tests", {
                   p_val_type = p_val_type
                 )
               )
-              
+
               expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
@@ -545,7 +545,7 @@ test_that("test r against Julia I: stochastic tests", {
                              tolerance = reltol
                 )
               }
-              
+
               # bootcluster variable not in clustid 2
               # currently: bug in fwildclusterboot when not all bootcluster
               # variables \in clustid OR specified in lm() (e.g. drop
@@ -574,7 +574,7 @@ test_that("test r against Julia I: stochastic tests", {
                     p_val_type = p_val_type
                   )
                 )
-              
+
               expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
@@ -582,7 +582,7 @@ test_that("test r against Julia I: stochastic tests", {
                              tolerance = reltol
                 )
               }
-              
+
               boot_r <-
                 suppressWarnings(
                   boottest(
@@ -607,7 +607,7 @@ test_that("test r against Julia I: stochastic tests", {
                     p_val_type = p_val_type
                   )
                 )
-              
+
               expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
@@ -615,7 +615,7 @@ test_that("test r against Julia I: stochastic tests", {
                              tolerance = reltol
                 )
               }
-              
+
               # clustid variale not in bootcluster & bootcluster variable
               # not in clustid
               boot_r <-
@@ -629,7 +629,7 @@ test_that("test r against Julia I: stochastic tests", {
                     nthreads = 6
                   )
                 )
-              
+
               boot_jl1 <-
                 suppressWarnings(
                   boottest(
@@ -640,8 +640,8 @@ test_that("test r against Julia I: stochastic tests", {
                     param = "treatment"
                   )
                 )
-              
-              
+
+
               expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
@@ -649,8 +649,8 @@ test_that("test r against Julia I: stochastic tests", {
                              tolerance = reltol
                 )
               }
-              
-              
+
+
               # clustid variale not in bootcluster & bootcluster variable
               # not in clustid
               boot_r <-
@@ -664,7 +664,7 @@ test_that("test r against Julia I: stochastic tests", {
                     nthreads = 6
                   )
                 )
-              
+
               boot_jl1 <-
                 suppressWarnings(
                   boottest(
@@ -675,8 +675,8 @@ test_that("test r against Julia I: stochastic tests", {
                     param = "treatment"
                   )
                 )
-              
-              
+
+
               expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
@@ -684,10 +684,10 @@ test_that("test r against Julia I: stochastic tests", {
                              tolerance = reltol
                 )
               }
-              
+
               # clustid variale not in bootcluster & bootcluster variable
               # not in clustid
-              
+
               boot_r <-
                 suppressWarnings(
                   boottest(
@@ -708,7 +708,7 @@ test_that("test r against Julia I: stochastic tests", {
                     param = "treatment"
                   )
                 )
-              
+
               expect_equal(boot_r$p_val, boot_jl1$p_val, tolerance = reltol)
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
@@ -726,5 +726,5 @@ test_that("test r against Julia I: stochastic tests", {
       "test-r-vs-julia.R skipped as JULIA_BINDIR not found."
     )
   }
-  
+
 })

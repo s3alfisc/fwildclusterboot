@@ -2,7 +2,7 @@ test_that("test tidiers with q = 1", {
 
   skip_on_cran()
   
-  if(is_juliaconnector_prepared()){
+  if(TRUE){
 
     lm_fit <<-
       lm(
@@ -60,7 +60,7 @@ test_that("test tidiers with q > 1", {
   
   skip_on_cran()
 
-  if(is_juliaconnector_prepared()){
+  if(TRUE){
     
   lm_fit <<-
     lm(

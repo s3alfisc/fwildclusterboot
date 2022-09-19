@@ -13,6 +13,75 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// boot_algo3_crv1
+List boot_algo3_crv1(const int B, const int G, const int k, arma::mat v, arma::mat scores_mat, arma::mat scores_boot, arma::mat tXXinv, arma::cube Ag, double ssc, int cores, arma::mat R);
+RcppExport SEXP _fwildclusterboot_boot_algo3_crv1(SEXP BSEXP, SEXP GSEXP, SEXP kSEXP, SEXP vSEXP, SEXP scores_matSEXP, SEXP scores_bootSEXP, SEXP tXXinvSEXP, SEXP AgSEXP, SEXP sscSEXP, SEXP coresSEXP, SEXP RSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< const int >::type G(GSEXP);
+    Rcpp::traits::input_parameter< const int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type v(vSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type scores_mat(scores_matSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type scores_boot(scores_bootSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type tXXinv(tXXinvSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type Ag(AgSEXP);
+    Rcpp::traits::input_parameter< double >::type ssc(sscSEXP);
+    Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type R(RSEXP);
+    rcpp_result_gen = Rcpp::wrap(boot_algo3_crv1(B, G, k, v, scores_mat, scores_boot, tXXinv, Ag, ssc, cores, R));
+    return rcpp_result_gen;
+END_RCPP
+}
+// boot_algo3_crv3
+List boot_algo3_crv3(const int B, const int G, const int k, arma::mat v, arma::mat scores_mat, arma::mat scores_boot, arma::cube inv_tXX_tXgXg, int cores, arma::mat R, arma::mat delta_b_star);
+RcppExport SEXP _fwildclusterboot_boot_algo3_crv3(SEXP BSEXP, SEXP GSEXP, SEXP kSEXP, SEXP vSEXP, SEXP scores_matSEXP, SEXP scores_bootSEXP, SEXP inv_tXX_tXgXgSEXP, SEXP coresSEXP, SEXP RSEXP, SEXP delta_b_starSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< const int >::type G(GSEXP);
+    Rcpp::traits::input_parameter< const int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type v(vSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type scores_mat(scores_matSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type scores_boot(scores_bootSEXP);
+    Rcpp::traits::input_parameter< arma::cube >::type inv_tXX_tXgXg(inv_tXX_tXgXgSEXP);
+    Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type R(RSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type delta_b_star(delta_b_starSEXP);
+    rcpp_result_gen = Rcpp::wrap(boot_algo3_crv3(B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, cores, R, delta_b_star));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_c_all_boot_cpp
+NumericVector get_c_all_boot_cpp(NumericVector coef_boot, NumericVector shares, int B, int cores);
+RcppExport SEXP _fwildclusterboot_get_c_all_boot_cpp(SEXP coef_bootSEXP, SEXP sharesSEXP, SEXP BSEXP, SEXP coresSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type coef_boot(coef_bootSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type shares(sharesSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_c_all_boot_cpp(coef_boot, shares, B, cores));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_se_all_boot_cpp
+NumericVector get_se_all_boot_cpp(NumericMatrix V_boot, NumericVector s, int B, int cores);
+RcppExport SEXP _fwildclusterboot_get_se_all_boot_cpp(SEXP V_bootSEXP, SEXP sSEXP, SEXP BSEXP, SEXP coresSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type V_boot(V_bootSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type s(sSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_se_all_boot_cpp(V_boot, s, B, cores));
+    return rcpp_result_gen;
+END_RCPP
+}
 // eigenMapMatMult
 SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A, Eigen::Map<Eigen::MatrixXd> B, int nthreads);
 RcppExport SEXP _fwildclusterboot_eigenMapMatMult(SEXP ASEXP, SEXP BSEXP, SEXP nthreadsSEXP) {
@@ -109,6 +178,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_fwildclusterboot_boot_algo3_crv1", (DL_FUNC) &_fwildclusterboot_boot_algo3_crv1, 11},
+    {"_fwildclusterboot_boot_algo3_crv3", (DL_FUNC) &_fwildclusterboot_boot_algo3_crv3, 10},
+    {"_fwildclusterboot_get_c_all_boot_cpp", (DL_FUNC) &_fwildclusterboot_get_c_all_boot_cpp, 4},
+    {"_fwildclusterboot_get_se_all_boot_cpp", (DL_FUNC) &_fwildclusterboot_get_se_all_boot_cpp, 4},
     {"_fwildclusterboot_eigenMapMatMult", (DL_FUNC) &_fwildclusterboot_eigenMapMatMult, 3},
     {"_fwildclusterboot_cpp_get_nb_threads", (DL_FUNC) &_fwildclusterboot_cpp_get_nb_threads, 0},
     {"_fwildclusterboot_sample_weights", (DL_FUNC) &_fwildclusterboot_sample_weights, 2},

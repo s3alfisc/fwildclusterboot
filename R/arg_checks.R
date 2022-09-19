@@ -125,7 +125,7 @@ check_boottest_args_plus <- function(
   }
   
   if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
-    message(paste("Note: The bootstrap usually performs best when the
+    format_message(paste("Note: The bootstrap usually performs best when the
                   confidence level (here,", 1 - sign_level, "%)
                   times the number of replications plus 1
                   (", B, "+ 1 = ", B + 1, ") is an integer."))
@@ -268,8 +268,8 @@ check_boot_algo3 <- function(
   
   if (!is.null(fe)) {
     stop("The '13', '31', and '33'
-         bootstrap variants currently only
-         support oneway clustering when 'boot_engine' == 'R'.")
+         bootstrap variants currently don't support fixed 
+         effects in the bootstrap. Please set 'fe = NULL'.")
   }
   
   if(!is.null(weights)){

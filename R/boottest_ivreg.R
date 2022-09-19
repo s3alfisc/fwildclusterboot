@@ -268,13 +268,12 @@ boottest.ivreg <- function(object,
   
   if (ssc[["fixef.K"]] != "none" ||
       ssc[["cluster.df"]] != "conventional") {
-    message(
-      paste(
-        "Currently, boottest() only supports fixef.K = 'none' and
-        cluster.df = 'conventional'."
-      )
+    x <- format_message(
+      "Currently, boottest() only supports fixef.K = 'none'."
     )
+    message(x)
   }
+  
   
   
   check_params_in_model(
@@ -327,7 +326,7 @@ boottest.ivreg <- function(object,
   clustermin <- julia_ssc$clustermin
   
   if (ssc[["fixef.K"]] != "none") {
-    message(paste("Currently, boottest() only supports fixef.K = 'none'."))
+    format_message(paste("Currently, boottest() only supports fixef.K = 'none'."))
   }
   
   res <- boot_algo_julia(

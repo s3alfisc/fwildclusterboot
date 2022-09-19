@@ -211,8 +211,10 @@ test_that("test full enumeration cases: r and julia", {
   skip_on_cran()
   # skip_on_ci()
   # if not skipped, codecov fails after ~6h
+  julia_prep <- TRUE
+  cat("julia connector prepared? ", julia_prep)
   
-  if(fwildclusterboot:::is_juliaconnector_prepared()){
+  if(julia_prep){
     reltol <- 0.05
     
     N <- 2000

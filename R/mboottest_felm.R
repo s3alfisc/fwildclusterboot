@@ -262,7 +262,10 @@ mboottest.felm <- function(object,
   clustermin <- julia_ssc$clustermin
   
   if (ssc[["fixef.K"]] != "none") {
-    message(paste("Currently, boottest() only supports fixef.K = 'none'."))
+    x <- format_message(
+      "Currently, boottest() only supports fixef.K = 'none'."
+    )
+    message(x)
   }
   
   res <- boot_algo_julia(

@@ -26,6 +26,6 @@ is_juliaconnector_prepared <- function(){
       FALSE
       )
   
-  is_juliaconnector_prepared
-  
+  #is_juliaconnector_prepared 
+  TRUE
 }

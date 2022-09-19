@@ -2,7 +2,7 @@ test_that("errors and warnings q = 1", {
   
   skip_on_cran()
 
-  if(is_juliaconnector_prepared()){
+  if(TRUE){
 
     # ------------------------------------------------------------------ #
     # test for warnings and errors
@@ -257,7 +257,7 @@ test_that("errors and warnings q = 1", {
         suppressWarnings(expect_warning(
           boottest(
             object = feols_fit,
-            clustid = c("group_id1"),
+            clustid = "group_id1",
             B = 9999,
             seed = 911,
             param = "treatment",
@@ -1465,7 +1465,7 @@ test_that("error warning IV/WRE and q > 1", {
   requireNamespace("clubSandwich")
 
   
-  if(is_juliaconnector_prepared()){
+  if(TRUE){
     
     # drop all NA values from SchoolingReturns
     #SchoolingReturns <-
@@ -1782,6 +1782,8 @@ test_that("error message when character vars in felm and fixest", {
       B = 999
     )    
   )
+  
+ 
 
 
 })

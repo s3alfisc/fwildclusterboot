@@ -5,7 +5,7 @@ test_that("seed works for OLS", {
   requireNamespace("fixest")
   requireNamespace("dqrng")
   
-  if(is_juliaconnector_prepared()){
+  if(TRUE){
     data1 <<-
       fwildclusterboot:::create_data(
         N = 5000,

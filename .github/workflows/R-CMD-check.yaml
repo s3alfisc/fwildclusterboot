@@ -7,10 +7,15 @@ on:
       - ropensci
   pull_request:
     branches:
-      - ropensci
       - master
 
 name: R-CMD-check
+
+# This will cancel running jobs once a new run is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
 
 jobs:
   R-CMD-check:

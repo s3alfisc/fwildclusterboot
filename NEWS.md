@@ -1,6 +1,16 @@
-# fwildclusterboot 0.11.1
+# fwildclusterboot 0.11.1 (development version)
 
-+ The `boot_algo` function argument is renamed to `engine`. + A new function argument has been added - `bootstrap_type`. In combination with the `impose_null` function argument, it allows to choose which wild cluster bootstrap type should be run - WCx11, WCx13, WCx31, WCx33. 
+### New bootstrap algorithms following MNW (2022)
+
++ A new function argument has been added - `bootstrap_type`. In combination with the `impose_null` function argument, it allows to choose between different cluster bootstrap types - WCx11, WCx13, WCx31, WCx33. For more details on these methods, see the working paper by [MacKinnon, Nielsen & Webb (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf).
+
+### `boot_aggregate()` method for Sun-Abrahams Event Studies
+
+A `boot_aggregate()` method to supports the aggregation of coefficients in staggered difference-in-differences following the methods by [Sun & Abraham (2021, Journal of Econometrics)](https://arxiv.org/pdf/1804.05785.pdf) in combination with the `sunab()` function from [`fixest`](https://lrberge.github.io/fixest/reference/sunab.html)has been added. Essentially, `boot_aggregate()` is a copy of [`aggregate.fixest`](https://lrberge.github.io/fixest/reference/aggregate.fixest.html): the only difference is that inference is powered by a wild bootstrap.
+
+### Other syntax changes
+
++ The `boot_algo` function argument has been renamed to `engine`.
 + The `setBoottest_boot_algo()` function has been renamed to `setBoottest_engine()`.
 In consequence, the syntax introduced in 0.11 changes to 
 
@@ -17,7 +27,7 @@ boottest(
 )
 ```
 
-To run everything through `WildBootTests.jl`, one would have to specify 
+To run everything through `WildBootTests.jl`, you would have to specify 
 
 ```
 boottest(

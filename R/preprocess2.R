@@ -59,6 +59,15 @@ preprocess2.fixest <-
         or fixest::feglm."
       )
     }
+    
+    # if (!is.null(object$is_sunab)) {
+    #   if(object$is_sunab == TRUE){
+    #     stop(
+    #       "boottest() does not support the Sun-Abrams
+    #       estimator via `sunab()`."
+    #     )
+    #   }
+    # }
 
     is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
     has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
@@ -667,308 +676,6 @@ preprocess2.ivreg <-
   }
 
 
-get_cluster <-
-  function(object,
-           clustid_char,
-           bootcluster,
-           N,
-           call_env) {
-    #' function creates a data.frame with cluster variables
-    #'
-    #' @param object An object of type lm, fixest, felm or ivreg
-    #' @param clustid_char the name of the cluster variable(s) as
-    #' a character vector
-    #' @param bootcluster the name of the bootcluster variable(s)
-    #'  as a character vector, or "min" or "max" for multiway clustering
-    #' @param N the number of observations used in the bootstrap
-    #' @param call_env the environment in which the 'object' was evaluated
-    #'
-    #' @noRd
-    #'
-    #' @return a list, containing, among other things, a data.frame of the
-    #'  cluster variables,
-    #'         a data.frame of the bootcluster variable(s), and a helper
-    #'         matrix, all_c, used in `engine_julia()`
-
-    # ----------------------------------------------------------------------- #
-    # Note: a large part of the following code was taken and adapted from the
-    # sandwich R package, which is distributed under GPL-2 | GPL-3
-    # Zeileis A, Köll S, Graham N (2020). "Various Versatile Variances:
-    # An object-Oriented Implementation of Clustered Covariances in R."
-    # _Journal of Statistical Software_,  *95*(1), 1-36.
-    # doi: 10.18637/jss.v095.i01 (URL: https://doi.org/10.18637/jss.v095.i01).
-
-    # changes by Alexander Fischer:
-    # no essential changes, but slight reorganization of pieces of code
-
-    dreamerr::check_arg(clustid_char, "character scalar|charakter vector")
-    dreamerr::check_arg(bootcluster, "character scalar | character vector")
-
-    clustid_fml <- reformulate(clustid_char)
-    # Step 1: create cluster df
-
-    cluster_tmp <-
-      try(if ("Formula" %in% loadedNamespaces()) {
-        ## FIXME to suppress potential warnings due to | in Formula
-        suppressWarnings(
-          expand.model.frame(
-            model = object,
-            extras = clustid_fml,
-            na.expand = FALSE,
-            envir = call_env
-          )
-        )
-      } else {
-        expand.model.frame(object,
-          clustid_fml,
-          na.expand = FALSE,
-          envir = call_env
-        )
-      })
-
-    if(inherits(cluster_tmp, "try-error")){
-      if(inherits(object, "fixest") || inherits(object, "felm")){
-        if(grepl("non-numeric argument to binary operator$", 
-                 attr(cluster_tmp, "condition")$message)){
-          stop("In your model, you have specified multiple fixed effects,
-               none of which are of type factor. While `fixest::feols()` and
-               `lfe::felm()` handle this case without any troubles,  
-               `boottest()` currently cannot handle this case - please 
-               change the type of (at least one) fixed effect(s) to factor.
-               If this does not solve the error, please report the issue
-               at https://github.com/s3alfisc/fwildclusterboot.")
-        }
-        if(grepl("operations are possible only for numeric, logical
-                 or complex types$", 
-                 attr(cluster_tmp, "condition")$message)){
-          stop("Either a fixed effect or a cluster variable in your fixest()
-               or felm() model is currently specified as a character. 
-               'boottest()' relies on 'expand.model.frame',
-               which can not handle these variable types in models.
-               Please change these character variables to factors. ")
-        }
-      }
-    }
-    
-    cluster_df <-
-      model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
-    # without cluster intersection
-    N_G <-
-      vapply(cluster_df, function(x) {
-        length(unique(x))
-      }, numeric(1))
-
-    # Step 1: decode bootcluster variable
-
-    # create a bootcluster vector
-    if (length(bootcluster) == 1) {
-      if (bootcluster == "max") {
-        # use both vars
-        bootcluster_char <- clustid_char
-      } else if (bootcluster == "min") {
-        # only minimum var
-        bootcluster_char <- clustid_char[which.min(N_G)]
-      } else {
-        bootcluster_char <- bootcluster
-      }
-    } else {
-      bootcluster_char <- bootcluster
-    }
-
-    # add bootcluster variable to formula of clusters
-    cluster_bootcluster_fml <-
-      update(
-        clustid_fml, paste(
-          "~ . +", paste(
-            bootcluster_char,
-            collapse = " + "
-          )
-        )
-      )
-
-
-    cluster_bootcluster_tmp <-
-      if ("Formula" %in% loadedNamespaces()) {
-        ## FIXME to suppress potential warnings due to | in Formula
-        suppressWarnings(
-          expand.model.frame(
-            object,
-            cluster_bootcluster_fml,
-            na.expand = FALSE,
-            envir = call_env
-          )
-        )
-      } else {
-        expand.model.frame(object,
-          cluster_bootcluster_fml,
-          na.expand = FALSE,
-          envir = call_env
-        )
-      }
-
-    # data.frame as needed for WildBootTests.jl
-    cluster_bootcluster_df <- model.frame(cluster_bootcluster_fml,
-      cluster_bootcluster_tmp,
-      na.action = na.pass
-    )
-  
-  if(inherits(cluster_tmp, "try-error")){
-    if(inherits(object, "fixest") || inherits(object, "felm")){
-      if(
-        grepl(
-          "non-numeric argument to binary operator$",
-          attr(
-            cluster_tmp, "condition"
-            )$message
-          )
-        ){
-        stop(
-          "In your model, you have specified multiple fixed effects, 
-          none of which are of type factor. While `fixest::feols()` and 
-          `lfe::felm()` handle this case without any troubles,  `boottest()`
-          currently cannot handle this case - please change the type of
-          (at least one) fixed effect(s) to factor. If this does not solve
-          the error, please report the issue at 
-          https://github.com/s3alfisc/fwildclusterboot."
-        )
-      }
-      if(
-        grepl(
-          "operations are possible only for numeric, logical or complex types$",
-          attr(
-            cluster_tmp,
-            "condition")$message
-          )
-        ){
-        stop(
-          "Either a fixed effect or a cluster variable in your fixest() or
-          felm() model is currently specified as a character. 'boottest()' 
-          relies on 'expand.model.frame', which can not handle these variable
-          types in models. Please change these character variables to factors."
-          )
-      }
-    }
-  }
-
-    # data.frames with clusters, bootcluster
-    cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
-    bootcluster <-
-      cluster_bootcluster_df[, bootcluster_char, drop = FALSE]
-
-    if (!any(bootcluster_char %in% clustid_char)) {
-      is_subcluster <- TRUE
-      if (!(any(names(bootcluster) %in% c(clustid_char, names(coef(
-        object
-      )))))) {
-        stop(
-          "A bootcluster variable is neither contained in the cluster
-          variables nor in the model coefficients."
-        )
-      }
-    } else {
-      is_subcluster <- FALSE
-    }
-
-    ## handle omitted or excluded observations (works for lfe, lm)
-    if ((N != NROW(cluster)) &&
-      !is.null(object$na.action) &&
-      (class(object$na.action) %in% c("exclude", "omit"))) {
-      cluster <- cluster[-object$na.action, , drop = FALSE]
-    }
-
-    if ((N != NROW(bootcluster)) &&
-      !is.null(object$na.action) &&
-      (class(object$na.action) %in% c("exclude", "omit"))) {
-      bootcluster <- bootcluster[-object$na.action, , drop = FALSE]
-    }
-
-    if (N != nrow(cluster) && inherits(object, "fixest")) {
-      cluster <- cluster[unlist(object$obs_selection), , drop = FALSE]
-      bootcluster <-
-        bootcluster[unlist(object$obs_selection), , drop = FALSE]
-    }
-
-    if (NROW(cluster) != N) {
-      stop("number of observations in 'cluster' and 'nobs()' do not match")
-    }
-    if (NROW(bootcluster) != N) {
-      stop("number of observations in 'bootcluster' and 'nobs()' do not match")
-    }
-
-    if (any(is.na(cluster))) {
-      stop(
-        "`boottest()` cannot handle NAs in `clustid` variables that are not
-        part of the estimated model object."
-      )
-    }
-    if (any(is.na(bootcluster))) {
-      stop(
-        "`boottest()` cannot handle NAs in `bootcluster` variables that are
-        not part of the estimated model object."
-      )
-    }
-
-
-    clustid_dims <- length(clustid_char)
-
-    i <- !vapply(cluster, is.numeric, logical(1))
-    cluster[i] <- lapply(cluster[i], as.character)
-
-    # taken from multiwayvcov::cluster.boot
-    acc <- list()
-    for (i in 1:clustid_dims) {
-      acc <-
-        append(acc, utils::combn(1:clustid_dims, i, simplify = FALSE))
-    }
-
-    vcov_sign <- vapply(acc, function(i) {
-      (-1)^(length(i) + 1)
-    }, numeric(1))
-    acc <- acc[-1:-clustid_dims]
-
-    if (clustid_dims > 1) {
-      for (i in acc) {
-        cluster <- cbind(cluster, Reduce(paste, cluster[, i]))
-        names(cluster)[length(names(cluster))] <-
-          Reduce(paste, names(cluster[, i]))
-      }
-    }
-
-    N_G <- vapply(cluster, function(x) {
-      length(unique(x))
-    }, numeric(1))
-
-    # now do all the other bootcluster things
-    c1 <-
-      bootcluster_char[which(!(bootcluster_char %in% clustid_char))]
-    # both bootstrapping and error cluster: all variables in clustid_char that
-    # are also in bootcluster
-    c2 <- clustid_char[which(clustid_char %in% bootcluster_char)]
-    # only error cluster: variables in clustid_char not in c1, c2
-    c3 <- clustid_char[which(!(clustid_char %in% c(c1, c2)))]
-    all_c <- c(c1, c2, c3)
-
-    if (length(bootcluster_char) > 1) {
-      bootcluster <- as.data.frame(Reduce(paste, bootcluster))
-      names(bootcluster) <- Reduce(paste, bootcluster_char)
-    }
-
-
-    res <- list(
-      vcov_sign = vcov_sign,
-      clustid_dims = clustid_dims,
-      clustid = cluster,
-      N_G = N_G,
-      cluster_names = names(cluster),
-      all_c = all_c,
-      bootcluster = bootcluster,
-      cluster_bootcluster = cluster_bootcluster_df
-    )
-
-    res
-  }
-
-
 demean_fe <- function(X, Y, fe, has_weights, N) {
   #' function deamens design matrix X and depvar Y if fe != NULL
   #'
@@ -1110,3 +817,326 @@ transform_fe <-
 
     res
   }
+
+
+get_cluster <-
+  function(object,
+           clustid_char,
+           bootcluster,
+           N,
+           call_env) {
+    #' function creates a data.frame with cluster variables
+    #'
+    #' @param object An object of type lm, fixest, felm or ivreg
+    #' @param clustid_char the name of the cluster variable(s) as
+    #' a character vector
+    #' @param bootcluster the name of the bootcluster variable(s)
+    #'  as a character vector, or "min" or "max" for multiway clustering
+    #' @param N the number of observations used in the bootstrap
+    #' @param call_env the environment in which the 'object' was evaluated
+    #'
+    #' @noRd
+    #'
+    #' @return a list, containing, among other things, a data.frame of the
+    #'  cluster variables,
+    #'         a data.frame of the bootcluster variable(s), and a helper
+    #'         matrix, all_c, used in `engine_julia()`
+    
+    # ----------------------------------------------------------------------- #
+    # Note: a large part of the following code was taken and adapted from the
+    # sandwich R package, which is distributed under GPL-2 | GPL-3
+    # Zeileis A, Köll S, Graham N (2020). "Various Versatile Variances:
+    # An object-Oriented Implementation of Clustered Covariances in R."
+    # _Journal of Statistical Software_,  *95*(1), 1-36.
+    # doi: 10.18637/jss.v095.i01 (URL: https://doi.org/10.18637/jss.v095.i01).
+    
+    # changes by Alexander Fischer:
+    # no essential changes, but slight reorganization of pieces of code
+    
+    dreamerr::check_arg(clustid_char, "character scalar|charakter vector")
+    dreamerr::check_arg(bootcluster, "character scalar | character vector")
+    
+    clustid_fml <- reformulate(clustid_char)
+    # Step 1: create cluster df
+    
+    
+    manipulate_object <- function(object){
+      if(inherits(object, "fixest")){
+        if(!is.null(object$fixef_vars)){
+          update(object, . ~ + 1 | . + 1)
+        } else {
+          update(object, . ~ + 1 )
+        }
+      } else {
+        object
+      }
+    }
+    
+    cluster_tmp <-
+      if ("Formula" %in% loadedNamespaces()) {
+        ## FIXME to suppress potential warnings due to | in Formula
+        suppressWarnings(
+          expand.model.frame(
+            model = 
+              manipulate_object(object),
+            extras = clustid_fml,
+            na.expand = FALSE,
+            envir = call_env
+          )
+        )
+      } else {
+        expand.model.frame(
+          model = 
+            manipulate_object(object),
+          extras = clustid_fml,
+          na.expand = FALSE,
+          envir = call_env
+        )
+      }
+    
+    # if(inherits(cluster_tmp, "try-error")){
+    #   if(inherits(object, "fixest") || inherits(object, "felm")){
+    #     if(grepl("non-numeric argument to binary operator$", 
+    #              attr(cluster_tmp, "condition")$message)){
+    #       stop("In your model, you have specified multiple fixed effects,
+    #            none of which are of type factor. While `fixest::feols()` and
+    #            `lfe::felm()` handle this case without any troubles,  
+    #            `boottest()` currently cannot handle this case - please 
+    #            change the type of (at least one) fixed effect(s) to factor.
+    #            If this does not solve the error, please report the issue
+    #            at https://github.com/s3alfisc/fwildclusterboot.")
+    #     }
+    #     if(grepl("operations are possible only for numeric, logical
+    #              or complex types$", 
+    #              attr(cluster_tmp, "condition")$message)){
+    #       stop("Either a fixed effect or a cluster variable in your fixest()
+    #            or felm() model is currently specified as a character. 
+    #            'boottest()' relies on 'expand.model.frame',
+    #            which can not handle these variable types in models.
+    #            Please change these character variables to factors. ")
+    #     }
+    #   }
+    # }
+    
+    cluster_df <-
+      model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
+    # without cluster intersection
+    N_G <-
+      vapply(cluster_df, function(x) {
+        length(unique(x))
+      }, numeric(1))
+    
+    # Step 1: decode bootcluster variable
+    
+    # create a bootcluster vector
+    if (length(bootcluster) == 1) {
+      if (bootcluster == "max") {
+        # use both vars
+        bootcluster_char <- clustid_char
+      } else if (bootcluster == "min") {
+        # only minimum var
+        bootcluster_char <- clustid_char[which.min(N_G)]
+      } else {
+        bootcluster_char <- bootcluster
+      }
+    } else {
+      bootcluster_char <- bootcluster
+    }
+    
+    # add bootcluster variable to formula of clusters
+    cluster_bootcluster_fml <-
+      update(
+        clustid_fml, paste(
+          "~ . +", paste(
+            bootcluster_char,
+            collapse = " + "
+          )
+        )
+      )
+    
+    
+    cluster_bootcluster_tmp <-
+      if ("Formula" %in% loadedNamespaces()) {
+        ## FIXME to suppress potential warnings due to | in Formula
+        suppressWarnings(
+          expand.model.frame(
+            model = 
+              manipulate_object(object),
+            extras = cluster_bootcluster_fml,
+            na.expand = FALSE,
+            envir = call_env
+          )
+        )
+      } else {
+        expand.model.frame(
+          model = 
+            manipulate_object(object),
+          extras = cluster_bootcluster_fml,
+          na.expand = FALSE,
+          envir = call_env
+        )
+      }
+    
+    # data.frame as needed for WildBootTests.jl
+    cluster_bootcluster_df <- model.frame(
+      cluster_bootcluster_fml,
+      cluster_bootcluster_tmp,
+      na.action = na.pass
+    )
+    
+    # if(inherits(cluster_tmp, "try-error")){
+    #   if(inherits(object, "fixest") || inherits(object, "felm")){
+    #     if(
+    #       grepl(
+    #         "non-numeric argument to binary operator$",
+    #         attr(
+    #           cluster_tmp, "condition"
+    #         )$message
+    #       )
+    #     ){
+    #       stop(
+    #         "In your model, you have specified multiple fixed effects, 
+    #       none of which are of type factor. While `fixest::feols()` and 
+    #       `lfe::felm()` handle this case without any troubles,  `boottest()`
+    #       currently cannot handle this case - please change the type of
+    #       (at least one) fixed effect(s) to factor. If this does not solve
+    #       the error, please report the issue at 
+    #       https://github.com/s3alfisc/fwildclusterboot."
+    #       )
+    #     }
+    #     if(
+    #       grepl(
+    #         "operations are possible only for numeric, logical or complex types$",
+    #         attr(
+    #           cluster_tmp,
+    #           "condition")$message
+    #       )
+    #     ){
+    #       stop(
+    #         "Either a fixed effect or a cluster variable in your fixest() or
+    #       felm() model is currently specified as a character. 'boottest()' 
+    #       relies on 'expand.model.frame', which can not handle these variable
+    #       types in models. Please change these character variables to factors."
+    #       )
+    #     }
+    #   }
+    # }
+    
+    # data.frames with clusters, bootcluster
+    cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
+    bootcluster <-
+      cluster_bootcluster_df[, bootcluster_char, drop = FALSE]
+    
+    if (!any(bootcluster_char %in% clustid_char)) {
+      is_subcluster <- TRUE
+      if (!(any(names(bootcluster) %in% c(clustid_char, names(coef(
+        object
+      )))))) {
+        stop(
+          "A bootcluster variable is neither contained in the cluster
+          variables nor in the model coefficients."
+        )
+      }
+    } else {
+      is_subcluster <- FALSE
+    }
+    
+    ## handle omitted or excluded observations (works for lfe, lm)
+    if ((N != NROW(cluster)) &&
+        !is.null(object$na.action) &&
+        (class(object$na.action) %in% c("exclude", "omit"))) {
+      cluster <- cluster[-object$na.action, , drop = FALSE]
+    }
+    
+    if ((N != NROW(bootcluster)) &&
+        !is.null(object$na.action) &&
+        (class(object$na.action) %in% c("exclude", "omit"))) {
+      bootcluster <- bootcluster[-object$na.action, , drop = FALSE]
+    }
+    
+    if (N != nrow(cluster) && inherits(object, "fixest")) {
+      cluster <- cluster[unlist(object$obs_selection), , drop = FALSE]
+      bootcluster <-
+        bootcluster[unlist(object$obs_selection), , drop = FALSE]
+    }
+    
+    if (NROW(cluster) != N) {
+      stop("number of observations in 'cluster' and 'nobs()' do not match")
+    }
+    if (NROW(bootcluster) != N) {
+      stop("number of observations in 'bootcluster' and 'nobs()' do not match")
+    }
+    
+    if (any(is.na(cluster))) {
+      stop(
+        "`boottest()` cannot handle NAs in `clustid` variables that are not
+        part of the estimated model object."
+      )
+    }
+    if (any(is.na(bootcluster))) {
+      stop(
+        "`boottest()` cannot handle NAs in `bootcluster` variables that are
+        not part of the estimated model object."
+      )
+    }
+    
+    
+    clustid_dims <- length(clustid_char)
+    
+    i <- !vapply(cluster, is.numeric, logical(1))
+    cluster[i] <- lapply(cluster[i], as.character)
+    
+    # taken from multiwayvcov::cluster.boot
+    acc <- list()
+    for (i in 1:clustid_dims) {
+      acc <-
+        append(acc, utils::combn(1:clustid_dims, i, simplify = FALSE))
+    }
+    
+    vcov_sign <- vapply(acc, function(i) {
+      (-1)^(length(i) + 1)
+    }, numeric(1))
+    acc <- acc[-1:-clustid_dims]
+    
+    if (clustid_dims > 1) {
+      for (i in acc) {
+        cluster <- cbind(cluster, Reduce(paste, cluster[, i]))
+        names(cluster)[length(names(cluster))] <-
+          Reduce(paste, names(cluster[, i]))
+      }
+    }
+    
+    N_G <- vapply(cluster, function(x) {
+      length(unique(x))
+    }, numeric(1))
+    
+    # now do all the other bootcluster things
+    c1 <-
+      bootcluster_char[which(!(bootcluster_char %in% clustid_char))]
+    # both bootstrapping and error cluster: all variables in clustid_char that
+    # are also in bootcluster
+    c2 <- clustid_char[which(clustid_char %in% bootcluster_char)]
+    # only error cluster: variables in clustid_char not in c1, c2
+    c3 <- clustid_char[which(!(clustid_char %in% c(c1, c2)))]
+    all_c <- c(c1, c2, c3)
+    
+    if (length(bootcluster_char) > 1) {
+      bootcluster <- as.data.frame(Reduce(paste, bootcluster))
+      names(bootcluster) <- Reduce(paste, bootcluster_char)
+    }
+    
+    
+    res <- list(
+      vcov_sign = vcov_sign,
+      clustid_dims = clustid_dims,
+      clustid = cluster,
+      N_G = N_G,
+      cluster_names = names(cluster),
+      all_c = all_c,
+      bootcluster = bootcluster,
+      cluster_bootcluster = cluster_bootcluster_df
+    )
+    
+    res
+  }
+
