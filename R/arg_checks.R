@@ -125,7 +125,7 @@ check_boottest_args_plus <- function(
   }
   
   if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
-    message(paste("Note: The bootstrap usually performs best when the
+    format_message(paste("Note: The bootstrap usually performs best when the
                   confidence level (here,", 1 - sign_level, "%)
                   times the number of replications plus 1
                   (", B, "+ 1 = ", B + 1, ") is an integer."))

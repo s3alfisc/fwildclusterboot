@@ -506,9 +506,14 @@ boottest.lm <- function(object,
     clusteradj <- julia_ssc$clusteradj
     clustermin <- julia_ssc$clustermin
     
-    if (ssc[["fixef.K"]] != "none") {
-      message(paste("Currently, boottest() only supports fixef.K = 'none'."))
+    if (ssc[["fixef.K"]] != "none" ||
+        ssc[["cluster.df"]] != "conventional") {
+      x <- format_message(
+        "Currently, boottest() only supports fixef.K = 'none'."
+      )
+      message(x)
     }
+    
     
     res <- boot_algo_julia(
       preprocess = preprocess,

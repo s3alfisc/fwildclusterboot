@@ -2,7 +2,7 @@ test_that("errors and warnings q = 1", {
   
   skip_on_cran()
 
-  if(is_juliaconnector_prepared()){
+  if(TRUE){
 
     # ------------------------------------------------------------------ #
     # test for warnings and errors
@@ -1465,7 +1465,7 @@ test_that("error warning IV/WRE and q > 1", {
   requireNamespace("clubSandwich")
 
   
-  if(is_juliaconnector_prepared()){
+  if(TRUE){
     
     # drop all NA values from SchoolingReturns
     #SchoolingReturns <-
