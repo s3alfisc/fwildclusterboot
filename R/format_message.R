@@ -25,13 +25,6 @@
 #' line, two white space characters are inserted.
 #'
 #' @details
-#' There is an experimental formatting feature implemented in this function.
-#' You can use following tags:
-#' * `{.b text}` for bold formatting
-#' * `{.i text}` to use italic font style
-#' * `{.url www.url.com}` formats the string as URL (i.e., enclosing URL in
-#' `<` and `>`, blue color and italic font style)
-#' * `{.pkg packagename}` formats the text in blue color.
 #'
 #' This features has some limitations: it's hard to detect the exact length for
 #' each line when the string has multiple lines (after line breaks) and the
@@ -43,36 +36,6 @@
 #' @return For `format_message()`, a formatted string.
 #'   For `format_alert()` and related functions, the requested exception,
 #'   with the exception formatted using `format_message()`.
-#' @examples
-#' msg <- format_message("Much too long string for just one line, I guess!",
-#'   line_length = 15
-#' )
-#' message(msg)
-#'
-#' msg <- format_message("Much too long string for just one line, I guess!",
-#'   "First new line",
-#'   "Second new line",
-#'   "(both indented)",
-#'   line_length = 30
-#' )
-#' message(msg)
-#'
-#' msg <- format_message("Much too long string for just one line, I guess!",
-#'   "First new line",
-#'   "Second new line",
-#'   "(not indented)",
-#'   line_length = 30,
-#'   indent = ""
-#' )
-#' message(msg)
-#'
-#' # Caution, experimental! See 'Details'
-#' msg <- format_message(
-#'   "This is {.i italic}, visit {.url easystats.github.io/easystats}",
-#'   line_length = 30
-#' )
-#' message(msg)
-#'
 #' @export
 format_message <- function(string,
                            ...,
@@ -209,31 +172,31 @@ format_error <- function(...) {
     }
   }
   
-  # convert tokens into formatting
-  if (!is.null(which_tokens)) {
-    for (i in which(which_tokens)) {
-      if (token_pattern[i] == token_pattern[1]) {
-        # bold formatting
-        pattern <- paste0("(.*)\\{\\.b_", allowed_chars, "\\}(.*)")
-        s2 <- .bold(gsub(pattern, "\\2", string))
-      } else if (token_pattern[i] == token_pattern[2]) {
-        # italic formatting
-        pattern <- paste0("(.*)\\{\\.i_", allowed_chars, "\\}(.*)")
-        s2 <- .italic(gsub(pattern, "\\2", string))
-      } else if (token_pattern[i] == token_pattern[3]) {
-        # url formatting
-        pattern <- paste0("(.*)\\{\\.url_", allowed_chars, "\\}(.*)")
-        s2 <- .italic(.blue(paste0("<", gsub(pattern, "\\2", string), ">")))
-      } else if (token_pattern[i] == token_pattern[4]) {
-        # package formatting
-        pattern <- paste0("(.*)\\{\\.pkg_", allowed_chars, "\\}(.*)")
-        s2 <- .blue(gsub(pattern, "\\2", string))
-      }
-      s1 <- gsub(pattern, "\\1", string)
-      s3 <- gsub(pattern, "\\3", string)
-      string <- paste0(s1, s2, s3)
-    }
-  }
+  # # convert tokens into formatting
+  # if (!is.null(which_tokens)) {
+  #   for (i in which(which_tokens)) {
+  #     if (token_pattern[i] == token_pattern[1]) {
+  #       # bold formatting
+  #       pattern <- paste0("(.*)\\{\\.b_", allowed_chars, "\\}(.*)")
+  #       s2 <- .bold(gsub(pattern, "\\2", string))
+  #     } else if (token_pattern[i] == token_pattern[2]) {
+  #       # italic formatting
+  #       pattern <- paste0("(.*)\\{\\.i_", allowed_chars, "\\}(.*)")
+  #       s2 <- .italic(gsub(pattern, "\\2", string))
+  #     } else if (token_pattern[i] == token_pattern[3]) {
+  #       # url formatting
+  #       pattern <- paste0("(.*)\\{\\.url_", allowed_chars, "\\}(.*)")
+  #       s2 <- .italic(.blue(paste0("<", gsub(pattern, "\\2", string), ">")))
+  #     } else if (token_pattern[i] == token_pattern[4]) {
+  #       # package formatting
+  #       pattern <- paste0("(.*)\\{\\.pkg_", allowed_chars, "\\}(.*)")
+  #       s2 <- .blue(gsub(pattern, "\\2", string))
+  #     }
+  #     s1 <- gsub(pattern, "\\1", string)
+  #     s3 <- gsub(pattern, "\\3", string)
+  #     string <- paste0(s1, s2, s3)
+  #   }
+  # }
   
   # remove trailing white space
   if (grepl("\\n  $", string)) {

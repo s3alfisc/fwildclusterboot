@@ -330,9 +330,9 @@ nobs.boottest <- function(object, ...) {
   object$N
 }
 
-tidy.boottest <- function(object, ...) {
+tidy.boottest <- function(x, ...) {
   #' S3 method to summarize objects of class boottest into tidy data.frame
-  #' @param object object of type boottest
+  #' @param x object of type boottest
   #' @param ... Further arguments passed to or from other methods.
   #' @importFrom generics tidy
   #' @export
@@ -354,35 +354,35 @@ tidy.boottest <- function(object, ...) {
   #' )
   #' generics::tidy(boot)
 
-  stopifnot(inherits(object, "boottest"))
+  stopifnot(inherits(x, "boottest"))
   # dreamerr::validate_dots(stop = TRUE)
 
-  if (object$engine == "WildBootTests.jl") {
-    R <- object$R[which(object$R != 0)]
+  if (x$engine == "WildBootTests.jl") {
+    R <- x$R[which(x$R != 0)]
     hypothesis <-
-      paste(paste0(paste0(R, "*"), object$param, collapse = "+"), "=", object$r)
+      paste(paste0(paste0(R, "*"), x$param, collapse = "+"), "=", x$r)
   } else {
     hypothesis <-
       paste(
         paste0(
           paste0(
-            object$R, "*"
+            x$R, "*"
           ),
-          object$param,
+          x$param,
           collapse = "+"
         ),
-        "=", object$r
+        "=", x$r
       )
   }
 
   term <- hypothesis
-  estimate <- object$point_estimate
-  statistic <- object$t_stat
-  p.value <- object$p_val
+  estimate <- x$point_estimate
+  statistic <- x$t_stat
+  p.value <- x$p_val
   # std.error <- NA
-  if (!is.null(object$conf_int)) {
-    conf.low <- object$conf_int[1]
-    conf.high <- object$conf_int[2]
+  if (!is.null(x$conf_int)) {
+    conf.low <- x$conf_int[1]
+    conf.high <- x$conf_int[2]
   } else {
     conf.low <- conf.high <- NA
   }
@@ -572,6 +572,32 @@ glance.boottest <- function(x, ...) {
   broom::glance(eval(x$call$object))
 }
 
+glance.mboottest <- function(x, ...) {
+  #' S3 method to glance at objects of class boottest
+  #' @param x object of type mboottest
+  #' @param ... Further arguments passed to or from other methods.
+  #' @importFrom generics glance
+  #' @method glance mboottest
+  #' @export
+  #' @return A single row summary "glance" of an object of type boottest
+  #'         - lists characteristics of the input regression model
+  #' @examples
+  #' requireNamespace("fwildclusterboot")
+  #' data(voters)
+  #' lm_fit <- lm(
+  #' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  #'   data = voters
+  #' )
+  #' boot <- mboottest(lm_fit,
+  #'   B = 9999,
+  #'   param = "treatment",
+  #'   clustid = "group_id1"
+  #' )
+  #' generics::glance(mboot)
+  
+  stopifnot(inherits(x, "mboottest"))
+  broom::glance(eval(x$call$object))
+}
 
 
 #' S3 method to obtain the wild cluster bootstrapped p-value of an object
@@ -741,10 +767,10 @@ print.mboottest <- function(x, ..., digits = 4) {
 }
 
 
-tidy.mboottest <- function(object, ...) {
+tidy.mboottest <- function(x, ...) {
 
   #' S3 method to summarize objects of class mboottest into tidy data.frame
-  #' @param object object of type mboottest
+  #' @param x object of type mboottest
   #' @param ... Further arguments passed to or from other methods.
   #' @importFrom generics tidy
   #' @rdname tidy.mboottest
@@ -772,11 +798,11 @@ tidy.mboottest <- function(object, ...) {
   #' }
 
 
-  stopifnot(inherits(object, "mboottest"))
+  stopifnot(inherits(x, "mboottest"))
   # dreamerr::validate_dots(stop = TRUE)
 
-  statistic <- object$teststat
-  p.value <- object$p_val
+  statistic <- x$teststat
+  p.value <- x$p_val
 
   res <- data.frame(teststat = statistic, p_val = p.value)
 

@@ -4,10 +4,10 @@
 \alias{tidy.mboottest}
 \title{S3 method to summarize objects of class mboottest into tidy data.frame}
 \usage{
-\method{tidy}{mboottest}(object, ...)
+\method{tidy}{mboottest}(x, ...)
 }
 \arguments{
-\item{object}{object of type mboottest}
+\item{x}{object of type mboottest}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
