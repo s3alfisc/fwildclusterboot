@@ -555,6 +555,7 @@ glance.boottest <- function(x, ...) {
   #' @return A single row summary "glance" of an object of type boottest
   #'         - lists characteristics of the input regression model
   #' @examples
+  #' \dontrun{
   #' requireNamespace("fwildclusterboot")
   #' data(voters)
   #' lm_fit <- lm(
@@ -567,6 +568,7 @@ glance.boottest <- function(x, ...) {
   #'   clustid = "group_id1"
   #' )
   #' generics::glance(boot)
+  #' }
 
   stopifnot(inherits(x, "boottest"))
   broom::glance(eval(x$call$object))

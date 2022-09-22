@@ -19,6 +19,7 @@ A single row summary "glance" of an object of type boottest
 S3 method to glance at objects of class boottest
 }
 \examples{
+\dontrun{
 requireNamespace("fwildclusterboot")
 data(voters)
 lm_fit <- lm(
@@ -31,4 +32,5 @@ boot <- boottest(lm_fit,
   clustid = "group_id1"
 )
 generics::glance(boot)
+}
 }
