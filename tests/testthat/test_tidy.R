@@ -44,6 +44,8 @@ test_that("test tidiers with q = 1", {
     expect_equal(tidy(boottest_r), tidy(boottest_julia), tolerance = 0.02)
     expect_equal(glance(boottest_r), glance(boottest_julia), tolerance = 0.02)
     expect_equal(plot(boottest_r), plot(boottest_julia), tolerance = 0.02)
+    expect_equal(nobs(boottest_r), nobs(boottest_julia), tolerance = 0.02)
+    expect_equal(summary(boottest_r), summary(boottest_julia), tolerance = 0.02)
     
     expect_equal(tidy(boottest_rlean)[, 1:4],
                  tidy(boottest_r)[, 1:4],
@@ -90,7 +92,7 @@ test_that("test tidiers with q > 1", {
 
   expect_equal(tidy(mboottest_julia)$teststat, -14.02107)
   expect_equal(summary(mboottest_julia)$p_val, 0)
-  
+
   } else {
     message("test_tidy.R, q > 1 skipped as 'JULIA_BINDIR' not found.")
   }

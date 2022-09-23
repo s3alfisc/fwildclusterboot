@@ -11,48 +11,11 @@ on:
   # Run on every push to main
   push:
     branches:
-      - master
-      - ropensci
-    # Run on every PR to main
-  pull_request:
-    branches:
+      - main
       - master
 
 jobs:
   pkgcheck:
     runs-on: ubuntu-latest
-    jobs:
-  check:
-    runs-on: ubuntu-latest
-    container: ghcr.io/ropensci-review-tools/pkgcheck-action:latest
-    env: 
-      GITHUB_PAT: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v2
-      
-      # install julia
-      - uses: julia-actions/setup-julia@v1
-      # add julia to renviron
-      - name: Create and populate .Renviron file
-        run: echo JULIA_BINDIR= "${{ env.juliaLocation }}" >> ~/.Renviron
-        shell: bash
-
-      # install WildBootTests.jl
-      - name: install WildBootTests.jl 
-        run: julia -e 'using Pkg; Pkg.add(["WildBootTests", "StableRNGs"])'
-        # use shell bash to ensure consistent behavior across OS
-        shell: bash
-      
-      - name: Run pkgcheck
-        id: pkgcheck
-        shell: Rscript {0}
-        
-      - uses: actions/upload-artifact@v2
-        with:
-          name: visual-network
-          path: "${{ steps.pkgcheck.outputs.visnet_path }}"
-          
-      - uses: actions/upload-artifact@v2
-        with:
-          name: results
-          path: "${{ steps.pkgcheck.outputs.results }}"
+      - uses: ropensci-review-tools/pkgcheck-action@main

@@ -118,15 +118,15 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                       )
                     )
   
-                  expect_equal(abs(boot1$t_stat),
+                  expect_equal(abs(teststat(boot1)),
                     abs(dof_tstat[1]),
                     ignore_attr = TRUE
                   )
-                  expect_equal(abs(boot2$t_stat),
+                  expect_equal(abs(teststat(boot2)),
                     abs(dof_tstat[2]),
                     ignore_attr = TRUE
                   )
-                  expect_equal(abs(boot3$t_stat),
+                  expect_equal(abs(teststat(boot3)),
                     abs(dof_tstat[3]),
                     ignore_attr = TRUE
                   )

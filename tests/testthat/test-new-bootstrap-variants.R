@@ -74,6 +74,9 @@ test_that("test r-fnw vs r-, stochastic", {
             expect_equal(
               boot1$t_boot, boot2$t_boot, ignore_attr = TRUE
             )
+            expect_equal(
+              nobs(boot1), nobs(boot2), ignore_attr = TRUE
+            )
 
             # test the wcu
 
