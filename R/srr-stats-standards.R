@@ -11,8 +11,10 @@
 #'
 #' @srrstats {G1.0} *`boottest()` links to multiple published papers.*
 #' @srrstats {G1.1} *The help files of all boottest methods document that the
-#' algorithm is already implemented in the STATA boottest package. The readme
-#' and descriptions also point to the WildBootTests.jl implementation.*.
+#' "fast and wild" algorithm is already implemented in the STATA boottest 
+#' package. The readme and descriptions also point to the WildBootTests.jl 
+#' implementation. The WRE13 and WRE33 are, to the best of my knowledge, 
+#' only available through fwildclusterboot*.
 #' @srrstats {G1.2} *Life Cycle "Maturing".*
 #' @srrstats {G1.3} *All statistical terminology should be clarified and
 #'  unambiguously defined.* This is done in an extra vignette.

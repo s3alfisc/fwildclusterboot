@@ -1016,7 +1016,8 @@ get_cluster <-
     #         "Either a fixed effect or a cluster variable in your fixest() or
     #       felm() model is currently specified as a character. 'boottest()' 
     #       relies on 'expand.model.frame', which can not handle these variable
-    #       types in models. Please change these character variables to factors."
+    #       types in models. 
+    #       Please change these character variables to factors."
     #       )
     #     }
     #   }
