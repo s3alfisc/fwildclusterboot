@@ -1247,8 +1247,6 @@ test_that("clustid can be fe", {
   
   requireNamespace("fixest")
   requireNamespace("lfe")
-  
-  if(TRUE){
     
   print_results <- FALSE
   
@@ -1311,7 +1309,5 @@ test_that("clustid can be fe", {
                ))["treatment"],
                ignore_attr = TRUE
   )
-} else {
-    message("test-method_equivalence.R II skipped as JULIA_BINDR not found.")
-  }
+
 })

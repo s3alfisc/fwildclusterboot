@@ -62,6 +62,7 @@ test_that("test tidiers with q = 1", {
 test_that("test tidiers with q > 1", {
   
   skip_on_cran()
+  skip_on_ci()
 
   if(TRUE){
     
