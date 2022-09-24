@@ -209,7 +209,8 @@ test_that("test full enumeration cases: r and julia", {
   # note: these tests are deterministic! therefore exact.
   
   skip_on_cran()
-  # skip_on_ci()
+  skip_on_ci()
+  
   # if not skipped, codecov fails after ~6h
   julia_prep <- TRUE
   cat("julia connector prepared? ", julia_prep)
