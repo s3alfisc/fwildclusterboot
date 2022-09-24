@@ -162,24 +162,24 @@ L'Actualite economique 91.1-2 (2015): 11-33.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Number of Clusters: 40</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              term estimate statistic p.value conf.low conf.high</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1*treatment = 0    0.073     3.709   0.001    0.033     0.113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1*treatment = 0    0.073     3.709   0.001    0.032     0.113</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = "group_id1")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> p value: 0.0011 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> confidence interval: 0.0329 0.113 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> p value: 8e-04 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> confidence interval: 0.0322 0.1132 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> test statistic 3.7094 </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="boottest-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/nobs.html" class="external-link">nobs</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 300</span>
 <span class="r-in"><span><span class="fu"><a href="pval.html">pval</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00110011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.00080008</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/confint.html" class="external-link">confint</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03288216 0.11301408</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.03221649 0.11320111</span>
 <span class="r-in"><span><span class="fu">generics</span><span class="fu">::</span><span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              term   estimate statistic    p.value   conf.low conf.high</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1*treatment = 0 0.07290769  3.709435 0.00110011 0.03288216 0.1130141</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1*treatment = 0 0.07290769  3.709435 0.00080008 0.03221649 0.1132011</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
