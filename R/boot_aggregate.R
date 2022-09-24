@@ -229,11 +229,11 @@ boot_aggregate = function(
   check_arg(full, "logical scalar")
   # => later => extend it to more than one set of vars to agg
 
-  dots = list(...)
-  from_summary = isTRUE(dots$from_summary)
+  dots <- list(...)
+  from_summary <- isTRUE(dots$from_summary)
 
-  no_agg = FALSE
-  agg_rm = NULL
+  no_agg <- FALSE
+  agg_rm <- NULL
   check_value_plus(agg, "match(att, period, cohort, TRUE) | scalar")
   if(agg %in% c("att", "period", "cohort", "TRUE")){
     if(isTRUE(x$is_sunab)){
@@ -255,7 +255,7 @@ boot_aggregate = function(
     agg = c("nothing to remove" = "we want all the coefficients")
   }
 
-  is_name = !is.null(names(agg))
+  is_name <- !is.null(names(agg))
 
   if(!is_name && !grepl("(", agg, fixed = TRUE)){
     stop("Argument 'agg' must be a character in
@@ -263,12 +263,12 @@ boot_aggregate = function(
          So far there are no parenthesis: please have a look at the examples.")
   }
 
-  coef = x$coefficients
-  cname = names(coef)
-  V = x$cov.scaled
+  coef <- x$coefficients
+  cname <- names(coef)
+  V <- x$cov.scaled
   
 
-  qui = grepl(agg, cname, perl = TRUE)
+  qui <- grepl(agg, cname, perl = TRUE)
   if(!any(qui)){
     if(from_summary){
       # We make it silent when aggregate is used in summary
@@ -277,7 +277,7 @@ boot_aggregate = function(
       return(list(coeftable = x$coeftable, 
                   model_matrix_info = x$model_matrix_info))
     } else if(no_agg){
-      x = summary(x, agg = FALSE, ...)
+      x <- summary(x, agg = FALSE, ...)
       return(x$coeftable)
     } else {
       stop("The argument 'agg' does not match any variable.")
@@ -285,19 +285,19 @@ boot_aggregate = function(
   }
 
   if(!isTRUE(x$summary)){
-    x = summary(x, ...)
+    x <- summary(x, ...)
   }
 
-  cname_select = cname[qui]
+  cname_select <- cname[qui]
   if(is_name){
-    root = rep(names(agg), length(cname_select))
-    val = gsub(paste0(".*", agg, ".*"), "\\1", cname_select, perl = TRUE)
+    root <- rep(names(agg), length(cname_select))
+    val <- gsub(paste0(".*", agg, ".*"), "\\1", cname_select, perl = TRUE)
   } else {
-    root = gsub(paste0(".*", agg, ".*"), "\\1", cname_select, perl = TRUE)
-    val = gsub(paste0(".*", agg, ".*"), "\\2", cname_select, perl = TRUE)
+    root <- gsub(paste0(".*", agg, ".*"), "\\1", cname_select, perl = TRUE)
+    val <- gsub(paste0(".*", agg, ".*"), "\\2", cname_select, perl = TRUE)
   }
 
-  mm = model.matrix(x)
+  mm <- model.matrix(x)
 
   cat("Run the wild bootstrap: this might take some time...(but 
       hopefully not too much time =) ).", "\n")
@@ -334,11 +334,11 @@ boot_aggregate = function(
   # }
 
 
-  name_df = unique(data.frame(root, val, stringsAsFactors = FALSE))
+  name_df <- unique(data.frame(root, val, stringsAsFactors = FALSE))
 
   nk <- nrow(name_df)
-  c_all = vector(mode = "numeric", length = nk)
-  se_all = vector(mode = "numeric", length = nk)
+  c_all <- vector(mode = "numeric", length = nk)
+  se_all <- vector(mode = "numeric", length = nk)
   #c_all_boot <- matrix(NA, nk, B+1)
   #se_all_boot <- matrix(NA, nk, B+1)
 
@@ -347,41 +347,41 @@ boot_aggregate = function(
   
   # zvalue_boot <- matrix(NA, B, nk)
   
-  pb = txtProgressBar(min = 0, max = nk, initial = 0, style = 3) 
+  pb <- txtProgressBar(min = 0, max = nk, initial = 0, style = 3) 
   
   for(i in 1:nk){
     
     setTxtProgressBar(pb,i)
     
-    r = name_df[i, 1]
-    v = name_df[i, 2]
-    v_names = cname_select[root == r & val == v]
+    r <- name_df[i, 1]
+    v <- name_df[i, 2]
+    v_names <- cname_select[root == r & val == v]
 
     if(use_weights && !is.null(x$weights)){
-      shares = colSums(x$weights * sign(mm[, v_names, drop = FALSE]))
+      shares <- colSums(x$weights * sign(mm[, v_names, drop = FALSE]))
     } else {
-      shares = colSums(sign(mm[, v_names, drop = FALSE]))
+      shares <- colSums(sign(mm[, v_names, drop = FALSE]))
     }
 
-    shares = shares / sum(shares)
+    shares <- shares / sum(shares)
 
     # The coef
-    c_value = sum(shares * coef[v_names])
+    c_value <- sum(shares * coef[v_names])
 
     # The variance
-    n = length(v_names)
-    s1 = matrix(shares, n, n)
-    s2 = matrix(shares, n, n, byrow = TRUE)
+    n <- length(v_names)
+    s1 <- matrix(shares, n, n)
+    s2 <- matrix(shares, n, n, byrow = TRUE)
 
     s <- s1 * s2
     
-    var_value = sum(s * V[v_names, v_names])
-    se_value = sqrt(var_value)
+    var_value <- sum(s * V[v_names, v_names])
+    se_value <- sqrt(var_value)
 
     v_names_pos <- which(names(coef) %in% v_names)
 
-    c_all[i] = c_value
-    se_all[i] = se_value
+    c_all[i] <- c_value
+    se_all[i] <- se_value
 
 
     # create weighted bootstrap coefs and ses
@@ -440,7 +440,7 @@ boot_aggregate = function(
     
   }
     # th z & p values
-    zvalue = c_all/se_all
+    zvalue <- c_all/se_all
     #zvalue_boot <- c_all_boot / se_all_boot
 
     #pvalue <- rowMeans(abs(zvalue) < abs(zvalue_boot))

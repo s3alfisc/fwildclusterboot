@@ -147,12 +147,12 @@
 # 
 #     beta_1g_tilde <- lapply(1:G,
 #                             function(g)
-#                               MASS::ginv(tX1X1 - tX1gX1g[[g]]) %*% (tX1y - tX1gyg[[g]]))
+#                   MASS::ginv(tX1X1 - tX1gX1g[[g]]) %*% (tX1y - tX1gyg[[g]]))
 # 
 #   } else if (bootstrap_type == "WCU3x") {
 #     beta_g_hat <- lapply(1:G,
 #                          function(g)
-#                            MASS::ginv(tXX - tXgXg[[g]]) %*% (tXy - tXgyg[[g]]))
+#                        MASS::ginv(tXX - tXgXg[[g]]) %*% (tXy - tXgyg[[g]]))
 # 
 #   }
 # 

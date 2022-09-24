@@ -28,10 +28,11 @@
 #'
 #' This features has some limitations: it's hard to detect the exact length for
 #' each line when the string has multiple lines (after line breaks) and the
-#' string contains formatting tags. Thus, it can happen that lines are wrapped at
-#' an earlier length than expected. Furthermore, if you have multiple words in a
-#' format tag (`{.b one two three}`), a line break might occur inside this tag,
-#' and the formatting no longer works (messing up the message-string).
+#' string contains formatting tags. Thus, it can happen that lines are
+#' wrapped at an earlier length than expected. Furthermore, if 
+#' you have multiple words in a format tag (`{.b one two three}`), a 
+#' line break might occur inside this tag, and the formatting no longer
+#'works (messing up the message-string).
 #'
 #' @return For `format_message()`, a formatted string.
 #'   For `format_alert()` and related functions, the requested exception,
@@ -129,35 +130,7 @@ format_error <- function(...) {
   lsub <- 0
   tmp_string <- string
   
-  # these chars are allowed inside a token, e.g. "{.i allowedchars}"
-  allowed_chars <- "([a-zA-Z:\\./\\+-]*)"
-  # supported tokens, create regex pattern
-  token_pattern <- sprintf("\\{\\.%s %s\\}", c("b", "i", "url", "pkg"), allowed_chars)
-  # for line breaks, we "protect" these patterns
-  token_protected <- sprintf("\\{\\.%s_\\1\\}", c("b", "i", "url", "pkg"))
-  
-  # check if string contains any formatting token
-  which_tokens <- .find_tokens(string)
-  
-  # check ansi-colors are supported by system. if not, remove tokens from string
-  # if (!.supports_color() && !is.null(which_tokens)) {
-  #   for (i in token_pattern[which_tokens]) {
-  #     string <- gsub(i, "\\1", string)
-  #   }
-  #   which_tokens <- NULL
-  # }
-  
-  # remove tokens from temporary string, so we can detect the "real" line length
-  if (!is.null(which_tokens)) {
-    for (i in which(which_tokens)) {
-      tmp_string <- gsub(token_pattern[i], "\\1", tmp_string)
-      # protect tokens from line break
-      string <- gsub(token_pattern[i], token_protected[i], string)
-    }
-  } else {
-    tmp_string <- string
-  }
-  
+    
   # check if line breaks are required
   if (line_length > 0 && nchar(tmp_string) > line_length) {
     # insert line breaks into string at specified length
@@ -172,32 +145,6 @@ format_error <- function(...) {
     }
   }
   
-  # # convert tokens into formatting
-  # if (!is.null(which_tokens)) {
-  #   for (i in which(which_tokens)) {
-  #     if (token_pattern[i] == token_pattern[1]) {
-  #       # bold formatting
-  #       pattern <- paste0("(.*)\\{\\.b_", allowed_chars, "\\}(.*)")
-  #       s2 <- .bold(gsub(pattern, "\\2", string))
-  #     } else if (token_pattern[i] == token_pattern[2]) {
-  #       # italic formatting
-  #       pattern <- paste0("(.*)\\{\\.i_", allowed_chars, "\\}(.*)")
-  #       s2 <- .italic(gsub(pattern, "\\2", string))
-  #     } else if (token_pattern[i] == token_pattern[3]) {
-  #       # url formatting
-  #       pattern <- paste0("(.*)\\{\\.url_", allowed_chars, "\\}(.*)")
-  #       s2 <- .italic(.blue(paste0("<", gsub(pattern, "\\2", string), ">")))
-  #     } else if (token_pattern[i] == token_pattern[4]) {
-  #       # package formatting
-  #       pattern <- paste0("(.*)\\{\\.pkg_", allowed_chars, "\\}(.*)")
-  #       s2 <- .blue(gsub(pattern, "\\2", string))
-  #     }
-  #     s1 <- gsub(pattern, "\\1", string)
-  #     s3 <- gsub(pattern, "\\3", string)
-  #     string <- paste0(s1, s2, s3)
-  #   }
-  # }
-  
   # remove trailing white space
   if (grepl("\\n  $", string)) {
     string <- gsub("\\n  $", "", string)
@@ -210,15 +157,3 @@ format_error <- function(...) {
   string
 }
 
-
-
-# check whether a string line contains one of the supported format tags
-.find_tokens <- function(string) {
-  tokens <- c("{.b ", "{.i ", "{.url ", "{.pkg ")
-  matches <- sapply(tokens, grepl, string, fixed = TRUE)
-  if (any(matches)) {
-    matches
-  } else {
-    return(NULL)
-  }
-}

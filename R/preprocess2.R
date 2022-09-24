@@ -1006,7 +1006,7 @@ get_cluster <-
     #     }
     #     if(
     #       grepl(
-    #         "operations are possible only for numeric, logical or complex types$",
+    #   "operations are possible only for numeric, logical or complex types$",
     #         attr(
     #           cluster_tmp,
     #           "condition")$message
