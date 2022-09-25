@@ -43,7 +43,6 @@ test_that("test r-fnw vs r-, stochastic", {
           for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
 
             # test the wcr
-            pracma::tic()
             boot1 <- boottest(object,
                               param = "log_income",
                               clustid = c("group_id2"),
@@ -56,9 +55,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-            pracma::toc()
-
-            pracma::tic()
+    
             boot2 <- boottest(object,
                               param = "log_income",
                               clustid = c("group_id2"),
@@ -71,8 +68,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-            pracma::toc()
-            
+
             expect_equal(
               teststat(boot1), teststat(boot2), ignore_attr = TRUE
             )
