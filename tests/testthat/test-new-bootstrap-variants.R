@@ -1,10 +1,10 @@
 test_that("test r-fnw vs r-, stochastic", {
 
       reltol <- 0.05
-      B <- 999
+      B <- 9999
 
       data1 <<- fwildclusterboot:::create_data(
-        N = 10000,
+        N = 1000,
         N_G1 = 20,
         icc1 = 0.5,
         N_G2 = 20,
@@ -28,6 +28,10 @@ test_that("test r-fnw vs r-, stochastic", {
         ols = lm_fit#,
         #  wls = lm_fit_weights
       )
+# 
+      # object <- lm_fit
+      # type <- "rademacher"
+      # p_val_type = "two-tailed"
 
 
       for (object in lm_fits) {
@@ -39,6 +43,7 @@ test_that("test r-fnw vs r-, stochastic", {
           for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
 
             # test the wcr
+            pracma::tic()
             boot1 <- boottest(object,
                               param = "log_income",
                               clustid = c("group_id2"),
@@ -51,7 +56,9 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
+            pracma::toc()
 
+            pracma::tic()
             boot2 <- boottest(object,
                               param = "log_income",
                               clustid = c("group_id2"),
@@ -64,10 +71,12 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-
+            pracma::toc()
+            
             expect_equal(
               teststat(boot1), teststat(boot2), ignore_attr = TRUE
             )
+            
             expect_equal(
               pval(boot1), pval(boot2), ignore_attr = TRUE
             )
@@ -163,6 +172,7 @@ test_that("new bootstrap variants II - t_stat equivalence", {
 
   for(x in wcr_algos){
 
+    cat(x)
     res <-
       suppressWarnings(
         boottest(

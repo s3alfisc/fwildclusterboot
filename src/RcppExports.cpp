@@ -13,24 +13,20 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// boot_algo3_crv1
-List boot_algo3_crv1(const int B, const int G, const int k, arma::mat v, arma::mat scores_mat, arma::mat scores_boot, arma::mat tXXinv, arma::cube Ag, double ssc, int cores, arma::mat R);
-RcppExport SEXP _fwildclusterboot_boot_algo3_crv1(SEXP BSEXP, SEXP GSEXP, SEXP kSEXP, SEXP vSEXP, SEXP scores_matSEXP, SEXP scores_bootSEXP, SEXP tXXinvSEXP, SEXP AgSEXP, SEXP sscSEXP, SEXP coresSEXP, SEXP RSEXP) {
+// boot_algo3_crv1_denom
+arma::vec boot_algo3_crv1_denom(int B, int G, double ssc, arma::mat H, arma::vec Cg, arma::mat v, int cores);
+RcppExport SEXP _fwildclusterboot_boot_algo3_crv1_denom(SEXP BSEXP, SEXP GSEXP, SEXP sscSEXP, SEXP HSEXP, SEXP CgSEXP, SEXP vSEXP, SEXP coresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int >::type B(BSEXP);
-    Rcpp::traits::input_parameter< const int >::type G(GSEXP);
-    Rcpp::traits::input_parameter< const int >::type k(kSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type v(vSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type scores_mat(scores_matSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type scores_boot(scores_bootSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type tXXinv(tXXinvSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type Ag(AgSEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< int >::type G(GSEXP);
     Rcpp::traits::input_parameter< double >::type ssc(sscSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type H(HSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Cg(CgSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type v(vSEXP);
     Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type R(RSEXP);
-    rcpp_result_gen = Rcpp::wrap(boot_algo3_crv1(B, G, k, v, scores_mat, scores_boot, tXXinv, Ag, ssc, cores, R));
+    rcpp_result_gen = Rcpp::wrap(boot_algo3_crv1_denom(B, G, ssc, H, Cg, v, cores));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -178,7 +174,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_fwildclusterboot_boot_algo3_crv1", (DL_FUNC) &_fwildclusterboot_boot_algo3_crv1, 11},
+    {"_fwildclusterboot_boot_algo3_crv1_denom", (DL_FUNC) &_fwildclusterboot_boot_algo3_crv1_denom, 7},
     {"_fwildclusterboot_boot_algo3_crv3", (DL_FUNC) &_fwildclusterboot_boot_algo3_crv3, 10},
     {"_fwildclusterboot_get_c_all_boot_cpp", (DL_FUNC) &_fwildclusterboot_get_c_all_boot_cpp, 4},
     {"_fwildclusterboot_get_se_all_boot_cpp", (DL_FUNC) &_fwildclusterboot_get_se_all_boot_cpp, 4},

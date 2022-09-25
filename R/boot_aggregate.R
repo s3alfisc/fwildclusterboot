@@ -188,7 +188,7 @@
 #' }
 
 
-boot_aggregate = function(
+boot_aggregate <- function(
     x,
     agg,
     full = FALSE,
@@ -237,19 +237,19 @@ boot_aggregate = function(
   check_value_plus(agg, "match(att, period, cohort, TRUE) | scalar")
   if(agg %in% c("att", "period", "cohort", "TRUE")){
     if(isTRUE(x$is_sunab)){
-      agg_name = names(agg)
+      agg_name <- names(agg)
       if(agg == "att"){
         agg = x$model_matrix_info$sunab$agg_att
         # we also remove the previous vars
-        agg_rm = gsub("E::", "E::-?", agg, fixed = TRUE)
+        agg_rm <- gsub("E::", "E::-?", agg, fixed = TRUE)
       } else if(agg == "cohort"){
         agg = c("cohort" = "::[^-].*:cohort::(.+)")
-        agg_rm = gsub("E::", "E::-?", 
+        agg_rm <- gsub("E::", "E::-?", 
                       x$model_matrix_info$sunab$agg_att, fixed = TRUE)
       } else {
-        agg = x$model_matrix_info$sunab$agg_period
+        agg <- x$model_matrix_info$sunab$agg_period
       }
-      if(!is.null(agg_name)) names(agg) = agg_name
+      if(!is.null(agg_name)) names(agg) <- agg_name
     }
   } else if(isFALSE(agg)){
     agg = c("nothing to remove" = "we want all the coefficients")
