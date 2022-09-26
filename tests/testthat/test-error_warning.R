@@ -1,8 +1,7 @@
 test_that("errors and warnings q = 1", {
   
   skip_on_cran()
-  skip_on_ci()
-  
+
   if(TRUE){
 
     # ------------------------------------------------------------------ #
@@ -1463,8 +1462,7 @@ test_that("errors and warnings q = 1", {
 test_that("error warning IV/WRE and q > 1", {
   
   skip_on_cran()
-  skip_on_ci()
-  
+
   requireNamespace("ivreg")
   requireNamespace("fixest")
   requireNamespace("clubSandwich")

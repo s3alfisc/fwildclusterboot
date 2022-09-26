@@ -347,7 +347,6 @@ test_that("t-stat equivalence OLS - R and R-lean", {
 test_that("t-stat equivalence OLS - WildBootTests", {
   
   skip_on_cran()
-  skip_on_ci()
 
   julia_prep <- is_juliaconnector_prepared()
   cat("julia connector prepared? ", julia_prep, "\n")
@@ -603,8 +602,7 @@ test_that("t-stat equivalence OLS - WildBootTests", {
 test_that("t-stat equivalence OLS q > 1", {
   
   skip_on_cran()
-  skip_on_ci()
-  
+
   julia_prep <- is_juliaconnector_prepared()
   cat("julia connector prepared? ", julia_prep, "\n")
   
@@ -890,7 +888,6 @@ test_that("t-stat equivalence OLS q > 1", {
 test_that("t-stat equivalence IV", {
   
   skip_on_cran()
-  skip_on_ci()
 
   julia_prep <- is_juliaconnector_prepared()
   cat("julia connector prepared? ", julia_prep, "\n")
