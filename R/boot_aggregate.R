@@ -209,18 +209,18 @@ boot_aggregate <- function(
     getauxweights = FALSE,
     ...){
   
-
+  
   # note: all boottest function arguments are tested in boottest()
   # therefore, only check for supported subset of features
-
+  
   check_arg(bootstrap_type, "charin(fnw11)")
   
   check_arg(full, "logical scalar")
   # => later => extend it to more than one set of vars to agg
-
+  
   dots <- list(...)
   from_summary <- isTRUE(dots$from_summary)
-
+  
   no_agg <- FALSE
   agg_rm <- NULL
   check_value_plus(agg, "match(att, period, cohort, TRUE) | scalar")
@@ -234,7 +234,7 @@ boot_aggregate <- function(
       } else if(agg == "cohort"){
         agg = c("cohort" = "::[^-].*:cohort::(.+)")
         agg_rm <- gsub("E::", "E::-?", 
-                      x$model_matrix_info$sunab$agg_att, fixed = TRUE)
+                       x$model_matrix_info$sunab$agg_att, fixed = TRUE)
       } else {
         agg <- x$model_matrix_info$sunab$agg_period
       }
@@ -243,20 +243,20 @@ boot_aggregate <- function(
   } else if(isFALSE(agg)){
     agg = c("nothing to remove" = "we want all the coefficients")
   }
-
+  
   is_name <- !is.null(names(agg))
-
+  
   if(!is_name && !grepl("(", agg, fixed = TRUE)){
     stop("Argument 'agg' must be a character in
          which the pattern to match must be in between parentheses.
          So far there are no parenthesis: please have a look at the examples.")
   }
-
+  
   coef <- x$coefficients
   cname <- names(coef)
   V <- x$cov.scaled
   
-
+  
   qui <- grepl(agg, cname, perl = TRUE)
   if(!any(qui)){
     if(from_summary){
@@ -272,11 +272,11 @@ boot_aggregate <- function(
       stop("The argument 'agg' does not match any variable.")
     }
   }
-
+  
   if(!isTRUE(x$summary)){
     x <- summary(x, ...)
   }
-
+  
   cname_select <- cname[qui]
   if(is_name){
     root <- rep(names(agg), length(cname_select))
@@ -285,56 +285,19 @@ boot_aggregate <- function(
     root <- gsub(paste0(".*", agg, ".*"), "\\1", cname_select, perl = TRUE)
     val <- gsub(paste0(".*", agg, ".*"), "\\2", cname_select, perl = TRUE)
   }
-
+  
   mm <- model.matrix(x)
-
+  
   cat("Run the wild bootstrap: this might take some time...(but 
       hopefully not too much time =) ).", "\n")
-  # pracma::tic()
-  # boot_fit <-
-  #   boottest(
-  #     object = x,
-  #     param = param,
-  #     clustid = clustid,
-  #     B = B,
-  #     impose_null = impose_null,
-  #     bootstrap_type= bootstrap_type, 
-  #     nthreads = nthreads
-  #   )
-  # pracma::toc()
-
-  # B <- boot_fit$boot_iter
-  # #V <- boot_fit$vcov_boot
-  # V_boot <- boot_fit$boot_vcov
-  # coef_boot <- boot_fit$boot_coef
-
-  # note: because feols() allows for outprojection of fixed effects, 
-  # but boottest() currently does not, V_boot and coef_boot will have
-  # different dims than coef and V - need to pick appropriate sub matrices
   
-  # if(length(coef) != nrow(coef_boot)){
-  #   coef_selector <- which(names(coef) %in% rownames(coef_boot))
-  #   coef_boot <- coef_boot[coef_selector, ]
-  #   V_boot2 <- array(NA, c(length(coef_selector), length(coef_selector), B+1))
-  #   for(b in 1:(B+1)){
-  #     V_boot2[,,b] <- V_boot[coef_selector,coef_selector,b]
-  #   }
-  #   V_boot <- V_boot2
-  # }
-
-
   name_df <- unique(data.frame(root, val, stringsAsFactors = FALSE))
-
+  
   nk <- nrow(name_df)
   c_all <- vector(mode = "numeric", length = nk)
   se_all <- vector(mode = "numeric", length = nk)
-  #c_all_boot <- matrix(NA, nk, B+1)
-  #se_all_boot <- matrix(NA, nk, B+1)
-
   pvalues <- c_all 
   conf_int <- matrix(NA, nk, 2)
-  
-  # zvalue_boot <- matrix(NA, B, nk)
   
   pb <- txtProgressBar(min = 0, max = nk, initial = 0, style = 3) 
   
@@ -345,53 +308,32 @@ boot_aggregate <- function(
     r <- name_df[i, 1]
     v <- name_df[i, 2]
     v_names <- cname_select[root == r & val == v]
-
+    
     if(use_weights && !is.null(x$weights)){
       shares <- colSums(x$weights * sign(mm[, v_names, drop = FALSE]))
     } else {
       shares <- colSums(sign(mm[, v_names, drop = FALSE]))
     }
-
+    
     shares <- shares / sum(shares)
-
+    
     # The coef
     c_value <- sum(shares * coef[v_names])
-
+    
     # The variance
     n <- length(v_names)
     s1 <- matrix(shares, n, n)
     s2 <- matrix(shares, n, n, byrow = TRUE)
-
+    
     s <- s1 * s2
     
     var_value <- sum(s * V[v_names, v_names])
     se_value <- sqrt(var_value)
-
+    
     v_names_pos <- which(names(coef) %in% v_names)
-
+    
     c_all[i] <- c_value
     se_all[i] <- se_value
-
-
-    # create weighted bootstrap coefs and ses
-   
-    # c_all_boot[i,] <- get_c_all_boot_cpp(
-    #   coef_boot = coef_boot[v_names_pos,], 
-    #   shares= shares, 
-    #   B = B, 
-    #   cores = nthreads
-    # )
-    # se_all_boot[i,] <- get_se_all_boot_cpp(
-    #   V_boot = V_boot[v_names_pos, v_names_pos, ],
-    #   s= s,
-    #   B = B,
-    #   cores = nthreads
-    # )
-    
-    # for(b in 1:(B+1)){
-    #   var_value = sum(s * V_boot[v_names_pos, v_names_pos,b])
-    #   se_all_boot[i,b] = sqrt(var_value)
-    # }
     
     param <- names(shares)
     R <- shares
@@ -428,89 +370,23 @@ boot_aggregate <- function(
     conf_int[i,] <- confint.boottest(boot_fit)
     
   }
-    # th z & p values
-    zvalue <- c_all/se_all
-    #zvalue_boot <- c_all_boot / se_all_boot
+  # th z & p values
+  zvalue <- c_all/se_all
 
-    #pvalue <- rowMeans(abs(zvalue) < abs(zvalue_boot))
+  res <- cbind(
+    c_all,
+    pvalues, 
+    conf_int
+  )
+  colnames(res) <- c(
+    "Estimate",
+    "Pr(>|t|)", 
+    paste0("[",sign_level / 2, "%"),
+    paste0(1 - (sign_level / 2), "%","]")
+  )
 
-    # crit_vals <- t(
-    #   apply(
-    #     zvalue_boot, 
-    #     1,
-    #     function(x)
-    #       quantile(x, c(sign_level/2, 1-sign_level/2), na.rm = TRUE)
-    #     )
-    #   )
-    # 
-    # conf_int <- c_all +  crit_vals * se_all
-
-    res <- cbind(
-      c_all,
-      pvalues, 
-      conf_int
-    )
-    colnames(res) <- c(
-      "Estimate",
-      "Pr(>|t|)", 
-      paste0("[",sign_level / 2, "%"),
-      paste0(1 - (sign_level / 2), "%","]")
-    )
-    #pvalue(summary(x, agg = "TRUE"))
-    #confint(summary(x, agg = "TRUE"))
+  res
   
-    res
-    
-
-  # res = cbind(c_all, se_all, zvalue, pvalue)
-  # if(max(nchar(val)) == 0){
-  #   rownames(res) = name_df[[1]]
-  # } else {
-  #   rownames(res) = apply(name_df, 1, paste, collapse = "::")
-  # }
-  # 
-  # colnames(res) = c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
-  # 
-  # if(full){
-  #   if(!is.null(agg_rm)){
-  #     qui = grepl(agg_rm, cname, perl = TRUE)
-  #   }
-  # 
-  #   table_origin = x$coeftable
-  #   i_min = min(which(qui)) - 1
-  #   before = if(i_min > 0) table_origin[1:i_min, , drop = FALSE] else NULL
-  # 
-  #   i_after = (1:nrow(table_origin)) > i_min & !qui
-  #   after = if(any(i_after)) table_origin[i_after, , drop = FALSE] else NULL
-  # 
-  #   res = rbind(before, res, after)
-  # 
-  #   attr(res, "type") = attr(table_origin, "type")
-  # }
-  # 
-  # if(from_summary){
-  #   # We add the model_matrix_info needed in iplot()
-  #   mm_info = x$model_matrix_info
-  #   mm_info_agg = attr(agg, "model_matrix_info")
-  #   if(!is.null(mm_info_agg)){
-  #     tmp = list(mm_info_agg)
-  #     for(i in seq_along(mm_info)){
-  #       my_name = names(mm_info)[i]
-  #       if(my_name != ""){
-  #         tmp[[my_name]] = mm_info[[i]]
-  #       } else {
-  #         tmp[[1 + i]] = mm_info[[i]]
-  #       }
-  # 
-  #     }
-  #     mm_info = tmp
-  #   }
-  # 
-  #   res = list(coeftable = res, model_matrix_info = mm_info)
-  # }
-  # 
-  # 
-  # res
 }
 
 

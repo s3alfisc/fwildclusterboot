@@ -195,49 +195,37 @@ minor changes by Alexander Fischer
 \examples{
 
 \donttest{
-library(fwildclusterboot)
 library(fixest)
-library(did2s)
-data("df_het", package = "did2s")
-object = feols(
-  dep_var ~ sunab(year - rel_year, year) | state + year, 
-  df_het, 
-  cluster = ~state
-)
+# Simple DiD example
+data(base_stagg)
+# The DiD estimation
+res_sunab = feols(y ~ x1 + sunab(year_treated, year) | id + year, base_stagg)
+res_sunab_3ref = feols(y ~ x1 + sunab(
+ year_treated, year, ref.p = c(.F + 0:2, -1)) |
+                        id + year, 
+                      cluster = "id",
+                      base_stagg, 
+                      ssc = ssc(adj = FALSE, cluster.adj = FALSE))
+
+aggregate(res_sunab, agg = "ATT")
+# test ATT equivalence
+boot_att <- 
+ boot_aggregate(
+   res_sunab, 
+   B = 9999, 
+   agg = "ATT", 
+   clustid = "id" 
+ )
+head(boot_att)
+
+#'boot_agg2 <- 
+ boot_aggregate(
+   res_sunab, 
+   B = 99999, 
+   agg = TRUE
+   ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+ )
 
 
-agg1 = boot_aggregate(
-  x = object,
-  agg = TRUE,
-  full = FALSE,
-  use_weights = TRUE,
-  B = 9999, 
-  clustid = ~state,
-  nthreads = 1,
-  sign_level = 0.05,
-  impose_null = TRUE,
-  fe = ~ state
-)
-
-agg1 |> head()
-pvalue(summary(object, agg = TRUE)) |> head()
-confint(summary(object, agg = TRUE)) |> head()
-
-agg1 = fwildclusterboot:::boot_aggregate(
-  x = object,
-  agg = "att",
-  full = FALSE,
-  use_weights = TRUE,
-  B = 9999, 
-  clustid = ~state,
-  nthreads = 1,
-  sign_level = 0.05,
-  impose_null = TRUE,
-  fe = ~ state
-)
-
-agg1 |> head()
-pvalue(summary(object, agg = "att")) |> head()
-confint(summary(object, agg = "att")) |> head()
 }
 }

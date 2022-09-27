@@ -68,7 +68,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-
+            
             expect_equal(
               teststat(boot1), teststat(boot2), ignore_attr = TRUE
             )
@@ -82,12 +82,12 @@ test_that("test r-fnw vs r-, stochastic", {
             expect_equal(
               nobs(boot1), nobs(boot2), ignore_attr = TRUE
             )
-
+            
             # test the wcu
-
+            
             # new WCU11 ("fast and reliable") vs old WCR11 ("fast and wild")
-
-
+            
+            
             boot1 <- boottest(object,
                               param = "log_income",
                               clustid = c("group_id2"),
@@ -100,7 +100,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-
+            
             boot2 <- boottest(object,
                               param = "log_income",
                               clustid = c("group_id2"),
@@ -113,7 +113,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-
+            
             expect_equal(
               teststat(boot1), teststat(boot2), ignore_attr = TRUE
             )
@@ -123,19 +123,19 @@ test_that("test r-fnw vs r-, stochastic", {
             expect_equal(
               boot1$t_boot, boot2$t_boot, ignore_attr = TRUE
             )
-
-
-
+            
+            
+            
           }
         }
       }
-
+      
 })
 
 
 
 test_that("new bootstrap variants II - t_stat equivalence", {
-
+  
   N <- 1000
   N_G1 <- 17
   data <- fwildclusterboot:::create_data(

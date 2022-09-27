@@ -67,10 +67,11 @@ default type of exception to \code{warning()} and \code{stop()}, respectively.
 \details{
 This features has some limitations: it's hard to detect the exact length for
 each line when the string has multiple lines (after line breaks) and the
-string contains formatting tags. Thus, it can happen that lines are wrapped at
-an earlier length than expected. Furthermore, if you have multiple words in a
-format tag (\verb{\{.b one two three\}}), a line break might occur inside this tag,
-and the formatting no longer works (messing up the message-string).
+string contains formatting tags. Thus, it can happen that lines are
+wrapped at an earlier length than expected. Furthermore, if
+you have multiple words in a format tag (\verb{\{.b one two three\}}), a
+line break might occur inside this tag, and the formatting no longer
+works (messing up the message-string).
 }
 \examples{
 \dontrun{
