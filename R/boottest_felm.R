@@ -265,6 +265,33 @@
 #'   pval(boot1)
 #'   confint(boot1)
 #'   generics::tidy(boot1)
+#'   
+#' # run different bootstrap types following MacKinnon, Nielsen & Webb (2022):
+#' 
+#' # default: the fnw algorithm
+#' boot_fnw11 <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1", 
+#'   bootstrap_type = "fnw11"
+#' )
+#'
+#' # WCR 31 
+#'boot_WCR31 <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1",
+#'   bootstrap_type = "31"
+#' )
+#'
+#' # WCU33 
+#'boot_WCR31 <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1",
+#'   bootstrap_type = "33", 
+#'   impose_null = FALSE
+#' )
 #' }
 #'
 boottest.felm <- function(object,
@@ -372,6 +399,11 @@ boottest.felm <- function(object,
   } else {
     heteroskedastic <- FALSE
   }
+  
+  check_bootstrap_types(
+    param = param, 
+    bootstrap_type = bootstrap_type
+  )
   
   R_long <- process_R(
     R = R,

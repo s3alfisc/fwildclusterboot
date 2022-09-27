@@ -59,6 +59,7 @@ Imports:
     Matrix.utils,
     generics,
     dqrng, 
+    gtools, 
     JuliaConnectoR, 
     MASS, 
     Rcpp, 

@@ -1790,3 +1790,57 @@ test_that("error message when character vars in felm and fixest", {
 
 
 })
+
+
+test_that("other misc errors", {
+  
+  lm_fit <-
+    lm(
+      proposition_vote ~ treatment + ideology1 + log_income +
+        Q1_immigration,
+      data = fwildclusterboot:::create_data(
+        N = 1000,
+        N_G1 = 10,
+        icc1 = 0.01,
+        N_G2 = 10,
+        icc2 = 0.01,
+        numb_fe1 = 10,
+        numb_fe2 = 10,
+        seed = 1234
+      )
+    )
+  
+  expect_error(
+    boottest(
+      object = lm_fit, 
+      param = ~treatment, 
+      clustid = ~group_id1, 
+      B = 999, 
+      bootstrap_type = "31", 
+      engine = "WildBootTests.jl"
+    )
+  )
+
+  expect_error(
+    boottest(
+      object = lm_fit, 
+      param = ~treatment, 
+      clustid = ~group_id1, 
+      B = 999, 
+      bootstrap_type = "13", 
+      engine = "R-lean"
+    )
+  )
+  
+  expect_error(
+    boottest(
+      object = lm_fit, 
+      param = ~treatment, 
+      clustid = ~group_id1, 
+      B = 999, 
+      bootstrap_type = "33", 
+      engine = "R-lean"
+    )
+  )
+  
+})

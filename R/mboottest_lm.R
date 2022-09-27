@@ -184,13 +184,13 @@ mboottest.lm <- function(object,
                          ...) {
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
-
+  
   check_arg(object, "MBT class(lm)")
-
+  
   check_arg(clustid, "character scalar | character vector | formula")
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric matrix")
-
+  
   check_arg(seed, "scalar integer | NULL")
   check_arg(r, "numeric vector  | NULL")
   check_arg(bootcluster, "character vector | formula")
@@ -202,39 +202,39 @@ mboottest.lm <- function(object,
   check_arg(floattype, "charin(Float32, Float64")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(tol, "numeric scalar GT{0}")
-
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-
+  
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-
+  
   internal_seed <- set_seed(
     seed = seed,
     engine = "WildBootTests.jl",
     type = type
   )
-
-
+  
+  
   if (ssc[["fixef.K"]] != "none" ||
-    ssc[["cluster.df"]] != "conventional") {
+      ssc[["cluster.df"]] != "conventional") {
     x <- format_message(
       "Currently, boottest() only supports fixef.K = 'none'."
     )
     message(x)
   }
   
-
+  
   check_mboottest_args_plus(
     object = object,
     R = R,
     r = r,
     fe = NULL
   )
-
-
+  
+  
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess2.lm(
     object = object,
@@ -244,7 +244,7 @@ mboottest.lm <- function(object,
     bootcluster = bootcluster,
     engine = "WildBootTests.jl"
   )
-
+  
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -254,17 +254,17 @@ mboottest.lm <- function(object,
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-
+  
   julia_ssc <- get_ssc_julia(ssc)
   small <- julia_ssc$small
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
-
+  
   if (ssc[["fixef.K"]] != "none") {
     format_message(
       paste("Currently, boottest() only supports fixef.K = 'none'."))
   }
-
+  
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -291,7 +291,7 @@ mboottest.lm <- function(object,
     fe = NULL,
     fedfadj = 0L
   )
-
+  
   # collect results
   res_final <- list(
     p_val = res$p_val,
@@ -309,9 +309,9 @@ mboottest.lm <- function(object,
     engine = "WildBootTests.jl",
     internal_seed = internal_seed
   )
-
-
+  
+  
   class(res_final) <- "mboottest"
-
+  
   invisible(res_final)
 }

@@ -12,6 +12,7 @@ get_weights <- function(type,
   #' @param N_G_bootcluster Integer. The number of bootstrap clusters
   #' @param boot_iter The number of bootstrap iterations
   #' @return A matrix of dimension N_G_bootcluster x (boot_iter + 1)
+  #' @importFrom gtools permutations
   #' @noRd
   
 
@@ -55,7 +56,8 @@ get_weights <- function(type,
   if (full_enumeration) {
       type <- 0
       v0 <-
-        gtools_permutations(
+        # gtools_permutations(
+        permutations(
           n = 2,
           r = N_G_bootcluster,
           v = c(1, -1),

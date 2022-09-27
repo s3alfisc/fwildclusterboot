@@ -15,8 +15,9 @@ All new bootstrap variants are implemented in `{fwildclusterboot}` and can be ca
 
 To run all bootstrap types with the null hypothesis imposed on the bootstrap data generating process, you would have to specify the `bootstrap_type` function argument: 
 
-```{r setup}
+```{r setup, warnings = FALSE}
 library(fwildclusterboot)
+library(modelsummary)
 
 N <- 1000
 N_G1 <- 17
@@ -29,7 +30,6 @@ data <- fwildclusterboot:::create_data(
   numb_fe1 = 10,
   numb_fe2 = 5,
   seed = 41224,
-  #seed = 123,
   weights = 1:N / N
 )
 
@@ -38,40 +38,30 @@ lm_fit <- lm(
   data = data
 )
 
-wcr_algos <- c("11", "13", "31", "33")
-p_val <- t_stat <- 
-  list()
+wcr_algos <- c("fnw11","11", "13", "31", "33")
 
-for(x in wcr_algos){
-  
+run_all <- 
+lapply(wcr_algos, function(x){  
   res <- 
-    suppressWarnings(
-        boottest(
+    boottest(
       lm_fit, 
       param = ~treatment, 
       clustid = ~group_id1,
       B = 9999, 
       impose_null = TRUE,
-      engine = "R",
       bootstrap_type = x,
-      seed = 123, 
-      ssc = boot_ssc(
-        adj = FALSE, 
-        cluster.adj = FALSE
-        )
-      )
+      seed = 123
     )
-  
-  p_val[[x]] <- pval(res)
-  t_stat[[x]] <- teststat(res)
-  
-}
+  })
 
-df <- data.frame(
-  "p-values" = unlist(p_val), 
-  "t-statistics" = unlist(t_stat)
+names(run_all) <- paste("WCR", c("11 F&W", "11 F&R", "13 F&R", "31 F&R", "33 F&R"))
+
+msummary(
+  run_all, 
+  estimate = "{estimate} ({p.value})", 
+  statistic = "[{conf.low}, {conf.high}]"
 )
 
-df
-
 ```
+
+Given the same `seed = 123`, both implementations of the `11` algorithm produce exactly the same p-values. The p-values produced by all other algorithms differ slightly, but are overall very close to each other. Confidence intervals are currently only implemented for the `fnw11` algorithm.

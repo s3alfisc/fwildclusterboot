@@ -254,10 +254,10 @@ check_boot_algo3 <- function(
   #' @param param character vector. the parameters included in the hypothesis
   #' @noRd
   
-
+  
   if(R != 1L || r != 0){
-
-      stop("Bootstraps of type '11', '13', '31', '33' currently
+    
+    stop("Bootstraps of type '11', '13', '31', '33' currently
            only support hypotheses of the form R * beta = 0 vs beta <> 0, 
            where R is a scalar equal to 1.")
   }
@@ -266,7 +266,7 @@ check_boot_algo3 <- function(
     stop("The '13', '31', and '33'
          bootstrap variants currently only
          support oneway clustering when 'boot_engine' == 'R'."
-         )
+    )
   }
   
   if (!is.null(fe)) {
@@ -406,4 +406,57 @@ process_R <- function(R, param) {
     }
   }
   R
+}
+
+
+check_engine_btype <- function(
+    engine, 
+    bootstrap_type){
+  
+  if(engine == "WildBootTests.jl"){
+    if(!(bootstrap_type %in% c("11", "fnw11", "31"))){
+      stop(
+        paste(
+          "The bootstrap of type", 
+          bootstrap_type, 
+          "is not yet supported via 'WildBootTests. You can run it via 
+          the 'R' engine instead.'")
+      )
+    }
+  } else if(engine == "R-lean"){
+    if(bootstrap_type != "fnw11"){
+      if(bootstrap_type == "31"){
+        stop(
+          paste(
+            "The bootstrap of type", 
+            bootstrap_type, 
+            "is not yet supported via 'R-lean'. You can run it via 
+          the 'R' or 'WildBootTests.jl' engines instead.'")
+        )
+      } else {
+        stop(
+          paste(
+            "The bootstrap of type", 
+            bootstrap_type, 
+            "is not yet supported via 'R-lean'. You can run it via 
+          the 'R' engine instead.'")
+        )
+      }
+      
+    }
+  }
+  
+}
+
+
+check_bootstrap_types <- function(param, bootstrap_types){
+  
+  if(length(param) > 1){
+    if(bootstrap_type != "fnw11"){
+      stop("Only bootstrap_type = 'fnw11' is currently supported with
+           hypotheses that contain more than one parameter. This feature 
+           will be added in the near future.")
+    }
+  }
+  
 }

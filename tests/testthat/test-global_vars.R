@@ -1,8 +1,7 @@
 test_that("global engine", {
   
   skip_on_cran()
-  skip_on_ci()
-  
+
 
   if(TRUE){
     data(voters)
