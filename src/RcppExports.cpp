@@ -50,34 +50,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// get_c_all_boot_cpp
-NumericVector get_c_all_boot_cpp(NumericVector coef_boot, NumericVector shares, int B, int cores);
-RcppExport SEXP _fwildclusterboot_get_c_all_boot_cpp(SEXP coef_bootSEXP, SEXP sharesSEXP, SEXP BSEXP, SEXP coresSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type coef_boot(coef_bootSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type shares(sharesSEXP);
-    Rcpp::traits::input_parameter< int >::type B(BSEXP);
-    Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_c_all_boot_cpp(coef_boot, shares, B, cores));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_se_all_boot_cpp
-NumericVector get_se_all_boot_cpp(NumericMatrix V_boot, NumericVector s, int B, int cores);
-RcppExport SEXP _fwildclusterboot_get_se_all_boot_cpp(SEXP V_bootSEXP, SEXP sSEXP, SEXP BSEXP, SEXP coresSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type V_boot(V_bootSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type s(sSEXP);
-    Rcpp::traits::input_parameter< int >::type B(BSEXP);
-    Rcpp::traits::input_parameter< int >::type cores(coresSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_se_all_boot_cpp(V_boot, s, B, cores));
-    return rcpp_result_gen;
-END_RCPP
-}
 // eigenMapMatMult
 SEXP eigenMapMatMult(const Eigen::Map<Eigen::MatrixXd> A, Eigen::Map<Eigen::MatrixXd> B, int nthreads);
 RcppExport SEXP _fwildclusterboot_eigenMapMatMult(SEXP ASEXP, SEXP BSEXP, SEXP nthreadsSEXP) {
@@ -176,8 +148,6 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_fwildclusterboot_boot_algo3_crv1_denom", (DL_FUNC) &_fwildclusterboot_boot_algo3_crv1_denom, 7},
     {"_fwildclusterboot_boot_algo3_crv3", (DL_FUNC) &_fwildclusterboot_boot_algo3_crv3, 10},
-    {"_fwildclusterboot_get_c_all_boot_cpp", (DL_FUNC) &_fwildclusterboot_get_c_all_boot_cpp, 4},
-    {"_fwildclusterboot_get_se_all_boot_cpp", (DL_FUNC) &_fwildclusterboot_get_se_all_boot_cpp, 4},
     {"_fwildclusterboot_eigenMapMatMult", (DL_FUNC) &_fwildclusterboot_eigenMapMatMult, 3},
     {"_fwildclusterboot_cpp_get_nb_threads", (DL_FUNC) &_fwildclusterboot_cpp_get_nb_threads, 0},
     {"_fwildclusterboot_sample_weights", (DL_FUNC) &_fwildclusterboot_sample_weights, 2},

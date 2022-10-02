@@ -414,7 +414,8 @@ boottest.lm <- function(object,
     R = R_long,
     param = param,
     bootcluster = bootcluster,
-    engine = engine
+    engine = engine, 
+    bootstrap_type = bootstrap_type
   )
   
   enumerate <-

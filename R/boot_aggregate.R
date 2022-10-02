@@ -372,7 +372,7 @@ boot_aggregate <- function(
   }
   # th z & p values
   zvalue <- c_all/se_all
-
+  
   res <- cbind(
     c_all,
     pvalues, 
@@ -384,7 +384,7 @@ boot_aggregate <- function(
     paste0("[",sign_level / 2, "%"),
     paste0(1 - (sign_level / 2), "%","]")
   )
-
+  
   res
   
 }

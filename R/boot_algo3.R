@@ -69,6 +69,7 @@ boot_algo3 <- function(preprocessed_object,
   R <- preprocessed_object$R0
   cluster_df <- preprocessed_object$clustid
   clustid <- names(cluster_df)
+  fe <- preprocessed_object$fe
   cluster <- as.factor(cluster_df[,1])
   bootcluster <- preprocessed_object$bootcluster
   G <- N_G_bootcluster <- length(unique(bootcluster[[1]]))
@@ -309,6 +310,7 @@ boot_algo3 <- function(preprocessed_object,
   # get original t-stat.
 
   if(crv_type == "crv1"){
+    
     vcov <- sandwich::vcovCL(
       object,
       reformulate(clustid),
@@ -323,6 +325,8 @@ boot_algo3 <- function(preprocessed_object,
       )
   }
 
+  print(dim(R))
+  
   se0 <- sqrt(small_sample_correction * R %*% vcov %*% t(R))
   se0 <- as.vector(se0)
 

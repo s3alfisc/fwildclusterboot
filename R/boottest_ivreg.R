@@ -304,7 +304,8 @@ boottest.ivreg <- function(object,
     R = R,
     param = param,
     bootcluster = bootcluster,
-    engine = "WildBootTests.jl"
+    engine = "WildBootTests.jl", 
+    bootstrap_type = NULL
   )
   enumerate <-
     check_set_full_enumeration(

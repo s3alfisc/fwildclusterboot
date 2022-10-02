@@ -264,7 +264,8 @@ mboottest.fixest <- function(object,
     param = NULL,
     bootcluster = bootcluster,
     fe = fe,
-    engine = "WildBootTests.jl"
+    engine = "WildBootTests.jl", 
+    bootstrap_type = bootstrap_type
   )
   
   enumerate <-

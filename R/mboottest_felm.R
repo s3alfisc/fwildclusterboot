@@ -242,7 +242,8 @@ mboottest.felm <- function(object,
     param = NULL,
     bootcluster = bootcluster,
     fe = fe,
-    engine = "WildBootTests.jl"
+    engine = "WildBootTests.jl", 
+    bootstrap_type = NULL
   )
   
   enumerate <-

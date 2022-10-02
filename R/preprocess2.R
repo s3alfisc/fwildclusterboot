@@ -20,7 +20,8 @@ preprocess2.fixest <-
            param,
            fe,
            engine,
-           bootcluster) {
+           bootcluster, 
+           bootstrap_type) {
     #' preprocess data for objects of type fixest
     #'
     #' @param object an object of type fixest
@@ -34,6 +35,8 @@ preprocess2.fixest <-
     #'  "WildBootTests.jl"
     #' @param bootcluster a character string containing the name(s) of the
     #'  bootcluster variables. Alternatively, "min" or "max"
+    #' @param bootstrap_type Which bootstrap type should be run? '11', '13', '31' or 
+    #' '33'. For more infos, see the paper by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
     #'
@@ -133,7 +136,9 @@ preprocess2.fixest <-
         fe = fe,
         N = N,
         has_weights = has_weights,
-        engine = engine
+        engine = engine, 
+        bootstrap_type = bootstrap_type, 
+        clustid_char = clustid
       )
 
 
@@ -239,7 +244,8 @@ preprocess2.felm <-
            param,
            fe,
            engine,
-           bootcluster) {
+           bootcluster, 
+           bootstrap_type) {
     #' preprocess data for objects of type felm
     #'
     #' @param object an object of type felm
@@ -253,6 +259,8 @@ preprocess2.felm <-
     #'  "WildBootTests.jl"
     #' @param bootcluster a character string containing the name(s) of the
     #'  bootcluster variables. Alternatively, "min" or "max"
+    #' @param bootstrap_type Which bootstrap type should be run? '11', '13', '31' or 
+    #' '33'. For more infos, see the paper by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
     #'
@@ -318,7 +326,9 @@ preprocess2.felm <-
         fe = fe,
         N = N,
         has_weights = has_weights,
-        engine = engine
+        engine = engine, 
+        bootstrap_type = bootstrap_type, 
+        clustid_char = clustid
       )
       X <- get_fe$X
       Y <- get_fe$Y
@@ -379,7 +389,7 @@ preprocess2.felm <-
       R0[, 1:p] <- R
     }
     # }
-
+    
     res <- list(
       Y = Y,
       X = X,
@@ -404,13 +414,13 @@ preprocess2.felm <-
       has_fe = has_fe,
       all_c = all_c
     )
-
+    
     if (is_iv) {
       class(res) <- c("preprocess", "iv")
     } else {
       class(res) <- c("preprocess", "ols")
     }
-
+    
     res
   }
 
@@ -421,7 +431,8 @@ preprocess2.lm <-
            R,
            param,
            engine,
-           bootcluster) {
+           bootcluster, 
+           bootstrap_type = NULL) {
     #' preprocess data for objects of type lm
     #'
     #' @param object an object of type lm
@@ -437,23 +448,23 @@ preprocess2.lm <-
     #' @noRd
     #'
     #' @method preprocess2 lm
-
+    
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
     fml <- Formula::as.Formula(fml)
-
+    
     N <- nobs(object)
     # lm and felm don't drop NAs due to multicollinearity, while fixest does
     k <- length(na.omit(coef(object)))
     p <- object$p
-
+    
     is_iv <- FALSE
-
+    
     X <- model_matrix(object, collin.rm = TRUE)
     Y <- model.response(model.frame(object))
     has_fe <- FALSE
-
+    
     weights <- weights(object)
     if (is.null(weights)) {
       has_weights <- FALSE
@@ -461,7 +472,7 @@ preprocess2.lm <-
     } else {
       has_weights <- TRUE
     }
-
+    
     # get cluster variable
     if (!is.null(clustid)) {
       clustid_list <- get_cluster(
@@ -471,13 +482,13 @@ preprocess2.lm <-
         bootcluster = bootcluster,
         call_env = call_env
       )
-
+      
       vcov_sign <- clustid_list$vcov_sign
       clustid <- clustid_list$clustid
       clustid_dims <- ncol(clustid)
       N_G <- clustid_list$N_G
       cluster_names <- clustid_list$cluster_names
-
+      
       cluster_bootcluster <- clustid_list$cluster_bootcluster
       bootcluster <- clustid_list$bootcluster
       all_c <- clustid_list$all_c
@@ -487,8 +498,8 @@ preprocess2.lm <-
         clustid <- bootcluster <- N_G <- cluster_names <- NULL
       cluster_bootcluster <- bootcluster <- all_c <- NULL
     }
-
-
+    
+    
     instruments <- X_exog <- X_endog <- NULL
     if (!is.matrix(R)) {
       R0 <- rep(0, length(colnames(X)))
@@ -500,9 +511,9 @@ preprocess2.lm <-
       R0 <- matrix(0, q, ncol(X))
       R0[, 1:p] <- R
     }
-
-
-
+    
+    
+    
     res <- list(
       Y = Y,
       X = X,
@@ -527,9 +538,9 @@ preprocess2.lm <-
       has_fe = has_fe,
       all_c = all_c
     )
-
+    
     class(res) <- c("preprocess", "ols")
-
+    
     res
   }
 
@@ -541,7 +552,8 @@ preprocess2.ivreg <-
            R,
            param,
            engine,
-           bootcluster) {
+           bootcluster, 
+           bootstrap_type = NULL) {
     #' preprocess data for objects of type ivreg
     #'
     #' @param object an object of type ivreg
@@ -557,21 +569,20 @@ preprocess2.ivreg <-
     #' @noRd
     #'
     #' @method preprocess2 ivreg
-
+    
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
     fml <- Formula::as.Formula(fml)
     is_iv <- TRUE
-
+    
     N <- nobs(object)
     # lm and felm don't drop NAs due to multicollinearity, while fixest does
-    k <- length(na.omit(coef(object)))
     p <- object$p
-
+    
     is_iv <- FALSE
     has_fe <- FALSE
-
+    
     X_endog <-
       model.matrix(
         object,
@@ -588,11 +599,11 @@ preprocess2.ivreg <-
         component = "instruments", na.rm = TRUE
       )[, object$instruments, drop = FALSE]
     Y <- model.response(model.frame(object))
-
+    
     n_exog <- length(object$exogenous)
     n_endog <- length(object$endogenous)
     n_instruments <- length(object$instruments)
-
+    
     weights <- weights(object)
     if (is.null(weights)) {
       has_weights <- FALSE
@@ -600,7 +611,7 @@ preprocess2.ivreg <-
     } else {
       has_weights <- TRUE
     }
-
+    
     # get cluster variable
     if (!is.null(clustid)) {
       clustid_list <- get_cluster(
@@ -610,13 +621,13 @@ preprocess2.ivreg <-
         bootcluster = bootcluster,
         call_env = call_env
       )
-
+      
       vcov_sign <- clustid_list$vcov_sign
       clustid <- clustid_list$clustid
       clustid_dims <- ncol(clustid)
       N_G <- clustid_list$N_G
       cluster_names <- clustid_list$cluster_names
-
+      
       cluster_bootcluster <- clustid_list$cluster_bootcluster
       bootcluster <- clustid_list$bootcluster
       all_c <- clustid_list$all_c
@@ -626,8 +637,8 @@ preprocess2.ivreg <-
         clustid <- bootcluster <- N_G <- cluster_names <- NULL
       cluster_bootcluster <- bootcluster <- all_c <- NULL
     }
-
-
+    
+    
     # iv prep
     R0 <- rep(0, n_exog + n_endog)
     R0[
@@ -635,14 +646,14 @@ preprocess2.ivreg <-
         param, 
         c(
           names(object$exogenous), names(object$endogenous)
-          )
         )
-      ] <- R
+      )
+    ] <- R
     names(R0) <- c(
       names(object$exogenous), 
       names(object$endogenous)
     )
-
+    
     res <- list(
       Y = Y,
       X = NULL,
@@ -668,10 +679,10 @@ preprocess2.ivreg <-
       has_fe = has_fe,
       all_c = all_c
     )
-
-
+    
+    
     class(res) <- c("preprocess", "iv")
-
+    
     res
   }
 
@@ -690,13 +701,13 @@ demean_fe <- function(X, Y, fe, has_weights, N) {
   #' design matrix X and depvar Y
   #'
   #' @noRd
-
+  
   g <- collapse::GRP(fe, call = FALSE)
   X <- collapse::fwithin(X, g)
   Y <- collapse::fwithin(Y, g)
-
+  
   fixed_effect_W <- as.factor(fe[, 1])
-
+  
   if (!has_weights) {
     levels(fixed_effect_W) <-
       (1 / table(fe)) # because duplicate levels are forbidden
@@ -708,10 +719,10 @@ demean_fe <- function(X, Y, fe, has_weights, N) {
     )
     # levels(fixed_effect_W) <- 1 / table(fixed_effect)
   }
-
+  
   W <- Matrix::Diagonal(N, as.numeric(as.character(fixed_effect_W)))
   n_fe <- length(unique(fe[, 1]))
-
+  
   res <- list(
     X = X,
     Y = Y,
@@ -719,13 +730,13 @@ demean_fe <- function(X, Y, fe, has_weights, N) {
     W = W,
     n_fe = n_fe
   )
-
+  
   res
 }
 
 
 transform_fe <-
-  function(object, X, Y, fe, has_weights, N, engine) {
+  function(object, X, Y, fe, has_weights, N, engine, bootstrap_type, clustid_char) {
     #' preprocess the model fixed effects
     #'
     #'  If is.null(fe) == TRUE, all
@@ -748,29 +759,29 @@ transform_fe <-
     #'         be projected out
     #'
     #' @noRd
-
+    
     all_fe <- model_matrix(object, type = "fixef", collin.rm = TRUE)
     # make sure all fixed effects variables are characters
-
+    
     n_fe <- ncol(all_fe)
     all_fe_names <- names(all_fe)
     k2 <- Reduce("+", lapply(all_fe, function(x) {
       length(unique(x))
     }))
-
+    
     fe_df <- W <- n_fe <- NULL
-
+    
     # if a fe is to be projected out in the bootstrap
     if (!is.null(fe)) {
       # add all fe except for fe to data frame
       fe_df <- all_fe[, fe, drop = FALSE]
       add_fe <- all_fe[, all_fe_names != fe, drop = FALSE]
       add_fe_names <- names(add_fe)
-
+      
       # nothing to add if only one fixed effect in model
       if (length(add_fe_names) != 0) {
         fml_fe <- reformulate(add_fe_names, response = NULL)
-
+        
         add_fe_dummies <-
           model.matrix(
             fml_fe, model.frame(
@@ -786,9 +797,16 @@ transform_fe <-
         X <-
           as.matrix(collapse::add_vars(as.data.frame(X), add_fe_dummies))
       }
-
+      
       # project out fe
       if (engine == "R") {
+        if(bootstrap_type != "fnw11"){
+          if(fe != clustid_char){
+            stop("Only cluster fixed effects are supported for bootstrap_types 
+                 '11', '13', '31', '33'.")
+          }
+        }
+        
         # WildBootTests.jl does demeaning internally
         prep_fe <- demean_fe(X, Y, fe_df, has_weights, N)
         X <- prep_fe$X
@@ -805,7 +823,7 @@ transform_fe <-
       X <-
         as.matrix(collapse::add_vars(as.data.frame(X), add_fe_dummies))
     }
-
+    
     res <- list(
       X = X,
       Y = Y,
@@ -814,7 +832,7 @@ transform_fe <-
       k2 = k2,
       fixed_effect = fe_df
     )
-
+    
     res
   }
 

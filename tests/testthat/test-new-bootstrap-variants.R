@@ -14,11 +14,11 @@ test_that("test r-fnw vs r-, stochastic", {
         seed = 908361239,
         weights = 1:N / N
       )
-
+      
       lm_fit <- lm(proposition_vote ~ treatment + log_income,
                    data = data1
       )
-
+      
       lm_fit_weights <- lm(
         proposition_vote ~ treatment + log_income,
         weights = data1$weights,
@@ -28,20 +28,20 @@ test_that("test r-fnw vs r-, stochastic", {
         ols = lm_fit#,
         #  wls = lm_fit_weights
       )
-# 
+      # 
       # object <- lm_fit
       # type <- "rademacher"
       # p_val_type = "two-tailed"
-
-
+      
+      
       for (object in lm_fits) {
         cat("start ols/wls", "\n")
         set.seed(12391786)
         # type <- "rademacher"
         for (type in c("rademacher", "webb", "mammen", "norm")) {
-
+          
           for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
-
+            
             # test the wcr
             boot1 <- boottest(object,
                               param = c("treatment", "log_income"),
@@ -55,7 +55,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
-    
+            
             boot2 <- boottest(object,
                               param = c("treatment", "log_income"),
                               clustid = c("group_id2"),
@@ -348,6 +348,69 @@ test_that("variants 31 R vs Julia", {
     )
     
   }
+  
+})
+
+
+test_that("new variants and fixed effects", {
+  
+  library(fixest)
+  library(fwildclusterboot)
+  
+  B <- 9999
+  
+  data1 <<- fwildclusterboot:::create_data(
+    N = 1000,
+    N_G1 = 20,
+    icc1 = 0.5,
+    N_G2 = 20,
+    icc2 = 0.2,
+    numb_fe1 = 10,
+    numb_fe2 = 10,
+    seed = 908361239,
+    weights = 1:N / N
+  )
+  
+  feols_fit <- feols(proposition_vote ~ treatment + log_income | group_id1,
+               data = data1
+  )
+  lm_fit <- lm(proposition_vote ~ treatment + log_income + as.factor(group_id1),
+                     data = data1
+  )  
+  
+  boot13_lm <- boottest(lm_fit,
+                     B = 9999,
+                     param = "treatment",
+                     clustid = "group_id1",
+                     bootstrap_type = "31"
+  )
+  
+  boot13_fe <- boottest(feols_fit,
+                     B = 9999,
+                     param = "treatment",
+                     clustid = "group_id1",
+                     bootstrap_type = "31"
+  )
+
+  expect_error(
+   boot13 <- boottest(feols_fit,
+                          B = 9999,
+                          param = "treatment",
+                          clustid = "group_id1",
+                          bootstrap_type = "13", 
+                          fe= "group_id1"
+    )
+  )
+  
+  boot13fe <- boottest(feols_fit,
+                     B = 999,
+                     param = "treatment",
+                     clustid = "group_id1",
+                     bootstrap_type = "13"#, 
+                     #fe = "group_id1"
+  )
+  
+    
   
 })
 

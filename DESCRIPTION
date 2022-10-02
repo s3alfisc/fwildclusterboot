@@ -55,8 +55,6 @@ Imports:
     collapse,
     Formula,
     dreamerr,
-    Matrix,
-    Matrix.utils,
     generics,
     dqrng, 
     gtools, 

@@ -441,7 +441,8 @@ boottest.fixest <- function(object,
     param = param,
     bootcluster = bootcluster,
     fe = fe,
-    engine = engine
+    engine = engine, 
+    bootstrap_type = bootstrap_type
   )
   
   enumerate <-
