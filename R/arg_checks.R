@@ -449,7 +449,7 @@ check_engine_btype <- function(
 }
 
 
-check_bootstrap_types <- function(param, bootstrap_types){
+check_bootstrap_types <- function(param, bootstrap_type){
   
   if(length(param) > 1){
     if(bootstrap_type != "fnw11"){

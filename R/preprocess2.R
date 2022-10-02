@@ -578,6 +578,7 @@ preprocess2.ivreg <-
     
     N <- nobs(object)
     # lm and felm don't drop NAs due to multicollinearity, while fixest does
+    k <- length(na.omit(coef(object)))
     p <- object$p
     
     is_iv <- FALSE
