@@ -4,15 +4,15 @@ test_that("test r-fnw vs r-, stochastic", {
       B <- 9999
 
       data1 <<- fwildclusterboot:::create_data(
-        N = 10000,
+        N = 1000,
         N_G1 = 20,
         icc1 = 0.5,
         N_G2 = 20,
         icc2 = 0.2,
         numb_fe1 = 10,
         numb_fe2 = 10,
-        seed = 908361239,
-        #seed = 123,
+        #seed = 908361239,
+        seed = 123123,
         weights = 1:N / N
       )
       
@@ -31,7 +31,7 @@ test_that("test r-fnw vs r-, stochastic", {
       )
       # 
       # object <- lm_fit
-      # type <- "rademacher"
+      # type <- "mammen"
       # p_val_type = "two-tailed"
       
       
