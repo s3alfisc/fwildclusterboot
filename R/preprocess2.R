@@ -5,6 +5,7 @@
 #' @param ... other arguments
 #' @noRd
 #'
+#' @importFrom Matrix Diagonal
 #' @return An object of class \code{preprocess2}.
 
 preprocess2 <- function(object, ...) {

@@ -140,7 +140,7 @@
 #' 
 #' @examples 
 #' 
-#' \donttest{
+#' \dontrun{
 #' if(requireNamespace("fixest")){
 #'library(fixest)
 #'data(base_stagg)

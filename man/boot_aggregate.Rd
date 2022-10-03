@@ -194,7 +194,7 @@ minor changes by Alexander Fischer
 }
 \examples{
 
-\donttest{
+\dontrun{
 if(requireNamespace("fixest")){
 library(fixest)
 data(base_stagg)

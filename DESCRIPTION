@@ -60,6 +60,7 @@ Imports:
     generics,
     dqrng, 
     gtools, 
+    Matrix,
     JuliaConnectoR, 
     MASS, 
     Rcpp, 
