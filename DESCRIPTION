@@ -30,12 +30,14 @@ Authors@R:
 	        "Krantz", 
 	         role = c("ctb"))
 	)
-Description: Implementation of the fast algorithm for wild cluster bootstrap 
-             inference developed in Roodman et al (2019, STATA Journal) for 
-             linear regression models <doi:10.1177/1536867X19830877>, 
+Description: Implementation of fast algorithms for wild cluster bootstrap 
+             inference developed in Roodman et al (2019, STATA Journal,
+             <doi:10.1177/1536867X19830877>) and MacKinnon et al (2022), 
              which makes it feasible to quickly calculate bootstrap test 
              statistics based on a large number of bootstrap draws even for 
-             large samples. Multiway clustering, regression weights, 
+             large samples. Multiple bootstrap types as described in MacKinnon, 
+             Nielsen & Webb (2022) are supported. 
+             Further, multiway clustering, regression weights, 
              bootstrap weights, fixed effects and subcluster bootstrapping
              are supported. Further, both restricted (WCR) and unrestricted
              (WCU) bootstrap are supported. Methods are provided for a variety 

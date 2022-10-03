@@ -134,23 +134,17 @@ boot_algo2 <-
     # dim = N_G x k
     Q1 <-
       collapse::fsum(WX * as.vector(Q), g)
-    # Q1 as in notes "Implementation details. Formerly called "SuXa".
-    # dim = N_G x k
-    # "crosstab for vectors" via sparse matrices
-    P2_bootcluster <- t(
-      collapse::fsum(
-        diag(as.vector(WXARP)), 
-        as.vector(bootcluster[[1]])
-      )
+    
+    P2_bootcluster <- vec2mat(
+      x = as.vector(WXARP),
+      group_id = g$group.id
+    )
+        
+    Q2_bootcluster <- vec2mat(
+      x = as.vector(WXARQ),
+      group_id = g$group.id
     )
     
-    Q2_bootcluster <- t(
-      collapse::fsum(
-        diag(as.vector(WXARQ)), 
-        as.vector(bootcluster[[1]])
-      )
-    )
-    # 
     # P2_bootcluster <- Matrix::t(Matrix.utils::aggregate.Matrix(
     #   # see notes; formerly diag_XinvXXRuS_a
     #   Matrix::Diagonal(

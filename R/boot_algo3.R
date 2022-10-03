@@ -325,8 +325,6 @@ boot_algo3 <- function(preprocessed_object,
       )
   }
 
-  print(dim(R))
-  
   se0 <- sqrt(small_sample_correction * R %*% vcov %*% t(R))
   se0 <- as.vector(se0)
 

@@ -52,8 +52,6 @@ boot_algo1 <-
     #' @param seed Integer scalar. Either set via boottest()'s seed argument
     #' or inherited from R's global seed (set via set.seed)
     #' @return A list of ...
-    #' @importFrom Matrix t Diagonal
-    #' @importFrom Matrix.utils aggregate.Matrix
     #' @importFrom collapse fsum GRP
     #' @importFrom stats as.formula coef model.matrix model.response
     #' model.weights residuals rlnorm rnorm update

@@ -4,7 +4,7 @@ test_that("test r-fnw vs r-, stochastic", {
       B <- 9999
 
       data1 <<- fwildclusterboot:::create_data(
-        N = 1000,
+        N = 10000,
         N_G1 = 20,
         icc1 = 0.5,
         N_G2 = 20,
@@ -12,6 +12,7 @@ test_that("test r-fnw vs r-, stochastic", {
         numb_fe1 = 10,
         numb_fe2 = 10,
         seed = 908361239,
+        #seed = 123,
         weights = 1:N / N
       )
       
@@ -42,6 +43,9 @@ test_that("test r-fnw vs r-, stochastic", {
           
           for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
             
+            cat("type: ",type, "\n")
+            cat("p_val_type: ",p_val_type, "\n")
+            
             # test the wcr
             boot1 <- boottest(object,
                               param = c("log_income"),
@@ -52,6 +56,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               bootstrap_type = "fnw11",
                               seed = 432,
                               type = type,
+                              p_val_type = p_val_type,
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
@@ -65,6 +70,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               bootstrap_type = "11",
                               seed = 432,
                               type = type,
+                              p_val_type = p_val_type,
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )

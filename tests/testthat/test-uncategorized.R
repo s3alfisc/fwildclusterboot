@@ -546,3 +546,26 @@ test_that("uncategorized tests", {
     clustid = "group_id1"
   ))
 })
+
+test_that("test vec2mat", {
+  
+  set.seed(5123)
+  N <- 100
+  x <- rnorm(N)
+  cluster <- sample(letters[1:5], N, TRUE)
+  g <- collapse::GRP(cluster, call = FALSE)
+  mat1 <- fwildclusterboot:::vec2mat(x = x, group_id = g$group.id)
+  
+  mat2 <- aggregate(
+    x = diag(x), 
+    by = list(g$group.id), 
+    FUN = "sum", 
+    simplify = TRUE
+  )
+  mat2 <- t(as.matrix(mat2))
+  expect_equal(mat1, mat2[-1,], ignore_attr = TRUE)
+
+  
+  
+  
+})

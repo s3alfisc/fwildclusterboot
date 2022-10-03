@@ -446,3 +446,31 @@ sub_f <- function (x, fac, dim){
                      both = x[fac == f, 
                      fac == f, drop = FALSE])
 }
+
+
+
+#' reformat a vector by a 'by' group
+#' @param x A vector
+#' @param group_id a grouping vector of integers
+#' @return 
+#' A matrix of dimension N x G, where G the number of obs and 
+#' G the number of groups
+#' @examples 
+#' if(requireNamespace("collapse")){
+#' N <- 100
+#' cluster <- sample(letters, N, TRUE)
+#' g <- collapse::GRP(cluster, call = FALSE)
+#' vec2mat(x = rnorm(N), group_id = g$group.id)
+#' }
+#' @noRd
+vec2mat <- function(x, group_id){
+  
+  N <- length(x)
+  G <- length(unique(group_id))
+  mat <- matrix(0, N, G)
+  index <- 1:N
+  idx <- index + N * (group_id - 1)
+  mat[idx] <- x 
+  mat
+  
+}

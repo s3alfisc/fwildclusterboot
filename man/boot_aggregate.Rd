@@ -195,8 +195,8 @@ minor changes by Alexander Fischer
 \examples{
 
 \donttest{
+if(require(Namespace("fixest")){
 library(fixest)
-# Simple DiD example
 data(base_stagg)
 # The DiD estimation
 res_sunab = feols(y ~ x1 + sunab(year_treated, year) | id + year, base_stagg)
@@ -222,10 +222,10 @@ head(boot_att)
  boot_aggregate(
    res_sunab, 
    B = 99999, 
-   agg = TRUE
+   agg = TRUE,
    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
  )
 
-
+}
 }
 }
