@@ -195,7 +195,7 @@ minor changes by Alexander Fischer
 \examples{
 
 \donttest{
-if(require(Namespace("fixest")){
+if(requireNamespace("fixest")){
 library(fixest)
 data(base_stagg)
 # The DiD estimation
