@@ -135,34 +135,34 @@ boot_algo2 <-
     Q1 <-
       collapse::fsum(WX * as.vector(Q), g)
     
-    # P2_bootcluster <- vec2mat(
-    #   x = as.vector(WXARP),
-    #   group_id = g$group.id
-    # )
-    #     
-    # Q2_bootcluster <- vec2mat(
-    #   x = as.vector(WXARQ),
-    #   group_id = g$group.id
-    # )
+    P2_bootcluster <- vec2mat(
+      x = as.vector(WXARP),
+      group_id = g$group.id
+    )
+        
+    Q2_bootcluster <- vec2mat(
+      x = as.vector(WXARQ),
+      group_id = g$group.id
+    )
     
-    P2_bootcluster <- Matrix::t(Matrix.utils::aggregate.Matrix(
-      # see notes; formerly diag_XinvXXRuS_a
-      Matrix::Diagonal(
-        N,
-        as.vector(WXARP)
-      ),
-      as.vector(bootcluster[[1]])
-    )) # N x c*
-    Q2_bootcluster <-
-      Matrix::t( # see notes; formerly diag_XinvXXRuS_b
-        Matrix.utils::aggregate.Matrix(
-          Matrix::Diagonal(
-            N,
-            as.vector(WXARQ)
-          ),
-          as.vector(bootcluster[[1]])
-        )
-      ) # N x c*
+    # P2_bootcluster <- Matrix::t(Matrix.utils::aggregate.Matrix(
+    #   # see notes; formerly diag_XinvXXRuS_a
+    #   Matrix::Diagonal(
+    #     N,
+    #     as.vector(WXARP)
+    #   ),
+    #   as.vector(bootcluster[[1]])
+    # )) # N x c*
+    # Q2_bootcluster <-
+    #   Matrix::t( # see notes; formerly diag_XinvXXRuS_b
+    #     Matrix.utils::aggregate.Matrix(
+    #       Matrix::Diagonal(
+    #         N,
+    #         as.vector(WXARQ)
+    #       ),
+    #       as.vector(bootcluster[[1]])
+    #     )
+    #   ) # N x c*
 
     # preallocate lists
     CC <- vector(mode = "list", length = length(names(clustid)))
@@ -190,13 +190,13 @@ boot_algo2 <-
         # P2_bootcluster has been collapsed over "bootcluster",
         # now collapse over cluster c
         P2 <-
-          Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
-          #collapse::fsum(P2_bootcluster, clustid[x])
+          #Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
+          collapse::fsum(P2_bootcluster, clustid[x])
         P_all <- P2 - tcrossprod(SXinvXXRXA, P1) # formerly _a
 
         Q2 <-
-          Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
-          #collapse::fsum(Q2_bootcluster, clustid[x])
+          #Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
+          collapse::fsum(Q2_bootcluster, clustid[x])
         Q_all <- Q2 - tcrossprod(SXinvXXRXA, Q1)
 
         C <-
@@ -234,16 +234,16 @@ boot_algo2 <-
         # a
         P3 <- t(tcrossprod(P3_2, CT_cfe)) # formerly prod_a
         P2 <-
-          Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
-          #collapse::fsum(P2_bootcluster, clustid[x])
+          #Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
+          collapse::fsum(P2_bootcluster, clustid[x])
         P_all <- P2 - tcrossprod(SXinvXXRXA, P1) - P3
 
         # b: note that from here, if impose_null = TRUE, _b suffix objects and
         # D, DD, CD need not be computed, they are always objects of 0's only
         Q3 <- t(tcrossprod(Q3_2, CT_cfe))
         Q2 <-
-          Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
-          #collapse::fsum(Q2_bootcluster, clustid[x])
+          #Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
+          collapse::fsum(Q2_bootcluster, clustid[x])
         Q_all <- Q2 - tcrossprod(SXinvXXRXA, Q1) - Q3
         C <- eigenMapMatMult(as.matrix(P_all), v, nthreads)
         D <- eigenMapMatMult(as.matrix(Q_all), v, nthreads)
