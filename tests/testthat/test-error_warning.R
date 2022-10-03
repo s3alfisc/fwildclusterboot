@@ -1816,7 +1816,7 @@ test_that("other misc errors", {
       param = ~treatment, 
       clustid = ~group_id1, 
       B = 999, 
-      bootstrap_type = "31", 
+      bootstrap_type = "13", 
       engine = "WildBootTests.jl"
     )
   )
