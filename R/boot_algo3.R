@@ -31,7 +31,6 @@
 #' @param impose_null logical scalar. Should the null be imposed on the
 #' bootstrap dgp or not?
 #' @importFrom MASS ginv
-#' @importFrom sandwich vcovCL
 #' @importFrom summclust vcov_CR3J
 #' @return A list of ...
 #' @noRd
@@ -311,20 +310,33 @@ boot_algo3 <- function(preprocessed_object,
 
   if(crv_type == "crv1"){
     
-    vcov <- sandwich::vcovCL(
-      object,
-      reformulate(clustid),
-      type = "HC0",
-      cadjust = FALSE
-    )
+    # print("scores_list")
+    # print(scores_list[[1]])
+    
+    score_prod <- lapply(1:G, function(g) tcrossprod(scores_list[[g]]))
+    meat <- Reduce("+", score_prod)
+    #print("meat", meat)
+    # print(dim(meat))
+    # print(dim(tXXinv))
+    vcov <- tXXinv %*% meat %*% tXXinv
+    
   } else if(crv_type == "crv3"){
-    vcov <-
+    
+    vcov3 <- quote(
       summclust::vcov_CR3J(
         obj = object,
         cluster = clustid
       )
-  }
+    )
+    
+    if(inherits(object, "fixest")){
+      vcov3$absorb_cluster_fixef = FALSE
+    }
+    
+    vcov <- eval(vcov3)
 
+  }
+  
   se0 <- sqrt(small_sample_correction * R %*% vcov %*% t(R))
   se0 <- as.vector(se0)
 
