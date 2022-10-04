@@ -101,8 +101,6 @@
 #' \item{teststat_boot}{All bootstrap t-statistics.}
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
-#' \item{engine}{The employed bootstrap algorithm.}
-#' \item{nthreads}{The number of threads employed.}
 #' \item{internal_seed}{The integer value -inherited from set.seed() -
 #' used within boottest() to set the random seed in either R or Julia.
 #'  If NULL, no internal seed was created.}
@@ -112,14 +110,7 @@
 #' @section Setting Seeds:
 #' To guarantee reproducibility, you can either use `boottest()'s` `seed`
 #'  function argument, or
-#' set a global random seed via
-#' + `set.seed()` when using
-#'    1) the lean algorithm (via `engine = "R-lean"`) including the
-#'    heteroskedastic wild bootstrap
-#'    2) the wild cluster bootstrap via `engine = "R"` with Mammen weights or
-#'    3) `engine = "WildBootTests.jl"`
-#' + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher, Webb or
-#' Normal weights
+#' set a global random seed via `set.seed()` when using
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.

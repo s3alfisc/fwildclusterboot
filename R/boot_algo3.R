@@ -93,7 +93,7 @@ boot_algo3 <- function(preprocessed_object,
   # create X_g's, X1_g's, y_g's etc
   X_list <- matrix_split(X, cluster, "row")
   y_list <- split(y, cluster, drop = FALSE)
-
+  
   # precompute a range of other objects
   tXgXg <- lapply(
     seq_along(1:G),
@@ -117,7 +117,7 @@ boot_algo3 <- function(preprocessed_object,
   beta_g_hat <- NULL
   beta_1g_tilde <- NULL
   inv_tXX_tXgXg <- NULL
-
+  
 
   if(bootstrap_type %in% c("WCR3x", "WCU3x")){
     # X1: X without parameter beta for which hypothesis beta = 0 is tested
@@ -182,6 +182,10 @@ boot_algo3 <- function(preprocessed_object,
       1:G,
       function(g) tXgXg[[g]] %*% tXXinv
     )
+    
+    if(is.null(beta_hat)){
+      beta_hat <- tXXinv %*% tXy
+    }
 
   } else {
     if(is.null(inv_tXX_tXgXg)){
@@ -313,12 +317,27 @@ boot_algo3 <- function(preprocessed_object,
     # print("scores_list")
     # print(scores_list[[1]])
     
-    score_prod <- lapply(1:G, function(g) tcrossprod(scores_list[[g]]))
-    meat <- Reduce("+", score_prod)
+    score_all <- lapply(
+      1:G, function(g) 
+        tcrossprod(
+          crossprod(X_list[[g]], y_list[[g]] - X_list[[g]] %*% beta_hat)
+        )
+    )
+    meat <- Reduce("+", score_all)
     #print("meat", meat)
     # print(dim(meat))
     # print(dim(tXXinv))
     vcov <- tXXinv %*% meat %*% tXXinv
+    #print(vcov)
+    
+    # sw_vcov <- sandwich::vcovCL(
+    #   object, 
+    #   cluster = reformulate(clustid), 
+    #   cadjust = 0, 
+    #   type = "HC0"
+    # )
+    # all.equal(sw_vcov, vcov)
+    
     
   } else if(crv_type == "crv3"){
     

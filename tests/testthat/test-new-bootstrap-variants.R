@@ -29,7 +29,7 @@ test_that("test r-fnw vs r-, stochastic", {
         ols = lm_fit#,
         #  wls = lm_fit_weights
       )
-      # 
+# 
       # object <- lm_fit
       # type <- "mammen"
       # p_val_type = "two-tailed"

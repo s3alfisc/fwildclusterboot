@@ -81,7 +81,8 @@ Suggests:
     bench,
     testthat (>= 3.0.0), 
     tibble, 
-    did2s
+    did2s, 
+    sandwich
 Remotes: s3alfisc/summclust
 Encoding: UTF-8
 LazyData: true
