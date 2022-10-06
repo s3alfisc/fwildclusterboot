@@ -345,6 +345,15 @@ boottest.fixest <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
+  if(bootstrap_type != "fnw11"){
+    if(engine == "R"){
+      if(conf_int){
+        message("Confidence Intervals are currently only supported for 
+                the R engine with 'bootstrap_type = 'fnw11' '.")
+      }
+    }
+  }
+  
   if (!is.null(beta0)) {
     stop(
       "The function argument 'beta0' is deprecated. Please use the

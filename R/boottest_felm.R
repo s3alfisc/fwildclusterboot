@@ -358,6 +358,26 @@ boottest.felm <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
+  if(bootstrap_type %in% c("33", "13")){
+    stop(
+      paste(
+        "The bootstrap types '13' and '33' are not yet supported for objects
+        of type felm. Support will be added in the future. Until then, you 
+        can run the '13' and '33' bootstrap types with objects of type 'lm' 
+        and 'fixest'."
+      )
+    )
+  }
+  
+  if(bootstrap_type != "fnw11"){
+    if(engine == "R"){
+      if(conf_int){
+        message("Confidence Intervals are currently only supported for 
+                the R engine with 'bootstrap_type = 'fnw11' '.")
+      }
+    }
+  }
+  
   if (!is.null(beta0)) {
     stop(
       "The function argument 'beta0' is deprecated. Please use the
