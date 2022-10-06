@@ -1,9 +1,12 @@
-# fwildclusterboot 0.11.2 (development version)
+# fwildclusterboot 0.11.3 (development version)
+
++ significant speed improvements for the heteroskedastic bootstrap
+
+
+# fwildclusterboot 0.11.2 
 
 + significant speed improvements for the x1 bootstrap algorithms,
   `bootstrap_type %in% c("11", "31")`, both for WCR and WCU
-
-
 
 # fwildclusterboot 0.11.1 
 

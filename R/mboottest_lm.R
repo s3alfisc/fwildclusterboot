@@ -233,7 +233,7 @@ mboottest.lm <- function(object,
     R = R,
     param = NULL,
     bootcluster = bootcluster,
-    engine = engine, 
+    engine = "WildBootTests.jl", 
     bootstrap_type = NULL
   )
   
