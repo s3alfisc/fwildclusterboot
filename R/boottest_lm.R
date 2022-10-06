@@ -331,6 +331,15 @@ boottest.lm <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
+  if(bootstrap_type != "fnw11"){
+    if(engine == "R"){
+      if(conf_int){
+        message("Confidence Intervals are currently only supported for 
+                the R engine with 'bootstrap_type = 'fnw11' '.")
+      }
+    }
+  }
+  
   check_engine_btype(
     engine = engine, 
     bootstrap_type = bootstrap_type
