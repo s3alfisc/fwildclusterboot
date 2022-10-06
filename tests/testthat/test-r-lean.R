@@ -29,7 +29,7 @@ test_that("test lean cpp boottest", {
   )
 
 
-  # Test 1: heteroskedastic wild bootstrap
+  # Test 1: heteroskedadestic wild bootstrap
   #
   # HC0
   # pracma::tic()

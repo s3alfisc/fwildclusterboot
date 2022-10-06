@@ -128,6 +128,9 @@ List wildboottestHC(const arma::vec & y,
   arma::mat XXinv = (X.t() * X ).i();
   arma::mat beta = XXinv * (X.t() * y);
   
+  arma::mat RXXinvX = (R.t() * XXinv) * X.t(); //1 x N
+  arma::mat RXXinvX_squared = (arma::pow(RXXinvX, 2));
+    
   // calculate beta constrained
   arma::vec beta_r = beta - XXinv * R * (R.t() * XXinv * R).i() *
     (R.t() * beta - r);
@@ -152,13 +155,14 @@ List wildboottestHC(const arma::vec & y,
     arma::vec coef_boot = XXinv * (X.t() * y_boot) ; // k x 1 
     arma::vec resid_boot = y_boot - X * coef_boot;
     // because resid_boot is diagonal
-    arma::mat meat = X.t() * arma::diagmat(pow(resid_boot,2)) * X;
-    arma::mat sigma_boot =   (XXinv * meat * XXinv);
+    // arma::mat meat = X.t() * arma::diagmat(pow(resid_boot,2)) * X;
+    // arma::mat sigma_boot =   (XXinv * meat * XXinv);
+    arma::mat boot_var = RXXinvX_squared * pow(resid_boot, 2);
     
     // calculate t-stats
     t_boot(b) = arma::as_scalar((R.t() * coef_boot - r) / 
-      arma::sqrt(small_sample_correction * (R.t() * sigma_boot * R)));
-    
+      // arma::sqrt(small_sample_correction * (R.t() * sigma_boot * R)));
+      arma::sqrt(small_sample_correction * boot_var));
   }
   
   // for b = 0
@@ -167,12 +171,14 @@ List wildboottestHC(const arma::vec & y,
   arma::vec coef_boot = XXinv * (X.t() * y_boot) ; // k x 1
   arma::vec resid_boot = y_boot - X * coef_boot;
   // because resid_boot is diagonal
-  arma::mat meat = X.t() * arma::diagmat(pow(resid_boot,2)) * X;
-  arma::mat sigma_boot =   (XXinv * meat * XXinv); //kxk
+  // arma::mat meat = X.t() * arma::diagmat(pow(resid_boot,2)) * X;
+  // arma::mat sigma_boot =   (XXinv * meat * XXinv); //kxk
+  arma::mat boot_var = RXXinvX_squared * pow(resid_boot, 2);
   
   // calculate t-stats
   t_boot(0) = arma::as_scalar((R.t() * coef_boot - r) / 
-    arma::sqrt(small_sample_correction * (R.t() * sigma_boot * R)));
+    // arma::sqrt(small_sample_correction * (R.t() * sigma_boot * R)));
+    arma::sqrt(small_sample_correction * boot_var));
   
   List res;
   res["t_boot"] = t_boot;
