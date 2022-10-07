@@ -50,7 +50,7 @@
 #' @return An object of class \code{boottest}.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
-#' (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+#' (\url{https://ideas.repec.org/p/qed/wpaper/1406.html})
 #' @references MacKinnon, James G., Morten Ørregaard Nielsen, and 
 #' Matthew D. Webb. Fast and reliable jackknife and bootstrap
 #'  methods for cluster-robust inference. No. 1485. 2022. 
@@ -113,13 +113,13 @@ boottest <- function(object,
 #' @return An object of class \code{mboottest}.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
-#' (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+#' (\url{https://ideas.repec.org/p/qed/wpaper/1406.html})
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 #'  "Bootstrap-based improvements for inference with clustered errors."
 #'  The Review of Economics and Statistics 90.3 (2008): 414-427.
 #' @references Cameron, A.Colin & Douglas L. Miller.
 #' "A practitioner's guide to cluster-robust inference"
-#' Journal of Human Resources (2015) \doi{doi: 10.3368/jhr.50.2.317}
+#' Journal of Human Resources (2015) \doi{doi:10.3368/jhr.50.2.317}
 #' @references Davidson & MacKinnon. "Wild Bootstrap Tests for IV regression"
 #' Journal of Economics and Business Statistics (2010)
 #' \doi{https://doi.org/10.1198/jbes.2009.07221}

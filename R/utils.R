@@ -191,7 +191,9 @@ create_data <-
 
 
 setBoottest_engine <- function(engine) {
+  
   #' Sets the bootstrap algo to be run via `boottest()` and `waldboottest()`
+  #' 
   #' @param engine Character scalar. Either 'R' or 'WildBootTests.jl'.
   #'  Default is 'R'
   #' @return No return value

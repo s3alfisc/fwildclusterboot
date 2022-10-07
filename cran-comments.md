@@ -1,3 +1,41 @@
+## Submission of 0.12
+
+Tests on rhub, github actions and win devel: 
+
+
+Got the following notes: 
+
+Possibly misspelled words in DESCRIPTION:
+  MacKinnon (35:50, 38:70)
+  multiway (40:23)
+
+* checking top-level files ... NOTE
+Non-standard file/directory found at top level:
+  'codemeta.json'
+
+* checking HTML version of manual ... NOTE
+Found the following HTML validation problems:
+setBoottest_engine.html:32:1: Warning: <div> isn't allowed in <h2> elements
+
+setBoottest_engine.html:32:1: Warning: missing </h2> before <pre>
+
+setBoottest_engine.html:91:97: Warning: discarding unexpected </h2>
+
+setBoottest_engine.html:205:1: Warning: discarding unexpected </div>
+
+setBoottest_engine.html:32:1: Warning: trimming empty <h2>
+
+* checking for detritus in the temp directory ... NOTE
+Found the following files/directories:
+  'lastMiKTeXException'
+ 
+Comments: 
+
+1) 'MacKinnon' and 'multiway' are spelled correctly
+2) Having a codemeta.json file should be fine, as it is recommended to have it by e.g. ropensci? 
+3) I unfortunately have no clue what this means, and googling did not help me with it. 
+4) As the last time, I don't know how to fix the 'lastMiKTeXException' =)
+
 ## Submission of 0.9 
 
 + no errors, warnings or messages on github actions for ubuntu, mac, windows

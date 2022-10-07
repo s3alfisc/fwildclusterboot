@@ -110,7 +110,7 @@
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
-#' (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+#' (\url{https://ideas.repec.org/p/qed/wpaper/1406.html})
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 #'  "Bootstrap-based improvements for inference with clustered errors."
 #'  The Review of Economics and Statistics 90.3 (2008): 414-427.

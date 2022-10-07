@@ -192,7 +192,7 @@
 #' \code{boottest} does not calculate standard errors.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
-#'      (\url{https://journals.sagepub.com/doi/full/10.1177/1536867X19830877})
+#'      (\url{https://ideas.repec.org/p/qed/wpaper/1406.html})
 #' @references MacKinnon, James G., Morten Ørregaard Nielsen, and 
 #' Matthew D. Webb. Fast and reliable jackknife and bootstrap
 #' methods for cluster-robust inference. No. 1485. 2022. 

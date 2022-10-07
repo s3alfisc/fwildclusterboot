@@ -55,8 +55,8 @@ BugReports: https://github.com/s3alfisc/fwildclusterboot/issues/
 License: GPL-3 
 Imports: 
     collapse,
-    Formula,
     dreamerr,
+    Formula, 
     generics,
     dqrng, 
     gtools, 
@@ -81,7 +81,6 @@ Suggests:
     bench,
     testthat (>= 3.0.0), 
     tibble, 
-    did2s, 
     sandwich
 Encoding: UTF-8
 LazyData: true
@@ -90,5 +89,5 @@ RoxygenNote: 7.2.0
 LinkingTo: Rcpp,RcppArmadillo, RcppEigen
 VignetteBuilder: knitr
 Language: en-US
-SystemRequirements: Julia (>= 1.7), WildBootTests.jl (>=0.8.0)
+SystemRequirements: Julia (>= 1.7), WildBootTests.jl (>=0.8.1)
 Config/testthat/edition: 3

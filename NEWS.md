@@ -1,3 +1,24 @@
+# fwildclusterboot 0.12
+
+This is the first CRAN release since version `0.9`. It comes with a set of new features, but also potentially breaking changes. This section summarizes all developments since version `0.9`. 
+
+### Potentially breaking changes: 
+* `boottest()'s` function argument `boot_algo` has been renamed to `engine`
+* the `setBoottest_boot_algo()` function was renamed to `setBoottest_engine()`
+
+### Bug fixes and internal changes
+
+* When a multi-parameter hypothesis of the form R \beta = r was tested, the *heteroskedastic* wild bootstrap would nevertheless always test 
+"param = 0" vs "param != 0". I am sorry for that bug!
+* The `Matrix.utils` package is at danger of CRAN removal - it has been replaced by custom functions for internal use.
+
+### New features and Improvements
+
++ A new function argument has been added - `bootstrap_type`. In combination with the `impose_null` function argument, it allows to choose between different cluster bootstrap types - WCx11, WCx13, WCx31, WCx33. For more details on these methods, see the working paper by [MacKinnon, Nielsen & Webb (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf). Currently, these new bootstrap types only compute p-values. Adding support for confidence intervals is work in progress.
++ A `boot_aggregate()` method now supports the aggregation of coefficients in staggered difference-in-differences following the methods by [Sun & Abraham (2021, Journal of Econometrics)](https://arxiv.org/pdf/1804.05785.pdf) in combination with the `sunab()` function from [`fixest`](https://lrberge.github.io/fixest/reference/sunab.html)has been added. Essentially, `boot_aggregate()` is a copy of [`aggregate.fixest`](https://lrberge.github.io/fixest/reference/aggregate.fixest.html): the only difference is that inference is powered by a wild bootstrap.
++ The heteroskedastic bootstrap is now significantly faster. 
+
+
 # fwildclusterboot 0.11.3 (development version)
 
 + significant speed improvements for the heteroskedastic bootstrap
@@ -18,7 +39,7 @@
 
 A `boot_aggregate()` method to supports the aggregation of coefficients in staggered difference-in-differences following the methods by [Sun & Abraham (2021, Journal of Econometrics)](https://arxiv.org/pdf/1804.05785.pdf) in combination with the `sunab()` function from [`fixest`](https://lrberge.github.io/fixest/reference/sunab.html)has been added. Essentially, `boot_aggregate()` is a copy of [`aggregate.fixest`](https://lrberge.github.io/fixest/reference/aggregate.fixest.html): the only difference is that inference is powered by a wild bootstrap.
 
-### Other syntax changes
+### Other syntax changes, potentially breaking! 
 
 + The `boot_algo` function argument has been renamed to `engine`.
 + The `setBoottest_boot_algo()` function has been renamed to `setBoottest_engine()`.
