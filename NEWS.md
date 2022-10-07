@@ -8,8 +8,8 @@ This is the first CRAN release since version `0.9`. It comes with a set of new f
 
 ### Bug fixes and internal changes
 
-* When a multi-parameter hypothesis of the form R \beta = r was tested, the *heteroskedastic* wild bootstrap would nevertheless always test 
-"param = 0" vs "param != 0". I am sorry for that bug!
+* When a multi-parameter hypothesis of the form R beta = r was tested, the *heteroskedastic* wild bootstrap would nevertheless always test 
+"beta_k = 0" vs "beta_k != 0", with "beta_k = param". I am sorry for that bug!
 * The `Matrix.utils` package is at danger of CRAN removal - it has been replaced by custom functions for internal use.
 
 ### New features and Improvements
@@ -19,7 +19,7 @@ This is the first CRAN release since version `0.9`. It comes with a set of new f
 + The heteroskedastic bootstrap is now significantly faster. 
 
 
-# fwildclusterboot 0.11.3 (development version)
+# fwildclusterboot 0.11.3 
 
 + significant speed improvements for the heteroskedastic bootstrap
 

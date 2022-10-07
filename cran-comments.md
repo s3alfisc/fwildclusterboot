@@ -2,10 +2,11 @@
 
 Tests on rhub, github actions and win devel: 
 
+I get one *prep error* on r-hub, for linux ubuntu. Note that I do not get such an error on github actions. 
 
-Got the following notes: 
+I received the following notes: 
 
-Possibly misspelled words in DESCRIPTION:
+* Possibly misspelled words in DESCRIPTION:
   MacKinnon (35:50, 38:70)
   multiway (40:23)
 
@@ -28,6 +29,10 @@ setBoottest_engine.html:32:1: Warning: trimming empty <h2>
 * checking for detritus in the temp directory ... NOTE
 Found the following files/directories:
   'lastMiKTeXException'
+  
+* Invalid URL in news - readme: on Fedora:  https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf 
+
+* further (also only on fedora): "Skipping checking HTML validation: no command 'tidy' found". 
  
 Comments: 
 
@@ -35,6 +40,8 @@ Comments:
 2) Having a codemeta.json file should be fine, as it is recommended to have it by e.g. ropensci? 
 3) I unfortunately have no clue what this means, and googling did not help me with it. 
 4) As the last time, I don't know how to fix the 'lastMiKTeXException' =)
+5) The URL is not invalid. 
+6) I am not sure what this means - the `tidy()` is properly exported, and no other OS test complains?
 
 ## Submission of 0.9 
 
