@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,30 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.11.3" id="fwildclusterboot-0113-development-version">fwildclusterboot 0.11.3 (development version)<a class="anchor" aria-label="anchor" href="#fwildclusterboot-0113-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.12" id="fwildclusterboot-012">fwildclusterboot 0.12<a class="anchor" aria-label="anchor" href="#fwildclusterboot-012"></a></h2>
+<p>This is the first CRAN release since version <code>0.9</code>. It comes with a set of new features, but also potentially breaking changes. This section summarizes all developments since version <code>0.9</code>.</p>
+<div class="section level4">
+<h4 id="potentially-breaking-changes-0-12">Potentially breaking changes:<a class="anchor" aria-label="anchor" href="#potentially-breaking-changes-0-12"></a></h4>
+<ul><li>
+<code>boottest()'s</code> function argument <code>boot_algo</code> has been renamed to <code>engine</code>
+</li>
+<li>the <code>setBoottest_boot_algo()</code> function was renamed to <code><a href="../reference/setBoottest_engine.html">setBoottest_engine()</a></code>
+</li>
+</ul></div>
+<div class="section level4">
+<h4 id="bug-fixes-and-internal-changes-0-12">Bug fixes and internal changes<a class="anchor" aria-label="anchor" href="#bug-fixes-and-internal-changes-0-12"></a></h4>
+<ul><li>When a multi-parameter hypothesis of the form R beta = r was tested, the <em>heteroskedastic</em> wild bootstrap would nevertheless always test “beta_k = 0” vs “beta_k != 0”, with “beta_k = param”. I am sorry for that bug!</li>
+<li>The <code>Matrix.utils</code> package is at danger of CRAN removal - it has been replaced by custom functions for internal use.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="new-features-and-improvements-0-12">New features and Improvements<a class="anchor" aria-label="anchor" href="#new-features-and-improvements-0-12"></a></h4>
+<ul><li>A new function argument has been added - <code>bootstrap_type</code>. In combination with the <code>impose_null</code> function argument, it allows to choose between different cluster bootstrap types - WCx11, WCx13, WCx31, WCx33. For more details on these methods, see the working paper by <a href="https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf" class="external-link">MacKinnon, Nielsen &amp; Webb (2022)</a>. Currently, these new bootstrap types only compute p-values. Adding support for confidence intervals is work in progress.</li>
+<li>A <code><a href="../reference/boot_aggregate.html">boot_aggregate()</a></code> method now supports the aggregation of coefficients in staggered difference-in-differences following the methods by <a href="https://arxiv.org/pdf/1804.05785.pdf" class="external-link">Sun &amp; Abraham (2021, Journal of Econometrics)</a> in combination with the <code><a href="../reference/sunab.html">sunab()</a></code> function from <a href="https://lrberge.github.io/fixest/reference/sunab.html" class="external-link"><code>fixest</code></a>has been added. Essentially, <code><a href="../reference/boot_aggregate.html">boot_aggregate()</a></code> is a copy of <a href="https://lrberge.github.io/fixest/reference/aggregate.fixest.html" class="external-link"><code>aggregate.fixest</code></a>: the only difference is that inference is powered by a wild bootstrap.</li>
+<li>The heteroskedastic bootstrap is now significantly faster.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.11.3" id="fwildclusterboot-0113">fwildclusterboot 0.11.3<a class="anchor" aria-label="anchor" href="#fwildclusterboot-0113"></a></h2>
 <ul><li>significant speed improvements for the heteroskedastic bootstrap</li></ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.11.2" id="fwildclusterboot-0112">fwildclusterboot 0.11.2<a class="anchor" aria-label="anchor" href="#fwildclusterboot-0112"></a></h2>
@@ -71,7 +94,7 @@
 <p>A <code><a href="../reference/boot_aggregate.html">boot_aggregate()</a></code> method to supports the aggregation of coefficients in staggered difference-in-differences following the methods by <a href="https://arxiv.org/pdf/1804.05785.pdf" class="external-link">Sun &amp; Abraham (2021, Journal of Econometrics)</a> in combination with the <code><a href="../reference/sunab.html">sunab()</a></code> function from <a href="https://lrberge.github.io/fixest/reference/sunab.html" class="external-link"><code>fixest</code></a>has been added. Essentially, <code><a href="../reference/boot_aggregate.html">boot_aggregate()</a></code> is a copy of <a href="https://lrberge.github.io/fixest/reference/aggregate.fixest.html" class="external-link"><code>aggregate.fixest</code></a>: the only difference is that inference is powered by a wild bootstrap.</p>
 </div>
 <div class="section level4">
-<h4 id="other-syntax-changes-0-11-1">Other syntax changes<a class="anchor" aria-label="anchor" href="#other-syntax-changes-0-11-1"></a></h4>
+<h4 id="other-syntax-changes-potentially-breaking-0-11-1">Other syntax changes, potentially breaking!<a class="anchor" aria-label="anchor" href="#other-syntax-changes-potentially-breaking-0-11-1"></a></h4>
 <ul><li>The <code>boot_algo</code> function argument has been renamed to <code>engine</code>.</li>
 <li>The <code>setBoottest_boot_algo()</code> function has been renamed to <code><a href="../reference/setBoottest_engine.html">setBoottest_engine()</a></code>. In consequence, the syntax introduced in 0.11 changes to</li>
 </ul><pre><code><span><span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span></span>

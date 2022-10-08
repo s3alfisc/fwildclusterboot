@@ -14,7 +14,7 @@ the fast wild bootstrap algorithm developed in Roodman et al., 2019."><meta prop
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -188,10 +188,13 @@ If FALSE, the null is not imposed <code>(WCU)</code></p></dd>
 
 <dt>bootstrap_type</dt>
 <dd><p>Determines which wild cluster bootstrap type should be
-run. Options are "fnw11","11", "13", "31" and "33". For more information,
-see the details section. "fnw11" is the default, which runs a "11" type
+run. Options are "fnw11","11", "13", "31" and "33" for the wild cluster
+bootstrap and "11" and "31" for the heteroskedastic bootstrap.
+For more information, see the details section. "fnw11" is the default for
+the cluster bootstrap, which runs a "11" type
 wild cluster bootstrap via the algorithm outlined in "fast and wild"
-(Roodman et al (2019)).</p></dd>
+(Roodman et al (2019)). "11" is the default for the heteroskedastic
+bootstrap.</p></dd>
 
 
 <dt>p_val_type</dt>
@@ -394,7 +397,7 @@ stops the procedure after 10 iterations.</p></li>
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 STATA using boottest", The STATA Journal.
-(<a href="https://journals.sagepub.com/doi/full/10.1177/1536867X19830877" class="external-link">https://journals.sagepub.com/doi/full/10.1177/1536867X19830877</a>)</p>
+(<a href="https://ideas.repec.org/p/qed/wpaper/1406.html" class="external-link">https://ideas.repec.org/p/qed/wpaper/1406.html</a>)</p>
 <p>MacKinnon, James G., Morten Ørregaard Nielsen, and
 Matthew D. Webb. Fast and reliable jackknife and bootstrap
 methods for cluster-robust inference. No. 1485. 2022.</p>
