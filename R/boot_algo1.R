@@ -62,7 +62,11 @@ boot_algo1 <-
     #' @importFrom dqrng dqsample dqset.seed
     #' @noRd
     
-    dreamerr::check_arg(bootstrap_type, "charin(11, 31)")
+    if(bootstrap_type == "fnw11"){
+      bootstrap_type <- "11"
+    }
+    
+    dreamerr::check_arg(bootstrap_type, "charin(11, 21, 31)")
     
     X <- preprocessed_object$X
     Y <- preprocessed_object$Y
@@ -144,6 +148,8 @@ boot_algo1 <-
     
     if(bootstrap_type == "11"){
       bootstrap_type_int <- 1
+    } else if(bootstrap_type == "21"){
+      bootstrap_type_int <- 2
     } else if(bootstrap_type == "31"){
       bootstrap_type_int <- 3
     }

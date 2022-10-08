@@ -314,7 +314,7 @@ boottest.lm <- function(object,
   check_arg(param, "MBT scalar character | character vector | formula")
   check_arg(B, "MBT scalar integer")
   check_arg(impose_null, "logical scalar")
-  check_arg(bootstrap_type, "charin(11, 13, 31, 33, fnw11)")
+  check_arg(bootstrap_type, "charin(11, 21, 13, 31, 33, fnw11)")
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
