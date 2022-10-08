@@ -143,3 +143,28 @@ List boot_algo3_crv3( const int B,
   
   
 }
+
+// // list multiplication 
+// // [[Rcpp::export]]
+// arma::cube multiply_listwise(List List1, 
+//                        List List2, 
+//                        int G, 
+//                        int k,
+//                        int cores){
+//   
+//   arma::cube res(k, k, G); 
+// #pragma omp parallel for num_threads(cores)
+//   for(int g = 0; g < G; g++){
+//     
+//     arma::mat mat1 = List1[g]; 
+//     arma::mat mat2 = List2[g];
+//     res.slice(g) = mat1.t() * mat2; 
+//   }
+//   
+//   return res; 
+//   
+// }
+
+
+
+

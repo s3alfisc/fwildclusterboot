@@ -50,10 +50,13 @@
 #'  algorithm globally by using the
 #'  `setBoottest_engine()` function.
 #' @param bootstrap_type Determines which wild cluster bootstrap type should be 
-#' run. Options are "fnw11","11", "13", "31" and "33". For more information,
-#' see the details section. "fnw11" is the default, which runs a "11" type 
+#' run. Options are "fnw11","11", "13", "31" and "33" for the wild cluster 
+#' bootstrap and "11" and "31" for the heteroskedastic bootstrap.
+#' For more information, see the details section. "fnw11" is the default for 
+#' the cluster bootstrap, which runs a "11" type 
 #' wild cluster bootstrap via the algorithm outlined in "fast and wild" 
-#' (Roodman et al (2019)). 
+#' (Roodman et al (2019)). "11" is the default for the heteroskedastic 
+#' bootstrap.
 #' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector giving linear combinations of coefficients.
 #' Must be either NULL or a vector of the same length as `param`. If NULL,
@@ -535,6 +538,7 @@ boottest.lm <- function(object,
       sign_level = sign_level,
       param = param,
       p_val_type = p_val_type,
+      bootstrap_type = bootstrap_type, 
       nthreads = nthreads,
       type = type,
       full_enumeration = full_enumeration,

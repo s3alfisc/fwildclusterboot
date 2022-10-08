@@ -89,8 +89,8 @@ sample_weights <- function(G, type) {
     .Call('_fwildclusterboot_sample_weights', PACKAGE = 'fwildclusterboot', G, type)
 }
 
-wildboottestHC <- function(y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction) {
-    .Call('_fwildclusterboot_wildboottestHC', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction)
+wildboottestHC <- function(y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction, bootstrap_type) {
+    .Call('_fwildclusterboot_wildboottestHC', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction, bootstrap_type)
 }
 
 wildboottestCL <- function(y, X, R, r, B, N_G_bootcluster, cores, type, cluster, small_sample_correction) {

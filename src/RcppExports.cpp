@@ -86,8 +86,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // wildboottestHC
-List wildboottestHC(const arma::vec& y, const arma::mat& X, const arma::mat& R, const double& r, const int& B, const int& N_G_bootcluster, const int& cores, const int& type, const double& small_sample_correction);
-RcppExport SEXP _fwildclusterboot_wildboottestHC(SEXP ySEXP, SEXP XSEXP, SEXP RSEXP, SEXP rSEXP, SEXP BSEXP, SEXP N_G_bootclusterSEXP, SEXP coresSEXP, SEXP typeSEXP, SEXP small_sample_correctionSEXP) {
+List wildboottestHC(const arma::vec& y, const arma::mat& X, const arma::mat& R, const double& r, const int& B, const int& N_G_bootcluster, const int& cores, const int& type, const double& small_sample_correction, const int bootstrap_type);
+RcppExport SEXP _fwildclusterboot_wildboottestHC(SEXP ySEXP, SEXP XSEXP, SEXP RSEXP, SEXP rSEXP, SEXP BSEXP, SEXP N_G_bootclusterSEXP, SEXP coresSEXP, SEXP typeSEXP, SEXP small_sample_correctionSEXP, SEXP bootstrap_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -100,7 +100,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type cores(coresSEXP);
     Rcpp::traits::input_parameter< const int& >::type type(typeSEXP);
     Rcpp::traits::input_parameter< const double& >::type small_sample_correction(small_sample_correctionSEXP);
-    rcpp_result_gen = Rcpp::wrap(wildboottestHC(y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction));
+    Rcpp::traits::input_parameter< const int >::type bootstrap_type(bootstrap_typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(wildboottestHC(y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction, bootstrap_type));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -151,7 +152,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_fwildclusterboot_eigenMapMatMult", (DL_FUNC) &_fwildclusterboot_eigenMapMatMult, 3},
     {"_fwildclusterboot_cpp_get_nb_threads", (DL_FUNC) &_fwildclusterboot_cpp_get_nb_threads, 0},
     {"_fwildclusterboot_sample_weights", (DL_FUNC) &_fwildclusterboot_sample_weights, 2},
-    {"_fwildclusterboot_wildboottestHC", (DL_FUNC) &_fwildclusterboot_wildboottestHC, 9},
+    {"_fwildclusterboot_wildboottestHC", (DL_FUNC) &_fwildclusterboot_wildboottestHC, 10},
     {"_fwildclusterboot_wildboottestCL", (DL_FUNC) &_fwildclusterboot_wildboottestCL, 10},
     {"_fwildclusterboot_wildboottestCL_enum", (DL_FUNC) &_fwildclusterboot_wildboottestCL_enum, 10},
     {NULL, NULL, 0}

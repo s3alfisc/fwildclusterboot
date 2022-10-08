@@ -115,15 +115,15 @@ List wildboottestHC(const arma::vec & y,
                     const int & N_G_bootcluster,
                     const int & cores,
                     const int & type, 
-                    const double & small_sample_correction) {
+                    const double & small_sample_correction, 
+                    const int bootstrap_type) {
   
   // function implements wild cluster bootstrap,
   // imposing the null
   
   
-  //int n = X.n_rows;
-  int k = X.n_cols;
-  
+  int N = X.n_rows;
+
   // impose null on the bootstrap dgp
   arma::mat XXinv = (X.t() * X ).i();
   arma::mat beta = XXinv * (X.t() * y);
@@ -137,10 +137,35 @@ List wildboottestHC(const arma::vec & y,
   arma::vec yhat_r = X * beta_r;
   arma::vec resid_r = y - yhat_r;
   
-  NumericVector s(2);
-  NumericVector prob = NumericVector::create();
-  s[0] = 1;
-  s[1] = -1;
+  // NumericVector s(2);
+  // NumericVector prob = NumericVector::create();
+  // s[0] = 1;
+  // s[1] = -1;
+  
+  // compute 1/(1-h_ii)'s -> resid_multiplier
+  arma::vec resid_multiplier(N);
+  // resid_multiplier.ones();
+  
+  if(bootstrap_type == 1){
+    
+    resid_multiplier.ones();
+    
+  } else {
+    
+    arma::mat hatmat = X * XXinv * X.t(); 
+    arma::vec diag_hatmat(N);
+    
+    for(int i = 0; i < N; i++){
+      diag_hatmat(i) = hatmat(i,i);
+    }
+    
+    if(bootstrap_type == 2){
+      arma::vec resid_multiplier = 1 / arma::sqrt(1-diag_hatmat);    
+    } else if(bootstrap_type == 3){
+      arma::vec resid_multiplier = 1 / (1-diag_hatmat);    
+    }
+    
+  }
   
   arma::vec t_boot(B + 1);
   
@@ -150,13 +175,10 @@ List wildboottestHC(const arma::vec & y,
     // create bootstrap sample
     //arma::vec weights = RcppArmadillo::sample(s, N_G_bootcluster, true, prob);
     arma::vec weights = sample_weights(N_G_bootcluster, type);
-    arma::vec y_boot = yhat_r + resid_r % weights;
+    arma::vec y_boot = yhat_r + resid_multiplier % resid_r % weights;
     // get bootstrapped coefs and resids
     arma::vec coef_boot = XXinv * (X.t() * y_boot) ; // k x 1 
     arma::vec resid_boot = y_boot - X * coef_boot;
-    // because resid_boot is diagonal
-    // arma::mat meat = X.t() * arma::diagmat(pow(resid_boot,2)) * X;
-    // arma::mat sigma_boot =   (XXinv * meat * XXinv);
     arma::mat boot_var = RXXinvX_squared * pow(resid_boot, 2);
     
     // calculate t-stats
@@ -165,14 +187,11 @@ List wildboottestHC(const arma::vec & y,
       arma::sqrt(small_sample_correction * boot_var));
   }
   
-  // for b = 0
+  // for b = 0 - always HC1
   arma::vec y_boot = yhat_r + resid_r;
   // get bootstrapped coefs and resids
   arma::vec coef_boot = XXinv * (X.t() * y_boot) ; // k x 1
   arma::vec resid_boot = y_boot - X * coef_boot;
-  // because resid_boot is diagonal
-  // arma::mat meat = X.t() * arma::diagmat(pow(resid_boot,2)) * X;
-  // arma::mat sigma_boot =   (XXinv * meat * XXinv); //kxk
   arma::mat boot_var = RXXinvX_squared * pow(resid_boot, 2);
   
   // calculate t-stats

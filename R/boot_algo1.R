@@ -7,6 +7,7 @@ boot_algo1 <-
            sign_level,
            param,
            p_val_type,
+           bootstrap_type, 
            nthreads,
            type,
            full_enumeration,
@@ -32,6 +33,9 @@ boot_algo1 <-
     #' @param param name of the test parameter.
     #' @param p_val_type type Type of p-value. By default "two-tailed".
     #' Other options: "equal-tailed", ">", "<"
+    #' @param bootstrap_type Determines which wild bootstrap type should be 
+    #' run. Options are "11" and "31". For more information,
+    #' see the details section.
     #' @param nthreads The number of threads. Can be: a) an integer lower than,
     #'                 or equal to, the maximum number of threads; b) 0: meaning
     #'                 all available threads will be used; c) a number strictly
@@ -57,6 +61,8 @@ boot_algo1 <-
     #' model.weights residuals rlnorm rnorm update
     #' @importFrom dqrng dqsample dqset.seed
     #' @noRd
+    
+    dreamerr::check_arg(bootstrap_type, "charin(11, 31)")
     
     X <- preprocessed_object$X
     Y <- preprocessed_object$Y
@@ -136,6 +142,11 @@ boot_algo1 <-
       )
     }
     
+    if(bootstrap_type == "11"){
+      bootstrap_type_int <- 1
+    } else if(bootstrap_type == "31"){
+      bootstrap_type_int <- 3
+    }
     
     if (heteroskedastic == TRUE) {
       boot_res <-
@@ -148,7 +159,8 @@ boot_algo1 <-
           N_G_bootcluster = N,
           cores = nthreads,
           type = type,
-          small_sample_correction = small_sample_correction
+          small_sample_correction = small_sample_correction, 
+          bootstrap_type = bootstrap_type_int
         )[["t_boot"]]
     } else {
       bootcluster <- preprocessed_object$bootcluster[, 1]
@@ -189,7 +201,7 @@ boot_algo1 <-
             cores = nthreads,
             cluster = bootcluster,
             small_sample_correction = small_sample_correction,
-            v = t(v)
+            v = t(v) 
           )[["t_boot"]]
       }
       

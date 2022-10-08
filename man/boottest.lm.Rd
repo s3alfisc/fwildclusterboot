@@ -95,10 +95,13 @@ the bootstrap dgp or not. Null imposed \code{(WCR)} by default.
 If FALSE, the null is not imposed \code{(WCU)}}
 
 \item{bootstrap_type}{Determines which wild cluster bootstrap type should be
-run. Options are "fnw11","11", "13", "31" and "33". For more information,
-see the details section. "fnw11" is the default, which runs a "11" type
+run. Options are "fnw11","11", "13", "31" and "33" for the wild cluster
+bootstrap and "11" and "31" for the heteroskedastic bootstrap.
+For more information, see the details section. "fnw11" is the default for
+the cluster bootstrap, which runs a "11" type
 wild cluster bootstrap via the algorithm outlined in "fast and wild"
-(Roodman et al (2019)).}
+(Roodman et al (2019)). "11" is the default for the heteroskedastic
+bootstrap.}
 
 \item{p_val_type}{Character vector of length 1. Type of p-value.
 By default "two-tailed". Other options include "equal-tailed",
