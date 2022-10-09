@@ -529,6 +529,10 @@ boottest.lm <- function(object,
       impose_null = impose_null
     )
     
+    if(bootstrap_type == "fnw11"){
+      bootstrap_type <- "11"
+    }
+    
     res <- boot_algo1(
       preprocessed_object = preprocess,
       boot_iter = B,

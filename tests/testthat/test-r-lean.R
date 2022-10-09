@@ -246,5 +246,57 @@ test_that("r-lean multi-param tests", {
 })
 
 
+test_that("heteroskedastic 11 vs 12 vs 13",{
+  
 
+  lm_fit <-
+    lm(
+      proposition_vote ~ treatment + ideology1 + log_income,
+      data = fwildclusterboot:::create_data(
+        N = 1000,
+        N_G1 = 20,
+        icc1 = 0.81,
+        N_G2 = 10,
+        icc2 = 0.01,
+        numb_fe1 = 10,
+        numb_fe2 = 10,
+        seed = 12412
+      )
+    )
+  
+  fit11 <- 
+    boottest(
+      lm_fit, 
+      param = "treatment", 
+      bootstrap_type = "11", 
+      B = 9999, 
+      seed = 12312
+    )
+  
+  fit12 <- 
+    boottest(
+      lm_fit, 
+      param = "treatment", 
+      bootstrap_type = "21", 
+      B = 9999, 
+      seed = 12312
+    )
+  
+  fit13 <- 
+    boottest(
+      lm_fit, 
+      param = "treatment", 
+      bootstrap_type = "31", 
+      B = 9999, 
+      seed = 12312
+    )
+  
+  expect_equal(teststat(fit11), teststat(fit12))
+  expect_equal(teststat(fit12), teststat(fit13))
+  
+  expect_equal(pval(fit11), pval(fit12), tolerance = 0.02)
+  expect_equal(pval(fit12), pval(fit13), tolerance = 0.02)
+  
+  
+})
 

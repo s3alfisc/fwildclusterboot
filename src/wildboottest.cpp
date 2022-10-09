@@ -128,6 +128,7 @@ List wildboottestHC(const arma::vec & y,
   arma::mat XXinv = (X.t() * X ).i();
   arma::mat beta = XXinv * (X.t() * y);
   
+  arma::mat XXinvX = XXinv * X.t();
   arma::mat RXXinvX = (R.t() * XXinv) * X.t(); //1 x N
   arma::mat RXXinvX_squared = (arma::pow(RXXinvX, 2));
     
@@ -160,9 +161,9 @@ List wildboottestHC(const arma::vec & y,
     }
     
     if(bootstrap_type == 2){
-      arma::vec resid_multiplier = 1 / arma::sqrt(1-diag_hatmat);    
+      resid_multiplier = 1 / arma::sqrt(1-diag_hatmat);    
     } else if(bootstrap_type == 3){
-      arma::vec resid_multiplier = 1 / (1-diag_hatmat);    
+      resid_multiplier = 1 / (1-diag_hatmat);    
     }
     
   }
@@ -177,7 +178,7 @@ List wildboottestHC(const arma::vec & y,
     arma::vec weights = sample_weights(N_G_bootcluster, type);
     arma::vec y_boot = yhat_r + resid_multiplier % resid_r % weights;
     // get bootstrapped coefs and resids
-    arma::vec coef_boot = XXinv * (X.t() * y_boot) ; // k x 1 
+    arma::vec coef_boot = XXinvX * y_boot ; // k x 1 
     arma::vec resid_boot = y_boot - X * coef_boot;
     arma::mat boot_var = RXXinvX_squared * pow(resid_boot, 2);
     
@@ -190,7 +191,7 @@ List wildboottestHC(const arma::vec & y,
   // for b = 0 - always HC1
   arma::vec y_boot = yhat_r + resid_r;
   // get bootstrapped coefs and resids
-  arma::vec coef_boot = XXinv * (X.t() * y_boot) ; // k x 1
+  arma::vec coef_boot = XXinvX * y_boot ; // k x 1 
   arma::vec resid_boot = y_boot - X * coef_boot;
   arma::mat boot_var = RXXinvX_squared * pow(resid_boot, 2);
   
