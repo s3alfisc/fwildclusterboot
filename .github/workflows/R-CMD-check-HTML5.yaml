@@ -18,6 +18,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+    # install julia
+      - uses: julia-actions/setup-julia@v1
+      # add julia to renviron
+      - name: Create and populate .Renviron file
+        run: echo JULIA_BINDIR= "${{ env.juliaLocation }}" >> ~/.Renviron
+        shell: bash
+
+      # install WildBootTests.jl
+      - name: install WildBootTests.jl 
+        run: julia -e 'using Pkg; Pkg.add(["WildBootTests", "StableRNGs"])'
+        # use shell bash to ensure consistent behavior across OS
+        shell: bash
+        
       - name: Install pdflatex
         run: sudo apt-get install texlive-latex-base texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra
 
