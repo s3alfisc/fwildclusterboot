@@ -1,3 +1,45 @@
+## Re-Submission of 0.12 
+
+The package did not pass the initial CRAN checks. I believe that the received notes are mostly false positives. On Friday, I therefore replied by email to CRAN-submissions@r-project.org, but have not yet received a reply. As I am not sure if the email received you, I am resubmitting, and have attached the content of my email. Further, note that `fwildclusterboot` is currently archived due to `Matrix.utils` being archived, a dependency that I have dropped in the submission at hand. 
+
+"Dear CRAN team,
+
+The pre-tests produce the following notes on windows and Debian:
+
+- Possibly misspelled words in DESCRIPTION:
+  MacKinnon (35:50, 38:70)
+  multiway (40:23)
+
+- * checking top-level files ... NOTE
+Non-standard file/directory found at top level:  ‘codemeta.json’
+
+I believe both to be false positives - the words are spelled correctly and a 'codemeta.json' appeared to be allowed in the past.
+
+On windows, the following note further is a false positive - I have checked the URL prior to submission, and it works.
+
+- Found the following (possibly) invalid URLs:
+  URL: https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf
+    From: README.md
+          NEWS.md
+    Status: Error
+    Message: server certificate verification failed. CAfile: none CRLfile: none
+              (Status without verification: OK)
+
+Two notes remain that I do not understand, both of which are related to the html manual:
+
+- On Windows:  checking HTML version of manual ... [1s/1s] NOTE
+Found the following HTML validation problems:
+setBoottest_engine.html:32:1 (setBoottest_engine.Rd:19): Warning: <div> isn't allowed in <h2> elements
+- On Debian: * checking HTML version of manual ... [8s] NOTE
+Encountered the following conversion/validation errors:
+missing value where TRUE/FALSE needed
+
+All the best, and thanks for all your efforts!
+
+Alex"
+
+
+
 ## Submission of 0.12
 
 Tests on rhub, github actions and win devel: 

@@ -16,7 +16,7 @@ This is the first CRAN release since version `0.9`. It comes with a set of new f
 
 + A new function argument has been added - `bootstrap_type`. In combination with the `impose_null` function argument, it allows to choose between different cluster bootstrap types - WCx11, WCx13, WCx31, WCx33. For more details on these methods, see the working paper by [MacKinnon, Nielsen & Webb (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf). Currently, these new bootstrap types only compute p-values. Adding support for confidence intervals is work in progress.
 + A `boot_aggregate()` method now supports the aggregation of coefficients in staggered difference-in-differences following the methods by [Sun & Abraham (2021, Journal of Econometrics)](https://arxiv.org/pdf/1804.05785.pdf) in combination with the `sunab()` function from [`fixest`](https://lrberge.github.io/fixest/reference/sunab.html)has been added. Essentially, `boot_aggregate()` is a copy of [`aggregate.fixest`](https://lrberge.github.io/fixest/reference/aggregate.fixest.html): the only difference is that inference is powered by a wild bootstrap.
-+ The heteroskedastic bootstrap is now significantly faster. 
++ The heteroskedastic bootstrap is now significantly faster, and WCR21 and WCR31 versions are now supported (i.e. HC2 and HC3 'imposed' on the bootstrap dgp.)
 
 
 # fwildclusterboot 0.11.3 
