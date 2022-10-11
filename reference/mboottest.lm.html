@@ -141,8 +141,7 @@ Roodman et al cited below, section 4.2).
 Other options include "min", where bootstrapping is clustered by the
 cluster variable with the fewest clusters.
 Further, the subcluster bootstrap (MacKinnon &amp; Webb, 2018) is
-supported - see the <code><a href="../articles/fwildclusterboot.html">vignette("fwildclusterboot",
-        package = "fwildclusterboot")</a></code> for details.</p></dd>
+supported - see the <code><a href="../articles/fwildclusterboot.html">vignette("fwildclusterboot", package = "fwildclusterboot")</a></code> for details.</p></dd>
 
 
 <dt>seed</dt>
@@ -203,11 +202,11 @@ bootstrap-c instead of bootstrap-t</p></dd>
 
 <dt>ssc</dt>
 <dd><p>An object of class <code>boot_ssc.type</code> obtained with the function
-<code><a href="boot_ssc.html">boot_ssc</a></code>. Represents how the small sample
+<code><a href="boot_ssc.html">boot_ssc()</a></code>. Represents how the small sample
 adjustments are computed. The defaults are <code>adj = TRUE, fixef.K = "none", cluster.adj = "TRUE", cluster.df = "conventional"</code>.
 You can find more details in the help file for <code><a href="boot_ssc.html">boot_ssc()</a></code>.
 The function is purposefully designed to mimic fixest's
-<code><a href="https://lrberge.github.io/fixest/reference/ssc.html" class="external-link">ssc</a></code> function.</p></dd>
+<code><a href="https://lrberge.github.io/fixest/reference/ssc.html" class="external-link">fixest::ssc()</a></code> function.</p></dd>
 
 
 <dt>...</dt>

@@ -756,7 +756,11 @@ Log.Lik.
 <span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"fixest"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="co"># estimate the regression model via feols</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lrberge.github.io/fixest/" class="external-link">fixest</a></span><span class="op">)</span></span>
-<span>  <span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">|</span> <span class="va">Q1_immigration</span> , data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span></span>
+<span>  <span class="va">feols_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span></span>
+<span>    <span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span> <span class="op">+</span> <span class="va">ideology1</span> <span class="op">+</span> <span class="va">log_income</span> <span class="op">|</span> </span>
+<span>      <span class="va">Q1_immigration</span> , </span>
+<span>    data <span class="op">=</span> <span class="va">voters</span></span>
+<span>  <span class="op">)</span></span>
 <span>  <span class="va">boot_feols</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span></span>
 <span>    <span class="va">feols_fit</span>, </span>
 <span>    clustid <span class="op">=</span> <span class="st">"group_id1"</span>, </span>
@@ -971,7 +975,7 @@ Log.Lik.
 <span><span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">SchoolingReturns</span><span class="op">)</span></span>
 <span><span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span></span>
-<span>                           <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span>  <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>, </span>
+<span>              <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span>  <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>, </span>
 <span>  data <span class="op">=</span> <span class="va">SchoolingReturns</span><span class="op">)</span></span>
 <span></span>
 <span>      </span>
@@ -1119,7 +1123,9 @@ Log.Lik.
 <span>                    cluster.df <span class="op">=</span> <span class="st">'conventional'</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span>        </span>
-<span><span class="va">feols_tstats</span> <span class="op">&lt;-</span> <span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/coeftable.html" class="external-link">coeftable</a></span><span class="op">(</span><span class="va">feols_fit</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment"</span>, <span class="st">"log_income"</span>, <span class="st">"ideology1"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">]</span></span>
+<span><span class="va">feols_tstats</span> <span class="op">&lt;-</span> <span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/coeftable.html" class="external-link">coeftable</a></span><span class="op">(</span></span>
+<span>  <span class="va">feols_fit</span></span>
+<span>  <span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment"</span>, <span class="st">"log_income"</span>, <span class="st">"ideology1"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">boot_tstats</span> <span class="op">&lt;-</span> </span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"treatment"</span>, <span class="st">"log_income"</span>, <span class="st">"ideology1"</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span></span>
