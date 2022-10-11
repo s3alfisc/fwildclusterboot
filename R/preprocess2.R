@@ -6,7 +6,7 @@
 #' @noRd
 #'
 #' @importFrom Matrix Diagonal
-#' @return An object of class \code{preprocess2}.
+#' @return An object of class `preprocess2`.
 
 preprocess2 <- function(object, ...) {
   UseMethod("preprocess2")
@@ -36,8 +36,9 @@ preprocess2.fixest <-
     #'  "WildBootTests.jl"
     #' @param bootcluster a character string containing the name(s) of the
     #'  bootcluster variables. Alternatively, "min" or "max"
-    #' @param bootstrap_type Which bootstrap type should be run? '11', '13', '31' or 
-    #' '33'. For more infos, see the paper by MacKinnon, Nielsen & Webb (2022)
+    #' @param bootstrap_type Which bootstrap type should be run? 
+    #' '11', '13', '31' or 33'. For more infos, see the paper
+    #' by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
     #'
@@ -260,8 +261,9 @@ preprocess2.felm <-
     #'  "WildBootTests.jl"
     #' @param bootcluster a character string containing the name(s) of the
     #'  bootcluster variables. Alternatively, "min" or "max"
-    #' @param bootstrap_type Which bootstrap type should be run? '11', '13', '31' or 
-    #' '33'. For more infos, see the paper by MacKinnon, Nielsen & Webb (2022)
+    #' @param bootstrap_type Which bootstrap type should be run? 
+    #' '11', '13', '31' or  33'. For more infos, 
+    #' see the paper by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
     #'
@@ -738,7 +740,8 @@ demean_fe <- function(X, Y, fe, has_weights, N) {
 
 
 transform_fe <-
-  function(object, X, Y, fe, has_weights, N, engine, bootstrap_type, clustid_char) {
+  function(object, X, Y, fe, has_weights, N, engine, 
+           bootstrap_type, clustid_char) {
     #' preprocess the model fixed effects
     #'
     #'  If is.null(fe) == TRUE, all

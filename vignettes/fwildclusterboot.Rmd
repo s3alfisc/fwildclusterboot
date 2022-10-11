@@ -247,7 +247,11 @@ Within the bootstrap, the user can choose to project out *only one* fixed effect
 if(requireNamespace("fixest")){
   # estimate the regression model via feols
   library(fixest)
-  feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income | Q1_immigration , data = voters)
+  feols_fit <- feols(
+    proposition_vote ~ treatment + ideology1 + log_income | 
+      Q1_immigration , 
+    data = voters
+  )
   boot_feols <- boottest(
     feols_fit, 
     clustid = "group_id1", 
@@ -378,7 +382,7 @@ data("SchoolingReturns", package = "ivreg")
 SchoolingReturns <- na.omit(SchoolingReturns)
 ivreg_fit <- ivreg(
   log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
-                           nearcollege + age  + ethnicity + smsa + south + parents14, 
+              nearcollege + age  + ethnicity + smsa + south + parents14, 
   data = SchoolingReturns)
 
       
@@ -571,7 +575,9 @@ feols_fit <- fixest::feols(
                     cluster.df = 'conventional')
   )
         
-feols_tstats <- fixest::coeftable(feols_fit)[c("treatment", "log_income", "ideology1"), 3]
+feols_tstats <- fixest::coeftable(
+  feols_fit
+  )[c("treatment", "log_income", "ideology1"), 3]
 
 boot_tstats <- 
 lapply(c("treatment", "log_income", "ideology1"), function(x){

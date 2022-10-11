@@ -53,8 +53,8 @@
 #'        Other options include "min", where bootstrapping is clustered by
 #'        the cluster variable with the fewest clusters.
 #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
-#'         supported - see the \code{vignette("fwildclusterboot", package =
-#'          "fwildclusterboot")} for details.
+#'         supported - see the `vignette("fwildclusterboot", package =
+#'          "fwildclusterboot")` for details.
 #' @param fe A character vector or rhs formula of length one which contains
 #' the name of the fixed effect to be projected
 #'        out in the bootstrap. Note: if regression weights are used, fe
@@ -111,12 +111,12 @@
 #'                 between 0 and 1 which represents the fraction of all threads
 #'                 to use. The default is to use 1 core.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function
-#'  \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample
+#'  [fwildclusterboot::boot_ssc()]. Represents how the small sample
 #'   adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none",
 #'   cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`.
 #'             The function is purposefully designed to mimic fixest's
-#'             \code{\link[fixest]{ssc}} function.
+#'             [fixest::ssc()] function.
 #' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
 #' @param floattype Float64 by default. Other option: Float32. Should floating
 #'  point numbers in Julia be represented as 32 or 64 bit? Only relevant when
@@ -227,11 +227,11 @@ boot_aggregate <- function(
     if(isTRUE(x$is_sunab)){
       agg_name <- names(agg)
       if(agg == "att"){
-        agg = x$model_matrix_info$sunab$agg_att
+        agg <- x$model_matrix_info$sunab$agg_att
         # we also remove the previous vars
         agg_rm <- gsub("E::", "E::-?", agg, fixed = TRUE)
       } else if(agg == "cohort"){
-        agg = c("cohort" = "::[^-].*:cohort::(.+)")
+        agg <- c("cohort" = "::[^-].*:cohort::(.+)")
         agg_rm <- gsub("E::", "E::-?", 
                        x$model_matrix_info$sunab$agg_att, fixed = TRUE)
       } else {
@@ -240,7 +240,7 @@ boot_aggregate <- function(
       if(!is.null(agg_name)) names(agg) <- agg_name
     }
   } else if(isFALSE(agg)){
-    agg = c("nothing to remove" = "we want all the coefficients")
+    agg <- c("nothing to remove" = "we want all the coefficients")
   }
   
   is_name <- !is.null(names(agg))

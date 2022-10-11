@@ -8,10 +8,10 @@
 #' @param object An object of type lm, fixest, felm or ivreg
 #' @param ... other arguments
 #'
-#' @seealso \link[fwildclusterboot]{boottest.lm},
-#' \link[fwildclusterboot]{boottest.fixest},
-#' \link[fwildclusterboot]{boottest.felm},
-#'  \link[fwildclusterboot]{boottest.ivreg}
+#' @seealso [boottest.lm][fwildclusterboot::boottest.lm],
+#' [boottest.fixest][fwildclusterboot::boottest.fixest],
+#' [boottest.felm][fwildclusterboot::boottest.felm],
+#'  [boottest.ivreg][fwildclusterboot::boottest.ivreg]
 #'
 #' @examples
 #' requireNamespace("fwildclusterboot")
@@ -47,10 +47,10 @@
 #' + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher, Webb
 #' or Normal weights
 #'
-#' @return An object of class \code{boottest}.
+#' @return An object of class `boottest`.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
-#' (\url{https://ideas.repec.org/p/qed/wpaper/1406.html})
+#' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
 #' @references MacKinnon, James G., Morten Ørregaard Nielsen, and 
 #' Matthew D. Webb. Fast and reliable jackknife and bootstrap
 #'  methods for cluster-robust inference. No. 1485. 2022. 
@@ -92,9 +92,9 @@ boottest <- function(object,
 #' @param object An object of type lm, fixest or felm
 #' @param ... other arguments
 #'
-#' @seealso \link[fwildclusterboot]{mboottest.lm}
-#'  \link[fwildclusterboot]{mboottest.felm}
-#'  \link[fwildclusterboot]{mboottest.fixest}
+#' @seealso [mboottest.lm][fwildclusterboot::mboottest.lm]
+#'  [mboottest.felm][fwildclusterboot::mboottest.felm]
+#'  [mboottest.fixest][fwildclusterboot::mboottest.fixest]
 #'
 #' @export
 #'
@@ -110,10 +110,10 @@ boottest <- function(object,
 #' + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher,
 #'  Webb or Normal weights
 #'
-#' @return An object of class \code{mboottest}.
+#' @return An object of class `mboottest`.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
-#' (\url{https://ideas.repec.org/p/qed/wpaper/1406.html})
+#' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 #'  "Bootstrap-based improvements for inference with clustered errors."
 #'  The Review of Economics and Statistics 90.3 (2008): 414-427.

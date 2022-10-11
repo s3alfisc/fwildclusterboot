@@ -96,8 +96,8 @@ Webb, Matthew D.
 . No. 1315. Queen's Economics Department Working Paper, 2013.
 }
 \seealso{
-\link[fwildclusterboot]{boottest.lm},
-\link[fwildclusterboot]{boottest.fixest},
-\link[fwildclusterboot]{boottest.felm},
-\link[fwildclusterboot]{boottest.ivreg}
+\link[=boottest.lm]{boottest.lm},
+\link[=boottest.fixest]{boottest.fixest},
+\link[=boottest.felm]{boottest.felm},
+\link[=boottest.ivreg]{boottest.ivreg}
 }

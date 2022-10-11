@@ -6,9 +6,11 @@ test_that("test sunab", {
   base_stagg <- fixest::base_stagg
 
   # The DiD estimation
-  res_sunab = fixest::feols(y ~ x1 + fixest:::sunab(year_treated, year) | id + year, base_stagg)
+  res_sunab <- fixest::feols(
+    y ~ x1 + fixest:::sunab(year_treated, year) | id + year, base_stagg)
   
-  res_sunab_3ref = fixest::feols(y ~ x1 + fixest:::sunab(year_treated, year, ref.p = c(.F + 0:2, -1)) |
+  res_sunab_3ref <- fixest::feols(
+    y ~ x1 + fixest:::sunab(year_treated, year, ref.p = c(.F + 0:2, -1)) |
                            id + year, 
                          cluster = "id", base_stagg, 
                          ssc = fixest::ssc(adj = FALSE, cluster.adj = FALSE))

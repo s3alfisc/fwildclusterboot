@@ -28,8 +28,8 @@
 #'        Other options include "min", where bootstrapping is clustered by
 #'        the cluster variable with the fewest clusters.
 #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
-#'         supported - see the \code{vignette("fwildclusterboot", package =
-#'          "fwildclusterboot")} for details.
+#'         supported - see the `vignette("fwildclusterboot", package =
+#'          "fwildclusterboot")` for details.
 #' @param fe A character vector or rhs formula of length one which contains
 #' the name of the fixed effect to be projected
 #'        out in the bootstrap. Note: if regression weights are used, fe
@@ -97,12 +97,12 @@
 #'                 between 0 and 1 which represents the fraction of all threads
 #'                 to use. The default is to use 1 core.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function
-#'  \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample
+#'  [fwildclusterboot::boot_ssc()]. Represents how the small sample
 #'   adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none",
 #'   cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`.
 #'             The function is purposefully designed to mimic fixest's
-#'             \code{\link[fixest]{ssc}} function.
+#'             [fixest::ssc()] function.
 #' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
 #' @param floattype Float64 by default. Other option: Float32. Should floating
 #'  point numbers in Julia be represented as 32 or 64 bit? Only relevant when
@@ -117,7 +117,7 @@
 
 #' @importFrom dreamerr check_arg validate_dots
 
-#' @return An object of class \code{boottest}
+#' @return An object of class `boottest`
 #'
 #' \item{p_val}{The bootstrap p-value.}
 #' \item{conf_int}{The bootstrap confidence interval.}
@@ -164,7 +164,7 @@
 #' or Normal weights
 #'
 #' @section Confidence Intervals:
-#' \code{boottest} computes confidence intervals by inverting p-values.
+#' `boottest` computes confidence intervals by inverting p-values.
 #'       In practice, the following procedure is used:
 #' \itemize{
 #' \item Based on an initial guess for starting values, calculate p-values
@@ -174,14 +174,14 @@
 #'       sign_level sign_level.
 #' \item Feed the two pairs of x into an numerical root finding procedure
 #'       and solve for the root. boottest currently relies on
-#'       \code{stats::uniroot} and sets an absolute tolerance of 1e-06 and
+#'       `stats::uniroot` and sets an absolute tolerance of 1e-06 and
 #'       stops the procedure after 10 iterations.
 #' }
 #' @section Standard Errors:
-#' \code{boottest} does not calculate standard errors.
+#' `boottest` does not calculate standard errors.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
-#'      (\url{https://ideas.repec.org/p/qed/wpaper/1406.html})
+#'      (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
 #' @references MacKinnon, James G., Morten Ørregaard Nielsen, and 
 #' Matthew D. Webb. Fast and reliable jackknife and bootstrap
 #'  methods for cluster-robust inference. No. 1485. 2022. 
@@ -667,7 +667,3 @@ boottest.fixest <- function(object,
   invisible(res_final)
 }
 
-#' this is a trick - actually not need
-#' it's just that something called sunab() needs to be 
-#' found, else cluster creation funs confused
-sunab <- function(){1}

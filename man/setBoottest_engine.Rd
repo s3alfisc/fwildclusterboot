@@ -76,7 +76,8 @@ sub(n, r, v[1:n])
 }\if{html}{\out{</div>}}
 
 }
-Sets the bootstrap algo to be run via \code{boottest()} and \code{waldboottest()}}
+Sets the default bootstrap algo for the current R session
+to be run via \code{boottest()} and \code{mboottest()}}
 \usage{
 setBoottest_engine(engine)
 }
@@ -162,7 +163,8 @@ sub(n, r, v[1:n])
 }\if{html}{\out{</div>}}
 
 }
-Sets the bootstrap algo to be run via \code{boottest()} and \code{waldboottest()}
+Sets the default bootstrap algo for the current R session
+to be run via \code{boottest()} and \code{mboottest()}
 }
 \examples{
 \dontrun{

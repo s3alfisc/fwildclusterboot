@@ -61,8 +61,7 @@ Roodman et al cited below, section 4.2).
 Other options include "min", where bootstrapping is clustered by
 the cluster variable with the fewest clusters.
 Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
-supported - see the \code{vignette("fwildclusterboot",
-        package = "fwildclusterboot")} for details.}
+supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.}
 
 \item{fe}{A character vector or rhs formula of length one which contains
 the name of the fixed effect to be projected
@@ -129,12 +128,12 @@ between 0 and 1 which represents the fraction of all threads
 to use. The default is to use 1 core.}
 
 \item{ssc}{An object of class \code{boot_ssc.type} obtained with the function
-\code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample
+\code{\link[=boot_ssc]{boot_ssc()}}. Represents how the small sample
 adjustments are computed. The defaults are
 adj = TRUE, fixef.K = "none", cluster.adj = "TRUE",
 cluster.df = "conventional". You can find more details in the help
 file for \code{boot_ssc()}. The function is purposefully designed to mimic
-fixest's \code{\link[fixest]{ssc}} function.}
+fixest's \code{\link[fixest:ssc]{fixest::ssc()}} function.}
 
 \item{engine}{Character scalar. Either "R" or "WildBootTests.jl".
 Controls the algorithm employed by boottest.

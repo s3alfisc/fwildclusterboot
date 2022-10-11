@@ -27,8 +27,8 @@
 #'        Other options include "min", where bootstrapping is clustered by
 #'        the cluster variable with the fewest clusters.
 #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
-#'        supported - see the \code{vignette("fwildclusterboot",
-#'         package = "fwildclusterboot")} for details.
+#'        supported - see the `vignette("fwildclusterboot",
+#'         package = "fwildclusterboot")` for details.
 #' @param sign_level A numeric between 0 and 1 which sets the significance level
 #'        of the inference procedure. E.g. sign_level = 0.05
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
@@ -72,19 +72,19 @@
 #' @param kappa Null by default. fixed <U+03BA> for k-class estimation
 #' @param arubin False by default. Logical scalar. TRUE for Anderson-Rubin Test.
 #' @param ssc An object of class `boot_ssc.type` obtained with the function
-#' \code{\link[fwildclusterboot]{boot_ssc}}. Represents how the small sample
+#' [fwildclusterboot::boot_ssc()]. Represents how the small sample
 #'  adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none",
 #'   cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`.
 #'             The function is purposefully designed to mimic
-#'             fixest's \code{\link[fixest]{ssc}} function.
+#'             fixest's [fixest::ssc()] function.
 #' @param ... Further arguments passed to or from other methods.
 #'
 #' @importFrom dreamerr check_arg validate_dots
 #'
 #' @method boottest ivreg
 #'
-#' @return An object of class \code{boottest}
+#' @return An object of class `boottest`
 #'
 #' \item{p_val}{The bootstrap p-value.}
 #' \item{conf_int}{The bootstrap confidence interval.}
@@ -130,7 +130,7 @@
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'    STATA using boottest", The STATA Journal.
-#'    (\url{https://ideas.repec.org/p/qed/wpaper/1406.html})
+#'    (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 #' "Bootstrap-based improvements for inference with clustered errors."
 #' The Review of Economics and Statistics 90.3 (2008): 414-427.

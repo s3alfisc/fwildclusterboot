@@ -9,6 +9,22 @@ boot_algo3_crv3 <- function(B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, 
     .Call('_fwildclusterboot_boot_algo3_crv3', PACKAGE = 'fwildclusterboot', B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, cores, R, delta_b_star)
 }
 
+#' Matrix Multiplication via Eigen
+#' @param A A matrix.
+#' @param B A matrix.
+#' @param nthreads Integer. Number of threads to use for matrix multiplication.
+#' @return A matrix
+#' @noRd
+eigenMapMatMult <- function(A, B, nthreads) {
+    .Call('_fwildclusterboot_eigenMapMatMult', PACKAGE = 'fwildclusterboot', A, B, nthreads)
+}
+
+#' Get maximum number of threads on hardware for open mp support
+#' @noRd
+cpp_get_nb_threads <- function() {
+    .Call('_fwildclusterboot_cpp_get_nb_threads', PACKAGE = 'fwildclusterboot')
+}
+
 #' Implementation of the heteroskedastic wild bootstrap. Computes
 #' HC robust variance estimators. For use in fwildclusterboot when no
 #' cluster variable is provided
@@ -64,22 +80,6 @@ NULL
 #'  imposed on the bootstrap dgp.
 #' @noRd
 NULL
-
-#' Matrix Multiplication via Eigen
-#' @param A A matrix.
-#' @param B A matrix.
-#' @param nthreads Integer. Number of threads to use for matrix multiplication.
-#' @return A matrix
-#' @noRd
-eigenMapMatMult <- function(A, B, nthreads) {
-    .Call('_fwildclusterboot_eigenMapMatMult', PACKAGE = 'fwildclusterboot', A, B, nthreads)
-}
-
-#' Get maximum number of threads on hardware for open mp support
-#' @noRd
-cpp_get_nb_threads <- function() {
-    .Call('_fwildclusterboot_cpp_get_nb_threads', PACKAGE = 'fwildclusterboot')
-}
 
 #'create bootstrap sample weights
 #' @param G the number of clusters

@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-In a recent working paper, [MacKinnon, Nielsen and Webb (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf) suggest multiple new variants of the wild cluster bootstrap. The methods differ in a) how the bootstrap scores are computed and b) if a CRV1 or CRV3 variance matrix is used when computing bootstrapped t-statistics. 
+In a recent working paper, [MacKinnon, Nielsen and Webb(2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf) suggest multiple new variants of the wild cluster bootstrap. The methods differ in a) how the bootstrap scores are computed and b) if a CRV1 or CRV3 variance matrix is used when computing bootstrapped t-statistics. 
 
 All new bootstrap variants are implemented in `{fwildclusterboot}` and can be called by using the `engine` function argument of `boottest()`. The implementation is still quite bare-bone: it only allows to test hypotheses of the form $\beta_k = 0$ vs $\beta_k \neq 0$, does not allow for regression weights or fixed effects, and further does not compute confidence intervals. 
 
@@ -54,7 +54,8 @@ lapply(wcr_algos, function(x){
     )
   })
 
-names(run_all) <- paste("WCR", c("11 F&W", "11 F&R", "13 F&R", "31 F&R", "33 F&R"))
+names(run_all) <- paste("WCR", 
+                        c("11 F&W", "11 F&R", "13 F&R", "31 F&R", "33 F&R"))
 
 msummary(
   run_all, 

@@ -349,7 +349,7 @@ boot_algo3 <- function(preprocessed_object,
     )
     
     if(inherits(object, "fixest")){
-      vcov3$absorb_cluster_fixef = FALSE
+      vcov3$absorb_cluster_fixef <- FALSE
     }
     
     vcov <- eval(vcov3)

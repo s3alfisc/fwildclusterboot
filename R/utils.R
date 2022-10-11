@@ -14,7 +14,7 @@
 #' @param numb_fe2 A scalar. Number of fixed effect for second factor variable
 #' @param seed An integer. Set the random seed
 #' @param weights Possible regression weights to be used in estimation
-#' @return A simulated \code{data.frame} with specified numbers of clusters,
+#' @return A simulated `data.frame` with specified numbers of clusters,
 #'         intra-cluster correlations and dimensionality of fixed effects.
 #' @examples
 #' df <- create_data(
@@ -192,12 +192,15 @@ create_data <-
 
 setBoottest_engine <- function(engine) {
   
-  #' Sets the bootstrap algo to be run via `boottest()` and `waldboottest()`
+  #' Sets the default bootstrap algo for the current R session 
+  #' to be run via `boottest()` and `mboottest()`
   #' 
   #' @param engine Character scalar. Either 'R' or 'WildBootTests.jl'.
   #'  Default is 'R'
   #' @return No return value
+  #' 
   #' @export
+  #' 
   #' @examples
   #' \dontrun{
   #' setBoottest_engine(engine = "R")
