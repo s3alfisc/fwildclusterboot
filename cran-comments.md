@@ -1,3 +1,8 @@
+## Re-Submission of 0.12
+
+The pre-submission checks complained about misspelled words in the description 
+file and the json.meta file. I have deleted the json.meta file and put all flagged words into '' parentheses. Win-devel and rhub no longer flag these issues. 
+
 ## Submission of 0.12 
 
 I checked the package following (almost all) steps in thinkR's [prepare-for-cran script](https://github.com/ThinkR-open/prepare-for-cran).
