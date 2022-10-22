@@ -93,6 +93,10 @@ wildboottestHC <- function(y, X, R, r, B, N_G_bootcluster, cores, type, small_sa
     .Call('_fwildclusterboot_wildboottestHC', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction, bootstrap_type)
 }
 
+wildboottestHC_v_provided <- function(y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction, bootstrap_type, weights) {
+    .Call('_fwildclusterboot_wildboottestHC_v_provided', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction, bootstrap_type, weights)
+}
+
 wildboottestCL <- function(y, X, R, r, B, N_G_bootcluster, cores, type, cluster, small_sample_correction) {
     .Call('_fwildclusterboot_wildboottestCL', PACKAGE = 'fwildclusterboot', y, X, R, r, B, N_G_bootcluster, cores, type, cluster, small_sample_correction)
 }

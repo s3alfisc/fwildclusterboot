@@ -105,6 +105,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// wildboottestHC_v_provided
+List wildboottestHC_v_provided(const arma::vec& y, const arma::mat& X, const arma::mat& R, const double& r, const int& B, const int& N_G_bootcluster, const int& cores, const int& type, const double& small_sample_correction, const int bootstrap_type, arma::mat weights);
+RcppExport SEXP _fwildclusterboot_wildboottestHC_v_provided(SEXP ySEXP, SEXP XSEXP, SEXP RSEXP, SEXP rSEXP, SEXP BSEXP, SEXP N_G_bootclusterSEXP, SEXP coresSEXP, SEXP typeSEXP, SEXP small_sample_correctionSEXP, SEXP bootstrap_typeSEXP, SEXP weightsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type R(RSEXP);
+    Rcpp::traits::input_parameter< const double& >::type r(rSEXP);
+    Rcpp::traits::input_parameter< const int& >::type B(BSEXP);
+    Rcpp::traits::input_parameter< const int& >::type N_G_bootcluster(N_G_bootclusterSEXP);
+    Rcpp::traits::input_parameter< const int& >::type cores(coresSEXP);
+    Rcpp::traits::input_parameter< const int& >::type type(typeSEXP);
+    Rcpp::traits::input_parameter< const double& >::type small_sample_correction(small_sample_correctionSEXP);
+    Rcpp::traits::input_parameter< const int >::type bootstrap_type(bootstrap_typeSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type weights(weightsSEXP);
+    rcpp_result_gen = Rcpp::wrap(wildboottestHC_v_provided(y, X, R, r, B, N_G_bootcluster, cores, type, small_sample_correction, bootstrap_type, weights));
+    return rcpp_result_gen;
+END_RCPP
+}
 // wildboottestCL
 List wildboottestCL(const arma::vec& y, const arma::mat& X, const arma::mat& R, const double& r, const int& B, const int& N_G_bootcluster, const int& cores, const int& type, const arma::vec& cluster, const double& small_sample_correction);
 RcppExport SEXP _fwildclusterboot_wildboottestCL(SEXP ySEXP, SEXP XSEXP, SEXP RSEXP, SEXP rSEXP, SEXP BSEXP, SEXP N_G_bootclusterSEXP, SEXP coresSEXP, SEXP typeSEXP, SEXP clusterSEXP, SEXP small_sample_correctionSEXP) {
@@ -153,6 +174,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_fwildclusterboot_cpp_get_nb_threads", (DL_FUNC) &_fwildclusterboot_cpp_get_nb_threads, 0},
     {"_fwildclusterboot_sample_weights", (DL_FUNC) &_fwildclusterboot_sample_weights, 2},
     {"_fwildclusterboot_wildboottestHC", (DL_FUNC) &_fwildclusterboot_wildboottestHC, 10},
+    {"_fwildclusterboot_wildboottestHC_v_provided", (DL_FUNC) &_fwildclusterboot_wildboottestHC_v_provided, 11},
     {"_fwildclusterboot_wildboottestCL", (DL_FUNC) &_fwildclusterboot_wildboottestCL, 10},
     {"_fwildclusterboot_wildboottestCL_enum", (DL_FUNC) &_fwildclusterboot_wildboottestCL_enum, 10},
     {NULL, NULL, 0}

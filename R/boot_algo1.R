@@ -152,18 +152,27 @@ boot_algo1 <-
     
     if (heteroskedastic == TRUE) {
       boot_res <-
-        wildboottestHC(
-          y = Y,
-          X = X,
-          R = t(R),
-          r = r,
-          B = boot_iter,
-          N_G_bootcluster = N,
-          cores = nthreads,
-          type = type,
-          small_sample_correction = small_sample_correction, 
-          bootstrap_type = bootstrap_type_int
-        )[["t_boot"]]
+        quote(
+          wildboottestHC(
+            y = Y,
+            X = X,
+            R = t(R),
+            r = r,
+            B = boot_iter,
+            N_G_bootcluster = N,
+            cores = nthreads,
+            type = type,
+            small_sample_correction = small_sample_correction, 
+            bootstrap_type = bootstrap_type_int
+          )
+        )
+      
+      if(!is.null(v)){
+        boot_res$weights <- t(v)
+      }
+      
+      boot_res <- eval(boot_res)[["t_boot"]]
+      
     } else {
       bootcluster <- preprocessed_object$bootcluster[, 1]
       # turn bootcluster into sequence of integers, starting 
@@ -177,8 +186,8 @@ boot_algo1 <-
       # (due to cpp implementation)
       bootcluster <- bootcluster - min(bootcluster)
       
-      if (is.null(v)) {
-        boot_res <-
+      boot_res <-
+        quote(
           wildboottestCL(
             y = unname(Y),
             X = unname(X),
@@ -190,32 +199,21 @@ boot_algo1 <-
             type = type,
             cluster = bootcluster,
             small_sample_correction = small_sample_correction
-          )[["t_boot"]]
-      } else {
-        boot_res <-
-          wildboottestCL_enum(
-            y = Y,
-            X = X,
-            R = t(unname(R)),
-            r = r,
-            B = boot_iter,
-            N_G_bootcluster = unname(N_G_bootcluster),
-            cores = nthreads,
-            cluster = bootcluster,
-            small_sample_correction = small_sample_correction,
-            v = t(v) 
-          )[["t_boot"]]
+          )
+        )
+      
+      if(!is.null(v)){
+        boot_res$v <- t(v)
       }
+      
+      boot_res <- eval(boot_res)[["t_boot"]]
       
     }
     
     
-    # selector <- which(R == 1)
     t_stat <- boot_res[1]
     t_boot <- boot_res[2:(boot_iter + 1)]
-    #t_stat <- boot_res[selector, 1]
-    #t_boot <- boot_res[selector, 2:(boot_iter + 1)]
-    
+
     p_val <- get_bootstrap_pvalue(p_val_type = p_val_type,
                                   t_stat = t_stat,
                                   t_boot = t_boot)
