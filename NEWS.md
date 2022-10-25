@@ -1,3 +1,8 @@
+# fwildclusterboot 0.12.1
+
+This is a hotfix CRAN release which disables multiple tests 
+that fail on ATLAS, BLAS and OpenBLAS.
+
 # fwildclusterboot 0.12
 
 This is the first CRAN release since version `0.9`. It comes with a set of new features, but also potentially breaking changes. This section summarizes all developments since version `0.9`. 
