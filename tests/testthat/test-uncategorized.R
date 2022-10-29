@@ -566,42 +566,6 @@ test_that("test vec2mat", {
   expect_equal(mat1, mat2[-1,], ignore_attr = TRUE)
 
   
-})
-
-
-test_that("no error when only one covariate in regression", {
-  
-  data(voters)
-  
-  feols_fit <-
-    fixest::feols(proposition_vote ~ 0 + treatment, data = voters)
-
-  # see https://github.com/s3alfisc/fwildclusterboot/issues/72
-  expect_no_error(
-    boottest(
-      feols_fit,
-      param = "treatment",
-      clustid = "group_id1", 
-      B = 999, 
-      bootstrap_type = "11"
-    )
-  )
-  
-  lm_fit <-
-    lm(proposition_vote ~ -1 + treatment, data = voters)
-  
-  # see https://github.com/s3alfisc/fwildclusterboot/issues/72
-  expect_no_error(
-    boottest(
-      lm_fit,
-      param = "treatment",
-      clustid = "group_id1", 
-      B = 999, 
-      bootstrap_type = "11"
-    )
-  )
   
   
 })
-
-

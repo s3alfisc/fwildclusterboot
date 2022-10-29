@@ -1,8 +1,5 @@
-test_that("test r-fnw vs r-new, non-stochastic (as same seed)", {
+test_that("test r-fnw vs r-, stochastic", {
 
-  
-      skip_on_cran()
-  
       reltol <- 0.05
       B <- 9999
 
@@ -29,11 +26,12 @@ test_that("test r-fnw vs r-new, non-stochastic (as same seed)", {
         data = data1
       )
       lm_fits <- list(
-        ols = lm_fit
+        ols = lm_fit#,
+        #  wls = lm_fit_weights
       )
-
+# 
       # object <- lm_fit
-      # type <- "rademacher"
+      # type <- "mammen"
       # p_val_type = "two-tailed"
       
       
@@ -143,8 +141,6 @@ test_that("test r-fnw vs r-new, non-stochastic (as same seed)", {
 
 
 test_that("new bootstrap variants II - t_stat equivalence", {
-  
-  skip_on_cran()
   
   N <- 1000
   N_G1 <- 17
@@ -364,8 +360,6 @@ test_that("variants 31 R vs Julia", {
 
 test_that("new variants and fixed effects", {
 
-  skip_on_cran()
-  
   library(fixest)
   library(fwildclusterboot)
 
