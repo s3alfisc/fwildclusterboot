@@ -1,3 +1,7 @@
+# fwildclusterboot 0.12.1
+
+This is a hot-fix release which turns of tests on CRAN that fail in non-standard CRAN test environments. 
+
 # fwildclusterboot 0.12
 
 This is the first CRAN release since version `0.9`. It comes with a set of new features, but also potentially breaking changes. This section summarizes all developments since version `0.9`. 
