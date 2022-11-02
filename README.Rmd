@@ -81,6 +81,19 @@ Additional features are provided through `WildBootTests.jl`:
 + OLS: `lm` (from stats), `fixest` (from fixest), `felm` from (lfe)
 + IV: `ivreg` (from ivreg). 
 
+### Installation
+
+You can install compiled versions of`{fwildclusterboot}` from R-universe (compiled) or github by following one of the steps below:
+
+```{r, eval = FALSE}
+# from r-universe (windows & mac, compiled R > 4.0 required)
+install.packages('fwildclusterboot', repos ='https://s3alfisc.r-universe.dev')
+# dev version from github
+# note: installation requires Rtools
+library(devtools)
+install_github("s3alfisc/fwildclusterboot")
+```
+
 ### The `boottest()` function
 
 For a longer introduction to `{fwildclusterboot}`, take a look at the [vignette](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
@@ -100,37 +113,6 @@ lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigrati
 # bootstrap inference via boottest()
 lm_boot <- boottest(lm_fit, clustid = c("group_id1"), B = 9999, param = "treatment", seed = 1)
 summary(lm_boot)
-```
-
-### Installation
-
-You can install compiled versions of`{fwildclusterboot}` from CRAN and the development version from R-universe (compiled) or github by following one of the steps below:
-
-```{r, eval = FALSE}
-# from CRAN 
-install.packages("fwildclusterboot")
-# from r-universe (windows & mac, compiled R > 4.0 required)
-install.packages('fwildclusterboot', repos ='https://s3alfisc.r-universe.dev')
-# dev version from github
-# note: installation requires Rtools
-library(devtools)
-install_github("s3alfisc/fwildclusterboot")
-```
-
-To run `WildBootTests.jl` through `{fwildclusterboot}`, `Julia` and `WildBootTests.jl` need to be installed. 
-
-You can install Julia by following the steps described on the official [`Julia` homepage](https://julialang.org/downloads/). 
-`WildBootTests.jl` can then be installed via Julia's package management system. 
-
-To help you connect Julia and R via the `JuliaConnectoR` and to install `WildBootTests.jl` from within R, you can alternatively use the `JuliaConnectoR.utils` package.
-
-```{r, eval = FALSE}
-devtools::install_github("s3alfisc/JuliaConnectoR.utils")
-library(JuliaConnectoR.utils)
-connect_julia_r() # instructions to connect Julia and R
-install_julia_packages("WildBootTests.jl") # install WildBootTests.jl
-set_julia_nthreads() # instructions to set nthreads for Julia
-
 ```
 
 ## Citation 

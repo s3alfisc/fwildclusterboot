@@ -6,7 +6,7 @@
 <img src="man/figures/logo.png" width="200px" align="right" />
 
 <!-- badges: start -->
-<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 1.3, 2022, 03, 10, 81868, R, R version 4.1.3 (2022-03-10), One Push-Up-orange.svg?style=flat-square)](commits/master) -->
+<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, ucrt, x86_64, mingw32, , 4, 2.1, 2022, 06, 23, 82513, R, R version 4.2.1 (2022-06-23 ucrt), Funny-Looking Kid-orange.svg?style=flat-square)](commits/master) -->
 
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
@@ -22,13 +22,10 @@ coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/ba
 
 <!-- badges: end -->
 
-The `{fwildclusterboot}` package provides a native R implementation of
-the fast wild cluster bootstrap algorithm developed in [Roodman et al
-(2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) for
-regression objects in R.
-
-Additionally, it provides support for multiple wild cluster bootstrap
-variants as described in [MacKinnon, Nielsen & Webb
+The `{fwildclusterboot}` package implements multiple fast wild cluster
+bootstrap algorithms as developed in [Roodman et al
+(2019)](https://econpapers.repec.org/paper/qedwpaper/1406.htm) and
+[MacKinnon, Nielsen & Webb
 (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf).
 
 Via the
@@ -42,9 +39,7 @@ hypotheses.
 The package’s central function is `boottest()`. It allows to test
 univariate hypotheses using a wild cluster bootstrap at extreme speed:
 via the ‘fast’ algorithm, it is possible to run a wild cluster bootstrap
-with
-![B = 100.000](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;B%20%3D%20100.000 "B = 100.000")
-iterations in less than a second!
+with $B = 100.000$ iterations in less than a second!
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
@@ -75,6 +70,20 @@ Additional features are provided through `WildBootTests.jl`:
 
 -   OLS: `lm` (from stats), `fixest` (from fixest), `felm` from (lfe)
 -   IV: `ivreg` (from ivreg).
+
+### Installation
+
+You can install compiled versions of`{fwildclusterboot}` from R-universe
+(compiled) or github by following one of the steps below:
+
+``` r
+# from r-universe (windows & mac, compiled R > 4.0 required)
+install.packages('fwildclusterboot', repos ='https://s3alfisc.r-universe.dev')
+# dev version from github
+# note: installation requires Rtools
+library(devtools)
+install_github("s3alfisc/fwildclusterboot")
+```
 
 ### The `boottest()` function
 
@@ -110,42 +119,6 @@ summary(lm_boot)
 #> 1 1*treatment = 0    0.079     3.983       0     0.04     0.118
 ```
 
-### Installation
-
-You can install compiled versions of`{fwildclusterboot}` from CRAN and
-the development version from R-universe (compiled) or github by
-following one of the steps below:
-
-``` r
-# from CRAN 
-install.packages("fwildclusterboot")
-# from r-universe (windows & mac, compiled R > 4.0 required)
-install.packages('fwildclusterboot', repos ='https://s3alfisc.r-universe.dev')
-# dev version from github
-# note: installation requires Rtools
-library(devtools)
-install_github("s3alfisc/fwildclusterboot")
-```
-
-To run `WildBootTests.jl` through `{fwildclusterboot}`, `Julia` and
-`WildBootTests.jl` need to be installed.
-
-You can install Julia by following the steps described on the official
-[`Julia` homepage](https://julialang.org/downloads/). `WildBootTests.jl`
-can then be installed via Julia’s package management system.
-
-To help you connect Julia and R via the `JuliaConnectoR` and to install
-`WildBootTests.jl` from within R, you can alternatively use the
-`JuliaConnectoR.utils` package.
-
-``` r
-devtools::install_github("s3alfisc/JuliaConnectoR.utils")
-library(JuliaConnectoR.utils)
-connect_julia_r() # instructions to connect Julia and R
-install_julia_packages("WildBootTests.jl") # install WildBootTests.jl
-set_julia_nthreads() # instructions to set nthreads for Julia
-```
-
 ## Citation
 
 If you are in `R`, you can simply run the following command to get the
@@ -163,7 +136,7 @@ citation("fwildclusterboot")
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Misc{,
-#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.11.1)},
+#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.12)},
 #>     author = {Alexander Fischer and David Roodman},
 #>     year = {2021},
 #>     url = {https://cran.r-project.org/package=fwildclusterboot},
