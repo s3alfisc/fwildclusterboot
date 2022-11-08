@@ -1,3 +1,15 @@
+## Resubmission of 0.12.1
+
+I have added comments regarding the SystemRequirements for Julia and WildBootTests.jl, including a link where to download 
+Julia from. I also mention that WildBootTests.jl can be downloaded from the Julia package manager. 
+
+Note that the package runs completely fine without either Julia or WildBootTests.jl - 
+the API to the Julia package is completely optional. 
+
+In consequence, I could also completely drop the SystemRequirements section from the description file and simply mention the minimal package versions in the vignette.
+
+I have checked the package on rhub and github actions, without any additional notes / warnings. 
+
 ## fwildclusterboot 0.12.1
 
 This is a hot-fix release which turns of some tests that fail on  ATLAS MKL OpenBLAS . 
