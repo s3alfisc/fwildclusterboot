@@ -1,5 +1,14 @@
 ## Resubmission of 0.12.1
 
+I have added additional information on how to download WildBootTests.jl to the description file. 
+
+I have also corrected the link to the JuliaConnectoR package, which now points to CRAN instead of the github repo.
+
+Tests via rhub and github actions pass without notes. 
+
+
+## Resubmission of 0.12.1
+
 I have added comments regarding the SystemRequirements for Julia and WildBootTests.jl, including a link where to download 
 Julia from. I also mention that WildBootTests.jl can be downloaded from the Julia package manager. 
 
