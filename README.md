@@ -29,7 +29,7 @@ bootstrap algorithms as developed in [Roodman et al
 (2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf).
 
 Via the
-[JuliaConnectoR](https://cran.r-project.org/web/packages/JuliaConnectoR/index.html),
+[JuliaConnectoR](https://CRAN.R-project.org/package=JuliaConnectoR),
 `{fwildclusterboot}` further ports functionality of
 [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) - which
 provides an even faster implementation of the wild cluster bootstrap for

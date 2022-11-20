@@ -92,5 +92,5 @@ Language: en-US
 SystemRequirements: Version Requirements to run the wild bootstrap through Julia - Julia (>= 1.7), WildBootTests.jl (>=0.8.1).
                     Julia is downloadable via the official Julia website (https://julialang.org/downloads/), 
                     WildBootTests.jl via Julia's package manager (https://docs.julialang.org/en/v1/stdlib/Pkg/) or 
-                    it's github repository (https://github.com/droodman/WildBootTests.jl)
+                    its github repository (https://github.com/droodman/WildBootTests.jl)
 Config/testthat/edition: 3
