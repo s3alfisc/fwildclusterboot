@@ -321,7 +321,7 @@
 #' predictor (independent) data.*
 #' 
 #' @noRd
-NULL
+# NULL
 
 #' NA_standards
 #'
@@ -528,7 +528,7 @@ NULL
 #' of **RE4.2**--**RE4.7**.
 #' 
 #' @srrstatsNA {RE7.4} Extending directly from **RE4.15**, where appropriate,
-#'  tests should demonstrate and confirm that forecast errors, confidence
-#'   intervals, or equivalent values increase with forecast horizons.
+#' tests should demonstrate and confirm that forecast errors, confidence
+#' intervals, or equivalent values increase with forecast horizons.
 
-NULL
+# NULL

@@ -182,9 +182,12 @@
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the 
 #' following software packages: 
-#' \item Stata: [boottest](https://github.com/droodman/boottest)
-#' \item Julia: [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl)
-#' \item Python: [wildboottest](https://github.com/s3alfisc/wildboottest)
+#' \item{
+#'  Stata: [boottest](https://github.com/droodman/boottest) }
+#' \item{
+#'  Julia: [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) }
+#' \item{
+#'  Python: [wildboottest](https://github.com/s3alfisc/wildboottest) }
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
 #'      (<https://ideas.repec.org/p/qed/wpaper/1406.html>)

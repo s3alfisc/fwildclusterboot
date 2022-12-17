@@ -113,15 +113,12 @@ feols_fit2 <- feols(proposition_vote ~ treatment | Q1_immigration^Q2_defense,
     data = voters
 )
 
+# leads to an error
 boot1 <- boottest(feols_fit2,
     B = 9999,
     param = "treatment",
     clustid = "group_id1"
 )
-# Error in check_boottest_args_plus(object = object, R = R_long, param = param,  : 
-#   Advanced formula notation in fixest / fixest via ^ to interact
-#           fixed effects is currently not supported in boottest().
-# 
 ```
 
 
