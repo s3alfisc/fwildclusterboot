@@ -203,8 +203,8 @@ If NULL, no internal seed was created.}
 \description{
 \code{boottest.fixest} is a S3 method that allows for fast wild cluster
 bootstrap inference for objects of class fixest by  implementing
-the fast wild bootstrap algorithm developed in Roodman et al., 2019 and
-implemented in the STATA package \code{boottest}.
+fast wild bootstrap algorithms as developed in Roodman et al., 2019
+and MacKinnon, Nielsen & Webb (2022).
 }
 \section{Setting Seeds}{
 
@@ -244,6 +244,15 @@ stops the procedure after 10 iterations.
 \section{Standard Errors}{
 
 \code{boottest} does not calculate standard errors.
+}
+
+\section{Stata, Julia and Python Implementations}{
+
+The fast wild cluster bootstrap algorithms are further implemented in the
+following software packages:
+\item Stata: \href{https://github.com/droodman/boottest}{boottest}
+\item Julia: \href{https://github.com/droodman/WildBootTests.jl}{WildBootTests.jl}
+\item Python: \href{https://github.com/s3alfisc/wildboottest}{wildboottest}
 }
 
 \examples{

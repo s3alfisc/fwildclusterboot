@@ -1,3 +1,7 @@
+## Resubmission of 0.12.1 
+
+Change JuliaConnectoR link in readme to "https://CRAN.R-project.org/package=JuliaConnectoR".
+
 ## Resubmission of 0.12.1
 
 I have added additional information on how to download WildBootTests.jl to the description file. 

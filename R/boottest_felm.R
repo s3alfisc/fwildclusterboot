@@ -2,8 +2,8 @@
 #'
 #' `boottest.felm` is a S3 method that allows for fast wild cluster
 #' bootstrap inference for objects of class felm by  implementing
-#' the fast wild bootstrap algorithm developed in Roodman et al., 2019 and
-#' implemented in the STATA package `boottest`.
+#' fast wild bootstrap algorithms as developed in Roodman et al., 2019 
+#' and MacKinnon, Nielsen & Webb (2022).
 #'
 #' @param object An object of class felm
 #' @param clustid A character vector or rhs formula containing the names of
@@ -193,6 +193,12 @@
 #' }
 #' @section Standard Errors:
 #' `boottest` does not calculate standard errors.
+#' @section Stata, Julia and Python Implementations:
+#' The fast wild cluster bootstrap algorithms are further implemented in the 
+#' following software packages: 
+#' \item Stata: [boottest](https://github.com/droodman/boottest)
+#' \item Julia: [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl)
+#' \item Python: [wildboottest](https://github.com/s3alfisc/wildboottest)
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
 #'      (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
