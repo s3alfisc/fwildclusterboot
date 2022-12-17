@@ -53,6 +53,7 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Different-Variants-of-the-Wild-Cluster-Bootstrap.html">Different Variants of the Wild Cluster Bootstrap</a>
     <a class="dropdown-item" href="../articles/Multiple-Estimations-with-fixest.html">fwildclusterboot and fixest</a>
+    <a class="dropdown-item" href="../articles/Wild-Cluster-Bootstrap-Inference-in-Stata-Julia-and-Python.html">Wild Cluster Bootstrap Inference in Stata, Julia and Python</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -115,8 +116,8 @@
 <span><span class="co">#&gt; boottest.fixest(object = feols_fit, param = "treatment::0:ideology1", </span></span>
 <span><span class="co">#&gt;     B = 9999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.0399 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0027 0.1087 </span></span>
+<span><span class="co">#&gt; p value: 0.0382 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0038 0.107 </span></span>
 <span><span class="co">#&gt; test statistic 2.2696</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -142,15 +143,15 @@
 <span><span class="co">#&gt; $`fixef: Q1_immigration`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.001 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0349 0.1132 </span></span>
+<span><span class="co">#&gt; p value: 0.002 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0334 0.1142 </span></span>
 <span><span class="co">#&gt; test statistic 3.8804 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`fixef: Q2_defense`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.001 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0446 0.1368 </span></span>
+<span><span class="co">#&gt; p value: 0 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0447 0.1384 </span></span>
 <span><span class="co">#&gt; test statistic 3.9637</span></span></code></pre></div>
 <p>Similarly, it is possible to loop over objects of <code>fixest_multi</code> created by <code>subset</code> functionality:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -176,16 +177,16 @@
 <span><span class="co">#&gt; $`sample.var: split; sample: 1`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.012 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0247 0.1742 </span></span>
-<span><span class="co">#&gt; test statistic 2.6483 </span></span>
+<span><span class="co">#&gt; p value: 0.0681 </span></span>
+<span><span class="co">#&gt; confidence interval: -0.007 0.1493 </span></span>
+<span><span class="co">#&gt; test statistic 1.8134 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`sample.var: split; sample: 2`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.042 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0018 0.148 </span></span>
-<span><span class="co">#&gt; test statistic 2.0163</span></span></code></pre></div>
+<span><span class="co">#&gt; p value: 0.003 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.043 0.1634 </span></span>
+<span><span class="co">#&gt; test statistic 3.5794</span></span></code></pre></div>
 <p>And of course it is also possible to combine multiple “syntactic sugar” features of <code>fixest</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">feols_fits</span> <span class="op">&lt;-</span> <span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span></span>
@@ -208,30 +209,30 @@
 <span><span class="co">#&gt; $`sample.var: split; sample: 1; fixef: Q1_immigration`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.006 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0267 0.1439 </span></span>
-<span><span class="co">#&gt; test statistic 3.1601 </span></span>
+<span><span class="co">#&gt; p value: 0.049 </span></span>
+<span><span class="co">#&gt; confidence interval: 6e-04 0.1452 </span></span>
+<span><span class="co">#&gt; test statistic 2.0959 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`sample.var: split; sample: 1; fixef: Q2_defense`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.012 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0187 0.1942 </span></span>
-<span><span class="co">#&gt; test statistic 2.5901 </span></span>
+<span><span class="co">#&gt; p value: 0.0961 </span></span>
+<span><span class="co">#&gt; confidence interval: -0.0146 0.1555 </span></span>
+<span><span class="co">#&gt; test statistic 1.8224 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`sample.var: split; sample: 2; fixef: Q1_immigration`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.046 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0017 0.1334 </span></span>
-<span><span class="co">#&gt; test statistic 2.0731 </span></span>
+<span><span class="co">#&gt; p value: 0.006 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0198 0.1307 </span></span>
+<span><span class="co">#&gt; test statistic 2.757 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`sample.var: split; sample: 2; fixef: Q2_defense`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.1241 </span></span>
-<span><span class="co">#&gt; confidence interval: -0.0181 0.1358 </span></span>
-<span><span class="co">#&gt; test statistic 1.643</span></span></code></pre></div>
+<span><span class="co">#&gt; p value: 0.001 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0434 0.1752 </span></span>
+<span><span class="co">#&gt; test statistic 3.6374</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="what-currently-is-not-supported">What currently is not supported<a class="anchor" aria-label="anchor" href="#what-currently-is-not-supported"></a>
