@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,8 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Different-Variants-of-the-Wild-Cluster-Bootstrap.html">Different Variants of the Wild Cluster Bootstrap</a>
+    <a class="dropdown-item" href="../articles/Multiple-Estimations-with-fixest.html">fwildclusterboot and fixest</a>
+    <a class="dropdown-item" href="../articles/Wild-Cluster-Bootstrap-Inference-in-Stata-Julia-and-Python.html">Wild Cluster Bootstrap Inference in Stata, Julia and Python</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -55,7 +57,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.12" id="fwildclusterboot-012">fwildclusterboot 0.12<a class="anchor" aria-label="anchor" href="#fwildclusterboot-012"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.12.1" id="fwildclusterboot-0121">fwildclusterboot 0.12.1<a class="anchor" aria-label="anchor" href="#fwildclusterboot-0121"></a></h2>
+<p>This is a hot-fix release which turns of tests on CRAN that fail in non-standard CRAN test environments.</p>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.12" id="fwildclusterboot-012">fwildclusterboot 0.12<a class="anchor" aria-label="anchor" href="#fwildclusterboot-012"></a></h2><p class="text-muted">CRAN release: 2022-10-15</p>
 <p>This is the first CRAN release since version <code>0.9</code>. It comes with a set of new features, but also potentially breaking changes. This section summarizes all developments since version <code>0.9</code>.</p>
 <div class="section level4">
 <h4 id="potentially-breaking-changes-0-12">Potentially breaking changes:<a class="anchor" aria-label="anchor" href="#potentially-breaking-changes-0-12"></a></h4>
@@ -217,7 +223,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"SchoolingReturns"</span>, package <span class="op">=</span> <span class="st">"ivreg"</span><span class="op">)</span></span>
 <span><span class="co"># drop all NA values from SchoolingReturns</span></span>
 <span><span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">SchoolingReturns</span><span class="op">)</span></span>
-<span><span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu">ivreg</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span></span>
+<span><span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span></span>
 <span>                           <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span>  <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>, data <span class="op">=</span> <span class="va">SchoolingReturns</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">boot_ivreg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span></span>

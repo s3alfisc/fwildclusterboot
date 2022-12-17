@@ -1,0 +1,16 @@
+---
+title: "Wild Cluster Bootstrap Inference in Stata, Julia and Python"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Fast wild cluster bootstrap algorithms as in `fwildclusterboot` are further implemented in Stata, Julia and Python: 
+
++ Stata: [boottest](https://github.com/droodman/boottest) 
++ Julia: [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) 
++ Python: [wildboottest](https://github.com/s3alfisc/wildboottest) 

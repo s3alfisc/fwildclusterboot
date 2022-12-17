@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,6 +52,8 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/Different-Variants-of-the-Wild-Cluster-Bootstrap.html">Different Variants of the Wild Cluster Bootstrap</a>
+    <a class="dropdown-item" href="../articles/Multiple-Estimations-with-fixest.html">fwildclusterboot and fixest</a>
+    <a class="dropdown-item" href="../articles/Wild-Cluster-Bootstrap-Inference-in-Stata-Julia-and-Python.html">Wild Cluster Bootstrap Inference in Stata, Julia and Python</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -1073,7 +1075,7 @@ function:</p>
 <span>      </span>
 <span><span class="co"># drop all NA values from SchoolingReturns</span></span>
 <span><span class="va">SchoolingReturns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="va">SchoolingReturns</span><span class="op">)</span></span>
-<span><span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu">ivreg</span><span class="op">(</span></span>
+<span><span class="va">ivreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://john-d-fox.github.io/ivreg//reference/ivreg.html" class="external-link">ivreg</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">wage</span><span class="op">)</span> <span class="op">~</span> <span class="va">education</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span> <span class="op">|</span></span>
 <span>              <span class="va">nearcollege</span> <span class="op">+</span> <span class="va">age</span>  <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">smsa</span> <span class="op">+</span> <span class="va">south</span> <span class="op">+</span> <span class="va">parents14</span>, </span>
 <span>  data <span class="op">=</span> <span class="va">SchoolingReturns</span><span class="op">)</span></span>
@@ -1103,7 +1105,7 @@ treatment = 0 \text{ and } ideology1 = 0\)</span> vs <span class="math inline">\
 0\)</span> via a wild cluster bootstrap, you can run</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://jepusto.github.io/clubSandwich/" class="external-link">clubSandwich</a></span><span class="op">)</span></span>
-<span><span class="va">R</span> <span class="op">&lt;-</span> <span class="fu">clubSandwich</span><span class="fu">::</span><span class="fu">constrain_zero</span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">lm_fit</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">R</span> <span class="op">&lt;-</span> <span class="fu">clubSandwich</span><span class="fu">::</span><span class="fu"><a href="http://jepusto.github.io/clubSandwich/reference/constraint_matrices.html" class="external-link">constrain_zero</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">lm_fit</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wboottest</span> <span class="op">&lt;-</span> </span>
 <span><span class="fu"><a href="../reference/mboottest.html">mboottest</a></span><span class="op">(</span></span>
 <span>  object <span class="op">=</span> <span class="va">lm_fit</span>, </span>
@@ -1309,7 +1311,7 @@ memory-efficient.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> </span>
-<span><span class="fu">bench</span><span class="fu">::</span><span class="fu">mark</span><span class="op">(</span></span>
+<span><span class="fu">bench</span><span class="fu">::</span><span class="fu"><a href="http://bench.r-lib.org/reference/mark.html" class="external-link">mark</a></span><span class="op">(</span></span>
 <span>  <span class="st">"R"</span> <span class="op">=</span> <span class="fu"><a href="../reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, </span>
 <span>           clustid <span class="op">=</span> <span class="st">"group_id1"</span>, </span>
 <span>           param <span class="op">=</span> <span class="st">"treatment"</span>, </span>

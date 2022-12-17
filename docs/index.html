@@ -71,7 +71,7 @@
     
     <a class="navbar-brand me-2" href="index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,6 +90,8 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="articles/Different-Variants-of-the-Wild-Cluster-Bootstrap.html">Different Variants of the Wild Cluster Bootstrap</a>
+    <a class="dropdown-item" href="articles/Multiple-Estimations-with-fixest.html">fwildclusterboot and fixest</a>
+    <a class="dropdown-item" href="articles/Wild-Cluster-Bootstrap-Inference-in-Stata-Julia-and-Python.html">Wild Cluster Bootstrap Inference in Stata, Julia and Python</a>
     <a class="dropdown-item" href="articles/WildBootTests.html">WildBootTests.jl</a>
   </div>
 </li>
@@ -122,13 +124,12 @@
 </div>
 <p><img src="reference/figures/logo.png" width="200px" align="right"></p>
 <!-- badges: start -->
-<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, x86_64, mingw32, , 4, 1.3, 2022, 03, 10, 81868, R, R version 4.1.3 (2022-03-10), One Push-Up-orange.svg?style=flat-square)](commits/master) -->
+<!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, ucrt, x86_64, mingw32, , 4, 2.1, 2022, 06, 23, 82513, R, R version 4.2.1 (2022-06-23 ucrt), Funny-Looking Kid-orange.svg?style=flat-square)](commits/master) -->
 
 <!-- badges: end -->
-<p>The <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> package provides a native R implementation of the fast wild cluster bootstrap algorithm developed in <a href="https://econpapers.repec.org/paper/qedwpaper/1406.htm" class="external-link">Roodman et al (2019)</a> for regression objects in R.</p>
-<p>Additionally, it provides support for multiple wild cluster bootstrap variants as described in <a href="https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf" class="external-link">MacKinnon, Nielsen &amp; Webb (2022)</a>.</p>
-<p>Via the <a href="https://github.com/stefan-m-lenz/JuliaConnectoR" class="external-link">JuliaConnectoR</a>, <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> further ports functionality of <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a> - which provides an even faster implementation of the wild cluster bootstrap for OLS and supports the WRE bootstrap for IV and tests of multiple joint hypotheses.</p>
-<p>The package’s central function is <code><a href="reference/boottest.html">boottest()</a></code>. It allows to test univariate hypotheses using a wild cluster bootstrap at extreme speed: via the ‘fast’ algorithm, it is possible to run a wild cluster bootstrap with <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;B%20%3D%20100.000" title="B = 100.000" alt="B = 100.000"> iterations in less than a second!</p>
+<p>The <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> package implements multiple fast wild cluster bootstrap algorithms as developed in <a href="https://econpapers.repec.org/paper/qedwpaper/1406.htm" class="external-link">Roodman et al (2019)</a> and <a href="https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf" class="external-link">MacKinnon, Nielsen &amp; Webb (2022)</a>.</p>
+<p>Via the <a href="https://CRAN.R-project.org/package=JuliaConnectoR" class="external-link">JuliaConnectoR</a>, <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> further ports functionality of <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a> - which provides an even faster implementation of the wild cluster bootstrap for OLS and supports the WRE bootstrap for IV and tests of multiple joint hypotheses.</p>
+<p>The package’s central function is <code><a href="reference/boottest.html">boottest()</a></code>. It allows to test univariate hypotheses using a wild cluster bootstrap at extreme speed: via the ‘fast’ algorithm, it is possible to run a wild cluster bootstrap with <span class="math inline"><em>B</em> = 100.000</span> iterations in less than a second!</p>
 <p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
 <p><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> supports the following features:</p>
 <ul>
@@ -152,10 +153,22 @@
 <li>IV: <code>ivreg</code> (from ivreg).</li>
 </ul>
 <div class="section level3">
+<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h3>
+<p>You can install compiled versions of<a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> from R-universe (compiled) or github by following one of the steps below:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># from r-universe (windows &amp; mac, compiled R &gt; 4.0 required)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'fwildclusterboot'</span>, repos <span class="op">=</span><span class="st">'https://s3alfisc.r-universe.dev'</span><span class="op">)</span></span>
+<span><span class="co"># dev version from github</span></span>
+<span><span class="co"># note: installation requires Rtools</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"s3alfisc/fwildclusterboot"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
 <h3 id="the-boottest-function">The <code>boottest()</code> function<a class="anchor" aria-label="anchor" href="#the-boottest-function"></a>
 </h3>
 <p>For a longer introduction to <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a>, take a look at the <a href="https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html">vignette</a>.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># set seed via dqset.seed for engine = "R" &amp; Rademacher, Webb &amp; Normal weights</span></span>
@@ -183,34 +196,11 @@
 <span><span class="co">#&gt;              term estimate statistic p.value conf.low conf.high</span></span>
 <span><span class="co">#&gt; 1 1*treatment = 0    0.079     3.983       0     0.04     0.118</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h3>
-<p>You can install compiled versions of<a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> from CRAN and the development version from R-universe (compiled) or github by following one of the steps below:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># from CRAN </span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"fwildclusterboot"</span><span class="op">)</span></span>
-<span><span class="co"># from r-universe (windows &amp; mac, compiled R &gt; 4.0 required)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'fwildclusterboot'</span>, repos <span class="op">=</span><span class="st">'https://s3alfisc.r-universe.dev'</span><span class="op">)</span></span>
-<span><span class="co"># dev version from github</span></span>
-<span><span class="co"># note: installation requires Rtools</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"s3alfisc/fwildclusterboot"</span><span class="op">)</span></span></code></pre></div>
-<p>To run <code>WildBootTests.jl</code> through <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a>, <code>Julia</code> and <code>WildBootTests.jl</code> need to be installed.</p>
-<p>You can install Julia by following the steps described on the official <a href="https://julialang.org/downloads/" class="external-link"><code>Julia</code> homepage</a>. <code>WildBootTests.jl</code> can then be installed via Julia’s package management system.</p>
-<p>To help you connect Julia and R via the <code>JuliaConnectoR</code> and to install <code>WildBootTests.jl</code> from within R, you can alternatively use the <code>JuliaConnectoR.utils</code> package.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"s3alfisc/JuliaConnectoR.utils"</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">JuliaConnectoR.utils</span><span class="op">)</span></span>
-<span><span class="fu">connect_julia_r</span><span class="op">(</span><span class="op">)</span> <span class="co"># instructions to connect Julia and R</span></span>
-<span><span class="fu">install_julia_packages</span><span class="op">(</span><span class="st">"WildBootTests.jl"</span><span class="op">)</span> <span class="co"># install WildBootTests.jl</span></span>
-<span><span class="fu">set_julia_nthreads</span><span class="op">(</span><span class="op">)</span> <span class="co"># instructions to set nthreads for Julia</span></span></code></pre></div>
-</div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
 <p>If you are in <code>R</code>, you can simply run the following command to get the BibTeX citation for <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a>:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"fwildclusterboot"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; To cite 'fwildclusterboot' in publications use:</span></span>
@@ -222,7 +212,7 @@
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   @Misc{,</span></span>
-<span><span class="co">#&gt;     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.11.1)},</span></span>
+<span><span class="co">#&gt;     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.12)},</span></span>
 <span><span class="co">#&gt;     author = {Alexander Fischer and David Roodman},</span></span>
 <span><span class="co">#&gt;     year = {2021},</span></span>
 <span><span class="co">#&gt;     url = {https://cran.r-project.org/package=fwildclusterboot},</span></span>
