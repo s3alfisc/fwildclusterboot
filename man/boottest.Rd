@@ -37,6 +37,17 @@ or Normal weights
 }
 }
 
+\section{Stata, Julia and Python Implementations}{
+
+The fast wild cluster bootstrap algorithms are further implemented in the
+following software packages:
+\itemize{
+\item Stata: \href{https://github.com/droodman/boottest}{boottest}
+\item Julia: \href{https://github.com/droodman/WildBootTests.jl}{WildBootTests.jl}
+\item Python: \href{https://github.com/s3alfisc/wildboottest}{wildboottest}
+}
+}
+
 \examples{
 requireNamespace("fwildclusterboot")
 data(voters)
