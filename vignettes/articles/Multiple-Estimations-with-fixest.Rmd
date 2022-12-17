@@ -1,0 +1,129 @@
+---
+title: "fwildclusterboot and fixest"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+```{r, warning = FALSE, message = FALSE}
+library(fwildclusterboot)
+library(fixest)
+
+data(voters)
+```
+
+
+`boottest()` supports multiple features of the advanced formula syntax of the `fixest` package, as e.g. multiple estimations.
+
+## Variables created via 'i()'
+
+```{r}
+feols_fit <- feols(proposition_vote ~ i(treatment, ideology1) ,
+    data = voters
+)
+
+boot1 <- boottest(feols_fit,
+    B = 9999,
+    param = "treatment::0:ideology1",
+    clustid = "group_id1"
+)
+
+boot1
+```
+
+## Multiple Estimations 
+
+It is possible to loop through different regression specifications. For example, to run `boottest()` over a `fixest_multi` object created via the `sw()` function:
+
+```{r, warning = FALSE}
+feols_fits <- fixest::feols(
+  proposition_vote ~ treatment | sw(Q1_immigration, Q2_defense),
+  data = voters
+)
+
+boot2 <- lapply(
+  feols_fits,
+  \(x) boottest(
+    x,
+    B = 999,
+    param = "treatment",
+    clustid = "group_id1")
+) 
+
+boot2
+```
+
+Similarly, it is possible to loop over objects of `fixest_multi` created by `subset` functionality: 
+
+```{r, warning = FALSE}
+voters$split <- sample(1:2, nrow(voters), TRUE)
+
+feols_fits <- fixest::feols(
+  proposition_vote ~ treatment, 
+  split = ~split, 
+  data = voters
+)
+
+boot3 <- lapply(
+  feols_fits, 
+  \(x) boottest(
+    x,
+    B = 999, 
+    param = "treatment",
+    clustid = "group_id1"
+    )
+)  
+
+boot3
+```
+
+And of course it is also possible to combine multiple "syntactic sugar" features of `fixest`:
+
+```{r, warning = FALSE}
+feols_fits <- fixest::feols(
+  proposition_vote ~ treatment | sw(Q1_immigration, Q2_defense), 
+  split = ~split,
+  data = voters
+)
+
+boot_4 <- lapply(
+  feols_fits, 
+  \(x) boottest(
+    x, 
+    B = 999,
+    param = "treatment", 
+    clustid = "group_id1"
+    )
+)  
+
+boot_4
+```
+
+## What currently is not supported
+
+Fixed effect interactions via `^` lead to an error. Fixing this is on my backlog but currently not highest priortiy. Send me a message if this causes you large headaches! 
+
+```{r, warning = FALSE, eval = FALSE}
+feols_fit2 <- feols(proposition_vote ~ treatment | Q1_immigration^Q2_defense,
+    data = voters
+)
+
+boot1 <- boottest(feols_fit2,
+    B = 9999,
+    param = "treatment",
+    clustid = "group_id1"
+)
+# Error in check_boottest_args_plus(object = object, R = R_long, param = param,  : 
+#   Advanced formula notation in fixest / fixest via ^ to interact
+#           fixed effects is currently not supported in boottest().
+# 
+```
+
+
+
+
