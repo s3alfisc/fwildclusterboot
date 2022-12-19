@@ -116,8 +116,8 @@
 <span><span class="co">#&gt; boottest.fixest(object = feols_fit, param = "treatment::0:ideology1", </span></span>
 <span><span class="co">#&gt;     B = 9999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.0403 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0027 0.1083 </span></span>
+<span><span class="co">#&gt; p value: 0.0355 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0035 0.108 </span></span>
 <span><span class="co">#&gt; test statistic 2.2696</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -144,14 +144,14 @@
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; p value: 0.001 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0374 0.1127 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0355 0.1123 </span></span>
 <span><span class="co">#&gt; test statistic 3.8804 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`fixef: Q2_defense`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0426 0.1382 </span></span>
+<span><span class="co">#&gt; p value: 0.001 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0454 0.1383 </span></span>
 <span><span class="co">#&gt; test statistic 3.9637</span></span></code></pre></div>
 <p>Similarly, it is possible to loop over objects of <code>fixest_multi</code> created by <code>subset</code> functionality:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -177,16 +177,16 @@
 <span><span class="co">#&gt; $`sample.var: split; sample: 1`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.01 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0222 0.1618 </span></span>
-<span><span class="co">#&gt; test statistic 2.6488 </span></span>
+<span><span class="co">#&gt; p value: 0.023 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0119 0.157 </span></span>
+<span><span class="co">#&gt; test statistic 2.5276 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`sample.var: split; sample: 2`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.031 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0097 0.1518 </span></span>
-<span><span class="co">#&gt; test statistic 2.5182</span></span></code></pre></div>
+<span><span class="co">#&gt; p value: 0.024 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0122 0.1628 </span></span>
+<span><span class="co">#&gt; test statistic 2.4111</span></span></code></pre></div>
 <p>And of course it is also possible to combine multiple “syntactic sugar” features of <code>fixest</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">feols_fits</span> <span class="op">&lt;-</span> <span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">feols</a></span><span class="op">(</span></span>
@@ -210,29 +210,29 @@
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
 <span><span class="co">#&gt; p value: 0.024 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.009 0.1335 </span></span>
-<span><span class="co">#&gt; test statistic 2.4853 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0126 0.129 </span></span>
+<span><span class="co">#&gt; test statistic 2.5156 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`sample.var: split; sample: 1; fixef: Q2_defense`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.009 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0249 0.1702 </span></span>
-<span><span class="co">#&gt; test statistic 2.843 </span></span>
+<span><span class="co">#&gt; p value: 0.013 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0131 0.1463 </span></span>
+<span><span class="co">#&gt; test statistic 2.5147 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`sample.var: split; sample: 2; fixef: Q1_immigration`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.004 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0263 0.1304 </span></span>
-<span><span class="co">#&gt; test statistic 2.9744 </span></span>
+<span><span class="co">#&gt; p value: 0.012 </span></span>
+<span><span class="co">#&gt; confidence interval: 0.0185 0.1428 </span></span>
+<span><span class="co">#&gt; test statistic 2.6809 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $`sample.var: split; sample: 2; fixef: Q2_defense`</span></span>
 <span><span class="co">#&gt; boottest.fixest(object = x, param = "treatment", B = 999, clustid = "group_id1")</span></span>
 <span><span class="co">#&gt;  </span></span>
-<span><span class="co">#&gt; p value: 0.013 </span></span>
-<span><span class="co">#&gt; confidence interval: 0.0184 0.1396 </span></span>
-<span><span class="co">#&gt; test statistic 2.7409</span></span></code></pre></div>
+<span><span class="co">#&gt; p value: 0.0571 </span></span>
+<span><span class="co">#&gt; confidence interval: -0.0027 0.1607 </span></span>
+<span><span class="co">#&gt; test statistic 2.1664</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="what-currently-is-not-supported">What currently is not supported<a class="anchor" aria-label="anchor" href="#what-currently-is-not-supported"></a>
