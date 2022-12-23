@@ -4,10 +4,10 @@ on:
       - main
       - master
       - develop
-  pull_request:
-    branches:
-      - main
-      - master
+  #pull_request:
+  #  branches:
+  #    - main
+  #    - master
 
 name: test-coverage
 
