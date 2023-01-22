@@ -216,11 +216,6 @@ boot_algo3 <- function(preprocessed_object,
   t_boot <- t_boot2 <- vector(mode = "numeric", B + 1)
   se <- se2 <- vector(mode = "numeric", B + 1)
 
-  # numer <- (( R %*% tXXinv) %*%  (Reduce("cbind", scores_list) %*% v))
-
-  # Ag2 <- lapply(1:G, function(g) RtXXinv %*% Ag[[g]])
-  # scores_list2 <- lapply(1:G, function(g) RtXXinv %*% scores_list[[g]])
-  
   dim(R) <- c(1, k) # turn R into matrix
   
   Cg <- R %*% tXXinv %*%  Reduce("cbind", scores_list)
@@ -236,24 +231,6 @@ boot_algo3 <- function(preprocessed_object,
       }
     }
   
-    # denom2 <- vector(mode = "numeric", B)
-    # for(b in 1:(B+1)){
-    # 
-    #   Zg <- vector(mode = "numeric", G)
-    #   Z_sq <- 0
-    #   for(g in 1:G){
-    #     vH <- 0
-    #     for(h in 1:G){
-    #       vH <- vH + v[h,b] * H[g,h]
-    #     }
-    #     Zg[g] <- Cg[g] * v[g, b] - vH
-    #     #Z_sq <- Z_sq + (Cg[g] * v[g, b] - vH)^2
-    #   }
-    #   #denom2[b] <- small_sample_correction* Z_sq
-    #   denom2[b] <- small_sample_correction * sum(Zg^2)
-    # 
-    # }
-    
     denom <- boot_algo3_crv1_denom(
       B = B,
       G = G,
@@ -264,8 +241,7 @@ boot_algo3 <- function(preprocessed_object,
       cores = nthreads
     )
     
-    # cbind(denom, denom2) |> head()
-    
+
     t_boot <- c(numer / sqrt(c(denom)))
     
   } else if (crv_type == "crv3"){
@@ -324,21 +300,8 @@ boot_algo3 <- function(preprocessed_object,
         )
     )
     meat <- Reduce("+", score_all)
-    #print("meat", meat)
-    # print(dim(meat))
-    # print(dim(tXXinv))
     vcov <- tXXinv %*% meat %*% tXXinv
-    #print(vcov)
-    
-    # sw_vcov <- sandwich::vcovCL(
-    #   object, 
-    #   cluster = reformulate(clustid), 
-    #   cadjust = 0, 
-    #   type = "HC0"
-    # )
-    # all.equal(sw_vcov, vcov)
-    
-    
+
   } else if(crv_type == "crv3"){
     
     vcov3 <- quote(
@@ -363,9 +326,7 @@ boot_algo3 <- function(preprocessed_object,
     coef(object)[which(R == 1)] / se0
   )
 
-  # print(all.equal(se, se2))
-  # print(all.equal(t_boot, t_boot2))
-  
+
   t_boot <- t_boot[-1]
 
   p_val <-

@@ -11,7 +11,9 @@ knitr::opts_chunk$set(
 
 In a recent working paper, [MacKinnon, Nielsen and Webb(2022)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf) suggest multiple new variants of the wild cluster bootstrap. The methods differ in a) how the bootstrap scores are computed and b) if a CRV1 or CRV3 variance matrix is used when computing bootstrapped t-statistics. 
 
-All new bootstrap variants are implemented in `{fwildclusterboot}` and can be called by using the `engine` function argument of `boottest()`. The implementation is still quite bare-bone: it only allows to test hypotheses of the form $\beta_k = 0$ vs $\beta_k \neq 0$, does not allow for regression weights or fixed effects, and further does not compute confidence intervals. 
+All new bootstrap variants are implemented in `{fwildclusterboot}` and can be called by using the `bootstrap_type` function argument of `boottest()`. The implementation is still quite bare-bone: it only allows to test hypotheses of the form $\beta_k = 0$ vs $\beta_k \neq 0$, does not allow for regression weights or fixed effects, and further does not compute confidence intervals. 
+
+Note that in a recent update of their working paper, MNW have renamed the new bootstrap types - type '11' is now called 'C' (for classic), type '31' is now called 'S' (for score), type '13' is now called 'V' (for variance) and type '33' is now called 'B' (for 'both'). I will update this in `fwildclusterboot` once I find the time =) 
 
 To run all bootstrap types with the null hypothesis imposed on the bootstrap data generating process, you would have to specify the `bootstrap_type` function argument: 
 
@@ -66,3 +68,9 @@ msummary(
 ```
 
 Given the same `seed = 123`, both implementations of the `11` algorithm produce exactly the same p-values. The p-values produced by all other algorithms differ slightly, but are overall very close to each other. Confidence intervals are currently only implemented for the `fnw11` algorithm.
+
+Now, which bootstrap type should you run? MNW argue in favor of the "31" or "S" type. In the future, I hope that I'll provide a more thorough discussion. 
+
+## Literature 
+
+[MacKinnon, Nielsen and Webb(2022)- Fast and Reliable Bootstrap and Jacknife Infernece (2023)](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf)
