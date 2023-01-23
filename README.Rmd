@@ -83,9 +83,12 @@ Additional features are provided through `WildBootTests.jl`:
 
 ### Installation
 
-You can install compiled versions of`{fwildclusterboot}` from R-universe (compiled) or github by following one of the steps below:
+You can install compiled versions of`{fwildclusterboot}` from CRAN (compiled), R-universe (compiled) or github by following one of the steps below:
 
 ```{r, eval = FALSE}
+# from CRAN 
+install.packages("fwildclusterboot")
+
 # from r-universe (windows & mac, compiled R > 4.0 required)
 install.packages('fwildclusterboot', repos ='https://s3alfisc.r-universe.dev')
 # dev version from github
