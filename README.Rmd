@@ -64,7 +64,7 @@ scale_y_continuous(trans='log10') +
 
 + The wild bootstrap for OLS (Wu 1986).
 + The wild cluster bootstrap for OLS (Cameron, Gelbach & Miller 2008, Roodman et al, 2019).
-+ Multiple new versions of the wild cluster bootstrap as described in MacKinnon, Nielsen & Webb (2022), including the WCR13, WCR31, WCR33, WCU13, WCU31 and WCU33.
++ Multiple new versions of the wild cluster bootstrap as described in MacKinnon, Nielsen & Webb (2022), including the WCR13 (WCR-V), WCR31 (WCR-S), WCR33 (WCR-B), WCU13 (WCU-V), WCU31 (WCU-S) and WCU33 (WCU-B).
 + The subcluster bootstrap (MacKinnon and Webb 2018).
 + Confidence intervals formed by inverting the test and iteratively searching for bounds.
 + Multiway clustering.
