@@ -251,9 +251,9 @@ stops the procedure after 10 iterations.
 The fast wild cluster bootstrap algorithms are further implemented in the
 following software packages:
 \itemize{
-\item Stata: \href{https://github.com/droodman/boottest}{boottest}
-\item Julia: \href{https://github.com/droodman/WildBootTests.jl}{WildBootTests.jl}
-\item Python: \href{https://github.com/s3alfisc/wildboottest}{wildboottest}
+\item Stata:\href{https://github.com/droodman/boottest}{boottest}
+\item Julia:\href{https://github.com/droodman/WildBootTests.jl}{WildBootTests.jl}
+\item Python:\href{https://github.com/s3alfisc/wildboottest}{wildboottest}
 }
 }
 
