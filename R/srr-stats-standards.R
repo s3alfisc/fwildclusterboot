@@ -16,10 +16,12 @@
 #' package. Additional information in the boottest() documentation points to 
 #' Julia, Python and Stata implementations. 
 #' 
-#' @srrstats {G1.2} *Life Cycle "Maturing".*
+#' @srrstats {G1.2} *Life Cycle "Maturing".* New features are being added over 
+#' time. 
 #' 
 #' @srrstats {G1.3} *All statistical terminology should be clarified and
-#'  unambiguously defined.* This is done in an extra vignette.
+#'  unambiguously defined.* I have prepared a small paper that attempts to 
+#'  clarify all statistical terms, which I am happy to send to reviewers. 
 #' 
 #' @srrstats {G1.4} *`roxygen2` is used throughout the package to document
 #' all functions.*
@@ -39,7 +41,7 @@
 #' with via the `dreamerr` package.* Function values checked via dreamerr.
 #' 
 #' @srrstats {G2.0a} Provide explicit secondary documentation of any
-#' expectations on lengths of inputs
+#' expectations on lengths of inputs. I think this is sufficiently documented.
 #' 
 #' @srrstats {G2.1} *Implement assertions on types of inputs (see the initial
 #' point on nomenclature above).*Function values checked via dreamerr.
@@ -59,12 +61,12 @@
 #' 
 #' @srrstats {G2.3b} *Either: use `tolower()` or equivalent to ensure input of
 #'  character parameters is not case dependent; or explicitly document that
-#'  parameters are strictly case-sensitive.*Function values checked via
-#'  dreamerr.
+#'  parameters are strictly case-sensitive.* Not relevant, I believe.
 #' 
 #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between
 #' different
-#'  data types, potentially including:*Function values checked via dreamerr.
+#'  data types, potentially including:* All cluster variables are set to 
+#'  character internally. 
 #' 
 #' @srrstats {G2.4a} *explicit conversion to `integer` via `as.integer()`*
 #' use custom function `as_integer()`
@@ -86,7 +88,7 @@
 #'  routines as part of initial pre-processing to ensure that all other
 #'   sub-functions of a package receive inputs of a single defined class or
 #'   type.* all formulas converted to characters, fixed effects converted to
-#'    factors, cluster variables converterd to characters
+#'    factors, cluster variables converted to characters
 #' 
 #' @srrstats {G2.10} *Software should ensure that extraction or filtering of
 #'  single columns from tabular inputs should not presume any particular
@@ -136,7 +138,9 @@
 #' calculations should enable users to choose between different algorithms
 #' for calculating covariances, and should not rely solely on covariances
 #' from the `stats::cov` function.* The package deals with "clustered"
-#' covariances. Non-clustered tests based on HC1 covariances are also supported.
+#' standard errors, but does not produce covariance matrices. 
+#'  Non-clustered tests based on the 'regular' wild bootstrap 
+#'  are also supported. 
 #' 
 #' @srrstats {G3.1a} *The ability to use arbitrarily specified covariance
 #' methods should be documented (typically in examples or vignettes).*
@@ -177,13 +181,16 @@
 #'    t-statistics
 #' produced via boottest() *exactly* match those computed by the fixest package
 #' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
-#'  against `WildBootTests.jl` - see "test-r-vs-julia".
+#'  against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R 
+#'  implementations of the WCB are tested against each other. 
 #' 
 #' @srrstats {G5.4b} *For new implementations of existing methods, correctness
 #'  tests should include tests against previous implementations. Such testing
 #'   may explicitly call those implementations in testing, preferably from
 #'   fixed-versions of other software, or use stored outputs from those where
-#'   that is not possible.* Extensive tests against WildBootTests.jl
+#'   that is not possible.* Extensive tests against WildBootTests.jl and 
+#'   alternative R implementations provided by fwildclusterboot. Also, the 
+#'   Python package wildboottest tests against fwildclusterboot. 
 #' 
 #' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
 #' Done.
@@ -230,7 +237,7 @@
 #' formulas.
 #' 
 #' @srrstats {RE1.1} *Regression Software should document how formula interfaces
-#'  are converted to matrix representations of input data.*
+#'  are converted to matrix representations of input data.* Not applicable.
 #' 
 #' @srrstats {RE1.4} *Regression Software should document any assumptions made
 #' with regard to input data; for example distributional assumptions, or
@@ -242,14 +249,15 @@
 #'  applied to input data, for example conversion of label-values to `factor`,
 #'   and should provide ways to explicitly avoid any default transformations
 #'   (with error or warning conditions where appropriate).* Cluster variables
-#'    and fixed effects are transformed to factors, if required. This is not
-#'    properly documented.
+#'    and fixed effects are transformed to factors, if required. This is 
+#'    likely (?) not properly documented.
 #' 
 #' @srrstats {RE3.0} *Issue appropriate warnings or other diagnostic messages
 #'  for models which fail to converge.* Sometimes, the confidence interval
 #'   inversion might fail - I am not sure if I have written very clear error
 #'   messages. Confidence interval calculation might need improvements
-#'   (in terms of code quality) in general - it works, but the code is ugly.
+#'   (in terms of code quality) in general - it works, but the code is ugly. 
+#'   I have plans to revisit this going forward.
 #' 
 #' @srrstats {RE3.1} *Enable such messages to be optionally suppressed, yet
 #' should ensure that the resultant model object nevertheless includes
