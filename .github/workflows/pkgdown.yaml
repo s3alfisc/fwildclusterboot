@@ -36,7 +36,7 @@ jobs:
         # use shell bash to ensure consistent behavior across OS
         shell: bash
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: pkgdown
           needs: website
