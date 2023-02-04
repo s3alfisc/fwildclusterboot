@@ -492,7 +492,7 @@ find_proglang <- function(lang){
   dreamerr::check_arg(lang, "charin(julia, python)")
   
   # x == 0L if no error is found
-  x =   
+  x <-  
     tryCatch(
       system2(
         command= lang, args="--version"
