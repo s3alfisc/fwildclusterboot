@@ -3,7 +3,7 @@
 \name{find_proglang}
 \alias{find_proglang}
 \title{Check if julia or python are installed /
-can be found on the PATH}
+can be found on the PATH.}
 \usage{
 find_proglang(lang)
 }
@@ -14,6 +14,6 @@ find_proglang(lang)
 logical. TRUE if lang is found on path, FALSE if not
 }
 \description{
-Check if julia or python are installed /
-can be found on the PATH
+Based on Mauro Lepore's great suggestion
+https://github.com/ropensci/software-review/issues/546#issuecomment-1416728843
 }
