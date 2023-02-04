@@ -491,6 +491,12 @@ find_proglang <- function(lang){
   #' @param lang which language to check. Either 'julia' or 'python'
   #' 
   #' @return logical. TRUE if lang is found on path, FALSE if not
+  #' 
+  #' @examples
+  #' 
+  #' \dontrun{
+  #' find_proglang(lang = "julia")
+  #' }
   
   dreamerr::check_arg(lang, "charin(julia, python)")
   

@@ -17,3 +17,9 @@ logical. TRUE if lang is found on path, FALSE if not
 Based on Mauro Lepore's great suggestion
 https://github.com/ropensci/software-review/issues/546#issuecomment-1416728843
 }
+\examples{
+
+\dontrun{
+find_proglang(lang = "julia")
+}
+}
