@@ -209,7 +209,10 @@ test_that("test full enumeration cases: r and julia", {
   # note: these tests are deterministic! therefore exact.
   
   skip_on_cran()
-  
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
   # if not skipped, codecov fails after ~6h
   julia_prep <- TRUE

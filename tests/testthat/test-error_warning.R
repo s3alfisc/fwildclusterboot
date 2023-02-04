@@ -1,6 +1,10 @@
 test_that("errors and warnings q = 1", {
   
   skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
 
   if(TRUE){
 
@@ -1462,6 +1466,10 @@ test_that("errors and warnings q = 1", {
 test_that("error warning IV/WRE and q > 1", {
   
   skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
 
   requireNamespace("ivreg")
   requireNamespace("fixest")

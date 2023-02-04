@@ -1,7 +1,10 @@
 test_that("test r-fnw vs r-, stochastic", {
 
       skip_on_cran()
-  
+      skip_if_not(
+        find_proglang("julia"), 
+        message = "skip test as julia installation not found."
+      )
       reltol <- 0.05
       B <- 9999
 
@@ -145,6 +148,10 @@ test_that("test r-fnw vs r-, stochastic", {
 test_that("new bootstrap variants II - t_stat equivalence", {
   
   skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
   N <- 1000
   N_G1 <- 17
@@ -257,7 +264,10 @@ test_that("new bootstrap variants II - t_stat equivalence", {
 test_that("variants 31 R vs Julia", {
   
   skip_on_cran()
-  
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
   if(TRUE){
     
@@ -365,6 +375,10 @@ test_that("variants 31 R vs Julia", {
 test_that("new variants and fixed effects", {
 
   skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
   library(fixest)
   library(fwildclusterboot)

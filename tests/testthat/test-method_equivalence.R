@@ -2,6 +2,10 @@ test_that("Do different, but equivalent ways to specify
           linear models lead to equivalent results?", {
   
   skip_on_cran()
+  skip_if_not(
+      find_proglang("julia"), 
+      message = "skip test as julia installation not found."
+  )          
 
   requireNamespace("fixest")
   requireNamespace("lfe")

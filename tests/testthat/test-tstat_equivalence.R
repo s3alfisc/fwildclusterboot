@@ -347,11 +347,11 @@ test_that("t-stat equivalence OLS - R and R-lean", {
 test_that("t-stat equivalence OLS - WildBootTests", {
   
   skip_on_cran()
-
-  julia_prep <- is_juliaconnector_prepared()
-  cat("julia connector prepared? ", julia_prep, "\n")
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
-  #if(julia_prep){
   if(TRUE){
         # data(voters)
         # adj <- cluster.adj <- TRUE; cluster.df <- "conventional";
@@ -602,11 +602,11 @@ test_that("t-stat equivalence OLS - WildBootTests", {
 test_that("t-stat equivalence OLS q > 1", {
   
   skip_on_cran()
-
-  julia_prep <- is_juliaconnector_prepared()
-  cat("julia connector prepared? ", julia_prep, "\n")
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
-  #if(julia_prep){
   if(TRUE){
     
     wald_test <- function(run_this_test) {
@@ -888,11 +888,11 @@ test_that("t-stat equivalence OLS q > 1", {
 test_that("t-stat equivalence IV", {
   
   skip_on_cran()
-
-  julia_prep <- is_juliaconnector_prepared()
-  cat("julia connector prepared? ", julia_prep, "\n")
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
-  #if(julia_prep){
   if(TRUE){
     
     iv_test <- function(run_this_test) {

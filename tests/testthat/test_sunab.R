@@ -1,6 +1,11 @@
 test_that("test sunab", {
 
   skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
+  
   library(fixest)
   # Simple DiD example
   base_stagg <- fixest::base_stagg

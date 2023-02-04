@@ -478,3 +478,31 @@ vec2mat <- function(x, group_id){
   mat
   
 }
+
+
+find_proglang <- function(lang){
+  
+  #' Check if julia or python are installed / 
+  #' can be found on the PATH
+  #' 
+  #' @param lang which language to check. Either 'julia' or 'python'
+  #' 
+  #' @return logical. TRUE if lang is found on path, FALSE if not
+  
+  dreamerr::check_arg(lang, "charin(julia, python)")
+  
+  # x == 0L if no error is found
+  x =   
+    tryCatch(
+      system2(
+        command= lang, args="--version"
+      ), 
+      error = function(e) e
+    )
+
+  language_found <- ifelse(x == 0L, TRUE, FALSE)
+
+  language_found
+  
+}
+

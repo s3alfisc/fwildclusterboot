@@ -1,6 +1,10 @@
 test_that("seed works for OLS", {
   
   skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
   requireNamespace("fixest")
   requireNamespace("dqrng")

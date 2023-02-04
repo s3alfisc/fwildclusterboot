@@ -1,7 +1,11 @@
 test_that("uncategorized tests", {
   
   skip_on_cran()
-
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
+  
   # see this issue: https://github.com/s3alfisc/fwildclusterboot/issues/26
 
   data1 <<-

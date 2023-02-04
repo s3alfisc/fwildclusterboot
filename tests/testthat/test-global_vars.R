@@ -1,7 +1,10 @@
 test_that("global engine", {
   
   skip_on_cran()
-
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
 
   if(TRUE){
     data(voters)
