@@ -12,8 +12,7 @@ boot_algo1 <-
            type,
            full_enumeration,
            small_sample_correction,
-           heteroskedastic,
-           seed) {
+           heteroskedastic) {
     #' Fast wild cluster bootstrap algorithm
     #'
     #' function that implements the fast bootstrap algorithm as described in
@@ -53,8 +52,6 @@ boot_algo1 <-
     #' See ssc().
     #' @param heteroskedastic Logical - if TRUE, run a heteroskedastic.
     #' If FALSE, run wild cluster bootstrap.
-    #' @param seed Integer scalar. Either set via boottest()'s seed argument
-    #' or inherited from R's global seed (set via set.seed)
     #' @return A list of ...
     #' @importFrom collapse fsum GRP
     #' @importFrom stats as.formula coef model.matrix model.response

@@ -516,7 +516,6 @@ boottest.felm <- function(object,
         r = r,
         sign_level = sign_level,
         param = param,
-        # seed = seed,
         p_val_type = p_val_type,
         nthreads = nthreads,
         type = type,
@@ -552,7 +551,6 @@ boottest.felm <- function(object,
         type = type,
         full_enumeration = full_enumeration,
         small_sample_correction = small_sample_correction,
-        seed = internal_seed, 
         object = object, 
         impose_null = impose_null
       )
@@ -587,8 +585,7 @@ boottest.felm <- function(object,
       type = type,
       full_enumeration = full_enumeration,
       small_sample_correction = small_sample_correction,
-      heteroskedastic = heteroskedastic,
-      seed = internal_seed
+      heteroskedastic = heteroskedastic
     )
     conf_int <- p_grid_vals <- grid_vals <- FALSE
   } else if (engine == "WildBootTests.jl") {

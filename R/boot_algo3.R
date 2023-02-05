@@ -25,8 +25,6 @@
 #' @param small_sample_correction The small sample correction to be applied.
 #' See ssc().
 #' If FALSE, run wild cluster bootstrap.
-#' @param seed Integer scalar. Either set via boottest()'s seed argument
-#' or inherited from R's global seed (set via set.seed)
 #' @param object the regression object
 #' @param impose_null logical scalar. Should the null be imposed on the
 #' bootstrap dgp or not?
@@ -48,7 +46,6 @@ boot_algo3 <- function(preprocessed_object,
                        type,
                        full_enumeration,
                        small_sample_correction,
-                       seed,
                        object,
                        impose_null){
 
