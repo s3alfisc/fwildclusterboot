@@ -9,7 +9,7 @@ In consequence, results produced via older versions of `fwildclusterboot` might 
 ## Other Changes: 
 
 * `boottest()` receives a new argument, `sampling`, which controls if random numbers are drawn via functions from `base` or the `dqrng` package. 
-* Some code refactoring.
+* Some code refactoring. All bootstrap algorithms and their associated files have been renamed (e.g. `boot_algo2.R` is not called `boot_algo_fastnwild.R`).
 
 ## Background on the Change to Seeding
 

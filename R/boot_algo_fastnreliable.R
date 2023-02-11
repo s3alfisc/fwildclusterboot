@@ -30,7 +30,7 @@
 #' bootstrap dgp or not?
 #' @importFrom MASS ginv
 #' @importFrom summclust vcov_CR3J
-#' @return A list of ...
+#' @return A list of bootstrap results. 
 #' @noRd
 
 
@@ -177,11 +177,6 @@ boot_algo_fastnreliable <- function(
   }
 
   if(crv_type == "crv1"){
-
-    Ag <- lapply(
-      1:G,
-      function(g) tXgXg[[g]] %*% tXXinv
-    )
     
     if(is.null(beta_hat)){
       beta_hat <- tXXinv %*% tXy
@@ -289,10 +284,7 @@ boot_algo_fastnreliable <- function(
   # get original t-stat.
 
   if(crv_type == "crv1"){
-    
-    # print("scores_list")
-    # print(scores_list[[1]])
-    
+        
     score_all <- lapply(
       1:G, function(g) 
         tcrossprod(
