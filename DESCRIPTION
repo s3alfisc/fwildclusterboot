@@ -89,7 +89,7 @@ RoxygenNote: 7.2.1
 LinkingTo: Rcpp,RcppArmadillo, RcppEigen
 VignetteBuilder: knitr
 Language: en-US
-SystemRequirements: Version Requirements to run the wild bootstrap through Julia - Julia (>= 1.8), WildBootTests.jl (>=0.8.6).
+SystemRequirements: Version Requirements to run the wild bootstrap through Julia - Julia (>= 1.8), WildBootTests.jl (>=0.8.8).
                     Julia is downloadable via the official Julia website (https://julialang.org/downloads/), 
                     WildBootTests.jl via Julia's package manager (https://docs.julialang.org/en/v1/stdlib/Pkg/) or 
                     its github repository (https://github.com/droodman/WildBootTests.jl)
