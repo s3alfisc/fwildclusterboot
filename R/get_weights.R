@@ -98,7 +98,6 @@ get_weights <- function(type,
   
   # full_enumeration only for rademacher weights (set earlier)
   if (full_enumeration) {
-      type <- 0
       v0 <-
         # gtools_permutations(
         permutations(

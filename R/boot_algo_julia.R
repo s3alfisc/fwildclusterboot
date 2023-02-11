@@ -82,6 +82,7 @@ boot_algo_julia <- function(preprocess,
   
   global_seed <- .Random.seed
   # need to pass a rng object to WildBootTests.jl
+  JuliaConnectoR::juliaEval("using StableRNGs")
   internal_seed <-
       JuliaConnectoR::juliaEval(paste0("rng = StableRNG(", get_seed(), ")"))
   on.exit(set.seed(global_seed))

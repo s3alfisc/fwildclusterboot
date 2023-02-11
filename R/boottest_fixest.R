@@ -355,7 +355,7 @@ boottest.fixest <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
-  check_arg(sampling, "charin('dqrng', 'standard')")
+  check_arg(sampling, "charin(dqrng, standard)")
   
   if(bootstrap_type != "fnw11"){
     if(engine == "R"){

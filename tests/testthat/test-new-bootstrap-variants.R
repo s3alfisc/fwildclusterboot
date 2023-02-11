@@ -2,7 +2,7 @@ test_that("test r-fnw vs r-, stochastic", {
 
       skip_on_cran()
       skip_if_not(
-        find_proglang("julia"), 
+        fwildclusterboot:::find_proglang("julia"), 
         message = "skip test as julia installation not found."
       )
       reltol <- 0.05
@@ -45,15 +45,11 @@ test_that("test r-fnw vs r-, stochastic", {
       
       
       for (object in lm_fits) {
-        cat("start ols/wls", "\n")
-        set.seed(12391786)
-        # type <- "rademacher"
+
         for (type in c("rademacher", "webb", "mammen", "norm")) {
           
           for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
             
-            cat("type: ",type, "\n")
-            cat("p_val_type: ",p_val_type, "\n")
             
             seed <- sample(1:100000, 1)
             dqrng::dqset.seed(seed)
@@ -163,7 +159,7 @@ test_that("new bootstrap variants II - t_stat equivalence", {
   
   skip_on_cran()
   skip_if_not(
-    find_proglang("julia"), 
+    fwildclusterboot:::find_proglang("julia"), 
     message = "skip test as julia installation not found."
   )
   
@@ -277,7 +273,7 @@ test_that("variants 31 R vs Julia", {
   
   skip_on_cran()
   skip_if_not(
-    find_proglang("julia"), 
+    fwildclusterboot:::find_proglang("julia"), 
     message = "skip test as julia installation not found."
   )
   
@@ -309,22 +305,25 @@ test_that("variants 31 R vs Julia", {
     
     # 1) test WCR31
     
-    boot31_jl <- boottest(lm_fit,
-                          B = 9999,
-                          param = "treatment",
-                          clustid = "group_id1",
-                          engine = "WildBootTests.jl",
-                          bootstrap_type = "31"
+    suppressWarnings(
+      boot31_jl <- boottest(lm_fit,
+                            B = 9999,
+                            param = "treatment",
+                            clustid = "group_id1",
+                            engine = "WildBootTests.jl",
+                            bootstrap_type = "31"
+      )
     )
     
-    boot31_r <- boottest(lm_fit,
-                         B = 9999,
-                         param = "treatment",
-                         clustid = "group_id1",
-                         engine = "R",
-                         bootstrap_type = "31"
+    suppressWarnings(
+      boot31_r <- boottest(lm_fit,
+                           B = 9999,
+                           param = "treatment",
+                           clustid = "group_id1",
+                           engine = "R",
+                           bootstrap_type = "31"
+      )
     )
-    
     
     testthat::expect_equal(
       pval(boot31_jl),
@@ -343,26 +342,30 @@ test_that("variants 31 R vs Julia", {
     
     #2) WCU31
     
-    boot31_jl <- boottest(lm_fit,
-                          B = 9999,
-                          param = "treatment",
-                          clustid = "group_id1",
-                          impose_null = FALSE,
-                          engine = "WildBootTests.jl",
-                          bootstrap_type = "31"
+    suppressWarnings(
+      boot31_jl <- boottest(lm_fit,
+                            B = 9999,
+                            param = "treatment",
+                            clustid = "group_id1",
+                            impose_null = FALSE,
+                            engine = "WildBootTests.jl",
+                            bootstrap_type = "31"
+      )
     )
     pval(boot31_jl)
     
-    boot31_r <- boottest(lm_fit,
-                         B = 9999,
-                         param = "treatment",
-                         clustid = "group_id1",
-                         impose_null = FALSE,
-                         engine = "WildBootTests.jl",
-                         bootstrap_type = "31"
-                         
+    suppressWarnings(
+      boot31_r <- boottest(lm_fit,
+                           B = 9999,
+                           param = "treatment",
+                           clustid = "group_id1",
+                           impose_null = FALSE,
+                           engine = "WildBootTests.jl",
+                           bootstrap_type = "31"
+                           
+      )
     )
-    
+      
     
     testthat::expect_equal(
       pval(boot31_jl),
@@ -388,7 +391,7 @@ test_that("new variants and fixed effects", {
 
   skip_on_cran()
   skip_if_not(
-    find_proglang("julia"), 
+    fwildclusterboot:::find_proglang("julia"), 
     message = "skip test as julia installation not found."
   )
   

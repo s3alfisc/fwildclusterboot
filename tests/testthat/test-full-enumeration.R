@@ -2,18 +2,17 @@ test_that("test full enumeration cases: r and r-lean", {
   
   # note: these tests are deterministic! therefore exact.
   
-  # if not skipped, codecov fails after ~6h
-
     reltol <- 0.05
     
     N <- 2000
     seed <- 187019
+    
     set.seed(2351)
     dqrng::dqset.seed(2351)
     
     data1 <<- fwildclusterboot:::create_data(
       N = N,
-      N_G1 = 8,
+      N_G1 = 3,
       icc1 = 0.5,
       N_G2 = 20,
       icc2 = 0.2,
@@ -39,36 +38,14 @@ test_that("test full enumeration cases: r and r-lean", {
       ols = lm_fit
       #,wls = lm_fit_weights
     )
-    # 
-    # object = lm_fit
-    # impose_null = TRUE
-    # type = "rademacher"
-    # p_val_type = ">"
-    
-    
-    cat("Part 1: Full enumeration Tests (deterministic)", "\n")
+
     
     
     for (object in lm_fits) {
-      cat("start ols/wls", "\n")
-      set.seed(12391786)
-      # type <- "rademacher"
       for (type in c("rademacher")) {
-        for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
+        #for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
           for (impose_null in c(TRUE)) {
             
-            cat(
-              paste(
-                "type:", type,
-                "p-val:", p_val_type,
-                "null imposed:", impose_null
-              ), 
-              "\n"
-            )
-            
-            cat(type, "\n")
-            cat(p_val_type, "\n")
-            cat(impose_null, "\n")
             
             boot_r <- suppressWarnings(
               boottest(
@@ -79,9 +56,12 @@ test_that("test full enumeration cases: r and r-lean", {
                 type = type,
                 p_val_type = p_val_type, 
                 impose_null = impose_null,
-                conf_int = FALSE
+                conf_int = FALSE, 
+                ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
               )
             )
+            
+            
             boot_r_lean <- suppressWarnings(
               boottest(
                 object,
@@ -92,7 +72,24 @@ test_that("test full enumeration cases: r and r-lean", {
                 p_val_type = p_val_type,
                 impose_null = impose_null,
                 engine = "R-lean", 
-                conf_int = FALSE
+                conf_int = FALSE, 
+                ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+              )
+            )
+            
+            boot_fnr <- suppressWarnings(
+              boottest(
+                object,
+                clustid = "group_id1", 
+                B = 999, 
+                param = "treatment",
+                type = type,
+                p_val_type = p_val_type,
+                impose_null = impose_null,
+                engine = "R", 
+                bootstrap_type = "11",
+                conf_int = FALSE, 
+                ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
               )
             )
 
@@ -115,16 +112,36 @@ test_that("test full enumeration cases: r and r-lean", {
             expect_true(
               boot_r_lean$p_val %in% (boot_r$p_val +  -2:2 * 1 / 2^boot_r$N_G)
             )
+            expect_true(
+              boot_fnr$p_val %in% (boot_r$p_val +  -2:2 * 1 / 2^boot_r$N_G)
+            )
+            
             expect_equal(
               boot_r_lean$t_stat,
               boot_r$t_stat, 
               ignore_attr = TRUE
             )
             expect_equal(
+              boot_fnr$t_stat,
+              boot_r$t_stat, 
+              ignore_attr = TRUE
+            )
+            
+            expect_equal(
               sort(boot_r_lean$t_boot), 
               sort(boot_r$t_boot),
               ignore_attr = TRUE
             )
+            expect_equal(
+              sort(boot_fnr$t_boot), 
+              sort(boot_r$t_boot),
+              ignore_attr = TRUE
+            )
+            
+            cbind(
+              sort(boot_r_lean$t_boot), 
+              sort(boot_r$t_boot)
+            )[1:20,]
             
             # check: with 9 clusters, 2^9 unique draws - 
             # hence the p-values calculated
@@ -212,15 +229,10 @@ test_that("test full enumeration cases: r and julia", {
   
   skip_on_cran()
   skip_if_not(
-    find_proglang("julia"), 
+    fwildclusterboot:::find_proglang("julia"), 
     message = "skip test as julia installation not found."
   )
   
-  # if not skipped, codecov fails after ~6h
-  julia_prep <- TRUE
-  cat("julia connector prepared? ", julia_prep)
-  
-  if(julia_prep){
     reltol <- 0.05
     
     N <- 2000
@@ -254,20 +266,8 @@ test_that("test full enumeration cases: r and julia", {
       ols = lm_fit
       #,wls = lm_fit_weights
     )
-    # 
-    # object = lm_fit
-    # impose_null = TRUE
-    # type = "rademacher"
-    # p_val_type = ">"
-    
-    
-    cat("Part 1: Full enumeration Tests (deterministic)", "\n")
-    
     
     for (object in lm_fits) {
-      cat("start ols/wls", "\n")
-      set.seed(12391786)
-      # type <- "rademacher"
       for (type in c("rademacher")) {
         for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
           for (impose_null in c(TRUE, FALSE)) {
@@ -280,10 +280,6 @@ test_that("test full enumeration cases: r and julia", {
               ), 
               "\n"
             )
-            
-            cat(type, "\n")
-            cat(p_val_type, "\n")
-            cat(impose_null, "\n")
             
             boot_r <- suppressWarnings(
               boottest(
@@ -425,6 +421,5 @@ test_that("test full enumeration cases: r and julia", {
         }
       }
     }
-  }
 })
 

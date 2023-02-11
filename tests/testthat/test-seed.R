@@ -30,6 +30,7 @@ test_that("seed works for OLS", {
   
   
     for (engine in c("R", "R-lean", "WildBootTests.jl")) {
+      
       # Case 1: seed set, no internal seeds
       set.seed(123)
       dqrng::dqset.seed(123)
@@ -91,5 +92,7 @@ test_that("seed works for OLS", {
       )
   
       expect_true(boot_lm_s1$p_val != boot_lm_s2$p_val)
+    
+    }
   
 })

@@ -74,29 +74,43 @@ boot_algo_textbook_cpp <-
     bootcluster <- preprocessed_object$bootcluster
     N_G_bootcluster <- length(unique(bootcluster[[1]]))
         
+    cat("full_enumeration:", full_enumeration, "\n")
+    
+    cat("type 1:", type, "\n")
     
     v <- NULL
+    if(type == "rademacher"){
+      if(full_enumeration){
+        
+        cat("type 2:", type, "\n")
+        
+        # get fully enumerated weights matrix
+        v <- get_weights(
+            type = type, 
+            full_enumeration = full_enumeration, 
+            N_G_bootcluster = N_G_bootcluster, 
+            boot_iter = boot_iter, 
+            sampling = "standard"
+        )
+        
+        cat("boot_iter:", boot_iter, "\n")
+        cat("nrow(v):", nrow(v), "\n")
+        cat("ncol(v):", ncol(v), "\n")
+        
+        
+        
+      }
+    }
+    
     if (type == "rademacher") {
       type <- 0
-      if (full_enumeration == TRUE) {
-        v0 <-
-          gtools_permutations(
-            n = 2,
-            r = N_G_bootcluster,
-            v = c(1,-1),
-            repeats.allowed = TRUE
-          )
-        v <- cbind(1, t(v0))
-        boot_iter <- 2 ^ N_G_bootcluster
-      } 
-    } else if (type == "webb") {
+    } else if (type == "webb"){
       type <- 1
     } else {
       stop("For the 'lean' bootstrap algorithm, only webb and rademacher 
            weights are supported.")
     }
-    
-    
+  
     if (impose_null == FALSE) {
       stop(
         "The 'lean' bootstrap algorithm is currently not supported without

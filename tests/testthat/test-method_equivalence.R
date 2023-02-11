@@ -3,7 +3,7 @@ test_that("Do different, but equivalent ways to specify
   
   skip_on_cran()
   skip_if_not(
-      find_proglang("julia"), 
+      fwildclusterboot:::find_proglang("julia"), 
       message = "skip test as julia installation not found."
   )    
   
@@ -13,10 +13,8 @@ test_that("Do different, but equivalent ways to specify
   requireNamespace("fixest")
   requireNamespace("lfe")
             
-            
-  if(TRUE){
-    print_results <- FALSE
-    
+  print_results <- FALSE
+
     data1 <<-
       fwildclusterboot:::create_data(
         N = 10000,
@@ -192,6 +190,9 @@ test_that("Do different, but equivalent ways to specify
       for (engine in c("R", "WildBootTests.jl")) {
         # boottest()
         cat("boottest()", "\n")
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_lm_", engine),
                suppressWarnings(
                  boottest(
@@ -208,6 +209,9 @@ test_that("Do different, but equivalent ways to specify
                envir = .GlobalEnv
         )
         
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest1_", engine),
                suppressWarnings(
                  boottest(
@@ -223,6 +227,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest2_", engine),
                suppressWarnings(
                  boottest(
@@ -238,6 +246,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest3_", engine),
                suppressWarnings(
                  boottest(
@@ -253,6 +265,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest4_", engine),
                suppressWarnings(
                  boottest(
@@ -268,6 +284,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest5_", engine),
                suppressWarnings(
                  boottest(
@@ -283,6 +303,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest6_", engine),
                suppressWarnings(
                  boottest(
@@ -298,6 +322,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest7_", engine),
                suppressWarnings(
                  boottest(
@@ -313,6 +341,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest8_", engine),
                suppressWarnings(
                  boottest(
@@ -329,6 +361,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest9_", engine),
                suppressWarnings(
                  boottest(
@@ -345,6 +381,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest10_", engine),
                suppressWarnings(
                  boottest(
@@ -361,6 +401,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest11_", engine),
                suppressWarnings(
                  boottest(
@@ -377,6 +421,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest12_", engine),
                suppressWarnings(
                  boottest(
@@ -393,6 +441,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest13_", engine),
                suppressWarnings(
                  boottest(
@@ -409,6 +461,9 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
         
         assign(paste0("boot_fixest6fe_", engine),
                suppressWarnings(
@@ -427,6 +482,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest7fe_", engine),
                suppressWarnings(
                  boottest(
@@ -444,6 +503,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest8fe_", engine),
                suppressWarnings(
                  boottest(
@@ -461,6 +524,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest9fe_", engine),
                suppressWarnings(
                  boottest(
@@ -478,6 +545,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest10fe_", engine),
                suppressWarnings(
                  boottest(
@@ -495,6 +566,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         # why suddenly fe = Q2_defense? Should give the same models
         assign(paste0("boot_fixest11fe_", engine),
                suppressWarnings(
@@ -513,6 +588,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest12fe_", engine),
                suppressWarnings(
                  boottest(
@@ -530,6 +609,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_fixest13fe_", engine),
                suppressWarnings(
                  boottest(
@@ -548,6 +631,9 @@ test_that("Do different, but equivalent ways to specify
                envir = .GlobalEnv
         )
         
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_felm1_", engine),
                suppressWarnings(
                  boottest(
@@ -564,6 +650,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_felm2_", engine),
                suppressWarnings(
                  boottest(
@@ -580,6 +670,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_felm3_", engine),
                suppressWarnings(
                  boottest(
@@ -596,6 +690,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_felm4_", engine),
                suppressWarnings(
                  boottest(
@@ -612,6 +710,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_felm5_", engine),
                suppressWarnings(
                  boottest(
@@ -628,6 +730,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_felm6_", engine),
                suppressWarnings(
                  boottest(
@@ -644,6 +750,9 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
         
         assign(paste0("boot_felm4fe_", engine),
                suppressWarnings(
@@ -662,6 +771,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_felm5fe_", engine),
                suppressWarnings(
                  boottest(
@@ -679,6 +792,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_felm6fe_", engine),
                suppressWarnings(
                  boottest(
@@ -696,6 +813,10 @@ test_that("Do different, but equivalent ways to specify
                ),
                envir = .GlobalEnv
         )
+        
+        set.seed(8965)
+        dqrng::dqset.seed(765)
+        
         assign(paste0("boot_felm7fe_", engine),
                suppressWarnings(
                  boottest(
@@ -719,6 +840,7 @@ test_that("Do different, but equivalent ways to specify
         if (engine == "WildBootTests.jl") {
           cat("mboottest()", "\n")
           
+          set.seed(86908)
           assign(paste0("wboot_lm_", engine),
                  suppressWarnings(
                    mboottest(
@@ -734,6 +856,8 @@ test_that("Do different, but equivalent ways to specify
                  envir = .GlobalEnv
           )
           
+          set.seed(86908)
+          
           assign(paste0("wboot_fixest1_", engine),
                  suppressWarnings(
                    mboottest(
@@ -748,6 +872,8 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          set.seed(86908)
+          
           assign(paste0("wboot_fixest2_", engine),
                  suppressWarnings(
                    mboottest(
@@ -762,6 +888,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_fixest3_", engine),
                  suppressWarnings(
                    mboottest(
@@ -776,6 +905,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_fixest4_", engine),
                  suppressWarnings(
                    mboottest(
@@ -790,6 +922,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_fixest5_", engine),
                  suppressWarnings(
                    mboottest(
@@ -807,6 +942,9 @@ test_that("Do different, but equivalent ways to specify
           # why lm_fit? Because mboottest() estimates without fixed
           # effects, so R needs to be of dimension of
           # length(names(coef(object)))
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_fixest6_", engine),
                  suppressWarnings(
                    mboottest(
@@ -821,6 +959,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_fixest7_", engine),
                  suppressWarnings(
                    mboottest(
@@ -835,6 +976,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_fixest8_", engine),
                  suppressWarnings(
                    mboottest(
@@ -849,6 +993,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_fixest9_", engine),
                  suppressWarnings(
                    mboottest(
@@ -863,6 +1010,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(
             paste0("wboot_fixest10_", engine),
             suppressWarnings(
@@ -878,6 +1028,8 @@ test_that("Do different, but equivalent ways to specify
             ),
             envir = .GlobalEnv
           )
+          
+          set.seed(86908)
           
           assign(
             paste0("wboot_fixest6fe_", engine),
@@ -895,6 +1047,9 @@ test_that("Do different, but equivalent ways to specify
             ),
             envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(
             paste0("wboot_fixest7fe_", engine),
             suppressWarnings(
@@ -911,6 +1066,9 @@ test_that("Do different, but equivalent ways to specify
             ),
             envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(
             paste0("wboot_fixest8fe_", engine),
             suppressWarnings(
@@ -927,6 +1085,9 @@ test_that("Do different, but equivalent ways to specify
             ),
             envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(
             paste0("wboot_fixest9fe_", engine),
             suppressWarnings(
@@ -943,6 +1104,9 @@ test_that("Do different, but equivalent ways to specify
             ),
             envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(
             paste0("wboot_fixest10fe_", engine),
             suppressWarnings(
@@ -959,6 +1123,9 @@ test_that("Do different, but equivalent ways to specify
             ),
             envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           # why suddenly fe = Q2_defense? Should give the same models
           assign(
             paste0("wboot_fixest11fe_", engine),
@@ -977,6 +1144,8 @@ test_that("Do different, but equivalent ways to specify
             envir = .GlobalEnv
           )
           
+          set.seed(86908)
+          
           assign(paste0("wboot_felm1_", engine),
                  suppressWarnings(
                    mboottest(
@@ -991,6 +1160,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_felm2_", engine),
                  suppressWarnings(
                    mboottest(
@@ -1005,6 +1177,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_felm3_", engine),
                  suppressWarnings(
                    mboottest(
@@ -1019,6 +1194,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_felm4_", engine),
                  suppressWarnings(
                    mboottest(
@@ -1033,6 +1211,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_felm5_", engine),
                  suppressWarnings(
                    mboottest(
@@ -1047,6 +1228,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_felm6_", engine),
                  suppressWarnings(
                    mboottest(
@@ -1061,6 +1245,8 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
           
           assign(paste0("wboot_felm4fe_", engine),
                  suppressWarnings(
@@ -1077,6 +1263,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_felm5fe_", engine),
                  suppressWarnings(
                    mboottest(
@@ -1092,6 +1281,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_felm6fe_", engine),
                  suppressWarnings(
                    mboottest(
@@ -1107,6 +1299,9 @@ test_that("Do different, but equivalent ways to specify
                  ),
                  envir = .GlobalEnv
           )
+          
+          set.seed(86908)
+          
           assign(paste0("wboot_felm7fe_", engine),
                  suppressWarnings(
                    mboottest(
@@ -1232,10 +1427,7 @@ test_that("Do different, but equivalent ways to specify
     
     create_models(clustid = c("group_id1", "group_id2"))
     run_tests()
-    
-  } else {
-    message("test-method_equivalence.R I skipped as JULIA_BINDR not found.")
-  }
+
     
   })
 
