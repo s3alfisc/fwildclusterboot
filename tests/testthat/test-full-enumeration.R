@@ -42,7 +42,6 @@ test_that("test full enumeration cases: r and r-lean", {
     
     
     for (object in lm_fits) {
-      for (type in c("rademacher")) {
         #for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
           for (impose_null in c(TRUE)) {
             
@@ -53,8 +52,6 @@ test_that("test full enumeration cases: r and r-lean", {
                 clustid = "group_id1",
                 B = 999,
                 param = "treatment", 
-                type = type,
-                p_val_type = p_val_type, 
                 impose_null = impose_null,
                 conf_int = FALSE, 
                 ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
@@ -68,8 +65,6 @@ test_that("test full enumeration cases: r and r-lean", {
                 clustid = "group_id1", 
                 B = 999, 
                 param = "treatment",
-                type = type,
-                p_val_type = p_val_type,
                 impose_null = impose_null,
                 engine = "R-lean", 
                 conf_int = FALSE, 
@@ -83,8 +78,6 @@ test_that("test full enumeration cases: r and r-lean", {
                 clustid = "group_id1", 
                 B = 999, 
                 param = "treatment",
-                type = type,
-                p_val_type = p_val_type,
                 impose_null = impose_null,
                 engine = "R", 
                 bootstrap_type = "11",
@@ -137,11 +130,7 @@ test_that("test full enumeration cases: r and r-lean", {
               sort(boot_r$t_boot),
               ignore_attr = TRUE
             )
-            
-            cbind(
-              sort(boot_r_lean$t_boot), 
-              sort(boot_r$t_boot)
-            )[1:20,]
+          
             
             # check: with 9 clusters, 2^9 unique draws - 
             # hence the p-values calculated
@@ -166,8 +155,6 @@ test_that("test full enumeration cases: r and r-lean", {
                 param = c("treatment", "log_income"),
                 R = c(-0.1, 0.1), 
                 r = 0.1,
-                type = type,
-                p_val_type = p_val_type,
                 impose_null = impose_null,
                 conf_int = FALSE
               )
@@ -180,8 +167,6 @@ test_that("test full enumeration cases: r and r-lean", {
                 param = c("treatment", "log_income"),
                 R = c(-0.1, 0.1), 
                 r = 0.1, 
-                type = type,
-                p_val_type = p_val_type,
                 impose_null = impose_null,
                 engine = "R-lean", 
                 conf_int = FALSE
@@ -216,8 +201,7 @@ test_that("test full enumeration cases: r and r-lean", {
             
         }
       }
-    }
-  }
+    
 })
 
 
@@ -268,18 +252,8 @@ test_that("test full enumeration cases: r and julia", {
     )
     
     for (object in lm_fits) {
-      for (type in c("rademacher")) {
-        for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
           for (impose_null in c(TRUE, FALSE)) {
             
-            cat(
-              paste(
-                "type:", type,
-                "p-val:", p_val_type,
-                "null imposed:", impose_null
-              ), 
-              "\n"
-            )
             
             boot_r <- suppressWarnings(
               boottest(
@@ -287,8 +261,6 @@ test_that("test full enumeration cases: r and julia", {
                 clustid = "group_id1",
                 B = 999,
                 param = "treatment", 
-                type = type,
-                p_val_type = p_val_type, 
                 impose_null = impose_null,
                 conf_int = FALSE
               )
@@ -299,8 +271,6 @@ test_that("test full enumeration cases: r and julia", {
                        clustid = "group_id1",
                        B = 999, 
                        param = "treatment", 
-                       type = type, 
-                       p_val_type = p_val_type, 
                        impose_null = impose_null,
                        engine = "WildBootTests.jl", 
                        conf_int = FALSE
@@ -366,8 +336,6 @@ test_that("test full enumeration cases: r and julia", {
                 param = c("treatment", "log_income"),
                 R = c(-0.1, 0.1), 
                 r = 0.1,
-                type = type,
-                p_val_type = p_val_type,
                 impose_null = impose_null,
                 conf_int = FALSE
               )
@@ -381,8 +349,6 @@ test_that("test full enumeration cases: r and julia", {
                 param = c("treatment", "log_income"), 
                 R = c(-0.1, 0.1), 
                 r = 0.1,
-                type = type,
-                p_val_type = p_val_type,
                 impose_null = impose_null,
                 engine = "WildBootTests.jl",
                 conf_int = FALSE
@@ -419,7 +385,5 @@ test_that("test full enumeration cases: r and julia", {
             
           }   
         }
-      }
-    }
 })
 

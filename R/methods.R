@@ -57,7 +57,7 @@
 #' \item Julia:[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) 
 #' \item Python:[wildboottest](https://github.com/s3alfisc/wildboottest) 
 #' }
-v#' 
+#' 
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
 #' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)

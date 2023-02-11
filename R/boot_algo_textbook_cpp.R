@@ -73,17 +73,12 @@ boot_algo_textbook_cpp <-
     vcov_sign <- preprocessed_object$vcov_sign
     bootcluster <- preprocessed_object$bootcluster
     N_G_bootcluster <- length(unique(bootcluster[[1]]))
-        
-    cat("full_enumeration:", full_enumeration, "\n")
-    
-    cat("type 1:", type, "\n")
+
     
     v <- NULL
     if(type == "rademacher"){
       if(full_enumeration){
-        
-        cat("type 2:", type, "\n")
-        
+      
         # get fully enumerated weights matrix
         v <- get_weights(
             type = type, 
@@ -92,12 +87,6 @@ boot_algo_textbook_cpp <-
             boot_iter = boot_iter, 
             sampling = "standard"
         )
-        
-        cat("boot_iter:", boot_iter, "\n")
-        cat("nrow(v):", nrow(v), "\n")
-        cat("ncol(v):", ncol(v), "\n")
-        
-        
         
       }
     }
@@ -161,22 +150,37 @@ boot_algo_textbook_cpp <-
       # bootcluster must be integers, starting with 0 
       # (due to cpp implementation)
       bootcluster <- bootcluster - min(bootcluster)
+      if (is.null(v)) {
+        boot_res <-
+          wildboottestCL(
+            y = unname(Y),
+            X = unname(X),
+            R = t(unname(R)),
+            r = r,
+            B = boot_iter,
+            N_G_bootcluster = unname(N_G_bootcluster),
+            cores = nthreads,
+            type = type,
+            cluster = bootcluster,
+            small_sample_correction = small_sample_correction
+          )[["t_boot"]]
+      } else {
+        boot_res <-
+          wildboottestCL_enum(
+            y = Y,
+            X = X,
+            R = t(unname(R)),
+            r = r,
+            B = boot_iter,
+            N_G_bootcluster = unname(N_G_bootcluster),
+            cores = nthreads,
+            cluster = bootcluster,
+            small_sample_correction = small_sample_correction,
+            v = t(v) 
+          )[["t_boot"]]
+      }
       
   
-      boot_res <-
-        wildboottestCL(
-          y = unname(Y),
-          X = unname(X),
-          R = t(unname(R)),
-          r = r,
-          B = boot_iter,
-          N_G_bootcluster = unname(N_G_bootcluster),
-          cores = nthreads,
-          type = type,
-          cluster = bootcluster,
-          small_sample_correction = small_sample_correction
-        )[["t_boot"]]
-   
     }
     
     
