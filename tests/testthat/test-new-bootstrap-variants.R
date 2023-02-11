@@ -422,6 +422,9 @@ test_that("new variants and fixed effects", {
 
   # x1 variants
   
+  set.seed(2345234)
+  dqrng::dqset.seed(6756)
+  
   boot31_lm <- boottest(lm_fit,
                      B = 9999,
                      param = "treatment",
@@ -430,6 +433,9 @@ test_that("new variants and fixed effects", {
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
   )
 
+  set.seed(2345234)
+  dqrng::dqset.seed(6756)
+  
   boot31_fe <- boottest(feols_fit,
                      B = 9999,
                      param = "treatment",
@@ -453,6 +459,8 @@ test_that("new variants and fixed effects", {
     boot31_fe$t_boot
   )
   
+  set.seed(2345234)
+  dqrng::dqset.seed(6756)
   
   # x3 variants
   boot13_lm <- boottest(lm_fit,
@@ -463,6 +471,9 @@ test_that("new variants and fixed effects", {
 
                         ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
   )
+  
+  set.seed(2345234)
+  dqrng::dqset.seed(6756)
   
   boot13_fe <- boottest(feols_fit,
                         B = 9999,
