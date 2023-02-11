@@ -186,6 +186,11 @@ mboottest.lm <- function(object,
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(tol, "numeric scalar GT{0}")
   
+  inform_seed(
+    frequency_id = "seed-reminder-m-lm", 
+    engine = engine
+  )
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
@@ -197,8 +202,9 @@ mboottest.lm <- function(object,
   
   if (ssc[["fixef.K"]] != "none" ||
       ssc[["cluster.df"]] != "conventional") {
-    x <- format_message(
-      "Currently, boottest() only supports fixef.K = 'none'."
+    rlang::inform(
+      "Currently, boottest() only supports fixef.K = 'none'.", 
+      use_cli_format = TRUE
     )
     message(x)
   }

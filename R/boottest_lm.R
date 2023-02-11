@@ -343,12 +343,21 @@ boottest.lm <- function(object,
   check_arg(bootstrapc, "scalar logical")
   
   check_arg(sampling, "charin(dqrng, standard)")
-  
+
+  # remind packages users to set a global seed
+  inform_seed(
+    frequency_id = "seed-reminder-boot-lm", 
+    engine = engine
+  )    
   if(bootstrap_type != "fnw11"){
     if(engine == "R"){
       if(conf_int){
-        message("Confidence Intervals are currently only supported for 
-                the R engine with 'bootstrap_type = 'fnw11' '.")
+        rlang::inform(
+          c('*',"Confidence Intervals are currently only supported for", 
+              "the R engine with 'bootstrap_type = 'fnw11'."), 
+          use_cli_format = TRUE, 
+          .frequency = "regularly", 
+          .frequency_id = "CI only for fnw algo.")
       }
     }
   }
@@ -359,10 +368,14 @@ boottest.lm <- function(object,
   )
   
   if (!is.null(beta0)) {
-    stop(
-      "The function argument 'beta0' is deprecated. Please use the function
-      argument 'r' instead, by which it is replaced."
-    )
+    rlang::abort(
+      c(
+        "The function argument 'beta0' is deprecated.
+         Please use the function argument 'r' instead,
+         by which it is replaced."
+      ),
+         use_cli_format = TRUE
+      )
   }
   
   if (inherits(clustid, "formula")) {

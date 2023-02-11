@@ -248,10 +248,10 @@ boottest.ivreg <- function(object,
   
   if (ssc[["fixef.K"]] != "none" ||
       ssc[["cluster.df"]] != "conventional") {
-    x <- format_message(
-      "Currently, boottest() only supports fixef.K = 'none'."
+      rlang::warn(
+      "Currently, boottest() only supports fixef.K = 'none'.", 
+      use_cli_format = TRUE
     )
-    message(x)
   }
   
   
@@ -306,10 +306,18 @@ boottest.ivreg <- function(object,
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
   
+  # remind packages users to set a global seed
+  inform_seed(
+    frequency_id = "seed-reminder-boot-iv", 
+    engine = "WildBootTests.jl"
+  )    
+  
   if (ssc[["fixef.K"]] != "none") {
-    format_message(
+    rlang::inform(
       paste(
-        "Currently, boottest() only supports fixef.K = 'none'."))
+        "Currently, boottest() only supports fixef.K = 'none'."),
+      use_cli_format = TRUE
+      )
   }
   
 

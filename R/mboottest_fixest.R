@@ -196,6 +196,11 @@ mboottest.fixest <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
+  inform_seed(
+    frequency_id = "seed-reminder-m-fixest", 
+    engine = engine
+  )
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
@@ -210,20 +215,25 @@ mboottest.fixest <- function(object,
   
   # fixest specific checks
   if (object$method != "feols") {
-    stop("mboottest() only supports OLS estimation via fixest::feols() - it
+    rlang::abort(
+      c("mboottest() only supports OLS estimation via fixest::feols() - it
          does not support non-linear models computed via e.g.
-         fixest::fepois() or fixest::feglm.")
+         fixest::fepois() or fixest::feglm."), 
+      use_cli_format = TRUE
+    )
   }
   
   if (!is.null(object$fixef_removed)) {
-    stop(paste(
+    rlang::abort(
+      paste(
       "feols() removes fixed effects with the following values: ",
       object$fixef_removed, ". Currently, boottest()'s
                internal pre-processing does not account for this deletion.
                Therefore, please exclude such fixed effects prior
                to estimation with feols(). You can find them listed under
-               '$fixef_removed' of your fixest object."
-    ))
+               '$fixef_removed' of your fixest object."), 
+        use_cli_format = TRUE
+    )
   }
   
   fedfadj <- 0L
@@ -272,10 +282,10 @@ mboottest.fixest <- function(object,
   clustermin <- julia_ssc$clustermin
   
   if (ssc[["fixef.K"]] != "none") {
-    x <- format_message(
-      "Currently, boottest() only supports fixef.K = 'none'."
+    rlang::inform(
+      "Currently, boottest() only supports fixef.K = 'none'.", 
+      use_cli_format = TRUE
     )
-    message(x)
   }
   
   

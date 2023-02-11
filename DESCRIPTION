@@ -64,7 +64,8 @@ Imports:
     JuliaConnectoR, 
     MASS, 
     Rcpp, 
-    summclust
+    summclust, 
+    rlang
 Suggests: 
     fixest,
     lfe,

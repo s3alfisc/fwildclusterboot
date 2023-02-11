@@ -225,10 +225,11 @@ getBoottest_engine <- function() {
   
   x <- getOption("boottest_engine")
   if (!(x %in% c("R", "WildBootTests.jl"))) {
-    stop(
+    rlang::abort(
       "The value of getOption(\"boottest_engine\") is currently not legal.
       Please use function setBoottest_engine to set it to an appropriate
-      value. "
+      value. ",
+      use_cli_format = TRUE
     )
   }
   x
@@ -290,9 +291,11 @@ getBoottest_nthreads <- function() {
   
   x <- getOption("boottest_nthreads")
   if (length(x) != 1 || !is.numeric(x) || is.na(x) || x %% 1 != 0 || x < 0) {
-    stop("The value of getOption(\"boottest_nthreads\") is currently not legal.
+    rlang::abort("The value of getOption(\"boottest_nthreads\") is currently not legal.
          Please use function setBoottest_nthreads to set it to an appropriate
-         value. ")
+         value. ", 
+      use_cli_format = TRUE
+    )
   }
   # cat("getBoottest nr threads \n")
   # print(x)
@@ -466,3 +469,31 @@ find_proglang <- function(lang){
   
 }
 
+
+inform_seed <- function(frequency_id, engine){
+  
+  if(engine != "WildBootTests.jl"){
+    
+    rlang::inform(
+      "Too guarantee reproducibility, don't forget to set a 
+    global random seed **both** via `set.seed()` and `dqrng::dqset.seed()`.", 
+      use_cli_format = TRUE, 
+      .frequency = "regularly", 
+      .frequency_id = frequency_id
+    )
+    
+  } else {
+    
+    rlang::inform(
+      "Too guarantee reproducibility, don't forget to set a 
+    global random seed via `set.seed()`.", 
+      use_cli_format = TRUE, 
+      .frequency = "regularly", 
+      .frequency_id = frequency_id
+    )
+    
+  }
+
+  
+  
+}

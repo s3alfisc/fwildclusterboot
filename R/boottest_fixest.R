@@ -357,19 +357,34 @@ boottest.fixest <- function(object,
   
   check_arg(sampling, "charin(dqrng, standard)")
   
+  # remind packages users to set a global seed
+  inform_seed(
+    frequency_id = "seed-reminder-boot-fixest", 
+    engine = engine
+  )  
+  
   if(bootstrap_type != "fnw11"){
     if(engine == "R"){
       if(conf_int){
-        message("Confidence Intervals are currently only supported for 
-                the R engine with 'bootstrap_type = 'fnw11' '.")
+        rlang::inform(
+          "Confidence Intervals are currently only supported for 
+                the R engine with 'bootstrap_type = 'fnw11' '.", 
+          use_cli_format = TRUE, 
+          .frequency = "regularly", 
+          .frequency_id = "CI only for fnw algo."
+        )
       }
     }
   }
   
   if (!is.null(beta0)) {
-    stop(
-      "The function argument 'beta0' is deprecated. Please use the
-      function argument 'r' instead, by which it is replaced."
+    rlang::abort(
+      c(
+        "The function argument 'beta0' is deprecated.
+         Please use the function argument 'r' instead,
+         by which it is replaced."
+      ),
+      use_cli_format = TRUE
     )
   }
   
@@ -391,7 +406,7 @@ boottest.fixest <- function(object,
   
   
   if (!is.null(object$fixef_removed)) {
-    stop(
+    rlang::abort(
       paste(
         "feols() removes fixed effects with the following values: ",
         object$fixef_removed,
@@ -399,7 +414,8 @@ boottest.fixest <- function(object,
         account for this deletion. Therefore, please exclude such fixed
         effects prior to estimation with feols(). You can find them listed
         under '$fixef_removed' of your fixest object."
-      )
+      ), 
+      use_cli_format = TRUE
     )
   }
   

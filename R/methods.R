@@ -532,7 +532,10 @@ plot.boottest <- function(x, ...) {
   dreamerr::validate_dots(stop = TRUE)
 
   if (is.null(x$conf_int)) {
-    stop("No plot method if boottest()'s function argument 'conf_int = FALSE'.")
+    rlang::abort(
+      c("No plot method if boottest()'s function argument 'conf_int = FALSE'."), 
+      use_cli_format = TRUE
+    )
   }
   test_vals <- x$grid_vals
   p_test_vals <- x$p_grid_vals

@@ -272,8 +272,9 @@ run_bootstrap <- function(
     fedfadj <- 0L
     
     if (ssc[["fixef.K"]] != "none") {
-      x <- format_message(
-        "Currently, boottest() only supports fixef.K = 'none'."
+      rlang::inform(
+        "Currently, boottest() only supports fixef.K = 'none'.", 
+        use_cli_format = TRUE
       )
       message(x)
     }

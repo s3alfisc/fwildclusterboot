@@ -193,6 +193,12 @@ mboottest.felm <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
+  # remind packages users to set a global seed
+  inform_seed(
+    frequency_id = "seed-reminder-m-felm", 
+    engine = engine
+  )
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
@@ -242,10 +248,10 @@ mboottest.felm <- function(object,
   clustermin <- julia_ssc$clustermin
   
   if (ssc[["fixef.K"]] != "none") {
-    x <- format_message(
-      "Currently, boottest() only supports fixef.K = 'none'."
-    )
-    message(x)
+    rlang::inform(
+      "Currently, boottest() only supports fixef.K = 'none'.",
+      use_cli_format = TRUE
+      )
   }
   
   
