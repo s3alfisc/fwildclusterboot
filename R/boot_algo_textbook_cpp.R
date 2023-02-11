@@ -1,4 +1,4 @@
-boot_algo1 <-
+boot_algo_textbook_cpp <-
   function(preprocessed_object,
            boot_iter,
            point_estimate,
@@ -191,7 +191,7 @@ boot_algo1 <-
       small_sample_correction = small_sample_correction
     )
     
-    class(res) <- "boot_algo1"
+    class(res) <- "boot_algo_textbook_cpp"
     
     invisible(res)
     

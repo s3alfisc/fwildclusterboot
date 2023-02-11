@@ -1,4 +1,4 @@
-boot_algo2 <-
+boot_algo_fastnwild <-
   function(preprocessed_object,
            boot_iter,
            point_estimate,

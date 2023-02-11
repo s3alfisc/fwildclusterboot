@@ -236,7 +236,7 @@ check_r_lean <- function(weights, clustid, fe, impose_null){
 }
 
 
-check_boot_algo3 <- function(
+check_boot_algo_fastnreliable <- function(
     weights,
     clustid, 
     fe,

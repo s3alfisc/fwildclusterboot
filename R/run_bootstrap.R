@@ -34,8 +34,9 @@ run_bootstrap <- function(
   #' Run different wild (cluster) bootstrap algorithms
   #' 
   #' Wrapper function to run all different bootstrap algorithms supported 
-  #' by fwildclusterboot: `boot_algo1.R`, `boot_algo2.R`, `boot_algo3.R`, 
-  #' `boot_algo_julia.R`. For more information, see the `Details` section.
+  #' by fwildclusterboot: `boot_algo_textbook_cpp.R`, `boot_algo_fastnwild.R`,
+  #'  `boot_algo_fastnreliable.R`, `boot_algo_julia.R`. 
+  #' For more information, see the `Details` section.
   #'
   #' @param object The initial regression object
   #' @param engine Character scalar. Either "R", "R-lean" or "WildBootTests.jl".
@@ -147,12 +148,12 @@ run_bootstrap <- function(
   #' 
   #' @section Different Bootstrap Implementations / Algorithms:
   #' \itemize{
-  #' \item `boot_algo1.R`: Implements the heteroskedastic wild bootstrap
+  #' \item `boot_algo_textbook_cpp.R`: Implements the heteroskedastic wild bootstrap
   #' (`WildboottestHC`) as well as the textbook wild cluster bootstrap 
   #' (`WildboottestHC`) in (R)cpp. 
-  #' \item `boot_algo2.R`: Implements the 'classical' wild cluster bootstrap 
+  #' \item `boot_algo_fastnwild.R`: Implements the 'classical' wild cluster bootstrap 
   #' via the "Fast and Wild" algorithm (Roodman et al, 2019).
-  #' \item `boot_algo3.R`: Implements the ('classical') as well as 'S', 'C' and 
+  #' \item `boot_algo_fastnreliable.R`: Implements the ('classical') as well as 'S', 'C' and 
   #' 'V' wild cluster bootstrap types following algorithms in 
   #' "Fast and Reliable" (MacKinnon et al, 2023).
   #' \item `boot_algo_julia.R`: Wrapper around 'WildBootTests.jl".
@@ -172,7 +173,7 @@ run_bootstrap <- function(
     
     if(bootstrap_type == "fnw11"){
       
-      res <- boot_algo2(
+      res <- boot_algo_fastnwild(
         preprocessed_object = preprocess,
         boot_iter = B,
         point_estimate = point_estimate,
@@ -195,7 +196,7 @@ run_bootstrap <- function(
     } else {
       
       # need some function checks here ... 
-      check_boot_algo3(
+      check_boot_algo_fastnreliable(
         weights = stats::weights(object), 
         clustid = clustid,
         fe = fe,
@@ -204,7 +205,7 @@ run_bootstrap <- function(
         r = r
       )
       
-      res <- boot_algo3(
+      res <- boot_algo_fastnreliable(
         preprocessed_object = preprocess,
         B = B,
         bootstrap_type = bootstrap_type,
@@ -243,7 +244,7 @@ run_bootstrap <- function(
       bootstrap_type <- "11"
     }
     
-    res <- boot_algo1(
+    res <- boot_algo_textbook_cpp(
       preprocessed_object = preprocess,
       boot_iter = B,
       point_estimate = point_estimate,

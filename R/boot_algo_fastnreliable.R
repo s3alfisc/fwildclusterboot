@@ -35,20 +35,21 @@
 
 
 
-boot_algo3 <- function(preprocessed_object,
-                       B,
-                       bootstrap_type,
-                       r = 0,
-                       sign_level,
-                       param,
-                       p_val_type,
-                       nthreads,
-                       type,
-                       full_enumeration,
-                       small_sample_correction,
-                       object,
-                       impose_null, 
-                       sampling){
+boot_algo_fastnreliable <- function(
+  preprocessed_object,
+  B,
+  bootstrap_type,
+  r = 0,
+  sign_level,
+  param,
+  p_val_type,
+  nthreads,
+  type,
+  full_enumeration,
+  small_sample_correction,
+  object,
+  impose_null, 
+  sampling){
 
 
   #here for debugging
