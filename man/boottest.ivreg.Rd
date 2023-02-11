@@ -11,7 +11,6 @@
   B,
   bootcluster = "max",
   conf_int = TRUE,
-  seed = NULL,
   R = NULL,
   r = 0,
   sign_level = 0.05,
@@ -63,8 +62,6 @@ supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterbo
 
 \item{conf_int}{A logical vector. If TRUE, boottest computes confidence
 intervals by test inversion. If FALSE, only the p-value is returned.}
-
-\item{seed}{An integer. Allows to set a random seed. For details, see below.}
 
 \item{R}{Hypothesis Vector giving linear combinations of coefficients.
 Must be either NULL or a vector of the same length as \code{param}. If NULL,
@@ -157,9 +154,6 @@ interval.}
 \item{call}{Function call of boottest.}
 \item{engine}{The employed bootstrap algorithm.}
 \item{nthreads}{The number of threads employed.}
-\item{internal_seed}{The integer value -inherited from set.seed() - used
-within boottest() to set the random seed in either R or Julia. If NULL,
-no internal seed was created.}
 }
 \description{
 \code{boottest.ivreg} is a S3 method that allows for fast wild cluster
@@ -169,20 +163,8 @@ for instrumental variable models (WRE, Davidson & McKinnon, 2010)
 }
 \section{Setting Seeds}{
 
-To guarantee reproducibility, you can either use \verb{boottest()'s} \code{seed}
-function argument, or
-set a global random seed via
-\itemize{
-\item \code{set.seed()} when using
-\enumerate{
-\item the lean algorithm (via \code{engine = "R-lean"}) including the
-heteroskedastic wild bootstrap
-\item the wild cluster bootstrap via \code{engine = "R"} with Mammen weights or
-\item \code{engine = "WildBootTests.jl"}
-}
-\item \code{dqrng::dqset.seed()} when using \code{engine = "R"} for Rademacher,
-Webb or Normal weights
-}
+To guarantee reproducibility, you need to
+set a global random seed via \code{set.seed()}
 }
 
 \examples{

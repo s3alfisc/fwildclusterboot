@@ -95,9 +95,8 @@ test_that("test tidiers with q > 1", {
       lm_fit,
       R = R,
       B = 999,
-      clustid = "group_id1",
-      seed = 123
-    )
+      clustid = "group_id1"
+  )
 
   expect_equal(tidy(mboottest_julia)$teststat, -14.02107)
   expect_equal(summary(mboottest_julia)$p_val, 0)

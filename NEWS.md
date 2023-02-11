@@ -1,3 +1,41 @@
+# fwildclusterboot 0.13
+
+## Potentially Breaking Changes: 
+
+* `boottest()`, `mboottest()` and `boot_aggregate()`no longer have a dedicated `seed` argument. Reproducibility of results can only be controlled by setting a **global seed** via `drqng::dqset.seed()` and `set.seed()`. For more context, see the discussion below. 
+
+In consequence, results produced via older versions of `fwildclusterboot` might no longer be exactly reproducible.   
+
+## Other Changes: 
+
+* `boottest()` receives a new argument, `sampling`, which controls if random numbers are drawn via functions from `base` or the `dqrng` package. 
+* Some code refactoring.
+
+## Background on the Change to Seeding
+
+Prior to the changes introduced with `v0.13`, if the `seed` argument was specified in `boottest()`, `boottest()` would call `set.seed()` or `dqrng::dqset.seed()` internally, to guarantee that calling `boottest()` twice under the same seed would lead to exactly identical inferences. But because both functions are not 'scoped' within `boottest()`, they would reset the **global** seed. The next random number generated in a given R session would then relate to the new seed state set by the call to `boottest()`. In other words, code like this 
+
+```r
+# Example 1
+set.seed(1)
+dqrng.dqset.seed(2)
+boottest(..., seed = NULL)
+rnorm(1)
+```
+and 
+```r
+# Example 2
+set.seed(1)
+dqrng.dqset.seed(2)
+boottest(..., seed = 3)
+rnorm(1)
+```
+would leed to different inferences, because the the two calls of `rnorm(1)` would be based on different global seed states. 
+
+Note that setting seeds within `boottest()` in this way would not affect reproducibility of scrips run end-to-end. But it is generally considered to be 'bad practice' to overwrite global variables without notification - e.g. the authors of `numpy` have deprecated their `np.random.seed()` function for such reasons. 
+
+In consequence, I have decided to deprecate the `seed` function argument. Random number generation now **needs** to be set outside of `boottest()` via `set.seed()` and `dqrng::dqset.seed()`.
+
 # fwildclusterboot 0.12.1
 
 This is a hot-fix release which turns of tests on CRAN that fail in non-standard CRAN test environments. 

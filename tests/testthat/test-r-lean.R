@@ -38,7 +38,6 @@ test_that("test lean cpp boottest", {
     B = 999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1,
-    seed = 1,
     type = "webb"
   )
   boot_lm2 <- boottest(lm_fit,
@@ -46,7 +45,6 @@ test_that("test lean cpp boottest", {
     B = 999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1,
-    seed = 2,
     type = "webb"
   )
 
@@ -270,7 +268,6 @@ test_that("heteroskedastic 11 vs 12 vs 13",{
       param = "treatment", 
       bootstrap_type = "11", 
       B = 9999, 
-      seed = 12312
     )
   
   fit12 <- 
@@ -279,7 +276,6 @@ test_that("heteroskedastic 11 vs 12 vs 13",{
       param = "treatment", 
       bootstrap_type = "21", 
       B = 9999, 
-      seed = 12312
     )
   
   fit13 <- 
@@ -288,7 +284,6 @@ test_that("heteroskedastic 11 vs 12 vs 13",{
       param = "treatment", 
       bootstrap_type = "31", 
       B = 9999, 
-      seed = 12312
     )
   
   expect_equal(teststat(fit11), teststat(fit12))

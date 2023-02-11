@@ -370,46 +370,6 @@ get_seed <- function() {
   x
 }
 
-set_seed <- function(seed, engine, type) {
-  
-  #' @importFrom JuliaConnectoR juliaEval
-  #' @noRd
-  
-  if (!is.null(seed)) {
-    if (engine %in% c("R", "WCR33", "WCR13", "WCU33", "WCU13", 
-                         "WCR31", "WCR11", "WCU31", "WCU11")) {
-      if (type %in% c("rademacher", "webb", "norm")) {
-        dqrng::dqset.seed(seed)
-        internal_seed <- NULL
-      } else if (type == "mammen") {
-        set.seed(seed)
-        internal_seed <- NULL
-      }
-    } else if (engine == "R-lean") {
-      set.seed(seed)
-      internal_seed <- NULL
-    } else if (engine == "WildBootTests.jl") {
-      JuliaConnectoR::juliaEval("using StableRNGs")
-      set.seed(seed)
-      seed <- get_seed()
-      internal_seed <-
-        JuliaConnectoR::juliaEval(paste0("rng = StableRNG(", seed, ")"))
-    }
-  } else if (is.null(seed)) {
-    if (engine == "WildBootTests.jl") {
-      seed <- get_seed()
-      JuliaConnectoR::juliaEval("using StableRNGs")
-      internal_seed <-
-        JuliaConnectoR::juliaEval(paste0("rng = StableRNG(", seed, ")"))
-    } else {
-      internal_seed <- NULL
-    }
-  }
-  
-  internal_seed
-}
-
-
 to_integer <- function(vec) {
   
   #' Transform vectors of all types safely to integer vectors

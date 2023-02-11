@@ -8,6 +8,9 @@ test_that("uncategorized tests", {
   
   # see this issue: https://github.com/s3alfisc/fwildclusterboot/issues/26
 
+  set.seed(76903)
+  dqrng::dqset.seed(98796)
+  
   data1 <<-
     fwildclusterboot:::create_data(
       N = 500,
@@ -51,32 +54,28 @@ test_that("uncategorized tests", {
       feols1,
       param = "treatment",
       B = 999,
-      clustid = "group_id1",
-      seed = 12342
+      clustid = "group_id1"
     )
   boot2 <-
     boottest(
       feols2,
       param = "treatment",
       B = 999,
-      clustid = "group_id1",
-      seed = 12342
+      clustid = "group_id1"
     )
   boot3 <-
     boottest(
       feols3,
       param = "treatment",
       B = 999,
-      clustid = "group_id1",
-      seed = 12342
+      clustid = "group_id1"
     )
   boot4 <-
     boottest(
       feols4,
       param = "treatment",
       B = 999,
-      clustid = "group_id1",
-      seed = 12342
+      clustid = "group_id1"
     )
 
   expect_equal(generics::tidy(boot1), generics::tidy(boot2))
@@ -185,8 +184,7 @@ test_that("uncategorized tests", {
         clustid = c("Q1_immigration"),
         B = 9999,
         param = "treatment",
-        bootcluster = "min",
-        seed = 123
+        bootcluster = "min"
       )
     )
   boot2 <-
@@ -196,8 +194,7 @@ test_that("uncategorized tests", {
         clustid = c("Q1_immigration"),
         B = 9999,
         param = "treatment",
-        bootcluster = "min",
-        seed = 123
+        bootcluster = "min"
       )
     )
   boot3 <-
@@ -207,8 +204,7 @@ test_that("uncategorized tests", {
         clustid = c("Q1_immigration"),
         B = 9999,
         param = "treatment",
-        bootcluster = "min",
-        seed = 123
+        bootcluster = "min"
       )
     )
   boot4 <-
@@ -218,8 +214,7 @@ test_that("uncategorized tests", {
         clustid = c("Q1_immigration"),
         B = 9999,
         param = "treatment",
-        bootcluster = "min",
-        seed = 123
+        bootcluster = "min"
       )
     )
 

@@ -12,7 +12,6 @@ class lm}
   R,
   r = rep(0, nrow(R)),
   bootcluster = "max",
-  seed = NULL,
   type = "rademacher",
   impose_null = TRUE,
   p_val_type = "two-tailed",
@@ -60,9 +59,6 @@ Other options include "min", where bootstrapping is clustered by the
 cluster variable with the fewest clusters.
 Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
 supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterboot")} for details.}
-
-\item{seed}{An integer. Allows to set a random seed. For details,
-see below.}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -128,9 +124,6 @@ regression coefficients.}
 \item{teststat_boot}{All bootstrap t-statistics.}
 \item{regression}{The regression object used in boottest.}
 \item{call}{Function call of boottest.}
-\item{internal_seed}{The integer value -inherited from set.seed() - used
-within boottest() to set the random seed in either R or Julia. If NULL, no
-internal seed was created.}
 }
 \description{
 \code{mboottest.lm} is a S3 method that allows for fast wild cluster
@@ -140,8 +133,7 @@ Roodman et al., 2019.
 }
 \section{Setting Seeds}{
 
-To guarantee reproducibility, you can either use \verb{boottest()'s} \code{seed}
-function argument, or
+To guarantee reproducibility, you need to
 set a global random seed via \code{set.seed()}
 }
 

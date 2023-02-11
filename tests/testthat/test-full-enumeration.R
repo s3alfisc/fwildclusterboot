@@ -8,6 +8,8 @@ test_that("test full enumeration cases: r and r-lean", {
     
     N <- 2000
     seed <- 187019
+    set.seed(2351)
+    dqrng::dqset.seed(2351)
     
     data1 <<- fwildclusterboot:::create_data(
       N = N,

@@ -16,7 +16,6 @@ boot_aggregate(
   bootcluster = "max",
   fe = NULL,
   sign_level = 0.05,
-  seed = NULL,
   beta0 = NULL,
   type = "rademacher",
   impose_null = TRUE,
@@ -32,6 +31,7 @@ boot_aggregate(
   maxmatsize = FALSE,
   bootstrapc = FALSE,
   getauxweights = FALSE,
+  sampling = "dqrng",
   ...
 )
 }
@@ -86,8 +86,6 @@ needs to be NULL.}
 \item{sign_level}{A numeric between 0 and 1 which sets the significance level
 of the inference procedure. E.g. sign_level = 0.05
 returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
-
-\item{seed}{An integer. Allows to set a random seed. For details, see below.}
 
 \item{beta0}{Deprecated function argument. Replaced by function argument 'r'.}
 
@@ -165,6 +163,13 @@ bootstrap-c instead of bootstrap-t. Only relevant when
 'engine = "WildBootTests.jl"'}
 
 \item{getauxweights}{Logical. Whether to save auxilliary weight matrix (v)}
+
+\item{sampling}{'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
+used for random number generation (when available). If 'standard',
+functions from the 'stats' package are used when available.
+This argument is mostly a convenience to control random number generation in
+a wrapper package around \code{fwildclusterboot}, \code{wildrwolf}.
+I recommend to use the fast' option.}
 
 \item{...}{misc function arguments}
 }

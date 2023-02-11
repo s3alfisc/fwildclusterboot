@@ -45,7 +45,7 @@ Description: Implementation of fast algorithms for wild cluster bootstrap
              (from package 'fixest') and 'felm()' (from package 'lfe'). 
              Additionally implements a 'heteroskedasticity-robust' ('HC1') wild 
              bootstrap.
-             Further, the package provides an R binding to 'WildBootTests.jl',
+             Last, the package provides an R binding to 'WildBootTests.jl',
              which provides additional speed gains and functionality, 
              including the 'WRE' bootstrap for instrumental variable models 
              (based on models of type 'ivreg()' from package 'ivreg')

@@ -31,7 +31,6 @@
 #' the name of the fixed effect to be projected
 #'        out in the bootstrap. Note: if regression weights are used, fe
 #'        needs to be NULL.
-#' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of
 #' coefficients. Must be either a vector of length k or a matrix of dimension
 #'  q x k, where q is the number
@@ -101,15 +100,11 @@
 #' \item{teststat_boot}{All bootstrap t-statistics.}
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
-#' \item{internal_seed}{The integer value -inherited from set.seed() -
-#' used within boottest() to set the random seed in either R or Julia.
-#'  If NULL, no internal seed was created.}
 
 #' @export
 #'
 #' @section Setting Seeds:
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed`
-#'  function argument, or
+#' To guarantee reproducibility, you need to
 #' set a global random seed via `set.seed()` when using
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
@@ -162,7 +157,6 @@ mboottest.felm <- function(object,
                            r = rep(0, nrow(R)),
                            bootcluster = "max",
                            fe = NULL,
-                           seed = NULL,
                            type = "rademacher",
                            impose_null = TRUE,
                            p_val_type = "two-tailed",
@@ -211,12 +205,6 @@ mboottest.felm <- function(object,
     fe <- attr(terms(fe), "term.labels")
   }
   
-  internal_seed <- set_seed(
-    seed = seed,
-    engine = "WildBootTests.jl",
-    type = type
-  )
-  
   check_mboottest_args_plus(
     object = object,
     R = R,
@@ -260,6 +248,7 @@ mboottest.felm <- function(object,
     message(x)
   }
   
+  
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -277,7 +266,6 @@ mboottest.felm <- function(object,
     # LIML = LIML,
     # ARubin = ARubin,
     getauxweights = getauxweights,
-    internal_seed = internal_seed,
     maxmatsize = maxmatsize,
     # fweights = 1L,
     small = small,
@@ -303,8 +291,7 @@ mboottest.felm <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    engine = "WildBootTests.jl",
-    internal_seed = internal_seed
+    engine = "WildBootTests.jl"
   )
   
   class(res_final) <- "mboottest"

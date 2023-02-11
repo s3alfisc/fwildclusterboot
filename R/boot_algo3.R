@@ -47,7 +47,8 @@ boot_algo3 <- function(preprocessed_object,
                        full_enumeration,
                        small_sample_correction,
                        object,
-                       impose_null){
+                       impose_null, 
+                       sampling){
 
 
   #here for debugging
@@ -84,7 +85,8 @@ boot_algo3 <- function(preprocessed_object,
     type = type,
     full_enumeration = full_enumeration,
     N_G_bootcluster = N_G_bootcluster,
-    boot_iter = B
+    boot_iter = B, 
+    sampling = sampling
   )
 
   # create X_g's, X1_g's, y_g's etc

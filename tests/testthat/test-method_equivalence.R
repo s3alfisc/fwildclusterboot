@@ -5,8 +5,11 @@ test_that("Do different, but equivalent ways to specify
   skip_if_not(
       find_proglang("julia"), 
       message = "skip test as julia installation not found."
-  )          
-
+  )    
+  
+  set.seed(2351)
+  dqrng::dqset.seed(2351)
+  
   requireNamespace("fixest")
   requireNamespace("lfe")
             
@@ -195,7 +198,6 @@ test_that("Do different, but equivalent ways to specify
                    object = lm_fit,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -212,7 +214,6 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit1,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
                    param = ~treatment,
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -228,7 +229,6 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit2,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -244,7 +244,6 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit3,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -260,7 +259,6 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit4,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -276,7 +274,6 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit5,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -292,7 +289,6 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit6,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -308,7 +304,6 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit7,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -324,7 +319,7 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit8,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -340,7 +335,7 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit9,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -356,7 +351,7 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit10,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -372,7 +367,7 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit11,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -388,7 +383,7 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit12,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -404,7 +399,7 @@ test_that("Do different, but equivalent ways to specify
                    object = feols_fit13,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -422,7 +417,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = ~Q1_immigration,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -439,7 +434,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = "Q1_immigration",
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -456,7 +451,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = "Q1_immigration",
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -473,7 +468,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = "Q1_immigration",
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -490,7 +485,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = "Q1_immigration",
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -508,7 +503,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = "Q2_defense",
                    B = 19999,
-                   seed = 911,
+                   
                    param = ~treatment,
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -525,7 +520,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = "Q2_defense",
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -542,7 +537,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = "Q2_defense",
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -559,7 +554,7 @@ test_that("Do different, but equivalent ways to specify
                    object = felm_fit1,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = ~treatment,
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -575,7 +570,7 @@ test_that("Do different, but equivalent ways to specify
                    object = felm_fit2,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -591,7 +586,7 @@ test_that("Do different, but equivalent ways to specify
                    object = felm_fit3,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -607,7 +602,7 @@ test_that("Do different, but equivalent ways to specify
                    object = felm_fit4,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -623,7 +618,7 @@ test_that("Do different, but equivalent ways to specify
                    object = felm_fit5,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -639,7 +634,7 @@ test_that("Do different, but equivalent ways to specify
                    object = felm_fit6,
                    clustid = clustid,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -657,7 +652,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = ~Q1_immigration,
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -674,7 +669,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = "Q1_immigration",
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -691,7 +686,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = "Q1_immigration",
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -708,7 +703,7 @@ test_that("Do different, but equivalent ways to specify
                    clustid = clustid,
                    fe = "Q2_defense",
                    B = 19999,
-                   seed = 911,
+                   
                    param = "treatment",
                    conf_int = TRUE,
                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
@@ -731,7 +726,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R1,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -746,7 +741,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R1,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -760,7 +755,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R1,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -774,7 +769,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R1,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -788,7 +783,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R1,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -802,7 +797,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R1,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -819,7 +814,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R2,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -833,7 +828,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R2,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -847,7 +842,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R2,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -861,7 +856,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R2,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -876,7 +871,7 @@ test_that("Do different, but equivalent ways to specify
                 R = R2,
                 clustid = clustid,
                 B = 19999,
-                seed = 911,
+                
                 ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                 floattype = "Float64"
               )
@@ -893,7 +888,7 @@ test_that("Do different, but equivalent ways to specify
                 clustid = clustid,
                 fe = "Q1_immigration",
                 B = 19999,
-                seed = 911,
+                
                 ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                 floattype = "Float64"
               )
@@ -909,7 +904,7 @@ test_that("Do different, but equivalent ways to specify
                 clustid = clustid,
                 fe = "Q1_immigration",
                 B = 19999,
-                seed = 911,
+                
                 ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                 floattype = "Float64"
               )
@@ -925,7 +920,7 @@ test_that("Do different, but equivalent ways to specify
                 clustid = clustid,
                 fe = "Q1_immigration",
                 B = 19999,
-                seed = 911,
+                
                 ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                 floattype = "Float64"
               )
@@ -941,7 +936,7 @@ test_that("Do different, but equivalent ways to specify
                 clustid = clustid,
                 fe = "Q1_immigration",
                 B = 19999,
-                seed = 911,
+                
                 ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                 floattype = "Float64"
               )
@@ -957,7 +952,7 @@ test_that("Do different, but equivalent ways to specify
                 clustid = clustid,
                 fe = "Q1_immigration",
                 B = 19999,
-                seed = 911,
+                
                 ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                 floattype = "Float64"
               )
@@ -974,7 +969,7 @@ test_that("Do different, but equivalent ways to specify
                 clustid = clustid,
                 fe = "Q2_defense",
                 B = 19999,
-                seed = 911,
+                
                 ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                 floattype = "Float64"
               )
@@ -989,7 +984,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R1,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -1003,7 +998,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R1,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -1017,7 +1012,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R1,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -1031,7 +1026,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R2,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -1045,7 +1040,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R2,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -1059,7 +1054,7 @@ test_that("Do different, but equivalent ways to specify
                      R = R2,
                      clustid = clustid,
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -1075,7 +1070,7 @@ test_that("Do different, but equivalent ways to specify
                      clustid = clustid,
                      fe = "Q1_immigration",
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -1090,7 +1085,7 @@ test_that("Do different, but equivalent ways to specify
                      clustid = clustid,
                      fe = "Q1_immigration",
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -1105,7 +1100,7 @@ test_that("Do different, but equivalent ways to specify
                      clustid = clustid,
                      fe = "Q1_immigration",
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
@@ -1120,7 +1115,7 @@ test_that("Do different, but equivalent ways to specify
                      clustid = clustid,
                      fe = "Q2_defense",
                      B = 19999,
-                     seed = 911,
+                     
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
                      floattype = "Float64"
                    )
