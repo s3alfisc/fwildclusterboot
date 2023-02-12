@@ -245,8 +245,8 @@ boot_algo_julia <- function(preprocess,
   res_final <- list(
     p_val = p_val,
     conf_int = conf_int,
-    t_stat = t_stat,
-    t_boot = t_boot,
+    t_stat = as.vector(t_stat),
+    t_boot = as.vector(t_boot),
     auxweights = getauxweights,
     grid_vals = plotpoints[, 1],
     p_grid_vals = plotpoints[, 2]
