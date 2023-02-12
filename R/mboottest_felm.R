@@ -183,7 +183,6 @@ mboottest.felm <- function(object,
   check_arg(R, "MBT numeric matrix")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
-  check_arg(seed, "scalar integer | NULL")
   check_arg(r, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL | formula")
   check_arg(bootcluster, "character vector | formula")
@@ -196,7 +195,7 @@ mboottest.felm <- function(object,
   # remind packages users to set a global seed
   inform_seed(
     frequency_id = "seed-reminder-m-felm", 
-    engine = engine
+    engine = "WildBootTests.jl"
   )
   
   if (inherits(clustid, "formula")) {

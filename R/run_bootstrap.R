@@ -276,7 +276,6 @@ run_bootstrap <- function(
         "Currently, boottest() only supports fixef.K = 'none'.", 
         use_cli_format = TRUE
       )
-      message(x)
     }
     
     res <- boot_algo_julia(

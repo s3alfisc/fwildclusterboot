@@ -198,7 +198,7 @@ mboottest.fixest <- function(object,
   
   inform_seed(
     frequency_id = "seed-reminder-m-fixest", 
-    engine = engine
+    engine = "WildBootTests.jl"
   )
   
   if (inherits(clustid, "formula")) {

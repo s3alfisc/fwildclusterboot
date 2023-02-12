@@ -188,7 +188,7 @@ mboottest.lm <- function(object,
   
   inform_seed(
     frequency_id = "seed-reminder-m-lm", 
-    engine = engine
+    engine = "WildBootTests.jl"
   )
   
   if (inherits(clustid, "formula")) {
@@ -206,7 +206,6 @@ mboottest.lm <- function(object,
       "Currently, boottest() only supports fixef.K = 'none'.", 
       use_cli_format = TRUE
     )
-    message(x)
   }
   
   
