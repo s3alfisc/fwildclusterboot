@@ -5,20 +5,19 @@ test_that("test full enumeration cases: r and r-lean", {
     reltol <- 0.05
     
     N <- 2000
-    seed <- 187019
-    
+
     set.seed(2351)
     dqrng::dqset.seed(2351)
     
     data1 <<- fwildclusterboot:::create_data(
       N = N,
-      N_G1 = 3,
+      N_G1 = 7,
       icc1 = 0.5,
       N_G2 = 20,
       icc2 = 0.2,
       numb_fe1 = 10,
       numb_fe2 = 10,
-      seed = seed
+      seed = 55530
       ,
       weights = 1:N / N
     )
