@@ -244,8 +244,9 @@ mboottest.lm <- function(object,
   clustermin <- julia_ssc$clustermin
   
   if (ssc[["fixef.K"]] != "none") {
-    format_message(
-      paste("Currently, boottest() only supports fixef.K = 'none'."))
+    rlang::inform(
+      paste("Currently, boottest() only supports fixef.K = 'none'."), 
+      use_cli_format = TRUE)
   }
   
 
