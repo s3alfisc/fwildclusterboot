@@ -135,7 +135,7 @@ boottest <- function(object,
 #'    1) the lean algorithm (via `engine = "R-lean"`),
 #'    2) the heteroskedastic wild bootstrap
 #'    3) the wild cluster bootstrap via `engine = "R"` with Mammen weights or
-#'     4) `engine = "WildBootTests.jl"`
+#'    4) `engine = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher,
 #'  Webb or Normal weights
 #'
