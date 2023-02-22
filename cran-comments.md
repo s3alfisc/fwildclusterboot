@@ -1,3 +1,10 @@
+## Submission of 0.13
+
+I have tested the package on: 
+- rhub
+- github actions
+
+
 ## Resubmission of 0.12.1 
 
 Change JuliaConnectoR link in readme to "https://CRAN.R-project.org/package=JuliaConnectoR".
