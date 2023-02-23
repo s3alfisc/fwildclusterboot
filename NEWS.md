@@ -14,7 +14,7 @@
 
 ## Background on the Change to Seeding
 
-Prior to the changes introduced in `v0.13`, `boottest()` will always call `set.seed()` or `dqrng::dqset.seed()` internally, regardless of whether the `seed` argument is specified or not (in the ladder case, it will create an internal seed by randomly drawing from a large set of integers). I considered this harmless, as setting seeds inside `boottest()` in this way does not affect the reproducibility of scripts run end-to-end.
+Prior to the changes introduced in `v0.13`, `boottest()` will always call `set.seed()` or `dqrng::dqset.seed()` internally, regardless of whether the `seed` argument is specified or not (in the ladder case, it will create an internal seed by randomly drawing from a large set of integers). I consider this harmless, as setting seeds inside `boottest()` in this way does not affect the reproducibility of scripts run end-to-end.
 
 However, I have learned that is generally considered bad practice to overwrite global variables without notification - for example, the authors of [numpy](https://numpy.org/doc/stable/reference/random/generated/numpy.random.seed.html) have deprecated their `np.random.seed()` function for this reason. 
 
