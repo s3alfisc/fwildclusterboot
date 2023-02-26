@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,46 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.12.1" id="fwildclusterboot-0121">fwildclusterboot 0.12.1<a class="anchor" aria-label="anchor" href="#fwildclusterboot-0121"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.13" id="fwildclusterboot-013">fwildclusterboot 0.13<a class="anchor" aria-label="anchor" href="#fwildclusterboot-013"></a></h2>
+<div class="section level3">
+<h3 id="potentially-breaking-changes-0-13">Potentially Breaking Changes:<a class="anchor" aria-label="anchor" href="#potentially-breaking-changes-0-13"></a></h3>
+<ul><li><p><code><a href="../reference/boottest.html">boottest()</a></code>, <code><a href="../reference/mboottest.html">mboottest()</a></code> and <code><a href="../reference/boot_aggregate.html">boot_aggregate()</a></code>no longer have a dedicated <code>seed</code> argument. From version 0.13, reproducibility of results can only be controlled by setting a <strong>global seed</strong> via <code>drqng::dqset.seed()</code> and <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code>. For more context, see the discussion below. As a consequence, results produced via old versions of <code>fwildlcusterboot</code> are no longer exactly reproducible.</p></li>
+<li><p>When the bootstrap is run via <code>engine = "WildBootTests.jl"</code>, the bootstrapped t-statistics and the original t-statistic are now returned as vectors (to align with the results from other <code>enginges</code>). Previously, they were returned as matrices.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="other-changes-0-13">Other Changes:<a class="anchor" aria-label="anchor" href="#other-changes-0-13"></a></h3>
+<ul><li>
+<code><a href="../reference/boottest.html">boottest()</a></code> receives a new argument, <code>sampling</code>, which controls if random numbers are drawn via functions from <code>base</code> or the <code>dqrng</code> package.</li>
+<li>Some code refactoring. All bootstrap algorithms and their associated files have been renamed (e.g. <code>boot_algo2.R</code> is not called <code>boot_algo_fastnwild.R</code>, etc.).</li>
+<li>Much nicer error and message formatting, via <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">rlang::abort()</a></code>, <code>warn()</code> and <code>inform()</code>. <code>rlang</code> is added as a dependency.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="background-on-the-change-to-seeding-0-13">Background on the Change to Seeding<a class="anchor" aria-label="anchor" href="#background-on-the-change-to-seeding-0-13"></a></h3>
+<p>Prior to the changes introduced in <code>v0.13</code>, <code><a href="../reference/boottest.html">boottest()</a></code> will always call <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> or <code><a href="https://daqana.github.io/dqrng/reference/dqrng-functions.html" class="external-link">dqrng::dqset.seed()</a></code> internally, regardless of whether the <code>seed</code> argument is specified or not (in the ladder case, it will create an internal seed by randomly drawing from a large set of integers). I consider this harmless, as setting seeds inside <code><a href="../reference/boottest.html">boottest()</a></code> in this way does not affect the reproducibility of scripts run end-to-end.</p>
+<p>However, I have learned that is generally considered bad practice to overwrite global variables without notification - for example, the authors of <a href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.seed.html" class="external-link">numpy</a> have deprecated their <code>np.random.seed()</code> function for this reason.</p>
+<p>Here is a quick example on what happens if a function “reseeds”: it affects the future chain of random draws.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">fn_reseed</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co"># [1] -0.5604756</span></span>
+<span><span class="fu">fn_reseed</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co"># [1] -0.6264538</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co"># [1] -0.5604756</span></span>
+<span><span class="co"># [1] -0.2301775</span></span></code></pre></div>
+<p>The two ‘second’ calls to <code>rnorm(1)</code> are based on different global seed states.</p>
+<p>As a result, I have decided to deprecate the <code>seed' function argument. Random number generation must now **be** set outside of</code>boottest()<code>using</code>set.seed()<code>and</code>dqrng::dqset.seed()`.</p>
+<p>This means that bootstrap results generated via versions &lt; 0.13 will no longer be exactly replicable under the new version, but with a sufficiently large number of bootstrap iterations, this change should not affect any of your conclusions.</p>
+</div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.12.1" id="fwildclusterboot-0121">fwildclusterboot 0.12.1<a class="anchor" aria-label="anchor" href="#fwildclusterboot-0121"></a></h2><p class="text-muted">CRAN release: 2023-01-23</p>
 <p>This is a hot-fix release which turns of tests on CRAN that fail in non-standard CRAN test environments.</p>
 </div>
     <div class="section level2">

@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,7 +94,8 @@
     
     
 <p>In a recent working paper, <a href="https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf" class="external-link">MacKinnon, Nielsen and Webb(2022)</a> suggest multiple new variants of the wild cluster bootstrap. The methods differ in a) how the bootstrap scores are computed and b) if a CRV1 or CRV3 variance matrix is used when computing bootstrapped t-statistics.</p>
-<p>All new bootstrap variants are implemented in <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> and can be called by using the <code>engine</code> function argument of <code><a href="../reference/boottest.html">boottest()</a></code>. The implementation is still quite bare-bone: it only allows to test hypotheses of the form <span class="math inline">\(\beta_k = 0\)</span> vs <span class="math inline">\(\beta_k \neq 0\)</span>, does not allow for regression weights or fixed effects, and further does not compute confidence intervals.</p>
+<p>All new bootstrap variants are implemented in <a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a> and can be called by using the <code>bootstrap_type</code> function argument of <code><a href="../reference/boottest.html">boottest()</a></code>. The implementation is still quite bare-bone: it only allows to test hypotheses of the form <span class="math inline">\(\beta_k = 0\)</span> vs <span class="math inline">\(\beta_k \neq 0\)</span>, does not allow for regression weights or fixed effects, and further does not compute confidence intervals.</p>
+<p>Note that in a recent update of their working paper, MNW have renamed the new bootstrap types - type ‘11’ is now called ‘C’ (for classic), type ‘31’ is now called ‘S’ (for score), type ‘13’ is now called ‘V’ (for variance) and type ‘33’ is now called ‘B’ (for ‘both’). I will update this in <code>fwildclusterboot</code> once I find the time =)</p>
 <p>To run all bootstrap types with the null hypothesis imposed on the bootstrap data generating process, you would have to specify the <code>bootstrap_type</code> function argument:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span>
@@ -130,18 +131,24 @@
 <span>      clustid <span class="op">=</span> <span class="op">~</span><span class="va">group_id1</span>,</span>
 <span>      B <span class="op">=</span> <span class="fl">9999</span>, </span>
 <span>      impose_null <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>      bootstrap_type <span class="op">=</span> <span class="va">x</span>,</span>
-<span>      seed <span class="op">=</span> <span class="fl">123</span></span>
+<span>      bootstrap_type <span class="op">=</span> <span class="va">x</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Confidence Intervals are currently only supported for </span></span>
-<span><span class="co">#&gt;                 the R engine with 'bootstrap_type = 'fnw11' '.</span></span>
-<span><span class="co">#&gt; Confidence Intervals are currently only supported for </span></span>
-<span><span class="co">#&gt;                 the R engine with 'bootstrap_type = 'fnw11' '.</span></span>
-<span><span class="co">#&gt; Confidence Intervals are currently only supported for </span></span>
-<span><span class="co">#&gt;                 the R engine with 'bootstrap_type = 'fnw11' '.</span></span>
-<span><span class="co">#&gt; Confidence Intervals are currently only supported for </span></span>
-<span><span class="co">#&gt;                 the R engine with 'bootstrap_type = 'fnw11' '.</span></span>
+<span><span class="co">#&gt; Warning: Please note that the seeding behavior for random number generation for</span></span>
+<span><span class="co">#&gt; `boottest()` has changed with `fwildclusterboot` version 0.13.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; It will no longer be possible to exactly reproduce results produced by versions</span></span>
+<span><span class="co">#&gt; lower than 0.13.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; If your prior results were produced under sufficiently many bootstrap</span></span>
+<span><span class="co">#&gt; iterations, none of your conclusions will change.  For more details about this</span></span>
+<span><span class="co">#&gt; change, please read the notes in</span></span>
+<span><span class="co">#&gt; [news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
+<span><span class="co">#&gt; Too guarantee reproducibility, don't forget to set a global random seed</span></span>
+<span><span class="co">#&gt; **both** via `set.seed()` and `dqrng::dqset.seed()`.</span></span>
+<span><span class="co">#&gt; *</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This message is displayed once every 8 hours.</span></span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">run_all</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"WCR"</span>, </span>
 <span>                        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"11 F&amp;W"</span>, <span class="st">"11 F&amp;R"</span>, <span class="st">"13 F&amp;R"</span>, <span class="st">"31 F&amp;R"</span>, <span class="st">"33 F&amp;R"</span><span class="op">)</span><span class="op">)</span></span>
@@ -156,19 +163,19 @@
 <th style="text-align:left;">
 </th>
 <th style="text-align:center;">
-WCR 11 F&amp;W
+ WCR 11 F&amp;W
 </th>
 <th style="text-align:center;">
-WCR 11 F&amp;R
+ WCR 11 F&amp;R
 </th>
 <th style="text-align:center;">
-WCR 13 F&amp;R
+ WCR 13 F&amp;R
 </th>
 <th style="text-align:center;">
-WCR 31 F&amp;R
+ WCR 31 F&amp;R
 </th>
 <th style="text-align:center;">
-WCR 33 F&amp;R
+ WCR 33 F&amp;R
 </th>
 </tr></thead>
 <tbody>
@@ -177,19 +184,19 @@ WCR 33 F&amp;R
 1*treatment = 0
 </td>
 <td style="text-align:center;">
-0.006 (0.573)
+0.006 (0.586)
 </td>
 <td style="text-align:center;">
-0.006 (0.573)
+0.006 (0.576)
 </td>
 <td style="text-align:center;">
-0.006 (0.583)
+0.006 (0.589)
 </td>
 <td style="text-align:center;">
-0.006 (0.571)
+0.006 (0.579)
 </td>
 <td style="text-align:center;">
-0.006 (0.584)
+0.006 (0.598)
 </td>
 </tr>
 <tr>
@@ -330,6 +337,12 @@ Log.Lik.
 </tbody>
 </table>
 <p>Given the same <code>seed = 123</code>, both implementations of the <code>11</code> algorithm produce exactly the same p-values. The p-values produced by all other algorithms differ slightly, but are overall very close to each other. Confidence intervals are currently only implemented for the <code>fnw11</code> algorithm.</p>
+<p>Now, which bootstrap type should you run? MNW argue in favor of the “31” or “S” type. In the future, I hope that I’ll provide a more thorough discussion down here =)</p>
+<div class="section level2">
+<h2 id="literature">Literature<a class="anchor" aria-label="anchor" href="#literature"></a>
+</h2>
+<p><a href="https://www.econ.queensu.ca/sites/econ.queensu.ca/files/wpaper/qed_wp_1485.pdf" class="external-link">MacKinnon, Nielsen and Webb(2022)- Fast and Reliable Bootstrap and Jacknife Inference (2023)</a></p>
+</div>
   </main>
 </div>
 

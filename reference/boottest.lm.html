@@ -16,7 +16,7 @@ and MacKinnon, Nielsen &amp;amp; Webb (2022)."><meta property="og:image" content
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,6 @@ and MacKinnon, Nielsen &amp; Webb (2022).</p>
 <span>  clustid <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bootcluster <span class="op">=</span> <span class="st">"max"</span>,</span>
 <span>  conf_int <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  R <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  r <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  beta0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -91,6 +90,7 @@ and MacKinnon, Nielsen &amp; Webb (2022).</p>
 <span>  p_val_type <span class="op">=</span> <span class="st">"two-tailed"</span>,</span>
 <span>  tol <span class="op">=</span> <span class="fl">1e-06</span>,</span>
 <span>  maxiter <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  sampling <span class="op">=</span> <span class="st">"dqrng"</span>,</span>
 <span>  nthreads <span class="op">=</span> <span class="fu">getBoottest_nthreads</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  ssc <span class="op">=</span> <span class="fu"><a href="boot_ssc.html">boot_ssc</a></span><span class="op">(</span>adj <span class="op">=</span> <span class="cn">TRUE</span>, fixef.K <span class="op">=</span> <span class="st">"none"</span>, cluster.adj <span class="op">=</span> <span class="cn">TRUE</span>, cluster.df <span class="op">=</span></span>
 <span>    <span class="st">"conventional"</span><span class="op">)</span>,</span>
@@ -146,10 +146,6 @@ supported - see the <code><a href="../articles/fwildclusterboot.html">vignette("
 <dt>conf_int</dt>
 <dd><p>A logical vector. If TRUE, boottest computes confidence
 intervals by test inversion. If FALSE, only the p-value is returned.</p></dd>
-
-
-<dt>seed</dt>
-<dd><p>An integer. Allows to set a random seed. For details, see below.</p></dd>
 
 
 <dt>R</dt>
@@ -218,6 +214,15 @@ the confidence interval.
 <dd><p>Integer. Maximum number of iterations used in the root
 finding procedure to find the confidence interval.
 10 by default.</p></dd>
+
+
+<dt>sampling</dt>
+<dd><p>'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
+used for random number generation (when available). If 'standard',
+functions from the 'stats' package are used when available.
+This argument is mostly a convenience to control random number generation in
+a wrapper package around <code>fwildclusterboot</code>, <code>wildrwolf</code>.
+I recommend to use the fast' option.</p></dd>
 
 
 <dt>nthreads</dt>
@@ -353,18 +358,12 @@ interval.</p></dd>
 <dt>nthreads</dt>
 <dd><p>The number of threads employed.</p></dd>
 
-<dt>internal_seed</dt>
-<dd><p>The integer value -inherited from set.seed() - used
-within boottest() to set the random seed in either R or Julia. If NULL,
-no internal seed was created.</p></dd>
-
 </dl></div>
     <div class="section level2">
     <h2 id="setting-seeds">Setting Seeds<a class="anchor" aria-label="anchor" href="#setting-seeds"></a></h2>
     
 
-<p>To guarantee reproducibility, you can either use <code>boottest()'s</code> <code>seed</code>
-function argument, or
+<p>To guarantee reproducibility, you need to
 set a global random seed via</p><ul><li><p><code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> when using</p><ol><li><p>the lean algorithm (via <code>engine = "R-lean"</code>) including the
 heteroskedastic wild bootstrap</p></li>
 <li><p>the wild cluster bootstrap via <code>engine = "R"</code> with Mammen weights or</p></li>
@@ -402,9 +401,9 @@ stops the procedure after 10 iterations.</p></li>
     
 
 <p>The fast wild cluster bootstrap algorithms are further implemented in the
-following software packages:</p><ul><li><p>Stata: <a href="https://github.com/droodman/boottest" class="external-link">boottest</a></p></li>
-<li><p>Julia: <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a></p></li>
-<li><p>Python: <a href="https://github.com/s3alfisc/wildboottest" class="external-link">wildboottest</a></p></li>
+following software packages:</p><ul><li><p>Stata:<a href="https://github.com/droodman/boottest" class="external-link">boottest</a></p></li>
+<li><p>Julia:<a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a></p></li>
+<li><p>Python:<a href="https://github.com/s3alfisc/wildboottest" class="external-link">wildboottest</a></p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -460,7 +459,6 @@ clustered errors. No. 1315. Queen's Economics Department Working Paper, 2013.</p
 <span class="r-in"><span>  param <span class="op">=</span> <span class="st">"treatment"</span>,</span></span>
 <span class="r-in"><span>  clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span>, <span class="st">"group_id2"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  sign_level <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
-<span class="r-in"><span>  seed <span class="op">=</span> <span class="fl">8</span>,</span></span>
 <span class="r-in"><span>  r <span class="op">=</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># test treatment + ideology1 = 2</span></span></span>
