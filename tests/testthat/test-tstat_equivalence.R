@@ -29,16 +29,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
             for (cluster.adj in c(TRUE, FALSE)) {
               for (cluster.df in c("conventional", "min")) {
                 for (impose_null in c(TRUE, FALSE)) {
-                  # cat("--------------------------------", "\n")
-                  #
-                  # cat("adj:", adj, "\n")
-                  # cat("cluster.adj:", cluster.adj, "\n")
-                  # cat("cluster.df:", cluster.df, "\n")
-                  # #cat("impose_null:", impose_null, "\n")
-                  #
-                  # cat("--------------------------------", "\n")
-                  # cat("oneway:", "\n")
-  
+
                   # oneway clustering
                   feols_fit <-
                     fixest::feols(
@@ -130,12 +121,7 @@ test_that("t-stat equivalence OLS - R and R-lean", {
                     abs(dof_tstat[3]),
                     ignore_attr = TRUE
                   )
-  
-  
-                  # cat("--------------------------------", "\n")
-                  # cat("twoway:", "\n")
-                  # cat("--------------------------------", "\n")
-  
+
   
                   if (engine != "R-lean") {
   
@@ -347,17 +333,11 @@ test_that("t-stat equivalence OLS - R and R-lean", {
 test_that("t-stat equivalence OLS - WildBootTests", {
   
   skip_on_cran()
-
-  julia_prep <- is_juliaconnector_prepared()
-  cat("julia connector prepared? ", julia_prep, "\n")
+  skip_if_not(
+    fwildclusterboot:::find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
-  #if(julia_prep){
-  if(TRUE){
-        # data(voters)
-        # adj <- cluster.adj <- TRUE; cluster.df <- "conventional";
-        # impose_null = TRUE
-        
-        
         lm_fit <-
           lm(
             proposition_vote ~ treatment + ideology1 + log_income,
@@ -375,26 +355,12 @@ test_that("t-stat equivalence OLS - WildBootTests", {
         
         B <- 999
         
-        # adj= FALSE
-        # cluster.adj= FALSE
-        # cluster.df= "conventional"
-        # impose_null= TRUE
-        # engine = "R"
-        
         for (engine in c("WildBootTests.jl")) {
           for (adj in c(TRUE, FALSE)) {
             for (cluster.adj in c(TRUE, FALSE)) {
               for (cluster.df in c("conventional", "min")) {
                 for (impose_null in c(TRUE, FALSE)) {
-                  # cat("--------------------------------", "\n")
-                  #
-                  # cat("adj:", adj, "\n")
-                  # cat("cluster.adj:", cluster.adj, "\n")
-                  # cat("cluster.df:", cluster.df, "\n")
-                  # #cat("impose_null:", impose_null, "\n")
-                  #
-                  # cat("--------------------------------", "\n")
-                  # cat("oneway:", "\n")
+          
                   
                   # oneway clustering
                   feols_fit <-
@@ -487,12 +453,6 @@ test_that("t-stat equivalence OLS - WildBootTests", {
                                abs(dof_tstat[3]),
                                ignore_attr = TRUE
                   )
-                  
-                  
-                  # cat("--------------------------------", "\n")
-                  # cat("twoway:", "\n")
-                  # cat("--------------------------------", "\n")
-                  
                   
                   
                   # twoway clustering
@@ -592,23 +552,18 @@ test_that("t-stat equivalence OLS - WildBootTests", {
             }
           }
         }
-        
-    } else {
-      message("test-tstat_equivalence.R I skipped as JULIA_BINDR not found.")
-  }
+      
 })
 # exact tests
 
 test_that("t-stat equivalence OLS q > 1", {
   
   skip_on_cran()
-
-  julia_prep <- is_juliaconnector_prepared()
-  cat("julia connector prepared? ", julia_prep, "\n")
+  skip_if_not(
+    fwildclusterboot:::find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
-  #if(julia_prep){
-  if(TRUE){
-    
     wald_test <- function(run_this_test) {
       if (run_this_test) {
         reltol <- 0.002
@@ -781,8 +736,7 @@ test_that("t-stat equivalence OLS q > 1", {
             )
           )
   
-        # sW <- coeftest(object, vcov = sandwich::vcovCL(object,
-        # cluster = ~ group_id1))
+
         wald_stat <-
           fixest::wald(feols_fit_weights, "treatment", cluster = ~group_id1)
   
@@ -837,9 +791,7 @@ test_that("t-stat equivalence OLS q > 1", {
             ssc = boot_ssc(cluster.df = "min")
           )
         )
-  
-        # sW <- coeftest(object, vcov = sandwich::vcovCL(object,
-        # cluster = ~ group_id1))
+
         wald_stat <- fixest::wald(
           feols_fit_weights,
           "treatment",
@@ -880,20 +832,17 @@ test_that("t-stat equivalence OLS q > 1", {
     }
   
     wald_test(run_this_test = TRUE)
-  } else {
-    message("test-tstat_equivalence.R II skipped as JULIA_BINDR not found.")
-  }
+
 })
 
 test_that("t-stat equivalence IV", {
   
   skip_on_cran()
-
-  julia_prep <- is_juliaconnector_prepared()
-  cat("julia connector prepared? ", julia_prep, "\n")
+  skip_if_not(
+    fwildclusterboot:::find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
-  #if(julia_prep){
-  if(TRUE){
     
     iv_test <- function(run_this_test) {
       # Note: Test with Float64 for exact match
@@ -964,9 +913,7 @@ test_that("t-stat equivalence IV", {
     }
   
     iv_test(run_this_test = TRUE)
-  } else {
-    message("test-stat_equivalence.R III skipped as JULIA_BINDR not found.")
-  }
+
 })
 
 

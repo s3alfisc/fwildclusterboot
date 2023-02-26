@@ -2,7 +2,12 @@ test_that("algorithm performance test", {
   
   skip_on_cran()
   skip_on_ci()
-
+  
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
+  
   # convergence in probability of boottest p values when B -> infinity
   seed <- 1230123
 

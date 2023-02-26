@@ -1,7 +1,8 @@
 get_weights <- function(type, 
                         full_enumeration, 
                         N_G_bootcluster, 
-                        boot_iter){
+                        boot_iter, 
+                        sampling){
   
   
   #' draw bootstrap weights
@@ -11,50 +12,92 @@ get_weights <- function(type,
   #' employed
   #' @param N_G_bootcluster Integer. The number of bootstrap clusters
   #' @param boot_iter The number of bootstrap iterations
+  #' @param sampling 'fast' or 'standard'. If 'fast', the 'dqrng' package is used 
+  #' for random number generation. If 'standard', functions from the 'stats' 
+  #' package are used when available. This argument is mostly a convenience for 
+  #' a wrapper package around fwildclusterboot, wildrwolf. I recommend to use the 
+  #' 'fast' option. 
   #' @return A matrix of dimension N_G_bootcluster x (boot_iter + 1)
   #' @importFrom gtools permutations
   #' @noRd
   
 
-  
-  wild_draw_fun <- switch(type,
-                          # note: for randemacher, create integer matrix
-                          # (uses less memory
-                          # than numeric)
-                          rademacher = function(n) {
-                            dqrng::dqsample(
-                              x = c(-1L, 1L),
-                              size = n,
-                              replace = TRUE
-                            )
-                          },
-                          mammen = function(n) {
-                            sample(
-                              c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2,
-                              n,
-                              replace = TRUE,
-                              prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))
-                            )
-                          },
-                          norm = function(n) {
-                            dqrng::dqrnorm(n = n)
-                          },
-                          webb = function(n) {
-                            dqrng::dqsample(
-                              x = c(-sqrt((3:1) / 2), sqrt((1:3) / 2)),
-                              size = n,
-                              replace = TRUE
-                            )
-                          },
-                          wild_draw_fun
-  )
-  
+  if(sampling == "dqrng"){
+    
+    wild_draw_fun <- switch(type,
+                            # note: for randemacher, create integer matrix
+                            # (uses less memory
+                            # than numeric)
+                            rademacher = function(n) {
+                              dqrng::dqsample(
+                                x = c(-1L, 1L),
+                                size = n,
+                                replace = TRUE
+                              )
+                            },
+                            mammen = function(n) {
+                              sample(
+                                c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2,
+                                n,
+                                replace = TRUE,
+                                prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))
+                              )
+                            },
+                            norm = function(n) {
+                              dqrng::dqrnorm(n = n)
+                            },
+                            webb = function(n) {
+                              dqrng::dqsample(
+                                x = c(-sqrt((3:1) / 2), sqrt((1:3) / 2)),
+                                size = n,
+                                replace = TRUE
+                              )
+                            },
+                            wild_draw_fun
+    )
+    
+  } else if(sampling == "standard") {
+    
+    wild_draw_fun <- switch(type,
+                            # note: for randemacher, create integer matrix
+                            # (uses less memory
+                            # than numeric)
+                            rademacher = function(n) {
+                              sample(
+                                x = c(-1L, 1L),
+                                size = n,
+                                replace = TRUE
+                              )
+                            },
+                            mammen = function(n) {
+                              sample(
+                                c(-1, 1) * (sqrt(5) + c(-1, 1)) / 2,
+                                n,
+                                replace = TRUE,
+                                prob = (sqrt(5) + c(1, -1)) / (2 * sqrt(5))
+                              )
+                            },
+                            norm = function(n) {
+                              rnorm(n = n)
+                            },
+                            webb = function(n) {
+                              sample(
+                                x = c(-sqrt((3:1) / 2), sqrt((1:3) / 2)),
+                                size = n,
+                                replace = TRUE
+                              )
+                            },
+                            wild_draw_fun
+    )
+    
+    
+  }
+
   # do full enumeration for rademacher weights if bootstrap iterations
   # B exceed number of possible permutations else random sampling
   
   # full_enumeration only for rademacher weights (set earlier)
   if (full_enumeration) {
-      type <- 0
       v0 <-
         # gtools_permutations(
         permutations(

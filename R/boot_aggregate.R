@@ -81,7 +81,6 @@
 #' run. Options are "fnw11", which runs a "11" type 
 #' wild cluster bootstrap via the algorithm outlined in "fast and wild" 
 #' (Roodman et al (2019)). 
-#' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param beta0 Deprecated function argument. Replaced by function argument 'r'.
 #' @param type character or function. The character string specifies the type
 #'        of boostrap to use: One of "rademacher", "mammen", "norm"
@@ -127,6 +126,12 @@
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request
 #' bootstrap-c instead of bootstrap-t. Only relevant when
 #' 'engine = "WildBootTests.jl"'
+#' @param sampling 'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
+#' used for random number generation (when available). If 'standard', 
+#' functions from the 'stats' package are used when available. 
+#' This argument is mostly a convenience to control random number generation in 
+#' a wrapper package around `fwildclusterboot`, `wildrwolf`. 
+#' I recommend to use the fast' option. 
 #' @param ... misc function arguments 
 #' 
 #' @export
@@ -186,7 +191,6 @@ boot_aggregate <- function(
     bootcluster = "max",
     fe = NULL,
     sign_level = 0.05,
-    seed = NULL,
     beta0 = NULL,
     type = "rademacher",
     impose_null = TRUE,
@@ -206,6 +210,7 @@ boot_aggregate <- function(
     maxmatsize = FALSE,
     bootstrapc = FALSE,
     getauxweights = FALSE,
+    sampling = "dqrng",
     ...){
   
   
@@ -216,6 +221,12 @@ boot_aggregate <- function(
   
   check_arg(full, "logical scalar")
   # => later => extend it to more than one set of vars to agg
+  
+  # remind packages users to set a global seed
+  inform_seed(
+    frequency_id = "seed-reminder-bootagg", 
+    engine = engine
+  )
   
   dots <- list(...)
   from_summary <- isTRUE(dots$from_summary)
@@ -246,9 +257,12 @@ boot_aggregate <- function(
   is_name <- !is.null(names(agg))
   
   if(!is_name && !grepl("(", agg, fixed = TRUE)){
-    stop("Argument 'agg' must be a character in
+    rlang::abort(
+        c("Argument 'agg' must be a character in
          which the pattern to match must be in between parentheses.
-         So far there are no parenthesis: please have a look at the examples.")
+         So far there are no parenthesis: please have a look at the examples."), 
+        use_cli_format = TRUE
+    )
   }
   
   coef <- x$coefficients
@@ -268,7 +282,10 @@ boot_aggregate <- function(
       x <- summary(x, agg = FALSE, ...)
       return(x$coeftable)
     } else {
-      stop("The argument 'agg' does not match any variable.")
+      rlang::abort(
+        "The argument 'agg' does not match any variable.", 
+        use_cli_format = TRUE
+      )
     }
   }
   
@@ -348,7 +365,6 @@ boot_aggregate <- function(
         fe = fe,
         sign_level = sign_level,
         conf_int = TRUE,
-        seed = seed,
         r = 0,
         beta0 = beta0,
         type = type,
@@ -362,7 +378,8 @@ boot_aggregate <- function(
         floattype = floattype,
         maxmatsize = maxmatsize,
         bootstrapc = bootstrapc,
-        getauxweights = getauxweights
+        getauxweights = getauxweights, 
+        sampling = sampling
       )
     
     pvalues[i] <- pval(boot_fit)

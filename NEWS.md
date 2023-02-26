@@ -1,3 +1,46 @@
+# fwildclusterboot 0.13
+
+## Potentially Breaking Changes: 
+
+* `boottest()`, `mboottest()` and `boot_aggregate()`no longer have a dedicated `seed` argument. From version 0.13, reproducibility of results can only be controlled by setting a **global seed** via `drqng::dqset.seed()` and `set.seed()`. For more context, see the discussion below. As a consequence, results produced via old versions of `fwildlcusterboot` are no longer exactly reproducible. 
+
+* When the bootstrap is run via `engine = "WildBootTests.jl"`, the bootstrapped t-statistics and the original t-statistic are now returned as vectors (to align with the results from other `enginges`). Previously, they were returned as matrices. 
+
+## Other Changes: 
+
+* `boottest()` receives a new argument, `sampling`, which controls if random numbers are drawn via functions from `base` or the `dqrng` package. 
+* Some code refactoring. All bootstrap algorithms and their associated files have been renamed (e.g. `boot_algo2.R` is not called `boot_algo_fastnwild.R`, etc.).
+* Much nicer error and message formatting, via `rlang::abort()`, `warn()` and `inform()`. `rlang` is added as a dependency.
+
+## Background on the Change to Seeding
+
+Prior to the changes introduced in `v0.13`, `boottest()` will always call `set.seed()` or `dqrng::dqset.seed()` internally, regardless of whether the `seed` argument is specified or not (in the ladder case, it will create an internal seed by randomly drawing from a large set of integers). I consider this harmless, as setting seeds inside `boottest()` in this way does not affect the reproducibility of scripts run end-to-end.
+
+However, I have learned that is generally considered bad practice to overwrite global variables without notification - for example, the authors of [numpy](https://numpy.org/doc/stable/reference/random/generated/numpy.random.seed.html) have deprecated their `np.random.seed()` function for this reason. 
+
+Here is a quick example on what happens if a function "reseeds": it affects the future chain of random draws. 
+
+```r
+fn_reseed <- function(x){set.seed(x)}
+
+set.seed(123)
+rnorm(1)
+# [1] -0.5604756
+fn_reseed(1)
+rnorm(1)
+# [1] -0.6264538
+
+set.seed(123)
+rnorm(1); rnorm(1)
+# [1] -0.5604756
+# [1] -0.2301775
+```
+The two 'second' calls to `rnorm(1)` are based on different global seed states. 
+
+As a result, I have decided to deprecate the `seed' function argument. Random number generation must now **be** set outside of `boottest()` using `set.seed()` and `dqrng::dqset.seed()`. 
+
+This means that bootstrap results generated via versions < 0.13 will no longer be exactly replicable under the new version, but with a sufficiently large number of bootstrap iterations, this change should not affect any of your conclusions. 
+
 # fwildclusterboot 0.12.1
 
 This is a hot-fix release which turns of tests on CRAN that fail in non-standard CRAN test environments. 

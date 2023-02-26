@@ -225,10 +225,11 @@ getBoottest_engine <- function() {
   
   x <- getOption("boottest_engine")
   if (!(x %in% c("R", "WildBootTests.jl"))) {
-    stop(
+    rlang::abort(
       "The value of getOption(\"boottest_engine\") is currently not legal.
       Please use function setBoottest_engine to set it to an appropriate
-      value. "
+      value. ",
+      use_cli_format = TRUE
     )
   }
   x
@@ -290,9 +291,11 @@ getBoottest_nthreads <- function() {
   
   x <- getOption("boottest_nthreads")
   if (length(x) != 1 || !is.numeric(x) || is.na(x) || x %% 1 != 0 || x < 0) {
-    stop("The value of getOption(\"boottest_nthreads\") is currently not legal.
+    rlang::abort("The value of getOption(\"boottest_nthreads\") is currently not legal.
          Please use function setBoottest_nthreads to set it to an appropriate
-         value. ")
+         value. ", 
+      use_cli_format = TRUE
+    )
   }
   # cat("getBoottest nr threads \n")
   # print(x)
@@ -370,46 +373,6 @@ get_seed <- function() {
   x
 }
 
-set_seed <- function(seed, engine, type) {
-  
-  #' @importFrom JuliaConnectoR juliaEval
-  #' @noRd
-  
-  if (!is.null(seed)) {
-    if (engine %in% c("R", "WCR33", "WCR13", "WCU33", "WCU13", 
-                         "WCR31", "WCR11", "WCU31", "WCU11")) {
-      if (type %in% c("rademacher", "webb", "norm")) {
-        dqrng::dqset.seed(seed)
-        internal_seed <- NULL
-      } else if (type == "mammen") {
-        set.seed(seed)
-        internal_seed <- NULL
-      }
-    } else if (engine == "R-lean") {
-      set.seed(seed)
-      internal_seed <- NULL
-    } else if (engine == "WildBootTests.jl") {
-      JuliaConnectoR::juliaEval("using StableRNGs")
-      set.seed(seed)
-      seed <- get_seed()
-      internal_seed <-
-        JuliaConnectoR::juliaEval(paste0("rng = StableRNG(", seed, ")"))
-    }
-  } else if (is.null(seed)) {
-    if (engine == "WildBootTests.jl") {
-      seed <- get_seed()
-      JuliaConnectoR::juliaEval("using StableRNGs")
-      internal_seed <-
-        JuliaConnectoR::juliaEval(paste0("rng = StableRNG(", seed, ")"))
-    } else {
-      internal_seed <- NULL
-    }
-  }
-  
-  internal_seed
-}
-
-
 to_integer <- function(vec) {
   
   #' Transform vectors of all types safely to integer vectors
@@ -476,5 +439,61 @@ vec2mat <- function(x, group_id){
   idx <- index + N * (group_id - 1)
   mat[idx] <- x 
   mat
+  
+}
+
+
+find_proglang <- function(lang){
+  
+  #' Check if julia or python are installed / 
+  #' can be found on the PATH. 
+  #' 
+  #' Based on Mauro Lepore's great suggestion
+  #' https://github.com/ropensci/software-review/issues/546#issuecomment-1416728843
+  #' 
+  #' @param lang which language to check. Either 'julia' or 'python'
+  #' 
+  #' @return logical. TRUE if lang is found on path, FALSE if not
+  #' 
+  #' @examples
+  #' 
+  #' \dontrun{
+  #' find_proglang(lang = "julia")
+  #' }
+  
+  dreamerr::check_arg(lang, "charin(julia, python)")
+  
+  language_found <- nzchar(Sys.which(lang))
+
+  language_found
+  
+}
+
+
+inform_seed <- function(frequency_id, engine){
+  
+  if(engine != "WildBootTests.jl"){
+    
+    rlang::inform(
+      "Too guarantee reproducibility, don't forget to set a 
+    global random seed **both** via `set.seed()` and `dqrng::dqset.seed()`.", 
+      use_cli_format = TRUE, 
+      .frequency = "regularly", 
+      .frequency_id = frequency_id
+    )
+    
+  } else {
+    
+    rlang::inform(
+      "Too guarantee reproducibility, don't forget to set a 
+    global random seed via `set.seed()`.", 
+      use_cli_format = TRUE, 
+      .frequency = "regularly", 
+      .frequency_id = frequency_id
+    )
+    
+  }
+
+  
   
 }

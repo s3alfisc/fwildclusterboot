@@ -88,6 +88,25 @@
 
 boottest <- function(object,
                      ...) {
+  
+  rlang::warn(
+    message = "
+    Please note that the seeding behavior for random number
+    generation for `boottest()` has changed with `fwildclusterboot` 
+    version 0.13. 
+    
+    It will no longer be possible to 
+    exactly reproduce results produced by versions lower than 0.13. 
+    
+    If your prior results were produced under sufficiently many bootstrap 
+    iterations, none of your conclusions will change. 
+    For more details about this change, please read the notes in
+    [news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).", 
+    .frequency = "once", 
+    .frequency_id = "random-seed-message", 
+    use_cli_format = TRUE
+  )
+  
   UseMethod("boottest")
 }
 
@@ -116,7 +135,7 @@ boottest <- function(object,
 #'    1) the lean algorithm (via `engine = "R-lean"`),
 #'    2) the heteroskedastic wild bootstrap
 #'    3) the wild cluster bootstrap via `engine = "R"` with Mammen weights or
-#'     4) `engine = "WildBootTests.jl"`
+#'    4) `engine = "WildBootTests.jl"`
 #' + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher,
 #'  Webb or Normal weights
 #'
@@ -532,7 +551,10 @@ plot.boottest <- function(x, ...) {
   dreamerr::validate_dots(stop = TRUE)
 
   if (is.null(x$conf_int)) {
-    stop("No plot method if boottest()'s function argument 'conf_int = FALSE'.")
+    rlang::abort(
+      c("No plot method if boottest()'s function argument 'conf_int = FALSE'."), 
+      use_cli_format = TRUE
+    )
   }
   test_vals <- x$grid_vals
   p_test_vals <- x$p_grid_vals

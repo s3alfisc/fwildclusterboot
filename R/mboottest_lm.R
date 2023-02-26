@@ -27,8 +27,6 @@
 #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
 #'        supported - see the `vignette("fwildclusterboot",
 #'         package = "fwildclusterboot")` for details.
-#' @param seed An integer. Allows to set a random seed. For details,
-#'  see below.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of
 #' coefficients. Must be either a vector of length k or a matrix of dimension
 #' q x k, where q is the number
@@ -96,16 +94,12 @@
 #' \item{teststat_boot}{All bootstrap t-statistics.}
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
-#' \item{internal_seed}{The integer value -inherited from set.seed() - used
-#' within boottest() to set the random seed in either R or Julia. If NULL, no
-#'  internal seed was created.}
 #'
 #' @export
 #' @method mboottest lm
 #'
 #' @section Setting Seeds:
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed`
-#'  function argument, or
+#' To guarantee reproducibility, you need to
 #' set a global random seed via `set.seed()` 
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
@@ -157,7 +151,6 @@ mboottest.lm <- function(object,
                          R,
                          r = rep(0, nrow(R)),
                          bootcluster = "max",
-                         seed = NULL,
                          type = "rademacher",
                          impose_null = TRUE,
                          p_val_type = "two-tailed",
@@ -182,7 +175,6 @@ mboottest.lm <- function(object,
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric matrix")
   
-  check_arg(seed, "scalar integer | NULL")
   check_arg(r, "numeric vector  | NULL")
   check_arg(bootcluster, "character vector | formula")
   check_arg(tol, "numeric scalar")
@@ -194,6 +186,11 @@ mboottest.lm <- function(object,
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(tol, "numeric scalar GT{0}")
   
+  inform_seed(
+    frequency_id = "seed-reminder-m-lm", 
+    engine = "WildBootTests.jl"
+  )
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
@@ -202,19 +199,13 @@ mboottest.lm <- function(object,
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
   
-  internal_seed <- set_seed(
-    seed = seed,
-    engine = "WildBootTests.jl",
-    type = type
-  )
-  
   
   if (ssc[["fixef.K"]] != "none" ||
       ssc[["cluster.df"]] != "conventional") {
-    x <- format_message(
-      "Currently, boottest() only supports fixef.K = 'none'."
+    rlang::inform(
+      "Currently, boottest() only supports fixef.K = 'none'.", 
+      use_cli_format = TRUE
     )
-    message(x)
   }
   
   
@@ -253,10 +244,12 @@ mboottest.lm <- function(object,
   clustermin <- julia_ssc$clustermin
   
   if (ssc[["fixef.K"]] != "none") {
-    format_message(
-      paste("Currently, boottest() only supports fixef.K = 'none'."))
+    rlang::inform(
+      paste("Currently, boottest() only supports fixef.K = 'none'."), 
+      use_cli_format = TRUE)
   }
   
+
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -274,7 +267,6 @@ mboottest.lm <- function(object,
     # LIML = LIML,
     # ARubin = ARubin,
     getauxweights = getauxweights,
-    internal_seed = internal_seed,
     maxmatsize = maxmatsize,
     # fweights = 1L,
     small = small,
@@ -298,8 +290,7 @@ mboottest.lm <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    engine = "WildBootTests.jl",
-    internal_seed = internal_seed
+    engine = "WildBootTests.jl"
   )
   
   

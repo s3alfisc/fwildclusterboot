@@ -5,7 +5,7 @@
 #' @param impose_null A logical - should the null hypothesis be imposed or not?
 #' @param r Shifts the null hypothesis.
 #' @param B number of bootstrap iterations
-#' @param bootcluster A data.frame containing the bootcluster
+#' @param bootcluster The bootcluster specification in `boottest()`
 #' @param clustid A data.frame containing the cluster variables
 #' @param sign_level The significance level.
 #' @param conf_int Logical. Should confidence intervals be calculated
@@ -27,7 +27,6 @@
 #' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
 #' @param fweights Should frequency weight or probability weights be used for 
 #' WLS? Currently, only frequency weights are supported
-#' @param internal_seed an integer. sets the seed used in Julia
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set
 #' the maximum size of auxilliary weight matrix (v), in gigabytes. Only
 #'  relevant when 'engine = "WildBootTests.jl"'
@@ -66,7 +65,6 @@ boot_algo_julia <- function(preprocess,
                             bootstrapc,
                             getauxweights,
                             fweights,
-                            internal_seed,
                             maxmatsize,
                             small,
                             clusteradj,
@@ -78,6 +76,16 @@ boot_algo_julia <- function(preprocess,
                             fuller = NULL,
                             kappa = NULL, 
                             bootstrap_type = "11") {
+  
+  
+  # pass an internal seed which 'inherits' from global seed
+  
+  global_seed <- .Random.seed
+  # need to pass a rng object to WildBootTests.jl
+  JuliaConnectoR::juliaEval("using StableRNGs")
+  internal_seed <-
+      JuliaConnectoR::juliaEval(paste0("rng = StableRNG(", get_seed(), ")"))
+  on.exit(set.seed(global_seed))
   
   resp <- as.numeric(preprocess$Y)
 
@@ -157,18 +165,15 @@ boot_algo_julia <- function(preprocess,
     getci = getci,
     imposenull = imposenull,
     rtol = rtol,
-    # rng = internal_seed,
     auxwttype = auxwttype,
     ptype = ptype,
     reps = reps,
     fweights = FALSE,
     bootstrapc = bootstrapc, 
-    jk = FALSE
+    jk = FALSE, 
+    rng = internal_seed
   )
 
-  if (!is.null(internal_seed)) {
-    eval_list[["rng"]] <- internal_seed
-  }
 
   if (!is.null(small)) {
     eval_list[["small"]] <- small
@@ -240,8 +245,8 @@ boot_algo_julia <- function(preprocess,
   res_final <- list(
     p_val = p_val,
     conf_int = conf_int,
-    t_stat = t_stat,
-    t_boot = t_boot,
+    t_stat = as.vector(t_stat),
+    t_boot = as.vector(t_boot),
     auxweights = getauxweights,
     grid_vals = plotpoints[, 1],
     p_grid_vals = plotpoints[, 2]

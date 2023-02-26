@@ -1,12 +1,8 @@
 test_that("test lean cpp boottest", {
   
+  set.seed(96578)
+  dqrng::dqset.seed(9568)
   
-  set.seed(9809873)
-  # library(fixest)
-  # library(lfe)
-  # library(fwildclusterboot)
-  # skip()
-  # devtools::load_all()
   data1 <<- fwildclusterboot:::create_data(
     N = 1000,
     N_G1 = 1000,
@@ -30,33 +26,43 @@ test_that("test lean cpp boottest", {
 
 
   # Test 1: heteroskedadestic wild bootstrap
-  #
-  # HC0
-  # pracma::tic()
+  
+  
+  set.seed(96578)
+  dqrng::dqset.seed(9568)
+  
   boot_lm <- boottest(lm_fit,
     param = "treatment",
     B = 999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1,
-    seed = 1,
     type = "webb"
   )
+  
+  set.seed(96578)
+  dqrng::dqset.seed(9568)
+  
   boot_lm2 <- boottest(lm_fit,
     param = "treatment",
     B = 999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1,
-    seed = 2,
     type = "webb"
   )
 
-
+  set.seed(96578)
+  dqrng::dqset.seed(9568)
+  
   boot_feols <- boottest(feols_fit,
     param = "treatment",
     B = 9999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1
   )
+  
+  set.seed(96578)
+  dqrng::dqset.seed(9568)
+  
   boot_felm <- boottest(felm_fit,
     param = "treatment",
     B = 9999,
@@ -128,7 +134,7 @@ test_that("test lean cpp boottest", {
 
 
   # test oneway clustering
-  # pracma::tic()
+  
   boot_lm1 <- boottest(feols_fit,
     param = "treatment",
     clustid = "group_id1",
@@ -140,9 +146,7 @@ test_that("test lean cpp boottest", {
       cluster.adj = FALSE
     )
   )
-  # pracma::toc()
 
-  # pracma::tic()
   boot_lm2 <- boottest(lm_fit,
     param = "treatment",
     clustid = "group_id1",
@@ -167,9 +171,7 @@ test_that("test lean cpp boottest", {
     engine = "R-lean",
     nthreads = 1
   )
-  # pracma::toc()
 
-  # pracma::tic()
   boot_lm2 <- boottest(feols_fit,
     param = "treatment",
     clustid = "group_id1",
@@ -177,7 +179,6 @@ test_that("test lean cpp boottest", {
     engine = "R",
     nthreads = 1
   )
-  # pracma::toc()
 
   expect_equal(pval(boot_lm1), pval(boot_lm2), tolerance = 0.05)
   expect_equal(teststat(boot_lm1), teststat(boot_lm2))
@@ -246,7 +247,7 @@ test_that("r-lean multi-param tests", {
 })
 
 
-test_that("heteroskedastic 11 vs 12 vs 13",{
+test_that("heteroskedastic 11 vs 21 vs 31",{
   
 
   lm_fit <-
@@ -270,7 +271,6 @@ test_that("heteroskedastic 11 vs 12 vs 13",{
       param = "treatment", 
       bootstrap_type = "11", 
       B = 9999, 
-      seed = 12312
     )
   
   fit12 <- 
@@ -279,7 +279,6 @@ test_that("heteroskedastic 11 vs 12 vs 13",{
       param = "treatment", 
       bootstrap_type = "21", 
       B = 9999, 
-      seed = 12312
     )
   
   fit13 <- 
@@ -288,7 +287,6 @@ test_that("heteroskedastic 11 vs 12 vs 13",{
       param = "treatment", 
       bootstrap_type = "31", 
       B = 9999, 
-      seed = 12312
     )
   
   expect_equal(teststat(fit11), teststat(fit12))

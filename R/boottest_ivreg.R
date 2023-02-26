@@ -34,7 +34,6 @@
 #'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
 #' @param conf_int A logical vector. If TRUE, boottest computes confidence
 #'        intervals by test inversion. If FALSE, only the p-value is returned.
-#' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector giving linear combinations of coefficients.
 #' Must be either NULL or a vector of the same length as `param`. If NULL,
 #'  a vector of ones of length param.
@@ -111,22 +110,11 @@
 #' \item{call}{Function call of boottest.}
 #' \item{engine}{The employed bootstrap algorithm.}
 #' \item{nthreads}{The number of threads employed.}
-#' \item{internal_seed}{The integer value -inherited from set.seed() - used
-#'  within boottest() to set the random seed in either R or Julia. If NULL,
-#'   no internal seed was created.}
 #' @export
 #'
 #' @section Setting Seeds:
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed`
-#' function argument, or
-#' set a global random seed via
-#' + `set.seed()` when using
-#'    1) the lean algorithm (via `engine = "R-lean"`) including the
-#'    heteroskedastic wild bootstrap
-#'    2) the wild cluster bootstrap via `engine = "R"` with Mammen weights or
-#'    3) `engine = "WildBootTests.jl"`
-#' + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher,
-#' Webb or Normal weights
+#' To guarantee reproducibility, you need to 
+#' set a global random seed via `set.seed()` 
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'    STATA using boottest", The STATA Journal.
@@ -189,7 +177,6 @@ boottest.ivreg <- function(object,
                            B,
                            bootcluster = "max",
                            conf_int = TRUE,
-                           seed = NULL,
                            R = NULL,
                            r = 0,
                            sign_level = 0.05,
@@ -223,7 +210,6 @@ boottest.ivreg <- function(object,
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(conf_int, "logical scalar ")
-  check_arg(seed, "scalar integer | NULL")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
   check_arg(bootcluster, "character vector | formula")
@@ -253,12 +239,6 @@ boottest.ivreg <- function(object,
     param <- attr(terms(param), "term.labels")
   }
   
-  # set random seed
-  internal_seed <- set_seed(
-    seed = seed,
-    engine = "WildBootTests.jl",
-    type = type
-  )
   # translate ssc into small_sample_adjustment
   if (ssc[["adj"]] == TRUE && ssc[["cluster.adj"]] == TRUE) {
     small_sample_adjustment <- TRUE
@@ -268,10 +248,10 @@ boottest.ivreg <- function(object,
   
   if (ssc[["fixef.K"]] != "none" ||
       ssc[["cluster.df"]] != "conventional") {
-    x <- format_message(
-      "Currently, boottest() only supports fixef.K = 'none'."
+      rlang::warn(
+      "Currently, boottest() only supports fixef.K = 'none'.", 
+      use_cli_format = TRUE
     )
-    message(x)
   }
   
   
@@ -326,12 +306,21 @@ boottest.ivreg <- function(object,
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
   
+  # remind packages users to set a global seed
+  inform_seed(
+    frequency_id = "seed-reminder-boot-iv", 
+    engine = "WildBootTests.jl"
+  )    
+  
   if (ssc[["fixef.K"]] != "none") {
-    format_message(
+    rlang::inform(
       paste(
-        "Currently, boottest() only supports fixef.K = 'none'."))
+        "Currently, boottest() only supports fixef.K = 'none'."),
+      use_cli_format = TRUE
+      )
   }
   
+
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -349,7 +338,6 @@ boottest.ivreg <- function(object,
     # liml = liml,
     # arubin = arubin,
     getauxweights = getauxweights,
-    internal_seed = internal_seed,
     maxmatsize = maxmatsize,
     # fweights = 1L,
     small = small,
@@ -381,8 +369,7 @@ boottest.ivreg <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    engine = "WildBootTests.jl",
-    internal_seed = internal_seed
+    engine = "WildBootTests.jl"
   )
   
   class(res_final) <- "boottest"

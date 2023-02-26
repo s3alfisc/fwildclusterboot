@@ -58,16 +58,17 @@ preprocess2.fixest <-
     method <- object$family
     # fixest specific checks
     if (object$method != "feols") {
-      stop(
+      rlang::abort(
         "boottest() only supports OLS estimation via fixest::feols() - it
         does not support non-linear models computed via e.g. fixest::fepois()
-        or fixest::feglm."
+        or fixest::feglm.", 
+        use_cli_format = TRUE
       )
     }
     
     # if (!is.null(object$is_sunab)) {
     #   if(object$is_sunab == TRUE){
-    #     stop(
+    #     rlang::abort(
     #       "boottest() does not support the Sun-Abrams
     #       estimator via `sunab()`."
     #     )
@@ -117,9 +118,10 @@ preprocess2.fixest <-
 
     if (has_weights) {
       if (!is.null(fe)) {
-        stop(
+        rlang::abort(
           "boottest() unfortunately currently does not support WLS and fixed
-          effects. Please set fe = NULL to run a bootstrap with WLS."
+          effects. Please set fe = NULL to run a bootstrap with WLS.", 
+          use_cli_format = TRUE
         )
       }
     }
@@ -292,10 +294,11 @@ preprocess2.felm <-
           rhs = 3
         )
       ) != "~0") {
-      stop(
+      rlang::abort(
         "IV regression is currently not supported by boottest() for
         objects of type 'felm'. You can either use 'fixest::feols()'
-        or 'ivreg::ivreg' for IV-regression."
+        or 'ivreg::ivreg' for IV-regression.", 
+        use_cli_format = TRUE
       )
       is_iv <- TRUE
     }
@@ -314,9 +317,10 @@ preprocess2.felm <-
 
     if (has_weights) {
       if (!is.null(fe)) {
-        stop(
+        rlang::abort(
           "boottest() unfortunately currently does not support WLS and
-          fixed effects. Please set fe = NULL to run a bootstrap with WLS."
+          fixed effects. Please set fe = NULL to run a bootstrap with WLS.",
+          use_cli_format = TRUE
         )
       }
     }
@@ -716,10 +720,11 @@ demean_fe <- function(X, Y, fe, has_weights, N) {
     levels(fixed_effect_W) <-
       (1 / table(fe)) # because duplicate levels are forbidden
   } else {
-    stop(
+    rlang::abort(
       "Currently, boottest() does not jointly support regression weights /
       WLS and fixed effects. If you want to use
-      boottest() for inference based on WLS, please set fe = NULL."
+      boottest() for inference based on WLS, please set fe = NULL.", 
+      use_cli_format = TRUE
     )
     # levels(fixed_effect_W) <- 1 / table(fixed_effect)
   }
@@ -807,8 +812,10 @@ transform_fe <-
       if (engine == "R") {
         if(bootstrap_type != "fnw11"){
           if(fe != clustid_char){
-            stop("Only cluster fixed effects are supported for bootstrap_types 
-                 '11', '13', '31', '33'.")
+            rlang::abort("Only cluster fixed effects are supported for bootstrap_types 
+                 '11', '13', '31', '33'.", 
+                use_cli_format = TRUE
+                )
           }
         }
         
@@ -921,7 +928,7 @@ get_cluster <-
     #   if(inherits(object, "fixest") || inherits(object, "felm")){
     #     if(grepl("non-numeric argument to binary operator$", 
     #              attr(cluster_tmp, "condition")$message)){
-    #       stop("In your model, you have specified multiple fixed effects,
+    #       rlang::abort("In your model, you have specified multiple fixed effects,
     #            none of which are of type factor. While `fixest::feols()` and
     #            `lfe::felm()` handle this case without any troubles,  
     #            `boottest()` currently cannot handle this case - please 
@@ -932,7 +939,7 @@ get_cluster <-
     #     if(grepl("operations are possible only for numeric, logical
     #              or complex types$", 
     #              attr(cluster_tmp, "condition")$message)){
-    #       stop("Either a fixed effect or a cluster variable in your fixest()
+    #       rlang::abort("Either a fixed effect or a cluster variable in your fixest()
     #            or felm() model is currently specified as a character. 
     #            'boottest()' relies on 'expand.model.frame',
     #            which can not handle these variable types in models.
@@ -1017,7 +1024,7 @@ get_cluster <-
     #         )$message
     #       )
     #     ){
-    #       stop(
+    #       rlang::abort(
     #         "In your model, you have specified multiple fixed effects, 
     #       none of which are of type factor. While `fixest::feols()` and 
     #       `lfe::felm()` handle this case without any troubles,  `boottest()`
@@ -1035,7 +1042,7 @@ get_cluster <-
     #           "condition")$message
     #       )
     #     ){
-    #       stop(
+    #       rlang::abort(
     #         "Either a fixed effect or a cluster variable in your fixest() or
     #       felm() model is currently specified as a character. 'boottest()' 
     #       relies on 'expand.model.frame', which can not handle these variable
@@ -1056,9 +1063,10 @@ get_cluster <-
       if (!(any(names(bootcluster) %in% c(clustid_char, names(coef(
         object
       )))))) {
-        stop(
+        rlang::abort(
           "A bootcluster variable is neither contained in the cluster
-          variables nor in the model coefficients."
+          variables nor in the model coefficients.", 
+          use_cli_format = TRUE
         )
       }
     } else {
@@ -1085,22 +1093,30 @@ get_cluster <-
     }
     
     if (NROW(cluster) != N) {
-      stop("number of observations in 'cluster' and 'nobs()' do not match")
+      rlang::abort(
+        "The number of observations in 'cluster' and 'nobs()' do not match", 
+        use_cli_format = TRUE
+      )
     }
     if (NROW(bootcluster) != N) {
-      stop("number of observations in 'bootcluster' and 'nobs()' do not match")
+      rlang::abort(
+        "The number of observations in 'bootcluster' and 'nobs()' do not match", 
+        use_cli_format = TRUE
+      )
     }
     
     if (any(is.na(cluster))) {
-      stop(
+      rlang::abort(
         "`boottest()` cannot handle NAs in `clustid` variables that are not
-        part of the estimated model object."
+        part of the estimated model object.", 
+        use_cli_format = TRUE
       )
     }
     if (any(is.na(bootcluster))) {
-      stop(
+      rlang::abort(
         "`boottest()` cannot handle NAs in `bootcluster` variables that are
-        not part of the estimated model object."
+        not part of the estimated model object.", 
+        use_cli_format = TRUE
       )
     }
     

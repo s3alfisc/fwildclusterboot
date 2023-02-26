@@ -182,15 +182,16 @@ invert_p_val <- function(ABCD,
   # boundaries
   # x1 & x2 so that 0 < p(x) < sign_level for x = {x1, x2}
   if (sum(p_start < sign_level) < 2) {
-    stop((
+    rlang::abort(c(
       "The inflation factor for initial guesses for standard errors was not
       large enough. In consequence, the root-finding procedure to compute
-      confidence intervalsvia p-value inversion could not be initiated.
+      confidence intervals via p-value inversion could not be initiated.
       In a future release, it will be possible to specify a costum inflation
       factor as a function argument to boottest(). Until then, you can still
       use boottest() to calculate p-values by setting the boottest() function
-      argument conf_int to FALSE."
-    ))
+      argument conf_int to FALSE."), 
+      use_cli_format = TRUE
+    )
   }
   
   # ----------------------------------------------------------------------

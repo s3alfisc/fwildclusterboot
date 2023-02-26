@@ -1,6 +1,6 @@
 Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap Inference for Linear Models
-Version: 0.12.4.2
+Version: 0.13.0
 Authors@R: 
     c(
     person(given = "Alexander",
@@ -45,7 +45,7 @@ Description: Implementation of fast algorithms for wild cluster bootstrap
              (from package 'fixest') and 'felm()' (from package 'lfe'). 
              Additionally implements a 'heteroskedasticity-robust' ('HC1') wild 
              bootstrap.
-             Further, the package provides an R binding to 'WildBootTests.jl',
+             Last, the package provides an R binding to 'WildBootTests.jl',
              which provides additional speed gains and functionality, 
              including the 'WRE' bootstrap for instrumental variable models 
              (based on models of type 'ivreg()' from package 'ivreg')
@@ -64,7 +64,8 @@ Imports:
     JuliaConnectoR, 
     MASS, 
     Rcpp, 
-    summclust
+    summclust, 
+    rlang
 Suggests: 
     fixest,
     lfe,
@@ -89,7 +90,7 @@ RoxygenNote: 7.2.1
 LinkingTo: Rcpp,RcppArmadillo, RcppEigen
 VignetteBuilder: knitr
 Language: en-US
-SystemRequirements: Version Requirements to run the wild bootstrap through Julia - Julia (>= 1.8), WildBootTests.jl (>=0.8.6).
+SystemRequirements: Version Requirements to run the wild bootstrap through Julia - Julia (>= 1.8), WildBootTests.jl (>=0.9).
                     Julia is downloadable via the official Julia website (https://julialang.org/downloads/), 
                     WildBootTests.jl via Julia's package manager (https://docs.julialang.org/en/v1/stdlib/Pkg/) or 
                     its github repository (https://github.com/droodman/WildBootTests.jl)

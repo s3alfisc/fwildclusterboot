@@ -1,6 +1,9 @@
 #' several checks on the param input variable for 'boottest()'
 #' @param object an object of type lm, fixest or felm
 #' @param param character vector - boottest() function arg 'param'
+#' 
+#' @importFrom rlang abort warn inform
+#' 
 #' @noRd
 
 check_params_in_model <- function(object, param) {
@@ -8,37 +11,41 @@ check_params_in_model <- function(object, param) {
   # for lm and fixest
   if (inherits(object, "lm")) {
     if (mean(param %in% c(names(coef(object)))) != 1) {
-      stop(paste("The parameter", param, "is not included in the estimated
+      rlang::abort(paste("The parameter", param, "is not included in the estimated
                   model. Maybe you are trying to test for an interaction 
                   parameter? To see all model parameter names,
-                  run names(coef(model))."))
+                  run names(coef(object))."), 
+                   use_cli_format = TRUE)
     }
   }
   
   # for lm and fixest
   if (inherits(object, "fixest")) {
     if (mean(param %in% c(names(coef(object)))) != 1) {
-      stop(paste("The parameter", param, "is not included in the estimated
+      rlang::abort(paste("The parameter", param, "is not included in the estimated
                   model. Maybe you are trying to test for an interaction 
                   parameter? To see all model parameter names,
-                  run names(coef(model))."))    }
+                  run names(coef(model))."), 
+                  use_cli_format = TRUE)    
+      }
   }
   
   # for felm
   if (inherits(object, "felm")) {
     # check if param(s) is (are) in model
     if (mean(param %in% c(rownames(object$coefficients))) != 1) {
-      stop(paste("The parameter", param, "is not included
+      rlang::abort(paste("The parameter", param, "is not included
                in the estimated model. Maybe you are trying to
                test for an interaction parameter? To see all model
-               parameter names, run names(coef(model))."))
+               parameter names, run names(coef(model))."), 
+               use_cli_format = TRUE)
     }
   }
   
   if (inherits(object, "ivreg")) {
     # which parametrs can be tested?
     if (mean(param %in% names(c(object$exogenous, object$endogenous)) != 1)) {
-      stop(paste("The parameter", param, "is not included in the estimated
+      rlang::abort(paste("The parameter", param, "is not included in the estimated
                   model. Maybe you are trying to test for an interaction 
                   parameter? To see all model parameter names,
                   run names(coef(model))."))    }
@@ -60,7 +67,7 @@ check_boottest_args_plus <- function(
   
   if (inherits(object, "ivreg")) {
     if (object$method != "OLS") {
-      stop("Currently, only 2SLS is supported. Please set the `ivreg`
+      rlang::abort("Currently, only 2SLS is supported. Please set the `ivreg`
            function argument `method` to `OLS`.")
     }
   }
@@ -69,14 +76,14 @@ check_boottest_args_plus <- function(
   if (inherits(object, "felm")) {
     if (!is.null(fe)) {
       if (fe %in% param) {
-        stop(paste("The function argument fe =", fe, "is included in the
+        rlang::abort(paste("The function argument fe =", fe, "is included in the
                    hypothesis (via the `param` argument). This is not allowed.
                    Please set fe to another factor variable or NULL."),
              call. = FALSE
         )
       }
       if (!(fe %in% names(object$fe))) {
-        stop(paste(
+        rlang::abort(paste(
           "The fixed effect to be projected out in the bootstrap,",
           fe, "is not included as a dedicated fixed effect in the
                    estimated model."
@@ -101,21 +108,21 @@ check_boottest_args_plus <- function(
       # note: whitespace ~ - for IV
       # grepl("~", deparse_fml, fixed = TRUE)
     ) {
-      stop("Advanced formula notation in fixest / fixest via ^ to interact
+      rlang::abort("Advanced formula notation in fixest / fixest via ^ to interact
           fixed effects is currently not supported in boottest().")
     }
     
     
     if (!is.null(fe)) {
       if (fe %in% param) {
-        stop(paste("The function argument fe =", fe, "is included in the
+        rlang::abort(paste("The function argument fe =", fe, "is included in the
                    hypothesis (via the `param` argument). This is not allowed.
                    Please set fe to another factor variable or NULL."),
              call. = FALSE
         )
       }
       if (!(fe %in% object$fixef_vars)) {
-        stop(paste(
+        rlang::abort(paste(
           "The fixed effect to be projected out in the bootstrap,",
           fe, "is not included as a dedicated fixed effect
                    in the estimated model."
@@ -125,13 +132,12 @@ check_boottest_args_plus <- function(
   }
   
   if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
-    msg <- format_message(
-      "Note: The bootstrap usually performs best when the confidence", 
-      paste("level (here,", 1 - sign_level, "%)
-           times the number of replications"), 
-      paste("plus 1 (", B, "+ 1 = ", B + 1, ") is an integer.")
+    rlang::inform(
+      paste("Note: The bootstrap usually performs best when the confidence", 
+      "level (here,", 1 - sign_level, "% times the number of replications", 
+      "plus 1 (", B, "+ 1 = ", B + 1, ") is an integer."), 
+      use_cli_format = TRUE
     )
-    message(msg)
   }
 }
 
@@ -150,7 +156,7 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
   if (inherits(object, "felm")) {
     if (!is.null(fe)) {
       if (!(fe %in% names(object$fe))) {
-        stop(paste(
+        rlang::abort(paste(
           "The fixed effect to be projected out in the bootstrap,",
           fe, "is not included as a dedicated fixed effect in the
                    estimated model."
@@ -174,14 +180,14 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
        ))
       
     ) {
-      stop("Advanced formula notation in fixest / fixest via ^ to interact
+      rlang::abort("Advanced formula notation in fixest / fixest via ^ to interact
           fixed effects is currently not supported in boottest().")
     }
     
     
     if (!is.null(fe)) {
       if (!(fe %in% object$fixef_vars)) {
-        stop(paste(
+        rlang::abort(paste(
           "The fixed effect to be projected out in the bootstrap,",
           fe, "is not included as a dedicated fixed effect in the
                    estimated model."
@@ -191,7 +197,7 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
   }
   
   if (nrow(R) != length(r)) {
-    stop(paste(
+    rlang::abort(paste(
       "The dimensions of func args R and r do not match. The number
                of rows of R is ", nrow(R), ", but the length of r is",
       length(r), "."
@@ -214,21 +220,21 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
 check_r_lean <- function(weights, clustid, fe, impose_null){
   
   if(length(clustid) > 1){
-    stop("The R-lean algorithm currently only supports oneway clustering.")
+    rlang::abort("The R-lean algorithm currently only supports oneway clustering.")
   }
   
   if (!is.null(fe)) {
-    stop("boottest() currently does not support 
+    rlang::abort("boottest() currently does not support 
          fixed effects with engine = 'R-lean'.")
   }
   
   if(!is.null(weights)){
-    stop("boottest() currently does not support regression
+    rlang::abort("boottest() currently does not support regression
          weights with engine = 'R-lean'.")
   }
   
   if(impose_null != TRUE){
-    stop("boottest() currently does not support the 'WCU' bootstrap 
+    rlang::abort("boottest() currently does not support the 'WCU' bootstrap 
     - which does not impose the null on the 
           bootstrap dgp - for engine = 'R-lean'.")
   }
@@ -236,7 +242,7 @@ check_r_lean <- function(weights, clustid, fe, impose_null){
 }
 
 
-check_boot_algo3 <- function(
+check_boot_algo_fastnreliable <- function(
     weights,
     clustid, 
     fe,
@@ -257,26 +263,26 @@ check_boot_algo3 <- function(
   
   if(R != 1L || r != 0){
     
-    stop("Bootstraps of type '11', '13', '31', '33' currently
+    rlang::abort("Bootstraps of type '11', '13', '31', '33' currently
            only support hypotheses of the form R * beta = 0 vs beta <> 0, 
            where R is a scalar equal to 1.")
   }
   
   if(length(clustid) > 1){
-    stop("The '13', '31', and '33'
+    rlang::abort("The '13', '31', and '33'
          bootstrap variants currently only
          support oneway clustering when 'boot_engine' == 'R'."
     )
   }
   
   if (!is.null(fe)) {
-    stop("The '13', '31', and '33'
+    rlang::abort("The '13', '31', and '33'
          bootstrap variants currently don't support fixed 
          effects in the bootstrap. Please set 'fe = NULL'.")
   }
   
   if(!is.null(weights)){
-    stop("The '13', '31', and '33'
+    rlang::abort("The '13', '31', and '33'
          bootstrap variants currently only
          support oneway clustering when 'boot_engine' == 'R'.")
   }
@@ -308,7 +314,7 @@ check_set_full_enumeration <-
       N_G_2 <- 2^N_G_bootcluster
       if (type == "rademacher") {
         if (N_G_2 <= B) {
-          warning(
+          rlang::warn(
             paste(
               "There are only",
               N_G_2,
@@ -325,8 +331,7 @@ check_set_full_enumeration <-
               more thorough discussion, see Webb `Reworking wild bootstrap
               based inference for clustered errors` (2013)."
             ),
-            call. = FALSE,
-            noBreaks. = TRUE
+            use_cli_format = TRUE
           )
           full_enumeration <- TRUE
           if (engine != "WildBootTests.jl") {
@@ -355,7 +360,7 @@ check_set_full_enumeration <-
 r_algo_checks <- function(R, p_val_type, conf_int, B) {
   if (!is.null(R)) {
     if (length(nrow(R)) != 0) {
-      stop(
+      rlang::abort(
         "Hypotheses with q>1 are currently only supported via WildBootTests.jl.
         Please set the function argument 'engine = WildBootTests.jl'."
       )
@@ -365,12 +370,12 @@ r_algo_checks <- function(R, p_val_type, conf_int, B) {
   if (p_val_type %in% c(">", "<")) {
     if (conf_int == TRUE) {
       conf_int <- FALSE
-      warning(
+      rlang::warn(
         paste(
           "Currently, boottest() calculates confidence intervals for one-sided
-          hypotheses only for engine = 'WildBootTests.jl'."
+          hypotheses only for `engine = 'WildBootTests.jl'`."
         ),
-        call. = FALSE
+        use_cli_format = TRUE
       )
     }
   }
@@ -378,7 +383,7 @@ r_algo_checks <- function(R, p_val_type, conf_int, B) {
   
   if (conf_int == TRUE || is.null(conf_int)) {
     if (B <= 100) {
-      stop(
+      rlang::abort(
         "The function argument B is smaller than 100. The number of bootstrap
           iterations needs to be 100 or higher in order to guarantee that the
           root finding procudure used to find the confidence set
@@ -401,7 +406,7 @@ process_R <- function(R, param) {
     R <- rep(1, length(param))
   } else {
     if (length(R) != length(param)) {
-      stop("The constraints vector must either be NULL or a numeric of
+      rlang::abort("The constraints vector must either be NULL or a numeric of
            the same length as the `param` input vector.")
     }
   }
@@ -415,7 +420,7 @@ check_engine_btype <- function(
   
   if(engine == "WildBootTests.jl"){
     if(!(bootstrap_type %in% c("11", "fnw11", "31"))){
-      stop(
+      rlang::abort(
         paste(
           "The bootstrap of type", 
           bootstrap_type, 
@@ -426,7 +431,7 @@ check_engine_btype <- function(
   } else if(engine == "R-lean"){
     if(bootstrap_type != "fnw11"){
       if(bootstrap_type == "31"){
-        stop(
+        rlang::abort(
           paste(
             "The bootstrap of type", 
             bootstrap_type, 
@@ -434,7 +439,7 @@ check_engine_btype <- function(
           the 'R' or 'WildBootTests.jl' engines instead.'")
         )
       } else {
-        stop(
+        rlang::abort(
           paste(
             "The bootstrap of type", 
             bootstrap_type, 
@@ -453,7 +458,7 @@ check_bootstrap_types <- function(param, bootstrap_type){
   
   if(length(param) > 1){
     if(bootstrap_type != "fnw11"){
-      stop("Only bootstrap_type = 'fnw11' is currently supported with
+      rlang::abort("Only bootstrap_type = 'fnw11' is currently supported with
            hypotheses that contain more than one parameter. This feature 
            will be added in the near future.")
     }

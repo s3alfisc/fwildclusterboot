@@ -61,7 +61,6 @@
 #' wild cluster bootstrap via the algorithm outlined in "fast and wild" 
 #' (Roodman et al (2019)). "11" is the default for the heteroskedastic 
 #' bootstrap.
-#' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector giving linear combinations of coefficients.
 #'  Must be either NULL or a vector of the same length as `param`. If NULL,
 #'   a vector of ones of length param.
@@ -131,6 +130,12 @@
 #' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request
 #' bootstrap-c instead of bootstrap-t. Only relevant when 'engine =
 #' "WildBootTests.jl"'
+#' @param sampling 'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
+#' used for random number generation (when available). If 'standard', 
+#' functions from the 'stats' package are used when available. 
+#' This argument is mostly a convenience to control random number generation in 
+#' a wrapper package around `fwildclusterboot`, `wildrwolf`. 
+#' I recommend to use the fast' option. 
 #' @param ... Further arguments passed to or from other methods.
 #'
 #' @importFrom dreamerr check_arg validate_dots
@@ -166,8 +171,7 @@
 #' @method boottest felm
 #'
 #' @section Setting Seeds:
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed`
-#' function argument, or
+#' To guarantee reproducibility, you need to 
 #' set a global random seed via
 #' + `set.seed()` when using
 #'    1) the lean algorithm (via `engine = "R-lean"`) including the
@@ -258,7 +262,6 @@
 #'     clustid = c("group_id1", "group_id2"),
 #'     fe = "Q1_immigration",
 #'     sign_level = 0.2,
-#'     seed = 8,
 #'     r = 2
 #'   )
 #'   # test treatment + ideology1 = 2
@@ -313,7 +316,6 @@ boottest.felm <- function(object,
                           bootcluster = "max",
                           fe = NULL,
                           conf_int = TRUE,
-                          seed = NULL,
                           R = NULL,
                           r = 0,
                           beta0 = NULL,
@@ -324,6 +326,7 @@ boottest.felm <- function(object,
                           p_val_type = "two-tailed",
                           tol = 1e-6,
                           maxiter = 10,
+                          sampling = "dqrng",
                           nthreads = getBoottest_nthreads(),
                           ssc = boot_ssc(
                             adj = TRUE,
@@ -354,8 +357,6 @@ boottest.felm <- function(object,
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   
   check_arg(conf_int, "logical scalar")
-  check_arg(seed, "scalar integer | NULL")
-  check_arg(internal_seed, "scalar logical")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
   check_arg(fe, "character scalar | NULL |formula ")
@@ -369,30 +370,48 @@ boottest.felm <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
   
+  check_arg(sampling, "charin(dqrng, standard)")
+  
+  # remind packages users to set a global seed
+  inform_seed(
+    frequency_id = "seed-reminder-boot-felm", 
+    engine = engine
+  )  
+  
   if(bootstrap_type %in% c("33", "13")){
-    stop(
-      paste(
+    rlang::abort(
+      c(
         "The bootstrap types '13' and '33' are not yet supported for objects
         of type felm. Support will be added in the future. Until then, you 
         can run the '13' and '33' bootstrap types with objects of type 'lm' 
         and 'fixest'."
-      )
+      ), 
+      use_cli_format = TRUE
     )
   }
   
   if(bootstrap_type != "fnw11"){
     if(engine == "R"){
       if(conf_int){
-        message("Confidence Intervals are currently only supported for 
-                the R engine with 'bootstrap_type = 'fnw11' '.")
+        rlang::inform(
+        "Confidence Intervals are currently only supported for 
+                the R engine with 'bootstrap_type = 'fnw11' '.", 
+        use_cli_format = TRUE, 
+        .frequency = "regularly", 
+        .frequency_id = "CI only for fnw algo."
+        )
       }
     }
   }
   
   if (!is.null(beta0)) {
-    stop(
-      "The function argument 'beta0' is deprecated. Please use the
-      function argument 'r' instead, by which it is replaced."
+    rlang::abort(
+      c(
+        "The function argument 'beta0' is deprecated.
+         Please use the function argument 'r' instead,
+         by which it is replaced."
+      ),
+      use_cli_format = TRUE
     )
   }
   
@@ -411,12 +430,6 @@ boottest.felm <- function(object,
   if (inherits(fe, "formula")) {
     fe <- attr(terms(fe), "term.labels")
   }
-  
-  internal_seed <- set_seed(
-    seed = seed,
-    engine = engine,
-    type = type
-  )
   
   # check appropriateness and assign nthreads
   nthreads <- check_set_nthreads(nthreads)
@@ -503,137 +516,41 @@ boottest.felm <- function(object,
   point_estimate <-
     as.vector(object$coefficients[param, ] %*% preprocess$R0[param])
   
-  
-  if (engine == "R") {
-    
-    if(bootstrap_type == "fnw11"){
-      
-      res <- boot_algo2(
-        preprocessed_object = preprocess,
-        boot_iter = B,
-        point_estimate = point_estimate,
-        impose_null = impose_null,
-        r = r,
-        sign_level = sign_level,
-        param = param,
-        # seed = seed,
-        p_val_type = p_val_type,
-        nthreads = nthreads,
-        type = type,
-        full_enumeration = full_enumeration,
-        small_sample_correction = small_sample_correction,
-        conf_int = conf_int,
-        maxiter = maxiter,
-        tol = tol
-      )
-      
-      
-    } else {
-      
-      # need some function checks here ... 
-      check_boot_algo3(
-        weights = stats::weights(object), 
-        clustid = clustid,
-        fe = fe,
-        bootstrap_type = bootstrap_type, 
-        R = R_long, 
-        r = r
-      )
-      
-      res <- boot_algo3(
-        preprocessed_object = preprocess,
-        B = B,
-        bootstrap_type = bootstrap_type,
-        r = r,
-        sign_level = sign_level,
-        param = param,
-        p_val_type = p_val_type,
-        nthreads = 1,
-        type = type,
-        full_enumeration = full_enumeration,
-        small_sample_correction = small_sample_correction,
-        seed = internal_seed, 
-        object = object, 
-        impose_null = impose_null
-      )
-      conf_int <- p_grid_vals <- grid_vals <- FALSE
-      
-      
-    }
-    
-  } else if (engine == "R-lean") {
-    check_r_lean(
-      weights = stats::weights(object),
-      clustid = clustid,
-      fe = fe, 
-      impose_null = impose_null
-    )
-    
-    if(bootstrap_type == "fnw11"){
-      bootstrap_type <- "11"
-    }
-    
-    res <- boot_algo1(
-      preprocessed_object = preprocess,
-      boot_iter = B,
-      point_estimate = point_estimate,
-      impose_null = impose_null,
-      r = r,
-      sign_level = sign_level,
-      param = param,
-      p_val_type = p_val_type,
+  res <- 
+    run_bootstrap(
+      object = object, 
+      engine = engine, 
+      preprocess = preprocess,  
       bootstrap_type = bootstrap_type, 
-      nthreads = nthreads,
-      type = type,
-      full_enumeration = full_enumeration,
-      small_sample_correction = small_sample_correction,
-      heteroskedastic = heteroskedastic,
-      seed = internal_seed
+      B = B, 
+      point_estimate = point_estimate, 
+      impose_null = impose_null, 
+      r = r, 
+      sign_level = sign_level, 
+      param = param, 
+      p_val_type = p_val_type, 
+      nthreads = nthreads, 
+      type = type, 
+      full_enumeration = full_enumeration, 
+      small_sample_correction = small_sample_correction, 
+      conf_int = conf_int, 
+      maxiter = maxiter, 
+      tol = tol, 
+      clustid = clustid, 
+      fe = fe, 
+      R_long = R_long, 
+      heteroskedastic = heteroskedastic, 
+      ssc = ssc, 
+      floattype = floattype ,
+      bootstrapc = bootstrapc ,
+      getauxweights = getauxweights ,
+      maxmatsize = maxmatsize, 
+      sampling = sampling, 
+      bootcluster = bootcluster
     )
-    conf_int <- p_grid_vals <- grid_vals <- FALSE
-  } else if (engine == "WildBootTests.jl") {
-    julia_ssc <- get_ssc_julia(ssc)
-    small <- julia_ssc$small
-    clusteradj <- julia_ssc$clusteradj
-    clustermin <- julia_ssc$clustermin
-    
-    fedfadj <- 0L
-    
-    if (ssc[["fixef.K"]] != "none") {
-      x <- format_message(
-        "Currently, boottest() only supports fixef.K = 'none'."
-      )
-      message(x)
-    }
-    
-    res <- boot_algo_julia(
-      preprocess = preprocess,
-      impose_null = impose_null,
-      r = r,
-      B = B,
-      bootcluster = bootcluster,
-      clustid = clustid,
-      sign_level = sign_level,
-      conf_int = conf_int,
-      tol = tol,
-      p_val_type = p_val_type,
-      type = type,
-      floattype = floattype,
-      bootstrapc = bootstrapc,
-      # LIML = LIML,
-      # ARubin = ARubin,
-      getauxweights = getauxweights,
-      internal_seed = internal_seed,
-      maxmatsize = maxmatsize,
-      # fweights = 1L,
-      small = small,
-      clusteradj = clusteradj,
-      clustermin = clustermin,
-      fe = fe,
-      fedfadj = fedfadj, 
-      bootstrap_type = bootstrap_type
-    )
-  } 
+  
+  
+
   
   # collect results
   res_final <- list(
@@ -658,8 +575,7 @@ boottest.felm <- function(object,
     R = R_long,
     r = r,
     engine = engine,
-    nthreads = nthreads,
-    internal_seed = internal_seed
+    nthreads = nthreads
   )
   
   

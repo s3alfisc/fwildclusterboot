@@ -657,7 +657,15 @@ res
 
 ## Seeds
 
-For Rademacher, Normal and Webb weights and `engine = "R"`, you need to set a global seed via `dqrng::dqset.seed()`. For all other options - Mammen weights with `engine = "R"`, `engine = "R-lean"` or `engine = "WildBootTests.jl"`, you can set a global seed via the familiar`set.seed()`. 
+To guarantee reproducibility, you need to 
+set a global random seed via
+
+ + `set.seed()` when using
+    1) the lean algorithm (via `engine = "R-lean"`),
+    2) the heteroskedastic wild bootstrap
+    3) the wild cluster bootstrap via `engine = "R"` with Mammen weights or
+    4) `engine = "WildBootTests.jl"`
+ + `dqrng::dqset.seed()` when using `engine = "R"` for Rademacher, Webb or Normal weights
 
 ## Treatment of Invalid Test Statistics for multiway clustering
 

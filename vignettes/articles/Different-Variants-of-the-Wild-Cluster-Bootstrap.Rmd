@@ -51,8 +51,7 @@ lapply(wcr_algos, function(x){
       clustid = ~group_id1,
       B = 9999, 
       impose_null = TRUE,
-      bootstrap_type = x,
-      seed = 123
+      bootstrap_type = x
     )
   })
 

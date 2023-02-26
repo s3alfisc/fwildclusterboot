@@ -25,32 +25,31 @@
 #' @param small_sample_correction The small sample correction to be applied.
 #' See ssc().
 #' If FALSE, run wild cluster bootstrap.
-#' @param seed Integer scalar. Either set via boottest()'s seed argument
-#' or inherited from R's global seed (set via set.seed)
 #' @param object the regression object
 #' @param impose_null logical scalar. Should the null be imposed on the
 #' bootstrap dgp or not?
 #' @importFrom MASS ginv
 #' @importFrom summclust vcov_CR3J
-#' @return A list of ...
+#' @return A list of bootstrap results. 
 #' @noRd
 
 
 
-boot_algo3 <- function(preprocessed_object,
-                       B,
-                       bootstrap_type,
-                       r = 0,
-                       sign_level,
-                       param,
-                       p_val_type,
-                       nthreads,
-                       type,
-                       full_enumeration,
-                       small_sample_correction,
-                       seed,
-                       object,
-                       impose_null){
+boot_algo_fastnreliable <- function(
+  preprocessed_object,
+  B,
+  bootstrap_type,
+  r = 0,
+  sign_level,
+  param,
+  p_val_type,
+  nthreads,
+  type,
+  full_enumeration,
+  small_sample_correction,
+  object,
+  impose_null, 
+  sampling){
 
 
   #here for debugging
@@ -87,7 +86,8 @@ boot_algo3 <- function(preprocessed_object,
     type = type,
     full_enumeration = full_enumeration,
     N_G_bootcluster = N_G_bootcluster,
-    boot_iter = B
+    boot_iter = B, 
+    sampling = sampling
   )
 
   # create X_g's, X1_g's, y_g's etc
@@ -177,11 +177,6 @@ boot_algo3 <- function(preprocessed_object,
   }
 
   if(crv_type == "crv1"){
-
-    Ag <- lapply(
-      1:G,
-      function(g) tXgXg[[g]] %*% tXXinv
-    )
     
     if(is.null(beta_hat)){
       beta_hat <- tXXinv %*% tXy
@@ -289,10 +284,7 @@ boot_algo3 <- function(preprocessed_object,
   # get original t-stat.
 
   if(crv_type == "crv1"){
-    
-    # print("scores_list")
-    # print(scores_list[[1]])
-    
+        
     score_all <- lapply(
       1:G, function(g) 
         tcrossprod(

@@ -1,10 +1,17 @@
 test_that("test r-fnw vs r-, stochastic", {
 
       skip_on_cran()
-  
+      skip_if_not(
+        fwildclusterboot:::find_proglang("julia"), 
+        message = "skip test as julia installation not found."
+      )
       reltol <- 0.05
       B <- 9999
-
+  
+      seed <- 123123
+      set.seed(seed)
+      
+      
       data1 <<- fwildclusterboot:::create_data(
         N = 1000,
         N_G1 = 20,
@@ -38,16 +45,15 @@ test_that("test r-fnw vs r-, stochastic", {
       
       
       for (object in lm_fits) {
-        cat("start ols/wls", "\n")
-        set.seed(12391786)
-        # type <- "rademacher"
+
         for (type in c("rademacher", "webb", "mammen", "norm")) {
           
           for (p_val_type in c("two-tailed", "equal-tailed", ">", "<")) {
             
-            cat("type: ",type, "\n")
-            cat("p_val_type: ",p_val_type, "\n")
             
+            seed <- sample(1:100000, 1)
+            dqrng::dqset.seed(seed)
+            set.seed(seed)
             # test the wcr
             boot1 <- boottest(object,
                               param = c("log_income"),
@@ -56,13 +62,15 @@ test_that("test r-fnw vs r-, stochastic", {
                               impose_null = TRUE,
                               engine = "R",
                               bootstrap_type = "fnw11",
-                              seed = 432,
                               type = type,
                               p_val_type = p_val_type,
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
             
+            # reset seed to make sure same weights are applied
+            dqrng::dqset.seed(seed)
+            set.seed(seed)
             boot2 <- boottest(object,
                               param = c("log_income"),
                               clustid = c("group_id2"),
@@ -70,7 +78,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               impose_null = TRUE,
                               engine = "R",
                               bootstrap_type = "11",
-                              seed = 432,
+                              ,
                               type = type,
                               p_val_type = p_val_type,
                               conf_int = FALSE,
@@ -95,6 +103,9 @@ test_that("test r-fnw vs r-, stochastic", {
             
             # new WCU11 ("fast and reliable") vs old WCR11 ("fast and wild")
             
+            seed <- sample(1:100000, 1)
+            dqrng::dqset.seed(seed)
+            set.seed(seed)
             
             boot1 <- boottest(object,
                               param = "log_income",
@@ -103,12 +114,14 @@ test_that("test r-fnw vs r-, stochastic", {
                               impose_null = FALSE,
                               bootstrap_type = "11",
                               engine = "R",
-                              seed = 432,
+                              ,
                               type = type,
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
             )
             
+            dqrng::dqset.seed(seed)
+            set.seed(seed)
             boot2 <- boottest(object,
                               param = "log_income",
                               clustid = c("group_id2"),
@@ -116,7 +129,7 @@ test_that("test r-fnw vs r-, stochastic", {
                               impose_null = FALSE,
                               engine = "R",
                               bootstrap_type = "fnw11",
-                              seed = 432,
+                              ,
                               type = type,
                               conf_int = FALSE,
                               ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
@@ -145,6 +158,10 @@ test_that("test r-fnw vs r-, stochastic", {
 test_that("new bootstrap variants II - t_stat equivalence", {
   
   skip_on_cran()
+  skip_if_not(
+    fwildclusterboot:::find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
   N <- 1000
   N_G1 <- 17
@@ -188,7 +205,6 @@ test_that("new bootstrap variants II - t_stat equivalence", {
           B = 9999,
           impose_null = TRUE,
           bootstrap_type = x,
-          seed = 123,
           ssc = boot_ssc(
             adj = FALSE,
             cluster.adj = FALSE
@@ -227,7 +243,6 @@ test_that("new bootstrap variants II - t_stat equivalence", {
           B = 9999,
           impose_null = FALSE,
           bootstrap_type = x,
-          seed = 123,
           ssc = boot_ssc(
             adj = FALSE,
             cluster.adj = FALSE
@@ -257,7 +272,10 @@ test_that("new bootstrap variants II - t_stat equivalence", {
 test_that("variants 31 R vs Julia", {
   
   skip_on_cran()
-  
+  skip_if_not(
+    fwildclusterboot:::find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
   if(TRUE){
     
@@ -287,22 +305,25 @@ test_that("variants 31 R vs Julia", {
     
     # 1) test WCR31
     
-    boot31_jl <- boottest(lm_fit,
-                          B = 9999,
-                          param = "treatment",
-                          clustid = "group_id1",
-                          engine = "WildBootTests.jl",
-                          bootstrap_type = "31"
+    suppressWarnings(
+      boot31_jl <- boottest(lm_fit,
+                            B = 9999,
+                            param = "treatment",
+                            clustid = "group_id1",
+                            engine = "WildBootTests.jl",
+                            bootstrap_type = "31"
+      )
     )
     
-    boot31_r <- boottest(lm_fit,
-                         B = 9999,
-                         param = "treatment",
-                         clustid = "group_id1",
-                         engine = "R",
-                         bootstrap_type = "31"
+    suppressWarnings(
+      boot31_r <- boottest(lm_fit,
+                           B = 9999,
+                           param = "treatment",
+                           clustid = "group_id1",
+                           engine = "R",
+                           bootstrap_type = "31"
+      )
     )
-    
     
     testthat::expect_equal(
       pval(boot31_jl),
@@ -321,26 +342,30 @@ test_that("variants 31 R vs Julia", {
     
     #2) WCU31
     
-    boot31_jl <- boottest(lm_fit,
-                          B = 9999,
-                          param = "treatment",
-                          clustid = "group_id1",
-                          impose_null = FALSE,
-                          engine = "WildBootTests.jl",
-                          bootstrap_type = "31"
+    suppressWarnings(
+      boot31_jl <- boottest(lm_fit,
+                            B = 9999,
+                            param = "treatment",
+                            clustid = "group_id1",
+                            impose_null = FALSE,
+                            engine = "WildBootTests.jl",
+                            bootstrap_type = "31"
+      )
     )
     pval(boot31_jl)
     
-    boot31_r <- boottest(lm_fit,
-                         B = 9999,
-                         param = "treatment",
-                         clustid = "group_id1",
-                         impose_null = FALSE,
-                         engine = "WildBootTests.jl",
-                         bootstrap_type = "31"
-                         
+    suppressWarnings(
+      boot31_r <- boottest(lm_fit,
+                           B = 9999,
+                           param = "treatment",
+                           clustid = "group_id1",
+                           impose_null = FALSE,
+                           engine = "WildBootTests.jl",
+                           bootstrap_type = "31"
+                           
+      )
     )
-    
+      
     
     testthat::expect_equal(
       pval(boot31_jl),
@@ -365,6 +390,10 @@ test_that("variants 31 R vs Julia", {
 test_that("new variants and fixed effects", {
 
   skip_on_cran()
+  skip_if_not(
+    fwildclusterboot:::find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
   
   library(fixest)
   library(fwildclusterboot)
@@ -393,21 +422,25 @@ test_that("new variants and fixed effects", {
 
   # x1 variants
   
+  set.seed(2345234)
+  dqrng::dqset.seed(6756)
+  
   boot31_lm <- boottest(lm_fit,
                      B = 9999,
                      param = "treatment",
                      clustid = "group_id1",
                      bootstrap_type = "31" , 
-                     seed = 123, 
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
   )
 
+  set.seed(2345234)
+  dqrng::dqset.seed(6756)
+  
   boot31_fe <- boottest(feols_fit,
                      B = 9999,
                      param = "treatment",
                      clustid = "group_id1",
                      bootstrap_type = "31", 
-                     seed = 123, 
                      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
   )
   
@@ -426,6 +459,8 @@ test_that("new variants and fixed effects", {
     boot31_fe$t_boot
   )
   
+  set.seed(2345234)
+  dqrng::dqset.seed(6756)
   
   # x3 variants
   boot13_lm <- boottest(lm_fit,
@@ -433,16 +468,19 @@ test_that("new variants and fixed effects", {
                         param = "treatment",
                         clustid = "group_id1",
                         bootstrap_type = "13" , 
-                        seed = 123, 
+
                         ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
   )
+  
+  set.seed(2345234)
+  dqrng::dqset.seed(6756)
   
   boot13_fe <- boottest(feols_fit,
                         B = 9999,
                         param = "treatment",
                         clustid = "group_id1",
                         bootstrap_type = "13", 
-                        seed = 123, 
+
                         ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
   )
   

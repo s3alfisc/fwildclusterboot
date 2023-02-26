@@ -1,4 +1,4 @@
-boot_algo2 <-
+boot_algo_fastnwild <-
   function(preprocessed_object,
            boot_iter,
            point_estimate,
@@ -13,7 +13,9 @@ boot_algo2 <-
            small_sample_correction,
            conf_int,
            maxiter,
-           tol) {
+           tol, 
+           sampling) {
+    
     #' Fast wild cluster bootstrap algorithm
     #'
     #' function that implements the fast bootstrap algorithm as described
@@ -60,6 +62,12 @@ boot_algo2 <-
     #' @param maxiter Integer. Maximum number of iterations used in the root
     #'  finding procedure to find the confidence interval.
     #'        10 by default.
+    #' @param sampling 'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
+    #' used for random number generation (when available). If 'standard', 
+    #' functions from the 'stats' package are used when available. 
+    #' This argument is mostly a convenience to control random number generation in 
+    #' a wrapper package around `fwildclusterboot`, `wildrwolf`. 
+    #' I recommend to use the fast' option. 
     #' @return A list of ...
     #' @importFrom collapse fsum GRP
     #' @importFrom stats as.formula coef model.matrix model.response
@@ -94,7 +102,8 @@ boot_algo2 <-
       type = type, 
       full_enumeration = full_enumeration, 
       N_G_bootcluster = N_G_bootcluster, 
-      boot_iter = boot_iter
+      boot_iter = boot_iter, 
+      sampling = sampling
     )
     
     # prepare "key" for use with collapse::fsum()

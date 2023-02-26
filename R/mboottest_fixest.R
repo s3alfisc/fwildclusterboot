@@ -31,7 +31,6 @@
 #' the name of the fixed effect to be projected
 #'        out in the bootstrap. Note: if regression weights are used, fe
 #'        needs to be NULL.
-#' @param seed An integer. Allows to set a random seed. For details, see below.
 #' @param R Hypothesis Vector or Matrix giving linear combinations of
 #' coefficients. Must be either a vector of length k or a matrix of dimension
 #'  q x k, where q is the number
@@ -101,15 +100,11 @@
 #' \item{teststat_boot}{All bootstrap t-statistics.}
 #' \item{regression}{The regression object used in boottest.}
 #' \item{call}{Function call of boottest.}
-#' \item{internal_seed}{The integer value -inherited from set.seed() - used
-#' within boottest() to set the random seed in either R or Julia. If NULL,
-#'  no internal seed was created.}
 
 #' @export
 #'
 #' @section Setting Seeds:
-#' To guarantee reproducibility, you can either use `boottest()'s` `seed`
-#' function argument, or
+#' To guarantee reproducibility, you need to
 #' set a global random seed via`set.seed()` 
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
@@ -162,7 +157,6 @@ mboottest.fixest <- function(object,
                              r = rep(0, nrow(R)),
                              bootcluster = "max",
                              fe = NULL,
-                             seed = NULL,
                              type = "rademacher",
                              impose_null = TRUE,
                              p_val_type = "two-tailed",
@@ -191,7 +185,6 @@ mboottest.fixest <- function(object,
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   
-  check_arg(seed, "scalar integer | NULL")
   check_arg(r, "numeric vector | NULL")
   check_arg(fe, "character scalar | NULL | formula")
   check_arg(bootcluster, "character vector | formula")
@@ -202,6 +195,11 @@ mboottest.fixest <- function(object,
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
+  
+  inform_seed(
+    frequency_id = "seed-reminder-m-fixest", 
+    engine = "WildBootTests.jl"
+  )
   
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
@@ -215,28 +213,27 @@ mboottest.fixest <- function(object,
     fe <- attr(terms(fe), "term.labels")
   }
   
-  internal_seed <- set_seed(
-    seed = seed,
-    engine = "WildBootTests.jl",
-    type = type
-  )
-  
   # fixest specific checks
   if (object$method != "feols") {
-    stop("mboottest() only supports OLS estimation via fixest::feols() - it
+    rlang::abort(
+      c("mboottest() only supports OLS estimation via fixest::feols() - it
          does not support non-linear models computed via e.g.
-         fixest::fepois() or fixest::feglm.")
+         fixest::fepois() or fixest::feglm."), 
+      use_cli_format = TRUE
+    )
   }
   
   if (!is.null(object$fixef_removed)) {
-    stop(paste(
+    rlang::abort(
+      paste(
       "feols() removes fixed effects with the following values: ",
       object$fixef_removed, ". Currently, boottest()'s
                internal pre-processing does not account for this deletion.
                Therefore, please exclude such fixed effects prior
                to estimation with feols(). You can find them listed under
-               '$fixef_removed' of your fixest object."
-    ))
+               '$fixef_removed' of your fixest object."), 
+        use_cli_format = TRUE
+    )
   }
   
   fedfadj <- 0L
@@ -285,11 +282,12 @@ mboottest.fixest <- function(object,
   clustermin <- julia_ssc$clustermin
   
   if (ssc[["fixef.K"]] != "none") {
-    x <- format_message(
-      "Currently, boottest() only supports fixef.K = 'none'."
+    rlang::inform(
+      "Currently, boottest() only supports fixef.K = 'none'.", 
+      use_cli_format = TRUE
     )
-    message(x)
   }
+  
   
   res <- boot_algo_julia(
     preprocess = preprocess,
@@ -308,7 +306,6 @@ mboottest.fixest <- function(object,
     # LIML = LIML,
     # ARubin = ARubin,
     getauxweights = getauxweights,
-    internal_seed = internal_seed,
     maxmatsize = maxmatsize,
     # fweights = 1L,
     small = small,
@@ -332,8 +329,7 @@ mboottest.fixest <- function(object,
     impose_null = impose_null,
     R = R,
     r = r,
-    engine = "WildBootTests.jl",
-    internal_seed = internal_seed
+    engine = "WildBootTests.jl"
   )
   
   class(res_final) <- "mboottest"

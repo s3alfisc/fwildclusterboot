@@ -1,3 +1,17 @@
+## Submission of 0.13
+
+I have tested the package on: 
+- rhub
+- win devel
+- github actions
+
+and received the following notes: 
+
+* checking for detritus in the temp directory ... NOTE
+Found the following files/directories:
+  'lastMiKTeXException'
+
+
 ## Resubmission of 0.12.1 
 
 Change JuliaConnectoR link in readme to "https://CRAN.R-project.org/package=JuliaConnectoR".

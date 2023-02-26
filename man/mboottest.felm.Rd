@@ -13,7 +13,6 @@ class felm}
   r = rep(0, nrow(R)),
   bootcluster = "max",
   fe = NULL,
-  seed = NULL,
   type = "rademacher",
   impose_null = TRUE,
   p_val_type = "two-tailed",
@@ -66,8 +65,6 @@ supported - see the \code{vignette("fwildclusterboot", package = "fwildclusterbo
 the name of the fixed effect to be projected
 out in the bootstrap. Note: if regression weights are used, fe
 needs to be NULL.}
-
-\item{seed}{An integer. Allows to set a random seed. For details, see below.}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm", "gamma"
@@ -133,9 +130,6 @@ regression coefficients.}
 \item{teststat_boot}{All bootstrap t-statistics.}
 \item{regression}{The regression object used in boottest.}
 \item{call}{Function call of boottest.}
-\item{internal_seed}{The integer value -inherited from set.seed() -
-used within boottest() to set the random seed in either R or Julia.
-If NULL, no internal seed was created.}
 }
 \description{
 \code{mboottest.felm} is a S3 method that allows for fast wild cluster
@@ -145,8 +139,7 @@ Roodman et al., 2019.
 }
 \section{Setting Seeds}{
 
-To guarantee reproducibility, you can either use \verb{boottest()'s} \code{seed}
-function argument, or
+To guarantee reproducibility, you need to
 set a global random seed via \code{set.seed()} when using
 }
 

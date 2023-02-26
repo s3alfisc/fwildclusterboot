@@ -13,6 +13,8 @@ knitr::opts_chunk$set(
 ```{r, warning = FALSE, message = FALSE}
 library(fwildclusterboot)
 library(fixest)
+set.seed(34345)
+dqrng::dqset.seed(123)
 
 data(voters)
 ```

@@ -1,8 +1,14 @@
 test_that("errors and warnings q = 1", {
   
   skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
+  
+  set.seed(2351)
+  dqrng::dqset.seed(2351)
 
-  if(TRUE){
 
     # ------------------------------------------------------------------ #
     # test for warnings and errors
@@ -12,10 +18,7 @@ test_that("errors and warnings q = 1", {
     
     
     for (engine in c("R", "WildBootTests.jl", "R-lean")) {
-      cat(engine, "\n")
-      
-      # for(engine in c("R-lean")){
-      # test boottest function arguments for errors
+
       lm_fit <-
         lm(
           proposition_vote ~ treatment + ideology1 + log_income +
@@ -101,7 +104,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           sign_level = 1.1,
@@ -113,7 +115,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = c("group_id1"),
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           sign_level = 1.1,
@@ -125,7 +126,6 @@ test_that("errors and warnings q = 1", {
           object = felm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           sign_level = 1.1,
@@ -137,7 +137,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           sign_level = -1.1,
@@ -149,7 +148,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = c("group_id1"),
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           sign_level = -1.1,
@@ -161,7 +159,6 @@ test_that("errors and warnings q = 1", {
           object = felm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           sign_level = -1.1,
@@ -176,7 +173,6 @@ test_that("errors and warnings q = 1", {
             object = lm_fit,
             clustid = "group_id1",
             B = 99,
-            seed = 911,
             param = "treatment",
             conf_int = TRUE,
             engine = engine
@@ -187,7 +183,6 @@ test_that("errors and warnings q = 1", {
             object = feols_fit,
             clustid = c("group_id1"),
             B = 99,
-            seed = 911,
             param = "treatment",
             conf_int = TRUE,
             engine = engine
@@ -198,7 +193,6 @@ test_that("errors and warnings q = 1", {
             object = felm_fit,
             clustid = "group_id1",
             B = 99,
-            seed = 911,
             param = "treatment",
             conf_int = TRUE,
             engine = engine
@@ -212,7 +206,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment1",
           conf_int = TRUE,
           engine = engine
@@ -223,7 +216,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = c("group_id1"),
           B = 999,
-          seed = 911,
           param = "treatment1",
           conf_int = TRUE,
           engine = engine
@@ -234,7 +226,6 @@ test_that("errors and warnings q = 1", {
           object = felm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment1",
           conf_int = TRUE,
           engine = engine
@@ -248,7 +239,6 @@ test_that("errors and warnings q = 1", {
             object = lm_fit,
             clustid = "group_id1",
             B = 9999,
-            seed = 911,
             param = "treatment",
             conf_int = TRUE,
             engine = engine
@@ -259,7 +249,6 @@ test_that("errors and warnings q = 1", {
             object = feols_fit,
             clustid = "group_id1",
             B = 9999,
-            seed = 911,
             param = "treatment",
             conf_int = TRUE,
             engine = engine
@@ -270,7 +259,6 @@ test_that("errors and warnings q = 1", {
             object = felm_fit,
             clustid = "group_id1",
             B = 9999,
-            seed = 911,
             param = "treatment",
             conf_int = TRUE,
             engine = engine
@@ -283,7 +271,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 2^10,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           engine = engine
@@ -313,7 +300,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = c("group_id1"),
           B = 999,
-          seed = 911,
           param = "treatment1",
           conf_int = TRUE,
           engine = engine
@@ -378,7 +364,6 @@ test_that("errors and warnings q = 1", {
             object = felm_fit,
             clustid = "group_id1",
             B = 999,
-            seed = 911,
             param = "treatment",
             conf_int = TRUE,
             fe = "Q1_immigration",
@@ -390,7 +375,6 @@ test_that("errors and warnings q = 1", {
             object = feols_fit,
             clustid = c("group_id1"),
             B = 999,
-            seed = 911,
             param = "treatment",
             conf_int = TRUE,
             fe = "Q1_immigration",
@@ -406,7 +390,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           nthreads = -1,
@@ -414,12 +397,7 @@ test_that("errors and warnings q = 1", {
         )
       )
       
-      # expect_warning(boottest(object = lm_fit,
-      #                       clustid =  "group_id1",
-      #                       B = 999, seed = 911,
-      #                       ,
-      #                       conf_int = TRUE,
-      #                       nthreads = 20))
+
       
       # Warning: In boottest.lm(object = lm_fit, clustid = "group_id1...:
       # Asked for 20 threads while the maximum is 8. Set to 8 threads instead.
@@ -430,26 +408,19 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           nthreads = -1,
           engine = engine
         )
       )
-      # expect_warning(boottest(object = feols_fit,
-      #                       clustid =  "group_id1",
-      #                       B = 999, seed = 911,
-      #                       ,
-      #                       conf_int = TRUE,
-      #                       nthreads = 20))
+
       
       expect_error(
         boottest(
           object = felm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           nthreads = -1,
@@ -457,12 +428,7 @@ test_that("errors and warnings q = 1", {
         )
       )
       
-      # expect_warning(boottest(object = felm_fit,
-      #                       clustid =  "group_id1",
-      #                       B = 999, seed = 911,
-      #                       ,
-      #                       conf_int = TRUE,
-      #                       nthreads = 20))
+
       
       # maxiter
       expect_error(
@@ -470,7 +436,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           maxiter = -1,
@@ -482,7 +447,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           maxiter = 0.1,
@@ -495,7 +459,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           maxiter = -1,
@@ -507,7 +470,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           maxiter = 0.1,
@@ -520,7 +482,6 @@ test_that("errors and warnings q = 1", {
           object = felm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           maxiter = -1,
@@ -532,7 +493,6 @@ test_that("errors and warnings q = 1", {
           object = felm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           maxiter = 0.1,
@@ -547,7 +507,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           tol = -1,
@@ -560,7 +519,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           tol = -1,
@@ -573,7 +531,6 @@ test_that("errors and warnings q = 1", {
           object = felm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           tol = -1,
@@ -587,7 +544,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           p_val_type = "equaltail",
@@ -600,7 +556,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           p_val_type = "equaltail",
@@ -613,7 +568,6 @@ test_that("errors and warnings q = 1", {
           object = felm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           p_val_type = "equaltail",
@@ -627,7 +581,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 1000,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           engine = engine
@@ -640,7 +593,6 @@ test_that("errors and warnings q = 1", {
             object = feols_fit,
             clustid = "group_id1",
             B = 1000,
-            seed = 911,
             param = "treatment",
             conf_int = TRUE,
             engine = engine
@@ -653,7 +605,6 @@ test_that("errors and warnings q = 1", {
             object = felm_fit,
             clustid = "group_id1",
             B = 1000,
-            seed = 911,
             param = "treatment",
             conf_int = TRUE,
             engine = engine
@@ -672,7 +623,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           sig_level = 0.1,
@@ -684,7 +634,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           sig_level = 0.1,
@@ -696,7 +645,6 @@ test_that("errors and warnings q = 1", {
           object = felm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = "treatment",
           conf_int = TRUE,
           sig_level = 0.1,
@@ -724,7 +672,6 @@ test_that("errors and warnings q = 1", {
         lm_fit,
         clustid = "group_id1",
         B = 999,
-        seed = 911,
         param = "treatment",
         conf_int = TRUE,
         sign_level = 0.1,
@@ -774,7 +721,6 @@ test_that("errors and warnings q = 1", {
           clustid = "group_id1",
           # guarantees that full enumeration is employed
           B = 2^4 + 1,
-          seed = 1,
           param = "treatment",
           type = "rademacher",
           conf_int = FALSE,
@@ -792,7 +738,6 @@ test_that("errors and warnings q = 1", {
             clustid = "group_id1",
             # guarantees that full enumeration is employed
             B = 2^4 + 1,
-            seed = 1,
             param = "treatment",
             type = "rademacher",
             conf_int = TRUE,
@@ -810,7 +755,6 @@ test_that("errors and warnings q = 1", {
             clustid = "group_id1",
             # guarantees that full enumeration is employed
             B = 2^4 + 1,
-            seed = 1,
             param = "treatment",
             type = "mammen",
             conf_int = TRUE,
@@ -855,7 +799,6 @@ test_that("errors and warnings q = 1", {
           clustid = "group_id1",
           # guarantees that full enumeration is employed
           B = 999,
-          seed = 1,
           param = "treatment",
           type = "rademacher",
           conf_int = TRUE,
@@ -869,7 +812,6 @@ test_that("errors and warnings q = 1", {
           clustid = ~ group_id1 + group_id2,
           # guarantees that full enumeration is employed
           B = 999,
-          seed = 1,
           param = "treatment",
           type = "rademacher",
           conf_int = TRUE,
@@ -886,7 +828,6 @@ test_that("errors and warnings q = 1", {
           bootcluster = ~ group_id1 + group_id2,
           # guarantees that full enumeration is employed
           B = 999,
-          seed = 1,
           param = "treatment",
           type = "rademacher",
           conf_int = TRUE,
@@ -900,7 +841,6 @@ test_that("errors and warnings q = 1", {
       #       clustid = "group_id1",
       #       # guarantees that full enumeration is employed
       #       B = 999,
-      #       seed = 1,
       #       param = "treatment",
       #       type = "rademacher",
       #       conf_int = TRUE,
@@ -922,7 +862,6 @@ test_that("errors and warnings q = 1", {
       #       clustid = "group_id1",
       #       # guarantees that full enumeration is employed
       #       B = 999,
-      #       seed = 1,
       #       param = "treatment",
       #       type = "rademacher",
       #       conf_int = TRUE,
@@ -939,7 +878,6 @@ test_that("errors and warnings q = 1", {
           object = lm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = c("treatment", "ideology1"),
           R = 1,
           conf_int = TRUE,
@@ -951,7 +889,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit,
           clustid = c("group_id1"),
           B = 999,
-          seed = 911,
           param = c("treatment", "ideology1"),
           R = 1,
           conf_int = TRUE,
@@ -963,7 +900,6 @@ test_that("errors and warnings q = 1", {
           object = felm_fit,
           clustid = "group_id1",
           B = 999,
-          seed = 911,
           param = c("treatment", "ideology1"),
           R = 1,
           conf_int = TRUE,
@@ -980,7 +916,6 @@ test_that("errors and warnings q = 1", {
           fe = "Q1_immigration",
           clustid = c("Q1_immigration"),
           B = 999,
-          seed = 911,
           param = c("treatment", "ideology1"),
           R = 1,
           conf_int = TRUE,
@@ -993,7 +928,6 @@ test_that("errors and warnings q = 1", {
           fe = "Q1_immigration",
           clustid = "Q1_immigration",
           B = 999,
-          seed = 911,
           param = c("treatment", "ideology1"),
           R = 1,
           conf_int = TRUE,
@@ -1006,7 +940,6 @@ test_that("errors and warnings q = 1", {
           object = feols_fit_c,
           clustid = c("Q1_immigration"),
           B = 999,
-          seed = 911,
           param = c("Q1_immigration"),
           R = 1,
           conf_int = TRUE,
@@ -1018,7 +951,6 @@ test_that("errors and warnings q = 1", {
           object = felm_fit_c,
           clustid = "Q1_immigration",
           B = 999,
-          seed = 911,
           param = c("Q1_immigration"),
           R = 1,
           conf_int = TRUE,
@@ -1448,12 +1380,8 @@ test_that("errors and warnings q = 1", {
         )
       }
     }
-  } else {
-    message(
-      "test-error_warning.R with q = 1 skipped as JULIA_BINDIR not found."
-    )
+  
     
-  }
  
 })
 
@@ -1462,13 +1390,16 @@ test_that("errors and warnings q = 1", {
 test_that("error warning IV/WRE and q > 1", {
   
   skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
 
   requireNamespace("ivreg")
   requireNamespace("fixest")
   requireNamespace("clubSandwich")
 
   
-  if(TRUE){
     
     # drop all NA values from SchoolingReturns
     #SchoolingReturns <-
@@ -1568,16 +1499,10 @@ test_that("error warning IV/WRE and q > 1", {
       object = feols_fit,
       clustid = c("group_id1"),
       B = 999,
-      seed = 911,
       R = R,
       r = 1:3
     ))
-  } else {
-    message(
-      "test-error_warning.R with q > 1 skipped as JULIA_BINDIR not found."
-    )
     
-  }
 })
 
 test_that("error message when character vars in felm and fixest", {

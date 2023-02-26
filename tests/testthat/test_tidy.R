@@ -1,8 +1,11 @@
 test_that("test tidiers with q = 1", {
 
   skip_on_cran()
-
-  if(TRUE){
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
+  
 
     lm_fit <<-
       lm(
@@ -51,9 +54,7 @@ test_that("test tidiers with q = 1", {
                  tidy(boottest_r)[, 1:4],
                  tolerance = 0.02
     )
-  } else {
-    message("test_tidy.R, q = 1 skipped as 'JULIA_BINDIR' not found.")
-  }
+
   
 })
 
@@ -62,9 +63,12 @@ test_that("test tidiers with q > 1", {
   
   skip_on_cran()
   skip_on_ci()
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
 
-  if(TRUE){
-    
+
   lm_fit <<-
     lm(
       proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -87,15 +91,12 @@ test_that("test tidiers with q > 1", {
       lm_fit,
       R = R,
       B = 999,
-      clustid = "group_id1",
-      seed = 123
-    )
+      clustid = "group_id1"
+  )
 
   expect_equal(tidy(mboottest_julia)$teststat, -14.02107)
   expect_equal(summary(mboottest_julia)$p_val, 0)
 
-  } else {
-    message("test_tidy.R, q > 1 skipped as 'JULIA_BINDIR' not found.")
-  }
+
   
 })

@@ -1,9 +1,11 @@
 test_that("global engine", {
   
   skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"), 
+    message = "skip test as julia installation not found."
+  )
 
-
-  if(TRUE){
     data(voters)
     lm_fit <-
       lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
@@ -60,9 +62,6 @@ test_that("global engine", {
     expect_equal(boot1$engine, "WildBootTests.jl")
     expect_equal(boot2$engine, "WildBootTests.jl")
     expect_equal(boot3$engine, "R")
-  } else {
-    message("test-global_vars.R skipped as JULIA_BINDR not found.")
-  }
   
 })
 
