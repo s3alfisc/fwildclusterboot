@@ -8,6 +8,8 @@
 <!-- badges: start -->
 <!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, ucrt, x86_64, mingw32, , 4, 2.1, 2022, 06, 23, 82513, R, R version 4.2.1 (2022-06-23 ucrt), Funny-Looking Kid-orange.svg?style=flat-square)](commits/master) -->
 
+[![Status at rOpenSci Software Peer
+Review](https://badges.ropensci.org/546_status.svg)](https://github.com/ropensci/software-review/issues/546)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![CRAN
@@ -109,6 +111,17 @@ data(voters)
 lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigration) + as.factor(Q2_defense), data = voters)
 # bootstrap inference via boottest()
 lm_boot <- boottest(lm_fit, clustid = c("group_id1"), B = 9999, param = "treatment")
+#> Warning: Please note that the seeding behavior for random number generation for
+#> `boottest()` has changed with `fwildclusterboot` version 0.13.
+#> 
+#> It will no longer be possible to exactly reproduce results produced by versions
+#> lower than 0.13.
+#> 
+#> If your prior results were produced under sufficiently many bootstrap
+#> iterations, none of your conclusions will change.  For more details about this
+#> change, please read the notes in
+#> [news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
+#> This warning is displayed once per session.
 #> Too guarantee reproducibility, don't forget to set a global random seed
 #> **both** via `set.seed()` and `dqrng::dqset.seed()`.
 #> This message is displayed once every 8 hours.
@@ -143,7 +156,7 @@ citation("fwildclusterboot")
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Misc{,
-#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.12.4.3)},
+#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.13.0)},
 #>     author = {Alexander Fischer and David Roodman},
 #>     year = {2021},
 #>     url = {https://cran.r-project.org/package=fwildclusterboot},
