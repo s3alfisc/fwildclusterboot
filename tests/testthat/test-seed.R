@@ -9,9 +9,6 @@ test_that("seed works for OLS", {
   set.seed(12312)
   dqrng::dqset.seed(9786)
   
-  requireNamespace("fixest")
-  requireNamespace("dqrng")
-  
   data1 <<-
     fwildclusterboot:::create_data(
         N = 5000,

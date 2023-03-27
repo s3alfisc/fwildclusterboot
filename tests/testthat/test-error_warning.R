@@ -13,9 +13,7 @@ test_that("errors and warnings q = 1", {
     # ------------------------------------------------------------------ #
     # test for warnings and errors
     # ------------------------------------------------------------------ #
-    requireNamespace("lfe")
-    requireNamespace("fixest")
-    
+
     
     for (engine in c("R", "WildBootTests.jl", "R-lean")) {
 
@@ -1395,12 +1393,7 @@ test_that("error warning IV/WRE and q > 1", {
     message = "skip test as julia installation not found."
   )
 
-  requireNamespace("ivreg")
-  requireNamespace("fixest")
-  requireNamespace("clubSandwich")
 
-  
-    
     # drop all NA values from SchoolingReturns
     #SchoolingReturns <-
     #  SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
@@ -1507,8 +1500,6 @@ test_that("error warning IV/WRE and q > 1", {
 
 test_that("error message when character vars in felm and fixest", {
 
-  requireNamespace("lfe")
-  requireNamespace("fixest")
 
   N <- 1000
   
@@ -1576,8 +1567,6 @@ test_that("error message when character vars in felm and fixest", {
 
 test_that("error message when character vars in felm and fixest", {
   
-  requireNamespace("lfe")
-  requireNamespace("fixest")
 
   N <- 1000
   
@@ -1647,9 +1636,7 @@ test_that("error message when character vars in felm and fixest", {
 
 test_that("error message when character vars in felm and fixest", {
   
-  requireNamespace("lfe")
-  requireNamespace("fixest")
-  
+
   N <- 1000
   
   real_1000 <- runif(N, 1, 100)

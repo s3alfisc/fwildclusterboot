@@ -1,5 +1,4 @@
 test_that("crosstab works", {
-  if (requireNamespace("data.table")) {
   
     a <- sample(1:10, 10, replace = TRUE)
     b <- sample(1:4, 10, replace = TRUE)
@@ -14,5 +13,5 @@ test_that("crosstab works", {
     ct4 <- fwildclusterboot:::crosstab4(data = data, var1 = var1, var2 = var2)
 
     expect_equal(ct1, ct4, ignore_attr = TRUE)
-  }
+  
 })
