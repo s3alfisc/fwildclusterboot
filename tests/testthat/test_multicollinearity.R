@@ -1,6 +1,4 @@
 test_that("test multicollinearity", {
-
-  
   N <- 1000
   X1 <- rnorm(N)
   X2 <- X1

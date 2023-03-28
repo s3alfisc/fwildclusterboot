@@ -1,8 +1,7 @@
 test_that("test lean cpp boottest", {
-  
   set.seed(96578)
   dqrng::dqset.seed(9568)
-  
+
   data1 <<- fwildclusterboot:::create_data(
     N = 1000,
     N_G1 = 1000,
@@ -16,21 +15,21 @@ test_that("test lean cpp boottest", {
   lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income,
     data = data1
   )
-  feols_fit <-fixest::feols(
+  feols_fit <- fixest::feols(
     proposition_vote ~ treatment + ideology1 + log_income,
     data = data1
   )
-  felm_fit <-lfe::felm(proposition_vote ~ treatment + ideology1 + log_income,
+  felm_fit <- lfe::felm(proposition_vote ~ treatment + ideology1 + log_income,
     data = data1
   )
 
 
   # Test 1: heteroskedadestic wild bootstrap
-  
-  
+
+
   set.seed(96578)
   dqrng::dqset.seed(9568)
-  
+
   boot_lm <- boottest(lm_fit,
     param = "treatment",
     B = 999,
@@ -38,10 +37,10 @@ test_that("test lean cpp boottest", {
     nthreads = 1,
     type = "webb"
   )
-  
+
   set.seed(96578)
   dqrng::dqset.seed(9568)
-  
+
   boot_lm2 <- boottest(lm_fit,
     param = "treatment",
     B = 999,
@@ -52,17 +51,17 @@ test_that("test lean cpp boottest", {
 
   set.seed(96578)
   dqrng::dqset.seed(9568)
-  
+
   boot_feols <- boottest(feols_fit,
     param = "treatment",
     B = 9999,
     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
     nthreads = 1
   )
-  
+
   set.seed(96578)
   dqrng::dqset.seed(9568)
-  
+
   boot_felm <- boottest(felm_fit,
     param = "treatment",
     B = 9999,
@@ -134,7 +133,7 @@ test_that("test lean cpp boottest", {
 
 
   # test oneway clustering
-  
+
   boot_lm1 <- boottest(feols_fit,
     param = "treatment",
     clustid = "group_id1",
@@ -182,74 +181,63 @@ test_that("test lean cpp boottest", {
 
   expect_equal(pval(boot_lm1), pval(boot_lm2), tolerance = 0.05)
   expect_equal(teststat(boot_lm1), teststat(boot_lm2))
-  
-  
+
+
   # test for non-standard hypotheses
-  
 })
 
 
 test_that("r-lean multi-param tests", {
-  
-  
+  N <- 2000
+  seed <- 7896
 
-    N <- 2000
-    seed <- 7896
-    
-    data1 <<- fwildclusterboot:::create_data(
-      N = N,
-      N_G1 = 8,
-      icc1 = 0.5,
-      N_G2 = 20,
-      icc2 = 0.2,
-      numb_fe1 = 10,
-      numb_fe2 = 10,
-      seed = seed
-      ,
-      weights = 1:N / N
+  data1 <<- fwildclusterboot:::create_data(
+    N = N,
+    N_G1 = 8,
+    icc1 = 0.5,
+    N_G2 = 20,
+    icc2 = 0.2,
+    numb_fe1 = 10,
+    numb_fe2 = 10,
+    seed = seed,
+    weights = 1:N / N
+  )
+
+  lm_fit <- lm(proposition_vote ~ treatment + log_income,
+    data = data1
+  )
+
+  boot <- suppressWarnings(
+    boottest(
+      lm_fit,
+      B = 999,
+      param = c("treatment", "log_income"),
+      R = c(-0.1, 0.1),
+      r = -0.1,
+      conf_int = FALSE,
+      ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
     )
-    
-    lm_fit <- lm(proposition_vote ~ treatment + log_income,
-                 data = data1
-    )
-    
-    boot <- suppressWarnings(
-      boottest(
-        lm_fit,
-        B = 999,
-        param = c("treatment", "log_income"),
-        R = c(-0.1, 0.1), 
-        r = -0.1,
-        conf_int = FALSE, 
-        ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
-      )
-    )
-  
-
-    X <- model.matrix(lm_fit)
-    u <- resid(lm_fit)
-    y <- model.response(model.frame(lm_fit))
-    Omega <- diag(tcrossprod(u))
-    tXX <- solve(crossprod(X))
-    N <- nobs(lm_fit)
-    vcov <- tXX %*% (t(X) %*% diag(Omega) %*% X) %*% tXX 
-    R <- c(0, -0.1, 0.1)
-    r <- -0.1
-    beta <- coef(lm_fit)
-    
-    t <- (R %*% beta - r) / sqrt(t(R) %*% vcov %*% R)
-    
-    expect_equal(c(t), teststat(boot))
+  )
 
 
-  
-  
+  X <- model.matrix(lm_fit)
+  u <- resid(lm_fit)
+  y <- model.response(model.frame(lm_fit))
+  Omega <- diag(tcrossprod(u))
+  tXX <- solve(crossprod(X))
+  N <- nobs(lm_fit)
+  vcov <- tXX %*% (t(X) %*% diag(Omega) %*% X) %*% tXX
+  R <- c(0, -0.1, 0.1)
+  r <- -0.1
+  beta <- coef(lm_fit)
+
+  t <- (R %*% beta - r) / sqrt(t(R) %*% vcov %*% R)
+
+  expect_equal(c(t), teststat(boot))
 })
 
 
-test_that("heteroskedastic 11 vs 21 vs 31",{
-  
-
+test_that("heteroskedastic 11 vs 21 vs 31", {
   lm_fit <-
     lm(
       proposition_vote ~ treatment + ideology1 + log_income,
@@ -264,37 +252,34 @@ test_that("heteroskedastic 11 vs 21 vs 31",{
         seed = 12412
       )
     )
-  
-  fit11 <- 
+
+  fit11 <-
     boottest(
-      lm_fit, 
-      param = "treatment", 
-      bootstrap_type = "11", 
-      B = 9999, 
+      lm_fit,
+      param = "treatment",
+      bootstrap_type = "11",
+      B = 9999,
     )
-  
-  fit12 <- 
+
+  fit12 <-
     boottest(
-      lm_fit, 
-      param = "treatment", 
-      bootstrap_type = "21", 
-      B = 9999, 
+      lm_fit,
+      param = "treatment",
+      bootstrap_type = "21",
+      B = 9999,
     )
-  
-  fit13 <- 
+
+  fit13 <-
     boottest(
-      lm_fit, 
-      param = "treatment", 
-      bootstrap_type = "31", 
-      B = 9999, 
+      lm_fit,
+      param = "treatment",
+      bootstrap_type = "31",
+      B = 9999,
     )
-  
+
   expect_equal(teststat(fit11), teststat(fit12))
   expect_equal(teststat(fit12), teststat(fit13))
-  
+
   expect_equal(pval(fit11), pval(fit12), tolerance = 0.02)
   expect_equal(pval(fit12), pval(fit13), tolerance = 0.02)
-  
-  
 })
-
