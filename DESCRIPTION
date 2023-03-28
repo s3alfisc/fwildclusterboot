@@ -18,7 +18,7 @@ Description: Implementation of fast algorithms for wild cluster bootstrap
     inference developed in 'Roodman et al' (2019, 'STATA' Journal,
     <doi:10.1177/1536867X19830877>) and 'MacKinnon et al' (2022), which
     makes it feasible to quickly calculate bootstrap test statistics based
-    on a large number of bootstrap draws even for large samples. Multiple
+    on a large number of bootstrap draws even for large samples.  Multiple
     bootstrap types as described in 'MacKinnon, Nielsen & Webb' (2022) are
     supported.  Further, 'multiway' clustering, regression weights,
     bootstrap weights, fixed effects and 'subcluster' bootstrapping are
@@ -64,3 +64,22 @@ Suggests:
     sandwich,
     testthat (>= 3.0.0),
     tibble
+LinkingTo:
+    Rcpp,
+    RcppArmadillo,
+    RcppEigen
+VignetteBuilder:
+    knitr
+Config/testthat/edition: 3
+Encoding: UTF-8
+Language: en-US
+LazyData: true
+Roxygen: list(markdown = TRUE, roclets = c ("namespace", "rd",
+    "srr::srr_stats_roclet"))
+RoxygenNote: 7.2.1
+SystemRequirements: Version Requirements to run the wild bootstrap through
+    Julia - Julia (>= 1.8), WildBootTests.jl (>=0.9).  Julia is
+    downloadable via the official Julia website
+    (https://julialang.org/downloads/), WildBootTests.jl via Julia's
+    package manager (https://docs.julialang.org/en/v1/stdlib/Pkg/) or its
+    github repository (https://github.com/droodman/WildBootTests.jl)
