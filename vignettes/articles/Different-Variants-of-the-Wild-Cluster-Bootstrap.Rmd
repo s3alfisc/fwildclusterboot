@@ -20,6 +20,7 @@ To run all bootstrap types with the null hypothesis imposed on the bootstrap dat
 ```{r setup, warnings = FALSE}
 library(fwildclusterboot)
 library(modelsummary)
+options(modelsummary_factory_default = "gt")
 
 N <- 1000
 N_G1 <- 17
