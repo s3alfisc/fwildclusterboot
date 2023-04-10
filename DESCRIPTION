@@ -55,6 +55,7 @@ Suggests:
     data.table,
     fabricatr,
     fixest,
+    gt,
     ivreg,
     knitr,
     lfe,
