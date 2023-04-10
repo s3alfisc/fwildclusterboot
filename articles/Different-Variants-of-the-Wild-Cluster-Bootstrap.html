@@ -81,8 +81,7 @@
 
 
 
-<script src="Different-Variants-of-the-Wild-Cluster-Bootstrap_files/accessible-code-block-0.0.1/empty-anchor.js"></script><script src="Different-Variants-of-the-Wild-Cluster-Bootstrap_files/kePrint-0.0.1/kePrint.js"></script><link href="Different-Variants-of-the-Wild-Cluster-Bootstrap_files/lightable-0.0.1/lightable.css" rel="stylesheet">
-<div class="row">
+<script src="Different-Variants-of-the-Wild-Cluster-Bootstrap_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Different Variants of the Wild Cluster Bootstrap</h1>
             
@@ -100,6 +99,7 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/modelsummary/" class="external-link">modelsummary</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>modelsummary_factory_default <span class="op">=</span> <span class="st">"gt"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
 <span><span class="va">N_G1</span> <span class="op">&lt;-</span> <span class="fl">17</span></span>
@@ -158,184 +158,523 @@
 <span>  estimate <span class="op">=</span> <span class="st">"{estimate} ({p.value})"</span>, </span>
 <span>  statistic <span class="op">=</span> <span class="st">"[{conf.low}, {conf.high}]"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<table class="table table" style="width: auto !important; margin-left: auto; margin-right: auto;">
-<thead><tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:center;">
- WCR 11 F&amp;W
-</th>
-<th style="text-align:center;">
- WCR 11 F&amp;R
-</th>
-<th style="text-align:center;">
- WCR 13 F&amp;R
-</th>
-<th style="text-align:center;">
- WCR 31 F&amp;R
-</th>
-<th style="text-align:center;">
- WCR 33 F&amp;R
-</th>
-</tr></thead>
-<tbody>
+<div id="rphqlcagjy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#rphqlcagjy table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#rphqlcagjy thead, #rphqlcagjy tbody, #rphqlcagjy tfoot, #rphqlcagjy tr, #rphqlcagjy td, #rphqlcagjy th {
+  border-style: none;
+}
+
+#rphqlcagjy p {
+  margin: 0;
+  padding: 0;
+}
+
+#rphqlcagjy .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#rphqlcagjy .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#rphqlcagjy .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#rphqlcagjy .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#rphqlcagjy .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#rphqlcagjy .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#rphqlcagjy .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#rphqlcagjy .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#rphqlcagjy .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#rphqlcagjy .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#rphqlcagjy .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rphqlcagjy .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#rphqlcagjy .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#rphqlcagjy .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#rphqlcagjy .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rphqlcagjy .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#rphqlcagjy .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#rphqlcagjy .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#rphqlcagjy .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rphqlcagjy .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#rphqlcagjy .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rphqlcagjy .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#rphqlcagjy .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rphqlcagjy .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rphqlcagjy .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rphqlcagjy .gt_left {
+  text-align: left;
+}
+
+#rphqlcagjy .gt_center {
+  text-align: center;
+}
+
+#rphqlcagjy .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rphqlcagjy .gt_font_normal {
+  font-weight: normal;
+}
+
+#rphqlcagjy .gt_font_bold {
+  font-weight: bold;
+}
+
+#rphqlcagjy .gt_font_italic {
+  font-style: italic;
+}
+
+#rphqlcagjy .gt_super {
+  font-size: 65%;
+}
+
+#rphqlcagjy .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#rphqlcagjy .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#rphqlcagjy .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#rphqlcagjy .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#rphqlcagjy .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#rphqlcagjy .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#rphqlcagjy .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead><tr class="gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id=" "> </th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="WCR 11 F&amp;amp;W">WCR 11 F&amp;W</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="WCR 11 F&amp;amp;R">WCR 11 F&amp;R</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="WCR 13 F&amp;amp;R">WCR 13 F&amp;R</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="WCR 31 F&amp;amp;R">WCR 31 F&amp;R</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="WCR 33 F&amp;amp;R">WCR 33 F&amp;R</th>
+    </tr></thead>
+<tbody class="gt_table_body">
 <tr>
-<td style="text-align:left;">
-1*treatment = 0
-</td>
-<td style="text-align:center;">
-0.006 (0.578)
-</td>
-<td style="text-align:center;">
-0.006 (0.580)
-</td>
-<td style="text-align:center;">
-0.006 (0.601)
-</td>
-<td style="text-align:center;">
-0.006 (0.568)
-</td>
-<td style="text-align:center;">
-0.006 (0.590)
-</td>
+<td headers="" class="gt_row gt_left">1*treatment = 0</td>
+<td headers="WCR 11 F&amp;W" class="gt_row gt_center">0.006 (0.581)</td>
+<td headers="WCR 11 F&amp;R" class="gt_row gt_center">0.006 (0.577)</td>
+<td headers="WCR 13 F&amp;R" class="gt_row gt_center">0.006 (0.590)</td>
+<td headers="WCR 31 F&amp;R" class="gt_row gt_center">0.006 (0.578)</td>
+<td headers="WCR 33 F&amp;R" class="gt_row gt_center">0.006 (0.583)</td>
 </tr>
 <tr>
-<td style="text-align:left;box-shadow: 0px 1px">
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-[−0.016, 0.027]
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
-</td>
+<td headers="" class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;"></td>
+<td headers="WCR 11 F&amp;W" class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;">[-0.016, 0.028]</td>
+<td headers="WCR 11 F&amp;R" class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;"></td>
+<td headers="WCR 13 F&amp;R" class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;"></td>
+<td headers="WCR 31 F&amp;R" class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;"></td>
+<td headers="WCR 33 F&amp;R" class="gt_row gt_center" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;"></td>
 </tr>
 <tr>
-<td style="text-align:left;">
-Num.Obs.
-</td>
-<td style="text-align:center;">
-1000
-</td>
-<td style="text-align:center;">
-1000
-</td>
-<td style="text-align:center;">
-1000
-</td>
-<td style="text-align:center;">
-1000
-</td>
-<td style="text-align:center;">
-1000
-</td>
+<td headers="" class="gt_row gt_left">Num.Obs.</td>
+<td headers="WCR 11 F&amp;W" class="gt_row gt_center">1000</td>
+<td headers="WCR 11 F&amp;R" class="gt_row gt_center">1000</td>
+<td headers="WCR 13 F&amp;R" class="gt_row gt_center">1000</td>
+<td headers="WCR 31 F&amp;R" class="gt_row gt_center">1000</td>
+<td headers="WCR 33 F&amp;R" class="gt_row gt_center">1000</td>
 </tr>
 <tr>
-<td style="text-align:left;">
-R2
-</td>
-<td style="text-align:center;">
-0.022
-</td>
-<td style="text-align:center;">
-0.022
-</td>
-<td style="text-align:center;">
-0.022
-</td>
-<td style="text-align:center;">
-0.022
-</td>
-<td style="text-align:center;">
-0.022
-</td>
+<td headers="" class="gt_row gt_left">R2</td>
+<td headers="WCR 11 F&amp;W" class="gt_row gt_center">0.022</td>
+<td headers="WCR 11 F&amp;R" class="gt_row gt_center">0.022</td>
+<td headers="WCR 13 F&amp;R" class="gt_row gt_center">0.022</td>
+<td headers="WCR 31 F&amp;R" class="gt_row gt_center">0.022</td>
+<td headers="WCR 33 F&amp;R" class="gt_row gt_center">0.022</td>
 </tr>
 <tr>
-<td style="text-align:left;">
-R2 Adj.
-</td>
-<td style="text-align:center;">
-0.020
-</td>
-<td style="text-align:center;">
-0.020
-</td>
-<td style="text-align:center;">
-0.020
-</td>
-<td style="text-align:center;">
-0.020
-</td>
-<td style="text-align:center;">
-0.020
-</td>
+<td headers="" class="gt_row gt_left">R2 Adj.</td>
+<td headers="WCR 11 F&amp;W" class="gt_row gt_center">0.020</td>
+<td headers="WCR 11 F&amp;R" class="gt_row gt_center">0.020</td>
+<td headers="WCR 13 F&amp;R" class="gt_row gt_center">0.020</td>
+<td headers="WCR 31 F&amp;R" class="gt_row gt_center">0.020</td>
+<td headers="WCR 33 F&amp;R" class="gt_row gt_center">0.020</td>
 </tr>
 <tr>
-<td style="text-align:left;">
-AIC
-</td>
-<td style="text-align:center;">
-−150.6
-</td>
-<td style="text-align:center;">
-−150.6
-</td>
-<td style="text-align:center;">
-−150.6
-</td>
-<td style="text-align:center;">
-−150.6
-</td>
-<td style="text-align:center;">
-−150.6
-</td>
+<td headers="" class="gt_row gt_left">AIC</td>
+<td headers="WCR 11 F&amp;W" class="gt_row gt_center">-150.6</td>
+<td headers="WCR 11 F&amp;R" class="gt_row gt_center">-150.6</td>
+<td headers="WCR 13 F&amp;R" class="gt_row gt_center">-150.6</td>
+<td headers="WCR 31 F&amp;R" class="gt_row gt_center">-150.6</td>
+<td headers="WCR 33 F&amp;R" class="gt_row gt_center">-150.6</td>
 </tr>
 <tr>
-<td style="text-align:left;">
-BIC
-</td>
-<td style="text-align:center;">
-−131.0
-</td>
-<td style="text-align:center;">
-−131.0
-</td>
-<td style="text-align:center;">
-−131.0
-</td>
-<td style="text-align:center;">
-−131.0
-</td>
-<td style="text-align:center;">
-−131.0
-</td>
+<td headers="" class="gt_row gt_left">BIC</td>
+<td headers="WCR 11 F&amp;W" class="gt_row gt_center">-131.0</td>
+<td headers="WCR 11 F&amp;R" class="gt_row gt_center">-131.0</td>
+<td headers="WCR 13 F&amp;R" class="gt_row gt_center">-131.0</td>
+<td headers="WCR 31 F&amp;R" class="gt_row gt_center">-131.0</td>
+<td headers="WCR 33 F&amp;R" class="gt_row gt_center">-131.0</td>
 </tr>
 <tr>
-<td style="text-align:left;">
-Log.Lik.
-</td>
-<td style="text-align:center;">
-79.309
-</td>
-<td style="text-align:center;">
-79.309
-</td>
-<td style="text-align:center;">
-79.309
-</td>
-<td style="text-align:center;">
-79.309
-</td>
-<td style="text-align:center;">
-79.309
-</td>
+<td headers="" class="gt_row gt_left">Log.Lik.</td>
+<td headers="WCR 11 F&amp;W" class="gt_row gt_center">79.309</td>
+<td headers="WCR 11 F&amp;R" class="gt_row gt_center">79.309</td>
+<td headers="WCR 13 F&amp;R" class="gt_row gt_center">79.309</td>
+<td headers="WCR 31 F&amp;R" class="gt_row gt_center">79.309</td>
+<td headers="WCR 33 F&amp;R" class="gt_row gt_center">79.309</td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>Given the same <code>seed = 123</code>, both implementations of the <code>11</code> algorithm produce exactly the same p-values. The p-values produced by all other algorithms differ slightly, but are overall very close to each other. Confidence intervals are currently only implemented for the <code>fnw11</code> algorithm.</p>
 <p>Now, which bootstrap type should you run? MNW argue in favor of the “31” or “S” type. In the future, I hope that I’ll provide a more thorough discussion down here =)</p>
 <div class="section level2">
