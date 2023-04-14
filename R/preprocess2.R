@@ -56,9 +56,9 @@ preprocess2.plm <-
     k <- length(na.omit(coef(object)))
 
     # plm specific checks
-    if(object$args$model != "within"){
-      rlang::abort("boottest() only supports estimation of 'within' models
-                  via the plm::plm().",
+    if(!(object$args$model %in% c("pooling", "within", "between"))){
+      rlang::abort("boottest() only supports estimation of 'pooling', 'within'
+                   and 'between' models via the plm::plm() function.",
                   use_cli_format = TRUE
       )
     }
@@ -66,7 +66,7 @@ preprocess2.plm <-
     is_iv <- FALSE
     has_fe <- FALSE
 
-    if(object$args$model == "within"){
+    if(object$args$model %in% c("within", "between")){
       has_fe <- TRUE
     }
 
