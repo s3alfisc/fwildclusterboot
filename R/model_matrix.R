@@ -10,6 +10,35 @@ model_matrix <- function(object, ...) {
   UseMethod("model_matrix")
 }
 
+model_matrix.plm <- function(object, type, collin.rm = TRUE, ...) {
+  #' Enhanced model.matrix for objects of type plm
+  #' @method model_matrix felm
+  #' @param object An object of class plm
+  #' @param collin.rm Should collinear variables be dropped?
+  #' @param type 'rhs' for right-hand side variables, 'fixef' for fixed effects
+  #' @param ... Other arguments
+  #' @noRd
+  
+  dreamerr::check_arg(type, "charin(rhs, fixef)")
+  
+  if (type == "rhs") {
+    mm <- model.matrix(object)
+    if (collin.rm == TRUE) {
+      bn <- names(na.omit(coef(object)))
+      mm <- mm[, colnames(mm) %in% bn]
+    }
+  } else if (type == "fixef") {
+    mm <- index(object)
+    # make sure all fixed effect variables are factors
+    i <- seq_along(mm)
+    mm[, i] <- lapply(i, function(x) {
+      factor(mm[, x])
+    })
+  }
+  
+  mm
+}
+
 
 model_matrix.lm <- function(object, collin.rm = TRUE, ...) {
   #' Enhanced model.matrix for objects of type lm
