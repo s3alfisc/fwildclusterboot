@@ -69,10 +69,16 @@ preprocess2.plm <-
     if(object$args$model %in% c("within", "between")){
       has_fe <- TRUE
     }
-    
+     
     mf <- model.frame(object)
     Y <- as.vector(mf[,1])
-    X <- as.matrix(mf[,2:(k+1)])
+    
+    X <- as.matrix(mf[,2:ncol(mf)])
+    
+    if(object$args$model == "pooling"){
+      X <- cbind(1, X)
+      colnames(X) <- names(coef(object))
+    }
 
     weights <- weights(object)
     if (is.null(weights)) {
