@@ -1,95 +1,91 @@
 #' Fast wild cluster bootstrap inference for object of class plm
 #'
 #' `boottest.plm` is a S3 method that allows for fast wild cluster
-#' bootstrap inference for objects of class plm by  implementing
+#' bootstrap inference for objects of class plm by implementing
 #' fast wild bootstrap algorithms as developed in Roodman et al., 2019 
 #' and MacKinnon, Nielsen & Webb (2022).
 #'
-#' @param object An object of class plm and estimated via `plm::feols()`.
+#' @param object An object of class plm and estimated via `plm::plm()`.
 #' Non-linear models are not supported.
 #' @param clustid A character vector or rhs formula containing the names of the
-#' cluster variables. If NULL,
-#'        a heteroskedasticity-robust (HC1) wild bootstrap is run.
+#' cluster variables. If `NULL`, a heteroskedasticity-robust (HC1) wild bootstrap is run.
 #' @param param A character vector or rhs formula. The name of the regression
 #'        coefficient(s) for which the hypothesis is to be tested
 #' @param B Integer. The number of bootstrap iterations. When the number of
-#'  clusters is low,
-#'        increasing B adds little additional runtime.
+#'  clusters is low, increasing `B` adds little additional runtime.
 #' @param bootcluster A character vector or rhs formula of length 1. Specifies
 #' the bootstrap clustering variable or variables. If more
 #'        than one variable is specified, then bootstrapping is clustered by the
 #'         intersections of
 #'        clustering implied by the listed variables. To mimic the behavior of
-#'        stata's boottest command,
+#'        Stata's boottest command,
 #'        the default is to cluster by the intersection of all the variables
 #'        specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by
-#'         Roodman et al cited below, section 4.2).
-#'        Other options include "min", where bootstrapping is clustered by
+#'         Roodman et al. (2019) cited below, section 4.2).
+#'        Other options include `"min"`, where bootstrapping is clustered by
 #'        the cluster variable with the fewest clusters.
 #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
 #'         supported - see the `vignette("fwildclusterboot", package =
 #'          "fwildclusterboot")` for details.
 #' @param fe A character vector or rhs formula of length one which contains
 #' the name of the fixed effect to be projected
-#'        out in the bootstrap. Note: if regression weights are used, fe
-#'        needs to be NULL.
+#'        out in the bootstrap. Note: if regression weights are used, `fe`
+#'        needs to be `NULL`.
 #' @param sign_level A numeric between 0 and 1 which sets the significance level
-#'        of the inference procedure. E.g. sign_level = 0.05
-#'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
-#' @param conf_int A logical vector. If TRUE, boottest computes confidence
-#'        intervals by test inversion. If FALSE, only the p-value is returned.
-#' @param engine Character scalar. Either "R", "R-lean" or "WildBootTests.jl".
+#'        of the inference procedure. E.g. `sign_level = 0.05`
+#'        returns 0.95% confidence intervals. By default, `sign_level = 0.05`.
+#' @param conf_int A logical vector. If `TRUE`, boottest computes confidence
+#'        intervals by test inversion. If `FALSE`, only the p-value is returned.
+#' @param engine Character scalar. Either `"R"`, `"R-lean"` or `"WildBootTests.jl"`.
 #'  Controls if `boottest()` should run via its native R implementation 
 #'  or `WildBootTests.jl`.
-#'  "R" is the default and implements the cluster bootstrap
-#'  as in Roodman (2019). "WildBootTests.jl" executes the
+#'  `"R"` is the default and implements the cluster bootstrap
+#'  as in Roodman (2019). `"WildBootTests.jl"` executes the
 #'  wild cluster bootstrap via the WildBootTests.jl
 #'  package. For it to run, Julia and WildBootTests.jl need
 #'  to be installed.
-#'  The "R-lean" algorithm is a memory friendly, but less
-#'  performant rcpp-armadillo based implementation of the wild
+#'  The `"R-lean"` algorithm is a memory friendly, but less
+#'  performant rcpp-armadillo-based implementation of the wild
 #'  cluster bootstrap.
-#'  Note that if no cluster is provided, boottest() always
-#'  defaults to the "lean" algorithm. You can set the employed
+#'  Note that if no cluster is provided, `boottest()` always
+#'  defaults to the `"R-lean"` algorithm. You can set the employed
 #'  algorithm globally by using the
 #'  `setBoottest_engine()` function.
 #' @param bootstrap_type Determines which wild cluster bootstrap type should be 
-#' run. Options are "fnw11","11", "13", "31" and "33" for the wild cluster 
-#' bootstrap and "11" and "31" for the heteroskedastic bootstrap.
-#' For more information, see the details section. "fnw11" is the default for 
-#' the cluster bootstrap, which runs a "11" type 
+#' run. Options are `"fnw11"`, `"11"`, `"13"`, `"31"` and `"33"` for the wild cluster 
+#' bootstrap and `"11"` and `"31"` for the heteroskedastic bootstrap.
+#' For more information, see the details section. `"fnw11"` is the default for 
+#' the cluster bootstrap, which runs a `"11"` type 
 #' wild cluster bootstrap via the algorithm outlined in "fast and wild" 
-#' (Roodman et al (2019)). "11" is the default for the heteroskedastic 
+#' (Roodman et al. (2019)). `"11"` is the default for the heteroskedastic 
 #' bootstrap.
 #' @param R Hypothesis Vector giving linear combinations of coefficients.
-#' Must be either NULL or a vector of the same length as `param`. If NULL,
+#' Must be either `NULL` or a vector of the same length as `param`. If `NULL`,
 #' a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
 #' @param beta0 Deprecated function argument. Replaced by function argument 'r'.
 #' @param type character or function. The character string specifies the type
-#'        of boostrap to use: One of "rademacher", "mammen", "norm"
-#'        and "webb". Alternatively, type can be a function(n) for drawing
-#'        wild bootstrap factors. "rademacher" by default.
-#'        For the Rademacher distribution, if the number of replications B
-#'        exceeds
-#'        the number of possible draw ombinations, 2^(#number of clusters),
-#'         then `boottest()`
-#'        will use each possible combination once (enumeration).
+#'        of boostrap to use: One of `"rademacher"`, `"mammen"`, `"norm"`
+#'        and `"webb"`. Alternatively, type can be a function(n) for drawing
+#'        wild bootstrap factors. `"rademacher"` by default.
+#'        For the Rademacher distribution, if the number of replications `B`
+#'        exceeds the number of possible draw ombinations, 2^(#number of clusters),
+#'         then `boottest()` will use each possible combination once (enumeration).
 #' @param impose_null Logical. Controls if the null hypothesis is imposed on
 #'        the bootstrap dgp or not. Null imposed `(WCR)` by default.
-#'        If FALSE, the null is not imposed `(WCU)`
+#'        If `FALSE`, the null is not imposed `(WCU)`
 #' @param p_val_type Character vector of length 1. Type of p-value.
-#'        By default "two-tailed". Other options include "equal-tailed",
-#'        ">" and "<".
+#'        By default `"two-tailed"`. Other options include `"equal-tailed"`,
+#'        `">"` and `"<"`.
 #' @param tol Numeric vector of length 1. The desired accuracy
 #'        (convergence tolerance) used in the root finding procedure to find
 #'         the confidence interval.
-#'        1e-6 by default.
+#'        `1e-6` by default.
 #' @param maxiter Integer. Maximum number of iterations used in the root
 #' finding procedure to find the confidence interval.
-#'        10 by default.
+#'        `10L` by default.
 #' @param nthreads The number of threads. Can be: a) an integer lower than,
 #'                 or equal to, the maximum number of threads; b) 0: meaning
 #'                 all available threads will be used; c) a number strictly
@@ -101,19 +97,19 @@
 #'   cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`.
 #'             The function is purposefully designed to mimic plm's
-#'             [fixest::ssc()] function.
+#'             [plm::vcovSSC()] function.
 #' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
 #' @param floattype Float64 by default. Other option: Float32. Should floating
 #'  point numbers in Julia be represented as 32 or 64 bit? Only relevant when
 #'   'engine = "WildBootTests.jl"'
-#' @param maxmatsize NULL by default = no limit. Else numeric scalar to set
+#' @param maxmatsize `NULL` by default = no limit. Else numeric scalar to set
 #' the maximum size of auxilliary weight matrix (v), in gigabytes. Only
-#' relevant when 'engine = "WildBootTests.jl"'
-#' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request
+#' relevant when `engine = "WildBootTests.jl"`
+#' @param bootstrapc Logical scalar, `FALSE` by default. `TRUE` to request
 #' bootstrap-c instead of bootstrap-t. Only relevant when
-#' 'engine = "WildBootTests.jl"'
-#' @param sampling 'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
-#' used for random number generation (when available). If 'standard', 
+#' `engine = "WildBootTests.jl"`
+#' @param sampling `"dqrng"` or `"standard"`. If `"dqrng"`, the 'dqrng' package is
+#' used for random number generation (when available). If `"standard"`, 
 #' functions from the 'stats' package are used when available. 
 #' This argument is mostly a convenience to control random number generation in 
 #' a wrapper package around `fwildclusterboot`, `wildrwolf`. 
@@ -315,7 +311,7 @@ boottest.plm <- function(object,
                             bootstrap_type = "fnw11",
                             p_val_type = "two-tailed",
                             tol = 1e-6,
-                            maxiter = 10,
+                            maxiter = 10L,
                             sampling = "dqrng",
                             nthreads = getBoottest_nthreads(),
                             ssc = boot_ssc(
