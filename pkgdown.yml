@@ -7,7 +7,8 @@ articles:
   Wild-Cluster-Bootstrap-Inference-in-Stata-Julia-and-Python: Wild-Cluster-Bootstrap-Inference-in-Stata-Julia-and-Python.html
   WildBootTests: WildBootTests.html
   fwildclusterboot: fwildclusterboot.html
-last_built: 2023-04-10T10:43Z
+  Literature: Literature.html
+last_built: 2023-04-15T19:14Z
 urls:
   reference: https://s3alfisc.github.io/fwildclusterboot/reference
   article: https://s3alfisc.github.io/fwildclusterboot/articles
