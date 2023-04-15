@@ -368,6 +368,69 @@ boottest.plm <- function(object,
     engine = engine
   )  
   
+  model <- object$args$model
+  effect <- object$args$effect
+  supported_models <- c("pooling", "within")
+  
+  
+  if(!(model %in% supported_models)){
+    rlang::abort(
+      "The model type is not supported. boottest() only supports 
+      models 'pooling' and 'within' for plm::plm().", 
+      use_cli_format = TRUE
+    )
+  }
+  
+  
+  # plm specific tests: check if fixed effects in index
+  
+  if(!is.null(fe)){
+    
+    if(model == "pooling"){
+      rlang::abort(
+        "The 'fe' argument is not supported for model = 'pooling'.", 
+        use_cli_format = TRUE
+      )
+    } else {
+      
+      index_names <- names(index(object))
+      if(!(fe %in% index_names)){
+        rlang::abort(
+          paste("The fe variable", fe, "is not part of the model index"), 
+          use_cli_format = TRUE
+        )
+      } else {
+        
+        if(effect == "individual"){
+          if(fe != index_names[1]){
+            rlang::abort(
+              paste(
+              "When you specify 'effect=individual', the fe argument
+              can only be equal to", index_names[1], ", but it is", fe, "."),
+            use_cli_format = TRUE
+            )
+          }
+        }
+        
+        if(effect == "time"){
+          if(fe != index_names[2]){
+            rlang::abort(
+              paste(
+                "When you specify 'effect=time', the fe argument
+              can only be equal to", index_names[2], ", but it is", fe, "."),
+              use_cli_format = TRUE
+            )
+          }
+        }
+        
+      }
+      
+    }
+    
+  }
+  
+  
+  
   if(bootstrap_type != "fnw11"){
     if(engine == "R"){
       if(conf_int){
