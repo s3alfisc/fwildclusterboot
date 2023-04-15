@@ -12,7 +12,7 @@ model_matrix <- function(object, ...) {
 
 model_matrix.plm <- function(object, type, collin.rm = TRUE, ...) {
   #' Enhanced model.matrix for objects of type plm
-  #' @method model_matrix felm
+  #' @method model_matrix plm
   #' @param object An object of class plm
   #' @param collin.rm Should collinear variables be dropped?
   #' @param type 'rhs' for right-hand side variables, 'fixef' for fixed effects

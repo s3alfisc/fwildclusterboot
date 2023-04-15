@@ -47,7 +47,7 @@ preprocess2.plm <-
     call <- object$call
     call_env <- object$call_env
     fml <- formula(object)
-    fml <- Formula::as.Formula(fml)
+    #fml <- Formula::as.Formula(fml)
 
     fml_full <- formula(fml, collapse = TRUE)
 
@@ -69,10 +69,10 @@ preprocess2.plm <-
     if(object$args$model %in% c("within", "between")){
       has_fe <- TRUE
     }
-
+    
     mf <- model.frame(object)
-    Y <- mf[,1]
-    X <- mf[,2:(k+1)]
+    Y <- as.vector(mf[,1])
+    X <- as.matrix(mf[,2:(k+1)])
 
     weights <- weights(object)
     if (is.null(weights)) {
@@ -995,6 +995,7 @@ transform_fe <-
 
       # project out fe
       if (engine == "R") {
+        
         if(bootstrap_type != "fnw11"){
           if(fe != clustid_char){
             rlang::abort("Only cluster fixed effects are supported for bootstrap_types
