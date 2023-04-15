@@ -1,0 +1,43 @@
+---
+title: "Literature on the Wild Bootstrap and Clustered Inference in Regression Models"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Literature on the Wild Bootstrap and Clustered Inference in Regression Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
++ [Roodman, MacKinnon, Nielsen & Webb - Fast and Wild Bootstrap Inference (Stata Journal), 2019](https://journals.sagepub.com/doi/pdf/10.1177/1536867X19830877). The paper to read if you think that the performance of `fwildclusterboot` resembles black magic. Introduces `boottest` - the Stata software package `fwildclusterboot` is modeled after - and contains a great introduction to (almost) all features of the wild cluster bootstrap implemented in `fwildclusterboot`. 
+
++ [MacKinnon, Nielsen & Webb - Fast and Reliable Jackknife and Bootstrap
+Methods for Cluster-Robust Inference (Journal of Applied Econometrics), 2023](https://arxiv.org/pdf/2301.04527.pdf) Introduces the "31", "33", "13" bootstrap types, explains how to compute them quickly, and contrasts their empirical performance in Monte Carlo studies. Argues in favour of the "31" method. 
+
++ [MacKinnon - Fast cluster bootstrap methods for linear regression models (Econometrics and Statistics, 2021)](https://www.econstor.eu/bitstream/10419/247206/1/qed-wp-1465.pdf) Discusses computational tricks for speeding up wild cluster bootstrap inference. Further provides a nice discussion of (bootstrap) test inversion to compute confidence intervals. 
+
++ [MacKinnon, Nielsen & Webb - Cluster-robust inference: A guide to empirical practice (Journal of Econometrics), 2023](https://www.sciencedirect.com/science/article/pii/S0304407622000781) Broad introduction and state-of-the-art literature survey of concepts around clustered errors.
+
++ [Webb - Reworking wild bootstrap based inference for clustered errors (forthcoming at Canadian Journal of Economics)](https://ideas.repec.org/p/qed/wpaper/1315.html) Introduces "Webb" weights, which are the recommended wild bootstrap weight type when the number of clusters are very small. 
+
++ [MacKinnon & Webb -  The wild bootstrap for few (treated) clusters (Econometrics Journal), 2018](https://academic.oup.com/ectj/article-abstract/21/2/114/5078969) Introduces the subcluster bootstrap for regressions with few treated clusters (e.g. difference-in-differences regressions with one treated cluster).
+
++ [MacKinnon - Wild Cluster Bootstrap Confidence Intervals (L'Actualité économique), 2015](https://www.erudit.org/en/journals/ae/1900-v1-n1-ae02507/1036912ar.pdf) Discusses how to invert a bootstrap to obtain a confidence interval.
+
++ [Davidson & MacKinnon - Wild bootstrap tests for IV regression (Journal of Economic and Business Statistics), 2010](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221) Introduces the WRE bootstrap / wild cluster bootstrap for instrumental variables regression.
+
++ [Cameron, Gelbach & Miller - Bootstrap-based improvements for inference with clustered errors (Review of Economics and Statistics)](https://www.nber.org/system/files/working_papers/t0344/t0344.pdf) The paper that started the literature on wild cluster bootstrap inference. Simulation evidence that the wild cluster bootstrap works remarkably well when there are only few clusters. 
+
++ [Flachaire - Bootstrapping heteroskedastic regression models: wild bootstrap vs. pairs bootstrap (Computational Statistics & Data Analysis), 2005](https://shs.hal.science/file/index/docid/175910/filename/Flachaire_03a.pdf) Provides simulation evidence of the performance of *heteroskedastic* wild bootstrap procedures. 
+ 
++ [Kline & Santos - A Score Based Approach to Wild Bootstrap Inference (Journal of Econometric Methods), 2012](https://www.nber.org/system/files/working_papers/w16127/w16127.pdf) Introduces a score based wild bootstrap for non-linear regression models. 
+
+
+
+
