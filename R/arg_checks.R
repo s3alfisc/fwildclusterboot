@@ -131,6 +131,30 @@ check_boottest_args_plus <- function(
     }
   }
   
+  
+  if(inherits(object, "plm")){
+    
+    if (!is.null(fe)) {
+      if (fe %in% param) {
+        rlang::abort(paste("The function argument fe =", fe, "is included in the
+                   hypothesis (via the `param` argument). This is not allowed.
+                   Please set fe to another factor variable or NULL."),
+                     call. = FALSE
+        )
+      }
+      if (!(fe %in% names(index(object)))) {
+        rlang::abort(paste(
+          "The fixed effect to be projected out in the bootstrap,",
+          fe, "is not included as a dedicated fixed effect
+                   in the estimated model."
+        ))
+      }
+    }
+    
+    
+  }
+  
+  
   if (((1 - sign_level) * (B + 1)) %% 1 != 0) {
     rlang::inform(
       paste("Note: The bootstrap usually performs best when the confidence", 

@@ -71,8 +71,8 @@ preprocess2.plm <-
     }
 
     mf <- model.frame(object)
-    Y <- model_frame[,1]
-    X <- model_frame[,2:(k+1)]
+    Y <- mf[,1]
+    X <- mf[,2:(k+1)]
 
     weights <- weights(object)
     if (is.null(weights)) {

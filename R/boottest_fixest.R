@@ -485,6 +485,7 @@ boottest.fixest <- function(object,
       type = type,
       engine = engine
     )
+  
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
   
