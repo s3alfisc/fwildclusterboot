@@ -27,8 +27,27 @@ model_matrix.plm <- function(object, type, collin.rm = TRUE, ...) {
       bn <- names(na.omit(coef(object)))
       mm <- mm[, colnames(mm) %in% bn]
     }
+  
   } else if (type == "fixef") {
+    
     mm <- index(object)
+    model <- object$args$model
+    effect <- object$args$effect
+    
+    
+    if(model == "within"){
+      if(effect == "individual"){
+        mm <- mm[,1, drop = FALSE]
+      } else if(effect == "time"){
+        mm <- mm[,2, drop = FALSE]
+      }
+    } else if (model == "between"){
+      mm <- mm[,2, drop = FALSE]
+    } else{
+      stop("The plm object needs to be estimated via 'within' or between 
+           for use with fixed effects. ")
+    }
+    
     # make sure all fixed effect variables are factors
     i <- seq_along(mm)
     mm[, i] <- lapply(i, function(x) {
