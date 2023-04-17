@@ -329,7 +329,7 @@
 #' predictor (independent) data.*
 #' 
 #' @noRd
-# NULL
+NULL
 
 #' NA_standards
 #'
@@ -539,4 +539,4 @@
 #' tests should demonstrate and confirm that forecast errors, confidence
 #' intervals, or equivalent values increase with forecast horizons.
 
-# NULL
+NULL
