@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Academic Papers
 
 + [Roodman, MacKinnon, Nielsen & Webb - Fast and Wild Bootstrap Inference (Stata Journal), 2019](https://journals.sagepub.com/doi/pdf/10.1177/1536867X19830877). The paper to read if you think that the performance of `fwildclusterboot` resembles black magic. Introduces `boottest` - the Stata software package `fwildclusterboot` is modeled after - and contains a great introduction to (almost) all features of the wild cluster bootstrap implemented in `fwildclusterboot`. 
 
@@ -35,9 +36,15 @@ Methods for Cluster-Robust Inference (Journal of Applied Econometrics), 2023](ht
 + [Cameron, Gelbach & Miller - Bootstrap-based improvements for inference with clustered errors (Review of Economics and Statistics)](https://www.nber.org/system/files/working_papers/t0344/t0344.pdf) The paper that started the literature on wild cluster bootstrap inference. Simulation evidence that the wild cluster bootstrap works remarkably well when there are only few clusters. 
 
 + [Flachaire - Bootstrapping heteroskedastic regression models: wild bootstrap vs. pairs bootstrap (Computational Statistics & Data Analysis), 2005](https://shs.hal.science/file/index/docid/175910/filename/Flachaire_03a.pdf) Provides simulation evidence of the performance of *heteroskedastic* wild bootstrap procedures. 
+
++ [MacKinnon - Thirty Years of Heteroskedasticity-Robust Inference, 2012](https://www.econ.queensu.ca/sites/econ.queensu.ca/files/qed_wp_1268.pdf) More simulation evidence on the performance of the HC1-HC3 vcov estimators vs the wild bootstrap.
+
++ [Joshi, Megha, James E. Pustejovsky, and S. Natasha Beretvas - "Cluster wild bootstrapping to handle dependent effect sizes in meta‐analysis with a small number of studies." (Research Synthesis Methods), 2022](https://onlinelibrary.wiley.com/doi/abs/10.1002/jrsm.1554) Nice simulations on the empirical performance of the wild cluster bootstrap for tests of multiple joint hypotheses. 
  
 + [Kline & Santos - A Score Based Approach to Wild Bootstrap Inference (Journal of Econometric Methods), 2012](https://www.nber.org/system/files/working_papers/w16127/w16127.pdf) Introduces a score based wild bootstrap for non-linear regression models. 
 
+## Links, blogposts, etc
 
+[Stata blog - Heteroskedasticity robust standard errors: Some practical considerations](https://blog.stata.com/2022/10/06/heteroskedasticity-robust-standard-errors-some-practical-considerations/) Extensive simulations on small sample properties of HC estimators, inlcuding the wild bootstrap
 
 
