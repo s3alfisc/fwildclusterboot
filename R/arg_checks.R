@@ -382,7 +382,7 @@ r_algo_checks <- function(R, p_val_type, conf_int, B) {
   
   
   if (conf_int == TRUE || is.null(conf_int)) {
-    if (B <= 100) {
+    if (B < 100) {
       rlang::abort(
         "The function argument B is smaller than 100. The number of bootstrap
           iterations needs to be 100 or higher in order to guarantee that the
