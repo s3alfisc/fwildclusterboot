@@ -1,95 +1,91 @@
-#' Fast wild cluster bootstrap inference for object of class fixest
+#' Fast wild cluster bootstrap inference for object of class plm
 #'
-#' `boottest.fixest` is a S3 method that allows for fast wild cluster
-#' bootstrap inference for objects of class fixest by  implementing
+#' `boottest.plm` is a S3 method that allows for fast wild cluster
+#' bootstrap inference for objects of class plm by implementing
 #' fast wild bootstrap algorithms as developed in Roodman et al., 2019 
 #' and MacKinnon, Nielsen & Webb (2022).
 #'
-#' @param object An object of class fixest and estimated via `fixest::feols()`.
+#' @param object An object of class plm and estimated via `plm::plm()`.
 #' Non-linear models are not supported.
 #' @param clustid A character vector or rhs formula containing the names of the
-#' cluster variables. If NULL,
-#'        a heteroskedasticity-robust (HC1) wild bootstrap is run.
+#' cluster variables. If `NULL`, a heteroskedasticity-robust (HC1) wild bootstrap is run.
 #' @param param A character vector or rhs formula. The name of the regression
 #'        coefficient(s) for which the hypothesis is to be tested
 #' @param B Integer. The number of bootstrap iterations. When the number of
-#'  clusters is low,
-#'        increasing B adds little additional runtime.
+#'  clusters is low, increasing `B` adds little additional runtime.
 #' @param bootcluster A character vector or rhs formula of length 1. Specifies
 #' the bootstrap clustering variable or variables. If more
 #'        than one variable is specified, then bootstrapping is clustered by the
 #'         intersections of
 #'        clustering implied by the listed variables. To mimic the behavior of
-#'        stata's boottest command,
+#'        Stata's boottest command,
 #'        the default is to cluster by the intersection of all the variables
 #'        specified via the `clustid` argument,
 #'        even though that is not necessarily recommended (see the paper by
-#'         Roodman et al cited below, section 4.2).
-#'        Other options include "min", where bootstrapping is clustered by
+#'         Roodman et al. (2019) cited below, section 4.2).
+#'        Other options include `"min"`, where bootstrapping is clustered by
 #'        the cluster variable with the fewest clusters.
 #'        Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
 #'         supported - see the `vignette("fwildclusterboot", package =
 #'          "fwildclusterboot")` for details.
 #' @param fe A character vector or rhs formula of length one which contains
 #' the name of the fixed effect to be projected
-#'        out in the bootstrap. Note: if regression weights are used, fe
-#'        needs to be NULL.
+#'        out in the bootstrap. Note: if regression weights are used, `fe`
+#'        needs to be `NULL`.
 #' @param sign_level A numeric between 0 and 1 which sets the significance level
-#'        of the inference procedure. E.g. sign_level = 0.05
-#'        returns 0.95% confidence intervals. By default, sign_level = 0.05.
-#' @param conf_int A logical vector. If TRUE, boottest computes confidence
-#'        intervals by test inversion. If FALSE, only the p-value is returned.
-#' @param engine Character scalar. Either "R", "R-lean" or "WildBootTests.jl".
+#'        of the inference procedure. E.g. `sign_level = 0.05`
+#'        returns 0.95% confidence intervals. By default, `sign_level = 0.05`.
+#' @param conf_int A logical vector. If `TRUE`, boottest computes confidence
+#'        intervals by test inversion. If `FALSE`, only the p-value is returned.
+#' @param engine Character scalar. Either `"R"`, `"R-lean"` or `"WildBootTests.jl"`.
 #'  Controls if `boottest()` should run via its native R implementation 
 #'  or `WildBootTests.jl`.
-#'  "R" is the default and implements the cluster bootstrap
-#'  as in Roodman (2019). "WildBootTests.jl" executes the
+#'  `"R"` is the default and implements the cluster bootstrap
+#'  as in Roodman (2019). `"WildBootTests.jl"` executes the
 #'  wild cluster bootstrap via the WildBootTests.jl
 #'  package. For it to run, Julia and WildBootTests.jl need
 #'  to be installed.
-#'  The "R-lean" algorithm is a memory friendly, but less
-#'  performant rcpp-armadillo based implementation of the wild
+#'  The `"R-lean"` algorithm is a memory friendly, but less
+#'  performant rcpp-armadillo-based implementation of the wild
 #'  cluster bootstrap.
-#'  Note that if no cluster is provided, boottest() always
-#'  defaults to the "lean" algorithm. You can set the employed
+#'  Note that if no cluster is provided, `boottest()` always
+#'  defaults to the `"R-lean"` algorithm. You can set the employed
 #'  algorithm globally by using the
 #'  `setBoottest_engine()` function.
 #' @param bootstrap_type Determines which wild cluster bootstrap type should be 
-#' run. Options are "fnw11","11", "13", "31" and "33" for the wild cluster 
-#' bootstrap and "11" and "31" for the heteroskedastic bootstrap.
-#' For more information, see the details section. "fnw11" is the default for 
-#' the cluster bootstrap, which runs a "11" type 
+#' run. Options are `"fnw11"`, `"11"`, `"13"`, `"31"` and `"33"` for the wild cluster 
+#' bootstrap and `"11"` and `"31"` for the heteroskedastic bootstrap.
+#' For more information, see the details section. `"fnw11"` is the default for 
+#' the cluster bootstrap, which runs a `"11"` type 
 #' wild cluster bootstrap via the algorithm outlined in "fast and wild" 
-#' (Roodman et al (2019)). "11" is the default for the heteroskedastic 
+#' (Roodman et al. (2019)). `"11"` is the default for the heteroskedastic 
 #' bootstrap.
 #' @param R Hypothesis Vector giving linear combinations of coefficients.
-#' Must be either NULL or a vector of the same length as `param`. If NULL,
+#' Must be either `NULL` or a vector of the same length as `param`. If `NULL`,
 #' a vector of ones of length param.
 #' @param r A numeric. Shifts the null hypothesis
 #'        H0: param = r vs H1: param != r
 #' @param beta0 Deprecated function argument. Replaced by function argument 'r'.
 #' @param type character or function. The character string specifies the type
-#'        of boostrap to use: One of "rademacher", "mammen", "norm"
-#'        and "webb". Alternatively, type can be a function(n) for drawing
-#'        wild bootstrap factors. "rademacher" by default.
-#'        For the Rademacher distribution, if the number of replications B
-#'        exceeds
-#'        the number of possible draw ombinations, 2^(#number of clusters),
-#'         then `boottest()`
-#'        will use each possible combination once (enumeration).
+#'        of boostrap to use: One of `"rademacher"`, `"mammen"`, `"norm"`
+#'        and `"webb"`. Alternatively, type can be a function(n) for drawing
+#'        wild bootstrap factors. `"rademacher"` by default.
+#'        For the Rademacher distribution, if the number of replications `B`
+#'        exceeds the number of possible draw ombinations, 2^(#number of clusters),
+#'         then `boottest()` will use each possible combination once (enumeration).
 #' @param impose_null Logical. Controls if the null hypothesis is imposed on
 #'        the bootstrap dgp or not. Null imposed `(WCR)` by default.
-#'        If FALSE, the null is not imposed `(WCU)`
+#'        If `FALSE`, the null is not imposed `(WCU)`
 #' @param p_val_type Character vector of length 1. Type of p-value.
-#'        By default "two-tailed". Other options include "equal-tailed",
-#'        ">" and "<".
+#'        By default `"two-tailed"`. Other options include `"equal-tailed"`,
+#'        `">"` and `"<"`.
 #' @param tol Numeric vector of length 1. The desired accuracy
 #'        (convergence tolerance) used in the root finding procedure to find
 #'         the confidence interval.
-#'        1e-6 by default.
+#'        `1e-6` by default.
 #' @param maxiter Integer. Maximum number of iterations used in the root
 #' finding procedure to find the confidence interval.
-#'        10 by default.
+#'        `10L` by default.
 #' @param nthreads The number of threads. Can be: a) an integer lower than,
 #'                 or equal to, the maximum number of threads; b) 0: meaning
 #'                 all available threads will be used; c) a number strictly
@@ -100,20 +96,20 @@
 #'   adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none",
 #'   cluster.adj = "TRUE", cluster.df = "conventional"`.
 #'             You can find more details in the help file for `boot_ssc()`.
-#'             The function is purposefully designed to mimic fixest's
-#'             [fixest::ssc()] function.
+#'             The function is purposefully designed to mimic plm's
+#'             [plm::vcovSSC()] function.
 #' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
 #' @param floattype Float64 by default. Other option: Float32. Should floating
 #'  point numbers in Julia be represented as 32 or 64 bit? Only relevant when
 #'   'engine = "WildBootTests.jl"'
-#' @param maxmatsize NULL by default = no limit. Else numeric scalar to set
+#' @param maxmatsize `NULL` by default = no limit. Else numeric scalar to set
 #' the maximum size of auxilliary weight matrix (v), in gigabytes. Only
-#' relevant when 'engine = "WildBootTests.jl"'
-#' @param bootstrapc Logical scalar, FALSE by default. TRUE  to request
+#' relevant when `engine = "WildBootTests.jl"`
+#' @param bootstrapc Logical scalar, `FALSE` by default. `TRUE` to request
 #' bootstrap-c instead of bootstrap-t. Only relevant when
-#' 'engine = "WildBootTests.jl"'
-#' @param sampling 'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
-#' used for random number generation (when available). If 'standard', 
+#' `engine = "WildBootTests.jl"`
+#' @param sampling `"dqrng"` or `"standard"`. If `"dqrng"`, the 'dqrng' package is
+#' used for random number generation (when available). If `"standard"`, 
 #' functions from the 'stats' package are used when available. 
 #' This argument is mostly a convenience to control random number generation in 
 #' a wrapper package around `fwildclusterboot`, `wildrwolf`. 
@@ -151,7 +147,7 @@
 #' \item{nthreads}{The number of threads employed.}
 #'
 #' @export
-#' @method boottest fixest
+#' @method boottest plm
 #'
 #' @section Setting Seeds:
 #' To guarantee reproducibility, you need to 
@@ -218,44 +214,48 @@
 
 #' @examples
 #' \dontrun{
-#' requireNamespace("fixest")
-#' requireNamespace("fwildclusterboot")
-#' data(voters)
-#' feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income,
-#'  fixef = "Q1_immigration",
-#'  data = voters
+#' library("plm")
+#' data("EmplUK", package="plm")
+#' 
+#' E <- pdata.frame(EmplUK, index=c("firm","year"), drop.index=TRUE, row.names=TRUE)
+#' head(E)
+#' 
+#' plm_fit <- plm(inv~value+capital, data = Grunfeld, model = "within")
+#' 
+#' boot1 <- boottest(plm_fit,
+#'                   B = 9999,
+#'                   param = "value",
+#'                   clustid = "firm"
 #' )
-#' boot1 <- boottest(feols_fit,
-#'  B = 9999,
-#'  param = "treatment",
-#'  clustid = "group_id1"
+#' 
+#' boot2 <- boottest(plm_fit,
+#'                   B = 9999,
+#'                   param = "value",
+#'                   clustid = c("firm", "year")
 #' )
-#' boot2 <- boottest(feols_fit,
-#'  B = 9999,
-#'  param = "treatment",
-#'  clustid = c("group_id1", "group_id2")
+#' 
+#' boot3 <- boottest(plm_fit,
+#'                   B = 9999,
+#'                   param = "value",
+#'                   clustid = c("firm", "year"),
+#'                   fe = "firm"
 #' )
-#' boot3 <- boottest(feols_fit,
-#'   B = 9999,
-#'   param = "treatment",
-#'   clustid = c("group_id1", "group_id2"),
-#'   fe = "Q1_immigration"
-#' )
-#' boot4 <- boottest(feols_fit,
-#'   B = 9999,
-#'   param = "treatment",
-#'   clustid = c("group_id1", "group_id2"),
-#'   fe = "Q1_immigration",
-#'   sign_level = 0.2,
-#'   r = 2
+#' 
+#' boot4 <- boottest(plm_fit,
+#'                   B = 9999,
+#'                   param = "value",
+#'                   clustid = c("firm", "year"),
+#'                   fe = "firm",
+#'                   sign_level = 0.2,
+#'                   r = 2
 #' )
 #' # test treatment + ideology1 = 2
-#' boot5 <- boottest(feols_fit,
-#'   B = 9999,
-#'   clustid = c("group_id1", "group_id2"),
-#'   param = c("treatment", "ideology1"),
-#'   R = c(1, 1),
-#'   r = 2
+#' boot5 <- boottest(plm_fit,
+#'                   B = 9999,
+#'                   clustid = c("firm", "year"),
+#'                   param = c("value", "capital"),
+#'                   R = c(1, 1),
+#'                   r = 2
 #' )
 #' summary(boot1)
 #' print(boot1)
@@ -268,33 +268,34 @@
 #' # run different bootstrap types following MacKinnon, Nielsen & Webb (2022):
 #' 
 #' # default: the fnw algorithm
-#' boot_fnw11 <- boottest(lm_fit,
-#'   B = 9999,
-#'   param = "treatment",
-#'   clustid = "group_id1", 
-#'   bootstrap_type = "fnw11"
+#' boot_fnw11 <- boottest(plm_fit,
+#'                        B = 9999,
+#'                        param = "value",
+#'                        clustid = "firm",
+#'                        bootstrap_type = "fnw11"
 #' )
-#'
-#' # WCR 31 
-#'boot_WCR31 <- boottest(lm_fit,
-#'   B = 9999,
-#'   param = "treatment",
-#'   clustid = "group_id1",
-#'   bootstrap_type = "31"
+#' 
+#' # WCR 31
+#' boot_WCR31 <- boottest(plm_fit,
+#'                        B = 9999,
+#'                        param = "value",
+#'                        clustid = "firm",
+#'                        bootstrap_type = "31"
 #' )
-#'
-#' # WCU33 
-#'boot_WCR31 <- boottest(lm_fit,
-#'   B = 9999,
-#'   param = "treatment",
-#'   clustid = "group_id1",
-#'   bootstrap_type = "33", 
-#'   impose_null = FALSE
+#' 
+#' # WCU33
+#' boot_WCR31 <- boottest(plm_fit,
+#'                        B = 9999,
+#'                        param = "value",
+#'                        clustid = "firm",
+#'                        bootstrap_type = "33",
+#'                        impose_null = FALSE
 #' )
+#' 
 #' 
 #' }
 #'
-boottest.fixest <- function(object,
+boottest.plm <- function(object,
                             param,
                             B,
                             clustid = NULL,
@@ -310,7 +311,7 @@ boottest.fixest <- function(object,
                             bootstrap_type = "fnw11",
                             p_val_type = "two-tailed",
                             tol = 1e-6,
-                            maxiter = 10,
+                            maxiter = 10L,
                             sampling = "dqrng",
                             nthreads = getBoottest_nthreads(),
                             ssc = boot_ssc(
@@ -330,7 +331,7 @@ boottest.fixest <- function(object,
   dreamerr::validate_dots(stop = TRUE)
   
   # Step 1: check arguments of feols call
-  check_arg(object, "MBT class(fixest)")
+  check_arg(object, "MBT class(plm)")
   check_arg(clustid, "NULL | character scalar | character vector | formula")
   check_arg(param, "MBT scalar character | character vector | formula")
   check_arg(B, "MBT scalar integer GT{99}")
@@ -359,9 +360,72 @@ boottest.fixest <- function(object,
   
   # remind packages users to set a global seed
   inform_seed(
-    frequency_id = "seed-reminder-boot-fixest", 
+    frequency_id = "seed-reminder-boot-plm", 
     engine = engine
   )  
+  
+  model <- object$args$model
+  effect <- object$args$effect
+  supported_models <- c("pooling", "within")
+  
+  
+  if(!(model %in% supported_models)){
+    rlang::abort(
+      "The model type is not supported. boottest() only supports 
+      models 'pooling' and 'within' for plm::plm().", 
+      use_cli_format = TRUE
+    )
+  }
+  
+  
+  # plm specific tests: check if fixed effects in index
+  
+  if(!is.null(fe)){
+    
+    if(model == "pooling"){
+      rlang::abort(
+        "The 'fe' argument is not supported for model = 'pooling'.", 
+        use_cli_format = TRUE
+      )
+    } else {
+      
+      index_names <- names(index(object))
+      if(!(fe %in% index_names)){
+        rlang::abort(
+          paste("The fe variable", fe, "is not part of the model index"), 
+          use_cli_format = TRUE
+        )
+      } else {
+        
+        if(effect == "individual"){
+          if(fe != index_names[1]){
+            rlang::abort(
+              paste(
+              "When you specify 'effect=individual', the fe argument
+              can only be equal to", index_names[1], ", but it is", fe, "."),
+            use_cli_format = TRUE
+            )
+          }
+        }
+        
+        if(effect == "time"){
+          if(fe != index_names[2]){
+            rlang::abort(
+              paste(
+                "When you specify 'effect=time', the fe argument
+              can only be equal to", index_names[2], ", but it is", fe, "."),
+              use_cli_format = TRUE
+            )
+          }
+        }
+        
+      }
+      
+    }
+    
+  }
+  
+  
   
   if(bootstrap_type != "fnw11"){
     if(engine == "R"){
@@ -388,6 +452,8 @@ boottest.fixest <- function(object,
     )
   }
   
+  # parse formula inputs to strings
+  
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
@@ -404,20 +470,8 @@ boottest.fixest <- function(object,
     fe <- attr(terms(fe), "term.labels")
   }
   
-  
-  if (!is.null(object$fixef_removed)) {
-    rlang::abort(
-      paste(
-        "feols() removes fixed effects with the following values: ",
-        object$fixef_removed,
-        ". Currently, boottest()'s internal pre-processing does not
-        account for this deletion. Therefore, please exclude such fixed
-        effects prior to estimation with feols(). You can find them listed
-        under '$fixef_removed' of your fixest object."
-      ), 
-      use_cli_format = TRUE
-    )
-  }
+  # drop singleton fixed effects? How are these handled 
+  # by plm? 
   
   # --------------------------------------------
   
@@ -454,8 +508,6 @@ boottest.fixest <- function(object,
     )
   }
   
-  # check_params_in_model(object = object, param = param)
-  
   check_boottest_args_plus(
     object = object,
     R = R_long,
@@ -466,7 +518,7 @@ boottest.fixest <- function(object,
   )
   
   # preprocess the data: Y, X, weights, fixed_effect
-  preprocess <- preprocess2.fixest(
+  preprocess <- preprocess2.plm(
     object = object,
     clustid = clustid,
     R = R_long,
@@ -549,8 +601,8 @@ boottest.fixest <- function(object,
       sampling = sampling, 
       bootcluster = bootcluster
       
-  )
-    
+    )
+  
   # collect results
   res_final <- list(
     point_estimate = point_estimate,
@@ -579,8 +631,11 @@ boottest.fixest <- function(object,
     boot_coef = boot_coef
   )
   
-  
   class(res_final) <- "boottest"
   invisible(res_final)
+  
 }
-
+  
+  
+  
+  
