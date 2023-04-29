@@ -4,6 +4,11 @@ Version: 0.13.2
 Authors@R: c(
     person("Alexander", "Fischer", , "alexander-fischer1801@t-online.de", role = c("aut", "cre")),
     person("David", "Roodman", role = "aut"),
+    person("Megha", "Joshi", 
+            role = "rev", 
+            comment = "Megha reviewed the package (v. 0.13) for ropensci 
+                      , see <https://github.com/ropensci/software-review/issues/546>"
+          ),
     person("Achim", "Zeileis", role = "ctb",
            comment = "Author of included sandwich fragments"),
     person("Nathaniel", "Graham", role = "ctb",
