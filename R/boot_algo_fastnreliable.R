@@ -29,6 +29,7 @@
 #' @param impose_null logical scalar. Should the null be imposed on the
 #' bootstrap dgp or not?
 #' @importFrom MASS ginv
+#' @importFrom Matrix crossprod tcrossprod t Matrix
 #' @importFrom summclust vcov_CR3J
 #' @return A list of bootstrap results. 
 #' @noRd
@@ -63,6 +64,8 @@ boot_algo_fastnreliable <- function(
   }
 
   X <- preprocessed_object$X
+  # convert to sparse matrix
+  X <- Matrix::Matrix(X)
   y <- preprocessed_object$Y
   R <- preprocessed_object$R0
   cluster_df <- preprocessed_object$clustid
@@ -97,12 +100,12 @@ boot_algo_fastnreliable <- function(
   # precompute a range of other objects
   tXgXg <- lapply(
     seq_along(1:G),
-    function(g) crossprod(X_list[[g]])
+    function(g) Matrix::crossprod(X_list[[g]])
   )
 
   tXgyg <- lapply(
     seq_along(1:G),
-    function(g) t(X_list[[g]]) %*% y_list[[g]]
+    function(g) Matrix::t(X_list[[g]]) %*% y_list[[g]]
   )
 
 
@@ -126,22 +129,22 @@ boot_algo_fastnreliable <- function(
 
     tX1gX1g <- lapply(
       seq_along(1:G),
-      function(g) crossprod(X1_list[[g]])
+      function(g) Matrix::crossprod(X1_list[[g]])
     )
 
     tX1gyg <- lapply(
       seq_along(1:G),
-      function(g) t(X1_list[[g]]) %*% y_list[[g]]
+      function(g) Matrix::t(X1_list[[g]]) %*% y_list[[g]]
     )
 
     tXgX1g <- lapply(
       seq_along(1:G),
-      function(g) t(X_list[[g]]) %*% X1_list[[g]]
+      function(g) Matrix::t(X_list[[g]]) %*% X1_list[[g]]
     )
 
     tX1X1 <- Reduce("+", tX1gX1g) # crossprod(X1)
     tX1y <- Reduce("+", tX1gyg) #t(X1) %*% y
-    tX1X1inv <- solve(tX1X1)
+    tX1X1inv <- Matrix::solve(tX1X1)
 
   }
 
@@ -159,19 +162,19 @@ boot_algo_fastnreliable <- function(
 
     inv_tXX_tXgXg <- lapply(
       1:G,
-      function(x) MASS::ginv(tXX - tXgXg[[x]])
+      function(x) solve(tXX - tXgXg[[x]])
     )
 
     beta_1g_tilde <- lapply(
       1:G,
-      function(g) MASS::ginv(tX1X1 - tX1gX1g[[g]]) %*% (tX1y - tX1gyg[[g]])
+      function(g) solve(tX1X1 - tX1gX1g[[g]]) %*% (tX1y - tX1gyg[[g]])
     )
 
   } else if(bootstrap_type == "WCU3x"){
 
     beta_g_hat <- lapply(
       1:G,
-      function(g) MASS::ginv(tXX - tXgXg[[g]]) %*% (tXy - tXgyg[[g]])
+      function(g) solve(tXX - tXgXg[[g]]) %*% (tXy - tXgyg[[g]])
     )
 
   }
@@ -186,7 +189,7 @@ boot_algo_fastnreliable <- function(
     if(is.null(inv_tXX_tXgXg)){
       inv_tXX_tXgXg <- lapply(
         1:G,
-        function(x) MASS::ginv(tXX - tXgXg[[x]])
+        function(x) solve(tXX - tXgXg[[x]])
       )
     }
   }
@@ -219,25 +222,26 @@ boot_algo_fastnreliable <- function(
   
   if(crv_type == "crv1"){
     
-    H <- matrix(NA, G, G)
+    H <- Matrix::Matrix(NA, G, G)
     for(g in 1:G){
       for(h in 1:G){
-        H[g,h] <- R %*% tXXinv %*% tXgXg[[g]] %*% tXXinv %*% scores_list[[h]]
+        H[g,h] <- 
+          (R %*% tXXinv %*% tXgXg[[g]] %*% tXXinv %*% scores_list[[h]])
       }
     }
-  
+    
     denom <- boot_algo3_crv1_denom(
       B = B,
       G = G,
       ssc =  small_sample_correction,
-      H = H,
-      Cg = Cg,
+      H = as.matrix(H),
+      Cg = as.matrix(Cg),
       v = v,
       cores = nthreads
     )
     
 
-    t_boot <- c(numer / sqrt(c(denom)))
+    t_boot <- c(as.matrix(numer) / sqrt(c(denom)))
     
   } else if (crv_type == "crv3"){
   
@@ -250,7 +254,7 @@ boot_algo_fastnreliable <- function(
       v_ <- v[,b]
       
       for(g in 1:G){
-        scores_g_boot[g,] <- scores_list[[g]] * v_[g] #* v[g, b]
+        scores_g_boot[g,] <- c(as.matrix(scores_list[[g]])) * v_[g] #* v[g, b]
       }
       
       # numerator (both for WCR, WCU)
@@ -276,7 +280,7 @@ boot_algo_fastnreliable <- function(
             )
         )[which(R == 1)]
       
-      t_boot[b] <- c(delta_b_star)[which(R == 1)] / se[b]
+      t_boot[b] <- c(as.matrix(delta_b_star))[which(R == 1)] / se[b]
       
     }
 
@@ -287,8 +291,8 @@ boot_algo_fastnreliable <- function(
         
     score_all <- lapply(
       1:G, function(g) 
-        tcrossprod(
-          crossprod(X_list[[g]], y_list[[g]] - X_list[[g]] %*% beta_hat)
+        Matrix::tcrossprod(
+          Matrix::crossprod(X_list[[g]], y_list[[g]] - X_list[[g]] %*% beta_hat)
         )
     )
     meat <- Reduce("+", score_all)
@@ -320,6 +324,9 @@ boot_algo_fastnreliable <- function(
 
 
   t_boot <- t_boot[-1]
+  
+  t_stat <- as.vector(t_stat)
+  t_boot <- as.vector(t_boot)
 
   p_val <-
     get_bootstrap_pvalue(
@@ -329,9 +336,9 @@ boot_algo_fastnreliable <- function(
     )
 
   res <- list(
-    p_val = p_val,
-    t_stat = t_stat,
-    t_boot = t_boot,
+    p_val = as.matrix(p_val),
+    t_stat = as.matrix(t_stat),
+    t_boot = as.matrix(t_boot),
     B = B,
     R0 = R,
     param = param,
