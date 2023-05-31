@@ -60,7 +60,7 @@ model_matrix.felm <- function(object, type, collin.rm = TRUE, ...) {
 
 
 model_matrix.fixest <-
-  function(object, type, collin.rm = TRUE, ...) {
+  function(object, type, collin.rm = TRUE, sparse = FALSE, ...) {
     #' Enhanced model.matrix for objects of type fixest
     #' @method model_matrix fixest
     #' @param object An object of class fixest
