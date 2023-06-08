@@ -1,5 +1,5 @@
 #' WRE13, WRE33, WRU13 and WRU33 bootstraps as in MNW (2022) "Fast and
-#' reliable" and MacKinnon "Fast Cluster Bootstraps" 
+#' reliable" and MacKinnon "Fast Cluster Bootstraps"
 #' (Econometrics & Statistics, 2021)
 #'
 #' @param preprocessed_object A list: output of the preprocess2 function.
@@ -31,7 +31,7 @@
 #' @importFrom MASS ginv
 #' @importFrom Matrix crossprod tcrossprod t Matrix
 #' @importFrom summclust vcov_CR3J
-#' @return A list of bootstrap results. 
+#' @return A list of bootstrap results.
 #' @noRd
 
 
@@ -49,7 +49,7 @@ boot_algo_fastnreliable <- function(
   full_enumeration,
   small_sample_correction,
   object,
-  impose_null, 
+  impose_null,
   sampling){
 
 
@@ -64,13 +64,17 @@ boot_algo_fastnreliable <- function(
   }
 
   X <- preprocessed_object$X
+  y <- preprocessed_object$Y
+  
   # convert to sparse matrix
   X <- Matrix::Matrix(X)
-  y <- preprocessed_object$Y
+  y <- Matrix::Matrix(y)
+  
   R <- preprocessed_object$R0
   cluster_df <- preprocessed_object$clustid
   clustid <- names(cluster_df)
   fe <- preprocessed_object$fe
+  #' @srrstats {G2.4d} *explicit conversion to factor via `as.factor()`*
   cluster <- as.factor(cluster_df[,1])
   bootcluster <- preprocessed_object$bootcluster
   G <- N_G_bootcluster <- length(unique(bootcluster[[1]]))
@@ -89,14 +93,14 @@ boot_algo_fastnreliable <- function(
     type = type,
     full_enumeration = full_enumeration,
     N_G_bootcluster = N_G_bootcluster,
-    boot_iter = B, 
+    boot_iter = B,
     sampling = sampling
   )
 
   # create X_g's, X1_g's, y_g's etc
   X_list <- matrix_split(X, cluster, "row")
   y_list <- split(y, cluster, drop = FALSE)
-  
+
   # precompute a range of other objects
   tXgXg <- lapply(
     seq_along(1:G),
@@ -120,7 +124,7 @@ boot_algo_fastnreliable <- function(
   beta_g_hat <- NULL
   beta_1g_tilde <- NULL
   inv_tXX_tXgXg <- NULL
-  
+
 
   if(bootstrap_type %in% c("WCR3x", "WCU3x")){
     # X1: X without parameter beta for which hypothesis beta = 0 is tested
@@ -162,25 +166,25 @@ boot_algo_fastnreliable <- function(
 
     inv_tXX_tXgXg <- lapply(
       1:G,
-      function(x) solve(tXX - tXgXg[[x]])
+      function(x) MASS::ginv(as.matrix(tXX - tXgXg[[x]]))
     )
 
     beta_1g_tilde <- lapply(
       1:G,
-      function(g) solve(tX1X1 - tX1gX1g[[g]]) %*% (tX1y - tX1gyg[[g]])
+      function(g) MASS::ginv(as.matrix(tX1X1 - tX1gX1g[[g]])) %*% (tX1y - tX1gyg[[g]])
     )
 
   } else if(bootstrap_type == "WCU3x"){
 
     beta_g_hat <- lapply(
       1:G,
-      function(g) solve(tXX - tXgXg[[g]]) %*% (tXy - tXgyg[[g]])
+      function(g) MASS::ginv(as.matrix(tXX - tXgXg[[g]])) %*% (tXy - tXgyg[[g]])
     )
 
   }
 
   if(crv_type == "crv1"){
-    
+
     if(is.null(beta_hat)){
       beta_hat <- tXXinv %*% tXy
     }
@@ -189,7 +193,7 @@ boot_algo_fastnreliable <- function(
     if(is.null(inv_tXX_tXgXg)){
       inv_tXX_tXgXg <- lapply(
         1:G,
-        function(x) solve(tXX - tXgXg[[x]])
+        function(x) MASS::ginv(as.matrix(tXX - tXgXg[[x]]))
       )
     }
   }
@@ -215,21 +219,21 @@ boot_algo_fastnreliable <- function(
   se <- se2 <- vector(mode = "numeric", B + 1)
 
   dim(R) <- c(1, k) # turn R into matrix
-  
+
   Cg <- R %*% tXXinv %*%  Reduce("cbind", scores_list)
-  
+
   numer <- Cg %*% v
-  
+
   if(crv_type == "crv1"){
-    
+
     H <- Matrix::Matrix(NA, G, G)
     for(g in 1:G){
       for(h in 1:G){
-        H[g,h] <- 
+        H[g,h] <-
           (R %*% tXXinv %*% tXgXg[[g]] %*% tXXinv %*% scores_list[[h]])
       }
     }
-    
+
     denom <- boot_algo3_crv1_denom(
       B = B,
       G = G,
@@ -239,39 +243,39 @@ boot_algo_fastnreliable <- function(
       v = v,
       cores = nthreads
     )
-    
+
 
     t_boot <- c(as.matrix(numer) / sqrt(c(denom)))
-    
+
   } else if (crv_type == "crv3"){
-  
+
     for(b in 1:(B + 1)){
-      
+
       # Step 1: get bootstrapped scores
-      
+
       scores_g_boot <- matrix(NA,G,k)
-      
+
       v_ <- v[,b]
-      
+
       for(g in 1:G){
         scores_g_boot[g,] <- c(as.matrix(scores_list[[g]])) * v_[g] #* v[g, b]
       }
-      
+
       # numerator (both for WCR, WCU)
       scores_boot <- colSums(scores_g_boot)
       delta_b_star <- tXXinv %*% scores_boot
-  
+
       delta_diff <- matrix(NA, G, k)
-        
+
       for(g in 1:G){
         score_diff <- scores_boot - scores_g_boot[g,]
         delta_diff[g,] <-
-          
+
           (
             (inv_tXX_tXgXg[[g]] %*% score_diff) - delta_b_star
           )^2
       }
-        
+
       se[b] <-
         sqrt(
           ((G-1) / G) *
@@ -279,18 +283,18 @@ boot_algo_fastnreliable <- function(
               delta_diff
             )
         )[which(R == 1)]
-      
+
       t_boot[b] <- c(as.matrix(delta_b_star))[which(R == 1)] / se[b]
-      
+
     }
 
   }
   # get original t-stat.
 
   if(crv_type == "crv1"){
-        
+
     score_all <- lapply(
-      1:G, function(g) 
+      1:G, function(g)
         Matrix::tcrossprod(
           Matrix::crossprod(X_list[[g]], y_list[[g]] - X_list[[g]] %*% beta_hat)
         )
@@ -299,22 +303,22 @@ boot_algo_fastnreliable <- function(
     vcov <- tXXinv %*% meat %*% tXXinv
 
   } else if(crv_type == "crv3"){
-    
+
     vcov3 <- quote(
       summclust::vcov_CR3J(
         obj = object,
         cluster = clustid
       )
     )
-    
+
     if(inherits(object, "fixest")){
       vcov3$absorb_cluster_fixef <- FALSE
     }
-    
+
     vcov <- eval(vcov3)
 
   }
-  
+
   se0 <- sqrt(small_sample_correction * R %*% vcov %*% t(R))
   se0 <- as.vector(se0)
 
@@ -324,7 +328,7 @@ boot_algo_fastnreliable <- function(
 
 
   t_boot <- t_boot[-1]
-  
+
   t_stat <- as.vector(t_stat)
   t_boot <- as.vector(t_boot)
 
