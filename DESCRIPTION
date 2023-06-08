@@ -13,7 +13,7 @@ Authors@R: c(
             role = "rev", 
             comment = "Eunseop reviewed the package (v. 0.13) for ropensci 
                       , see <https://github.com/ropensci/software-review/issues/546>"
-          )
+          ),
     person("Achim", "Zeileis", role = "ctb",
            comment = "Author of included sandwich fragments"),
     person("Nathaniel", "Graham", role = "ctb",
