@@ -55,6 +55,14 @@ boot_algo_fastnreliable <- function(
 
   #here for debugging
   #preprocessed_object <- preprocess
+  
+  #inv <- "matrix_solve"
+  inv <- "mass_ginv"
+  inv <- switch(
+    inv, 
+    mass_ginv = function(x) MASS::ginv(x), 
+    matrix_solve = function(x) Matrix::solve(x)
+  )
 
 
   if(substr(bootstrap_type, 2, 2) == 1){
@@ -67,8 +75,8 @@ boot_algo_fastnreliable <- function(
   y <- preprocessed_object$Y
   
   # convert to sparse matrix
-  X <- Matrix::Matrix(X)
-  y <- Matrix::Matrix(y)
+  #X <- Matrix::Matrix(X)
+  #y <- Matrix::Matrix(y)
   
   R <- preprocessed_object$R0
   cluster_df <- preprocessed_object$clustid
@@ -102,10 +110,12 @@ boot_algo_fastnreliable <- function(
   y_list <- split(y, cluster, drop = FALSE)
 
   # precompute a range of other objects
+  pracma::tic()
   tXgXg <- lapply(
     seq_along(1:G),
     function(g) Matrix::crossprod(X_list[[g]])
   )
+  pracma::toc()
 
   tXgyg <- lapply(
     seq_along(1:G),
@@ -166,19 +176,19 @@ boot_algo_fastnreliable <- function(
 
     inv_tXX_tXgXg <- lapply(
       1:G,
-      function(x) MASS::ginv(as.matrix(tXX - tXgXg[[x]]))
+      function(x) inv(as.matrix(tXX - tXgXg[[x]]))
     )
 
     beta_1g_tilde <- lapply(
       1:G,
-      function(g) MASS::ginv(as.matrix(tX1X1 - tX1gX1g[[g]])) %*% (tX1y - tX1gyg[[g]])
+      function(g) inv(as.matrix(tX1X1 - tX1gX1g[[g]])) %*% (tX1y - tX1gyg[[g]])
     )
 
   } else if(bootstrap_type == "WCU3x"){
 
     beta_g_hat <- lapply(
       1:G,
-      function(g) MASS::ginv(as.matrix(tXX - tXgXg[[g]])) %*% (tXy - tXgyg[[g]])
+      function(g) inv(as.matrix(tXX - tXgXg[[g]])) %*% (tXy - tXgyg[[g]])
     )
 
   }
@@ -193,7 +203,7 @@ boot_algo_fastnreliable <- function(
     if(is.null(inv_tXX_tXgXg)){
       inv_tXX_tXgXg <- lapply(
         1:G,
-        function(x) MASS::ginv(as.matrix(tXX - tXgXg[[x]]))
+        function(x) inv((tXX - tXgXg[[x]]))
       )
     }
   }
