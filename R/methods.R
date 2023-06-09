@@ -48,22 +48,25 @@
 #' or Normal weights
 #'
 #' @return An object of class `boottest`.
-#' 
+#'
 #' @section Stata, Julia and Python Implementations:
-#' The fast wild cluster bootstrap algorithms are further implemented in the 
-#' following software packages: 
+#' The fast wild cluster bootstrap algorithms are further implemented in the
+#' following software packages:
 #' \itemize{
-#' \item Stata:[boottest](https://github.com/droodman/boottest) 
-#' \item Julia:[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) 
-#' \item Python:[wildboottest](https://github.com/s3alfisc/wildboottest) 
+#' \item Stata:[boottest](https://github.com/droodman/boottest)
+#' \item Julia:[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl)
+#' \item Python:[wildboottest](https://github.com/s3alfisc/wildboottest)
 #' }
-#' 
+#' @srrstats {G1.1} *The help files of all boottest methods document that the
+#' "fast and wild" algorithm is already implemented in the STATA boottest
+#' package. Additional information in the boottest() documentation points to
+#' Julia, Python and Stata implementations.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
 #' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
-#' @references MacKinnon, James G., Morten Ørregaard Nielsen, and 
+#' @references MacKinnon, James G., Morten Ørregaard Nielsen, and
 #' Matthew D. Webb. Fast and reliable jackknife and bootstrap
-#'  methods for cluster-robust inference. No. 1485. 2022. 
+#'  methods for cluster-robust inference. No. 1485. 2022.
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 #'  "Bootstrap-based improvements for inference with clustered errors."
 #'  The Review of Economics and Statistics 90.3 (2008): 414-427.
@@ -85,28 +88,30 @@
 #' @references Webb, Matthew D.
 #' "Reworking wild bootstrap based inference for clustered errors"
 #' . No. 1315. Queen's Economics Department Working Paper, 2013.
+#' @srrstats {G1.0} *`boottest()` links to multiple published papers.*
+
 
 boottest <- function(object,
                      ...) {
-  
+
   rlang::warn(
     message = "
     Please note that the seeding behavior for random number
-    generation for `boottest()` has changed with `fwildclusterboot` 
-    version 0.13. 
-    
-    It will no longer be possible to 
-    exactly reproduce results produced by versions lower than 0.13. 
-    
-    If your prior results were produced under sufficiently many bootstrap 
-    iterations, none of your conclusions will change. 
+    generation for `boottest()` has changed with `fwildclusterboot`
+    version 0.13.
+
+    It will no longer be possible to
+    exactly reproduce results produced by versions lower than 0.13.
+
+    If your prior results were produced under sufficiently many bootstrap
+    iterations, none of your conclusions will change.
     For more details about this change, please read the notes in
-    [news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).", 
-    .frequency = "once", 
-    .frequency_id = "random-seed-message", 
+    [news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).",
+    .frequency = "once",
+    .frequency_id = "random-seed-message",
     use_cli_format = TRUE
   )
-  
+
   UseMethod("boottest")
 }
 
@@ -194,7 +199,7 @@ mboottest <- function(object,
 #' @param ... other arguments
 #'
 #' @export
-#' 
+#'
 #' @examples
 #' requireNamespace("fwildclusterboot")
 #' data(voters)
@@ -208,8 +213,8 @@ mboottest <- function(object,
 #'   clustid = "group_id1"
 #' )
 #' pval(boot)
-#' @return 
-#' A scalar with the bootstrapped p-value. 
+#' @return
+#' A scalar with the bootstrapped p-value.
 
 
 
@@ -552,7 +557,7 @@ plot.boottest <- function(x, ...) {
 
   if (is.null(x$conf_int)) {
     rlang::abort(
-      c("No plot method if boottest()'s function argument 'conf_int = FALSE'."), 
+      c("No plot method if boottest()'s function argument 'conf_int = FALSE'."),
       use_cli_format = TRUE
     )
   }
@@ -631,7 +636,7 @@ glance.mboottest <- function(x, ...) {
   #' )
   #' generics::glance(mboot)
   #' }
-  
+
   stopifnot(inherits(x, "mboottest"))
   broom::glance(eval(x$call$object))
 }
@@ -754,7 +759,10 @@ print.boottest <- function(x, ..., digits = 4) {
   vals <- lapply(
     c("p_val", "conf_int", "t_stat"),
     function(y) {
-      round(x[[y]], digits = digits)
+      ifelse(is.null(x[[y]]), 
+        'not computed',
+        round(x[[y]], digits = digits)
+      )
     }
   )
 
