@@ -57,11 +57,22 @@ boot_algo_fastnreliable <- function(
   #preprocessed_object <- preprocess
   
   #inv <- "matrix_solve"
-  inv <- "mass_ginv"
+  #inv <- "mass_ginv"
+  #inv <- "sparse_ginv"
+  inv <- "arma_pinv"
   inv <- switch(
     inv, 
     mass_ginv = function(x) MASS::ginv(x), 
-    matrix_solve = function(x) Matrix::solve(x)
+    matrix_solve = function(x) Matrix::solve(x),
+    sparse_ginv = function(x) {
+      # does not work, as matrix is not pos. definite
+      N <- dim(X)[1]
+      L <- Matrix::chol(X)
+      I <- Matrix::Diagonal(N)
+      L_inv <- Matrix::solve(L, I)
+      Matrix::t(L_inv) %*% L_inv
+    }, 
+    arma_pinv = function(x) pinv(x)
   )
 
 

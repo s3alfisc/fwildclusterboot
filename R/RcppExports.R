@@ -9,6 +9,10 @@ boot_algo3_crv3 <- function(B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, 
     .Call('_fwildclusterboot_boot_algo3_crv3', PACKAGE = 'fwildclusterboot', B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, cores, R, delta_b_star)
 }
 
+pinv <- function(X) {
+    .Call('_fwildclusterboot_pinv', PACKAGE = 'fwildclusterboot', X)
+}
+
 #' Matrix Multiplication via Eigen
 #' @param A A matrix.
 #' @param B A matrix.
