@@ -147,6 +147,8 @@ List wildboottestHC(const arma::vec & y,
 #pragma omp parallel for num_threads(cores)
   for(int b = 1; b < B + 1; b++){
     
+    Rcpp::checkUserInterrupt()
+    
     // create bootstrap sample
     //arma::vec weights = RcppArmadillo::sample(s, N_G_bootcluster, true, prob);
     arma::vec weights = sample_weights(N_G_bootcluster, type);
@@ -232,6 +234,8 @@ List wildboottestCL(const arma::vec & y,
   
 #pragma omp parallel for num_threads(cores)
   for(int b = 1; b < B + 1; b++){
+    
+    Rcpp::checkUserInterrupt()
     
     // create bootstrap sample
     arma::vec y_boot(n);
@@ -353,6 +357,8 @@ List wildboottestCL_enum(const arma::vec & y,
   
 #pragma omp parallel for num_threads(cores)
   for(int b = 1; b < B + 1; b++){
+    
+    Rcpp::checkUserInterrupt()
     
     // create bootstrap sample
     arma::vec y_boot(n);
