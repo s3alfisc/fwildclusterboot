@@ -26,7 +26,7 @@ arma::vec boot_algo3_crv1_denom(int B,
 #pragma omp parallel for num_threads(cores)
   for(int b = 0; b < (B+1); b++){
     
-    Rcpp::checkUserInterrupt()
+    Rcpp::checkUserInterrupt();
     
     //double Z_sq;
     arma::vec Zg(G);
@@ -118,7 +118,7 @@ List boot_algo3_crv3( const int B,
 #pragma omp parallel for num_threads(cores)
   for(int b = 0; b < B +1; b++){
     
-    Rcpp::checkUserInterrupt()
+    Rcpp::checkUserInterrupt();
     
     arma::mat delta_diff(G,k);
     
