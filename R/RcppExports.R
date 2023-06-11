@@ -13,6 +13,12 @@ pinv <- function(X) {
     .Call('_fwildclusterboot_pinv', PACKAGE = 'fwildclusterboot', X)
 }
 
+#' Moore-Penrose Pseudo Inverses via Eigen
+#' @param A a matrix
+#' @return A matrix. Pseudo-Inverse of A.
+#' @noRd
+NULL
+
 #' Matrix Multiplication via Eigen
 #' @param A A matrix.
 #' @param B A matrix.
@@ -21,6 +27,10 @@ pinv <- function(X) {
 #' @noRd
 eigenMapMatMult <- function(A, B, nthreads) {
     .Call('_fwildclusterboot_eigenMapMatMult', PACKAGE = 'fwildclusterboot', A, B, nthreads)
+}
+
+eigen_pinv <- function(A) {
+    .Call('_fwildclusterboot_eigen_pinv', PACKAGE = 'fwildclusterboot', A)
 }
 
 #' Get maximum number of threads on hardware for open mp support

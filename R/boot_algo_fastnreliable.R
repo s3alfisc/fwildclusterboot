@@ -59,7 +59,8 @@ boot_algo_fastnreliable <- function(
   #inv <- "matrix_solve"
   #inv <- "mass_ginv"
   #inv <- "sparse_ginv"
-  inv <- "arma_pinv"
+  inv <- "eigen_pinv"
+  #inv <- "arma_pinv"
   inv <- switch(
     inv, 
     mass_ginv = function(x) MASS::ginv(x), 
@@ -72,7 +73,8 @@ boot_algo_fastnreliable <- function(
       L_inv <- Matrix::solve(L, I)
       Matrix::t(L_inv) %*% L_inv
     }, 
-    arma_pinv = function(x) pinv(x)
+    arma_pinv = function(x) pinv(x), 
+    eigen_pinv = function(x) eigen_pinv(x)
   )
 
 
@@ -121,12 +123,10 @@ boot_algo_fastnreliable <- function(
   y_list <- split(y, cluster, drop = FALSE)
 
   # precompute a range of other objects
-  pracma::tic()
   tXgXg <- lapply(
     seq_along(1:G),
     function(g) Matrix::crossprod(X_list[[g]])
   )
-  pracma::toc()
 
   tXgyg <- lapply(
     seq_along(1:G),
