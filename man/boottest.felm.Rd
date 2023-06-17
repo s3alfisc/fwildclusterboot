@@ -256,6 +256,17 @@ If your felm() model contains fixed effects, boottest() will internally convert 
 effects but the one specified via the \code{fe} argument to dummy variables.
 }
 
+\section{Run \code{boottest} quietly}{
+
+You can suppress all warning and error messages by setting the following global
+options:
+\code{options(rlib_warning_verbosity = "quiet")}
+\code{options(rlib_message_verbosity = "quiet")}
+Not that this will turn off all warnings (messages) produced via \code{rlang::warn()} and
+\code{rlang::inform()}, which might not be desirable if you use other software build on
+\code{rlang}, as e.g. the \code{tidyverse}.
+}
+
 \section{Stata, Julia and Python Implementations}{
 
 The fast wild cluster bootstrap algorithms are further implemented in the

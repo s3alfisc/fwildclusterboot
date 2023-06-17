@@ -182,6 +182,14 @@
 #' }
 #' @section Standard Errors:
 #' `boottest` does not calculate standard errors.
+#' @section Run `boottest` quietly:
+#' You can suppress all warning and error messages by setting the following global
+#' options:
+#' `options(rlib_warning_verbosity = "quiet")`
+#' `options(rlib_message_verbosity = "quiet")`
+#' Not that this will turn off all warnings (messages) produced via `rlang::warn()` and
+#' `rlang::inform()`, which might not be desirable if you use other software build on
+#' `rlang`, as e.g. the `tidyverse`.
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the
 #' following software packages:
