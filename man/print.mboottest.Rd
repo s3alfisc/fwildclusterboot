@@ -2,9 +2,9 @@
 % Please edit documentation in R/methods.R
 \name{print.mboottest}
 \alias{print.mboottest}
-\title{S3 method to print key information for objects of type \code{mboottest}}
+\title{S3 method to print key information for objects of type \code{bboottest}}
 \usage{
-\method{print}{mboottest}(x, ..., digits = 4)
+\method{print}{boottest}(x, ..., digits = 4)
 }
 \arguments{
 \item{x}{object of type mboottest}
@@ -14,13 +14,30 @@
 \item{digits}{Number of rounding digits}
 }
 \value{
+A scalar containing the effective number of observations
+used in \code{mboottest}
+
 A scalar containing the effective number of observations used
 in \code{mboottest}
 }
 \description{
-S3 method to print key information for objects of type \code{mboottest}
+S3 method to print key information for objects of type \code{bboottest}
 }
 \examples{
+#' requireNamespace("fwildclusterboot")
+data(voters)
+lm_fit <- lm(
+  proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  data = voters
+)
+boot <- boottest(lm_fit,
+  B = 9999,
+  param = "treatment",
+  clustid = "group_id1"
+)
+print(boot)
+
+S3 method to print key information for objects of type `mboottest`
 \dontrun{
 requireNamespace("clubSandwich")
 R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
