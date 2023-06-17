@@ -1,6 +1,7 @@
 test_that("test r-fnw vs r-, stochastic", {
   
   skip_on_cran()
+  
   skip_if_not(
     fwildclusterboot:::find_proglang("julia"),
     message = "skip test as julia installation not found."
@@ -11,20 +12,20 @@ test_that("test r-fnw vs r-, stochastic", {
   seed <- 123123
   set.seed(seed)
 
-#' @srrstats {G5.1} *Data sets created within, and used to test, a package
-#' should be exported (or otherwise made generally available) so that users
-#'  can confirm tests and run examples.* Data sets used internally can be
-#'  recreated via a non-exported `fwildclusterboot:::create_data()` function.
-#' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms
-#' produce expected results to some fixed test data sets (potentially through
-#' comparisons using binding frameworks such as
-#' [RStata](https://github.com/lbraglia/RStata)).* Several correctness
-#' tests are implemented. First, it is tested if the non-bootstrapped
-#' t-statistics
-#' produced via boottest() *exactly* match those computed by the fixest package
-#' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
-#' against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R
-#' implementations of the WCB are tested against each other.
+  #' @srrstats {G5.1} *Data sets created within, and used to test, a package
+  #' should be exported (or otherwise made generally available) so that users
+  #'  can confirm tests and run examples.* Data sets used internally can be
+  #'  recreated via a non-exported `fwildclusterboot:::create_data()` function.
+  #' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms
+  #' produce expected results to some fixed test data sets (potentially through
+  #' comparisons using binding frameworks such as
+  #' [RStata](https://github.com/lbraglia/RStata)).* Several correctness
+  #' tests are implemented. First, it is tested if the non-bootstrapped
+  #' t-statistics
+  #' produced via boottest() *exactly* match those computed by the fixest package
+  #' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
+  #' against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R
+  #' implementations of the WCB are tested against each other.
 
 
   data1 <<- fwildclusterboot:::create_data(
@@ -167,6 +168,7 @@ test_that("test r-fnw vs r-, stochastic", {
 
 
 test_that("new bootstrap variants II - t_stat equivalence", {
+  
   skip_on_cran()
   skip_if_not(
     fwildclusterboot:::find_proglang("julia"),
@@ -175,7 +177,7 @@ test_that("new bootstrap variants II - t_stat equivalence", {
 
   N <- 1000
   N_G1 <- 17
-  data <- fwildclusterboot:::create_data(
+  data1 <<- fwildclusterboot:::create_data(
     N = N,
     N_G1 = N_G1,
     icc1 = 0.8,
@@ -189,7 +191,7 @@ test_that("new bootstrap variants II - t_stat equivalence", {
 
   lm_fit <- lm(
     proposition_vote ~ treatment + log_income,
-    data = data
+    data = data1
   )
 
   # WCR
@@ -204,7 +206,7 @@ test_that("new bootstrap variants II - t_stat equivalence", {
     list()
 
   for (x in wcr_algos) {
-    cat(x)
+    cat(x, "\n")
     res <-
       suppressWarnings(
         boottest(
@@ -286,7 +288,7 @@ test_that("variants 31 R vs Julia", {
     N_G1 <- 10
     B <- 9999
 
-    data2 <- fwildclusterboot:::create_data(
+    data2 <<- fwildclusterboot:::create_data(
       N = 1000,
       N_G1 = N_G1,
       icc1 = 0.8,

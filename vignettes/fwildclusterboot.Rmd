@@ -119,7 +119,7 @@ if(requireNamespace("modelsummary")){
 
 ```
 
-A `plot()` method allows the user to inspect the bootstrap t-statistics: 
+A `plot()` visualizes bootstrapped p-values as a function of the hypothesized effect size $r$.
 
 ```{r}
 plot(boot_lm)
