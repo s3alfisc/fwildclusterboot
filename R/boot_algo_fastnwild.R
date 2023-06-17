@@ -220,12 +220,12 @@ boot_algo_fastnwild <-
     } else if (!is.null(W)) {
       # project out fe
       Q3_2 <-
-        crosstab(as.matrix(weights * W %*% Q),
+        crosstab_qtab(as.matrix(weights * W %*% Q),
           var1 = bootcluster,
           var2 = fixed_effect
         ) # f x c*
       P3_2 <-
-        crosstab(as.matrix(weights * W %*% P),
+        crosstab_qtab(as.matrix(weights * W %*% P),
           var1 = bootcluster,
           var2 = fixed_effect
         ) # f x c*
@@ -237,7 +237,7 @@ boot_algo_fastnwild <-
         # part of numerator independent of both bootstrap errors and r
 
         CT_cfe <-
-          crosstab(WXAR, var1 = clustid[x], var2 = fixed_effect)
+          crosstab_qtab(WXAR, var1 = clustid[x], var2 = fixed_effect)
         # c x f, formerly S_XinvXXR_F
 
         # a

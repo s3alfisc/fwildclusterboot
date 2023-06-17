@@ -121,13 +121,23 @@ crosstab <- function(data, var1, var2) {
   res
 }
 
-crosstab5 <- function(data, var1, var2){
+crosstab_qtab <- function(data, var1, var2){
 
-  res <- qtab(
+  #' Another optimized collapse way to calculate crosstabs
+  #' @param data A matrix to collapse by two dimensions var1 var2
+  #' @param var1 a data.frame containing a single variable
+  #' @param var2 a data.frame containing a single variable
+  #' @return A collapsed matrix of dimension length(unique(var1)) x
+  #' length(unique(var2)). If...
+  #' @importFrom dreamerr check_arg
+  #' @importFrom collapse qtab fmean
+  #' @noRd
+  
+  res <- collapse::qtab(
     var1[,1], 
     var2[,1], 
     w = as.vector(data), 
-    wFUN = fmean, 
+    wFUN = collapse::fmean, 
     na.exclude = FALSE
   )
   class(res) <- "matrix"

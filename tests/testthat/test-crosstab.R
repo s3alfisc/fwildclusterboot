@@ -10,7 +10,7 @@ test_that("crosstab works", {
   # ct2 <- crosstab2(data = data, var1 = var1, var2 = var2)
   # ct3 <- crosstab3(data = data, var1 = var1, var2 = var2)
   ct4 <- fwildclusterboot:::crosstab4(data = data, var1 = var1, var2 = var2)
-  ct5 <- fwildclusterboot:::crosstab5(data = data, var1 = var1, var2 = var2)
+  ct5 <- fwildclusterboot:::crosstab_qtab(data = data, var1 = var1, var2 = var2)
   
   expect_equal(ct1, ct4, ignore_attr = TRUE)
 })
