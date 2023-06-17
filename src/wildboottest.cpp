@@ -126,12 +126,14 @@ List wildboottestHC(const arma::vec & y,
     
   } else {
     
-    arma::mat hatmat = X * XXinv * X.t(); 
-    arma::vec diag_hatmat(N);
+    //arma::mat hatmat = X * XXinv * X.t(); 
+    //arma::vec diag_hatmat(N);
     
-    for(int i = 0; i < N; i++){
-      diag_hatmat(i) = hatmat(i,i);
-    }
+    //for(int i = 0; i < N; i++){
+    //  diag_hatmat(i) = hatmat(i,i);
+    //}
+    
+    arma::vec diag_hatmat = arma::sum(X % (X * XXinv.t()),1);
     
     if(bootstrap_type == 2){
       resid_multiplier = 1 / arma::sqrt(1-diag_hatmat);    
