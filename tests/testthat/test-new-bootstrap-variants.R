@@ -10,6 +10,21 @@ test_that("test r-fnw vs r-, stochastic", {
   seed <- 123123
   set.seed(seed)
 
+#' @srrstats {G5.1} *Data sets created within, and used to test, a package
+#' should be exported (or otherwise made generally available) so that users
+#'  can confirm tests and run examples.* Data sets used internally can be
+#'  recreated via a non-exported `fwildclusterboot:::create_data()` function.
+#' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms
+#' produce expected results to some fixed test data sets (potentially through
+#' comparisons using binding frameworks such as
+#' [RStata](https://github.com/lbraglia/RStata)).* Several correctness
+#' tests are implemented. First, it is tested if the non-bootstrapped
+#' t-statistics
+#' produced via boottest() *exactly* match those computed by the fixest package
+#' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
+#' against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R
+#' implementations of the WCB are tested against each other.
+
 
   data1 <<- fwildclusterboot:::create_data(
     N = 1000,

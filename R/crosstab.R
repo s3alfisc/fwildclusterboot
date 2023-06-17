@@ -120,3 +120,18 @@ crosstab <- function(data, var1, var2) {
   res[is.na(res)] <- 0
   res
 }
+
+crosstab5 <- function(data, var1, var2){
+
+  res <- qtab(
+    var1[,1], 
+    var2[,1], 
+    w = as.vector(data), 
+    wFUN = fmean, 
+    na.exclude = FALSE
+  )
+  class(res) <- "matrix"
+  res[is.na(res)] <- 0
+  res  
+
+}

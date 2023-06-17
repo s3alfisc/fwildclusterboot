@@ -143,6 +143,12 @@ To guarantee reproducibility, you need to
 set a global random seed via\code{set.seed()}
 }
 
+\section{Multiple Fixed Effects}{
+
+If your feols() model contains fixed effects, boottest() will internally convert all fixed
+effects but the one specified via the \code{fe} argument to dummy variables.
+}
+
 \examples{
 \dontrun{
 requireNamespace("fwildclusterboot")

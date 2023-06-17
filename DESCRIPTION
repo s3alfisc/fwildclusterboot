@@ -87,7 +87,7 @@ Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE, roclets = c ("namespace", "rd",
     "srr::srr_stats_roclet"))
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 SystemRequirements: Version Requirements to run the wild bootstrap through
     Julia - Julia (>= 1.8), WildBootTests.jl (>=0.9).  Julia is
     downloadable via the official Julia website

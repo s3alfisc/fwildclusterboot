@@ -1,4 +1,37 @@
-test_that("t-stat equivalence OLS - R and R-lean", {
+test_that("t-stat equivalence OLS - R and R-lean, against fixest", {
+
+#' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms
+#' produce expected results to some fixed test data sets (potentially through
+#' comparisons using binding frameworks such as
+#' [RStata](https://github.com/lbraglia/RStata)).* Several correctness
+#' tests are implemented. First, it is tested if the non-bootstrapped
+#' t-statistics
+#' produced via boottest() *exactly* match those computed by the fixest package
+#' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
+#' against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R
+#' implementations of the WCB are tested against each other.
+#' @srrstats {G5.4b} *For new implementations of existing methods, correctness
+#' tests should include tests against previous implementations. Such testing
+#' may explicitly call those implementations in testing, preferably from
+#' fixed-versions of other software, or use stored outputs from those where
+#' that is not possible.* Extensive tests against WildBootTests.jl and
+#' alternative R implementations provided by fwildclusterboot. Also, the
+#' Python package wildboottest tests against fwildclusterboot.
+#' @srrstats {G5.6} **Parameter recovery tests** *to test that the
+#' implementation produce expected results given data with known properties.
+#' For instance, a linear regression algorithm should return expected
+#' coefficient values for a simulated data set generated from a linear model.*
+#' Done. Non-bootstrapped t-stats are tested against t-stats and F-stats
+#' computed by the fixest package (see test_tstat_equivalence.R). Also, tests
+#'  if bootstrapped p-values are deterministic under "full enumeration"
+#'  (test-seed.R).
+#' @srrstats {G5.6a} *Parameter recovery tests should generally be expected
+#' to succeed within a defined tolerance rather than recovering exact values.*
+#'  t-stat equivalence is tested "exactly", r vs Julia is tested with tolerance.
+
+
+
+
   lm_fit <-
     lm(
       proposition_vote ~ treatment + ideology1 + log_income,

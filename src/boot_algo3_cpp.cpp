@@ -1,12 +1,12 @@
 #include <RcppArmadillo.h>
-#define NDEBUG
 #ifdef _OPENMP
 #include <omp.h>
-// [[Rcpp::plugins(openmp)]]
 #else
-#define omp_get_max_threads() 0
+  #define omp_get_max_threads() 0
 #endif
 
+// [[Rcpp::plugins(openmp)]]
+// [[Rcpp::depends(RcppArmadillo)]]
 
 using namespace Rcpp;
 
@@ -23,7 +23,7 @@ arma::vec boot_algo3_crv1_denom(int B,
   
   arma::vec denom(B+1);
   
-#pragma omp parallel for num_threads(cores)
+//#pragma omp parallel for num_threads(cores) reduction(+:denom)
   for(int b = 0; b < (B+1); b++){
     
     Rcpp::checkUserInterrupt();
@@ -115,7 +115,7 @@ List boot_algo3_crv3( const int B,
   
   double ssc = (G-1) / G;
   
-#pragma omp parallel for num_threads(cores)
+//#pragma omp parallel for num_threads(cores) reduction(+:vcov)
   for(int b = 0; b < B +1; b++){
     
     Rcpp::checkUserInterrupt();

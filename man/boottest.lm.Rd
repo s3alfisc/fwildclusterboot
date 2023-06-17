@@ -80,7 +80,8 @@ returns 0.95\% confidence intervals. By default, sign_level = 0.05.}
 
 \item{type}{character or function. The character string specifies the type
 of boostrap to use: One of "rademacher", "mammen", "norm"
-and "webb". Alternatively, type can be a function(n) for drawing
+and "webb".
+Alternatively, type can be a function(n) for drawing
 wild bootstrap factors. "rademacher" by default.
 For the Rademacher distribution, if the number of replications B
 exceeds the number of possible draw ombinations, 2^(#number
@@ -301,11 +302,11 @@ generics::tidy(boot1)
 boot_fnw11 <- boottest(lm_fit,
   B = 9999,
   param = "treatment",
-  clustid = "group_id1", 
+  clustid = "group_id1",
   bootstrap_type = "fnw11"
 )
 
-# WCR 31 
+# WCR 31
 boot_WCR31 <- boottest(lm_fit,
   B = 9999,
   param = "treatment",
@@ -313,12 +314,12 @@ boot_WCR31 <- boottest(lm_fit,
   bootstrap_type = "31"
 )
 
-# WCU33 
+# WCU33
 boot_WCR31 <- boottest(lm_fit,
   B = 9999,
   param = "treatment",
   clustid = "group_id1",
-  bootstrap_type = "33", 
+  bootstrap_type = "33",
   impose_null = FALSE
 )
 

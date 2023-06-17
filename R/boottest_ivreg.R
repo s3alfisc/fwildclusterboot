@@ -113,8 +113,8 @@
 #' @export
 #'
 #' @section Setting Seeds:
-#' To guarantee reproducibility, you need to 
-#' set a global random seed via `set.seed()` 
+#' To guarantee reproducibility, you need to
+#' set a global random seed via `set.seed()`
 #'
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'    STATA using boottest", The STATA Journal.
@@ -140,6 +140,7 @@
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference
 #'  for clustered errors. No. 1315. Queen's Economics Department Working
 #'   Paper, 2013.
+#' @srrstats {G1.0} *`boottest()` links to multiple published papers.*
 #' @examples
 #' \dontrun{
 #' requireNamespace("ivreg")
@@ -201,8 +202,10 @@ boottest.ivreg <- function(object,
                            ...) {
   # check inputs
   call <- match.call()
+  type <- tolower(type)
+
   dreamerr::validate_dots(stop = TRUE)
-  
+
   check_arg(object, "MBT class(ivreg)")
   check_arg(clustid, "NULL | character scalar | character vector | formula")
   check_arg(param, "MBT scalar character | character vector | formula")
@@ -225,49 +228,49 @@ boottest.ivreg <- function(object,
   check_arg(arubin, "scalar logical")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
-  
-  
+
+
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-  
+
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-  
+
   if (inherits(param, "formula")) {
     param <- attr(terms(param), "term.labels")
   }
-  
+
   # translate ssc into small_sample_adjustment
   if (ssc[["adj"]] == TRUE && ssc[["cluster.adj"]] == TRUE) {
     small_sample_adjustment <- TRUE
   } else {
     small_sample_adjustment <- FALSE
   }
-  
+
   if (ssc[["fixef.K"]] != "none" ||
       ssc[["cluster.df"]] != "conventional") {
       rlang::warn(
-      "Currently, boottest() only supports fixef.K = 'none'.", 
+      "Currently, boottest() only supports fixef.K = 'none'.",
       use_cli_format = TRUE
     )
   }
-  
-  
-  
+
+
+
   check_params_in_model(
     object = object,
     param = param
   )
-  
-  
+
+
   R <- process_R(
     R = R,
     param = param
   )
-  
-  
+
+
   check_boottest_args_plus(
     object = object,
     R = R,
@@ -275,8 +278,8 @@ boottest.ivreg <- function(object,
     sign_level = sign_level,
     B = B
   )
-  
-  
+
+
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess2.ivreg(
     object = object,
@@ -284,7 +287,7 @@ boottest.ivreg <- function(object,
     R = R,
     param = param,
     bootcluster = bootcluster,
-    engine = "WildBootTests.jl", 
+    engine = "WildBootTests.jl",
     bootstrap_type = NULL
   )
   enumerate <-
@@ -294,24 +297,24 @@ boottest.ivreg <- function(object,
       type = type,
       engine = "WildBootTests.jl"
     )
-  
+
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-  
+
   point_estimate <-
     as.vector(object$coefficients[param] %*% preprocess$R0[param])
-  
+
   julia_ssc <- get_ssc_julia(ssc)
   small <- julia_ssc$small
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
-  
+
   # remind packages users to set a global seed
   inform_seed(
-    frequency_id = "seed-reminder-boot-iv", 
+    frequency_id = "seed-reminder-boot-iv",
     engine = "WildBootTests.jl"
-  )    
-  
+  )
+
   if (ssc[["fixef.K"]] != "none") {
     rlang::inform(
       paste(
@@ -319,7 +322,7 @@ boottest.ivreg <- function(object,
       use_cli_format = TRUE
       )
   }
-  
+
 
   res <- boot_algo_julia(
     preprocess = preprocess,
@@ -346,7 +349,7 @@ boottest.ivreg <- function(object,
     fe = NULL,
     fedfadj = NULL
   )
-  
+
   # collect results
   res_final <- list(
     point_estimate = point_estimate,
@@ -371,8 +374,8 @@ boottest.ivreg <- function(object,
     r = r,
     engine = "WildBootTests.jl"
   )
-  
+
   class(res_final) <- "boottest"
-  
+
   invisible(res_final)
 }

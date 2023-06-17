@@ -101,17 +101,18 @@ create_data <-
         state = rep(1:(N / 20), 20),
         year = sort(rep(1:20, N / 20))
       )
-    
+
+    #' @srrstats {G2.4d} *explicit conversion to factor via `as.factor()`* Yes.
     voters$Q1_immigration <- as.factor(voters$Q1_immigration)
     voters$Q2_defense <- as.factor(voters$Q2_defense)
-    
-    
+
+
     voters$log_income <- log(voters$income)
     voters$Q1_immigration <- as.factor(voters$Q1_immigration)
-    
+
     # add weights
     voters$weights <- sample(1:10, N, replace = TRUE) / 10
-    
+
     voters
   }
 
@@ -129,7 +130,7 @@ create_data <-
 #     #' @param set logical flag for duplicates
 #     #' @param repeats.allowed logical flag
 #     #' @noRd
-#     
+#
 #     if (mode(n) != "numeric" || length(n) != 1 || n < 1 ||
 #         (n %% 1) != 0) {
 #       stop("bad value of n")
@@ -190,31 +191,31 @@ create_data <-
 #   }
 
 setBoottest_engine <- function(engine) {
-  
-  #' Sets the default bootstrap algo for the current R session 
+
+  #' Sets the default bootstrap algo for the current R session
   #' to be run via `boottest()` and `mboottest()`
-  #' 
+  #'
   #' @param engine Character scalar. Either 'R' or 'WildBootTests.jl'.
   #'  Default is 'R'
   #' @return No return value
-  #' 
+  #'
   #' @export
-  #' 
+  #'
   #' @examples
   #' \dontrun{
   #' setBoottest_engine(engine = "R")
   #' setBoottest_engine(engine = "WildBootTests.jl")
   #' }
-  
+
   if (missing(engine) || is.null(engine)) {
     # New default: one cores used
     engine <- "R"
   }
-  
+
   engine <- set_engine(engine)
-  
+
   options("boottest_engine" = engine)
-  
+
   invisible()
 }
 
@@ -222,7 +223,7 @@ getBoottest_engine <- function() {
   #' get the bootstrap algorithm to be run via `boottest()` and `waldboottest()`
   #' @return The number of threads currently used by boottest as set in options
   #' @noRd
-  
+
   x <- getOption("boottest_engine")
   if (!(x %in% c("R", "WildBootTests.jl"))) {
     rlang::abort(
@@ -236,13 +237,13 @@ getBoottest_engine <- function() {
 }
 
 set_engine <- function(engine) {
-  
+
   #' check the bootstrap algo
   #' @param engine character scalar
   #' @noRd
-  
+
   dreamerr::check_value(engine, "charin(R, WildBootTests.jl)")
-  
+
   engine
 }
 
@@ -257,29 +258,29 @@ set_engine <- function(engine) {
 # 2. the default number of threads in check_set_nthreads is set to 1
 
 setBoottest_nthreads <- function(nthreads) {
-  
+
   #' Set the number of threads for use with open mp via options
   #' By default, only one thread is used
   #' @param nthreads Integer. Number of threads to be used
   #' @return No return value
   #' @noRd
   #' @importFrom parallel detectCores
-  
+
   max_CRAN <- as.numeric(Sys.getenv("OMP_THREAD_LIMIT"))
   max_CRAN[is.na(max_CRAN)] <- 1000
-  
+
   max_threads <- min(cpp_get_nb_threads(), 1000, max_CRAN)
   # we cap at 1k nthreads
-  
+
   if (missing(nthreads) || is.null(nthreads)) {
     # New default: one cores used
     nthreads <- 1
   }
-  
+
   nthreads <- check_set_nthreads(nthreads)
-  
+
   options("boottest_nthreads" = nthreads)
-  
+
   invisible()
 }
 
@@ -288,12 +289,12 @@ getBoottest_nthreads <- function() {
   #' get the number of threads for use with open mp
   #' @return The number of threads currently used by boottest as set in options
   #' @noRd
-  
+
   x <- getOption("boottest_nthreads")
   if (length(x) != 1 || !is.numeric(x) || is.na(x) || x %% 1 != 0 || x < 0) {
     rlang::abort("The value of getOption(\"boottest_nthreads\") is currently not legal.
          Please use function setBoottest_nthreads to set it to an appropriate
-         value. ", 
+         value. ",
       use_cli_format = TRUE
     )
   }
@@ -308,10 +309,10 @@ check_set_nthreads <- function(nthreads) {
   #' @importFrom dreamerr set_up check_value warn_up
   #' @return Integer. The number of threads to be used.
   #' @noRd
-  
-  
+
+
   dreamerr::set_up(1)
-  
+
   dreamerr::check_value(nthreads,
                         "integer scalar GE{0} | numeric scalar GT{0} LT{1}",
                         .message = paste0(
@@ -324,15 +325,15 @@ check_set_nthreads <- function(nthreads) {
                           threads to be used."
                         )
   )
-  
+
   # max_threads <- parallel::detectCores()
   max_threads <- cpp_get_nb_threads()
   # cat("max_threads \n")
   # print(max_threads)
-  
+
   # # To add later
   # if(cpp_is_in_fork()) return(1)
-  
+
   if (nthreads == 0) {
     nthreads <- max(max_threads, 1)
   } else if (nthreads < 1) {
@@ -366,7 +367,7 @@ get_seed <- function() {
   #' for using set.seed() for controlling rcpp's seed, see this
   #' blog post http://rorynolan.rbind.io/2018/09/30/rcsetseed/
   #' @noRd
-  
+
   # max_int <- .Machine$integer.max
   max_int <- 2147483647L
   x <- sample.int(max_int, 1)
@@ -374,14 +375,16 @@ get_seed <- function() {
 }
 
 to_integer <- function(vec) {
-  
+
   #' Transform vectors of all types safely to integer vectors
   #' @param vec A vector
   #' @return An integer vector
   #' @noRd
-  
+  #' @srrstats {G2.4a}
+
+
   dreamerr::check_arg(vec, "MBT vector")
-  
+
   unique_vec <- unique(vec)
   int_vec <- rep(NA, length(vec))
   for (x in seq_along(unique_vec)) {
@@ -395,8 +398,8 @@ to_integer <- function(vec) {
 # functions taken from 'clubSandwich' package
 matrix_split <- function (x, fac, dim) {
   # if (is.vector(x)) {
-  #   if (dim != "both") 
-  #     stop(paste0("Object must be a matrix in order to subset by ", 
+  #   if (dim != "both")
+  #     stop(paste0("Object must be a matrix in order to subset by ",
   #                 dim, "."))
   #   x_list <- split(x, fac)
   #   lapply(x_list, function(x) diag(x, nrow = length(x)))
@@ -407,10 +410,10 @@ matrix_split <- function (x, fac, dim) {
 }
 
 sub_f <- function (x, fac, dim){
-  function(f) switch(dim, 
-                     row = x[fac == f, , drop = FALSE], 
+  function(f) switch(dim,
+                     row = x[fac == f, , drop = FALSE],
                      col = x[, fac == f, drop = FALSE],
-                     both = x[fac == f, 
+                     both = x[fac == f,
                      fac == f, drop = FALSE])
 }
 
@@ -419,10 +422,10 @@ sub_f <- function (x, fac, dim){
 #' reformat a vector by a 'by' group
 #' @param x A vector
 #' @param group_id a grouping vector of integers
-#' @return 
-#' A matrix of dimension N x G, where G the number of obs and 
+#' @return
+#' A matrix of dimension N x G, where G the number of obs and
 #' G the number of groups
-#' @examples 
+#' @examples
 #' if(requireNamespace("collapse")){
 #' N <- 100
 #' cluster <- sample(letters, N, TRUE)
@@ -431,69 +434,69 @@ sub_f <- function (x, fac, dim){
 #' }
 #' @noRd
 vec2mat <- function(x, group_id){
-  
+
   N <- length(x)
   G <- length(unique(group_id))
   mat <- matrix(0, N, G)
   index <- 1:N
   idx <- index + N * (group_id - 1)
-  mat[idx] <- x 
+  mat[idx] <- x
   mat
-  
+
 }
 
 
 find_proglang <- function(lang){
-  
-  #' Check if julia or python are installed / 
-  #' can be found on the PATH. 
-  #' 
+
+  #' Check if julia or python are installed /
+  #' can be found on the PATH.
+  #'
   #' Based on Mauro Lepore's great suggestion
   #' https://github.com/ropensci/software-review/issues/546#issuecomment-1416728843
-  #' 
+  #'
   #' @param lang which language to check. Either 'julia' or 'python'
-  #' 
+  #'
   #' @return logical. TRUE if lang is found on path, FALSE if not
-  #' 
+  #'
   #' @examples
-  #' 
+  #'
   #' \dontrun{
   #' find_proglang(lang = "julia")
   #' }
-  
+
   dreamerr::check_arg(lang, "charin(julia, python)")
-  
+
   language_found <- nzchar(Sys.which(lang))
 
   language_found
-  
+
 }
 
 
 inform_seed <- function(frequency_id, engine){
-  
+
   if(engine != "WildBootTests.jl"){
-    
+
     rlang::inform(
-      "Too guarantee reproducibility, don't forget to set a 
-    global random seed **both** via `set.seed()` and `dqrng::dqset.seed()`.", 
-      use_cli_format = TRUE, 
-      .frequency = "regularly", 
+      "Too guarantee reproducibility, don't forget to set a
+    global random seed **both** via `set.seed()` and `dqrng::dqset.seed()`.",
+      use_cli_format = TRUE,
+      .frequency = "regularly",
       .frequency_id = frequency_id
     )
-    
+
   } else {
-    
+
     rlang::inform(
-      "Too guarantee reproducibility, don't forget to set a 
-    global random seed via `set.seed()`.", 
-      use_cli_format = TRUE, 
-      .frequency = "regularly", 
+      "Too guarantee reproducibility, don't forget to set a
+    global random seed via `set.seed()`.",
+      use_cli_format = TRUE,
+      .frequency = "regularly",
       .frequency_id = frequency_id
     )
-    
+
   }
 
-  
-  
+
+
 }

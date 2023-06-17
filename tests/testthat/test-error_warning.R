@@ -1,4 +1,15 @@
 test_that("errors and warnings q = 1", {
+
+
+  #' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions
+  #' should be explicitly demonstrated through tests. In particular,* Tested in
+  #' test-warning-error test file.
+  #' @srrstats {G5.2b} *Explicit tests should demonstrate conditions which
+  #' trigger every one of those messages, and should compare the result with
+  #' expected values.* Done. See test-warning-error test file.
+
+
+
   skip_on_cran()
   skip_if_not(
     find_proglang("julia"),

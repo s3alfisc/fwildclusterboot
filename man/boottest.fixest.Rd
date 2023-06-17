@@ -247,6 +247,12 @@ stops the procedure after 10 iterations.
 \code{boottest} does not calculate standard errors.
 }
 
+\section{Multiple Fixed Effects}{
+
+If your feols() model contains fixed effects, boottest() will internally convert all fixed
+effects but the one specified via the \code{fe} argument to dummy variables.
+}
+
 \section{Stata, Julia and Python Implementations}{
 
 The fast wild cluster bootstrap algorithms are further implemented in the
@@ -313,11 +319,11 @@ generics::tidy(boot1)
 boot_fnw11 <- boottest(lm_fit,
   B = 9999,
   param = "treatment",
-  clustid = "group_id1", 
+  clustid = "group_id1",
   bootstrap_type = "fnw11"
 )
 
-# WCR 31 
+# WCR 31
 boot_WCR31 <- boottest(lm_fit,
   B = 9999,
   param = "treatment",
@@ -325,12 +331,12 @@ boot_WCR31 <- boottest(lm_fit,
   bootstrap_type = "31"
 )
 
-# WCU33 
+# WCU33
 boot_WCR31 <- boottest(lm_fit,
   B = 9999,
   param = "treatment",
   clustid = "group_id1",
-  bootstrap_type = "33", 
+  bootstrap_type = "33",
   impose_null = FALSE
 )
 

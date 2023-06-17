@@ -7,6 +7,11 @@
 #'
 #' @importFrom Matrix Diagonal
 #' @return An object of class `preprocess2`.
+#' @srrstats {G2.8} *Software should provide appropriate conversion or dispatch
+#'  routines as part of initial pre-processing to ensure that all other
+#'  sub-functions of a package receive inputs of a single defined class or
+#'  type.* Similar preprocess method + run_bootstrap function.
+
 
 preprocess2 <- function(object, ...) {
   UseMethod("preprocess2")
@@ -835,20 +840,20 @@ transform_fe <-
       add_fe <- all_fe
       add_fe_names <- names(add_fe)
       fml_fe <- reformulate(add_fe_names, response = NULL)
-      
+
       if(engine == "R" && bootstrap_type %in% c("11", "31", "13","33")){
-        
+
         add_fe_dummies <-
           Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
-        
+
       } else {
-        
+
         add_fe_dummies <-
           model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
       }
-      
+
       X <- cbind(X, add_fe_dummies)
-          
+
     }
 
     res <- list(
@@ -888,7 +893,24 @@ get_cluster <-
     #'         matrix, all_c, used in `engine_julia()`
     #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between
     #' different data types, potentially including:* All cluster variables
-    #' are set to character internally.
+    #' are set to factor internally.
+    #' @srrstats {G2.13} *As `boottest()` is a post-estimation command, missing
+    #' data checks are only required for variables not included in the original
+    #' regression model. The respective regression functions ensure that no NA
+    #' values are inlcuded when fittint the model.Missing data may occur only
+    #' if the user chooses a clustering variable that is not included in the
+    #' original model (the linear regression) & which includes NA values.
+    #' In this case, `boottest()` throws an error.*
+    #' @srrstats {G2.15} *Functions should never assume non-missingness,
+    #' and should never pass data with potential missing values to any base
+    #'  routines with default `na.rm = FALSE`-type parameters*. NAs are dropped via
+    #' the modeling functions (lm, felm, feols, ivreg). NAs in the cluster variables
+    #' are either dropped here (if dropped in the original model) or throw an error.
+    #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between
+    #' different
+    #' data types, potentially including:* All cluster variables are set to
+    #' factor internally.
+
 
 
     # ----------------------------------------------------------------------- #
@@ -942,30 +964,6 @@ get_cluster <-
           envir = call_env
         )
       }
-
-    # if(inherits(cluster_tmp, "try-error")){
-    #   if(inherits(object, "fixest") || inherits(object, "felm")){
-    #     if(grepl("non-numeric argument to binary operator$",
-    #              attr(cluster_tmp, "condition")$message)){
-    #       rlang::abort("In your model, you have specified multiple fixed effects,
-    #            none of which are of type factor. While `fixest::feols()` and
-    #            `lfe::felm()` handle this case without any troubles,
-    #            `boottest()` currently cannot handle this case - please
-    #            change the type of (at least one) fixed effect(s) to factor.
-    #            If this does not solve the error, please report the issue
-    #            at https://github.com/s3alfisc/fwildclusterboot.")
-    #     }
-    #     if(grepl("operations are possible only for numeric, logical
-    #              or complex types$",
-    #              attr(cluster_tmp, "condition")$message)){
-    #       rlang::abort("Either a fixed effect or a cluster variable in your fixest()
-    #            or felm() model is currently specified as a character.
-    #            'boottest()' relies on 'expand.model.frame',
-    #            which can not handle these variable types in models.
-    #            Please change these character variables to factors. ")
-    #     }
-    #   }
-    # }
 
     cluster_df <-
       model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
@@ -1032,45 +1030,6 @@ get_cluster <-
       cluster_bootcluster_tmp,
       na.action = na.pass
     )
-
-    # if(inherits(cluster_tmp, "try-error")){
-    #   if(inherits(object, "fixest") || inherits(object, "felm")){
-    #     if(
-    #       grepl(
-    #         "non-numeric argument to binary operator$",
-    #         attr(
-    #           cluster_tmp, "condition"
-    #         )$message
-    #       )
-    #     ){
-    #       rlang::abort(
-    #         "In your model, you have specified multiple fixed effects,
-    #       none of which are of type factor. While `fixest::feols()` and
-    #       `lfe::felm()` handle this case without any troubles,  `boottest()`
-    #       currently cannot handle this case - please change the type of
-    #       (at least one) fixed effect(s) to factor. If this does not solve
-    #       the error, please report the issue at
-    #       https://github.com/s3alfisc/fwildclusterboot."
-    #       )
-    #     }
-    #     if(
-    #       grepl(
-    #   "operations are possible only for numeric, logical or complex types$",
-    #         attr(
-    #           cluster_tmp,
-    #           "condition")$message
-    #       )
-    #     ){
-    #       rlang::abort(
-    #         "Either a fixed effect or a cluster variable in your fixest() or
-    #       felm() model is currently specified as a character. 'boottest()'
-    #       relies on 'expand.model.frame', which can not handle these variable
-    #       types in models.
-    #       Please change these character variables to factors."
-    #       )
-    #     }
-    #   }
-    # }
 
     # data.frames with clusters, bootcluster
     cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
@@ -1139,7 +1098,6 @@ get_cluster <-
       )
     }
 
-
     clustid_dims <- length(clustid_char)
 
     #' @srrstats {G2.4}
@@ -1172,6 +1130,13 @@ get_cluster <-
     N_G <- vapply(cluster, function(x) {
       length(unique(x))
     }, numeric(1))
+
+    #' @srrstats {G5.8c} *Data with all-`NA` fields or columns or all identical
+    #' fields or columns* If all cluster vars are NA, this leads to an error.
+
+    if(any(N_G == 1)){
+      stop("A clustering variable contains only one group. This is not allowed.")
+    }
 
     # now do all the other bootcluster things
     c1 <-
