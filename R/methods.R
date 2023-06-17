@@ -542,7 +542,10 @@ summary.boottest <- function(object, digits = 3, ...) {
 }
 
 plot.boottest <- function(x, ...) {
-  #' Plot the bootstrap distribution of t-statistics
+
+  #' Plots bootstrapped p-values as a function of the hypothesized effect size r for
+  #' a hypothesis test of the form R beta = r.The points where the p-values are 0.05
+  #' are the boundaries of the bootstrapped confidence interval.
   #' @param x An object of type boottest
   #' @param ... Further arguments passed to or from other methods.
   #' @method plot boottest
@@ -764,7 +767,7 @@ nobs.mboottest <- function(object, ...) {
 #   clustid = "group_id1"
 # )
 # print(boot)
-# 
+#
 # # print.boottest <- function(x, ..., digits = 4) {#   stopifnot(inherits(x, "boottest"))##   print(x$call)#   cat("", "\n")##   vals <- lapply(#     c("p_val", "conf_int", "t_stat"),#     function(y) {#       ifelse(is.null(x[[y]]),#         'not computed',#         round(x[[y]], digits = digits)#       )#     }#   )##   cat("p value:", vals[[1]], "\n")#   cat("confidence interval:", vals[[2]], "\n")#   cat("test statistic", vals[[3]], "\n")# }
 
 # S3 method to print key information for objects of type `mboottest`

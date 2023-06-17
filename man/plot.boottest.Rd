@@ -2,7 +2,9 @@
 % Please edit documentation in R/methods.R
 \name{plot.boottest}
 \alias{plot.boottest}
-\title{Plot the bootstrap distribution of t-statistics}
+\title{Plots bootstrapped p-values as a function of the hypothesized effect size r for
+a hypothesis test of the form R beta = r.The points where the p-values are 0.05
+are the boundaries of the bootstrapped confidence interval.}
 \usage{
 \method{plot}{boottest}(x, ...)
 }
@@ -15,7 +17,9 @@
 A plot of bootstrap t-statistics under different null hypotheses
 }
 \description{
-Plot the bootstrap distribution of t-statistics
+Plots bootstrapped p-values as a function of the hypothesized effect size r for
+a hypothesis test of the form R beta = r.The points where the p-values are 0.05
+are the boundaries of the bootstrapped confidence interval.
 }
 \examples{
 requireNamespace("fwildclusterboot")
