@@ -361,9 +361,9 @@ boot_algo_fastnreliable <- function(
     )
 
   res <- list(
-    p_val = as.matrix(p_val),
-    t_stat = as.matrix(t_stat),
-    t_boot = as.matrix(t_boot),
+    p_val = as.vector(p_val),
+    t_stat = as.vector(t_stat),
+    t_boot = as.vector(t_boot),
     B = B,
     R0 = R,
     param = param,
