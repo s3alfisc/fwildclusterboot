@@ -74,7 +74,7 @@ boot_algo_fastnreliable <- function(
       Matrix::t(L_inv) %*% L_inv
     }, 
     arma_pinv = function(x) pinv(x), 
-    eigen_pinv = function(x) eigen_pinv(x)
+    eigen_pinv = function(x) eigen_pinv(as.matrix(x))
   )
 
 
@@ -187,19 +187,19 @@ boot_algo_fastnreliable <- function(
 
     inv_tXX_tXgXg <- lapply(
       1:G,
-      function(x) inv(as.matrix(tXX - tXgXg[[x]]))
+      function(x) inv(tXX - tXgXg[[x]])
     )
 
     beta_1g_tilde <- lapply(
       1:G,
-      function(g) inv(as.matrix(tX1X1 - tX1gX1g[[g]])) %*% (tX1y - tX1gyg[[g]])
+      function(g) inv(tX1X1 - tX1gX1g[[g]]) %*% (tX1y - tX1gyg[[g]])
     )
 
   } else if(bootstrap_type == "WCU3x"){
 
     beta_g_hat <- lapply(
       1:G,
-      function(g) inv(as.matrix(tXX - tXgXg[[g]])) %*% (tXy - tXgyg[[g]])
+      function(g) inv(tXX - tXgXg[[g]]) %*% (tXy - tXgyg[[g]])
     )
 
   }
