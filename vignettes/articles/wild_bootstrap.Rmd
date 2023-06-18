@@ -1,0 +1,365 @@
+---
+title: "The Wild (Cluster) Bootstrap"
+bibliography: bibliography.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+### Wild Cluster Bootstrap 101
+
+We are interested in testing a linear hypothesis $H_0: \beta_{j} = 0$ against $H_1: \beta_{j} \neq 0$
+
+for a linear model of interest
+
+\begin{align}
+y &= X \beta + u \\
+  &=
+\begin{bmatrix}
+y_{1} \\
+y_{2} \\
+...\\
+y_{G}
+\end{bmatrix}
+=
+\begin{bmatrix}
+X_{1} \\
+X_{2} \\
+...\\
+X_{G}
+\end{bmatrix} \beta +
+\begin{bmatrix}
+u_{1} \\
+u_{2} \\
+...\\
+u_{G}
+\end{bmatrix},
+\end{align}
+
+with $E(u|X) = 0$, where group $g$ contains $N_{g}$ observations so that $N = \sum_{g = 1}^{G} N_{g}$. The regression residuals $u$ are allowed to be correlated within clusters, but are assumed to be uncorrelated across clusters. In consequence, the models' covariance matrix is block diagonal. For each cluster, we denote $E(u_{g} u_{g}') =\Sigma_{g}$ and $E(u u') =\Sigma$.
+
+A generic wild bootstrap test then proceeds in the following steps: 
+
+::: callout
+* Step 1: Either
+  - ... regress $y$ on $X$; obtain point estimates $\hat{\beta}$ and estimated residuals $\hat{u}$; This type of bootstrap is known as the "WCU" (wild cluster unrestricted)
+   - ... or regress $Y$ on $X$ imposing the null (via restricted least squares); obtain point estimates $\tilde{\beta}$ and estimated residuals $\tilde{u}$. This type of bootstrap is known as the "WCR" (wild cluster restricted)
+   - to unify notation, we will denote $\ddot{\beta}$,      with $\ddot{\beta} = \hat{\beta}$ for the WCU and      $\ddot{\beta} = \tilde{\beta}$ for the WCR
+
+* Step 2:
+  - calculate the (cluster) robust t-statistic for the null hypothesis of interest, i.e.
+  $$
+    t_{j} = \frac{\hat{\beta_{j}}}{\sqrt{\hat{\Sigma}_{jj,x}}}
+  $$
+The subscript $x$ for the variance-covariance estimate $\hat{\Sigma}_{jj,x}$ denotes the type $x$ of the employed cluster robust variance estimator, and the $jj$ subscribt selects the jth column and row of the variance covariance matrix.
+
+* Step 3:
+  - For $b = 1, ..., B$ bootstrap iterations, create
+     - a set of bootstrap error terms $v_{b}^{*} \in \mathbb{R}^{G}$
+     - a new bootstrap sample $y_{b}^{*} = X \ddot{\beta} + f_{y}(\hat{u}) \times v_{b}^{*}$, where for each observation from the same cluster g, the transformed predicted error $f_{y}(\hat{u})$ is multiplied with the same weight $v_{b,g}^{*}$
+     - a bootstrapped t-statistic
+      $$
+        t_{j,b}^{*} = \frac{\hat{\beta_{j,b}^{*}} - \ddot{\beta_{j}}}{\sqrt{\hat{\Sigma}_{jj,x,b}^{*}}}
+      $$
+      where $\hat{\beta}_{j,b}^{*}$ is the jth element of the OLS estimate of $y_{b}^{*}$ on $X$ and
+      $\hat{\Sigma}_{jj, x, b}^{*}$ the associated (cluster) robust variance-covariance estimate of type $x$
+
+* Step 4:
+  - based on all $B$ bootstrapped t-statistics, calculate a bootstrap p-value as
+
+  \begin{equation}
+    \text{left-tailed: } \hat{P}_{L}^{*} = \frac{1}{B} \sum_{b = 1}^{B} 1(t^{*}_{j,b} < t_{j})
+\end{equation}
+
+\begin{equation}
+\text{right tailed: } \hat{P}_{R}^{*} = \frac{1}{B} \sum_{b = 1}^{B} 1(t^{*}_{j,b} > t_j)
+\end{equation}
+
+\begin{equation}
+   \text{two-tailed: }   \hat{P}_{S}^{*} = \frac{1}{B} \sum_{b = 1}^{B} 1(|t^{*}_{j,b}| > |t_j|)
+\end{equation}
+
+\begin{equation}
+\text{equal-tailed: } \hat{P}_{ET}^{*} = 2 min(\hat{P}_{L}^{*}, \hat{P}_{R}^{*}).
+\end{equation}
+
+:::
+
+### Multiple Variants of the Wild Cluster Bootstrap
+
+The above algorithm leads to several variants of the wild cluster bootstrap: first, the bootstrap variants may differ in the choice of the variance-covariance estimator $\Sigma_{x}$. Second, they may differ in the functional transformation of the estimated residuals $f(\hat{u})$. Finally, the choice of imposing or not imposing the null on the bootstrap data generating process, as well as the choice of bootstrap weights lead to different bootstrap variants. 
+
+Based on recent work by @mackinnon2022fast, we will put emphasis on the choice of the variance-covariance estimator $\Sigma_{x}$ and how the residuals $f(\hat{u})$ are transformed. 
+
+For reasons of computational feasibility, @mackinnon2022fast focus on CRV1 and CRV3 covariance matrix estimators.
+
+Both the CRV1 and CRV3 variance covariance estimators can be written as
+
+\begin{equation}
+  CRV: \hat{\Sigma}_{x} = (X'X)^{-1} (\sum_{g=1}^{G} X_{g}' f_{x}(\hat{u}_{g}) f_{x}(\hat{u}_{g})' X_{g} ) (X'X)^{-1}.
+\end{equation}
+
+For the CRV1 estimator, the function $f_{1}(\hat{u}_{g})'$ is defined as
+
+$$
+  f_{1}(\hat{u}_{g})' = \sqrt{\frac{G}{G-1} \frac{N-1}{N-k}} \times \hat{u}.
+$$
+
+For the CRV3 estimator, the equivalent function is defined as
+
+$$
+  f_{3}(\hat{u}_{g})' = \sqrt{\frac{G}{G-1}} \times M_{gg}^{-1} \hat{u}_{g}
+$$
+
+where $M_{gg} = I_{N_g} - H_g$, $H_g = X_g (X'X)^{-1} X_g'$, and $I_{N_g}$ is the diagonal matrix for all observations in cluster $g$.
+
+In consequence, @mackinnon2022fast define four distinct bootstrap variants that differ in a) the function $f_{y}$ used when creating the bootstrap samples - i.e. whether the "score" is imposed on the bootstrap data generating process or not - and b) the the type of variance-covariance matrix estimator, which can either be the classical CRV1 or the CRV3 estimator.
+
+| Bootstrap Type   | VCOV      | Score-on-dgp                   |
+|:----------------:|:---------:|:---------:|:------------------:|
+ 'Classic': 'C'    | CRV1      | $f_{1}$                        |
+ 'Variance': 'V'   | CRV3      | $f_{1}$                        |
+ 'Score': 'S'      | CRV1      | $f_{3}$                        |
+ 'Both': 'B'       | CRV3      | $f_{3}$                        |
+:Overview of different bootstrap variants  {#tbl-bootstrap-variants}
+
+All four variants of the wild cluster bootstrap are supported via [fwildclusterboot]{.pkg}, either imposing the null hypothesis on the bootstrap data generating process (WCR) or not (WCU).
+
+### Multi-Way Clustering
+
+A further generalisation of the algorithm described above is the case of multi-way clustering. For multi-way clustering over two sets of clusters $G$ and $H$, the variance-covariance matrix is computed as
+
+\begin{equation}
+  \hat{\Sigma} = m_{G} \hat{\Sigma}_{G} +  m_{H} \hat{\Sigma}_{H} - m_{GH} \hat{\Sigma}_{GH}
+\end{equation}
+
+where the number of clusters in $m_{GH}$ is the number of non-empty intersections in clusters $G$ and $H$ (and the variance covariance matrix estimator $\hat{\Sigma}_{i}$ can be either CRV1 or CRV3 for all $i \in \{G, H, GH \}$). Note that it may occur that the resulting variance-covariance matrix is not positive definite - in this case, bootstrap estimates are discarded.
+
+An important choice for multi-way clustering is the level from which the bootstrap weights are drawn: Should the bootstrap weights be drawn from cluster $G$, cluster $H$, or even the intersection of the two? The level of clustering from which the bootstrap weights are drawn is usually referred to as the "bootcluster". By default, [boottest]{.pkg} and [fwildclusterboot]{.pkg} select the *largest* of the three clustering levels as the bootcluster, although this is not necessarily recommended (see @roodman2019fast).
+
+For applications with few treated clusters - for example, difference-in-differences models with few treated states - @mackinnon2018wild suggest using a 'subcluster' as the level of sampling for the bootstrap weights. A subcluster is a partition of a cluster, i.e. cities in a given state.
+
+
+### The Non-Clustered Wild Bootstrap
+
+For the non-clustered ("heteroskedastic") wild bootstrap, each observation is multiplied by its own 'custom' weight, and the cluster-robust variance-covariance matrices are replaced by *heteroskedastic* variance-covariance matrices. This results in the following functional specifications:
+
+\begin{equation}
+  HC1: f(\hat{u}) = \sqrt{\frac{n}{n-k}} \hat{u}
+\end{equation}
+
+\begin{equation}
+HC2: f(\hat{u}) = \frac{\hat{u}}{(1-h_i)^{1/2}};
+\end{equation}
+
+\begin{equation}
+HC3:  f(\hat{u}) = \frac{\hat{u}}{(1-h_i)}
+\end{equation}
+
+where $h_i$ is the i-th diagonal element of the "hat-matrix" $P_x = X(X'X)^{-1}X'$.
+
+At the moment, [fwildclusterboot]{.pkg} only supports the '11', '21' and '31' combinations of the wild robust bootstrap, i.e. one can choose to apply the 'HC1', 'HC2' or 'HC3' correction on the bootstrap data generating process, but the bootstrap variance-covariance matrices are always calculated via 'HC1'.
+
+
+### Different bootstrap weights
+
+One last degree of freedom when conducting inference via a wild bootstrap is the type of bootstrap weights, i.e. the choice of probability distribution from which the weights are drawn.
+[fwildclusterboot]{.pkg} offers support for four distinct weights $v_{b}^{*}$:
+
+  + *Rademacher weights* take values $1$ and $-1$ with equal probability
+  + *Mammen weights* take values values $1-\psi$ with probability $\psi / \sqrt(5)$
+    and $\psi$ otherwise, with $\psi = (1+\sqrt(5))/2$
+  + *Normal weights* draw from the standard normal distribution
+  + *Webb weights* draw from a six-point distribution, each with probability $1/6$.
+    Possible values are $+/-1.5, +/-1, +/-0.5$.
+
+For Rademacher and Mammen weights, only $2^G$ unique combinations of draws exist. If G is small - i.e. smaller than 12 -  it is therefore often recommended to use Webb weights with $6^G$ unique possible draws (see @webb2013reworking).
+
+### Wild Bootstrap Confidence Intervals
+
+In theory, multiple ways to calculate wild (cluster) bootstrapped confidence intervals exists [@mackinnon2022cluster]. If the null hypothesis is not imposed on the bootstrap dgp, the most straightforward approach is to calculate a standard error $\hat{s}^{*}(\hat{\beta})$ based on the bootstrapped regression coefficients $\hat{\beta}_{b}^{*}$ and a plug-in estimator:
+
+\begin{equation}
+ [\hat{\beta} - c_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta}), \hat{\beta} + c_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta})].
+\end{equation}
+
+Here, $c_{1-\alpha / 2}$ is the $1-\alpha$ quantile of the $t(G-1)$ distribution.
+
+Asymptotic refinement of the plug-in estimator can be achieved by using as studentized version of the confidence interval above, which is often denoted as a "t-percentile bootstrap"
+
+\begin{equation}
+[\hat{\beta} - c^{*}_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta}), \hat{\beta} + c^{*}_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta})],
+\end{equation}
+
+where $c^{*}_{1-\alpha / 2}$ is the empirical $1-\alpha / 2$ quantile of the distribution of bootstrapped t-statistics.
+
+If the null hypothesis is imposed on the data generating process, the strategy above is now longer feasible. 
+
+Both [fwildclusterboot]{.pkg} and [boottest]{.pkg} instead compute confidence intervals by test inversion [@mackinnon2015wild]. While inverting bootstrap tests is computationally more demanding, it allows to compute confidence intervals for the WCR bootstrap, which is generally be considered to perform better (based on both theoretical and empirical simulation evidence, see e.g. [@mackinnon2022cluster] for a discussion). In addition, the inversion of wild cluster bootstrap tests can be massively accelerated by pre-computing multiple objects that are constant across all iterations of the inversion algorithm. Details on how this acceleration is achieved in [fwildclusterboot]{.pkg} are presented in the appendix (which is to be added. If you are curious, you can email Alex, and he'll share his notes). In the following section, for illustrative purposes, we will demonstrate how to invert a simple t-test for a regression model (vs a bootstrap test inversion).
+
+#### Example: How to compute a CI by test inversion
+
+Suppose we have a parameter $\theta \in \Theta$ and a test statistic $T(\theta)$. We also have a critical value $c$ so that to test the null hypothesis $H_0: \theta = \theta_0$ against $H_1: \theta \neq \theta_0$ at a level $\alpha$, we reject the null hypothesis if $T(\theta_0) > c$.
+
+Let's define a set that includes all values of $\theta$ for which the decision rule "reject the null hypothesis if $T(\theta)\geq c$" leads to an acceptance of the null hypothesis:
+
+$$
+  C = \{\theta \in \Theta: T(\theta)\leq c \}.
+$$
+Based on the definition of the p-value, we can alternatively define a confidence interval at significance level $\alpha$ as 
+
+$$
+  C = \{\theta \in \Theta: p(\theta) \geq \alpha \}.
+$$
+In other words: the confidence interval is the set of all values $\theta \in \Theta$ with p-value larger than the chosen significance level $\alpha$. 
+
+All of this implies that if we have a function that calculates p-values for different values of $\theta$, $p(\theta)$, to obtain a confidence interval, we simply have to collect all values $\theta$ for which $p(\theta) > \alpha$. Or, in other words, we need to *invert* $p(\theta)$.  
+
+We will illustrate all of this based on a simple linear regression model. 
+
+The data generating process is 
+
+$$ 
+  Y = \beta_0 + \beta_1 X + u
+$$ 
+
+with $E[u|X] = 0$, and we are interested in testing the null hypothesis 
+
+$$
+  H_0: \beta_1 = 0    \textit{ vs } H_1: \beta_1 \neq 0.
+$$
+
+We start with simulating the data:
+
+```{r}
+set.seed(21348534)
+
+N <- 10000
+X <- rnorm(N)
+y <- 1 + 0.01 * X + rnorm(N)
+df <- data.frame(X = X, y = y)
+
+fit <- (lm(y ~ 1 + X, data = df))
+```
+
+The estimated confidence interval of the regression model is 
+
+```{r}
+confint(fit)
+```
+
+Note that this confidence interval is build on *estimated standard errors*.
+
+This means that in order to calculate standard errors, `confint()` computes a standard error and multiplies it with a critical value.  
+
+To compute a confidence without estimating standard errors, we first need to define a function that calculates p-values for different values of $\beta$ given the model and data. To do so, we will simply create a function that will allow us to test hypotheses of the form 
+
+$$
+  H_0: \beta_1 - r = 0    \textit{ vs } H_1: \beta_1 -r \neq 0.
+$$
+
+for different values of $r$, which is of course equivalent to testing
+
+$$
+    H_0: \beta_1 = r     \textit{ vs } H_1: \beta_1  \neq r.
+$$
+
+Tests of such a form are implemented in the `car` package, via the `linearHypothesis` function, and we create a small wrapper function, `p_val(y, X, r)` around `car::linearHypothesis`: 
+
+```{r}
+p_val <- function(y, X, r){
+  res <- lm(y ~ 1 + X)
+  p_val <- car::linearHypothesis(model = res, hypothesis.matrix = c(0,1), rhs = r)$`Pr(>F)`[2]
+  p_val
+}
+
+```
+
+As can be seen in the plot below, for different values of $r$, `p_val()` returns a range of p-values: 
+
+```{r}
+p_val_r <- unlist(lapply(seq(-0.05, 0.05, 0.005), function(i) p_val(y = y, X = X, r = i)))
+p_val_df <- data.frame(r = seq(-0.05, 0.05, 0.005), p_val_r = p_val_r)
+plot(x = p_val_df$r, y = p_val_df$p_val_r,type = "b", pch = 20, lty = 2, xlab = "r", ylab = "p-value")
+lines(p_val_df$r, p_val_df$p_val_r, type = "l", lty = 1)
+abline(h = 0.05, col = "red") 
+abline(v = confint(fit)["X", ][1], col = "blue")
+text(x = confint(fit)["X", ][1] - 0.01, y = 0.8, "lower", srt=0.2, col = "blue")
+abline(v = confint(fit)["X", ][2], col = "blue")
+text(x = confint(fit)["X", ][2] + 0.01, y = 0.8, "upper", srt=0.2, col = "blue")
+abline(v = confint(fit)["X", ][1] - 0.01, col = "green", lty = 2)
+abline(v = confint(fit)["X", ][1] + 0.01, col = "green", lty = 2)
+abline(v = confint(fit)["X", ][2] - 0.01, col = "green", lty = 2)
+abline(v = confint(fit)["X", ][2] + 0.01, col = "green", lty = 2)
+```
+
+The p-value peaks for the "true" null hypothesis $\beta_1 = r = 0.01$ and decreases when moving further away from the true value. 
+
+The two points where the red line crosses with the black line - marked by a blue line - are the confidence interval for our hypothesis test of interest! (Note that this plot is very similar to the output of `plot.boottest()`).
+
+In consequence, our goal is to find the intersection of the blue, red, and black lines. 
+
+To do so, we need to find two starting values for the line search. Those are marked as green. In practice, `boottest()` needs to do some work to find them, but here we will skip this step. 
+
+We will start from the empirical confidence interval calculated by `confint()`: 
+
+```{r}
+confint(fit)
+```
+
+We create two sets of starting values by adding a value $\epsilon \neq 0$ to the confidence boundaries of the confidence set obtained by `confint()`: 
+
+```{r}
+epsilon <- 0.01
+
+startset1 <- confint(fit)["X",][1] + c(-epsilon, epsilon)
+startset2 <- confint(fit)["X",][2] + c(-epsilon, epsilon)
+```
+
+With these starting values at hand, we can invert $p(.)$ numerically by a root finding procedure - we will run a simple bisection. 
+
+
+```{r}
+invert_p_val <- function(X, y, startset1, startset2, alpha){
+  
+  # p-val - sign_level 
+  p_val_x_sign_level <- function(r) {
+    p_val(X = X, y = y, r) - alpha
+  }
+  
+  # bisection for both startset1, startset2
+  res <- lapply(list(startset1, startset2), function(x){ 
+                  
+          tmp <- suppressWarnings(stats::uniroot(f = p_val_x_sign_level,
+                                  lower = min(x),
+                                  upper = max(x),
+                                  tol = 1e-08,
+                                  maxiter = 10)$root)
+
+          })
+
+  unlist(res)
+  
+}
+```
+
+Now, which confidence interval do we get from the numerical p-value inversion?
+
+```{r}
+invert_p_val(X = X, y = y, startset1 = startset1, startset2 = startset2, alpha = 0.05)
+```
+
+As it turns out, this confidence interval is practically identical with the confidence interval based on estimated standard errors: 
+
+```{r}
+confint(fit)
+```
+
+We have successfully inverted p-values to obtain a confidence interval and have *not* calculated a standard error to compute the CI and have *not* used any asymptotic approximation in the process!
+
+### Literature
