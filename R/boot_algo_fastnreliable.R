@@ -56,23 +56,31 @@ boot_algo_fastnreliable <- function(
   #here for debugging
   #preprocessed_object <- preprocess
   
-  inv <- "eigen_pinv"
-  inv <- switch(
-    inv, 
-    mass_ginv = function(x) MASS::ginv(x), 
-    matrix_solve = function(x) Matrix::solve(x),
-    sparse_ginv = function(x) {
-      # does not work, as matrix is not pos. definite
-      N <- dim(X)[1]
-      L <- Matrix::chol(X)
-      I <- Matrix::Diagonal(N)
-      L_inv <- Matrix::solve(L, I)
-      Matrix::t(L_inv) %*% L_inv
-    }, 
-    arma_pinv = function(x) pinv(x), 
-    eigen_pinv = function(x) eigen_pinv(as.matrix(x))
-  )
-
+  inv <- function(x, g){
+    tryCatch(
+      {
+        Matrix::solve(x)
+      },
+      error = function(e) {
+        rlang::warn(message = paste0(
+          "Matrix inversion error when computing beta(g) for cluster ", g, ". Using Pseudo-Inverse instead."), 
+          use_cli_format = TRUE)
+        # message(paste0("Error when dropping cluster ", g, ". Using Psuedo-Inverse instead."))
+        eigen_pinv(as.matrix(x))
+      }
+    )
+  }
+  
+  solve2 <- function(x,y, g){
+    tryCatch(
+      {
+        Matrix::solve(x, y)
+      }, 
+      error = function(e){
+        eigen_pinv(as.matrix(x)) %*% y
+      }
+    )
+  }
 
   if(substr(bootstrap_type, 2, 2) == 1){
     crv_type <- "crv1"
@@ -82,6 +90,8 @@ boot_algo_fastnreliable <- function(
 
   X <- preprocessed_object$X
   y <- preprocessed_object$Y
+  
+
   
   R <- preprocessed_object$R0
   cluster_df <- preprocessed_object$clustid
@@ -179,19 +189,19 @@ boot_algo_fastnreliable <- function(
 
     inv_tXX_tXgXg <- lapply(
       1:G,
-      function(x) inv(tXX - tXgXg[[x]])
+      function(x) inv(tXX - tXgXg[[x]], x)
     )
 
     beta_1g_tilde <- lapply(
       1:G,
-      function(g) inv(tX1X1 - tX1gX1g[[g]]) %*% (tX1y - tX1gyg[[g]])
+      function(g) solve2(tX1X1 - tX1gX1g[[g]], tX1y - tX1gyg[[g]], g)
     )
 
   } else if(bootstrap_type == "WCU3x"){
 
     beta_g_hat <- lapply(
       1:G,
-      function(g) inv(tXX - tXgXg[[g]]) %*% (tXy - tXgyg[[g]])
+      function(g) solve2(tXX - tXgXg[[g]], tXy - tXgyg[[g]], g)
     )
 
   }
@@ -206,7 +216,7 @@ boot_algo_fastnreliable <- function(
     if(is.null(inv_tXX_tXgXg)){
       inv_tXX_tXgXg <- lapply(
         1:G,
-        function(x) inv((tXX - tXgXg[[x]]))
+        function(x) inv((tXX - tXgXg[[x]]), x)
       )
     }
   }
