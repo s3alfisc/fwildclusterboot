@@ -56,11 +56,7 @@ boot_algo_fastnreliable <- function(
   #here for debugging
   #preprocessed_object <- preprocess
   
-  #inv <- "matrix_solve"
-  #inv <- "mass_ginv"
-  #inv <- "sparse_ginv"
   inv <- "eigen_pinv"
-  #inv <- "arma_pinv"
   inv <- switch(
     inv, 
     mass_ginv = function(x) MASS::ginv(x), 
@@ -86,10 +82,6 @@ boot_algo_fastnreliable <- function(
 
   X <- preprocessed_object$X
   y <- preprocessed_object$Y
-  
-  # convert to sparse matrix
-  #X <- Matrix::Matrix(X)
-  #y <- Matrix::Matrix(y)
   
   R <- preprocessed_object$R0
   cluster_df <- preprocessed_object$clustid

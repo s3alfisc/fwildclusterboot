@@ -23,7 +23,7 @@ arma::vec boot_algo3_crv1_denom(int B,
   
   arma::vec denom(B+1);
   
-//#pragma omp parallel for num_threads(cores) reduction(+:denom)
+//#pragma omp parallel for num_threads(cores)
   for(int b = 0; b < (B+1); b++){
     
     Rcpp::checkUserInterrupt();
@@ -147,6 +147,24 @@ List boot_algo3_crv3( const int B,
   
   
 }
+
+
+// // [[Rcpp::export]]
+// arma::mat compute_H(int G, arma::mat R, arma::mat tXXinv, List tXgXg, List scores_list) {
+//   
+//   arma::mat H(G, G);
+//   
+//   for (int g = 0; g < G; g++) {
+//     for (int h = 0; h < G; h++) {
+//       arma::mat tXgXg_mat = as<arma::mat>(tXgXg[g]);
+//       arma::vec scores_vec = as<arma::vec>(scores_list[h]);
+//       H(g,h) = R * tXXinv * tXgXg_mat * tXXinv * scores_vec;
+//     }
+//   }
+//   
+//   return H;
+//   
+// }
 
 // // list multiplication 
 // // [[Rcpp::export]]
