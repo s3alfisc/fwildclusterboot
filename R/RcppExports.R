@@ -9,6 +9,14 @@ boot_algo3_crv3 <- function(B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, 
     .Call('_fwildclusterboot_boot_algo3_crv3', PACKAGE = 'fwildclusterboot', B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, cores, R, delta_b_star)
 }
 
+convertSparse <- function(mat) {
+    .Call('_fwildclusterboot_convertSparse', PACKAGE = 'fwildclusterboot', mat)
+}
+
+compute_H <- function(G, R, tXXinv, tXgXg, scores_list, cores) {
+    .Call('_fwildclusterboot_compute_H', PACKAGE = 'fwildclusterboot', G, R, tXXinv, tXgXg, scores_list, cores)
+}
+
 pinv <- function(X) {
     .Call('_fwildclusterboot_pinv', PACKAGE = 'fwildclusterboot', X)
 }

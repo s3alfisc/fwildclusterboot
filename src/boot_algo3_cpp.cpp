@@ -148,23 +148,45 @@ List boot_algo3_crv3( const int B,
   
 }
 
+// code taken from
+// https://gallery.rcpp.org/articles/armadillo-sparse-matrix/
+// [[Rcpp::export]]
+arma::sp_mat convertSparse(S4 mat) {
+  
+  // obtain dim, i, p. x from S4 object
+  IntegerVector dims = mat.slot("Dim");
+  arma::urowvec i = Rcpp::as<arma::urowvec>(mat.slot("i"));
+  arma::urowvec p = Rcpp::as<arma::urowvec>(mat.slot("p"));
+  arma::vec x     = Rcpp::as<arma::vec>(mat.slot("x"));
+  
+  int nrow = dims[0], ncol = dims[1];
+  
+  // use Armadillo sparse matrix constructor
+  arma::sp_mat res(i, p, x, nrow, ncol);
+  return res;
+}
 
-// // [[Rcpp::export]]
-// arma::mat compute_H(int G, arma::mat R, arma::mat tXXinv, List tXgXg, List scores_list) {
-//   
-//   arma::mat H(G, G);
-//   
-//   for (int g = 0; g < G; g++) {
-//     for (int h = 0; h < G; h++) {
-//       arma::mat tXgXg_mat = as<arma::mat>(tXgXg[g]);
-//       arma::vec scores_vec = as<arma::vec>(scores_list[h]);
-//       H(g,h) = R * tXXinv * tXgXg_mat * tXXinv * scores_vec;
-//     }
-//   }
-//   
-//   return H;
-//   
-// }
+
+// [[Rcpp::export]]
+arma::mat compute_H(int G, arma::mat R, arma::mat tXXinv, List tXgXg, List scores_list, int cores) {
+
+  
+  //arma::sp_mat sp_tXXinv = convertSparse(tXXinv);
+  
+  arma::mat H(G, G);
+
+  for (int g = 0; g < G; g++) {
+    for (int h = 0; h < G; h++) {
+      arma::mat tXgXg_mat = as<arma::mat>(tXgXg[g]);
+      arma::mat scores_vec = as<arma::mat>(scores_list[h]);
+      H(g,h) = arma::as_scalar(R * tXXinv * tXgXg_mat * tXXinv * scores_vec);
+    }
+  }
+
+  return H;
+
+}
+
 
 // // list multiplication 
 // // [[Rcpp::export]]

@@ -246,15 +246,10 @@ boot_algo_fastnreliable <- function(
 
   if(crv_type == "crv1"){
 
-    pracma::tic()
-    H <- Matrix::Matrix(NA, G, G)
-    for(g in 1:G){
-      for(h in 1:G){
-        H[g,h] <-
-          (R %*% tXXinv %*% tXgXg[[g]] %*% tXXinv %*% scores_list[[h]])
-      }
-    }
-    pracma::toc()
+    tXgXg <- lapply(tXgXg,function(g) as.matrix(g))
+    scores_list <- lapply(scores_list,function(g) as.matrix(g))
+    
+    H <- compute_H(G = G, R = matrix(R, 1, k), tXXinv = as.matrix(tXXinv), tXgXg = tXgXg, scores_list = scores_list, cores = nthreads)
 
     denom <- boot_algo3_crv1_denom(
       B = B,
