@@ -285,9 +285,15 @@ check_boot_algo_fastnreliable <- function(
   }
 
   if (!is.null(fe)) {
-    rlang::abort("The '13', '31', and '33'
-         bootstrap variants currently don't support fixed
+    if(bootstrap_type %in% c("11", "31")){
+      if(!(fe == clustid)){
+        rlang::abort("The '11' and '13''
+         bootstrap variants currently only support cluster fixed
          effects in the bootstrap. Please set 'fe = NULL'.")
+      }
+    } else {
+      rlang::abort("The '13' and '33' bootstrap types currently do not support any fixed effects.")
+    }
   }
 
   if(!is.null(weights)){

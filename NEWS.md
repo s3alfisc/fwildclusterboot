@@ -2,6 +2,7 @@
 
 ## Performance
 
+- allows to project out cluster fixed effects for the MNW bootstrap types
 - sparsifies MNW bootstraps - bootstrap types 31, 33, 13 (large speed gains for problems with high dimensional fixed effects)
 
 Here is a speed comparison for a problem with $k=100$ dummies from a 

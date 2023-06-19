@@ -63,9 +63,8 @@ boot_algo_fastnreliable <- function(
       },
       error = function(e) {
         rlang::warn(message = paste0(
-          "Matrix inversion error when computing beta(g) for cluster ", g, ". Using Pseudo-Inverse instead."), 
+          "Matrix inversion error when computing beta(g) for cluster ", g, ". Using Pseudo-Inverse instead. Potentially, you can suppress this message by specifying a cluster fixed effect in the bootstrap via the `fe` argument of `boottest()`."), 
           use_cli_format = TRUE)
-        # message(paste0("Error when dropping cluster ", g, ". Using Psuedo-Inverse instead."))
         eigen_pinv(as.matrix(x))
       }
     )
@@ -90,8 +89,6 @@ boot_algo_fastnreliable <- function(
 
   X <- preprocessed_object$X
   y <- preprocessed_object$Y
-  
-
   
   R <- preprocessed_object$R0
   cluster_df <- preprocessed_object$clustid
@@ -249,6 +246,7 @@ boot_algo_fastnreliable <- function(
 
   if(crv_type == "crv1"){
 
+    pracma::tic()
     H <- Matrix::Matrix(NA, G, G)
     for(g in 1:G){
       for(h in 1:G){
@@ -256,6 +254,7 @@ boot_algo_fastnreliable <- function(
           (R %*% tXXinv %*% tXgXg[[g]] %*% tXXinv %*% scores_list[[h]])
       }
     }
+    pracma::toc()
 
     denom <- boot_algo3_crv1_denom(
       B = B,

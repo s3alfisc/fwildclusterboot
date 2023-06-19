@@ -833,6 +833,10 @@ transform_fe <-
         prep_fe <- demean_fe(X, Y, fe_df, has_weights, N)
         X <- prep_fe$X
         Y <- prep_fe$Y
+        if(bootstrap_type != "fnw11"){
+          Y <- Matrix::Matrix(Y)
+          X <- Matrix::Matrix(X)
+        }
         W <- prep_fe$W
         n_fe <- prep_fe$n_fe
       }

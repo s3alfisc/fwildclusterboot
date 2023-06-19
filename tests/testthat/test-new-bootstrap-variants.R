@@ -393,6 +393,7 @@ test_that("variants 31 R vs Julia", {
 
 
 test_that("new variants and fixed effects", {
+  
   skip_on_cran()
   skip_if_not(
     fwildclusterboot:::find_proglang("julia"),
@@ -500,4 +501,100 @@ test_that("new variants and fixed effects", {
     boot13_lm$t_boot,
     boot13_fe$t_boot
   )
+})
+
+test_that("test cluster fixed effects", {
+  
+
+  library(fixest)
+  library(fwildclusterboot)
+  
+  B <- 9999
+  
+  data1 <<- fwildclusterboot:::create_data(
+    N = 1000,
+    N_G1 = 20,
+    icc1 = 0.5,
+    N_G2 = 20,
+    icc2 = 0.2,
+    numb_fe1 = 10,
+    numb_fe2 = 10,
+    seed = 961239,
+    weights = 1:N / N
+  )
+  
+  feols_fit <- feols(proposition_vote ~ treatment + log_income | group_id1 + group_id2,
+                     data = data1
+  )
+  
+  
+  for(bootstrap_type in c("11", "31")){
+    
+    set.seed(123); dqrng::dqset.seed(123)
+    boot <- boottest(feols_fit,
+                       B = 9999,
+                       param = "treatment",
+                       clustid = "group_id1",
+                       bootstrap_type = bootstrap_type,
+                       ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+    )
+    
+    set.seed(123); dqrng::dqset.seed(123)
+    boot_fe <- boottest(feols_fit,
+                     B = 9999,
+                     param = "treatment",
+                     clustid = "group_id1",
+                     bootstrap_type = bootstrap_type,
+                     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                     fe = "group_id1"
+    )
+    
+    expect_equal(pval(boot), pval(boot_fe))
+    expect_equal(teststat(boot), teststat(boot_fe))
+    expect_equal(confint(boot), confint(boot_fe))
+    
+    # expect error when fe is not the clustering variable
+    expect_error(
+      boot_fe <- boottest(feols_fit,
+                          B = 9999,
+                          param = "treatment",
+                          clustid = "group_id1",
+                          bootstrap_type = bootstrap_type,
+                          ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                          fe = "group_id2"
+      )
+    )
+    
+  
+    
+  }
+  
+  # error for fe with bootstrap types "13", "33"
+  
+  expect_error(
+    boot_fe <- boottest(feols_fit,
+                        B = 9999,
+                        param = "treatment",
+                        clustid = "group_id1",
+                        bootstrap_type = "13",
+                        ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                        fe = "group_id1"
+    )
+  )
+  
+  expect_error(
+    boot_fe <- boottest(feols_fit,
+                        B = 9999,
+                        param = "treatment",
+                        clustid = "group_id1",
+                        bootstrap_type = "33",
+                        ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                        fe = "group_id1"
+    )
+  )
+  
+  
+  
+  
+  
 })
