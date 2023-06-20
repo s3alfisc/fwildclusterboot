@@ -81,7 +81,7 @@ jobs:
 
       # install WildBootTests.jl
       - name: install WildBootTests.jl 
-        run: julia -e 'using Pkg; Pkg.add(["StableRNGs"]); Pkg.add(Pkg.PackageSpec(;name="WildBootTests", version="0.9.0"))'
+        run: julia -e 'using Pkg; Pkg.add(["StableRNGs"]); Pkg.add(Pkg.PackageSpec(;name="WildBootTests", version="0.9.8"))'
         # use shell bash to ensure consistent behavior across OS
         shell: bash
 

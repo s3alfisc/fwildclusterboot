@@ -89,7 +89,7 @@ Roxygen: list(markdown = TRUE, roclets = c ("namespace", "rd",
     "srr::srr_stats_roclet"))
 RoxygenNote: 7.2.3
 SystemRequirements: Version Requirements to run the wild bootstrap through
-    Julia - Julia (>= 1.8), WildBootTests.jl (>=0.9).  Julia is
+    Julia - Julia (>= 1.8), WildBootTests.jl (>=0.9.8).  Julia is
     downloadable via the official Julia website
     (https://julialang.org/downloads/), WildBootTests.jl via Julia's
     package manager (https://docs.julialang.org/en/v1/stdlib/Pkg/) or its
