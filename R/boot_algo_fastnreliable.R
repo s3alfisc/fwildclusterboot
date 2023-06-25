@@ -100,6 +100,8 @@ boot_algo_fastnreliable <- function(
   G <- N_G_bootcluster <- length(unique(bootcluster[[1]]))
   k <- length(R)
 
+  
+  
   bootstrap_type_x <- paste0(substr(bootstrap_type, 1, 1), "x")
   if(impose_null){
     # WCR1x or WCR3x
@@ -132,7 +134,7 @@ boot_algo_fastnreliable <- function(
     function(g) Matrix::t(X_list[[g]]) %*% y_list[[g]]
   )
 
-
+  
   tXX <- Reduce("+", tXgXg) # crossprod(X)
   tXy <- Reduce("+", tXgyg) # t(X) %*% y
   tXXinv <- solve(tXX)
@@ -288,7 +290,7 @@ boot_algo_fastnreliable <- function(
         score_diff <- scores_boot - scores_g_boot[g,]
         delta_diff[g,] <-
 
-          (
+          as.vector(
             (inv_tXX_tXgXg[[g]] %*% score_diff) - delta_b_star
           )^2
       }
