@@ -1,19 +1,23 @@
 # fwildclusterboot 0.14
 
+## Breaking Changes
+
+- the `print.boottest()` and `print.mboottest()` method have been deprecated, as both did not have a distinct use case. 
+
 ## Performance
 
 Verion 0.14 ...
 
 - allows to project out cluster fixed effects for the MNW bootstrap types
-- sparsifies MNW bootstraps - bootstrap types 31, 33, 13 (large speed gains for problems with high dimensional fixed effects)
-- computes pinv via rcpp eigen (large speed gains)
+- sparsifies the MNW bootstraps - bootstrap types 31, 33, 13 (which leads to good speed gains for problems with high dimensional fixed effects)
+- computes the generalized inverse `pinv` via rcpp eigen (large speed gains), but always tries `Matrix::solve()` first 
 - unlocks parallelization (nthreads was internally set to 1 for some reason)
 
 
 ## rOpenSci Review feedback 
 
 - update docs:
-  - add a vignette on wild bootstrap concepts
+  - add a vignette on wild bootstrap concepts (wild bootstrap 101)
   - better explanation of plot method in docs and vignette 
   - some guidelines on how to turn messages and warnings off
 - reorganization of ropensci ssr tags into code
@@ -25,7 +29,6 @@ Verion 0.14 ...
 - throws a clear error message when the subcluster bootstrap is tried for the 
   fast and reliable algos (currently not supported)
 - bumps the required `WildBootTests.jl` version to `0.9.7`
-- adds a new vignette on wild cluster bootstrapping 101
 
 
 # fwildclusterboot 0.13
