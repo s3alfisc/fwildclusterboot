@@ -2,39 +2,13 @@
 
 ## Performance
 
+Verion 0.14 ...
+
 - allows to project out cluster fixed effects for the MNW bootstrap types
 - sparsifies MNW bootstraps - bootstrap types 31, 33, 13 (large speed gains for problems with high dimensional fixed effects)
-
-Here is a speed comparison for a problem with $k=100$ dummies from a 
-high dimensional fixed effect: 
-```r
-library(fwildclusterboot)
-
-voters <-
-  fwildclusterboot:::create_data(
-    N = 100000,
-    N_G1 = 20,
-    icc1 = 0.01,
-    N_G2 = 10,
-    icc2 = 0.01,
-    numb_fe1 = 100,
-    numb_fe2 = 10,
-    seed = 71986045
-  )
-
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +
-               Q1_immigration,
-             data = voters
-)
-
-microbenchmark::microbenchmark(
-
-)
-```
-
 - computes pinv via rcpp eigen (large speed gains)
-- it is now possible to interrupt rcpp loops
 - unlocks parallelization (nthreads was internally set to 1 for some reason)
+
 
 ## rOpenSci Review feedback 
 
@@ -43,8 +17,14 @@ microbenchmark::microbenchmark(
   - better explanation of plot method in docs and vignette 
   - some guidelines on how to turn messages and warnings off
 - reorganization of ropensci ssr tags into code
+- it is now possible to interrupt rcpp loops
 
 
+## Misc
+
+- throws a clear error message when the subcluster bootstrap is tried for the 
+  fast and reliable algos (currently not supported)
+- bumps the required `WildBootTests.jl` version to `0.9.7`
 
 
 # fwildclusterboot 0.13
