@@ -1780,4 +1780,33 @@ test_that("other misc errors", {
       engine = "R"
     )
   )
+  
+  expect_error(
+    boottest(
+      object = feols_fit,
+      param = ~treatment,
+      clustid = ~group_id1,
+      B = 999,
+      bootstrap_type = "13",
+      bootcluster = "group_id2",
+      engine = "R"
+    )
+  )
+  
+  expect_error(
+    boottest(
+      object = feols_fit,
+      param = ~treatment,
+      clustid = ~group_id1,
+      B = 999,
+      bootstrap_type = "13",
+      bootcluster = ~group_id1 + group_id2,
+      engine = "R"
+    )
+  )
+  
+  
+  
+  
+  
 })

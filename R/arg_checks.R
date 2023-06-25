@@ -254,6 +254,7 @@ check_r_lean <- function(weights, clustid, fe, impose_null){
 check_boot_algo_fastnreliable <- function(
     weights,
     clustid,
+    bootcluster, 
     fe,
     bootstrap_type,
     R,
@@ -262,6 +263,7 @@ check_boot_algo_fastnreliable <- function(
   #' function to check input arguments passed to `boot_algo3()`
   #' @param weights NULL or numeric vector
   #' @param clustid character vector
+  #' @param bootcluster character vector with bootclusters
   #' @param fe NULL or character scalar
   #' @param bootstrap_type either '11', '13', '31, '33'
   #' @param R the constraints vector as specified in the 'boottest()' call
@@ -301,6 +303,15 @@ check_boot_algo_fastnreliable <- function(
          bootstrap variants currently only
          support oneway clustering when 'boot_engine' == 'R'.")
   }
+  
+  if(length(bootcluster) > 1){
+    rlang::abort(paste("The subcluster bootstrap is currently not supported for the bootstrap types '11', '31', '13' and '33'."))
+  }
+  
+  if(!(bootcluster %in% c("max", "min", clustid))){
+    rlang::abort(paste("For the 'fast and reliable' implementations, the 'bootcluster' argument must be 'max', 'min' or", clustid, "."))
+  }
+  
 
 
 }
@@ -479,4 +490,12 @@ check_bootstrap_types <- function(param, bootstrap_type){
     }
   }
 
+}
+
+check_bootcluster_equals_cluster <- function(bootcluster){
+  
+  if(cluster != bootcluster){
+    rlang::abort("For the 'fast and reliable' implementations, the 'bootcluster' argument must be equal to 'clustid'.")
+  }
+  
 }
