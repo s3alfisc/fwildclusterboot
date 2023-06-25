@@ -25,6 +25,7 @@ Verion 0.14 ...
 - throws a clear error message when the subcluster bootstrap is tried for the 
   fast and reliable algos (currently not supported)
 - bumps the required `WildBootTests.jl` version to `0.9.7`
+- adds a new vignette on wild cluster bootstrapping 101
 
 
 # fwildclusterboot 0.13

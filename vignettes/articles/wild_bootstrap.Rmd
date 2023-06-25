@@ -1,5 +1,5 @@
 ---
-title: "The Wild (Cluster) Bootstrap"
+title: "Wild (Cluster) Bootstrap 101"
 bibliography: bibliography.bib
 ---
 
@@ -122,10 +122,10 @@ In consequence, @mackinnon2022fast define four distinct bootstrap variants that 
 
 | Bootstrap Type   | VCOV      | Score-on-dgp                   |
 |:----------------:|:---------:|:---------:|:------------------:|
- 'Classic': 'C'    | CRV1      | $f_{1}$                        |
- 'Variance': 'V'   | CRV3      | $f_{1}$                        |
- 'Score': 'S'      | CRV1      | $f_{3}$                        |
- 'Both': 'B'       | CRV3      | $f_{3}$                        |
+ 'Classic': 'C'('11')   | CRV1      | $f_{1}$                        |
+ 'Variance': 'V'('13')   | CRV3      | $f_{1}$                        |
+ 'Score': 'S'('31')      | CRV1      | $f_{3}$                        |
+ 'Both': 'B'('33')       | CRV3      | $f_{3}$                        |
 :Overview of different bootstrap variants  {#tbl-bootstrap-variants}
 
 All four variants of the wild cluster bootstrap are supported via [fwildclusterboot]{.pkg}, either imposing the null hypothesis on the bootstrap data generating process (WCR) or not (WCU).
@@ -182,7 +182,9 @@ For Rademacher and Mammen weights, only $2^G$ unique combinations of draws exist
 
 ### Wild Bootstrap Confidence Intervals
 
-In theory, multiple ways to calculate wild (cluster) bootstrapped confidence intervals exists [@mackinnon2022cluster]. If the null hypothesis is not imposed on the bootstrap dgp, the most straightforward approach is to calculate a standard error $\hat{s}^{*}(\hat{\beta})$ based on the bootstrapped regression coefficients $\hat{\beta}_{b}^{*}$ and a plug-in estimator:
+In theory, multiple ways to calculate wild (cluster) bootstrapped confidence intervals exists [@mackinnon2022cluster]. 
+<!-- If the null hypothesis is not imposed on the bootstrap dgp, -->
+The most straightforward approach is to calculate a standard error $\hat{s}^{*}(\hat{\beta})$ based on the bootstrapped regression coefficients $\hat{\beta}_{b}^{*}$ and a plug-in estimator:
 
 \begin{equation}
  [\hat{\beta} - c_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta}), \hat{\beta} + c_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta})].
@@ -198,9 +200,12 @@ Asymptotic refinement of the plug-in estimator can be achieved by using as stude
 
 where $c^{*}_{1-\alpha / 2}$ is the empirical $1-\alpha / 2$ quantile of the distribution of bootstrapped t-statistics.
 
-If the null hypothesis is imposed on the data generating process, the strategy above is now longer feasible. 
+<!-- If the null hypothesis is imposed on the data generating process, the strategy above is now longer feasible.  -->
 
-Both [fwildclusterboot]{.pkg} and [boottest]{.pkg} instead compute confidence intervals by test inversion [@mackinnon2015wild]. While inverting bootstrap tests is computationally more demanding, it allows to compute confidence intervals for the WCR bootstrap, which is generally be considered to perform better (based on both theoretical and empirical simulation evidence, see e.g. [@mackinnon2022cluster] for a discussion). In addition, the inversion of wild cluster bootstrap tests can be massively accelerated by pre-computing multiple objects that are constant across all iterations of the inversion algorithm. Details on how this acceleration is achieved in [fwildclusterboot]{.pkg} are presented in the appendix (which is to be added. If you are curious, you can email Alex, and he'll share his notes). In the following section, for illustrative purposes, we will demonstrate how to invert a simple t-test for a regression model (vs a bootstrap test inversion).
+Both [fwildclusterboot]{.pkg} and [boottest]{.pkg} instead compute confidence intervals by test inversion [@mackinnon2015wild]. 
+While inverting bootstrap tests is computationally more demanding, in the case of the wild cluster bootstrap, the procedure can be massively accelerated by pre-computing multiple objects that are constant across all iterations of the inversion algorithm. Details on how this acceleration is achieved in [fwildclusterboot]{.pkg} are presented in the appendix (which is to be added. If you are curious, you can email Alex, and he'll share his notes). In the following section, for illustrative purposes, we will demonstrate how to invert a simple t-test for a regression model (vs a bootstrap test inversion).
+
+<!-- While inverting bootstrap tests is computationally more demanding, it allows to compute confidence intervals for the WCR bootstrap, which is generally be considered to perform better (based on both theoretical and empirical simulation evidence, see e.g. [@mackinnon2022cluster] for a discussion). In addition, the inversion of wild cluster bootstrap tests can be massively accelerated by pre-computing multiple objects that are constant across all iterations of the inversion algorithm. Details on how this acceleration is achieved in [fwildclusterboot]{.pkg} are presented in the appendix (which is to be added. If you are curious, you can email Alex, and he'll share his notes). In the following section, for illustrative purposes, we will demonstrate how to invert a simple t-test for a regression model (vs a bootstrap test inversion). -->
 
 #### Example: How to compute a CI by test inversion
 
