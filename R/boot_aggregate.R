@@ -383,8 +383,12 @@ boot_aggregate <- function(
       )
     
     pvalues[i] <- pval(boot_fit)
-    conf_int[i,] <- confint.boottest(boot_fit)
-    
+    if(!is.null(clustid)){
+        conf_int[i,] <- fwildclusterboot:::confint.boottest(boot_fit)
+    } else {
+      conf_int[i,] <- rep(NA, 2)
+    }
+
   }
   # th z & p values
   zvalue <- c_all/se_all
