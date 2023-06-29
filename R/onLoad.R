@@ -13,3 +13,11 @@
 
   invisible()
 }
+
+.onAttach <- 
+function(libname, pkgname) {
+  packageStartupMessage("\nPlease cite as: \n")
+  packageStartupMessage(" Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.")
+  packageStartupMessage(" Bootstrap Inference for Linear Regression Models.")
+  packageStartupMessage(" Available from https://cran.r-project.org/package=fwildclusterboot\.")
+}
