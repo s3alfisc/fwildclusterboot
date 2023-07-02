@@ -1388,6 +1388,33 @@ test_that("errors and warnings q = 1", {
           fe = "treatment"
         )
       )
+      
+      # varying slopes
+      
+      feols_fit_c <-
+        fixest::feols(
+          proposition_vote ~ treatment + ideology1  |
+            Q1_immigration[log_income],
+          data = fwildclusterboot:::create_data(
+            N = 1000,
+            N_G1 = 10,
+            icc1 = 0.01,
+            N_G2 = 10,
+            icc2 = 0.01,
+            numb_fe1 = 10,
+            numb_fe2 = 10,
+            seed = 1234
+          )
+        )
+      
+      expect_error(
+        boottest(
+          feols_fit_c,
+          param = "treatment",
+          B = 999,
+          clustid = "group_id1"
+        )
+      )
     }
   }
 })
