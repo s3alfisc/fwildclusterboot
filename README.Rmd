@@ -102,7 +102,7 @@ install_github("s3alfisc/fwildclusterboot")
 
 For a longer introduction to `{fwildclusterboot}`, take a look at the [vignette](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 library(fwildclusterboot)
 
 # set seed via dqset.seed for engine = "R" & Rademacher, Webb & Normal weights
