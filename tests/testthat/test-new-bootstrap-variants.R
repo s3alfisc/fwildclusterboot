@@ -530,28 +530,52 @@ test_that("test cluster fixed effects", {
   
   for(bootstrap_type in c("11", "31")){
     
-    set.seed(123); dqrng::dqset.seed(123)
-    boot <- boottest(feols_fit,
-                       B = 9999,
-                       param = "treatment",
-                       clustid = "group_id1",
-                       bootstrap_type = bootstrap_type,
-                       ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+    # set.seed(123); dqrng::dqset.seed(123)
+    # boot <- boottest(feols_fit,
+    #                    B = 9999,
+    #                    param = "treatment",
+    #                    clustid = "group_id1",
+    #                    bootstrap_type = bootstrap_type,
+    #                    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+    # )
+    # 
+    # set.seed(123); dqrng::dqset.seed(123)
+    # boot_fe <- boottest(feols_fit,
+    #                  B = 9999,
+    #                  param = "treatment",
+    #                  clustid = "group_id1",
+    #                  bootstrap_type = bootstrap_type,
+    #                  ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+    #                  fe = "group_id1"
+    # )
+    # 
+    # expect_equal(pval(boot), pval(boot_fe))
+    # expect_equal(teststat(boot), teststat(boot_fe))
+    # expect_equal(confint(boot), confint(boot_fe))
+    
+    
+    expect_error(
+      boot_fe <- boottest(feols_fit,
+                          B = 9999,
+                          param = "treatment",
+                          clustid = "group_id1",
+                          bootstrap_type = bootstrap_type,
+                          ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                          fe = "group_id1"
+      )
     )
     
-    set.seed(123); dqrng::dqset.seed(123)
-    boot_fe <- boottest(feols_fit,
-                     B = 9999,
-                     param = "treatment",
-                     clustid = "group_id1",
-                     bootstrap_type = bootstrap_type,
-                     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
-                     fe = "group_id1"
+    expect_error(
+      boot_fe <- boottest(feols_fit,
+                          B = 9999,
+                          param = "treatment",
+                          clustid = "group_id1",
+                          bootstrap_type = bootstrap_type,
+                          ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                          fe = "group_id1"
+      )
     )
     
-    expect_equal(pval(boot), pval(boot_fe))
-    expect_equal(teststat(boot), teststat(boot_fe))
-    expect_equal(confint(boot), confint(boot_fe))
     
     # expect error when fe is not the clustering variable
     expect_error(

@@ -721,12 +721,12 @@ transform_fe <-
       # project out fe
       if (engine == "R") {
         if(bootstrap_type != "fnw11"){
-          if(fe != clustid_char){
-            rlang::abort("Only cluster fixed effects are supported for bootstrap_types
+          #if(fe != clustid_char){
+            rlang::abort("No fixed effects are supported for bootstrap_types
                  '11', '13', '31', '33'.",
                          use_cli_format = TRUE
             )
-          }
+          #}
         }
         # WildBootTests.jl does demeaning internally
         prep_fe <- demean_fe(X, Y, fe_df, has_weights, N)
