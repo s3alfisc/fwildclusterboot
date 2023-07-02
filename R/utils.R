@@ -500,3 +500,31 @@ inform_seed <- function(frequency_id, engine){
 
 
 }
+
+is_congruent <- function(x, y){
+  
+  #' check if two vectors x and y are congruent
+  #' @param x a vector
+  #' @param y another vector of length(y) == length(x)
+  #' @return A logical. TRUE if the two vectors are congruent
+  #' @examples
+  #' x <- c(1, 1, 1, 2, 2, 3, 4, 4, 4)
+  #' y <- c("a", "a", "a", "b", "b", "b", "b", "b", "b")
+  #' is_congruent(x, y)
+  #' @noRd
+
+  dreamerr::check_arg(x,"vector")
+  dreamerr::check_arg(y, "vector")
+  
+  u_x <- unique(x)
+  u_y <- unique(y)
+  
+  if(length(u_x) < length(u_y)){
+    rlang::abort("")
+  }
+  
+  tab <- table(x,y)
+  !any(colSums(tab != 0) != 1)
+  
+}
+
