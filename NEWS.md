@@ -6,7 +6,7 @@
 
 ## Performance
 
-Verion 0.14 ...
+Version 0.14 ...
 
 - allows to project out cluster fixed effects for the MNW bootstrap types
 - sparsifies the MNW bootstraps - bootstrap types 31, 33, 13 (which leads to good speed gains for problems with high dimensional fixed effects)
@@ -29,6 +29,9 @@ Verion 0.14 ...
 - throws a clear error message when the subcluster bootstrap is tried for the 
   fast and reliable algos (currently not supported)
 - bumps the required `WildBootTests.jl` version to `0.9.7`
+- the input data frame for objects of type `fixest` is now fetched via
+  `fixest::fetch_data()` instead of `expand.model.frame()`, which is
+  still the default for objects of type `felm` and `lm`
 
 
 # fwildclusterboot 0.13
