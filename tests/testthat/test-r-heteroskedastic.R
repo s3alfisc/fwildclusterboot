@@ -1,4 +1,4 @@
-test_that("test lean cpp boottest against fixest", {
+test_that("test heteroskedastic boottest against fixest", {
 
 
 #' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms
@@ -200,7 +200,8 @@ test_that("test lean cpp boottest against fixest", {
 })
 
 
-test_that("r-lean multi-param tests", {
+test_that("heteroskedastic multi-param tests", {
+  
   N <- 2000
   seed <- 7896
 

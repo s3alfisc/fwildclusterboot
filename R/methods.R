@@ -8,10 +8,11 @@
 #' @param object An object of type lm, fixest, felm or ivreg
 #' @param ... other arguments
 #'
-#' @seealso [boottest.lm][fwildclusterboot::boottest.lm],
+#' @seealso 
+#' [boottest.lm][fwildclusterboot::boottest.lm],
 #' [boottest.fixest][fwildclusterboot::boottest.fixest],
 #' [boottest.felm][fwildclusterboot::boottest.felm],
-#'  [boottest.ivreg][fwildclusterboot::boottest.ivreg]
+#' [boottest.ivreg][fwildclusterboot::boottest.ivreg]
 #'
 #' @examples
 #' requireNamespace("fwildclusterboot")
@@ -48,7 +49,11 @@
 #' or Normal weights
 #'
 #' @return An object of class `boottest`.
-#'
+#' 
+#' @details Technical Details 
+#' For technical details, either take a look at the references below, or check
+#' out the [wild (cluster) bootstrap vignette](wild_bootstrap.html).
+#' 
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the
 #' following software packages:
