@@ -3,6 +3,9 @@
 ## Breaking Changes
 
 - the `print.boottest()` and `print.mboottest()` method have been deprecated, as both did not have a distinct use case. 
+- Bugfix: `boottest()` should never have run with `fixest::feols()` and 
+  varying slopes syntax via `var1[var2]`. Unfortunately it did - it's a bug. I am very sorry about this! This version adds an error message
+  for this case.
 
 ## Performance
 
@@ -26,12 +29,8 @@ Version 0.14 ...
 
 ## Misc
 
-- throws a clear error message when the subcluster bootstrap is tried for the 
-  fast and reliable algos (currently not supported)
+- throws a clear error message when the subcluster bootstrap is tried for the fast and reliable algos (currently not supported)
 - bumps the required `WildBootTests.jl` version to `0.9.7`
-- the input data frame for objects of type `fixest` is now fetched via
-  `fixest::fetch_data()` instead of `expand.model.frame()`, which is
-  still the default for objects of type `felm` and `lm`
 
 
 # fwildclusterboot 0.13
