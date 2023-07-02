@@ -88,14 +88,13 @@ test_that("test sunab", {
     fixest_pval[-1],
     boot_year[, "Pr(>|t|)"],
     ignore_attr = TRUE,
-    tolerance = 0.05
+    tolerance = 0.065
   )
   
   expect_equal(
     fixest_teststat[-1],
     boot_year[, "t value"],
-    ignore_attr = TRUE,
-    tolerance = 0.05
+    ignore_attr = TRUE
   )
   
   

@@ -1,6 +1,7 @@
 test_that("test sampling", {
+  
   data1 <<- fwildclusterboot:::create_data(
-    N = 1000,
+    N = 10000,
     N_G1 = 20,
     icc1 = 0.5,
     N_G2 = 20,
@@ -31,6 +32,6 @@ test_that("test sampling", {
   )
 
   expect_equal(pval(boot1), pval(boot2), tolerance = 0.05)
-  expect_equal(teststat(boot1), teststat(boot2), tolerance = 0.005)
+  expect_equal(teststat(boot1), teststat(boot2))
   expect_equal(confint(boot1), confint(boot2), tolerance = 0.005)
 })
