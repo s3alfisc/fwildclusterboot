@@ -511,10 +511,3 @@ check_bootstrap_types <- function(param, bootstrap_type){
 
 }
 
-check_bootcluster_equals_cluster <- function(bootcluster){
-  
-  if(cluster != bootcluster){
-    rlang::abort("For the 'fast and reliable' implementations, the 'bootcluster' argument must be equal to 'clustid'.")
-  }
-  
-}
