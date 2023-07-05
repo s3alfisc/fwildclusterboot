@@ -56,31 +56,6 @@ boot_algo_fastnreliable <- function(
   #here for debugging
   #preprocessed_object <- preprocess
   
-  inv <- function(x, g){
-    tryCatch(
-      {
-        Matrix::solve(x)
-      },
-      error = function(e) {
-        rlang::warn(message = paste0(
-          "Matrix inversion error when computing beta(g) for cluster ", g, ". Using Pseudo-Inverse instead. Potentially, you can suppress this message by specifying a cluster fixed effect in the bootstrap via the `fe` argument of `boottest()`."), 
-          use_cli_format = TRUE)
-        eigen_pinv(as.matrix(x))
-      }
-    )
-  }
-  
-  solve2 <- function(x,y, g){
-    tryCatch(
-      {
-        Matrix::solve(x, y)
-      }, 
-      error = function(e){
-        eigen_pinv(as.matrix(x)) %*% y
-      }
-    )
-  }
-
   if(substr(bootstrap_type, 2, 2) == 1){
     crv_type <- "crv1"
   } else {
@@ -135,8 +110,8 @@ boot_algo_fastnreliable <- function(
   )
 
   
-  tXX <- Reduce("+", tXgXg) # crossprod(X)
-  tXy <- Reduce("+", tXgyg) # t(X) %*% y
+  tXX <- Matrix::crossprod(X) #Reduce("+", tXgXg) # crossprod(X)
+  tXy <- Matrix::crossprod(X, y) #Reduce("+", tXgyg) # t(X) %*% y
   tXXinv <- solve(tXX)
   RtXXinv <- R %*% tXXinv
 
@@ -168,8 +143,8 @@ boot_algo_fastnreliable <- function(
       function(g) Matrix::t(X_list[[g]]) %*% X1_list[[g]]
     )
 
-    tX1X1 <- Reduce("+", tX1gX1g) # crossprod(X1)
-    tX1y <- Reduce("+", tX1gyg) #t(X1) %*% y
+    tX1X1 <- Matrix::crossprod(X1) #Reduce("+", tX1gX1g) # crossprod(X1)
+    tX1y <- Matrix::crossprod(X1, y) #Reduce("+", tX1gyg) #t(X1) %*% y
     tX1X1inv <- Matrix::solve(tX1X1)
 
   }
@@ -208,7 +183,7 @@ boot_algo_fastnreliable <- function(
   if(crv_type == "crv1"){
 
     if(is.null(beta_hat)){
-      beta_hat <- tXXinv %*% tXy
+      beta_hat <- Matrix::solve(tXXinv, tXy)
     }
 
   } else {
@@ -376,3 +351,30 @@ boot_algo_fastnreliable <- function(
   invisible(res)
 
 }
+
+
+inv <- function(x, g){
+  tryCatch(
+    {
+      Matrix::solve(x)
+    },
+    error = function(e) {
+      rlang::warn(message = paste0(
+        "Matrix inversion error when computing beta(g) for cluster ", g, ". Using Pseudo-Inverse instead. Potentially, you can suppress this message by specifying a cluster fixed effect in the bootstrap via the `fe` argument of `boottest()`."), 
+        use_cli_format = TRUE)
+      eigen_pinv(as.matrix(x))
+    }
+  )
+}
+
+solve2 <- function(x,y, g){
+  tryCatch(
+    {
+      Matrix::solve(x, y)
+    }, 
+    error = function(e){
+      eigen_pinv(as.matrix(x)) %*% y
+    }
+  )
+}
+
