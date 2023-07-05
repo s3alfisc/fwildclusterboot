@@ -52,7 +52,6 @@ Imports:
     generics,
     gtools,
     JuliaConnectoR,
-    MASS,
     Matrix,
     Rcpp,
     rlang,
@@ -74,7 +73,8 @@ Suggests:
     rmarkdown,
     sandwich,
     testthat (>= 3.0.0),
-    tibble
+    tibble, 
+    MASS
 LinkingTo:
     Rcpp,
     RcppArmadillo,

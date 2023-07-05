@@ -11,8 +11,9 @@
 
 Version 0.14 ...
 
-- sparsifies the MNW bootstraps - bootstrap types 31, 33, 13 (which leads to good speed gains for problems with high dimensional fixed effects)
-- computes the generalized inverse `pinv` via rcpp eigen (large speed gains), but always tries `Matrix::solve()` first 
+- sparsifies the "fast and reliable" bootstraps - bootstrap types 31, 33, 13 (which leads to good speed gains for problems with high dimensional fixed effects)
+- allows to project out cluster fixed effects when running the "fast and reliable" algorithms "11" and "31"
+- computes the generalized inverse `pinv` via rcpp eigen instead of `MASS::ginv()` whenever `Matrix::solve()` fails 
 - unlocks parallelization (nthreads was internally set to 1 for some reason)
 
 

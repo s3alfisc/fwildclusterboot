@@ -299,28 +299,27 @@ check_boot_algo_fastnreliable <- function(
   }
 
   if(length(clustid) > 1){
-    rlang::abort("The '13', '31', and '33'
-         bootstrap variants currently only
-         support oneway clustering when 'boot_engine' == 'R'."
+    rlang::abort("The '13', '31', and '33' bootstrap variants currently only support oneway clustering when 'boot_engine' == 'R'."
     )
   }
 
   if (!is.null(fe)) {
-    #if(bootstrap_type %in% c("11", "31", "13", "33")){
-      #if(!(fe == clustid)){
-      #  rlang::abort("The '11' and '13''
-      #   bootstrap variants currently only support cluster fixed
-      #   effects in the bootstrap. Please set 'fe = NULL'.")
-      #}
-    #} else {
-      rlang::abort("The '11', '31', '13', '33' bootstrap types currently do not support any fixed effects.")
-    #}
+    if(bootstrap_type %in% c("11", "31")){
+      if(!(fe == clustid)){
+        rlang::abort("The '11' and '31''
+         bootstrap variants currently only support cluster fixed effects in the bootstrap. Please set 'fe = NULL'.")
+      }
+    } 
+    
+    if (bootstrap_type %in% c("13", "33")) {
+        rlang::abort("The '13' and '33''
+           bootstrap variants currently do support cluster fixed effects in the bootstrap. Please set 'fe = NULL'.")
+    } 
   }
 
   if(!is.null(weights)){
-    rlang::abort("The '13', '31', and '33'
-         bootstrap variants currently only
-         support oneway clustering when 'boot_engine' == 'R'.")
+    rlang::abort("The '11','13', '31', and '33'
+         bootstrap variants currently only support weights for engine = 'WildBootTests.jl'.")
   }
   
   if(length(bootcluster) > 1){
