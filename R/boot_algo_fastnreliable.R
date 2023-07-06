@@ -28,7 +28,6 @@
 #' @param object the regression object
 #' @param impose_null logical scalar. Should the null be imposed on the
 #' bootstrap dgp or not?
-#' @importFrom MASS ginv
 #' @importFrom Matrix crossprod tcrossprod t Matrix
 #' @importFrom summclust vcov_CR3J
 #' @return A list of bootstrap results.
@@ -183,7 +182,7 @@ boot_algo_fastnreliable <- function(
   if(crv_type == "crv1"){
 
     if(is.null(beta_hat)){
-      beta_hat <- Matrix::solve(tXXinv, tXy)
+      beta_hat <- Matrix::solve(tXX, tXy)
     }
 
   } else {

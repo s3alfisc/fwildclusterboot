@@ -184,25 +184,25 @@ For Rademacher and Mammen weights, only $2^G$ unique combinations of draws exist
 
 In theory, multiple ways to calculate wild (cluster) bootstrapped confidence intervals exists [@mackinnon2022cluster]. 
 <!-- If the null hypothesis is not imposed on the bootstrap dgp, -->
-The most straightforward approach is to calculate a standard error $\hat{s}^{*}(\hat{\beta})$ based on the bootstrapped regression coefficients $\hat{\beta}_{b}^{*}$ and a plug-in estimator:
+<!-- The most straightforward approach is to calculate a standard error $\hat{s}^{*}(\hat{\beta})$ based on the bootstrapped regression coefficients $\hat{\beta}_{b}^{*}$ and a plug-in estimator: -->
 
-\begin{equation}
- [\hat{\beta} - c_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta}), \hat{\beta} + c_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta})].
-\end{equation}
+<!-- \begin{equation} -->
+<!--  [\hat{\beta} - c_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta}), \hat{\beta} + c_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta})]. -->
+<!-- \end{equation} -->
 
-Here, $c_{1-\alpha / 2}$ is the $1-\alpha$ quantile of the $t(G-1)$ distribution.
+<!-- Here, $c_{1-\alpha / 2}$ is the $1-\alpha$ quantile of the $t(G-1)$ distribution. -->
 
-Asymptotic refinement of the plug-in estimator can be achieved by using as studentized version of the confidence interval above, which is often denoted as a "t-percentile bootstrap"
+<!-- Asymptotic refinement of the plug-in estimator can be achieved by using as studentized version of the confidence interval above, which is often denoted as a "t-percentile bootstrap" -->
 
-\begin{equation}
-[\hat{\beta} - c^{*}_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta}), \hat{\beta} + c^{*}_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta})],
-\end{equation}
+<!-- \begin{equation} -->
+<!-- [\hat{\beta} - c^{*}_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta}), \hat{\beta} + c^{*}_{1-\alpha / 2}, \hat{s}^{*}(\hat{\beta})], -->
+<!-- \end{equation} -->
 
-where $c^{*}_{1-\alpha / 2}$ is the empirical $1-\alpha / 2$ quantile of the distribution of bootstrapped t-statistics.
+<!-- where $c^{*}_{1-\alpha / 2}$ is the empirical $1-\alpha / 2$ quantile of the distribution of bootstrapped t-statistics. -->
 
 <!-- If the null hypothesis is imposed on the data generating process, the strategy above is now longer feasible.  -->
 
-Both [fwildclusterboot]{.pkg} and [boottest]{.pkg} instead compute confidence intervals by test inversion [@mackinnon2015wild]. 
+Based on simulation results in @mackinnon2015wild and higher order asymptotic theory in @djogbenou2019asymptotic, [fwildclusterboot]{.pkg} computes confidence intervals by test inversion. 
 While inverting bootstrap tests is computationally more demanding, in the case of the wild cluster bootstrap, the procedure can be massively accelerated by pre-computing multiple objects that are constant across all iterations of the inversion algorithm. Details on how this acceleration is achieved in [fwildclusterboot]{.pkg} are presented in the appendix (which is to be added. If you are curious, you can email Alex, and he'll share his notes). In the following section, for illustrative purposes, we will demonstrate how to invert a simple t-test for a regression model (vs a bootstrap test inversion).
 
 <!-- While inverting bootstrap tests is computationally more demanding, it allows to compute confidence intervals for the WCR bootstrap, which is generally be considered to perform better (based on both theoretical and empirical simulation evidence, see e.g. [@mackinnon2022cluster] for a discussion). In addition, the inversion of wild cluster bootstrap tests can be massively accelerated by pre-computing multiple objects that are constant across all iterations of the inversion algorithm. Details on how this acceleration is achieved in [fwildclusterboot]{.pkg} are presented in the appendix (which is to be added. If you are curious, you can email Alex, and he'll share his notes). In the following section, for illustrative purposes, we will demonstrate how to invert a simple t-test for a regression model (vs a bootstrap test inversion). -->
