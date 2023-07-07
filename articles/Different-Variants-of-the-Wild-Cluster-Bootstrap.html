@@ -99,6 +99,11 @@
 <p>To run all bootstrap types with the null hypothesis imposed on the bootstrap data generating process, you would have to specify the <code>bootstrap_type</code> function argument:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://s3alfisc.github.io/fwildclusterboot/">fwildclusterboot</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Please cite as:</span></span>
+<span><span class="co">#&gt;  Fischer &amp; Roodman. (2021). fwildclusterboot: Fast Wild Cluster.</span></span>
+<span><span class="co">#&gt;  Bootstrap Inference for Linear Regression Models.</span></span>
+<span><span class="co">#&gt;  Available from https://cran.r-project.org/package=fwildclusterboot/.</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://vincentarelbundock.github.io/modelsummary/" class="external-link">modelsummary</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>modelsummary_factory_default <span class="op">=</span> <span class="st">"gt"</span><span class="op">)</span></span>
 <span></span>
@@ -148,7 +153,10 @@
 <span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
 <span><span class="co">#&gt; Too guarantee reproducibility, don't forget to set a global random seed</span></span>
 <span><span class="co">#&gt; **both** via `set.seed()` and `dqrng::dqset.seed()`.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This message is displayed once every 8 hours.</span></span></span>
 <span><span class="co">#&gt; *</span></span>
+<span><span class="co">#&gt; Confidence Intervals are currently only supported for</span></span>
+<span><span class="co">#&gt; the R engine with 'bootstrap_type = 'fnw11'.</span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">This message is displayed once every 8 hours.</span></span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">run_all</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"WCR"</span>, </span>
@@ -611,11 +619,11 @@
 <tbody class="gt_table_body">
 <tr>
 <td headers="" class="gt_row gt_left">1*treatment = 0</td>
-<td headers="WCR 11 F&amp;W" class="gt_row gt_center">0.006 (0.577)</td>
-<td headers="WCR 11 F&amp;R" class="gt_row gt_center">0.006 (0.577)</td>
-<td headers="WCR 13 F&amp;R" class="gt_row gt_center">0.006 (0.598)</td>
-<td headers="WCR 31 F&amp;R" class="gt_row gt_center">0.006 (0.580)</td>
-<td headers="WCR 33 F&amp;R" class="gt_row gt_center">0.006 (0.580)</td>
+<td headers="WCR 11 F&amp;W" class="gt_row gt_center">0.006 (0.580)</td>
+<td headers="WCR 11 F&amp;R" class="gt_row gt_center">0.006 (0.579)</td>
+<td headers="WCR 13 F&amp;R" class="gt_row gt_center">0.006 (0.591)</td>
+<td headers="WCR 31 F&amp;R" class="gt_row gt_center">0.006 (0.581)</td>
+<td headers="WCR 33 F&amp;R" class="gt_row gt_center">0.006 (0.597)</td>
 </tr>
 <tr>
 <td headers="" class="gt_row gt_left" style="border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #000000;"></td>
