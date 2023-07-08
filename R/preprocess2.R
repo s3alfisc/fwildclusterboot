@@ -42,6 +42,7 @@ preprocess2.fixest <-
     #' by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
+    #' @importFrom fixest sparse_model_matrix
     #'
     #' @method preprocess2 fixest
     
@@ -691,10 +692,13 @@ transform_fe <-
     #'         be projected out
     #'
     #' @noRd
-    all_fe <- model_matrix(object, type = "fixef", collin.rm = TRUE)
+    
+    #all_fe <- model_matrix.fixest(object, type = "fixef", collin.rm = TRUE)
     # make sure all fixed effects variables are characters
+    all_fe <- sparse_model_matrix(object, type = "fixef")
+    
     n_fe <- ncol(all_fe)
-    all_fe_names <- names(all_fe)
+    all_fe_names <- colnames(all_fe)
     k2 <- Reduce("+", lapply(all_fe, function(x) {
       length(unique(x))
     }))
@@ -747,21 +751,30 @@ transform_fe <-
       }
       
     } else {
-      add_fe <- all_fe
-      add_fe_names <- names(add_fe)
-      fml_fe <- reformulate(add_fe_names, response = NULL)
+      #add_fe <- all_fe
+      #add_fe_names <- names(add_fe)
+      #fml_fe <- reformulate(add_fe_names, response = NULL)
       if(engine == "R" && bootstrap_type %in% c("11", "31", "13","33")){
-        add_fe_dummies <-
-          Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+        
+        #add_fe_dummies <-
+        #  Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+        
+        add_fe_dummies <- sparse_model_matrix(object, type = "fixef")
+        
         
       } else {
         
-        add_fe_dummies <-
-          model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+        # add_fe_dummies <-
+        #   model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+        
+        add_fe_dummies <- sparse_model_matrix(object, type = "fixef")
+        add_fe_dummies <- as.matrix(add_fe_dummies)
+        
       }
       
-      X <- cbind(X, add_fe_dummies)
-      
+      fe <- sparse_model_matrix(object, type = c("fixef")) #cbind(X, add_fe_dummies)
+      X <- cbind(X, as.matrix(fe))
+      #print(colnames(X))
     }
     
     res <- list(
@@ -860,9 +873,10 @@ get_cluster <-
         ))
       }
       
-      clustid <- data[,clustid_char, drop = FALSE]
-      if(N != nrow(clustid)){
-        clustid <- clustid[unlist(object$obs_selection), drop = FALSE]
+      cluster_df <- cluster <- data[,clustid_char, drop = FALSE]
+      
+      if(N != nrow(cluster)){
+        cluster <- cluster[unlist(object$obs_selection), drop = FALSE]
       }
       
       bootcluster <- data[, bootcluster_char, drop = FALSE]
@@ -871,9 +885,9 @@ get_cluster <-
       }
       
       if(clustid_char == bootcluster_char){
-        cluster_bootcluster_df <- clustid
+        cluster_bootcluster_df <- cluster
       } else {
-        cluster_bootcluster_df <- cbind(clustid, bootcluster)
+        cluster_bootcluster_df <- cbind(cluster, bootcluster)
       }
       
 

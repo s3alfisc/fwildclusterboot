@@ -1,8 +1,8 @@
 fetch_data = function(x, prefix = "", suffix = ""){
   
   #' fetch data from environment
-  #' @param x an object of type fixest
-  
+  #' @noRd
+
   # x: fixest estimation
   # We try different strategies:
   # 1) using the environment where the estimation was done

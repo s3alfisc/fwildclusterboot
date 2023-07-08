@@ -103,6 +103,7 @@ check_boottest_args_plus <- function(
     if (
       # '^' illegal in fixef argument, but legal in main formula -
       # e.g. fml = y ~ x1 + I(x2^2) shold be possible
+      
       #' @srrstats {G2.4c} *explicit conversion to character via `as.character()`
       #' (and not `paste` or `paste0`)* Done
 

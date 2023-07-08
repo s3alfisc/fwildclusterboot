@@ -217,7 +217,7 @@ boot_aggregate <- function(
   # note: all boottest function arguments are tested in boottest()
   # therefore, only check for supported subset of features
   
-  check_arg(bootstrap_type, "charin(fnw11)")
+  check_arg(bootstrap_type, "charin(fnw11, 11, 31, 13, 33)")
   check_arg(full, "logical scalar")
   # => later => extend it to more than one set of vars to agg
   
@@ -312,8 +312,16 @@ boot_aggregate <- function(
     val <- gsub(paste0(".*", agg, ".*"), "\\2", cname_select, perl = TRUE)
   }
   
-  mm <- model.matrix(x)
-  
+  if(inherits(x, "etwfe")){
+    X <- fixest:::model.matrix.fixest(x, type = "rhs")
+    mm2 <- sparse_model_matrix(x, type = c("fixef")) |> as.matrix() |> as.data.frame()
+    mm <- cbind(X, mm2)
+  } else {
+    
+    mm <- model.matrix(x)
+    
+  }
+
   cat("Run the wild bootstrap: this might take some time...(but 
       hopefully not too much time =) ).", "\n")
   
