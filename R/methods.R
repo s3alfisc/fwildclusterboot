@@ -751,68 +751,86 @@ nobs.mboottest <- function(object, ...) {
 }
 
 
-# S3 method to print key information for objects of type `boottest`
-# @param x object of type boottest
-# @param ... Further arguments passed to or from other methods.
-# @param digits Number of rounding digits
-# @export
-# @method print boottest
-# @return A scalar containing the effective number of observations
-# used in `mboottest`
-# @examples
-# #' requireNamespace("fwildclusterboot")
-# data(voters)
-# lm_fit <- lm(
-#   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-#   data = voters
-# )
-# boot <- boottest(lm_fit,
-#   B = 9999,
-#   param = "treatment",
-#   clustid = "group_id1"
-# )
-# print(boot)
-#
-# # print.boottest <- function(x, ..., digits = 4) {#   stopifnot(inherits(x, "boottest"))##   print(x$call)#   cat("", "\n")##   vals <- lapply(#     c("p_val", "conf_int", "t_stat"),#     function(y) {#       ifelse(is.null(x[[y]]),#         'not computed',#         round(x[[y]], digits = digits)#       )#     }#   )##   cat("p value:", vals[[1]], "\n")#   cat("confidence interval:", vals[[2]], "\n")#   cat("test statistic", vals[[3]], "\n")# }
 
-# S3 method to print key information for objects of type `mboottest`
-# @param x object of type mboottest
-# @param ... Further arguments passed to or from other methods.
-# @param digits Number of rounding digits
-# @export
-# @method print mboottest
-# @return A scalar containing the effective number of observations used
-# in `mboottest`
-# @examples
-# \dontrun{
-# requireNamespace("clubSandwich")
-# R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
-# wboottest <-
-#   mboottest(
-#     object = lm_fit,
-#     clustid = "group_id1",
-#     B = 999,
-#     R = R
-#   )
-# print(wboottest)
-# }
-#
-# print.mboottest <- function(x, ..., digits = 4) {
-#   stopifnot(inherits(x, "mboottest"))
-#
-#   print(x$call)
-#   cat("", "\n")
-#
-#   vals <- lapply(
-#     c("p_val", "teststat"),
-#     function(y) {
-#       round(x[[y]], digits = digits)
-#     }
-#   )
-#
-#   cat("p value:", vals[[1]], "\n")
-#   cat("test statistic", vals[[2]], "\n")
-# }
+#' S3 method to print key information for objects of type `bboottest`
+#' @param x object of type boottest
+#' @param ... Further arguments passed to or from other methods.
+#' @param digits Number of rounding digits
+#' @export
+#' @method print boottest
+#' @return A scalar containing the effective number of observations
+#' used in `mboottest`
+#' @examples
+#' #' requireNamespace("fwildclusterboot")
+#' data(voters)
+#' lm_fit <- lm(
+#'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   data = voters
+#' )
+#' boot <- boottest(lm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
+#' )
+#' print(boot)
+#'
+print.boottest <- function(x, ..., digits = 4) {
+  stopifnot(inherits(x, "boottest"))
+  
+  print(x$call)
+  cat("", "\n")
+  
+  vals <- lapply(
+    c("p_val", "conf_int", "t_stat"),
+    function(y) {
+      round(x[[y]], digits = digits)
+    }
+  )
+  
+  cat("p value:", vals[[1]], "\n")
+  cat("confidence interval:", vals[[2]], "\n")
+  cat("test statistic", vals[[3]], "\n")
+}
+
+
+#' S3 method to print key information for objects of type `mboottest`
+#' @param x object of type mboottest
+#' @param ... Further arguments passed to or from other methods.
+#' @param digits Number of rounding digits
+#' @export
+#' @method print mboottest
+#' @return A scalar containing the effective number of observations used
+#' in `mboottest`
+#' @examples
+#' \dontrun{
+#' requireNamespace("clubSandwich")
+#' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+#' wboottest <-
+#'   mboottest(
+#'     object = lm_fit,
+#'     clustid = "group_id1",
+#'     B = 999,
+#'     R = R
+#'   )
+#' print(wboottest)
+#' }
+#'
+print.mboottest <- function(x, ..., digits = 4) {
+  stopifnot(inherits(x, "mboottest"))
+  
+  print(x$call)
+  cat("", "\n")
+  
+  vals <- lapply(
+    c("p_val", "teststat"),
+    function(y) {
+      round(x[[y]], digits = digits)
+    }
+  )
+  
+  cat("p value:", vals[[1]], "\n")
+  cat("test statistic", vals[[2]], "\n")
+}
 
 
 tidy.mboottest <- function(x, ...) {

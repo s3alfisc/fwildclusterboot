@@ -17,7 +17,7 @@ Note that in a recent update of their working paper, MNW have renamed the new bo
 
 To run all bootstrap types with the null hypothesis imposed on the bootstrap data generating process, you would have to specify the `bootstrap_type` function argument: 
 
-```{r setup, warnings = FALSE}
+```{r setup, warnings = FALSE, message=FALSE}
 library(fwildclusterboot)
 library(modelsummary)
 options(modelsummary_factory_default = "gt")
