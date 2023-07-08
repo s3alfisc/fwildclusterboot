@@ -209,14 +209,15 @@ While inverting bootstrap tests is computationally more demanding, in the case o
 
 #### Example: How to compute a CI by test inversion
 
-Suppose we have a parameter $\theta \in \Theta$ and a test statistic $T(\theta)$. We also have a critical value $c$ so that to test the null hypothesis $H_0: \theta = \theta_0$ against $H_1: \theta \neq \theta_0$ at a level $\alpha$, we reject the null hypothesis if $T(\theta_0) > c$.
+<!-- Suppose we have a parameter $\theta \in \Theta$ and a test statistic $T(\theta)$. We also have a critical value $c$ so that to test the null hypothesis $H_0: \theta = \theta_0$ against $H_1: \theta \neq \theta_0$ at a level $\alpha$, we reject the null hypothesis if $T(\theta_0) > c$. -->
 
-Let's define a set that includes all values of $\theta$ for which the decision rule "reject the null hypothesis if $T(\theta)\geq c$" leads to an acceptance of the null hypothesis:
+<!-- Let's define a set that includes all values of $\theta$ for which the decision rule "reject the null hypothesis if $T(\theta)\geq c$" leads to an acceptance of the null hypothesis: -->
 
-$$
-  C = \{\theta \in \Theta: T(\theta)\leq c \}.
-$$
-Based on the definition of the p-value, we can alternatively define a confidence interval at significance level $\alpha$ as 
+<!-- $$ -->
+<!--   C = \{\theta \in \Theta: T(\theta)\leq c \}. -->
+<!-- $$ -->
+
+Based on the definition of the p-value, we can define a confidence interval at significance level $\alpha$ as 
 
 $$
   C = \{\theta \in \Theta: p(\theta) \geq \alpha \}.
