@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,7 @@
     <a class="dropdown-item" href="../articles/Multiple-Estimations-with-fixest.html">fwildclusterboot and fixest</a>
     <a class="dropdown-item" href="../articles/Wild-Cluster-Bootstrap-Inference-in-Stata-Julia-and-Python.html">Wild Cluster Bootstrap Inference in Stata, Julia and Python</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
+    <a class="dropdown-item" href="../articles/wild_bootstrap.html">Wild (Cluster) Bootstrap 101</a>
     <a class="dropdown-item" href="../articles/Literature.html">Literature on the Wild Bootstrap and Clustered Inference in Regression Models</a>
   </div>
 </li>
@@ -57,6 +58,37 @@
       <small>Source: <a href="https://github.com/s3alfisc/fwildclusterboot/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.14" id="fwildclusterboot-014">fwildclusterboot 0.14<a class="anchor" aria-label="anchor" href="#fwildclusterboot-014"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-0-14">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-14"></a></h3>
+<ul><li>the <code>print.boottest()</code> and <code>print.mboottest()</code> method have been deprecated, as both did not have a distinct use case.</li>
+<li>Bugfix: <code><a href="../reference/boottest.html">boottest()</a></code> should never have run with <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">fixest::feols()</a></code> and varying slopes syntax via <code>var1[var2]</code>. Unfortunately it did for the heteroskedastic bootstrap - it’s a bug. I am very sorry if you are affected by this! This version adds an error message for this case.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="performance-0-14">Performance<a class="anchor" aria-label="anchor" href="#performance-0-14"></a></h3>
+<p>Version 0.14 …</p>
+<ul><li>sparsifies the “fast and reliable” bootstraps - bootstrap types 31, 33, 13 (which leads to good speed gains for problems with high dimensional fixed effects)</li>
+<li>allows to project out cluster fixed effects when running the “fast and reliable” algorithms “11” and “31”</li>
+<li>computes the generalized inverse <code>pinv</code> via rcpp eigen instead of <code><a href="https://rdrr.io/pkg/MASS/man/ginv.html" class="external-link">MASS::ginv()</a></code> whenever <code><a href="https://rdrr.io/pkg/Matrix/man/solve-methods.html" class="external-link">Matrix::solve()</a></code> fails</li>
+<li>unlocks parallelization (nthreads was internally set to 1 for some reason)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="ropensci-review-feedback-0-14">rOpenSci Review feedback<a class="anchor" aria-label="anchor" href="#ropensci-review-feedback-0-14"></a></h3>
+<ul><li>update docs:<ul><li>add a vignette on wild bootstrap concepts (wild bootstrap 101)</li>
+<li>better explanation of plot method in docs and vignette</li>
+<li>some guidelines on how to turn messages and warnings off</li>
+</ul></li>
+<li>reorganization of ropensci ssr tags into code</li>
+<li>it is now possible to interrupt rcpp loops</li>
+</ul></div>
+<div class="section level3">
+<h3 id="misc-0-14">Misc<a class="anchor" aria-label="anchor" href="#misc-0-14"></a></h3>
+<ul><li>throws a clear error message when the subcluster bootstrap is tried for the fast and reliable algos (currently not supported)</li>
+<li>bumps the required <code>WildBootTests.jl</code> version to <code>0.9.7</code>
+</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.13" id="fwildclusterboot-013">fwildclusterboot 0.13<a class="anchor" aria-label="anchor" href="#fwildclusterboot-013"></a></h2>
 <div class="section level3">
@@ -313,7 +345,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.6" id="fwildclusterboot-06">fwildclusterboot 0.6<a class="anchor" aria-label="anchor" href="#fwildclusterboot-06"></a></h2>
 <ul><li><p>Bug fix: for one-sided hypotheses for the WRU bootstrap (if impose_null = FALSE), the returned p-values were incorrect - they were reported as ‘p’, but should have been ‘1-p’. E.g. if the reported p-values was reported as 0.4, it should have been reported as 0.6.</p></li>
-<li><p>A new function argument <code>ssc</code> gives more control over the small sample adjustments made within <code><a href="../reference/boottest.html">boottest()</a></code>. It closely mirrors the <code>ssc</code> argument in <code>fixest</code>. The only difference is that <code>fwildclusterboot::boot_ssc()'s</code> <code>fixef.K</code> argument currently has only one option, <code>'none'</code>, which means that the fixed effect parameters are discarded when calculating the number of estimated parameters k. The default argument of <code><a href="../reference/boot_ssc.html">boot_ssc()</a></code> are <code>adj = TRUE, fixef.K = "none", cluster.adj = TRUE</code> and <code>cluster.df = "conventional"</code>. In fixest, the <code>cluster.df</code> argument is <code>"min"</code> by default. Prior to v 0.6, by default, no small sample adjustments regarding the sample size N and the number of estimated parameters k were applied. The changes in v0.6 may slightly affect the output of <code><a href="../reference/boottest.html">boottest()</a></code>. For exact reproducibility of previous results, set <code>adj = FALSE</code>. Setting <code>adj = TRUE</code> will not affect p-values and confidence intervals for <em>oneway clustering</em>, but the internally calculated t-stat, which is divided by <span class="math inline">$\sqrt{(N-k)/(N-1)}$</span>. For <em>twoway</em> clustering, it might affect the number and order of invalid bootstrapped t-statistics (due to non-positive definite covariance matrices) and, through this channel, affect bootstrapped inferential parameters.</p></li>
+<li><p>A new function argument <code>ssc</code> gives more control over the small sample adjustments made within <code><a href="../reference/boottest.html">boottest()</a></code>. It closely mirrors the <code>ssc</code> argument in <code>fixest</code>. The only difference is that <code>fwildclusterboot::boot_ssc()'s</code> <code>fixef.K</code> argument currently has only one option, <code>'none'</code>, which means that the fixed effect parameters are discarded when calculating the number of estimated parameters k. The default argument of <code><a href="../reference/boot_ssc.html">boot_ssc()</a></code> are <code>adj = TRUE, fixef.K = "none", cluster.adj = TRUE</code> and <code>cluster.df = "conventional"</code>. In fixest, the <code>cluster.df</code> argument is <code>"min"</code> by default. Prior to v 0.6, by default, no small sample adjustments regarding the sample size N and the number of estimated parameters k were applied. The changes in v0.6 may slightly affect the output of <code><a href="../reference/boottest.html">boottest()</a></code>. For exact reproducibility of previous results, set <code>adj = FALSE</code>. Setting <code>adj = TRUE</code> will not affect p-values and confidence intervals for <em>oneway clustering</em>, but the internally calculated t-stat, which is divided by sqrt(N-k)/(N-1). For <em>twoway</em> clustering, it might affect the number and order of invalid bootstrapped t-statistics (due to non-positive definite covariance matrices) and, through this channel, affect bootstrapped inferential parameters.</p></li>
 <li><p>Testing: unit tests are now run on <a href="https://github.com/s3alfisc/fwildclusterboot/actions/workflows/R-CMD-check.yaml" class="external-link">github actions</a> against <a href="https://github.com/s3alfisc/wildboottestjlr" class="external-link">wildboottestjlr</a>, which is a <a href="https://github.com/stefan-m-lenz/JuliaConnectoR" class="external-link">JuliaConnectoR</a> based wrapper around <a href="https://github.com/droodman/WildBootTests.jl" class="external-link">WildBootTests.jl</a>, a Julia implementation of the fast wild cluster bootstrap algorithm.</p></li>
 <li><p>Additionally, minor speed tweaks.</p></li>
 </ul></div>

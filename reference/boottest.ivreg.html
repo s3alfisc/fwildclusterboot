@@ -16,7 +16,7 @@ for instrumental variable models (WRE, Davidson &amp;amp; McKinnon, 2010)"><meta
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,6 +37,7 @@ for instrumental variable models (WRE, Davidson &amp;amp; McKinnon, 2010)"><meta
     <a class="dropdown-item" href="../articles/Multiple-Estimations-with-fixest.html">fwildclusterboot and fixest</a>
     <a class="dropdown-item" href="../articles/Wild-Cluster-Bootstrap-Inference-in-Stata-Julia-and-Python.html">Wild Cluster Bootstrap Inference in Stata, Julia and Python</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
+    <a class="dropdown-item" href="../articles/wild_bootstrap.html">Wild (Cluster) Bootstrap 101</a>
     <a class="dropdown-item" href="../articles/Literature.html">Literature on the Wild Bootstrap and Clustered Inference in Regression Models</a>
   </div>
 </li>
@@ -323,6 +324,18 @@ interval.</p></dd>
 
 <p>To guarantee reproducibility, you need to
 set a global random seed via <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code></p>
+    </div>
+    <div class="section level2">
+    <h2 id="run-boottest-quietly">Run <code>boottest</code> quietly<a class="anchor" aria-label="anchor" href="#run-boottest-quietly"></a></h2>
+    
+
+<p>You can suppress all warning and error messages by setting the following global
+options:
+<code>options(rlib_warning_verbosity = "quiet")</code>
+<code>options(rlib_message_verbosity = "quiet")</code>
+Not that this will turn off all warnings (messages) produced via <code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">rlang::warn()</a></code> and
+<code><a href="https://rlang.r-lib.org/reference/abort.html" class="external-link">rlang::inform()</a></code>, which might not be desirable if you use other software build on
+<code>rlang</code>, as e.g. the <code>tidyverse</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

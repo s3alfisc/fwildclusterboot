@@ -65,7 +65,7 @@
     
     <a class="navbar-brand me-2" href="index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,6 +87,7 @@
     <a class="dropdown-item" href="articles/Multiple-Estimations-with-fixest.html">fwildclusterboot and fixest</a>
     <a class="dropdown-item" href="articles/Wild-Cluster-Bootstrap-Inference-in-Stata-Julia-and-Python.html">Wild Cluster Bootstrap Inference in Stata, Julia and Python</a>
     <a class="dropdown-item" href="articles/WildBootTests.html">WildBootTests.jl</a>
+    <a class="dropdown-item" href="articles/wild_bootstrap.html">Wild (Cluster) Bootstrap 101</a>
     <a class="dropdown-item" href="articles/Literature.html">Literature on the Wild Bootstrap and Clustered Inference in Regression Models</a>
   </div>
 </li>
@@ -177,20 +178,6 @@
 <span><span class="va">lm_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">proposition_vote</span> <span class="op">~</span> <span class="va">treatment</span>  <span class="op">+</span> <span class="va">log_income</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">Q1_immigration</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">Q2_defense</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">voters</span><span class="op">)</span></span>
 <span><span class="co"># bootstrap inference via boottest()</span></span>
 <span><span class="va">lm_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/boottest.html">boottest</a></span><span class="op">(</span><span class="va">lm_fit</span>, clustid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group_id1"</span><span class="op">)</span>, B <span class="op">=</span> <span class="fl">9999</span>, param <span class="op">=</span> <span class="st">"treatment"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Please note that the seeding behavior for random number generation for</span></span>
-<span><span class="co">#&gt; `boottest()` has changed with `fwildclusterboot` version 0.13.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; It will no longer be possible to exactly reproduce results produced by versions</span></span>
-<span><span class="co">#&gt; lower than 0.13.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; If your prior results were produced under sufficiently many bootstrap</span></span>
-<span><span class="co">#&gt; iterations, none of your conclusions will change.  For more details about this</span></span>
-<span><span class="co">#&gt; change, please read the notes in</span></span>
-<span><span class="co">#&gt; [news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).</span></span>
-<span><span class="co">#&gt; This warning is displayed once per session.</span></span>
-<span><span class="co">#&gt; Too guarantee reproducibility, don't forget to set a global random seed</span></span>
-<span><span class="co">#&gt; **both** via `set.seed()` and `dqrng::dqset.seed()`.</span></span>
-<span><span class="co">#&gt; This message is displayed once every 8 hours.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">lm_boot</span><span class="op">)</span></span>
 <span><span class="co">#&gt; boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1"))</span></span>
 <span><span class="co">#&gt;  </span></span>
@@ -220,7 +207,7 @@
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   @Misc{,</span></span>
-<span><span class="co">#&gt;     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.13.0)},</span></span>
+<span><span class="co">#&gt;     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.14.0)},</span></span>
 <span><span class="co">#&gt;     author = {Alexander Fischer and David Roodman},</span></span>
 <span><span class="co">#&gt;     year = {2021},</span></span>
 <span><span class="co">#&gt;     url = {https://cran.r-project.org/package=fwildclusterboot},</span></span>
@@ -278,7 +265,6 @@
 <li><a href="https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master" class="external-link"><img src="https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://cran.r-project.org/package=fwildclusterboot" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/grand-total/fwildclusterboot?color=blue"></a></li>
 <li><a href="https://cran.r-project.org/package=fwildclusterboot" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/last-month/fwildclusterboot?color=green"></a></li>
-<li><a href="https://github.com/s3alfisc/fwildclusterboot/actions?query=workflow%3Apkgcheck" class="external-link"><img src="https://github.com/s3alfisc/fwildclusterboot/workflows/pkgcheck/badge.svg" alt="pkgcheck"></a></li>
 </ul>
 </div>
 

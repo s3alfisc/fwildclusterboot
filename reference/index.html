@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">fwildclusterboot</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,6 +31,7 @@
     <a class="dropdown-item" href="../articles/Multiple-Estimations-with-fixest.html">fwildclusterboot and fixest</a>
     <a class="dropdown-item" href="../articles/Wild-Cluster-Bootstrap-Inference-in-Stata-Julia-and-Python.html">Wild Cluster Bootstrap Inference in Stata, Julia and Python</a>
     <a class="dropdown-item" href="../articles/WildBootTests.html">WildBootTests.jl</a>
+    <a class="dropdown-item" href="../articles/wild_bootstrap.html">Wild (Cluster) Bootstrap 101</a>
     <a class="dropdown-item" href="../articles/Literature.html">Literature on the Wild Bootstrap and Clustered Inference in Regression Models</a>
   </div>
 </li>
@@ -163,17 +164,9 @@ in <code><a href="../reference/mboottest.html">mboottest()</a></code></dd>
           
           <code><a href="plot.boottest.html">plot(<i>&lt;boottest&gt;</i>)</a></code> 
         </dt>
-        <dd>Plot the bootstrap distribution of t-statistics</dd>
-      </dl><dl><dt>
-          
-          <code><a href="print.boottest.html">print(<i>&lt;boottest&gt;</i>)</a></code> 
-        </dt>
-        <dd>S3 method to print key information for objects of type <code>bboottest</code></dd>
-      </dl><dl><dt>
-          
-          <code><a href="print.mboottest.html">print(<i>&lt;mboottest&gt;</i>)</a></code> 
-        </dt>
-        <dd>S3 method to print key information for objects of type <code>mboottest</code></dd>
+        <dd>Plots bootstrapped p-values as a function of the hypothesized effect size r for
+a hypothesis test of the form R beta = r.The points where the p-values are 0.05
+are the boundaries of the bootstrapped confidence interval.</dd>
       </dl><dl><dt>
           
           <code><a href="pval.boottest.html">pval(<i>&lt;boottest&gt;</i>)</a></code> 
