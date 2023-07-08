@@ -59,10 +59,15 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.14.1" id="fwildclusterboot-0141">fwildclusterboot 0.14.1<a class="anchor" aria-label="anchor" href="#fwildclusterboot-0141"></a></h2>
+<ul><li>brings back the <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> method, it had a use case after all</li>
+<li>some fixes to the documentation</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.14" id="fwildclusterboot-014">fwildclusterboot 0.14<a class="anchor" aria-label="anchor" href="#fwildclusterboot-014"></a></h2>
 <div class="section level3">
 <h3 id="breaking-changes-0-14">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-14"></a></h3>
-<ul><li>the <code>print.boottest()</code> and <code>print.mboottest()</code> method have been deprecated, as both did not have a distinct use case.</li>
+<ul><li>the <code><a href="../reference/print.boottest.html">print.boottest()</a></code> and <code><a href="../reference/print.mboottest.html">print.mboottest()</a></code> method have been deprecated, as both did not have a distinct use case.</li>
 <li>Bugfix: <code><a href="../reference/boottest.html">boottest()</a></code> should never have run with <code><a href="https://lrberge.github.io/fixest/reference/feols.html" class="external-link">fixest::feols()</a></code> and varying slopes syntax via <code>var1[var2]</code>. Unfortunately it did for the heteroskedastic bootstrap - it’s a bug. I am very sorry if you are affected by this! This version adds an error message for this case.</li>
 </ul></div>
 <div class="section level3">

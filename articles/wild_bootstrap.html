@@ -296,11 +296,12 @@ HC3:  f(\hat{u}) = \frac{\hat{u}}{(1-h_i)}
 <div class="section level4">
 <h4 id="example-how-to-compute-a-ci-by-test-inversion">Example: How to compute a CI by test inversion<a class="anchor" aria-label="anchor" href="#example-how-to-compute-a-ci-by-test-inversion"></a>
 </h4>
-<p>Suppose we have a parameter <span class="math inline">\(\theta \in \Theta\)</span> and a test statistic <span class="math inline">\(T(\theta)\)</span>. We also have a critical value <span class="math inline">\(c\)</span> so that to test the null hypothesis <span class="math inline">\(H_0: \theta = \theta_0\)</span> against <span class="math inline">\(H_1: \theta \neq \theta_0\)</span> at a level <span class="math inline">\(\alpha\)</span>, we reject the null hypothesis if <span class="math inline">\(T(\theta_0) &gt; c\)</span>.</p>
-<p>Let’s define a set that includes all values of <span class="math inline">\(\theta\)</span> for which the decision rule “reject the null hypothesis if <span class="math inline">\(T(\theta)\geq c\)</span>” leads to an acceptance of the null hypothesis:</p>
-<p><span class="math display">\[
-  C = \{\theta \in \Theta: T(\theta)\leq c \}.
-\]</span> Based on the definition of the p-value, we can alternatively define a confidence interval at significance level <span class="math inline">\(\alpha\)</span> as</p>
+<!-- Suppose we have a parameter $\theta \in \Theta$ and a test statistic $T(\theta)$. We also have a critical value $c$ so that to test the null hypothesis $H_0: \theta = \theta_0$ against $H_1: \theta \neq \theta_0$ at a level $\alpha$, we reject the null hypothesis if $T(\theta_0) > c$. -->
+<!-- Let's define a set that includes all values of $\theta$ for which the decision rule "reject the null hypothesis if $T(\theta)\geq c$" leads to an acceptance of the null hypothesis: -->
+<!-- $$ -->
+<!--   C = \{\theta \in \Theta: T(\theta)\leq c \}. -->
+<!-- $$ -->
+<p>Based on the definition of the p-value, we can define a confidence interval at significance level <span class="math inline">\(\alpha\)</span> as</p>
 <p><span class="math display">\[
   C = \{\theta \in \Theta: p(\theta) \geq \alpha \}.
 \]</span> In other words: the confidence interval is the set of all values <span class="math inline">\(\theta \in \Theta\)</span> with p-value larger than the chosen significance level <span class="math inline">\(\alpha\)</span>.</p>
