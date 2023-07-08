@@ -693,9 +693,7 @@ transform_fe <-
     #'
     #' @noRd
     
-    #all_fe <- model_matrix.fixest(object, type = "fixef", collin.rm = TRUE)
-    # make sure all fixed effects variables are characters
-    all_fe <- sparse_model_matrix(object, type = "fixef")
+    all_fe <- model_matrix(object, type = "fixef", collin.rm = TRUE)
     
     n_fe <- ncol(all_fe)
     all_fe_names <- colnames(all_fe)
@@ -751,30 +749,37 @@ transform_fe <-
       }
       
     } else {
-      #add_fe <- all_fe
-      #add_fe_names <- names(add_fe)
-      #fml_fe <- reformulate(add_fe_names, response = NULL)
+      
+      # sparse matrices for all both "fnw11" && engine == "R"
       if(engine == "R" && bootstrap_type %in% c("11", "31", "13","33")){
         
-        #add_fe_dummies <-
-        #  Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
-        
-        add_fe_dummies <- sparse_model_matrix(object, type = "fixef")
-        
+
+        if(inherits(object, "fixest")){
+          add_fe_dummies <- sparse_model_matrix(object, type = "fixef")
+        } else {
+          add_fe <- all_fe
+          add_fe_names <- names(add_fe)
+          fml_fe <- reformulate(add_fe_names, response = NULL)
+          add_fe_dummies <-
+            Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+        }
         
       } else {
         
-        # add_fe_dummies <-
-        #   model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
-        
-        add_fe_dummies <- sparse_model_matrix(object, type = "fixef")
-        add_fe_dummies <- as.matrix(add_fe_dummies)
-        
+        if(inherits(object, "fixest")){
+          # need sparse matrix to handle varying slopes etc
+          add_fe_dummies <- sparse_model_matrix(object, type = "fixef")
+          add_fe_dummies <- as.matrix(add_fe_dummies)
+        } else {
+          add_fe <- all_fe
+          add_fe_names <- names(add_fe)
+          fml_fe <- reformulate(add_fe_names, response = NULL)
+          add_fe_dummies <-
+            Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+        }
+
       }
-      
-      fe <- sparse_model_matrix(object, type = c("fixef")) #cbind(X, add_fe_dummies)
-      X <- cbind(X, as.matrix(fe))
-      #print(colnames(X))
+      X <- cbind(X, as.matrix(add_fe_dummies))
     }
     
     res <- list(

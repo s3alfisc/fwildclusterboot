@@ -112,7 +112,7 @@ boot_algo_fastnwild <-
     # weights_mat <- Matrix::Diagonal(N, weights)
     # if no weights - N x N identity matrix
     weights_sq <- sqrt(weights) # sqrt fine because diagonal matrix
-    A <- inv(crossprod(weights_sq * X), "Matrix inversion failure Using a generalized inverse instead.") # k x k
+    A <- inv(crossprod(weights_sq * X), "Matrix inversion failure: Using a generalized inverse instead. Check the produced t-statistic, does it match the one of your regression package (under the same small sample correction)? If yes, this is likely not an issue.") # k x k
     # XXinv <- solve(crossprod(X))                          # k x k
     WX <- weights * X
 
