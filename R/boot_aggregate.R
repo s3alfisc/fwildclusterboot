@@ -317,7 +317,8 @@ boot_aggregate <- function(
     mm2 <- sparse_model_matrix(x, type = c("fixef")) |> as.matrix() |> as.data.frame()
     mm <- cbind(X, mm2)
   } else {
-    
+    # varying slopes only allowed for objects of type "etwfe"
+    check_no_varying_slopes(x)
     mm <- model.matrix(x)
     
   }
@@ -430,6 +431,30 @@ boot_aggregate <- function(
   )
   
   res
+  
+}
+
+check_no_varying_slopes <- function(object){
+  
+  has_fixef <- "fixef_vars" %in% names(object)
+  
+  if (
+    # '^' illegal in fixef argument, but legal in main formula -
+    # e.g. fml = y ~ x1 + I(x2^2) shold be possible
+    #' @srrstats {G2.4c} *explicit conversion to character via `as.character()`
+    #' (and not `paste` or `paste0`)* Done
+    
+    (has_fixef &&
+     grepl("[",
+           Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
+           fixed = TRUE) && 
+     !is.null(fe)
+    )
+    # note: whitespace ~ - for IV
+    # grepl("~", deparse_fml, fixed = TRUE)
+  ) {
+    rlang::abort("Varying slopes fixed effects in `fixest::feols()` are currently not supported in boottest() when fe are projected out in the bootstrap via the `fe` function argument.")
+  }
   
 }
 
