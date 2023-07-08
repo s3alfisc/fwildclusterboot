@@ -316,6 +316,14 @@ boot_aggregate <- function(
     X <- fixest:::model.matrix.fixest(x, type = "rhs")
     mm2 <- sparse_model_matrix(x, type = c("fixef")) |> as.matrix() |> as.data.frame()
     mm <- cbind(X, mm2)
+    
+    # 
+    if(agg %in% c("att", "period", "cohort", "TRUE")){
+      rlang::abort(
+        paste0("`agg='", agg, "'` works for fixest::sunab(), but is not implemented for objects of type `etwfe`. For `etwfe`, you will have to do the aggregation by hand. See `?boot_aggregate` for examples.")
+      )
+    }
+    
   } else {
     # varying slopes only allowed for objects of type "etwfe"
     check_no_varying_slopes(x)
@@ -323,8 +331,7 @@ boot_aggregate <- function(
     
   }
 
-  cat("Run the wild bootstrap: this might take some time...(but 
-      hopefully not too much time =) ).", "\n")
+  rlang::inform("Run the wild bootstrap: this might take some time...(but hopefully not too much time =) ).")
   
   name_df <- unique(data.frame(root, val, stringsAsFactors = FALSE))
   
@@ -457,6 +464,7 @@ check_no_varying_slopes <- function(object){
   }
   
 }
+
 
 
 
