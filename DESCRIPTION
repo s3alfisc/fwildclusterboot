@@ -1,9 +1,19 @@
 Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap Inference for Linear Models
-Version: 0.13.2
+Version: 0.14.0
 Authors@R: c(
     person("Alexander", "Fischer", , "alexander-fischer1801@t-online.de", role = c("aut", "cre")),
     person("David", "Roodman", role = "aut"),
+    person("Megha", "Joshi", 
+            role = "rev", 
+            comment = "Megha reviewed the package (v. 0.13) for ropensci 
+                      , see <https://github.com/ropensci/software-review/issues/546>"
+          ),
+    person("Eunseop", "Kim",
+            role = "rev", 
+            comment = "Eunseop reviewed the package (v. 0.13) for ropensci 
+                      , see <https://github.com/ropensci/software-review/issues/546>"
+          ),
     person("Achim", "Zeileis", role = "ctb",
            comment = "Author of included sandwich fragments"),
     person("Nathaniel", "Graham", role = "ctb",
@@ -42,7 +52,6 @@ Imports:
     generics,
     gtools,
     JuliaConnectoR,
-    MASS,
     Matrix,
     Rcpp,
     rlang,
@@ -64,7 +73,8 @@ Suggests:
     rmarkdown,
     sandwich,
     testthat (>= 3.0.0),
-    tibble
+    tibble, 
+    MASS
 LinkingTo:
     Rcpp,
     RcppArmadillo,
@@ -77,9 +87,9 @@ Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE, roclets = c ("namespace", "rd",
     "srr::srr_stats_roclet"))
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 SystemRequirements: Version Requirements to run the wild bootstrap through
-    Julia - Julia (>= 1.8), WildBootTests.jl (>=0.9).  Julia is
+    Julia - Julia (>= 1.8), WildBootTests.jl (>=0.9.8).  Julia is
     downloadable via the official Julia website
     (https://julialang.org/downloads/), WildBootTests.jl via Julia's
     package manager (https://docs.julialang.org/en/v1/stdlib/Pkg/) or its

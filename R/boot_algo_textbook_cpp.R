@@ -7,7 +7,7 @@ boot_algo_textbook_cpp <-
            sign_level,
            param,
            p_val_type,
-           bootstrap_type, 
+           bootstrap_type,
            nthreads,
            type,
            full_enumeration,
@@ -32,7 +32,7 @@ boot_algo_textbook_cpp <-
     #' @param param name of the test parameter.
     #' @param p_val_type type Type of p-value. By default "two-tailed".
     #' Other options: "equal-tailed", ">", "<"
-    #' @param bootstrap_type Determines which wild bootstrap type should be 
+    #' @param bootstrap_type Determines which wild bootstrap type should be
     #' run. Options are "11" and "31". For more information,
     #' see the details section.
     #' @param nthreads The number of threads. Can be: a) an integer lower than,
@@ -58,9 +58,9 @@ boot_algo_textbook_cpp <-
     #' model.weights residuals rlnorm rnorm update
     #' @importFrom dqrng dqsample dqset.seed
     #' @noRd
-    
+
     dreamerr::check_arg(bootstrap_type, "charin(11, 21, 31)")
-    
+
     X <- preprocessed_object$X
     Y <- preprocessed_object$Y
     N <- preprocessed_object$N
@@ -74,52 +74,52 @@ boot_algo_textbook_cpp <-
     bootcluster <- preprocessed_object$bootcluster
     N_G_bootcluster <- length(unique(bootcluster[[1]]))
 
-    
+
     v <- NULL
     if(type == "rademacher"){
       if(full_enumeration){
-      
+
         # get fully enumerated weights matrix
         v <- get_weights(
-            type = type, 
-            full_enumeration = full_enumeration, 
-            N_G_bootcluster = N_G_bootcluster, 
-            boot_iter = boot_iter, 
+            type = type,
+            full_enumeration = full_enumeration,
+            N_G_bootcluster = N_G_bootcluster,
+            boot_iter = boot_iter,
             sampling = "standard"
         )
-        
+
       }
     }
-    
+
     if (type == "rademacher") {
       type <- 0
     } else if (type == "webb"){
       type <- 1
     } else {
       rlang::abort(
-        paste("For the 'lean' bootstrap algorithm, only webb and rademacher 
-          weights are supported."), 
+        paste("For the 'lean' bootstrap algorithm, only webb and rademacher
+          weights are supported."),
         use_cli_format = TRUE
         )
     }
-  
+
     if (impose_null == FALSE) {
       rlang::abort(
         c("The 'lean' bootstrap algorithm is currently not supported without
-        imposing the null on the bootstrap dgp."), 
+        imposing the null on the bootstrap dgp."),
         use_cli_format = TRUE
       )
     }
-    
+
     if ((length(R) - sum(R != 1)) > 1) {
       rlang::abort(
-        c("The 'lean' bootstrap algorithm - which runs the 
-          heteroskedastic wild bootstrap - is currently not supported for 
-          hypotheses about more than one parameter."), 
+        c("The 'lean' bootstrap algorithm - which runs the
+          heteroskedastic wild bootstrap - is currently not supported for
+          hypotheses about more than one parameter."),
         use_cli_format = TRUE
       )
     }
-    
+
     if(bootstrap_type == "11"){
       bootstrap_type_int <- 1
     } else if(bootstrap_type == "21"){
@@ -127,7 +127,7 @@ boot_algo_textbook_cpp <-
     } else if(bootstrap_type == "31"){
       bootstrap_type_int <- 3
     }
-    
+
     if (heteroskedastic == TRUE) {
       boot_res <-
         wildboottestHC(
@@ -139,21 +139,23 @@ boot_algo_textbook_cpp <-
           N_G_bootcluster = N,
           cores = nthreads,
           type = type,
-          small_sample_correction = small_sample_correction, 
+          small_sample_correction = small_sample_correction,
           bootstrap_type = bootstrap_type_int
         )[["t_boot"]]
 
     } else {
 
       bootcluster <- preprocessed_object$bootcluster[, 1]
-      # turn bootcluster into sequence of integers, starting 
+      # turn bootcluster into sequence of integers, starting
       # at 0, 1, 2, ..., length(unique(bootcluster)) (required for cpp
       # implementation)
       # if(!class(bootcluster) == "integer"){
+      #' @srrstats {G2.4a}
+
       bootcluster <-
         to_integer(preprocessed_object$bootcluster[, 1])
       # }
-      # bootcluster must be integers, starting with 0 
+      # bootcluster must be integers, starting with 0
       # (due to cpp implementation)
       bootcluster <- bootcluster - min(bootcluster)
       if (is.null(v)) {
@@ -182,26 +184,26 @@ boot_algo_textbook_cpp <-
             cores = nthreads,
             cluster = bootcluster,
             small_sample_correction = small_sample_correction,
-            v = t(v) 
+            v = t(v)
           )[["t_boot"]]
       }
-      
-  
+
+
     }
-    
-    
+
+
     # selector <- which(R == 1)
     t_stat <- boot_res[1]
     t_boot <- boot_res[2:(boot_iter + 1)]
     #t_stat <- boot_res[selector, 1]
     #t_boot <- boot_res[selector, 2:(boot_iter + 1)]
-    
+
     p_val <- get_bootstrap_pvalue(
       p_val_type = p_val_type,
       t_stat = t_stat,
       t_boot = t_boot
     )
-    
+
     res <- list(
       p_val = p_val,
       t_stat = t_stat,
@@ -214,9 +216,9 @@ boot_algo_textbook_cpp <-
       ABCD = NULL,
       small_sample_correction = small_sample_correction
     )
-    
+
     class(res) <- "boot_algo_textbook_cpp"
-    
+
     invisible(res)
-    
+
   }

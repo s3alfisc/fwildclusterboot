@@ -199,6 +199,7 @@ run_bootstrap <- function(
       check_boot_algo_fastnreliable(
         weights = stats::weights(object), 
         clustid = clustid,
+        bootcluster = bootcluster, 
         fe = fe,
         bootstrap_type = bootstrap_type, 
         R = R_long, 

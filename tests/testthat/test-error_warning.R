@@ -1,4 +1,15 @@
 test_that("errors and warnings q = 1", {
+
+
+  #' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions
+  #' should be explicitly demonstrated through tests. In particular,* Tested in
+  #' test-warning-error test file.
+  #' @srrstats {G5.2b} *Explicit tests should demonstrate conditions which
+  #' trigger every one of those messages, and should compare the result with
+  #' expected values.* Done. See test-warning-error test file.
+
+
+
   skip_on_cran()
   skip_if_not(
     find_proglang("julia"),
@@ -1377,6 +1388,33 @@ test_that("errors and warnings q = 1", {
           fe = "treatment"
         )
       )
+      
+      # varying slopes
+      
+      feols_fit_c <-
+        fixest::feols(
+          proposition_vote ~ treatment + ideology1  |
+            Q1_immigration[log_income],
+          data = fwildclusterboot:::create_data(
+            N = 1000,
+            N_G1 = 10,
+            icc1 = 0.01,
+            N_G2 = 10,
+            icc2 = 0.01,
+            numb_fe1 = 10,
+            numb_fe2 = 10,
+            seed = 1234
+          )
+        )
+      
+      expect_error(
+        boottest(
+          feols_fit_c,
+          param = "treatment",
+          B = 999,
+          clustid = "group_id1"
+        )
+      )
     }
   }
 })
@@ -1769,4 +1807,33 @@ test_that("other misc errors", {
       engine = "R"
     )
   )
+  
+  expect_error(
+    boottest(
+      object = feols_fit,
+      param = ~treatment,
+      clustid = ~group_id1,
+      B = 999,
+      bootstrap_type = "13",
+      bootcluster = "group_id2",
+      engine = "R"
+    )
+  )
+  
+  expect_error(
+    boottest(
+      object = feols_fit,
+      param = ~treatment,
+      clustid = ~group_id1,
+      B = 999,
+      bootstrap_type = "13",
+      bootcluster = ~group_id1 + group_id2,
+      engine = "R"
+    )
+  )
+  
+  
+  
+  
+  
 })

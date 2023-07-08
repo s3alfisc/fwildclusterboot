@@ -1,4 +1,17 @@
-test_that("test lean cpp boottest", {
+test_that("test heteroskedastic boottest against fixest", {
+
+
+#' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms
+#'  produce expected results to some fixed test data sets (potentially through
+#'   comparisons using binding frameworks such as
+#'   [RStata](https://github.com/lbraglia/RStata)).* Several correctness
+#'   tests are implemented. First, it is tested if the non-bootstrapped
+#'    t-statistics
+#' produced via boottest() *exactly* match those computed by the fixest package
+#' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
+#'  against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R
+#'  implementations of the WCB are tested against each other.
+
   set.seed(96578)
   dqrng::dqset.seed(9568)
 
@@ -187,7 +200,8 @@ test_that("test lean cpp boottest", {
 })
 
 
-test_that("r-lean multi-param tests", {
+test_that("heteroskedastic multi-param tests", {
+  
   N <- 2000
   seed <- 7896
 

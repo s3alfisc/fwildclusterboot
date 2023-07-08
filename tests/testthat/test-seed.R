@@ -8,6 +8,12 @@ test_that("seed works for OLS", {
   set.seed(12312)
   dqrng::dqset.seed(9786)
 
+  #' @srrstats {G5.0} *Where applicable or practicable, tests should use
+  #' standard data sets with known properties (for example, the
+  #' [NIST Standard Reference Datasets](https://www.itl.nist.gov/div898/strd/),
+  #'  or data sets provided by other widely-used R packages).* All tests are based
+  #'  on random data sets.
+
   data1 <<-
     fwildclusterboot:::create_data(
       N = 5000,

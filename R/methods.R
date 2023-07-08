@@ -8,10 +8,11 @@
 #' @param object An object of type lm, fixest, felm or ivreg
 #' @param ... other arguments
 #'
-#' @seealso [boottest.lm][fwildclusterboot::boottest.lm],
+#' @seealso 
+#' [boottest.lm][fwildclusterboot::boottest.lm],
 #' [boottest.fixest][fwildclusterboot::boottest.fixest],
 #' [boottest.felm][fwildclusterboot::boottest.felm],
-#'  [boottest.ivreg][fwildclusterboot::boottest.ivreg]
+#' [boottest.ivreg][fwildclusterboot::boottest.ivreg]
 #'
 #' @examples
 #' requireNamespace("fwildclusterboot")
@@ -49,21 +50,28 @@
 #'
 #' @return An object of class `boottest`.
 #' 
-#' @section Stata, Julia and Python Implementations:
-#' The fast wild cluster bootstrap algorithms are further implemented in the 
-#' following software packages: 
-#' \itemize{
-#' \item Stata:[boottest](https://github.com/droodman/boottest) 
-#' \item Julia:[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) 
-#' \item Python:[wildboottest](https://github.com/s3alfisc/wildboottest) 
-#' }
+#' @details Technical Details 
+#' For technical details, either take a look at the references below, or check
+#' out the [wild (cluster) bootstrap vignette](wild_bootstrap.html).
 #' 
+#' @section Stata, Julia and Python Implementations:
+#' The fast wild cluster bootstrap algorithms are further implemented in the
+#' following software packages:
+#' \itemize{
+#' \item Stata:[boottest](https://github.com/droodman/boottest)
+#' \item Julia:[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl)
+#' \item Python:[wildboottest](https://github.com/s3alfisc/wildboottest)
+#' }
+#' @srrstats {G1.1} *The help files of all boottest methods document that the
+#' "fast and wild" algorithm is already implemented in the STATA boottest
+#' package. Additional information in the boottest() documentation points to
+#' Julia, Python and Stata implementations.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
 #' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
-#' @references MacKinnon, James G., Morten Ørregaard Nielsen, and 
+#' @references MacKinnon, James G., Morten Ørregaard Nielsen, and
 #' Matthew D. Webb. Fast and reliable jackknife and bootstrap
-#'  methods for cluster-robust inference. No. 1485. 2022. 
+#'  methods for cluster-robust inference. No. 1485. 2022.
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 #'  "Bootstrap-based improvements for inference with clustered errors."
 #'  The Review of Economics and Statistics 90.3 (2008): 414-427.
@@ -85,28 +93,30 @@
 #' @references Webb, Matthew D.
 #' "Reworking wild bootstrap based inference for clustered errors"
 #' . No. 1315. Queen's Economics Department Working Paper, 2013.
+#' @srrstats {G1.0} *`boottest()` links to multiple published papers.*
+
 
 boottest <- function(object,
                      ...) {
-  
+
   rlang::warn(
     message = "
     Please note that the seeding behavior for random number
-    generation for `boottest()` has changed with `fwildclusterboot` 
-    version 0.13. 
-    
-    It will no longer be possible to 
-    exactly reproduce results produced by versions lower than 0.13. 
-    
-    If your prior results were produced under sufficiently many bootstrap 
-    iterations, none of your conclusions will change. 
+    generation for `boottest()` has changed with `fwildclusterboot`
+    version 0.13.
+
+    It will no longer be possible to
+    exactly reproduce results produced by versions lower than 0.13.
+
+    If your prior results were produced under sufficiently many bootstrap
+    iterations, none of your conclusions will change.
     For more details about this change, please read the notes in
-    [news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).", 
-    .frequency = "once", 
-    .frequency_id = "random-seed-message", 
+    [news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).",
+    .frequency = "once",
+    .frequency_id = "random-seed-message",
     use_cli_format = TRUE
   )
-  
+
   UseMethod("boottest")
 }
 
@@ -194,7 +204,7 @@ mboottest <- function(object,
 #' @param ... other arguments
 #'
 #' @export
-#' 
+#'
 #' @examples
 #' requireNamespace("fwildclusterboot")
 #' data(voters)
@@ -208,8 +218,8 @@ mboottest <- function(object,
 #'   clustid = "group_id1"
 #' )
 #' pval(boot)
-#' @return 
-#' A scalar with the bootstrapped p-value. 
+#' @return
+#' A scalar with the bootstrapped p-value.
 
 
 
@@ -254,6 +264,9 @@ teststat <- function(object,
 #' @method confint boottest
 #' @return A vector containing the boundaries of the wild cluster
 #'  bootstrapped confidence interval
+#' @srrstats {RE4.3} *Confidence intervals on those coefficients
+#' (via `confint()`)* Done for objects of type boottest, not applicable
+#'  for objects of type mboottest
 #' @examples
 #' requireNamespace("fwildclusterboot")
 #' data(voters)
@@ -339,6 +352,8 @@ teststat.boottest <- function(object, ...) {
 #' @method nobs boottest
 #' @return A scalar containing the effective number of observations
 #'  used in `boottest()`
+#' @srrstats {RE4.5} *Numbers of observations submitted to model
+#'  (via `nobs()`)*
 #' @examples
 #' requireNamespace("fwildclusterboot")
 #' data(voters)
@@ -430,6 +445,11 @@ summary.boottest <- function(object, digits = 3, ...) {
   #' @method summary boottest
   #' @export
   #' @return Returns result summaries for objects of type boottest
+  #' @srrstats {RE4.18} *Regression Software may also implement `summary`
+  #' methods for model objects, and in particular should implement distinct
+  #' summary` methods for any cases in which calculation of summary
+  #' statistics is computationally non-trivial (for example, for bootstrapped
+  #' estimates of confidence intervals).* A summary method is implemented.
   #' @examples
   #' requireNamespace("fwildclusterboot")
   #' data(voters)
@@ -527,12 +547,20 @@ summary.boottest <- function(object, digits = 3, ...) {
 }
 
 plot.boottest <- function(x, ...) {
-  #' Plot the bootstrap distribution of t-statistics
+
+  #' Plots bootstrapped p-values as a function of the hypothesized effect size r for
+  #' a hypothesis test of the form R beta = r.The points where the p-values are 0.05
+  #' are the boundaries of the bootstrapped confidence interval.
   #' @param x An object of type boottest
   #' @param ... Further arguments passed to or from other methods.
   #' @method plot boottest
   #' @export
   #' @return A plot of bootstrap t-statistics under different null hypotheses
+  #' @srrstats {RE6.0} *Model objects returned by Regression Software
+  #' (see* **RE4***) should have default `plot` methods, either through
+  #'  explicit implementation, extension of methods for existing model objects,
+  #'  or through ensuring default methods work appropriately.* A default plot
+  #'   method is implemented.
   #' @examples
   #' requireNamespace("fwildclusterboot")
   #' data(voters)
@@ -552,7 +580,7 @@ plot.boottest <- function(x, ...) {
 
   if (is.null(x$conf_int)) {
     rlang::abort(
-      c("No plot method if boottest()'s function argument 'conf_int = FALSE'."), 
+      c("No plot method if boottest()'s function argument 'conf_int = FALSE'."),
       use_cli_format = TRUE
     )
   }
@@ -631,7 +659,7 @@ glance.mboottest <- function(x, ...) {
   #' )
   #' generics::glance(mboot)
   #' }
-  
+
   stopifnot(inherits(x, "mboottest"))
   broom::glance(eval(x$call$object))
 }
@@ -723,85 +751,68 @@ nobs.mboottest <- function(object, ...) {
 }
 
 
-#' S3 method to print key information for objects of type `bboottest`
-#' @param x object of type boottest
-#' @param ... Further arguments passed to or from other methods.
-#' @param digits Number of rounding digits
-#' @export
-#' @method print boottest
-#' @return A scalar containing the effective number of observations
-#' used in `mboottest`
-#' @examples
-#' #' requireNamespace("fwildclusterboot")
-#' data(voters)
-#' lm_fit <- lm(
-#'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-#'   data = voters
-#' )
-#' boot <- boottest(lm_fit,
-#'   B = 9999,
-#'   param = "treatment",
-#'   clustid = "group_id1"
-#' )
-#' print(boot)
-#'
-print.boottest <- function(x, ..., digits = 4) {
-  stopifnot(inherits(x, "boottest"))
+# S3 method to print key information for objects of type `boottest`
+# @param x object of type boottest
+# @param ... Further arguments passed to or from other methods.
+# @param digits Number of rounding digits
+# @export
+# @method print boottest
+# @return A scalar containing the effective number of observations
+# used in `mboottest`
+# @examples
+# #' requireNamespace("fwildclusterboot")
+# data(voters)
+# lm_fit <- lm(
+#   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#   data = voters
+# )
+# boot <- boottest(lm_fit,
+#   B = 9999,
+#   param = "treatment",
+#   clustid = "group_id1"
+# )
+# print(boot)
+#
+# # print.boottest <- function(x, ..., digits = 4) {#   stopifnot(inherits(x, "boottest"))##   print(x$call)#   cat("", "\n")##   vals <- lapply(#     c("p_val", "conf_int", "t_stat"),#     function(y) {#       ifelse(is.null(x[[y]]),#         'not computed',#         round(x[[y]], digits = digits)#       )#     }#   )##   cat("p value:", vals[[1]], "\n")#   cat("confidence interval:", vals[[2]], "\n")#   cat("test statistic", vals[[3]], "\n")# }
 
-  print(x$call)
-  cat("", "\n")
-
-  vals <- lapply(
-    c("p_val", "conf_int", "t_stat"),
-    function(y) {
-      round(x[[y]], digits = digits)
-    }
-  )
-
-  cat("p value:", vals[[1]], "\n")
-  cat("confidence interval:", vals[[2]], "\n")
-  cat("test statistic", vals[[3]], "\n")
-}
-
-
-#' S3 method to print key information for objects of type `mboottest`
-#' @param x object of type mboottest
-#' @param ... Further arguments passed to or from other methods.
-#' @param digits Number of rounding digits
-#' @export
-#' @method print mboottest
-#' @return A scalar containing the effective number of observations used
-#' in `mboottest`
-#' @examples
-#' \dontrun{
-#' requireNamespace("clubSandwich")
-#' R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
-#' wboottest <-
-#'   mboottest(
-#'     object = lm_fit,
-#'     clustid = "group_id1",
-#'     B = 999,
-#'     R = R
-#'   )
-#' print(wboottest)
-#' }
-#'
-print.mboottest <- function(x, ..., digits = 4) {
-  stopifnot(inherits(x, "mboottest"))
-
-  print(x$call)
-  cat("", "\n")
-
-  vals <- lapply(
-    c("p_val", "teststat"),
-    function(y) {
-      round(x[[y]], digits = digits)
-    }
-  )
-
-  cat("p value:", vals[[1]], "\n")
-  cat("test statistic", vals[[2]], "\n")
-}
+# S3 method to print key information for objects of type `mboottest`
+# @param x object of type mboottest
+# @param ... Further arguments passed to or from other methods.
+# @param digits Number of rounding digits
+# @export
+# @method print mboottest
+# @return A scalar containing the effective number of observations used
+# in `mboottest`
+# @examples
+# \dontrun{
+# requireNamespace("clubSandwich")
+# R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
+# wboottest <-
+#   mboottest(
+#     object = lm_fit,
+#     clustid = "group_id1",
+#     B = 999,
+#     R = R
+#   )
+# print(wboottest)
+# }
+#
+# print.mboottest <- function(x, ..., digits = 4) {
+#   stopifnot(inherits(x, "mboottest"))
+#
+#   print(x$call)
+#   cat("", "\n")
+#
+#   vals <- lapply(
+#     c("p_val", "teststat"),
+#     function(y) {
+#       round(x[[y]], digits = digits)
+#     }
+#   )
+#
+#   cat("p value:", vals[[1]], "\n")
+#   cat("test statistic", vals[[2]], "\n")
+# }
 
 
 tidy.mboottest <- function(x, ...) {

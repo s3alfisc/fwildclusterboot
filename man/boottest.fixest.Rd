@@ -247,6 +247,23 @@ stops the procedure after 10 iterations.
 \code{boottest} does not calculate standard errors.
 }
 
+\section{Multiple Fixed Effects}{
+
+If your feols() model contains fixed effects, boottest() will internally convert all fixed
+effects but the one specified via the \code{fe} argument to dummy variables.
+}
+
+\section{Run \code{boottest} quietly}{
+
+You can suppress all warning and error messages by setting the following global
+options:
+\code{options(rlib_warning_verbosity = "quiet")}
+\code{options(rlib_message_verbosity = "quiet")}
+Note that this will turn off all warnings (messages) produced via \code{rlang::warn()} and
+\code{rlang::inform()}, which might not be desirable if you use other software build on
+\code{rlang}, as e.g. the \code{tidyverse}.
+}
+
 \section{Stata, Julia and Python Implementations}{
 
 The fast wild cluster bootstrap algorithms are further implemented in the
@@ -313,11 +330,11 @@ generics::tidy(boot1)
 boot_fnw11 <- boottest(lm_fit,
   B = 9999,
   param = "treatment",
-  clustid = "group_id1", 
+  clustid = "group_id1",
   bootstrap_type = "fnw11"
 )
 
-# WCR 31 
+# WCR 31
 boot_WCR31 <- boottest(lm_fit,
   B = 9999,
   param = "treatment",
@@ -325,12 +342,12 @@ boot_WCR31 <- boottest(lm_fit,
   bootstrap_type = "31"
 )
 
-# WCU33 
+# WCU33
 boot_WCR31 <- boottest(lm_fit,
   B = 9999,
   param = "treatment",
   clustid = "group_id1",
-  bootstrap_type = "33", 
+  bootstrap_type = "33",
   impose_null = FALSE
 )
 

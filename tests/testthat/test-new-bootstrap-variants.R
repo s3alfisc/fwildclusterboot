@@ -1,5 +1,7 @@
 test_that("test r-fnw vs r-, stochastic", {
+  
   skip_on_cran()
+  
   skip_if_not(
     fwildclusterboot:::find_proglang("julia"),
     message = "skip test as julia installation not found."
@@ -9,6 +11,21 @@ test_that("test r-fnw vs r-, stochastic", {
 
   seed <- 123123
   set.seed(seed)
+
+  #' @srrstats {G5.1} *Data sets created within, and used to test, a package
+  #' should be exported (or otherwise made generally available) so that users
+  #'  can confirm tests and run examples.* Data sets used internally can be
+  #'  recreated via a non-exported `fwildclusterboot:::create_data()` function.
+  #' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms
+  #' produce expected results to some fixed test data sets (potentially through
+  #' comparisons using binding frameworks such as
+  #' [RStata](https://github.com/lbraglia/RStata)).* Several correctness
+  #' tests are implemented. First, it is tested if the non-bootstrapped
+  #' t-statistics
+  #' produced via boottest() *exactly* match those computed by the fixest package
+  #' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
+  #' against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R
+  #' implementations of the WCB are tested against each other.
 
 
   data1 <<- fwildclusterboot:::create_data(
@@ -151,6 +168,7 @@ test_that("test r-fnw vs r-, stochastic", {
 
 
 test_that("new bootstrap variants II - t_stat equivalence", {
+  
   skip_on_cran()
   skip_if_not(
     fwildclusterboot:::find_proglang("julia"),
@@ -159,7 +177,7 @@ test_that("new bootstrap variants II - t_stat equivalence", {
 
   N <- 1000
   N_G1 <- 17
-  data <- fwildclusterboot:::create_data(
+  data1 <<- fwildclusterboot:::create_data(
     N = N,
     N_G1 = N_G1,
     icc1 = 0.8,
@@ -173,7 +191,7 @@ test_that("new bootstrap variants II - t_stat equivalence", {
 
   lm_fit <- lm(
     proposition_vote ~ treatment + log_income,
-    data = data
+    data = data1
   )
 
   # WCR
@@ -188,7 +206,7 @@ test_that("new bootstrap variants II - t_stat equivalence", {
     list()
 
   for (x in wcr_algos) {
-    cat(x)
+    cat(x, "\n")
     res <-
       suppressWarnings(
         boottest(
@@ -270,7 +288,7 @@ test_that("variants 31 R vs Julia", {
     N_G1 <- 10
     B <- 9999
 
-    data2 <- fwildclusterboot:::create_data(
+    data2 <<- fwildclusterboot:::create_data(
       N = 1000,
       N_G1 = N_G1,
       icc1 = 0.8,
@@ -375,6 +393,7 @@ test_that("variants 31 R vs Julia", {
 
 
 test_that("new variants and fixed effects", {
+  
   skip_on_cran()
   skip_if_not(
     fwildclusterboot:::find_proglang("julia"),
@@ -482,4 +501,114 @@ test_that("new variants and fixed effects", {
     boot13_lm$t_boot,
     boot13_fe$t_boot
   )
+})
+
+test_that("test cluster fixed effects", {
+  
+
+  B <- 9999
+  
+  data1 <<- fwildclusterboot:::create_data(
+    N = 1000,
+    N_G1 = 30,
+    icc1 = 0.5,
+    N_G2 = 10,
+    icc2 = 0.2,
+    numb_fe1 = 10,
+    numb_fe2 = 10,
+    seed = 961239,
+    weights = 1:N / N
+  )
+  
+  feols_fit <- fixest::feols(proposition_vote ~ treatment + log_income | group_id1  + Q2_defense,
+                     data = data1
+  )
+  
+  
+  for(bootstrap_type in c("11", "31")){
+    
+    set.seed(123); dqrng::dqset.seed(123)
+    suppressWarnings(
+        boot <- boottest(feols_fit,
+                           B = 9999,
+                           param = "treatment",
+                           clustid = "group_id1",
+                           bootstrap_type = bootstrap_type,
+                           ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+        )
+    )
+    set.seed(123); dqrng::dqset.seed(123)
+    boot_fe <- boottest(feols_fit,
+                     B = 9999,
+                     param = "treatment",
+                     clustid = "group_id1",
+                     bootstrap_type = bootstrap_type,
+                     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
+                     fe = "group_id1"
+    )
+    # set.seed(123); dqrng::dqset.seed(123)
+    # boot_jl <- boottest(feols_fit,
+    #                     B = 9999,
+    #                     param = "treatment",
+    #                     clustid = "group_id1",
+    #                     bootstrap_type = "fnw11",
+    #                     ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE),
+    #                     # fe = "group_id1", 
+    #                     engine = "R"
+    # )
+
+    
+    expect_equal(pval(boot), pval(boot_fe))
+    # expect_equal(pval(boot), pval(boot_jl))
+    expect_equal(teststat(boot), teststat(boot_fe))
+    # expect_equal(teststat(boot), teststat(boot_jl))
+    expect_equal(boot$t_boot, boot_fe$t_boot)
+    # expect_equal(boot$t_boot, boot_jl$t_boot)
+    
+
+    
+    # expect error when fe is not the clustering variable
+    expect_error(
+      boot_fe <- boottest(feols_fit,
+                          B = 9999,
+                          param = "treatment",
+                          clustid = "group_id1",
+                          bootstrap_type = bootstrap_type,
+                          ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                          fe = "group_id2"
+      )
+    )
+    
+  
+    
+  }
+  
+  # error for fe with bootstrap types "13", "33"
+  
+  expect_error(
+    boot_fe <- boottest(feols_fit,
+                        B = 9999,
+                        param = "treatment",
+                        clustid = "group_id1",
+                        bootstrap_type = "13",
+                        ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                        fe = "group_id1"
+    )
+  )
+  
+  expect_error(
+    boot_fe <- boottest(feols_fit,
+                        B = 9999,
+                        param = "treatment",
+                        clustid = "group_id1",
+                        bootstrap_type = "33",
+                        ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE), 
+                        fe = "group_id1"
+    )
+  )
+  
+  
+  
+  
+  
 })

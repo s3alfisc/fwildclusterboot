@@ -2,7 +2,7 @@
 #'
 #' `boottest.felm` is a S3 method that allows for fast wild cluster
 #' bootstrap inference for objects of class felm by  implementing
-#' fast wild bootstrap algorithms as developed in Roodman et al., 2019 
+#' fast wild bootstrap algorithms as developed in Roodman et al., 2019
 #' and MacKinnon, Nielsen & Webb (2022).
 #'
 #' @param object An object of class felm
@@ -39,7 +39,7 @@
 #' @param conf_int A logical vector. If TRUE, boottest computes confidence
 #'        intervals by test inversion. If FALSE, only the p-value is returned.
 #' @param engine Character scalar. Either "R", "R-lean" or "WildBootTests.jl".
-#'  Controls if `boottest()` should run via its native R implementation 
+#'  Controls if `boottest()` should run via its native R implementation
 #'  or `WildBootTests.jl`.
 #'  "R" is the default and implements the cluster bootstrap
 #'  as in Roodman (2019). "WildBootTests.jl" executes the
@@ -53,13 +53,13 @@
 #'  defaults to the "lean" algorithm. You can set the employed
 #'  algorithm globally by using the
 #'  `setBoottest_engine()` function.
-#' @param bootstrap_type Determines which wild cluster bootstrap type should be 
-#' run. Options are "fnw11","11", "13", "31" and "33" for the wild cluster 
+#' @param bootstrap_type Determines which wild cluster bootstrap type should be
+#' run. Options are "fnw11","11", "13", "31" and "33" for the wild cluster
 #' bootstrap and "11" and "31" for the heteroskedastic bootstrap.
-#' For more information, see the details section. "fnw11" is the default for 
-#' the cluster bootstrap, which runs a "11" type 
-#' wild cluster bootstrap via the algorithm outlined in "fast and wild" 
-#' (Roodman et al (2019)). "11" is the default for the heteroskedastic 
+#' For more information, see the details section. "fnw11" is the default for
+#' the cluster bootstrap, which runs a "11" type
+#' wild cluster bootstrap via the algorithm outlined in "fast and wild"
+#' (Roodman et al (2019)). "11" is the default for the heteroskedastic
 #' bootstrap.
 #' @param R Hypothesis Vector giving linear combinations of coefficients.
 #'  Must be either NULL or a vector of the same length as `param`. If NULL,
@@ -131,11 +131,11 @@
 #' bootstrap-c instead of bootstrap-t. Only relevant when 'engine =
 #' "WildBootTests.jl"'
 #' @param sampling 'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
-#' used for random number generation (when available). If 'standard', 
-#' functions from the 'stats' package are used when available. 
-#' This argument is mostly a convenience to control random number generation in 
-#' a wrapper package around `fwildclusterboot`, `wildrwolf`. 
-#' I recommend to use the fast' option. 
+#' used for random number generation (when available). If 'standard',
+#' functions from the 'stats' package are used when available.
+#' This argument is mostly a convenience to control random number generation in
+#' a wrapper package around `fwildclusterboot`, `wildrwolf`.
+#' I recommend to use the fast' option.
 #' @param ... Further arguments passed to or from other methods.
 #'
 #' @importFrom dreamerr check_arg validate_dots
@@ -171,7 +171,7 @@
 #' @method boottest felm
 #'
 #' @section Setting Seeds:
-#' To guarantee reproducibility, you need to 
+#' To guarantee reproducibility, you need to
 #' set a global random seed via
 #' + `set.seed()` when using
 #'    1) the lean algorithm (via `engine = "R-lean"`) including the
@@ -197,20 +197,35 @@
 #' }
 #' @section Standard Errors:
 #' `boottest` does not calculate standard errors.
+#' @section Multiple Fixed Effects:
+#' If your felm() model contains fixed effects, boottest() will internally convert all fixed
+#' effects but the one specified via the `fe` argument to dummy variables.
+#' @section Run `boottest` quietly:
+#' You can suppress all warning and error messages by setting the following global
+#' options:
+#' `options(rlib_warning_verbosity = "quiet")`
+#' `options(rlib_message_verbosity = "quiet")`
+#' Not that this will turn off all warnings (messages) produced via `rlang::warn()` and
+#' `rlang::inform()`, which might not be desirable if you use other software build on
+#' `rlang`, as e.g. the `tidyverse`.
 #' @section Stata, Julia and Python Implementations:
-#' The fast wild cluster bootstrap algorithms are further implemented in the 
-#' following software packages: 
+#' The fast wild cluster bootstrap algorithms are further implemented in the
+#' following software packages:
 #' \itemize{
-#' \item Stata:[boottest](https://github.com/droodman/boottest) 
-#' \item Julia:[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl) 
-#' \item Python:[wildboottest](https://github.com/s3alfisc/wildboottest) 
+#' \item Stata:[boottest](https://github.com/droodman/boottest)
+#' \item Julia:[WildBootTests.jl](https://github.com/droodman/WildBootTests.jl)
+#' \item Python:[wildboottest](https://github.com/s3alfisc/wildboottest)
 #' }
+#' @srrstats {G1.1} *The help files of all boottest methods document that the
+#' "fast and wild" algorithm is already implemented in the STATA boottest
+#' package. Additional information in the boottest() documentation points to
+#' Julia, Python and Stata implementations.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #'             STATA using boottest", The STATA Journal.
 #'      (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
-#' @references MacKinnon, James G., Morten Ørregaard Nielsen, and 
+#' @references MacKinnon, James G., Morten Ørregaard Nielsen, and
 #' Matthew D. Webb. Fast and reliable jackknife and bootstrap
-#' methods for cluster-robust inference. No. 1485. 2022. 
+#' methods for cluster-robust inference. No. 1485. 2022.
 #' @references Cameron, A. Colin, Jonah B. Gelbach, and Douglas L. Miller.
 #' "Bootstrap-based improvements for inference with clustered errors."
 #' The Review of Economics and Statistics 90.3 (2008): 414-427.
@@ -232,9 +247,10 @@
 #' @references Webb, Matthew D. Reworking wild bootstrap based inference for
 #'  clustered errors. No. 1315. Queen's Economics Department Working Paper,
 #'   2013.
+#' @srrstats {G1.0} *`boottest()` links to multiple published papers.*
 #' @examples
 #' \dontrun{
-#'   requireNamespace("lfe") 
+#'   requireNamespace("lfe")
 #'   data(voters)
 #'   felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income |
 #'     Q1_immigration,
@@ -279,18 +295,18 @@
 #'   pval(boot1)
 #'   confint(boot1)
 #'   generics::tidy(boot1)
-#'   
+#'
 #' # run different bootstrap types following MacKinnon, Nielsen & Webb (2022):
-#' 
+#'
 #' # default: the fnw algorithm
 #' boot_fnw11 <- boottest(lm_fit,
 #'   B = 9999,
 #'   param = "treatment",
-#'   clustid = "group_id1", 
+#'   clustid = "group_id1",
 #'   bootstrap_type = "fnw11"
 #' )
 #'
-#' # WCR 31 
+#' # WCR 31
 #'boot_WCR31 <- boottest(lm_fit,
 #'   B = 9999,
 #'   param = "treatment",
@@ -298,12 +314,12 @@
 #'   bootstrap_type = "31"
 #' )
 #'
-#' # WCU33 
+#' # WCU33
 #'boot_WCR31 <- boottest(lm_fit,
 #'   B = 9999,
 #'   param = "treatment",
 #'   clustid = "group_id1",
-#'   bootstrap_type = "33", 
+#'   bootstrap_type = "33",
 #'   impose_null = FALSE
 #' )
 #' }
@@ -341,9 +357,11 @@ boottest.felm <- function(object,
                           getauxweights = FALSE,
                           ...) {
   call <- match.call()
-  
+
   dreamerr::validate_dots(stop = TRUE)
-  
+  type <- tolower(type)
+
+
   # Step 1: check arguments of felm call
   check_arg(object, "MBT class(felm)")
   check_arg(clustid, "NULL | character scalar | character vector | formula")
@@ -351,11 +369,11 @@ boottest.felm <- function(object,
   check_arg(B, "MBT scalar integer GT{99}")
   check_arg(impose_null, "logical scalar")
   check_arg(bootstrap_type, "charin(11, 13, 31, 33, fnw11)")
-  
+
   check_arg(sign_level, "scalar numeric GT{0} LT{1}")
   check_arg(type, "charin(rademacher, mammen, norm, gamma, webb)")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
-  
+
   check_arg(conf_int, "logical scalar")
   check_arg(R, "NULL| scalar numeric | numeric vector")
   check_arg(r, "numeric scalar | NULL")
@@ -365,45 +383,45 @@ boottest.felm <- function(object,
   check_arg(maxiter, "scalar integer GT{5}")
   check_arg(boot_ssc, "class(ssc) | class(boot_ssc)")
   check_arg(engine, "charin(R, R-lean, WildBootTests.jl)")
-  
+
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
-  
+
   check_arg(sampling, "charin(dqrng, standard)")
-  
+
   # remind packages users to set a global seed
   inform_seed(
-    frequency_id = "seed-reminder-boot-felm", 
+    frequency_id = "seed-reminder-boot-felm",
     engine = engine
-  )  
-  
+  )
+
   if(bootstrap_type %in% c("33", "13")){
     rlang::abort(
       c(
         "The bootstrap types '13' and '33' are not yet supported for objects
-        of type felm. Support will be added in the future. Until then, you 
-        can run the '13' and '33' bootstrap types with objects of type 'lm' 
+        of type felm. Support will be added in the future. Until then, you
+        can run the '13' and '33' bootstrap types with objects of type 'lm'
         and 'fixest'."
-      ), 
+      ),
       use_cli_format = TRUE
     )
   }
-  
+
   if(bootstrap_type != "fnw11"){
     if(engine == "R"){
       if(conf_int){
         rlang::inform(
-        "Confidence Intervals are currently only supported for 
-                the R engine with 'bootstrap_type = 'fnw11' '.", 
-        use_cli_format = TRUE, 
-        .frequency = "regularly", 
+        "Confidence Intervals are currently only supported for
+                the R engine with 'bootstrap_type = 'fnw11' '.",
+        use_cli_format = TRUE,
+        .frequency = "regularly",
         .frequency_id = "CI only for fnw algo."
         )
       }
     }
   }
-  
+
   if (!is.null(beta0)) {
     rlang::abort(
       c(
@@ -414,26 +432,26 @@ boottest.felm <- function(object,
       use_cli_format = TRUE
     )
   }
-  
+
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-  
+
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-  
+
   if (inherits(param, "formula")) {
     param <- attr(terms(param), "term.labels")
   }
-  
+
   if (inherits(fe, "formula")) {
     fe <- attr(terms(fe), "term.labels")
   }
-  
+
   # check appropriateness and assign nthreads
   nthreads <- check_set_nthreads(nthreads)
-  
+
   if (is.null(clustid)) {
     heteroskedastic <- TRUE
     if (engine == "R") {
@@ -443,17 +461,17 @@ boottest.felm <- function(object,
   } else {
     heteroskedastic <- FALSE
   }
-  
+
   check_bootstrap_types(
-    param = param, 
+    param = param,
     bootstrap_type = bootstrap_type
   )
-  
+
   R_long <- process_R(
     R = R,
     param = param
   )
-  
+
   if (engine != "WildBootTests.jl") {
     r_algo_checks(
       R = R_long,
@@ -462,9 +480,9 @@ boottest.felm <- function(object,
       B = B
     )
   }
-  
+
   check_params_in_model(object = object, param = param)
-  
+
   check_boottest_args_plus(
     object = object,
     R = R_long,
@@ -473,7 +491,7 @@ boottest.felm <- function(object,
     B = B,
     fe = fe
   )
-  
+
   preprocess <- preprocess2.felm(
     object = object,
     clustid = clustid,
@@ -481,10 +499,10 @@ boottest.felm <- function(object,
     param = param,
     bootcluster = bootcluster,
     fe = fe,
-    engine = engine, 
+    engine = engine,
     bootstrap_type = bootstrap_type
   )
-  
+
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -495,7 +513,7 @@ boottest.felm <- function(object,
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-  
+
   N <- preprocess$N
   k <- preprocess$k
   G <-
@@ -515,43 +533,43 @@ boottest.felm <- function(object,
   clustid_dims <- preprocess$clustid_dims
   point_estimate <-
     as.vector(object$coefficients[param, ] %*% preprocess$R0[param])
-  
-  res <- 
+
+  res <-
     run_bootstrap(
-      object = object, 
-      engine = engine, 
-      preprocess = preprocess,  
-      bootstrap_type = bootstrap_type, 
-      B = B, 
-      point_estimate = point_estimate, 
-      impose_null = impose_null, 
-      r = r, 
-      sign_level = sign_level, 
-      param = param, 
-      p_val_type = p_val_type, 
-      nthreads = nthreads, 
-      type = type, 
-      full_enumeration = full_enumeration, 
-      small_sample_correction = small_sample_correction, 
-      conf_int = conf_int, 
-      maxiter = maxiter, 
-      tol = tol, 
-      clustid = clustid, 
-      fe = fe, 
-      R_long = R_long, 
-      heteroskedastic = heteroskedastic, 
-      ssc = ssc, 
+      object = object,
+      engine = engine,
+      preprocess = preprocess,
+      bootstrap_type = bootstrap_type,
+      B = B,
+      point_estimate = point_estimate,
+      impose_null = impose_null,
+      r = r,
+      sign_level = sign_level,
+      param = param,
+      p_val_type = p_val_type,
+      nthreads = nthreads,
+      type = type,
+      full_enumeration = full_enumeration,
+      small_sample_correction = small_sample_correction,
+      conf_int = conf_int,
+      maxiter = maxiter,
+      tol = tol,
+      clustid = clustid,
+      fe = fe,
+      R_long = R_long,
+      heteroskedastic = heteroskedastic,
+      ssc = ssc,
       floattype = floattype ,
       bootstrapc = bootstrapc ,
       getauxweights = getauxweights ,
-      maxmatsize = maxmatsize, 
-      sampling = sampling, 
+      maxmatsize = maxmatsize,
+      sampling = sampling,
       bootcluster = bootcluster
     )
-  
-  
 
-  
+
+
+
   # collect results
   res_final <- list(
     point_estimate = point_estimate,
@@ -577,9 +595,9 @@ boottest.felm <- function(object,
     engine = engine,
     nthreads = nthreads
   )
-  
-  
+
+
   class(res_final) <- "boottest"
-  
+
   invisible(res_final)
 }

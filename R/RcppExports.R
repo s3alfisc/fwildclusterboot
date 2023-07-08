@@ -9,6 +9,24 @@ boot_algo3_crv3 <- function(B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, 
     .Call('_fwildclusterboot_boot_algo3_crv3', PACKAGE = 'fwildclusterboot', B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, cores, R, delta_b_star)
 }
 
+convertSparse <- function(mat) {
+    .Call('_fwildclusterboot_convertSparse', PACKAGE = 'fwildclusterboot', mat)
+}
+
+compute_H <- function(G, R, tXXinv, tXgXg, scores_list, cores) {
+    .Call('_fwildclusterboot_compute_H', PACKAGE = 'fwildclusterboot', G, R, tXXinv, tXgXg, scores_list, cores)
+}
+
+pinv <- function(X) {
+    .Call('_fwildclusterboot_pinv', PACKAGE = 'fwildclusterboot', X)
+}
+
+#' Moore-Penrose Pseudo Inverses via Eigen
+#' @param A a matrix
+#' @return A matrix. Pseudo-Inverse of A.
+#' @noRd
+NULL
+
 #' Matrix Multiplication via Eigen
 #' @param A A matrix.
 #' @param B A matrix.
@@ -17,6 +35,10 @@ boot_algo3_crv3 <- function(B, G, k, v, scores_mat, scores_boot, inv_tXX_tXgXg, 
 #' @noRd
 eigenMapMatMult <- function(A, B, nthreads) {
     .Call('_fwildclusterboot_eigenMapMatMult', PACKAGE = 'fwildclusterboot', A, B, nthreads)
+}
+
+eigen_pinv <- function(A) {
+    .Call('_fwildclusterboot_eigen_pinv', PACKAGE = 'fwildclusterboot', A)
 }
 
 #' Get maximum number of threads on hardware for open mp support

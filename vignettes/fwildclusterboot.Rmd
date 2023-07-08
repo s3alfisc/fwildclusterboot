@@ -64,7 +64,7 @@ The `boottest()` function has 4 required and several optional arguments. The req
 + param: a character vector of length one - the model parameter to be tested
 + B: the number of bootstrap iterations
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 # boottest on an object of type lm
 boot_lm <- boottest(
   lm_fit, 
@@ -119,7 +119,7 @@ if(requireNamespace("modelsummary")){
 
 ```
 
-A `plot()` method allows the user to inspect the bootstrap t-statistics: 
+A `plot()` visualizes bootstrapped p-values as a function of the hypothesized effect size $r$.
 
 ```{r}
 plot(boot_lm)
@@ -158,7 +158,7 @@ boot_lm$engine
 
 ## Choice of Bootstrap Weights
 
-Furthermore, the user can choose among four different weighting distribution via the `type` argument: Rademacher, Mammen, Normal and Webb. By default, `boottest()` uses the Rademacher distribution.
+Furthermore, you can choose among four different weighting distribution via the `type` argument: Rademacher, Mammen, Normal and Webb. By default, `boottest()` uses the Rademacher distribution.
 
 
 ```{r}
@@ -186,7 +186,7 @@ if(requireNamespace("modelsummary")){
 
 ## Other function arguments 
 
-Via the function argument `sign_level`, the user can control the significance level of the test. The default value is sign_level = 0.05, which corresponds to a 95\% confindence interval.
+Via the function argument `sign_level`, you can control the significance level of the test. The default value is sign_level = 0.05, which corresponds to a 95\% confindence interval.
 
 ```{r}
 boot_lm_5 <- boottest(
@@ -210,7 +210,7 @@ if(requireNamespace("modelsummary")){
 }
 ```
 
-In the case of multiway clustering, the user might want to specify the bootstrap clustering level. By default, boottest chooses the clustering level with the highest number of clusters as `bootcluster = "max"`. Other choices are the minimum cluster, or independent clustering variables.  
+In the case of multiway clustering, one might want to specify the bootstrap clustering level. By default, boottest chooses the clustering level with the highest number of clusters as `bootcluster = "max"`. Other choices are the minimum cluster, or independent clustering variables.  
 
 ```{r}
 boot_lm1 <- boottest(
@@ -240,7 +240,9 @@ if(requireNamespace("modelsummary")){
 ## Fixed Effects
 
 Last, `boottest()` supports out-projection of fixed effects in the estimation stage via `lfe::felm()` and `fixest::feols()`. 
-Within the bootstrap, the user can choose to project out *only one* fixed effect, which can be set via the `fe` function argument. All other fixed effects specified in either `felm()` or `feols()` are treated as sets of binary regressors.
+Within the bootstrap, it is possible to project out *only one* fixed effect, which can be set via the `fe` function argument. All other fixed effects specified in either `felm()` or `feols()` are treated as sets of binary regressors. Note that
+`boottest.fixest()` currently does not know how to properly handle advanced `fixest`
+syntax for fixed effects, as e.g. varying slopes. 
 
 ```{r}
 
@@ -266,7 +268,7 @@ if(requireNamespace("fixest")){
 
 ## The Subcluster Bootstrap 
 
-In the case of few treated clusters, [MacKinnon and Webb (2018)](https://academic.oup.com/ectj/article-abstract/21/2/114/5078969)  suggest to use subclusters to form the bootstrap distribution. `boottest()` allows the user to specify subclusters via the `bootcluster` argument. 
+In the case of few treated clusters, [MacKinnon and Webb (2018)](https://academic.oup.com/ectj/article-abstract/21/2/114/5078969)  suggest to use subclusters to form the bootstrap distribution. `boottest()` allows to specify subclusters via the `bootcluster` argument. 
 
 ```{r}
 boot_min <- boottest(

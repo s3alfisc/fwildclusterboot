@@ -19,6 +19,11 @@ An object of class \code{boottest}.
 bootstrap inference for objects of class lm, fixest and felm by  implementing
 the fast wild bootstrap algorithm developed in Roodman et al., 2019.
 }
+\details{
+Technical Details
+For technical details, either take a look at the references below, or check
+out the \href{wild_bootstrap.html}{wild (cluster) bootstrap vignette}.
+}
 \section{Setting Seeds}{
 
 To guarantee reproducibility, you can either use \verb{boottest()'s} \code{seed}

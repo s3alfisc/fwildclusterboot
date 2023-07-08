@@ -1,3 +1,37 @@
+# fwildclusterboot 0.14
+
+## Breaking Changes
+
+- the `print.boottest()` and `print.mboottest()` method have been deprecated, as both did not have a distinct use case. 
+- Bugfix: `boottest()` should never have run with `fixest::feols()` and 
+  varying slopes syntax via `var1[var2]`. Unfortunately it did for the heteroskedastic bootstrap - it's a bug. I am very sorry if you are affected by this! This version adds an error message for this case.
+
+## Performance
+
+Version 0.14 ...
+
+- sparsifies the "fast and reliable" bootstraps - bootstrap types 31, 33, 13 (which leads to good speed gains for problems with high dimensional fixed effects)
+- allows to project out cluster fixed effects when running the "fast and reliable" algorithms "11" and "31"
+- computes the generalized inverse `pinv` via rcpp eigen instead of `MASS::ginv()` whenever `Matrix::solve()` fails 
+- unlocks parallelization (nthreads was internally set to 1 for some reason)
+
+
+## rOpenSci Review feedback 
+
+- update docs:
+  - add a vignette on wild bootstrap concepts (wild bootstrap 101)
+  - better explanation of plot method in docs and vignette 
+  - some guidelines on how to turn messages and warnings off
+- reorganization of ropensci ssr tags into code
+- it is now possible to interrupt rcpp loops
+
+
+## Misc
+
+- throws a clear error message when the subcluster bootstrap is tried for the fast and reliable algos (currently not supported)
+- bumps the required `WildBootTests.jl` version to `0.9.7`
+
+
 # fwildclusterboot 0.13
 
 ## Potentially Breaking Changes: 
@@ -308,7 +342,7 @@ I have spent some time to clean up `fwildclusterboot's` internals, which should 
 + Bug fix: for one-sided hypotheses for the WRU bootstrap (if impose_null = FALSE), the returned p-values were incorrect - they were reported as 'p', but should have been '1-p'. E.g. if the reported p-values was reported as 0.4, it should have been reported as 0.6. 
 + A new function argument `ssc` gives more control over the small sample adjustments made within `boottest()`. It closely mirrors the `ssc` argument in `fixest`. The only difference is that `fwildclusterboot::boot_ssc()'s` `fixef.K` argument currently has only one option, `'none'`, which means that the fixed effect parameters are discarded when calculating the number of estimated parameters k. 
 The default argument of `boot_ssc()` are `adj = TRUE, fixef.K = "none", cluster.adj = TRUE` and `cluster.df = "conventional"`. In fixest, the `cluster.df` argument is `"min"` by default. 
-Prior to v 0.6, by default, no small sample adjustments regarding the sample size N and the number of estimated parameters k were applied. The changes in v0.6 may slightly affect the output of `boottest()`. For exact reproducibility of previous results, set `adj = FALSE`. Setting `adj = TRUE` will not affect p-values and confidence intervals for *oneway clustering*, but the internally calculated t-stat, which is divided by $\sqrt{(N-k)/(N-1)}$. For *twoway* clustering, it might affect the number and order of invalid bootstrapped t-statistics (due to non-positive definite covariance matrices) and, through this channel, affect bootstrapped inferential parameters.
+Prior to v 0.6, by default, no small sample adjustments regarding the sample size N and the number of estimated parameters k were applied. The changes in v0.6 may slightly affect the output of `boottest()`. For exact reproducibility of previous results, set `adj = FALSE`. Setting `adj = TRUE` will not affect p-values and confidence intervals for *oneway clustering*, but the internally calculated t-stat, which is divided by sqrt(N-k)/(N-1). For *twoway* clustering, it might affect the number and order of invalid bootstrapped t-statistics (due to non-positive definite covariance matrices) and, through this channel, affect bootstrapped inferential parameters.
 
 + Testing: unit tests are now run on [github actions](https://github.com/s3alfisc/fwildclusterboot/actions/workflows/R-CMD-check.yaml) against [wildboottestjlr](https://github.com/s3alfisc/wildboottestjlr), which is a [JuliaConnectoR](https://github.com/stefan-m-lenz/JuliaConnectoR) based wrapper around [WildBootTests.jl](https://github.com/droodman/WildBootTests.jl), a Julia implementation of the fast wild cluster bootstrap algorithm. 
 + Additionally, minor speed tweaks. 

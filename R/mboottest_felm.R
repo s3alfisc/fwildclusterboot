@@ -106,7 +106,17 @@
 #' @section Setting Seeds:
 #' To guarantee reproducibility, you need to
 #' set a global random seed via `set.seed()` when using
-#'
+#' @section Multiple Fixed Effects:
+#' If your felm() model contains fixed effects, boottest() will internally convert
+#'  all fixed effects but the one specified via the `fe` argument to dummy variables.
+#' @section Run `boottest` quietly:
+#' You can suppress all warning and error messages by setting the following global
+#' options:
+#' `options(rlib_warning_verbosity = "quiet")`
+#' `options(rlib_message_verbosity = "quiet")`
+#' Not that this will turn off all warnings (messages) produced via `rlang::warn()` and
+#' `rlang::inform()`, which might not be desirable if you use other software build on
+#' `rlang`, as e.g. the `tidyverse`.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
 #' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
@@ -173,9 +183,9 @@ mboottest.felm <- function(object,
                            ),
                            ...) {
   call <- match.call()
-  
+  type <- tolower(type)
   dreamerr::validate_dots(stop = TRUE)
-  
+
   # Step 1: check arguments of feols call
   check_arg(object, "MBT class(felm)")
   check_arg(clustid, "character scalar | character vector | formula")
@@ -191,34 +201,34 @@ mboottest.felm <- function(object,
   check_arg(floattype, "charin(Float32, Float64)")
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
-  
+
   # remind packages users to set a global seed
   inform_seed(
-    frequency_id = "seed-reminder-m-felm", 
+    frequency_id = "seed-reminder-m-felm",
     engine = "WildBootTests.jl"
   )
-  
+
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-  
+
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-  
+
   if (inherits(fe, "formula")) {
     fe <- attr(terms(fe), "term.labels")
   }
-  
+
   check_mboottest_args_plus(
     object = object,
     R = R,
     r = r,
     fe = fe
   )
-  
+
   fedfadj <- 0L
-  
+
   preprocess <- preprocess2.felm(
     object = object,
     clustid = clustid,
@@ -226,10 +236,10 @@ mboottest.felm <- function(object,
     param = NULL,
     bootcluster = bootcluster,
     fe = fe,
-    engine = "WildBootTests.jl", 
+    engine = "WildBootTests.jl",
     bootstrap_type = NULL
   )
-  
+
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -237,23 +247,23 @@ mboottest.felm <- function(object,
       type = type,
       engine = "WildBootTests.jl"
     )
-  
+
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-  
+
   julia_ssc <- get_ssc_julia(ssc)
   small <- julia_ssc$small
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
-  
+
   if (ssc[["fixef.K"]] != "none") {
     rlang::inform(
       "Currently, boottest() only supports fixef.K = 'none'.",
       use_cli_format = TRUE
       )
   }
-  
-  
+
+
   res <- boot_algo_julia(
     preprocess = preprocess,
     impose_null = impose_null,
@@ -279,7 +289,7 @@ mboottest.felm <- function(object,
     fe = fe,
     fedfadj = fedfadj
   )
-  
+
   # collect results
   res_final <- list(
     p_val = res$p_val,
@@ -298,8 +308,8 @@ mboottest.felm <- function(object,
     r = r,
     engine = "WildBootTests.jl"
   )
-  
+
   class(res_final) <- "mboottest"
-  
+
   invisible(res_final)
 }

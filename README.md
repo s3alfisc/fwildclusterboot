@@ -20,7 +20,6 @@ status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-p
 coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/fwildclusterboot?color=blue)](https://cran.r-project.org/package=fwildclusterboot)
 [![](http://cranlogs.r-pkg.org/badges/last-month/fwildclusterboot?color=green)](https://cran.r-project.org/package=fwildclusterboot)
-[![pkgcheck](https://github.com/s3alfisc/fwildclusterboot/workflows/pkgcheck/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions?query=workflow%3Apkgcheck)
 
 <!-- badges: end -->
 
@@ -111,20 +110,6 @@ data(voters)
 lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigration) + as.factor(Q2_defense), data = voters)
 # bootstrap inference via boottest()
 lm_boot <- boottest(lm_fit, clustid = c("group_id1"), B = 9999, param = "treatment")
-#> Warning: Please note that the seeding behavior for random number generation for
-#> `boottest()` has changed with `fwildclusterboot` version 0.13.
-#> 
-#> It will no longer be possible to exactly reproduce results produced by versions
-#> lower than 0.13.
-#> 
-#> If your prior results were produced under sufficiently many bootstrap
-#> iterations, none of your conclusions will change.  For more details about this
-#> change, please read the notes in
-#> [news.md](https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).
-#> This warning is displayed once per session.
-#> Too guarantee reproducibility, don't forget to set a global random seed
-#> **both** via `set.seed()` and `dqrng::dqset.seed()`.
-#> This message is displayed once every 8 hours.
 summary(lm_boot)
 #> boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1"))
 #>  
@@ -156,7 +141,7 @@ citation("fwildclusterboot")
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Misc{,
-#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.13.0)},
+#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.14.0)},
 #>     author = {Alexander Fischer and David Roodman},
 #>     year = {2021},
 #>     url = {https://cran.r-project.org/package=fwildclusterboot},

@@ -29,7 +29,6 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
 `r badger::badge_cran_download("fwildclusterboot", "grand-total", "blue")`
 `r badger::badge_cran_download("fwildclusterboot", "last-month", "green")`
-[![pkgcheck](https://github.com/s3alfisc/fwildclusterboot/workflows/pkgcheck/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions?query=workflow%3Apkgcheck)
 
 <!-- badges: end -->
 
@@ -102,7 +101,7 @@ install_github("s3alfisc/fwildclusterboot")
 
 For a longer introduction to `{fwildclusterboot}`, take a look at the [vignette](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 library(fwildclusterboot)
 
 # set seed via dqset.seed for engine = "R" & Rademacher, Webb & Normal weights
