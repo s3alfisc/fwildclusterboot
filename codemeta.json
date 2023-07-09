@@ -7,7 +7,7 @@
   "codeRepository": "https://github.com/s3alfisc/fwildclusterboot",
   "issueTracker": "https://github.com/s3alfisc/fwildclusterboot/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -71,39 +71,27 @@
   "softwareSuggestions": [
     {
       "@type": "SoftwareApplication",
-      "identifier": "fixest",
-      "name": "fixest",
+      "identifier": "bench",
+      "name": "bench",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=fixest"
+      "sameAs": "https://CRAN.R-project.org/package=bench"
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "lfe",
-      "name": "lfe",
+      "identifier": "broom",
+      "name": "broom",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=lfe"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "ivreg",
-      "name": "ivreg",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=ivreg"
+      "sameAs": "https://CRAN.R-project.org/package=broom"
     },
     {
       "@type": "SoftwareApplication",
@@ -119,15 +107,15 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "lmtest",
-      "name": "lmtest",
+      "identifier": "covr",
+      "name": "covr",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=lmtest"
+      "sameAs": "https://CRAN.R-project.org/package=covr"
     },
     {
       "@type": "SoftwareApplication",
@@ -155,15 +143,39 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "covr",
-      "name": "covr",
+      "identifier": "fixest",
+      "name": "fixest",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=covr"
+      "sameAs": "https://CRAN.R-project.org/package=fixest"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "gt",
+      "name": "gt",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=gt"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "ivreg",
+      "name": "ivreg",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=ivreg"
     },
     {
       "@type": "SoftwareApplication",
@@ -179,27 +191,27 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "rmarkdown",
-      "name": "rmarkdown",
+      "identifier": "lfe",
+      "name": "lfe",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+      "sameAs": "https://CRAN.R-project.org/package=lfe"
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "broom",
-      "name": "broom",
+      "identifier": "lmtest",
+      "name": "lmtest",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=broom"
+      "sameAs": "https://CRAN.R-project.org/package=lmtest"
     },
     {
       "@type": "SoftwareApplication",
@@ -215,15 +227,27 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "bench",
-      "name": "bench",
+      "identifier": "rmarkdown",
+      "name": "rmarkdown",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=bench"
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "sandwich",
+      "name": "sandwich",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=sandwich"
     },
     {
       "@type": "SoftwareApplication",
@@ -252,15 +276,15 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "sandwich",
-      "name": "sandwich",
+      "identifier": "MASS",
+      "name": "MASS",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=sandwich"
+      "sameAs": "https://CRAN.R-project.org/package=MASS"
     }
   ],
   "softwareRequirements": {
@@ -278,6 +302,18 @@
     },
     "2": {
       "@type": "SoftwareApplication",
+      "identifier": "dqrng",
+      "name": "dqrng",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=dqrng"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
       "identifier": "dreamerr",
       "name": "dreamerr",
       "provider": {
@@ -288,7 +324,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=dreamerr"
     },
-    "3": {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "Formula",
       "name": "Formula",
@@ -300,7 +336,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Formula"
     },
-    "4": {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "generics",
       "name": "generics",
@@ -311,18 +347,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=generics"
-    },
-    "5": {
-      "@type": "SoftwareApplication",
-      "identifier": "dqrng",
-      "name": "dqrng",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=dqrng"
     },
     "6": {
       "@type": "SoftwareApplication",
@@ -338,18 +362,6 @@
     },
     "7": {
       "@type": "SoftwareApplication",
-      "identifier": "Matrix",
-      "name": "Matrix",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=Matrix"
-    },
-    "8": {
-      "@type": "SoftwareApplication",
       "identifier": "JuliaConnectoR",
       "name": "JuliaConnectoR",
       "provider": {
@@ -360,19 +372,19 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=JuliaConnectoR"
     },
-    "9": {
+    "8": {
       "@type": "SoftwareApplication",
-      "identifier": "MASS",
-      "name": "MASS",
+      "identifier": "Matrix",
+      "name": "Matrix",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=MASS"
+      "sameAs": "https://CRAN.R-project.org/package=Matrix"
     },
-    "10": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "Rcpp",
       "name": "Rcpp",
@@ -383,6 +395,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=Rcpp"
+    },
+    "10": {
+      "@type": "SoftwareApplication",
+      "identifier": "rlang",
+      "name": "rlang",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rlang"
     },
     "11": {
       "@type": "SoftwareApplication",
@@ -396,21 +420,9 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=summclust"
     },
-    "12": {
-      "@type": "SoftwareApplication",
-      "identifier": "rlang",
-      "name": "rlang",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=rlang"
-    },
-    "SystemRequirements": "Version Requirements to run the wild bootstrap through Julia - Julia (>= 1.8), WildBootTests.jl (>=0.9).\n                    Julia is downloadable via the official Julia website (https://julialang.org/downloads/), \n                    WildBootTests.jl via Julia's package manager (https://docs.julialang.org/en/v1/stdlib/Pkg/) or \n                    its github repository (https://github.com/droodman/WildBootTests.jl)"
+    "SystemRequirements": "Version Requirements to run the wild bootstrap through\n    Julia - Julia (>= 1.8), WildBootTests.jl (>=0.9.8).  Julia is\n    downloadable via the official Julia website\n    (https://julialang.org/downloads/), WildBootTests.jl via Julia's\n    package manager (https://docs.julialang.org/en/v1/stdlib/Pkg/) or its\n    github repository (https://github.com/droodman/WildBootTests.jl)"
   },
-  "fileSize": "3396.035KB",
+  "fileSize": "3870.479KB",
   "citation": [
     {
       "@type": "CreativeWork",
@@ -427,14 +439,14 @@
           "familyName": "Roodman"
         }
       ],
-      "name": "fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.13.0)",
+      "name": "fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.14.0)",
       "url": "https://cran.r-project.org/package=fwildclusterboot"
     }
   ],
   "relatedLink": ["https://s3alfisc.github.io/fwildclusterboot/", "https://CRAN.R-project.org/package=fwildclusterboot"],
   "releaseNotes": "https://github.com/s3alfisc/fwildclusterboot/blob/master/NEWS.md",
   "readme": "https://github.com/s3alfisc/fwildclusterboot/blob/master/README.md",
-  "contIntegration": ["https://github.com/s3alfisc/fwildclusterboot/actions", "https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master", "https://github.com/s3alfisc/fwildclusterboot/actions?query=workflow%3Apkgcheck"],
+  "contIntegration": ["https://github.com/s3alfisc/fwildclusterboot/actions", "https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master"],
   "developmentStatus": "https://lifecycle.r-lib.org/articles/stages.html",
   "review": {
     "@type": "Review",
