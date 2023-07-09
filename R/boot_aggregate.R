@@ -217,7 +217,7 @@ boot_aggregate <- function(
   # note: all boottest function arguments are tested in boottest()
   # therefore, only check for supported subset of features
   
-  check_arg(bootstrap_type, "charin(fnw11)")
+  check_arg(bootstrap_type, "charin(fnw11, 11, 31, 13, 33)")
   check_arg(full, "logical scalar")
   # => later => extend it to more than one set of vars to agg
   
@@ -312,10 +312,26 @@ boot_aggregate <- function(
     val <- gsub(paste0(".*", agg, ".*"), "\\2", cname_select, perl = TRUE)
   }
   
-  mm <- model.matrix(x)
-  
-  cat("Run the wild bootstrap: this might take some time...(but 
-      hopefully not too much time =) ).", "\n")
+  if(inherits(x, "etwfe")){
+    X <- fixest:::model.matrix.fixest(x, type = "rhs")
+    mm2 <- sparse_model_matrix(x, type = c("fixef")) |> as.matrix() |> as.data.frame()
+    mm <- cbind(X, mm2)
+
+     
+    if(agg %in% c("att", "period", "cohort", "TRUE")){
+      rlang::abort(
+        paste0("`agg='", agg, "'` works for fixest::sunab(), but is not implemented for objects of type `etwfe`. For `etwfe`, you will have to do the aggregation by hand. See `?boot_aggregate` for examples.")
+      )
+    }
+    
+  } else {
+    # varying slopes only allowed for objects of type "etwfe"
+    check_no_varying_slopes(x)
+    mm <- model.matrix(x)
+    
+  }
+
+  rlang::inform("Run the wild bootstrap: this might take some time...(but hopefully not too much time =) ).")
   
   name_df <- unique(data.frame(root, val, stringsAsFactors = FALSE))
   
@@ -330,7 +346,6 @@ boot_aggregate <- function(
   
   for(i in 1:nk){
     
-
     r <- name_df[i, 1]
     v <- name_df[i, 2]
     v_names <- cname_select[root == r & val == v]
@@ -393,8 +408,6 @@ boot_aggregate <- function(
         ssc = ssc
       )
     
-    setTxtProgressBar(pb,i)
-    
     pvalues[i] <- pval(boot_fit)
     teststat[i] <- teststat(boot_fit)
     if(!is.null(clustid)){
@@ -402,6 +415,8 @@ boot_aggregate <- function(
     } else {
       conf_int[i,] <- rep(NA, 2)
     }
+    
+    setTxtProgressBar(pb,i)
 
   }
   # th z & p values
@@ -424,6 +439,31 @@ boot_aggregate <- function(
   res
   
 }
+
+check_no_varying_slopes <- function(object){
+  
+  has_fixef <- "fixef_vars" %in% names(object)
+  
+  if (
+    # '^' illegal in fixef argument, but legal in main formula -
+    # e.g. fml = y ~ x1 + I(x2^2) shold be possible
+    #' @srrstats {G2.4c} *explicit conversion to character via `as.character()`
+    #' (and not `paste` or `paste0`)* Done
+    
+    (has_fixef &&
+     grepl("[",
+           Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
+           fixed = TRUE) && 
+     !is.null(fe)
+    )
+    # note: whitespace ~ - for IV
+    # grepl("~", deparse_fml, fixed = TRUE)
+  ) {
+    rlang::abort("Varying slopes fixed effects in `fixest::feols()` are currently not supported in boottest() when fe are projected out in the bootstrap via the `fe` function argument.")
+  }
+  
+}
+
 
 
 

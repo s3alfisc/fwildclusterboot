@@ -1,3 +1,52 @@
+## Sumbission of 0.14
+
+I have tested the package on: 
+- rhub
+- win devel
+- github actions
+
+rhub gave the following notes: 
+
+- Found the following (possibly) invalid URLs:
+  URL: https://journals.sagepub.com/doi/pdf/10.1177/1536867X19830877
+    From: inst/doc/Literature.html
+    Status: 403
+    Message: Forbidden
+  URL: https://onlinelibrary.wiley.com/doi/abs/10.1002/jrsm.1554
+    From: inst/doc/Literature.html
+    Status: 403
+    Message: Forbidden
+  URL: https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221
+    From: inst/doc/Literature.html
+          inst/doc/fwildclusterboot.html
+          README.md
+    Status: 403
+    Message: Forbidden
+    
+  these URLs are valid, I have checked them manually
+  
+  
+- checking top-level files ... NOTE
+Non-standard file/directory found at top level:
+  'codemeta.json'
+  
+  Having a codemeta.json file should be ok? 
+  
+- checking for non-standard things in the check directory ... NOTE
+Found the following files/directories:
+  ''NULL''
+  
+  This appears to be an issue with rhub checks. 
+  
+- checking for detritus in the temp directory ... NOTE
+Found the following files/directories:
+  'lastMiKTeXException'
+  
+  This one I always get =) 
+  
+No other issues/ notes etc were found on github actions and win-dev.
+
+
 ## Submission of 0.13
 
 I have tested the package on: 

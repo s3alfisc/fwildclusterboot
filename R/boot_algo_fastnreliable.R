@@ -162,7 +162,10 @@ boot_algo_fastnreliable <- function(
 
     inv_tXX_tXgXg <- lapply(
       1:G,
-      function(x) inv(tXX - tXgXg[[x]], x)
+      function(x) inv(tXX - tXgXg[[x]], 
+                      paste0(
+                      "Matrix inversion error when computing beta(g) for cluster ", g, ". Using Pseudo-Inverse instead. Potentially, you can suppress this message by specifying a cluster fixed effect in the bootstrap via the `fe` argument of `boottest()`.")
+      )
     )
 
     beta_1g_tilde <- lapply(
@@ -189,7 +192,10 @@ boot_algo_fastnreliable <- function(
     if(is.null(inv_tXX_tXgXg)){
       inv_tXX_tXgXg <- lapply(
         1:G,
-        function(x) inv((tXX - tXgXg[[x]]), x)
+        function(g) inv((tXX - tXgXg[[g]]),
+                        paste0(
+                          "Matrix inversion error when computing beta(g) for cluster ", g, ". Using Pseudo-Inverse instead. Potentially, you can suppress this message by specifying a cluster fixed effect in the bootstrap via the `fe` argument of `boottest()`.")
+        )
       )
     }
   }
@@ -352,14 +358,13 @@ boot_algo_fastnreliable <- function(
 }
 
 
-inv <- function(x, g){
+inv <- function(x, message){
   tryCatch(
     {
       Matrix::solve(x)
     },
     error = function(e) {
-      rlang::warn(message = paste0(
-        "Matrix inversion error when computing beta(g) for cluster ", g, ". Using Pseudo-Inverse instead. Potentially, you can suppress this message by specifying a cluster fixed effect in the bootstrap via the `fe` argument of `boottest()`."), 
+      rlang::warn(message = message, 
         use_cli_format = TRUE)
       eigen_pinv(as.matrix(x))
     }

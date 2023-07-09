@@ -14,6 +14,7 @@
 preprocess2 <- function(object, ...) {
   UseMethod("preprocess2")
 }
+
 preprocess2.fixest <-
   function(object,
            clustid,
@@ -41,8 +42,10 @@ preprocess2.fixest <-
     #' by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
+    #' @importFrom fixest sparse_model_matrix
     #'
     #' @method preprocess2 fixest
+    
     call <- object$call
     call_env <- object$call_env
     fml <- formula(object)
@@ -61,14 +64,7 @@ preprocess2.fixest <-
         use_cli_format = TRUE
       )
     }
-    # if (!is.null(object$is_sunab)) {
-    #   if(object$is_sunab == TRUE){
-    #     rlang::abort(
-    #       "boottest() does not support the Sun-Abrams
-    #       estimator via `sunab()`."
-    #     )
-    #   }
-    # }
+
     is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
     has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
     if (!is_iv) {
@@ -164,12 +160,7 @@ preprocess2.fixest <-
     }
     # iv prep
     instruments <- X_exog <- X_endog <- NULL
-    # if(is_iv){
-    #  R0 <- rep(0, n_exog + n_endog)
-    #  R0[
-    # match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
-    #  names(R0) <- c(names(object$exogenous), names(object$endogenous))
-    # } else {
+
     if (!is.matrix(R)) {
       R0 <- rep(0, length(colnames(X)))
       R0[match(param, colnames(X))] <- R
@@ -180,7 +171,7 @@ preprocess2.fixest <-
       R0 <- matrix(0, q, ncol(X))
       R0[, 1:p] <- R
     }
-    # }
+    
     res <- list(
       Y = Y,
       X = X,
@@ -242,6 +233,8 @@ preprocess2.felm <-
     #' @noRd
     #'
     #' @method preprocess2 felm
+    #' 
+  
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
@@ -412,6 +405,7 @@ preprocess2.lm <-
     #' @noRd
     #'
     #' @method preprocess2 lm
+    
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
@@ -686,10 +680,11 @@ transform_fe <-
     #'         be projected out
     #'
     #' @noRd
+    
     all_fe <- model_matrix(object, type = "fixef", collin.rm = TRUE)
-    # make sure all fixed effects variables are characters
+    
     n_fe <- ncol(all_fe)
-    all_fe_names <- names(all_fe)
+    all_fe_names <- colnames(all_fe)
     k2 <- Reduce("+", lapply(all_fe, function(x) {
       length(unique(x))
     }))
@@ -742,21 +737,42 @@ transform_fe <-
       }
       
     } else {
-      add_fe <- all_fe
-      add_fe_names <- names(add_fe)
-      fml_fe <- reformulate(add_fe_names, response = NULL)
-      if(engine == "R" && bootstrap_type %in% c("11", "31", "13","33")){
-        add_fe_dummies <-
-          Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+      
+      # sparse matrices for all both "fnw11" && engine == "R"
+      run_sparse <- ( engine == "R" && bootstrap_type %in% c("11", "31", "13","33")) || (engine == "R-lean")
+
+      if(run_sparse){
+        
+
+        if(inherits(object, "fixest")){
+          add_fe_dummies <- sparse_model_matrix(object, type = "fixef")
+        } else {
+          add_fe <- all_fe
+          add_fe_names <- names(add_fe)
+          fml_fe <- reformulate(add_fe_names, response = NULL)
+          add_fe_dummies <-
+            Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+        }
         
       } else {
         
-        add_fe_dummies <-
-          model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+        if(inherits(object, "fixest")){
+          # need sparse matrix to handle varying slopes etc
+          add_fe_dummies <- sparse_model_matrix(object, type = "fixef")
+          add_fe_dummies <- as.matrix(add_fe_dummies)
+        } else {
+          add_fe <- all_fe
+          add_fe_names <- names(add_fe)
+          fml_fe <- reformulate(add_fe_names, response = NULL)
+          add_fe_dummies <-
+            Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+        }
+
       }
-      
-      X <- cbind(X, add_fe_dummies)
-      
+      X <- cbind(X, as.matrix(add_fe_dummies))
+      if(engine == "R-lean"){
+        x <- as.matrix(X)
+      }
     }
     
     res <- list(
@@ -819,54 +835,12 @@ get_cluster <-
     # doi: 10.18637/jss.v095.i01 (URL: https://doi.org/10.18637/jss.v095.i01).
     # changes by Alexander Fischer:
     # no essential changes, but slight reorganization of pieces of code
+    
     dreamerr::check_arg(clustid_char, "character scalar|charakter vector")
     dreamerr::check_arg(bootcluster, "character scalar | character vector")
     
     clustid_fml <- reformulate(clustid_char)
-    # Step 1: create cluster df
     
-    
-    manipulate_object <- function(object){
-      if(inherits(object, "fixest")){
-        if(!is.null(object$fixef_vars)){
-          update(object, . ~ + 1 | . + 1)
-        } else {
-          update(object, . ~ + 1 )
-        }
-      } else {
-        object
-      }
-    }
-    
-    cluster_tmp <-
-      if ("Formula" %in% loadedNamespaces()) {
-        ## FIXME to suppress potential warnings due to | in Formula
-        suppressWarnings(
-          expand.model.frame(
-            model =
-              manipulate_object(object),
-            extras = clustid_fml,
-            na.expand = FALSE,
-            envir = call_env
-          )
-        )
-      } else {
-        expand.model.frame(
-          model =
-            manipulate_object(object),
-          extras = clustid_fml,
-          na.expand = FALSE,
-          envir = call_env
-        )
-      }
-    
-    cluster_df <-
-      model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
-    # without cluster intersection
-    N_G <-
-      vapply(cluster_df, function(x) {
-        length(unique(x))
-      }, numeric(1))
     # Step 1: decode bootcluster variable
     # create a bootcluster vector
     if (length(bootcluster) == 1) {
@@ -883,22 +857,104 @@ get_cluster <-
       bootcluster_char <- bootcluster
     }
     
-    # add bootcluster variable to formula of clusters
-    cluster_bootcluster_fml <-
-      update(
-        clustid_fml, paste(
-          "~ . +", paste(
-            bootcluster_char,
-            collapse = " + "
+    
+
+    if(inherits(object, "fixest")){
+      
+      data <- fetch_data(object)
+      # Check that cluster vars are in the original estimation dataset
+      cluster_vars_in_data <- clustid_char %in% colnames(data)
+      if (any(!(cluster_vars_in_data))) {
+        stop(paste0(
+          "The following variables are not found in the dataset used in your `feols` call: ",
+          paste(clustid_char[!cluster_vars_in_data], collapse = ", ")
+        ))
+      }
+      
+      cluster_df <- cluster <- data[,clustid_char, drop = FALSE]
+      
+      if(N != nrow(cluster)){
+        cluster <- cluster[unlist(object$obs_selection), drop = FALSE]
+      }
+      
+      bootcluster <- data[, bootcluster_char, drop = FALSE]
+      if(N != nrow(bootcluster)){
+        bootcluster <- bootcluster[unlist(object$obs_selection), drop = FALSE]
+      }
+      
+      if(clustid_char == bootcluster_char){
+        cluster_bootcluster_df <- cluster
+      } else {
+        cluster_bootcluster_df <- cbind(cluster, bootcluster)
+      }
+      
+
+    } else {
+      
+      
+      manipulate_object <- function(object){
+        if(inherits(object, "fixest")){
+          if(!is.null(object$fixef_vars)){
+            update(object, . ~ + 1 | . + 1)
+          } else {
+            update(object, . ~ + 1 )
+          }
+        } else {
+          object
+        }
+      }
+    
+      cluster_tmp <-
+        if ("Formula" %in% loadedNamespaces()) {
+          ## FIXME to suppress potential warnings due to | in Formula
+          suppressWarnings(
+            expand.model.frame(
+              model =
+                manipulate_object(object),
+              extras = clustid_fml,
+              na.expand = FALSE,
+              envir = call_env
+            )
+          )
+
+          
+          expand.model.frame(
+            model =
+              manipulate_object(object),
+            extras = clustid_fml,
+            na.expand = FALSE,
+            envir = call_env
+          )
+        }
+    
+      cluster_df <-
+        model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
+
+      # add bootcluster variable to formula of clusters
+      cluster_bootcluster_fml <-
+        update(
+          clustid_fml, paste(
+            "~ . +", paste(
+              bootcluster_char,
+              collapse = " + "
+            )
           )
         )
-      )
     
     
-    cluster_bootcluster_tmp <-
-      if ("Formula" %in% loadedNamespaces()) {
-        ## FIXME to suppress potential warnings due to | in Formula
-        suppressWarnings(
+      cluster_bootcluster_tmp <-
+        if ("Formula" %in% loadedNamespaces()) {
+          ## FIXME to suppress potential warnings due to | in Formula
+          suppressWarnings(
+            expand.model.frame(
+              model =
+                manipulate_object(object),
+              extras = cluster_bootcluster_fml,
+              na.expand = FALSE,
+              envir = call_env
+            )
+          )
+        } else {
           expand.model.frame(
             model =
               manipulate_object(object),
@@ -906,28 +962,21 @@ get_cluster <-
             na.expand = FALSE,
             envir = call_env
           )
-        )
-      } else {
-        expand.model.frame(
-          model =
-            manipulate_object(object),
-          extras = cluster_bootcluster_fml,
-          na.expand = FALSE,
-          envir = call_env
-        )
-      }
+        }
     
-    # data.frame as needed for WildBootTests.jl
-    cluster_bootcluster_df <- model.frame(
-      cluster_bootcluster_fml,
-      cluster_bootcluster_tmp,
-      na.action = na.pass
-    )
+      # data.frame as needed for WildBootTests.jl
+      cluster_bootcluster_df <- model.frame(
+        cluster_bootcluster_fml,
+        cluster_bootcluster_tmp,
+        na.action = na.pass
+      )
+
+      # data.frames with clusters, bootcluster
+      cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
+      bootcluster <-
+        cluster_bootcluster_df[, bootcluster_char, drop = FALSE]
     
-    # data.frames with clusters, bootcluster
-    cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
-    bootcluster <-
-      cluster_bootcluster_df[, bootcluster_char, drop = FALSE]
+  }
     
     if (!any(bootcluster_char %in% clustid_char)) {
       is_subcluster <- TRUE
@@ -985,6 +1034,13 @@ get_cluster <-
         use_cli_format = TRUE
       )
     }
+    
+    # without cluster intersection
+    N_G <-
+      vapply(cluster_df, function(x) {
+        length(unique(x))
+      }, numeric(1))
+    
     clustid_dims <- length(clustid_char)
     #' @srrstats {G2.4}
     #' @srrstats {G2.4c} *explicit conversion to character via `as.character()`

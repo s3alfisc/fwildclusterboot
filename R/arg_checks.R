@@ -123,17 +123,17 @@ check_boottest_args_plus <- function(
       # e.g. fml = y ~ x1 + I(x2^2) shold be possible
       #' @srrstats {G2.4c} *explicit conversion to character via `as.character()`
       #' (and not `paste` or `paste0`)* Done
-      
+
       ("fixef_vars" %in% names(object) &&
        grepl("[",
              Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
-             fixed = TRUE
-       ))
+             fixed = TRUE) && 
+       !is.null(fe)
+       )
       # note: whitespace ~ - for IV
       # grepl("~", deparse_fml, fixed = TRUE)
     ) {
-      rlang::abort("Varying slopes in fixest / fixest via [] to interact
-          fixed effects is currently not supported in boottest().")
+      rlang::abort("Varying slopes fixed effects in `fixest::feols()` are currently not supported in boottest() when fe are projected out in the bootstrap via the `fe` function argument.")
     }
     
 

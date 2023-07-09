@@ -112,7 +112,7 @@ boot_algo_fastnwild <-
     # weights_mat <- Matrix::Diagonal(N, weights)
     # if no weights - N x N identity matrix
     weights_sq <- sqrt(weights) # sqrt fine because diagonal matrix
-    A <- solve(crossprod(weights_sq * X)) # k x k
+    A <- inv(crossprod(weights_sq * X), "Matrix inversion failure: Using a generalized inverse instead. Check the produced t-statistic, does it match the one of your regression package (under the same small sample correction)? If yes, this is likely not something to worry about.") # k x k
     # XXinv <- solve(crossprod(X))                          # k x k
     WX <- weights * X
 
@@ -172,47 +172,47 @@ boot_algo_fastnwild <-
     #       as.vector(bootcluster[[1]])
     #     )
     #   ) # N x c*
-
+    
     # preallocate lists
     CC <- vector(mode = "list", length = length(names(clustid)))
     DD <- vector(mode = "list", length = length(names(clustid)))
     CD <- vector(mode = "list", length = length(names(clustid)))
-
+    
     # CC <- matrix(NA, length(names(clustid)), B + 1)
     # CD <- matrix(NA, length(names(clustid)), B + 1)
     # DD <- matrix(NA, length(names(clustid)), B + 1)
-
-
+    
+    
     if (is.null(W)) {
       # if there are no fixed effects - term (2) in equ. (62) fast & wild
       # does not arise
       # note - W refers to W_bar in fast & wild, not regression weights.
       # If no fixed effects
       # in the model / bootstrap, W is NULL
-
+      
       for (x in seq_along(names(clustid))) {
         SXinvXXRX <- collapse::fsum(WXARX, clustid[x]) # c* x f
         SXinvXXRXA <-
           SXinvXXRX %*% A
         # part of numerator independent of both bootstrap errors and r
-
+        
         # P2_bootcluster has been collapsed over "bootcluster",
         # now collapse over cluster c
         P2 <-
           #Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
           collapse::fsum(P2_bootcluster, clustid[x])
         P_all <- P2 - tcrossprod(SXinvXXRXA, P1) # formerly _a
-
+        
         Q2 <-
           #Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
           collapse::fsum(Q2_bootcluster, clustid[x])
         Q_all <- Q2 - tcrossprod(SXinvXXRXA, Q1)
-
+        
         C <-
           eigenMapMatMult(as.matrix(P_all), v, nthreads) # c* x (B + 1)
         D <-
           eigenMapMatMult(as.matrix(Q_all), v, nthreads) # c* x (B + 1)
-
+        
         CC[[x]] <- colSums(C * C)
         DD[[x]] <- colSums(D * D)
         CD[[x]] <- colSums(C * D)
@@ -221,32 +221,32 @@ boot_algo_fastnwild <-
       # project out fe
       Q3_2 <-
         crosstab(as.matrix(weights * W %*% Q),
-          var1 = bootcluster,
-          var2 = fixed_effect
+                 var1 = bootcluster,
+                 var2 = fixed_effect
         ) # f x c*
       P3_2 <-
         crosstab(as.matrix(weights * W %*% P),
-          var1 = bootcluster,
-          var2 = fixed_effect
+                 var1 = bootcluster,
+                 var2 = fixed_effect
         ) # f x c*
-
+      
       for (x in seq_along(names(clustid))) {
         SXinvXXRX <- collapse::fsum(WXARX, clustid[x]) # c* x f
         SXinvXXRXA <-
           SXinvXXRX %*% A
         # part of numerator independent of both bootstrap errors and r
-
+        
         CT_cfe <-
           crosstab(WXAR, var1 = clustid[x], var2 = fixed_effect)
         # c x f, formerly S_XinvXXR_F
-
+        
         # a
         P3 <- t(tcrossprod(P3_2, CT_cfe)) # formerly prod_a
         P2 <-
           #Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
           collapse::fsum(P2_bootcluster, clustid[x])
         P_all <- P2 - tcrossprod(SXinvXXRXA, P1) - P3
-
+        
         # b: note that from here, if impose_null = TRUE, _b suffix objects and
         # D, DD, CD need not be computed, they are always objects of 0's only
         Q3 <- t(tcrossprod(Q3_2, CT_cfe))
@@ -256,20 +256,20 @@ boot_algo_fastnwild <-
         Q_all <- Q2 - tcrossprod(SXinvXXRXA, Q1) - Q3
         C <- eigenMapMatMult(as.matrix(P_all), v, nthreads)
         D <- eigenMapMatMult(as.matrix(Q_all), v, nthreads)
-
+        
         CC[[x]] <- colSums(C * C)
         DD[[x]] <- colSums(D * D)
         CD[[x]] <- colSums(C * D)
       }
     }
-
+    
     # calculate numerator:
     numer_a <- collapse::fsum(as.vector(WXARP), g)
     numer_b <- collapse::fsum(as.vector(WXARQ), g)
     # calculate A, B
     A <- crossprod(as.matrix(numer_a), v) # q x (B+1) -> q = 1
     B <- crossprod(numer_b, v) # q x (B+1) -> q = 1
-
+    
     p_val_res <-
       p_val_null2(
         r = r,
@@ -299,10 +299,10 @@ boot_algo_fastnwild <-
       CD = CD,
       DD = DD
     )
-
-
+    
+    
     # compute confidence interval
-
+    
     if (is.null(conf_int) || conf_int == TRUE) {
       # guess for standard errors
       if (impose_null == TRUE) {
@@ -312,8 +312,8 @@ boot_algo_fastnwild <-
       } else if (impose_null == FALSE) {
         se_guess <- abs((point_estimate - r) / t_stat)
       }
-
-
+      
+      
       conf_int <- invert_p_val(
         ABCD = ABCD,
         small_sample_correction = small_sample_correction,
@@ -335,7 +335,7 @@ boot_algo_fastnwild <-
         test_vals = NA
       )
     }
-
+    
     res <- list(
       p_val = p_val,
       conf_int = conf_int$conf_int,
@@ -352,8 +352,8 @@ boot_algo_fastnwild <-
       ABCD = ABCD # ,
       # small_sample_correction = small_sample_correction
     )
-
+    
     class(res) <- "boot_algo"
-
+    
     invisible(res)
   }

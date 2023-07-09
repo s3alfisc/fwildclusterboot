@@ -97,19 +97,18 @@ model_matrix.fixest <-
         )
     } else if (type == "fixef") {
       mm <-
-        model.matrix(
+        fixest::sparse_model_matrix(
           object,
-          type = type,
-          na.rm = TRUE,
-          collin.rm = collin.rm,
-          as.df = TRUE
+          type = c("rhs"),
+          na.rm = TRUE, 
+          collin.rm = collin.rm
         )
       # make sure that all fixef vars are of type factor
       #' @srrstats {G2.4}
-      i <- seq_along(mm)
-      mm[, i] <- lapply(i, function(x) {
-        factor(mm[, x])
-      })
+      # i <- seq_along(mm)
+      # mm[, i] <- lapply(i, function(x) {
+      #   factor(mm[, x])
+      # })
     }
 
     mm
