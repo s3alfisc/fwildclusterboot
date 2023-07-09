@@ -1,3 +1,40 @@
+## Submission of 0.14
+
+I have tested the package on: 
+- rhub
+- win devel
+- github actions
+
+and received the following notes: 
+
+* checking for detritus in the temp directory ... NOTE
+Found the following files/directories:
+  'lastMiKTeXException' 
+* as usually =)
+* Found the following (possibly) invalid URLs:
+  URL: https://journals.sagepub.com/doi/pdf/10.1177/1536867X19830877
+    From: inst/doc/Literature.html
+    Status: 403
+    Message: Forbidden
+  URL: https://onlinelibrary.wiley.com/doi/abs/10.1002/jrsm.1554
+    From: inst/doc/Literature.html
+    Status: 403
+    Message: Forbidden
+  URL: https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221
+    From: inst/doc/Literature.html
+          inst/doc/fwildclusterboot.html
+          README.md
+    Status: 403
+    Message: Forbidden
+* checked all links, they all work fine
+* Non-standard file/directory found at top level:
+  'codemeta.json'
+* this should be fine? the people from ropensci want me to have this file =) 
+* checking for non-standard things in the check directory ... NOTE
+Found the following files/directories:
+  ''NULL''
+
+
 ## Submission of 0.13
 
 I have tested the package on: 
