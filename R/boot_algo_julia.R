@@ -89,11 +89,11 @@ boot_algo_julia <- function(preprocess,
 
   resp <- as.numeric(preprocess$Y)
 
-  if (inherits(preprocess, "iv")) {
+  if (preprocess$is_iv) {
     predexog <- preprocess$X_exog
     predendog <- preprocess$X_endog
     inst <- preprocess$instruments
-  } else if (inherits(preprocess, "ols")) {
+  } else {
     predexog <- preprocess$X
   }
 
@@ -200,7 +200,7 @@ boot_algo_julia <- function(preprocess,
     eval_list[["level"]] <- 1 - sign_level
   }
 
-  if (inherits(preprocess, "iv")) {
+  if (preprocess$is_iv) {
     eval_list[["predendog"]] <- predendog
     eval_list[["inst"]] <- inst
     if (!is.null(liml)) {

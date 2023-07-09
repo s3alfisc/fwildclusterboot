@@ -45,14 +45,7 @@ preprocess_fixest <-
         use_cli_format = TRUE
       )
     }
-    # if (!is.null(object$is_sunab)) {
-    #   if(object$is_sunab == TRUE){
-    #     rlang::abort(
-    #       "boottest() does not support the Sun-Abrams
-    #       estimator via `sunab()`."
-    #     )
-    #   }
-    # }
+    
     is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
     has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
     if (!is_iv) {
@@ -148,12 +141,7 @@ preprocess_fixest <-
     }
     # iv prep
     instruments <- X_exog <- X_endog <- NULL
-    # if(is_iv){
-    #  R0 <- rep(0, n_exog + n_endog)
-    #  R0[
-    # match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
-    #  names(R0) <- c(names(object$exogenous), names(object$endogenous))
-    # } else {
+
     if (!is.matrix(R)) {
       R0 <- rep(0, length(colnames(X)))
       R0[match(param, colnames(X))] <- R
@@ -188,7 +176,8 @@ preprocess_fixest <-
       X_endog = X_endog,
       instruments = instruments,
       has_fe = has_fe,
-      all_c = all_c
+      all_c = all_c, 
+      is_iv = FALSE
     )
     
     res
@@ -353,7 +342,8 @@ preprocess_felm <-
       X_endog = NULL,
       instruments = NULL,
       has_fe = has_fe,
-      all_c = all_c
+      all_c = all_c, 
+      is_iv = FALSE
     )
     
     res
@@ -458,7 +448,8 @@ preprocess_lm <-
       X_endog = NULL,
       instruments = NULL,
       has_fe = has_fe,
-      all_c = all_c
+      all_c = all_c, 
+      is_iv = FALSE
     )
     
     res
@@ -584,7 +575,8 @@ preprocess_ivreg <-
       X_endog = X_endog,
       instruments = instruments,
       has_fe = has_fe,
-      all_c = all_c
+      all_c = all_c, 
+      is_iv = TRUE
     )
     res
   }
