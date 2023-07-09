@@ -1,8 +1,12 @@
+# fwildclusterboot 0.14.2
+
+Minor fixes for CRAN release
+
+
 # fwildclusterboot 0.14.1
 
 - brings back the `print()` method, it had a use case after all
 - some fixes to the documentation
-
 
 
 # fwildclusterboot 0.14
