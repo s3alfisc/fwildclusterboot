@@ -52,7 +52,7 @@
 #' 
 #' @details Technical Details 
 #' For technical details, either take a look at the references below, or check
-#' out the [wild (cluster) bootstrap vignette](wild_bootstrap.html).
+#' out the [wild (cluster) bootstrap vignette](https://s3alfisc.github.io/fwildclusterboot/articles/wild_bootstrap.html).
 #' 
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the

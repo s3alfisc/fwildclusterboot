@@ -1,7 +1,7 @@
 #' Pairs Cluster Bootstrap as in MacKinnon "Fast Cluster Bootstraps"
 #' (Econometrics & Statistics, 2021)
 #'
-#' @param preprocessed_object A list: output of the preprocess2 function.
+#' @param preprocessed_object A list: output of the preprocess function.
 #' @param B number of bootstrap iterations
 #' @param r Shifts the null hypothesis.
 #' @param sign_level The significance level.

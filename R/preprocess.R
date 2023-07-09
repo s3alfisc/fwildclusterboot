@@ -1,20 +1,4 @@
-#' `preprocess2` is a S3 method that fetches data from several model
-#' objectects for use with `boottest()`.
-#'
-#' @param object An objectect of type lm, fixest, felm or ivreg
-#' @param ... other arguments
-#' @noRd
-#'
-#' @importFrom Matrix Diagonal
-#' @return An object of class `preprocess2`.
-#' @srrstats {G2.8} *Software should provide appropriate conversion or dispatch
-#'  routines as part of initial pre-processing to ensure that all other
-#'  sub-functions of a package receive inputs of a single defined class or
-#'  type.* Similar preprocess method + run_bootstrap function.
-preprocess2 <- function(object, ...) {
-  UseMethod("preprocess2")
-}
-preprocess2.fixest <-
+preprocess_fixest <-
   function(object,
            clustid,
            R,
@@ -41,8 +25,8 @@ preprocess2.fixest <-
     #' by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
-    #'
-    #' @method preprocess2 fixest
+    
+
     call <- object$call
     call_env <- object$call_env
     fml <- formula(object)
@@ -206,14 +190,10 @@ preprocess2.fixest <-
       has_fe = has_fe,
       all_c = all_c
     )
-    if (is_iv) {
-      class(res) <- c("preprocess", "iv")
-    } else {
-      class(res) <- c("preprocess", "ols")
-    }
+    
     res
   }
-preprocess2.felm <-
+preprocess_felm <-
   function(object,
            clustid,
            R,
@@ -240,8 +220,7 @@ preprocess2.felm <-
     #' see the paper by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
-    #'
-    #' @method preprocess2 felm
+    
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
@@ -339,12 +318,7 @@ preprocess2.felm <-
     }
     # iv prep
     instruments <- X_exog <- X_endog <- NULL
-    # if(is_iv){
-    #  R0 <- rep(0, n_exog + n_endog)
-    #  R0[
-    # match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
-    #  names(R0) <- c(names(object$exogenous), names(object$endogenous))
-    # } else {
+
     if (!is.matrix(R)) {
       R0 <- rep(0, length(colnames(X)))
       R0[match(param, colnames(X))] <- R
@@ -381,14 +355,11 @@ preprocess2.felm <-
       has_fe = has_fe,
       all_c = all_c
     )
-    if (is_iv) {
-      class(res) <- c("preprocess", "iv")
-    } else {
-      class(res) <- c("preprocess", "ols")
-    }
+    
     res
   }
-preprocess2.lm <-
+
+preprocess_lm <-
   function(object,
            clustid,
            R,
@@ -410,8 +381,8 @@ preprocess2.lm <-
     #' @importFrom Matrix sparse.model.matrix
     #'
     #' @noRd
-    #'
-    #' @method preprocess2 lm
+
+
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
@@ -489,10 +460,11 @@ preprocess2.lm <-
       has_fe = has_fe,
       all_c = all_c
     )
-    class(res) <- c("preprocess", "ols")
+    
     res
+    
   }
-preprocess2.ivreg <-
+preprocess_ivreg <-
   function(object,
            clustid,
            R,
@@ -514,7 +486,7 @@ preprocess2.ivreg <-
     #'
     #' @noRd
     #'
-    #' @method preprocess2 ivreg
+    
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
@@ -614,7 +586,6 @@ preprocess2.ivreg <-
       has_fe = has_fe,
       all_c = all_c
     )
-    class(res) <- c("preprocess", "iv")
     res
   }
 demean_fe <- function(X, Y, fe, has_weights, N) {

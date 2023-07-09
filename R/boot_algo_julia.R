@@ -1,7 +1,7 @@
 #' run the wild cluster bootstrap via WildBootTests.jl and the
 #' JuliaConnectoR package
 #'
-#' @param preprocess A list: output of the preprocess2 function.
+#' @param preprocess A list: output of the preprocess function.
 #' @param impose_null A logical - should the null hypothesis be imposed or not?
 #' @param r Shifts the null hypothesis.
 #' @param B number of bootstrap iterations

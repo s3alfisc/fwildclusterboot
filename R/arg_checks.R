@@ -338,7 +338,7 @@ check_boot_algo_fastnreliable <- function(
 #' check if full enumeration should be employed, provide message when it is
 #' @param heteroskedastic Logical. Is the heteroskedastic or a wild cluster
 #' bootstrap being run?
-#' @param preprocess A list created via the preprocess2 function
+#' @param preprocess A list created via the preprocess function
 #' @param B Integer. The number of bootstrap iterations
 #' @param type. The type of test to be run
 #' @param engine. Character scalar, either "R", "WildBootTests.jl" or

@@ -255,7 +255,7 @@ mboottest.fixest <- function(object,
     fe = fe
   )
 
-  preprocess <- preprocess2.fixest(
+  preprocess <- preprocess_fixest(
     object = object,
     clustid = clustid,
     R = R,
