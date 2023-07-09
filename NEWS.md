@@ -1,6 +1,6 @@
 # fwildclusterboot 0.14.2
 
-Minor fixes for CRAN release
+Minor fixes for CRAN release.
 
 
 # fwildclusterboot 0.14.1
