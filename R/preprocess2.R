@@ -64,14 +64,7 @@ preprocess2.fixest <-
         use_cli_format = TRUE
       )
     }
-    # if (!is.null(object$is_sunab)) {
-    #   if(object$is_sunab == TRUE){
-    #     rlang::abort(
-    #       "boottest() does not support the Sun-Abrams
-    #       estimator via `sunab()`."
-    #     )
-    #   }
-    # }
+
     is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
     has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
     if (!is_iv) {
@@ -167,12 +160,7 @@ preprocess2.fixest <-
     }
     # iv prep
     instruments <- X_exog <- X_endog <- NULL
-    # if(is_iv){
-    #  R0 <- rep(0, n_exog + n_endog)
-    #  R0[
-    # match(param, c(names(object$exogenous), names(object$endogenous)))] <- R
-    #  names(R0) <- c(names(object$exogenous), names(object$endogenous))
-    # } else {
+
     if (!is.matrix(R)) {
       R0 <- rep(0, length(colnames(X)))
       R0[match(param, colnames(X))] <- R
@@ -183,7 +171,7 @@ preprocess2.fixest <-
       R0 <- matrix(0, q, ncol(X))
       R0[, 1:p] <- R
     }
-    # }
+    
     res <- list(
       Y = Y,
       X = X,
@@ -751,7 +739,9 @@ transform_fe <-
     } else {
       
       # sparse matrices for all both "fnw11" && engine == "R"
-      if(engine == "R" && bootstrap_type %in% c("11", "31", "13","33")){
+      run_sparse <- ( engine == "R" && bootstrap_type %in% c("11", "31", "13","33")) || (engine == "R-lean")
+
+      if(run_sparse){
         
 
         if(inherits(object, "fixest")){
@@ -780,6 +770,9 @@ transform_fe <-
 
       }
       X <- cbind(X, as.matrix(add_fe_dummies))
+      if(engine == "R-lean"){
+        x <- as.matrix(X)
+      }
     }
     
     res <- list(
