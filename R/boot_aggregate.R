@@ -316,8 +316,8 @@ boot_aggregate <- function(
     X <- fixest:::model.matrix.fixest(x, type = "rhs")
     mm2 <- sparse_model_matrix(x, type = c("fixef")) |> as.matrix() |> as.data.frame()
     mm <- cbind(X, mm2)
-    
-    # 
+
+     
     if(agg %in% c("att", "period", "cohort", "TRUE")){
       rlang::abort(
         paste0("`agg='", agg, "'` works for fixest::sunab(), but is not implemented for objects of type `etwfe`. For `etwfe`, you will have to do the aggregation by hand. See `?boot_aggregate` for examples.")
@@ -346,7 +346,6 @@ boot_aggregate <- function(
   
   for(i in 1:nk){
     
-
     r <- name_df[i, 1]
     v <- name_df[i, 2]
     v_names <- cname_select[root == r & val == v]
@@ -409,8 +408,6 @@ boot_aggregate <- function(
         ssc = ssc
       )
     
-    setTxtProgressBar(pb,i)
-    
     pvalues[i] <- pval(boot_fit)
     teststat[i] <- teststat(boot_fit)
     if(!is.null(clustid)){
@@ -418,6 +415,8 @@ boot_aggregate <- function(
     } else {
       conf_int[i,] <- rep(NA, 2)
     }
+    
+    setTxtProgressBar(pb,i)
 
   }
   # th z & p values
