@@ -7,7 +7,7 @@
   "codeRepository": "https://github.com/s3alfisc/fwildclusterboot",
   "issueTracker": "https://github.com/s3alfisc/fwildclusterboot/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.14.0",
+  "version": "0.14.2",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -422,7 +422,7 @@
     },
     "SystemRequirements": "Version Requirements to run the wild bootstrap through\n    Julia - Julia (>= 1.8), WildBootTests.jl (>=0.9.8).  Julia is\n    downloadable via the official Julia website\n    (https://julialang.org/downloads/), WildBootTests.jl via Julia's\n    package manager (https://docs.julialang.org/en/v1/stdlib/Pkg/) or its\n    github repository (https://github.com/droodman/WildBootTests.jl)"
   },
-  "fileSize": "3870.479KB",
+  "fileSize": "3870.729KB",
   "citation": [
     {
       "@type": "CreativeWork",
@@ -439,7 +439,7 @@
           "familyName": "Roodman"
         }
       ],
-      "name": "fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.14.0)",
+      "name": "fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.14.2)",
       "url": "https://cran.r-project.org/package=fwildclusterboot"
     }
   ],
