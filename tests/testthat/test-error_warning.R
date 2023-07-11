@@ -299,7 +299,7 @@ test_that("errors and warnings q = 1", {
         object = feols_fit,
         clustid = c("group_id1"),
         B = 999,
-        param = "treatment1",
+        param = "treatment",
         conf_int = TRUE,
         engine = engine
       )

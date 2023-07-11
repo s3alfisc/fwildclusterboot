@@ -472,7 +472,7 @@ boottest.fixest <- function(object,
     )
   }
 
-  # check_params_in_model(object = object, param = param)
+  check_params_in_model(object = object, param = param)
 
   check_boottest_args_plus(
     object = object,
