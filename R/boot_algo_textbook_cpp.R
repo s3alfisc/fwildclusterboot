@@ -96,28 +96,15 @@ boot_algo_textbook_cpp <-
     } else if (type == "webb"){
       type <- 1
     } else {
-      rlang::abort(
-        paste("For the 'lean' bootstrap algorithm, only webb and rademacher
-          weights are supported."),
-        use_cli_format = TRUE
-        )
+      only_webb_rademacher_for_rlean_error()
     }
 
     if (impose_null == FALSE) {
-      rlang::abort(
-        c("The 'lean' bootstrap algorithm is currently not supported without
-        imposing the null on the bootstrap dgp."),
-        use_cli_format = TRUE
-      )
+      no_wcu_for_rlean_error()
     }
 
     if ((length(R) - sum(R != 1)) > 1) {
-      rlang::abort(
-        c("The 'lean' bootstrap algorithm - which runs the
-          heteroskedastic wild bootstrap - is currently not supported for
-          hypotheses about more than one parameter."),
-        use_cli_format = TRUE
-      )
+      only_scalar_test_rlean_error()
     }
 
     if(bootstrap_type == "11"){

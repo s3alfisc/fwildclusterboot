@@ -232,12 +232,6 @@ boot_aggregate <- function(
   )
   
   
-  # remind packages users to set a global seed
-  inform_seed(
-    frequency_id = "seed-reminder-bootagg", 
-    engine = engine
-  )
-  
   dots <- list(...)
   from_summary <- isTRUE(dots$from_summary)
   
@@ -267,11 +261,10 @@ boot_aggregate <- function(
   is_name <- !is.null(names(agg))
   
   if(!is_name && !grepl("(", agg, fixed = TRUE)){
-    rlang::abort(
-        c("Argument 'agg' must be a character in
-         which the pattern to match must be in between parentheses.
-         So far there are no parenthesis: please have a look at the examples."), 
-        use_cli_format = TRUE
+    stop(
+        "Argument 'agg' must be a character in ",
+         "which the pattern to match must be in between parentheses.",
+         "So far there are no parenthesis: please have a look at the examples."
     )
   }
   
@@ -292,9 +285,8 @@ boot_aggregate <- function(
       x <- summary(x, agg = FALSE, ...)
       return(x$coeftable)
     } else {
-      rlang::abort(
-        "The argument 'agg' does not match any variable.", 
-        use_cli_format = TRUE
+      stop(
+        "The argument 'agg' does not match any variable."
       )
     }
   }

@@ -273,10 +273,7 @@ run_bootstrap <- function(
     fedfadj <- 0L
     
     if (ssc[["fixef.K"]] != "none") {
-      rlang::inform(
-        "Currently, boottest() only supports fixef.K = 'none'.", 
-        use_cli_format = TRUE
-      )
+      no_fixef.K_warning()
     }
     
     res <- boot_algo_julia(

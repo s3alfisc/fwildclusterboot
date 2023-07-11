@@ -54,21 +54,9 @@ preprocess2.fixest <-
     method <- object$family
     # fixest specific checks
     if (object$method != "feols") {
-      rlang::abort(
-        "boottest() only supports OLS estimation via fixest::feols() - it
-        does not support non-linear models computed via e.g. fixest::fepois()
-        or fixest::feglm.",
-        use_cli_format = TRUE
-      )
+      only_ols_for_fixest_error()
     }
-    # if (!is.null(object$is_sunab)) {
-    #   if(object$is_sunab == TRUE){
-    #     rlang::abort(
-    #       "boottest() does not support the Sun-Abrams
-    #       estimator via `sunab()`."
-    #     )
-    #   }
-    # }
+    
     is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
     has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
     if (!is_iv) {
@@ -108,11 +96,7 @@ preprocess2.fixest <-
     }
     if (has_weights) {
       if (!is.null(fe)) {
-        rlang::abort(
-          "boottest() unfortunately currently does not support WLS and fixed
-          effects. Please set fe = NULL to run a bootstrap with WLS.",
-          use_cli_format = TRUE
-        )
+        no_weights_when_fe_error()
       }
     }
     fixed_effect <- NULL
@@ -263,12 +247,7 @@ preprocess2.felm <-
           rhs = 3
         )
       ) != "~0") {
-      rlang::abort(
-        "IV regression is currently not supported by boottest() for
-        objects of type 'felm'. You can either use 'fixest::feols()'
-        or 'ivreg::ivreg' for IV-regression.",
-        use_cli_format = TRUE
-      )
+      no_iv_for_felm_error()
       is_iv <- TRUE
     }
     X <- model_matrix(object, type = "rhs", collin.rm = TRUE)
@@ -283,11 +262,7 @@ preprocess2.felm <-
     }
     if (has_weights) {
       if (!is.null(fe)) {
-        rlang::abort(
-          "boottest() unfortunately currently does not support WLS and
-          fixed effects. Please set fe = NULL to run a bootstrap with WLS.",
-          use_cli_format = TRUE
-        )
+        no_weights_when_fe_error()
       }
     }
     if (has_fe) {
@@ -640,12 +615,7 @@ demean_fe <- function(X, Y, fe, has_weights, N) {
     levels(fixed_effect_W) <-
       (1 / table(fe)) # because duplicate levels are forbidden
   } else {
-    rlang::abort(
-      "Currently, boottest() does not jointly support regression weights /
-      WLS and fixed effects. If you want to use
-      boottest() for inference based on WLS, please set fe = NULL.",
-      use_cli_format = TRUE
-    )
+    no_weights_when_fe_error()
     # levels(fixed_effect_W) <- 1 / table(fixed_effect)
   }
   #' @srrstats {G2.4c} *explicit conversion to character via `as.character()`
@@ -723,10 +693,7 @@ transform_fe <-
         
         if(bootstrap_type != "fnw11"){
           if(clustid_char != fe){
-            rlang::abort("No fixed effects are supported for bootstrap_types
-                 '11', '13', '31', '33'.",
-                         use_cli_format = TRUE
-            )
+            no_fixef_for_fast_reliable_error()
           }
         }
         # WildBootTests.jl does demeaning internally
@@ -934,11 +901,7 @@ get_cluster <-
       if (!(any(names(bootcluster) %in% c(clustid_char, names(coef(
         object
       )))))) {
-        rlang::abort(
-          "A bootcluster variable is neither contained in the cluster
-          variables nor in the model coefficients.",
-          use_cli_format = TRUE
-        )
+        bootcluster_neither_cluster_nor_params()
       }
     } else {
       is_subcluster <- FALSE
@@ -960,30 +923,16 @@ get_cluster <-
         bootcluster[unlist(object$obs_selection), , drop = FALSE]
     }
     if (NROW(cluster) != N) {
-      rlang::abort(
-        "The number of observations in 'cluster' and 'nobs()' do not match",
-        use_cli_format = TRUE
-      )
+      cluster_nobs_error()
     }
     if (NROW(bootcluster) != N) {
-      rlang::abort(
-        "The number of observations in 'bootcluster' and 'nobs()' do not match",
-        use_cli_format = TRUE
-      )
+      bootcluster_nobs_error()
     }
     if (any(is.na(cluster))) {
-      rlang::abort(
-        "`boottest()` cannot handle NAs in `clustid` variables that are not
-        part of the estimated model object.",
-        use_cli_format = TRUE
-      )
+      nas_in_clustid_error()
     }
     if (any(is.na(bootcluster))) {
-      rlang::abort(
-        "`boottest()` cannot handle NAs in `bootcluster` variables that are
-        not part of the estimated model object.",
-        use_cli_format = TRUE
-      )
+      nas_in_bootclustid_error()
     }
     clustid_dims <- length(clustid_char)
     #' @srrstats {G2.4}

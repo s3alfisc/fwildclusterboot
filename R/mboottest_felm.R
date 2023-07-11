@@ -109,14 +109,6 @@
 #' @section Multiple Fixed Effects:
 #' If your felm() model contains fixed effects, boottest() will internally convert
 #'  all fixed effects but the one specified via the `fe` argument to dummy variables.
-#' @section Run `boottest` quietly:
-#' You can suppress all warning and error messages by setting the following global
-#' options:
-#' `options(rlib_warning_verbosity = "quiet")`
-#' `options(rlib_message_verbosity = "quiet")`
-#' Not that this will turn off all warnings (messages) produced via `rlang::warn()` and
-#' `rlang::inform()`, which might not be desirable if you use other software build on
-#' `rlang`, as e.g. the `tidyverse`.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
 #' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
@@ -202,12 +194,6 @@ mboottest.felm <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
 
-  # remind packages users to set a global seed
-  inform_seed(
-    frequency_id = "seed-reminder-m-felm",
-    engine = "WildBootTests.jl"
-  )
-
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
@@ -257,10 +243,7 @@ mboottest.felm <- function(object,
   clustermin <- julia_ssc$clustermin
 
   if (ssc[["fixef.K"]] != "none") {
-    rlang::inform(
-      "Currently, boottest() only supports fixef.K = 'none'.",
-      use_cli_format = TRUE
-      )
+    no_fixef.K_warning()
   }
 
 

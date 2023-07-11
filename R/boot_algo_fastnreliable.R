@@ -358,9 +358,15 @@ inv <- function(x, g){
       Matrix::solve(x)
     },
     error = function(e) {
-      rlang::warn(message = paste0(
-        "Matrix inversion error when computing beta(g) for cluster ", g, ". Using Pseudo-Inverse instead. Potentially, you can suppress this message by specifying a cluster fixed effect in the bootstrap via the `fe` argument of `boottest()`."), 
-        use_cli_format = TRUE)
+      message(
+        message = 
+          paste0(
+            "Matrix inversion error when computing beta(g) for cluster ", 
+            g, ". Using Pseudo-Inverse instead. Potentially, you can suppress",
+            "this message by specifying a cluster fixed effect in the bootstrap", 
+            "via the `fe` argument of `boottest()`."
+          )
+        )
       eigen_pinv(as.matrix(x))
     }
   )

@@ -52,7 +52,7 @@
 #' 
 #' @details Technical Details 
 #' For technical details, either take a look at the references below, or check
-#' out the [wild (cluster) bootstrap vignette](wild_bootstrap.html).
+#' out the [wild (cluster) bootstrap vignette](https://s3alfisc.github.io/fwildclusterboot/articles/wild_bootstrap.html).
 #' 
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the
@@ -579,10 +579,7 @@ plot.boottest <- function(x, ...) {
   dreamerr::validate_dots(stop = TRUE)
 
   if (is.null(x$conf_int)) {
-    rlang::abort(
-      c("No plot method if boottest()'s function argument 'conf_int = FALSE'."),
-      use_cli_format = TRUE
-    )
+    no_plot_when_no_ci_error()
   }
   test_vals <- x$grid_vals
   p_test_vals <- x$p_grid_vals
