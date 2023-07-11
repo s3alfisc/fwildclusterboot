@@ -58,7 +58,7 @@ check_boottest_args_plus <- function(
   if (inherits(object, "felm")) {
     if (!is.null(fe)) {
       if (fe %in% param) {
-        fe_int_test_error(fe)
+        fe_in_test_error(fe)
       }
       if (!(fe %in% names(object$fe))) {
         fixef_not_fixef_error(fe)      }
@@ -104,7 +104,7 @@ check_boottest_args_plus <- function(
       # note: whitespace ~ - for IV
       # grepl("~", deparse_fml, fixed = TRUE)
     ) {
-      varing_slopes_error()
+      variyng_slopes_error()
     }
 
 
@@ -344,7 +344,7 @@ r_algo_checks <- function(R, p_val_type, conf_int, B) {
 
   if (conf_int == TRUE || is.null(conf_int)) {
     if (B < 100) {
-      B_too_small_error(B)
+      B_too_small_error()
     }
   }
 }
