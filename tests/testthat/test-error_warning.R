@@ -8,14 +8,6 @@ test_that("errors and warnings q = 1", {
   #' trigger every one of those messages, and should compare the result with
   #' expected values.* Done. See test-warning-error test file.
 
-
-
-  skip_on_cran()
-  skip_if_not(
-    find_proglang("julia"),
-    message = "skip test as julia installation not found."
-  )
-
   set.seed(2351)
   dqrng::dqset.seed(2351)
 
@@ -241,7 +233,7 @@ test_that("errors and warnings q = 1", {
 
     # rademacher enumeration case
     if (engine != "R-lean") {
-      suppressWarnings(expect_warning(
+      suppressWarnings(expect_message(
         boottest(
           object = lm_fit,
           clustid = "group_id1",
@@ -251,7 +243,7 @@ test_that("errors and warnings q = 1", {
           engine = engine
         )
       ))
-      suppressWarnings(expect_warning(
+      suppressWarnings(expect_message(
         boottest(
           object = feols_fit,
           clustid = "group_id1",
@@ -261,7 +253,7 @@ test_that("errors and warnings q = 1", {
           engine = engine
         )
       ))
-      suppressWarnings(expect_warning(
+      suppressWarnings(expect_message(
         boottest(
           object = felm_fit,
           clustid = "group_id1",
@@ -273,7 +265,7 @@ test_that("errors and warnings q = 1", {
       ))
     }
 
-    suppressWarnings(expect_warning(
+    suppressWarnings(expect_message(
       boottest(
         object = lm_fit,
         clustid = "group_id1",
@@ -722,7 +714,7 @@ test_that("errors and warnings q = 1", {
       )
 
     # no confidence intervals calculated: expect warning
-    expect_warning(
+    expect_message(
       boottest(
         object = lm_fit,
         clustid = "group_id1",
@@ -842,7 +834,7 @@ test_that("errors and warnings q = 1", {
         engine = engine
       )
     )
-    # suppressWarnings(expect_warning(
+    # suppressWarnings(expect_message(
     #   res <-
     #     boottest(
     #       object = lm_fit,
@@ -863,7 +855,7 @@ test_that("errors and warnings q = 1", {
     # + Q1_immigration,
     #   data = data3
     # )
-    # suppressWarnings(expect_warning(
+    # suppressWarnings(expect_message(
     #   res <-
     #     boottest(
     #       object = lm_fit,
@@ -1422,12 +1414,7 @@ test_that("errors and warnings q = 1", {
 
 
 test_that("error warning IV/WRE and q > 1", {
-  skip_on_cran()
-  skip_if_not(
-    find_proglang("julia"),
-    message = "skip test as julia installation not found."
-  )
-
+  
 
   # drop all NA values from SchoolingReturns
   # SchoolingReturns <-
@@ -1443,7 +1430,7 @@ test_that("error warning IV/WRE and q > 1", {
 
 
   # error because invalid param name
-  expect_error(suppressMessages(
+  expect_error(suppressWarnings(
     boottest(
       object = ivreg_fit,
       clustid = "kww",
@@ -1455,7 +1442,7 @@ test_that("error warning IV/WRE and q > 1", {
   ))
 
   # error due to length(R) != length(param)
-  expect_error(suppressMessages(
+  expect_error(suppressWarnings(
     boottest(
       object = ivreg_fit,
       clustid = "kww",
@@ -1468,7 +1455,7 @@ test_that("error warning IV/WRE and q > 1", {
   ))
 
   # enumeration warning
-  expect_warning(suppressMessages(
+  expect_message(suppressWarnings(
     boottest(
       object = ivreg_fit,
       clustid = "ethnicity",
@@ -1533,8 +1520,8 @@ test_that("error warning IV/WRE and q > 1", {
 })
 
 test_that("error message when character vars in felm and fixest", {
+  
   N <- 1000
-
   real_1000 <- runif(N, 1, 100)
   Year_cont <- sample(1:10, N, replace = TRUE)
   post1 <- sample(0:1, N, replace = TRUE)
