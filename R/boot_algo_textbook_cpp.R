@@ -18,7 +18,7 @@ boot_algo_textbook_cpp <-
     #' function that implements the fast bootstrap algorithm as described in
     #' Roodman et al (2019)
     #'
-    #' @param preprocessed_object A list: output of the preprocess2 function.
+    #' @param preprocessed_object A list: output of the preprocess function.
     #' @param boot_iter number of bootstrap iterations
     #' @param point_estimate The point estimate of the test parameter from the
     #' regression model.

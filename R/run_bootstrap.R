@@ -54,7 +54,7 @@ run_bootstrap <- function(
   #'  defaults to the "lean" algorithm. You can set the employed
   #'  algorithm globally by using the
   #'  `setBoottest_engine()` function.
-  #' @param preprocess A list: output of the preprocess2 function.
+  #' @param preprocess A list: output of the preprocess function.
   #' @param bootstrap_type Determines which wild cluster bootstrap type should be 
   #' run. Options are "fnw11","11", "13", "31" and "33" for the wild cluster 
   #' bootstrap and "11" and "31" for the heteroskedastic bootstrap.

@@ -1,20 +1,4 @@
-#' `preprocess2` is a S3 method that fetches data from several model
-#' objectects for use with `boottest()`.
-#'
-#' @param object An objectect of type lm, fixest, felm or ivreg
-#' @param ... other arguments
-#' @noRd
-#'
-#' @importFrom Matrix Diagonal
-#' @return An object of class `preprocess2`.
-#' @srrstats {G2.8} *Software should provide appropriate conversion or dispatch
-#'  routines as part of initial pre-processing to ensure that all other
-#'  sub-functions of a package receive inputs of a single defined class or
-#'  type.* Similar preprocess method + run_bootstrap function.
-preprocess2 <- function(object, ...) {
-  UseMethod("preprocess2")
-}
-preprocess2.fixest <-
+preprocess_fixest <-
   function(object,
            clustid,
            R,
@@ -41,8 +25,7 @@ preprocess2.fixest <-
     #' by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
-    #'
-    #' @method preprocess2 fixest
+    
     call <- object$call
     call_env <- object$call_env
     fml <- formula(object)
@@ -197,7 +180,7 @@ preprocess2.fixest <-
     }
     res
   }
-preprocess2.felm <-
+preprocess_felm <-
   function(object,
            clustid,
            R,
@@ -224,8 +207,7 @@ preprocess2.felm <-
     #' see the paper by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
-    #'
-    #' @method preprocess2 felm
+    
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
@@ -363,7 +345,7 @@ preprocess2.felm <-
     }
     res
   }
-preprocess2.lm <-
+preprocess_lm <-
   function(object,
            clustid,
            R,
@@ -385,8 +367,7 @@ preprocess2.lm <-
     #' @importFrom Matrix sparse.model.matrix
     #'
     #' @noRd
-    #'
-    #' @method preprocess2 lm
+    
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
@@ -467,7 +448,7 @@ preprocess2.lm <-
     class(res) <- c("preprocess", "ols")
     res
   }
-preprocess2.ivreg <-
+preprocess_ivreg <-
   function(object,
            clustid,
            R,
@@ -488,8 +469,7 @@ preprocess2.ivreg <-
     #' the bootcluster variables. Alternatively, "min" or "max"
     #'
     #' @noRd
-    #'
-    #' @method preprocess2 ivreg
+    
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)

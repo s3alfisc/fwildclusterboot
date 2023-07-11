@@ -1,3 +1,45 @@
+## Submission of `0.14.3`
+
+This is a re-submission. For `0.14.2`, I received the following notes: 
+
++ Found the following (possibly) invalid URLs:
+  URL: https://journals.sagepub.com/doi/pdf/10.1177/1536867X19830877
+    From: inst/doc/Literature.html
+    Status: 403
+    Message: Forbidden
+  URL: https://onlinelibrary.wiley.com/doi/abs/10.1002/jrsm.1554
+    From: inst/doc/Literature.html
+    Status: 403
+    Message: Forbidden
+  URL: https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221
+    From: inst/doc/Literature.html
+          inst/doc/fwildclusterboot.html
+          README.md
+    Status: 403
+    Message: Forbidden
+    
+    I checked all URLs manually - these are false positives.
+    
++ Found the following (possibly) invalid file URI:
+  URI: wild_bootstrap.html
+  
+  Fixed. 
+  
++ * checking top-level files ... NOTE
+Non-standard file/directory found at top level:
+  'codemeta.json'
+  
+  Added to `.Rbuildignore`.
++ Mismatches for apparent methods not registered:
+preprocess:
+
+  Fixed.
+  
+### New Checks
+
+- rhub, win-devel, github actions (mac, windows, ubuntu). only the note regarding URLs remains
+
+
 ## Submission of 0.13
 
 I have tested the package on: 
