@@ -8,6 +8,12 @@ test_that("errors and warnings q = 1", {
   #' trigger every one of those messages, and should compare the result with
   #' expected values.* Done. See test-warning-error test file.
 
+  skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"),
+    message = "skip test as julia installation not found."
+  )
+  
   set.seed(2351)
   dqrng::dqset.seed(2351)
 
@@ -1416,6 +1422,12 @@ test_that("errors and warnings q = 1", {
 test_that("error warning IV/WRE and q > 1", {
   
 
+  skip_on_cran()
+  skip_if_not(
+    find_proglang("julia"),
+    message = "skip test as julia installation not found."
+  )
+  
   # drop all NA values from SchoolingReturns
   # SchoolingReturns <-
   #  SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]

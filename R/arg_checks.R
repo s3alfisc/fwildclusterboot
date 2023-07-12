@@ -104,7 +104,7 @@ check_boottest_args_plus <- function(
       # note: whitespace ~ - for IV
       # grepl("~", deparse_fml, fixed = TRUE)
     ) {
-      variyng_slopes_error()
+      varying_slopes_error()
     }
 
 
