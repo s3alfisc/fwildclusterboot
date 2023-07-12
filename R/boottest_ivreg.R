@@ -270,7 +270,7 @@ boottest.ivreg <- function(object,
 
 
   # preprocess data: X, Y, weights, fixed effects
-  preprocess <- preprocess2_ivreg(
+  preprocess <- preprocess_ivreg(
     object = object,
     clustid = clustid,
     R = R,

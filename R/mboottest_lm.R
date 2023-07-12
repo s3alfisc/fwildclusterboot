@@ -203,7 +203,7 @@ mboottest.lm <- function(object,
 
 
   # preprocess data: X, Y, weights, fixed effects
-  preprocess <- preprocess2_lm(
+  preprocess <- preprocess_lm(
     object = object,
     clustid = clustid,
     R = R,
