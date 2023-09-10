@@ -14,7 +14,9 @@ boot_algo_fastnwild <-
            conf_int,
            maxiter,
            tol, 
-           sampling) {
+           sampling, 
+           se_guess
+           ) {
     
     #' Fast wild cluster bootstrap algorithm
     #'
@@ -68,6 +70,8 @@ boot_algo_fastnwild <-
     #' This argument is mostly a convenience to control random number generation in 
     #' a wrapper package around `fwildclusterboot`, `wildrwolf`. 
     #' I recommend to use the fast' option. 
+    #' @param se_guess NULL by default. Please use it to update the initial 
+    #'        guess for the standard error if the CI inversion throws an error.
     #' @return A list of ...
     #' @importFrom collapse fsum GRP
     #' @importFrom stats as.formula coef model.matrix model.response
@@ -302,32 +306,43 @@ boot_algo_fastnwild <-
 
 
     # compute confidence interval
-
+    
     if (is.null(conf_int) || conf_int == TRUE) {
-      # guess for standard errors
-      if (impose_null == TRUE) {
-        # should always be positive, point_estimate and t_stat need to have same
-        # sign, abs for security
-        se_guess <- abs(point_estimate / t_stat)
-      } else if (impose_null == FALSE) {
-        se_guess <- abs((point_estimate - r) / t_stat)
-      }
+      # guess for standard errors (if not manually provided)
+      if(is.null(se_guess)){
+        if (impose_null == TRUE) {
+          # should always be positive, point_estimate and t_stat need to have same
+          # sign, abs for security
+          se_guess <- abs(point_estimate / t_stat)
+        } else if (impose_null == FALSE) {
+          se_guess <- abs((point_estimate - r) / t_stat)
+        }
+      } 
+      
+      ci_error_message <- paste(
+        "Sorry, there was an error when computing the CIs.",
+        "This is likely due to a poorly specified starting value.",
+        "Please try a lower starting value yourself, via the `se_guess` function argument.")
+      
+      tryCatch({
+        conf_int <- invert_p_val(
+          ABCD = ABCD,
+          small_sample_correction = small_sample_correction,
+          boot_iter = boot_iter,
+          point_estimate = point_estimate,
+          se_guess = se_guess,
+          clustid = clustid,
+          sign_level = sign_level,
+          vcov_sign = vcov_sign,
+          impose_null = impose_null,
+          p_val_type = p_val_type,
+          maxiter = maxiter,
+          tol = tol
+        )
+      }, error = function(e) {
+        message(paste(ci_error_message, "The current `se_guess` value is", round(se_guess,2), ".", sep = " "))
+      })
 
-
-      conf_int <- invert_p_val(
-        ABCD = ABCD,
-        small_sample_correction = small_sample_correction,
-        boot_iter = boot_iter,
-        point_estimate = point_estimate,
-        se_guess = se_guess,
-        clustid = clustid,
-        sign_level = sign_level,
-        vcov_sign = vcov_sign,
-        impose_null = impose_null,
-        p_val_type = p_val_type,
-        maxiter = maxiter,
-        tol = tol
-      )
     } else {
       conf_int <- list(
         conf_int = NA,

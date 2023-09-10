@@ -114,6 +114,8 @@
 #' This argument is mostly a convenience to control random number generation in
 #' a wrapper package around `fwildclusterboot`, `wildrwolf`.
 #' I recommend to use the fast' option.
+#' @param se_guess NULL by default. Please use it to update the initial 
+#'        guess for the standard error if the CI inversion throws an error.
 #' @param ... Further arguments passed to or from other methods.
 #' @importFrom dreamerr check_arg validate_dots
 #' @importFrom parallel detectCores
@@ -320,6 +322,7 @@ boottest.lm <- function(object,
                         maxmatsize = FALSE,
                         bootstrapc = FALSE,
                         getauxweights = FALSE,
+                        se_guess = NULL,
                         ...) {
 
   call <- match.call()
@@ -501,8 +504,8 @@ boottest.lm <- function(object,
       getauxweights = getauxweights ,
       maxmatsize = maxmatsize,
       sampling = sampling,
-      bootcluster = bootcluster
-
+      bootcluster = bootcluster, 
+      se_guess = se_guess
     )
 
 

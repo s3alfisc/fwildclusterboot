@@ -28,7 +28,8 @@ run_bootstrap <- function(
   maxmatsize, 
   sampling, 
   # arguments only needed for boot_algo_julia - can be much cleaner
-  bootcluster
+  bootcluster, 
+  se_guess = NULL
   ){
   
   #' Run different wild (cluster) bootstrap algorithms
@@ -139,6 +140,8 @@ run_bootstrap <- function(
   #' Further, the subcluster bootstrap (MacKinnon & Webb, 2018) is
   #' supported - see the `vignette("fwildclusterboot", package =
   #' "fwildclusterboot")` for details
+  #' @param se_guess NULL by default. Please use it to update the initial 
+  #'        guess for the standard error if the CI inversion throws an error.
   #' 
   #' @return A list of bootstrap results
   #' @noRd
@@ -189,7 +192,8 @@ run_bootstrap <- function(
         conf_int = conf_int,
         maxiter = maxiter,
         tol = tol, 
-        sampling = sampling
+        sampling = sampling, 
+        se_guess = se_guess
       )
       
       
