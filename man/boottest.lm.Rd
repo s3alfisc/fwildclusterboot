@@ -30,6 +30,7 @@
   maxmatsize = FALSE,
   bootstrapc = FALSE,
   getauxweights = FALSE,
+  se_guess = NULL,
   ...
 )
 }
@@ -163,6 +164,9 @@ bootstrap-c instead of bootstrap-t. Only relevant when 'engine =
 "WildBootTests.jl"'}
 
 \item{getauxweights}{Logical. Whether to save auxilliary weight matrix (v)}
+
+\item{se_guess}{NULL by default. Please use it to update the initial
+guess for the standard error if the CI inversion throws an error.}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
