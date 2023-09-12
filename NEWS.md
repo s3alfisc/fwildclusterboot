@@ -1,3 +1,8 @@
+# fwildclusterboot 0.14.3
+
+- Fix a bug with CI inversion when `r` was set to be close to the estimated parameter. (CI inversion failed). See [#138](https://github.com/s3alfisc/fwildclusterboot/issues/138). Thanks to Achim Zeileis & team for raising this issue!
+
+
 # fwildclusterboot 0.14.2
 
 Minor fixes for CRAN release.
