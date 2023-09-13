@@ -6,6 +6,8 @@
   your bootstrap inferences might change slightly. 
 - For other changes, see the changelog for versions `0.13-0.14.3`, all of which have not 
   been published on CRAN. 
+- The package's lifecycle badge has been changed to `stable`, as there have not been any breaking API 
+  changes in a while, and I do not plan any in the future. 
   
 ```r
   > library(bench)
