@@ -780,16 +780,17 @@ print.boottest <- function(x, ..., digits = 4) {
   print(x$call)
   cat("", "\n")
   
-  vals <- lapply(
-    c("p_val", "conf_int", "t_stat"),
-    function(y) {
-      round(x[[y]], digits = digits)
-    }
-  )
+  pval <- pval(x)
+  conf_int <- confint(x)
+  teststat <- teststat(x)
   
-  cat("p value:", vals[[1]], "\n")
-  cat("confidence interval:", vals[[2]], "\n")
-  cat("test statistic", vals[[3]], "\n")
+  pval <- round(pval, digits = digits)
+  teststat <- round(teststat, digits = digits)
+  conf_int <- ifelse(is.null(conf_int), NA, round(conf_int, digits))
+  
+  cat("p value:", pval, "\n")
+  cat("confidence interval:", conf_int, "\n")
+  cat("test statistic", teststat, "\n")
 }
 
 
