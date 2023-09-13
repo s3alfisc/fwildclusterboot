@@ -383,7 +383,7 @@ boottest.lm <- function(object,
     engine = engine,
     bootstrap_type = bootstrap_type
   )
-
+  
   if (!is.null(beta0)) {
     rlang::abort(
       c(
@@ -413,14 +413,18 @@ boottest.lm <- function(object,
 
   if (is.null(clustid)) {
     heteroskedastic <- TRUE
-    if (engine == "R") {
+    if (engine %in% c("R", "WildBootTests.jl")) {
       # heteroskedastic models should always be run through R-lean
       engine <- "R-lean"
+      rlang::inform(
+        "The heteroskedastic bootstrap is only supported for `engine = 'R-lean'`, 
+        Resetting the engine argument to 'R-lean'."
+      )
+    } else {
+      heteroskedastic <- FALSE
     }
-  } else {
-    heteroskedastic <- FALSE
   }
-
+    
   check_bootstrap_types(
     param = param,
     bootstrap_type = bootstrap_type
