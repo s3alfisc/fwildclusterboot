@@ -29,11 +29,7 @@ get_weights <- function(type,
                             # (uses less memory
                             # than numeric)
                             rademacher = function(n) {
-                              dqrng::dqsample(
-                                x = c(-1L, 1L),
-                                size = n,
-                                replace = TRUE
-                              )
+                              dqrng::dqrrademacher(n)
                             },
                             mammen = function(n) {
                               sample(

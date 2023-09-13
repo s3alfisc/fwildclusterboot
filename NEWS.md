@@ -1,3 +1,37 @@
+# CRAN release: fwildclusterboot 0.15
+
+- For rademacher weights, switches to `dqrng::dqrrademacher`. This leads to substabtial 
+  performance increases (see below). But the random number generation changes slightly, so 
+  you might no longer reproduce exactly the same weights draw under the same seeds, and in turn, 
+  your bootstrap inferences might change slightly. 
+- For other changes, see the changelog for versions `0.13-0.14.3`, all of which have not 
+  been published on CRAN. 
+  
+```r
+  > library(bench)
+> 
+> n <- 999999 * 100
+> 
+> mark(
++   dqrrademacher(n), 
++   dqrng::dqsample(
++     x = c(-1L, 1L),
++     size = n,
++     replace = TRUE
++   ), 
++   iterations = 5, 
++   check = FALSE
++ )
+# A tibble: 2 × 13
+  expression                                                   min median itr/s…¹ mem_a…² gc/se…³ n_itr  n_gc
+  <bch:expr>                                                <bch:> <bch:>   <dbl> <bch:b>   <dbl> <int> <dbl>
+1 dqrrademacher(n)                                           123ms  166ms    5.25   381MB    3.15     5     3
+2 dqrng::dqsample(x = c(-1L, 1L), size = n, replace = TRUE)  615ms  647ms    1.47   763MB    1.47     5     5
+# … with 5 more variables: total_time <bch:tm>, result <list>, memory <list>, time <list>, gc <list>, and
+#   abbreviated variable names ¹​`itr/sec`, ²​mem_alloc, ³​`gc/sec`
+```
+
+
 # fwildclusterboot 0.14.3
 
 - Fix a bug with CI inversion when `r` was set to be close to the estimated parameter. (CI inversion failed). See [#138](https://github.com/s3alfisc/fwildclusterboot/issues/138). Thanks to Achim Zeileis & team for raising this issue!
