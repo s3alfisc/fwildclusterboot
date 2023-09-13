@@ -467,9 +467,9 @@ boottest.felm <- function(object,
         "The heteroskedastic bootstrap is only supported for `engine = 'R-lean'`, 
         Resetting the engine argument to 'R-lean'."
       )
-    } else {
-      heteroskedastic <- FALSE
     }
+  } else {
+    heteroskedastic <- FALSE
   }
   
   check_bootstrap_types(
