@@ -530,7 +530,7 @@ boottest.fixest <- function(object,
   )
 
   # preprocess the data: Y, X, weights, fixed_effect
-  preprocess <- preprocess2.fixest(
+  preprocess <- preprocess_fixest(
     object = object,
     clustid = clustid,
     R = R_long,

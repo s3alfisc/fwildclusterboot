@@ -179,6 +179,7 @@ test_that("Do different, but equivalent ways to specify
   # one-way clustering
 
   create_models <- function(clustid) {
+    
     R1 <- clubSandwich::constrain_zero(2:3, coefs = coef(lm_fit))
     R2 <- matrix(c(1, 0, 0, 1, 0, 0), 2, 3)
     R3 <- clubSandwich::constrain_zero(1:2, coefs = coef(felm_fit8))
@@ -187,8 +188,8 @@ test_that("Do different, but equivalent ways to specify
     for (engine in c("R", "WildBootTests.jl")) {
       # boottest()
       cat("boottest()", "\n")
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_lm_", engine),
         suppressWarnings(
@@ -206,8 +207,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest1_", engine),
         suppressWarnings(
@@ -225,8 +226,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest2_", engine),
         suppressWarnings(
@@ -244,8 +245,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest3_", engine),
         suppressWarnings(
@@ -263,8 +264,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest4_", engine),
         suppressWarnings(
@@ -282,8 +283,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest5_", engine),
         suppressWarnings(
@@ -301,8 +302,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest6_", engine),
         suppressWarnings(
@@ -320,8 +321,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest7_", engine),
         suppressWarnings(
@@ -339,8 +340,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest8_", engine),
         suppressWarnings(
@@ -358,8 +359,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest9_", engine),
         suppressWarnings(
@@ -377,8 +378,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest10_", engine),
         suppressWarnings(
@@ -396,8 +397,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest11_", engine),
         suppressWarnings(
@@ -415,8 +416,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest12_", engine),
         suppressWarnings(
@@ -434,8 +435,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest13_", engine),
         suppressWarnings(
@@ -453,8 +454,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest6fe_", engine),
         suppressWarnings(
@@ -473,8 +474,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest7fe_", engine),
         suppressWarnings(
@@ -493,8 +494,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest8fe_", engine),
         suppressWarnings(
@@ -513,8 +514,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest9fe_", engine),
         suppressWarnings(
@@ -533,8 +534,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest10fe_", engine),
         suppressWarnings(
@@ -553,8 +554,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       # why suddenly fe = Q2_defense? Should give the same models
       assign(paste0("boot_fixest11fe_", engine),
@@ -574,8 +575,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest12fe_", engine),
         suppressWarnings(
@@ -594,8 +595,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_fixest13fe_", engine),
         suppressWarnings(
@@ -614,8 +615,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_felm1_", engine),
         suppressWarnings(
@@ -633,8 +634,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_felm2_", engine),
         suppressWarnings(
@@ -652,8 +653,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_felm3_", engine),
         suppressWarnings(
@@ -671,8 +672,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_felm4_", engine),
         suppressWarnings(
@@ -690,8 +691,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_felm5_", engine),
         suppressWarnings(
@@ -709,8 +710,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_felm6_", engine),
         suppressWarnings(
@@ -728,8 +729,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_felm4fe_", engine),
         suppressWarnings(
@@ -748,8 +749,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_felm5fe_", engine),
         suppressWarnings(
@@ -768,8 +769,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_felm6fe_", engine),
         suppressWarnings(
@@ -788,8 +789,8 @@ test_that("Do different, but equivalent ways to specify
         envir = .GlobalEnv
       )
 
-      set.seed(8965)
-      dqrng::dqset.seed(765)
+      set.seed(89651)
+      dqrng::dqset.seed(74465)
 
       assign(paste0("boot_felm7fe_", engine),
         suppressWarnings(
@@ -1378,7 +1379,12 @@ test_that("Do different, but equivalent ways to specify
 
 
 test_that("clustid can be fe", {
+  
   print_results <- FALSE
+  
+  set.seed(2351)
+  dqrng::dqset.seed(2351)
+  
 
   data1 <<-
     fwildclusterboot:::create_data(
@@ -1406,7 +1412,10 @@ test_that("clustid can be fe", {
         group_id1,
       data = data1
     )
-
+  
+  set.seed(2351)
+  dqrng::dqset.seed(2351)
+  
   fit1 <-
     boottest(
       feols_fit1,
@@ -1417,6 +1426,9 @@ test_that("clustid can be fe", {
       ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
     )
 
+  set.seed(2351)
+  dqrng::dqset.seed(2351)
+  
   fit2 <-
     boottest(
       felm_fit1,
