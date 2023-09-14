@@ -757,6 +757,7 @@ nobs.mboottest <- function(object, ...) {
 #' @param ... Further arguments passed to or from other methods.
 #' @param digits Number of rounding digits
 #' @export
+#' @importFrom stats confint
 #' @method print boottest
 #' @return A scalar containing the effective number of observations
 #' used in `mboottest`
