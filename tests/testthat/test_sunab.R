@@ -1,11 +1,6 @@
 test_that("test sunab", {
   
 
-  skip_if_not(
-    find_proglang("julia"),
-    message = "skip test as julia installation not found."
-  )
-
   library(fixest)
   # Simple DiD example
   base_stagg <- fixest::base_stagg
@@ -68,6 +63,9 @@ test_that("test sunab", {
   fixest_pval <- as.vector(pvalue(summary(res_sunab, agg = TRUE)))
   fixest_teststat <- as.vector(tstat(summary(res_sunab, agg = TRUE)))
   
+  set.seed(8795)
+  dqrng::dqset.seed(2136)
+  
   boot_year <-
     boot_aggregate(
       res_sunab,
@@ -107,6 +105,10 @@ test_that("test sunab hetero", {
   # as it takes too long ...
   skip_on_cran()
   skip_on_ci()
+  
+  set.seed(8795)
+  dqrng::dqset.seed(2136)
+  
   
   library(fixest)
   # Simple DiD example
