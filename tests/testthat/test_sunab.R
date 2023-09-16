@@ -1,6 +1,8 @@
 test_that("test sunab", {
   
-
+    
+  skip_on_cran()
+  
   library(fixest)
   # Simple DiD example
   base_stagg <- fixest::base_stagg

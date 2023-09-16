@@ -1,3 +1,7 @@
+## Resubmission of 0.15
+
+- I turned off a test that ran for too long. I had accidentally turned it on 
+
 ## Submission of 0.15
 
 I have tested the package on: 
