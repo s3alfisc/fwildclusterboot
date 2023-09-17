@@ -1,3 +1,6 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
+
 test_that("uncategorized tests", {
   skip_on_cran()
   skip_if_not(

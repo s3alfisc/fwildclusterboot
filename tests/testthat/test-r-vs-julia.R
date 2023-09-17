@@ -1,3 +1,5 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
 test_that("test r against Julia I: stochastic tests", {
 
 #' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms

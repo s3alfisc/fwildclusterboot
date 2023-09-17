@@ -1,3 +1,6 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
+
 test_that("test full enumeration cases: r and r-lean", {
 
 #' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms

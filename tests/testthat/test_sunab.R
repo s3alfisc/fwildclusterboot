@@ -1,3 +1,6 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
+
 test_that("test sunab", {
   
     

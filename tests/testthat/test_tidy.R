@@ -1,3 +1,5 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
 test_that("test tidiers with q = 1", {
   skip_on_cran()
   skip_if_not(

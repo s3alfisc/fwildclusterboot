@@ -1,3 +1,5 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
 test_that("test sampling", {
   
   data1 <<- fwildclusterboot:::create_data(

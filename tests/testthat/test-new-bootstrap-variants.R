@@ -1,3 +1,6 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
+
 test_that("test r-fnw vs r-, stochastic", {
   
   skip_on_cran()

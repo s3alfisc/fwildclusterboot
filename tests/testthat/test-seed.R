@@ -1,3 +1,6 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
+
 test_that("seed works for OLS", {
   skip_on_cran()
   skip_if_not(

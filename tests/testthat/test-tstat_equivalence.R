@@ -1,3 +1,7 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
+
+
 test_that("t-stat equivalence OLS - R and R-lean, against fixest", {
 
 #' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms

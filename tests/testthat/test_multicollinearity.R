@@ -1,3 +1,6 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
+
 test_that("test multicollinearity", {
   N <- 1000
   X1 <- rnorm(N)

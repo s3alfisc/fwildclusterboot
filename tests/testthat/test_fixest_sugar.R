@@ -1,3 +1,6 @@
+fwildclusterboot::setBoottest_nthreads(1)
+
+
 test_that("test fixest formula sugar", {
   voters <- fwildclusterboot:::create_data(
     N = 10000,

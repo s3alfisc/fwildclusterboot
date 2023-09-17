@@ -265,6 +265,7 @@ setBoottest_nthreads <- function(nthreads) {
   #' @return No return value
   #' @noRd
   #' @importFrom parallel detectCores
+  #' @export
 
   max_CRAN <- as.numeric(Sys.getenv("OMP_THREAD_LIMIT"))
   max_CRAN[is.na(max_CRAN)] <- 1000
