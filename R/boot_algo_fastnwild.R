@@ -312,9 +312,9 @@ boot_algo_fastnwild <-
           if (impose_null == TRUE) {
             # should always be positive, point_estimate and t_stat need to have same
             # sign, abs for security
-            pval_peak <- abs(point_estimate)
+            pval_peak <- point_estimate
           } else if (impose_null == FALSE) {
-            pval_peak <- abs((point_estimate - r))
+            pval_peak <- (point_estimate - r)
           }
 
           invert_p_val(
