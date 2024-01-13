@@ -7,7 +7,7 @@
 #' @param boot_iter An integer. Number of bootstrap iterations
 #' @param point_estimate A scalar. Point estimate of the coefficient
 #'  of interest from the regression model
-#' @param se_guess A scalar vector of dimension 2. A guess of the standard
+#' @param pval_peak A scalar vector of dimension 2. A guess of the standard
 #'  error that initiates the p-value inversion.
 #' @param clustid A vector with the clusters
 #' @param sign_level A numeric between 0 and 1. Sets to confidence level:
@@ -33,7 +33,7 @@ invert_p_val <- function(ABCD,
                          small_sample_correction,
                          boot_iter,
                          point_estimate,
-                         se_guess,
+                         pval_peak,
                          clustid,
                          sign_level,
                          vcov_sign,
@@ -42,7 +42,7 @@ invert_p_val <- function(ABCD,
                          tol,
                          maxiter) {
   check_arg(point_estimate, "numeric scalar")
-  check_arg(se_guess, "numeric scalar")
+  check_arg(pval_peak, "numeric scalar")
   check_arg(clustid, "data.frame")
   check_arg(sign_level, "numeric scalar")
   # check_arg(vcov_sign)
@@ -107,19 +107,20 @@ invert_p_val <- function(ABCD,
 
   # define functions to find boundaries separately
   get_start_vals <- function(point_estimate,
-                             se_guess,
+                             pval_peak,
                              sign_level,
                              upper) {
     #' @param point_estimate the point estimate of the model
-    #' @param se_guess A guess for the standard deviation
+    #' @param pval_peak A guess for the standard deviation
     #' @param sign_level the significance / 1-coverage level of the confidence
     #' interval
     #' @param upper logical. Should the upper or lower starting value be
     #' searched for?
     #' @noRd
 
+
     check <- FALSE
-    inflate_se <- c(2^(0:100 / 2))
+    inflate_se <- (1:100 / 10) ** 2
     len_inflate <- length(inflate_se)
     j <- 1
 
@@ -135,10 +136,10 @@ invert_p_val <- function(ABCD,
       # start guesses by taking confidence interval guess times inflation factor
       if (upper == TRUE) {
         starting_vals <-
-          as.numeric(point_estimate + inflate_se[j] * se_guess)
+          as.numeric(point_estimate + inflate_se[j] * pval_peak)
       } else if (upper == FALSE) {
         starting_vals <-
-          as.numeric(point_estimate - inflate_se[j] * se_guess)
+          as.numeric(point_estimate - inflate_se[j] * pval_peak)
       }
 
       # find starting value
@@ -166,7 +167,7 @@ invert_p_val <- function(ABCD,
   start_vals <- lapply(c(TRUE, FALSE), function(x) {
     get_start_vals(
       point_estimate = point_estimate,
-      se_guess = se_guess,
+      pval_peak = pval_peak,
       sign_level = sign_level,
       upper = x
     )

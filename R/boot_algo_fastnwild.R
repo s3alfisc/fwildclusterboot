@@ -13,9 +13,9 @@ boot_algo_fastnwild <-
            small_sample_correction,
            conf_int,
            maxiter,
-           tol, 
+           tol,
            sampling) {
-    
+
     #' Fast wild cluster bootstrap algorithm
     #'
     #' function that implements the fast bootstrap algorithm as described
@@ -99,13 +99,13 @@ boot_algo_fastnwild <-
     N_G_bootcluster <- length(unique(bootcluster[[1]]))
 
     v <- get_weights(
-      type = type, 
-      full_enumeration = full_enumeration, 
-      N_G_bootcluster = N_G_bootcluster, 
-      boot_iter = boot_iter, 
+      type = type,
+      full_enumeration = full_enumeration,
+      N_G_bootcluster = N_G_bootcluster,
+      boot_iter = boot_iter,
       sampling = sampling
     )
-    
+
     # prepare "key" for use with collapse::fsum()
     g <- collapse::GRP(bootcluster[[1]], call = FALSE)
 
@@ -143,17 +143,17 @@ boot_algo_fastnwild <-
     # dim = N_G x k
     Q1 <-
       collapse::fsum(WX * as.vector(Q), g)
-    
+
     P2_bootcluster <- vec2mat(
       x = as.vector(WXARP),
       group_id = g$group.id
     )
-        
+
     Q2_bootcluster <- vec2mat(
       x = as.vector(WXARQ),
       group_id = g$group.id
     )
-    
+
     # P2_bootcluster <- Matrix::t(Matrix.utils::aggregate.Matrix(
     #   # see notes; formerly diag_XinvXXRuS_a
     #   Matrix::Diagonal(
@@ -305,28 +305,46 @@ boot_algo_fastnwild <-
 
     if (is.null(conf_int) || conf_int == TRUE) {
       # guess for standard errors
-      if (impose_null == TRUE) {
-        # should always be positive, point_estimate and t_stat need to have same
-        # sign, abs for security
-        se_guess <- abs(point_estimate / t_stat)
-      } else if (impose_null == FALSE) {
-        se_guess <- abs((point_estimate - r) / t_stat)
-      }
+      
+        #browser()
+        conf_int <- tryCatch({
 
+          if (impose_null == TRUE) {
+            # should always be positive, point_estimate and t_stat need to have same
+            # sign, abs for security
+            pval_peak <- abs(point_estimate)
+          } else if (impose_null == FALSE) {
+            pval_peak <- abs((point_estimate - r))
+          }
 
-      conf_int <- invert_p_val(
-        ABCD = ABCD,
-        small_sample_correction = small_sample_correction,
-        boot_iter = boot_iter,
-        point_estimate = point_estimate,
-        se_guess = se_guess,
-        clustid = clustid,
-        sign_level = sign_level,
-        vcov_sign = vcov_sign,
-        impose_null = impose_null,
-        p_val_type = p_val_type,
-        maxiter = maxiter,
-        tol = tol
+          invert_p_val(
+            ABCD = ABCD,
+            small_sample_correction = small_sample_correction,
+            boot_iter = boot_iter,
+            point_estimate = point_estimate,
+            pval_peak = pval_peak,
+            clustid = clustid,
+            sign_level = sign_level,
+            vcov_sign = vcov_sign,
+            impose_null = impose_null,
+            p_val_type = p_val_type,
+            maxiter = maxiter,
+            tol = tol
+          )
+
+        },
+        error = function(e){
+          message("Unfortunately, confidence inversion failed due to poorly chosen starting values.",
+                  "Please let the maintainer know about this by opening an issue on GitHub.",
+                  "No confidence interval is computed.")
+          conf_int <- list(
+            conf_int = NA,
+            p_test_vals = NA,
+            test_vals = NA
+          )
+          conf_int
+          
+        }
       )
     } else {
       conf_int <- list(
@@ -336,6 +354,7 @@ boot_algo_fastnwild <-
       )
     }
 
+      
     res <- list(
       p_val = p_val,
       conf_int = conf_int$conf_int,
