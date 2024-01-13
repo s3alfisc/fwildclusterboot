@@ -11,8 +11,12 @@ test_that("seed works for OLS", {
   #' @srrstats {G5.0} *Where applicable or practicable, tests should use
   #' standard data sets with known properties (for example, the
   #' [NIST Standard Reference Datasets](https://www.itl.nist.gov/div898/strd/),
-  #'  or data sets provided by other widely-used R packages).* All tests are based
-  #'  on random data sets.
+  #'  or data sets provided by other widely-used R packages).* All tests are
+  #'  based on random data sets.
+  #'
+  #' @srrstats {G5.1} *Data sets created within, and used to test, a package
+  #' should be exported (or otherwise made generally available) so 
+  #' that users can confirm tests and run examples.*
 
   data1 <<-
     fwildclusterboot:::create_data(
