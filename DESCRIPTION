@@ -1,17 +1,17 @@
 Package: fwildclusterboot
 Title: Fast Wild Cluster Bootstrap Inference for Linear Models
-Version: 0.14.3
+Version: 0.15.0
 Authors@R: c(
     person("Alexander", "Fischer", , "alexander-fischer1801@t-online.de", role = c("aut", "cre")),
     person("David", "Roodman", role = "aut"),
-    person("Megha", "Joshi", 
-            role = "rev", 
-            comment = "Megha reviewed the package (v. 0.13) for ropensci 
+    person("Megha", "Joshi",
+            role = "rev",
+            comment = "Megha reviewed the package (v. 0.13) for ropensci
                       , see <https://github.com/ropensci/software-review/issues/546>"
           ),
     person("Eunseop", "Kim",
-            role = "rev", 
-            comment = "Eunseop reviewed the package (v. 0.13) for ropensci 
+            role = "rev",
+            comment = "Eunseop reviewed the package (v. 0.13) for ropensci
                       , see <https://github.com/ropensci/software-review/issues/546>"
           ),
     person("Achim", "Zeileis", role = "ctb",
@@ -73,7 +73,7 @@ Suggests:
     rmarkdown,
     sandwich,
     testthat (>= 3.0.0),
-    tibble, 
+    tibble,
     MASS
 LinkingTo:
     Rcpp,

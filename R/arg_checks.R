@@ -44,7 +44,6 @@ check_params_in_model <- function(object, param) {
 #' @param B the number of bootstrap iterations
 #' @param fe NULL or numeric scalar - the fixed effect to be projected
 #' out in the bootstrap
-#' @noRd
 #'
 check_boottest_args_plus <- function(
     object, R, param, sign_level, B, fe = NULL) {
@@ -58,7 +57,7 @@ check_boottest_args_plus <- function(
   if (inherits(object, "felm")) {
     if (!is.null(fe)) {
       if (fe %in% param) {
-        fe_int_test_error(fe)
+        fe_in_test_error(fe)
       }
       if (!(fe %in% names(object$fe))) {
         fixef_not_fixef_error(fe)      }
@@ -76,7 +75,7 @@ check_boottest_args_plus <- function(
     if (
       # '^' illegal in fixef argument, but legal in main formula -
       # e.g. fml = y ~ x1 + I(x2^2) shold be possible
-      #' @srrstats {G2.4c} *explicit conversion to character via 
+      #' @srrstats {G2.4c} *explicit conversion to character via
       #' `as.character()`
       #' (and not `paste` or `paste0`)* Done
 
@@ -94,7 +93,7 @@ check_boottest_args_plus <- function(
     if (
       # '^' illegal in fixef argument, but legal in main formula -
       # e.g. fml = y ~ x1 + I(x2^2) shold be possible
-      #' @srrstats {G2.4c} *explicit conversion to character via 
+      #' @srrstats {G2.4c} *explicit conversion to character via
       #' `as.character()`
       #' (and not `paste` or `paste0`)* Done
 
@@ -106,7 +105,7 @@ check_boottest_args_plus <- function(
       # note: whitespace ~ - for IV
       # grepl("~", deparse_fml, fixed = TRUE)
     ) {
-      varing_slopes_error()
+      varying_slopes_error()
     }
 
 
@@ -124,8 +123,8 @@ check_boottest_args_plus <- function(
     message(
       paste(
         "Note: The bootstrap usually performs best when the confidence",
-        "level (here,", 
-        1 - sign_level, 
+        "level (here,",
+        1 - sign_level,
         "%) times the number of replications",
         "plus 1 (", B, "+ 1 = ", B + 1, ") is an integer."
       )
@@ -243,7 +242,7 @@ check_boot_algo_fastnreliable <- function(
   if(R != 1L || r != 0){
 
     non_scalar_test_error()
-  
+
   }
 
   if(length(clustid) > 1){
@@ -279,7 +278,7 @@ check_boot_algo_fastnreliable <- function(
 }
 
 
-#' check if full enumeration should be employed, provide message when it is. 
+#' check if full enumeration should be employed, provide message when it is.
 #' in this case, overwrite the number of bootstrap iterations to the number of
 #' enumerations.
 #' @param heteroskedastic Logical. Is the heteroskedastic or a wild cluster
@@ -346,7 +345,7 @@ r_algo_checks <- function(R, p_val_type, conf_int, B) {
 
   if (conf_int == TRUE || is.null(conf_int)) {
     if (B < 100) {
-      B_too_small_error(B)
+      B_too_small_error()
     }
   }
 }
