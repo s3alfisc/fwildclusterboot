@@ -181,8 +181,13 @@
 #' @section Standard Errors:
 #' `boottest` does not calculate standard errors.
 #' @section Multiple Fixed Effects:
-#' If your feols() model contains fixed effects, boottest() will internally convert all fixed
-#' effects but the one specified via the `fe` argument to dummy variables.
+#' If your feols() model contains fixed effects, boottest() will internally
+#' convert all fixed effects but the one specified via the `fe` argument to
+#' dummy variables.
+#' @srrstats {RE2.0} *Regression Software should document any transformations
+#' applied to input data, for example conversion of label-values to `factor`,
+#' and should provide ways to explicitly avoid any default
+#' transformations (with error or warning conditions where appropriate).*
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the
 #' following software packages:
@@ -336,7 +341,8 @@
 #'
 #' @srrstats {RE1.0} *Regression Software should enable models to be specified
 #' via a formula interface, unless reasons for not doing so are explicitly
-#' documented.* The following function arguments can be formulas: param, clustid, fe.
+#' documented.* The following function arguments can be formulas: param,
+#' clustid, fe.
 
 
 

@@ -249,8 +249,9 @@ stops the procedure after 10 iterations.
 
 \section{Multiple Fixed Effects}{
 
-If your feols() model contains fixed effects, boottest() will internally convert all fixed
-effects but the one specified via the \code{fe} argument to dummy variables.
+If your feols() model contains fixed effects, boottest() will internally
+convert all fixed effects but the one specified via the \code{fe} argument to
+dummy variables.
 }
 
 \section{Stata, Julia and Python Implementations}{

@@ -441,7 +441,8 @@ find_proglang <- function(lang){
   #' can be found on the PATH.
   #'
   #' Based on Mauro Lepore's great suggestion
-  #' https://github.com/ropensci/software-review/issues/546#issuecomment-1416728843
+  #' https://github.com/ropensci/
+  #' software-review/issues/546#issuecomment-1416728843
   #'
   #' @param lang which language to check. Either 'julia' or 'python'
   #'

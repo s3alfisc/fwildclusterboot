@@ -280,24 +280,43 @@ Tests of such a form are implemented in the `car` package, via the `linearHypoth
 ```{r}
 p_val <- function(y, X, r){
   res <- lm(y ~ 1 + X)
-  p_val <- car::linearHypothesis(model = res, hypothesis.matrix = c(0,1), rhs = r)$`Pr(>F)`[2]
+  p_val <- car::linearHypothesis(
+    model = res, 
+    hypothesis.matrix = c(0,1),
+    rhs = r)$`Pr(>F)`[2]
   p_val
 }
 
 ```
 
-As can be seen in the plot below, for different values of $r$, `p_val()` returns a range of p-values: 
+As can be seen in the plot below, for different values of $r$, `p_val()` returns
+a range of p-values: 
 
 ```{r}
-p_val_r <- unlist(lapply(seq(-0.05, 0.05, 0.005), function(i) p_val(y = y, X = X, r = i)))
+p_val_r <- unlist(
+  lapply(
+    seq(-0.05, 0.05, 0.005), 
+    function(i) p_val(y = y, X = X, r = i)
+    )
+  )
 p_val_df <- data.frame(r = seq(-0.05, 0.05, 0.005), p_val_r = p_val_r)
-plot(x = p_val_df$r, y = p_val_df$p_val_r,type = "b", pch = 20, lty = 2, xlab = "r", ylab = "p-value")
+plot(
+  x = p_val_df$r, 
+  y = p_val_df$p_val_r,
+  type = "b",
+  pch = 20,
+  lty = 2, 
+  xlab = "r",
+  ylab = "p-value"
+)
 lines(p_val_df$r, p_val_df$p_val_r, type = "l", lty = 1)
 abline(h = 0.05, col = "red") 
 abline(v = confint(fit)["X", ][1], col = "blue")
-text(x = confint(fit)["X", ][1] - 0.01, y = 0.8, "lower", srt=0.2, col = "blue")
+text(
+  x = confint(fit)["X", ][1] - 0.01, y = 0.8, "lower", srt=0.2, col = "blue")
 abline(v = confint(fit)["X", ][2], col = "blue")
-text(x = confint(fit)["X", ][2] + 0.01, y = 0.8, "upper", srt=0.2, col = "blue")
+text(
+  x = confint(fit)["X", ][2] + 0.01, y = 0.8, "upper", srt=0.2, col = "blue")
 abline(v = confint(fit)["X", ][1] - 0.01, col = "green", lty = 2)
 abline(v = confint(fit)["X", ][1] + 0.01, col = "green", lty = 2)
 abline(v = confint(fit)["X", ][2] - 0.01, col = "green", lty = 2)
@@ -357,7 +376,13 @@ invert_p_val <- function(X, y, startset1, startset2, alpha){
 Now, which confidence interval do we get from the numerical p-value inversion?
 
 ```{r}
-invert_p_val(X = X, y = y, startset1 = startset1, startset2 = startset2, alpha = 0.05)
+invert_p_val(
+  X = X,
+  y = y,
+  startset1 = startset1,
+  startset2 = startset2,
+  alpha = 0.05
+)
 ```
 
 As it turns out, this confidence interval is practically identical with the confidence interval based on estimated standard errors: 

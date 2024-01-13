@@ -105,9 +105,10 @@ boottest_engine_error <- function(){
 
 boottest_nthreads_error <- function(){
   stop(
-      "The value of `getOption(\"boottest_nthreads\")` is currently not legal. ",
-      "Please use function `setBoottest_nthreads` to set it to an appropriate ", 
-      "value."
+      "The value of `getOption(\"boottest_nthreads\")` is currently",
+      "not legal. ",
+      "Please use function `setBoottest_nthreads` to set it to an",
+      "appropriate value."
   )
 }
 

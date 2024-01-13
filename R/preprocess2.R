@@ -8,9 +8,11 @@
 #' @importFrom Matrix Diagonal
 #' @return An object of class `preprocess2`.
 #' @srrstats {G2.8} *Software should provide appropriate conversion or dispatch
-#'  routines as part of initial pre-processing to ensure that all other
-#'  sub-functions of a package receive inputs of a single defined class or
-#'  type.* Similar preprocess method + run_bootstrap function.
+#' routines as part of initial pre-processing to ensure that all other
+#' sub-functions of a package receive inputs of a single defined class or
+#' type.* The preprocess2 methods ensure that all information of individually
+#' supported classes - fixest, lfe, ivreg, lm - are processed into the
+#' required format.
 preprocess2 <- function(object, ...) {
   UseMethod("preprocess2")
 }
@@ -56,7 +58,7 @@ preprocess2.fixest <-
     if (object$method != "feols") {
       only_ols_for_fixest_error()
     }
-    
+
     is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
     has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
     if (!is_iv) {
@@ -690,7 +692,7 @@ transform_fe <-
       }
       # project out fe
       if (engine == "R") {
-        
+
         if(bootstrap_type != "fnw11"){
           if(clustid_char != fe){
             no_fixef_for_fast_reliable_error()
@@ -707,25 +709,41 @@ transform_fe <-
         W <- prep_fe$W
         n_fe <- prep_fe$n_fe
       }
-      
+
     } else {
       add_fe <- all_fe
       add_fe_names <- names(add_fe)
       fml_fe <- reformulate(add_fe_names, response = NULL)
       if(engine == "R" && bootstrap_type %in% c("11", "31", "13","33")){
         add_fe_dummies <-
-          Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
-        
+          Matrix::sparse.model.matrix(
+            fml_fe, 
+            model.frame(
+              fml_fe, 
+              data = as.data.frame(
+                add_fe
+                )
+              )
+            )
+
       } else {
-        
+
         add_fe_dummies <-
-          model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+          model.matrix(
+            fml_fe, 
+            model.frame(
+              fml_fe, 
+              data = as.data.frame(
+                add_fe
+                )
+              )
+            )
       }
-      
+
       X <- cbind(X, add_fe_dummies)
-      
+
     }
-    
+
     res <- list(
       X = X,
       Y = Y,
@@ -755,9 +773,8 @@ get_cluster <-
     #' @noRd
     #'
     #' @return a list, containing, among other things, a data.frame of the
-    #'  cluster variables,
-    #'         a data.frame of the bootcluster variable(s), and a helper
-    #'         matrix, all_c, used in `engine_julia()`
+    #'  cluster variables, a data.frame of the bootcluster variable(s), 
+    #'  and a helper matrix, all_c, used in `engine_julia()`
     #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between
     #' different data types, potentially including:* All cluster variables
     #' are set to factor internally.
@@ -770,9 +787,10 @@ get_cluster <-
     #' In this case, `boottest()` throws an error.*
     #' @srrstats {G2.15} *Functions should never assume non-missingness,
     #' and should never pass data with potential missing values to any base
-    #'  routines with default `na.rm = FALSE`-type parameters*. NAs are dropped via
-    #' the modeling functions (lm, felm, feols, ivreg). NAs in the cluster variables
-    #' are either dropped here (if dropped in the original model) or throw an error.
+    #'  routines with default `na.rm = FALSE`-type parameters*. NAs are dropped
+    #' via the modeling functions (lm, felm, feols, ivreg). NAs in the cluster
+    #' variables are either dropped here (if dropped in the original model) 
+    #' or throw an error.
     #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between
     #' different
     #' data types, potentially including:* All cluster variables are set to
@@ -788,11 +806,11 @@ get_cluster <-
     # no essential changes, but slight reorganization of pieces of code
     dreamerr::check_arg(clustid_char, "character scalar|charakter vector")
     dreamerr::check_arg(bootcluster, "character scalar | character vector")
-    
+
     clustid_fml <- reformulate(clustid_char)
     # Step 1: create cluster df
-    
-    
+
+
     manipulate_object <- function(object){
       if(inherits(object, "fixest")){
         if(!is.null(object$fixef_vars)){
@@ -804,7 +822,7 @@ get_cluster <-
         object
       }
     }
-    
+
     cluster_tmp <-
       if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
@@ -826,7 +844,7 @@ get_cluster <-
           envir = call_env
         )
       }
-    
+
     cluster_df <-
       model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
     # without cluster intersection
@@ -849,7 +867,7 @@ get_cluster <-
     } else {
       bootcluster_char <- bootcluster
     }
-    
+
     # add bootcluster variable to formula of clusters
     cluster_bootcluster_fml <-
       update(
@@ -860,8 +878,8 @@ get_cluster <-
           )
         )
       )
-    
-    
+
+
     cluster_bootcluster_tmp <-
       if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
@@ -883,19 +901,19 @@ get_cluster <-
           envir = call_env
         )
       }
-    
+
     # data.frame as needed for WildBootTests.jl
     cluster_bootcluster_df <- model.frame(
       cluster_bootcluster_fml,
       cluster_bootcluster_tmp,
       na.action = na.pass
     )
-    
+
     # data.frames with clusters, bootcluster
     cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
     bootcluster <-
       cluster_bootcluster_df[, bootcluster_char, drop = FALSE]
-    
+
     if (!any(bootcluster_char %in% clustid_char)) {
       is_subcluster <- TRUE
       if (!(any(names(bootcluster) %in% c(clustid_char, names(coef(
@@ -963,7 +981,9 @@ get_cluster <-
     #' @srrstats {G5.8c} *Data with all-`NA` fields or columns or all identical
     #' fields or columns* If all cluster vars are NA, this leads to an error.
     if(any(N_G == 1)){
-      stop("A clustering variable contains only one group. This is not allowed.")
+      stop(
+        "A clustering variable contains only one group. This is not allowed."
+        )
     }
     # now do all the other bootcluster things
     c1 <-

@@ -1,6 +1,6 @@
 ---
 output: github_document
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -15,14 +15,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-# fwildclusterboot 
+# fwildclusterboot
 
 <img src="man/figures/logo.png" width="200px" align="right" />
 
 <!-- badges: start -->
 <!-- [![packageversion](https://img.shields.io/badge/Package%20version-`r version`-orange.svg?style=flat-square)](commits/master) -->
 [![Status at rOpenSci Software Peer Review](https://badges.ropensci.org/546_status.svg)](https://github.com/ropensci/software-review/issues/546)
-[![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![CRAN status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-project.org/package=fwildclusterboot)
 ![runiverse-package](https://s3alfisc.r-universe.dev/badges/fwildclusterboot)
 [![R-CMD-check](https://github.com/s3alfisc/fwildclusterboot/workflows/R-CMD-check/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions)
@@ -48,14 +48,14 @@ df$`boot algo` <- df$type
 ```
 
 ```{r, fig.width=10, fig.height=3, echo = FALSE, warning = FALSE, message = FALSE}
-ggplot(data = df, aes(x = B, y = time, color = `boot algo`)) + 
-  facet_wrap(~N_G, nrow = 1) + 
-  geom_point() + 
-scale_y_continuous(trans='log10') + 
+ggplot(data = df, aes(x = B, y = time, color = `boot algo`)) +
+  facet_wrap(~N_G, nrow = 1) +
+  geom_point() +
+scale_y_continuous(trans='log10') +
   labs(title = "Benchmarks", caption = "N = 10_000, k = 20 covariates and one cluster of dimension N_G (3 iterations each, median runtime is plotted).")+
-  #theme_bw() + 
-  xlab("Bootstrap iterations") + 
-  ylab("time in seconds, log scale") + 
+  #theme_bw() +
+  xlab("Bootstrap iterations") +
+  ylab("time in seconds, log scale") +
   theme_bw()
 ```
 
@@ -76,17 +76,17 @@ Additional features are provided through `WildBootTests.jl`:
 + A highly optimized version of the Wild Restricted Efficient bootstrap (WRE) for IV/2SLS/LIML [(Davidson & MacKinnon, 2010)](https://www.tandfonline.com/doi/abs/10.1198/jbes.2009.07221).
 + Arbitrary and multiple linear hypotheses in the parameters.
 
-`{fwildclusterboot}` supports the following models: 
+`{fwildclusterboot}` supports the following models:
 
 + OLS: `lm` (from stats), `fixest` (from fixest), `felm` from (lfe)
-+ IV: `ivreg` (from ivreg). 
++ IV: `ivreg` (from ivreg).
 
 ### Installation
 
 You can install compiled versions of`{fwildclusterboot}` from CRAN (compiled), R-universe (compiled) or github by following one of the steps below:
 
 ```{r, eval = FALSE}
-# from CRAN 
+# from CRAN
 install.packages("fwildclusterboot")
 
 # from r-universe (windows & mac, compiled R > 4.0 required)
@@ -106,7 +106,7 @@ library(fwildclusterboot)
 
 # set seed via dqset.seed for engine = "R" & Rademacher, Webb & Normal weights
 dqrng::dqset.seed(2352342)
-# set 'familiar' seed for all other algorithms and weight types 
+# set 'familiar' seed for all other algorithms and weight types
 set.seed(23325)
 
 data(voters)
@@ -118,7 +118,7 @@ lm_boot <- boottest(lm_fit, clustid = c("group_id1"), B = 9999, param = "treatme
 summary(lm_boot)
 ```
 
-## Citation 
+## Citation
 
 If you are in `R`, you can simply run the following command to get the BibTeX citation for `{fwildclusterboot}`:
 
@@ -126,4 +126,4 @@ If you are in `R`, you can simply run the following command to get the BibTeX ci
 citation("fwildclusterboot")
 ```
 
-Alternatively, if you prefer to cite the "Fast & Wild" paper by Roodman et al, it would be great if you mentioned `{fwildclusterboot}` in a footnote =) ! 
+Alternatively, if you prefer to cite the "Fast & Wild" paper by Roodman et al, it would be great if you mentioned `{fwildclusterboot}` in a footnote =) !

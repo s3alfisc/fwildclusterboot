@@ -107,8 +107,9 @@
 #' To guarantee reproducibility, you need to
 #' set a global random seed via`set.seed()`
 #' @section Multiple Fixed Effects:
-#' If your feols() model contains fixed effects, boottest() will internally convert all fixed
-#' effects but the one specified via the `fe` argument to dummy variables.
+#' If your feols() model contains fixed effects, boottest() will internally 
+#' convert all fixed effects but the one specified via the `fe` argument to
+#' dummy variables.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
 #' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)

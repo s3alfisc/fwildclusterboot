@@ -25,7 +25,7 @@ function(libname, pkgname) {
   packageStartupMessage(
     "Too guarantee reproducibility, please don't forget to set a ", 
     "global random seed **both** via `set.seed()` and `dqrng::dqset.seed()`. ", 
-    "This is required as `boottest()` uses different random number generators ", 
+    "This is required as `boottest()` uses different random number generators", 
     "for different algorithms."
   )
 }

@@ -198,8 +198,9 @@
 #' @section Standard Errors:
 #' `boottest` does not calculate standard errors.
 #' @section Multiple Fixed Effects:
-#' If your felm() model contains fixed effects, boottest() will internally convert all fixed
-#' effects but the one specified via the `fe` argument to dummy variables.
+#' If your felm() model contains fixed effects, boottest() will internally
+#' convert all fixed effects but the one specified via the `fe`
+#'argument to dummy variables.
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the
 #' following software packages:

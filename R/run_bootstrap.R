@@ -55,8 +55,8 @@ run_bootstrap <- function(
   #'  algorithm globally by using the
   #'  `setBoottest_engine()` function.
   #' @param preprocess A list: output of the preprocess2 function.
-  #' @param bootstrap_type Determines which wild cluster bootstrap type should be 
-  #' run. Options are "fnw11","11", "13", "31" and "33" for the wild cluster 
+  #' @param bootstrap_type Determines which wild cluster bootstrap type should
+  #' be run. Options are "fnw11","11", "13", "31" and "33" for the wild cluster 
   #' bootstrap and "11" and "31" for the heteroskedastic bootstrap.
   #' For more information, see the details section. "fnw11" is the default for 
   #' the cluster bootstrap, which runs a "11" type 
@@ -64,7 +64,8 @@ run_bootstrap <- function(
   #' (Roodman et al (2019)). "11" is the default for the heteroskedastic 
   #' bootstrap.
   #' @param B number of bootstrap iterations
-  #' @param point_estimate The constraints vector R times the estimated coefficients, R x beta
+  #' @param point_estimate The constraints vector R times the 
+  #' estimated coefficients, R x beta
   #' @param impose_null logical scalar. Should the null be imposed on the
   #' bootstrap dgp or not?
   #' @param r Shifts the null hypothesis.
@@ -99,8 +100,8 @@ run_bootstrap <- function(
   #' @param clustid The name of the cluster variables, as a character vector
   #' @param fe The name of the fixed effect, as a character scalar
   #' @param R_long The (internally) transformed constraints vector
-  #' @param heteroskedastic If TRUE, runs the heteroskedastic wild bootstrap. FALSE for 
-  #' all wild cluster bootstrap variants
+  #' @param heteroskedastic If TRUE, runs the heteroskedastic wild bootstrap.
+  #' FALSE for all wild cluster bootstrap variants
   #' @param ssc An object of class `boot_ssc.type` obtained with the function
   #'  [fwildclusterboot::boot_ssc()]. Represents how the small sample
   #'   adjustments are computed. The defaults are `adj = TRUE, fixef.K = "none",
@@ -121,8 +122,8 @@ run_bootstrap <- function(
   #' @param sampling 'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
   #' used for random number generation (when available). If 'standard', 
   #' functions from the 'stats' package are used when available. 
-  #' This argument is mostly a convenience to control random number generation in 
-  #' a wrapper package around `fwildclusterboot`, `wildrwolf`. 
+  #' This argument is mostly a convenience to control random number generation 
+  #' in a wrapper package around `fwildclusterboot`, `wildrwolf`. 
   #' I recommend to use the fast' option. 
   #' @param bootcluster A character vector or rhs formula of length 1. Specifies
   #' the bootstrap clustering variable or variables. If more
@@ -148,14 +149,15 @@ run_bootstrap <- function(
   #' 
   #' @section Different Bootstrap Implementations / Algorithms:
   #' \itemize{
-  #' \item `boot_algo_textbook_cpp.R`: Implements the heteroskedastic wild bootstrap
+  #' \item `boot_algo_textbook_cpp.R`: Implements the heteroskedastic wild
+  #'  bootstrap
   #' (`WildboottestHC`) as well as the textbook wild cluster bootstrap 
   #' (`WildboottestHC`) in (R)cpp. 
-  #' \item `boot_algo_fastnwild.R`: Implements the 'classical' wild cluster bootstrap 
-  #' via the "Fast and Wild" algorithm (Roodman et al, 2019).
-  #' \item `boot_algo_fastnreliable.R`: Implements the ('classical') as well as 'S', 'C' and 
-  #' 'V' wild cluster bootstrap types following algorithms in 
-  #' "Fast and Reliable" (MacKinnon et al, 2023).
+  #' \item `boot_algo_fastnwild.R`: Implements the 'classical' wild cluster
+  #' bootstrap via the "Fast and Wild" algorithm (Roodman et al, 2019).
+  #' \item `boot_algo_fastnreliable.R`: Implements the ('classical') as 
+  #' well as 'S', 'C' and V' wild cluster bootstrap types following algorithms 
+  #' in "Fast and Reliable" (MacKinnon et al, 2023).
   #' \item `boot_algo_julia.R`: Wrapper around 'WildBootTests.jl".
   #' }
   #' 
