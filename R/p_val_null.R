@@ -43,7 +43,7 @@ p_val_null2 <-
 
     numer <- A + B * r
     names_clustid <- names(clustid)
-    
+
     JJ <- list()
     for (x in seq_along(names_clustid)) {
       JJ[[x]] <-

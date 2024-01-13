@@ -37,7 +37,7 @@ To start, we create a random data set with two cluster variables (group_id1 \& g
 ```{r, error = FALSE, warning = FALSE, message = FALSE}
 # set seed via dqset.seed for engine = "R" & Rademacher, Webb & Normal weights
 dqrng::dqset.seed(2352342)
-# set 'familiar' seed for all other algorithms and weight types 
+# set 'familiar' seed for all other algorithms and weight types
 set.seed(23325)
 
 # load data set voters included in fwildclusterboot
@@ -45,16 +45,15 @@ data(voters)
 
 # estimate the regression model via lm
 lm_fit <- lm(
-  proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration , 
+  proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
   data = voters
 )
 
 # model with interaction
 lm_fit_interact <- lm(
-  proposition_vote ~ treatment + ideology1 + log_income:Q1_immigration , 
+  proposition_vote ~ treatment + ideology1 + log_income:Q1_immigration,
   data = voters
 )
-
 ```
 
 The `boottest()` function has 4 required and several optional arguments. The required objects are
@@ -67,7 +66,7 @@ The `boottest()` function has 4 required and several optional arguments. The req
 ```{r, warning = FALSE, message = FALSE}
 # boottest on an object of type lm
 boot_lm <- boottest(
-  lm_fit, 
+  lm_fit,
   clustid = "group_id1",
   param = "treatment",
   B = 9999
@@ -77,7 +76,7 @@ boot_lm <- boottest(
 To tests for an interaction, it is important to use the coefficient names that are internally created by the modeling function.
 
 ```{r}
-#names(coef(lm_fit_interact))
+# names(coef(lm_fit_interact))
 boot_lm_interact <- boottest(
   lm_fit_interact,
   clustid = "group_id1",
@@ -91,11 +90,11 @@ testing the null hypothesis $0.6*treatment + 0.2*ideology1 = 0.02$. To test such
 
 ```{r}
 boot_multi <- boottest(
-  lm_fit, 
+  lm_fit,
   clustid = "group_id1",
   param = c("treatment", "ideology1"),
-  R = c(0.6, 0.2), 
-  r = 0.02, 
+  R = c(0.6, 0.2),
+  r = 0.02,
   B = 9999
 )
 ```
@@ -108,15 +107,14 @@ To access the estimation results, `boottest()` comes with `summary()`, `tidy()` 
 summary(boot_lm)
 summary(boot_multi)
 
-if(requireNamespace("modelsummary")){
+if (requireNamespace("modelsummary")) {
   # summary via the modelsummary package
   library(modelsummary)
-  msummary(list(boot_lm, boot_lm_interact), 
-            estimate = "{estimate} ({p.value})", 
-           statistic = "[{conf.low}, {conf.high}]")  
+  msummary(list(boot_lm, boot_lm_interact),
+    estimate = "{estimate} ({p.value})",
+    statistic = "[{conf.low}, {conf.high}]"
+  )
 }
-
-
 ```
 
 A `plot()` visualizes bootstrapped p-values as a function of the hypothesized effect size $r$.
@@ -134,7 +132,7 @@ The `boottest()` function supports clustering of any dimension. E.g. for two-way
 ```{r}
 boot_lm <- boottest(
   lm_fit,
-  clustid = c("group_id1", "group_id2"), 
+  clustid = c("group_id1", "group_id2"),
   param = "treatment",
   B = 9999
 )
@@ -163,24 +161,26 @@ Furthermore, you can choose among four different weighting distribution via the 
 
 ```{r}
 boot_lm_rade <- boottest(
-  lm_fit, 
-  clustid = c("group_id1", "group_id2"), 
-  param = "treatment", 
+  lm_fit,
+  clustid = c("group_id1", "group_id2"),
+  param = "treatment",
   B = 999,
-  type = "rademacher")
+  type = "rademacher"
+)
 boot_lm_webb <- boottest(
-  lm_fit, 
-  clustid = c("group_id1", "group_id2"), 
-  param = "treatment", 
+  lm_fit,
+  clustid = c("group_id1", "group_id2"),
+  param = "treatment",
   B = 999,
   type = "webb"
 )
 
-if(requireNamespace("modelsummary")){
+if (requireNamespace("modelsummary")) {
   library(modelsummary)
-  msummary(list(boot_lm_rade, boot_lm_webb), 
-          estimate = "{estimate} ({p.value})", 
-         statistic = "[{conf.low}, {conf.high}]")
+  msummary(list(boot_lm_rade, boot_lm_webb),
+    estimate = "{estimate} ({p.value})",
+    statistic = "[{conf.low}, {conf.high}]"
+  )
 }
 ```
 
@@ -190,23 +190,24 @@ Via the function argument `sign_level`, you can control the significance level o
 
 ```{r}
 boot_lm_5 <- boottest(
-  lm_fit, 
+  lm_fit,
   clustid = c("group_id1"),
-  param = "treatment", B = 9999, 
+  param = "treatment", B = 9999,
   sign_level = 0.05
 )
 boot_lm_10 <- boottest(
-  lm_fit, 
+  lm_fit,
   clustid = c("group_id1"),
-  param = "treatment", B = 9999, 
+  param = "treatment", B = 9999,
   sign_level = 0.10
 )
 
-if(requireNamespace("modelsummary")){
+if (requireNamespace("modelsummary")) {
   library(modelsummary)
-  msummary(list(boot_lm_5, boot_lm_10), 
-          estimate = "{estimate} ({p.value})", 
-         statistic = "[{conf.low}, {conf.high}]")
+  msummary(list(boot_lm_5, boot_lm_10),
+    estimate = "{estimate} ({p.value})",
+    statistic = "[{conf.low}, {conf.high}]"
+  )
 }
 ```
 
@@ -214,26 +215,27 @@ In the case of multiway clustering, one might want to specify the bootstrap clus
 
 ```{r}
 boot_lm1 <- boottest(
-  lm_fit, 
-  clustid = c("group_id1", "group_id2"), 
+  lm_fit,
+  clustid = c("group_id1", "group_id2"),
   param = "treatment",
-  B = 9999, 
+  B = 9999,
   bootcluster = "min"
 )
 
 boot_lm2 <- boottest(
-  lm_fit, 
-  clustid = c("group_id1", "group_id2"), 
+  lm_fit,
+  clustid = c("group_id1", "group_id2"),
   param = "treatment",
-  B = 9999, 
+  B = 9999,
   bootcluster = "group_id1"
 )
 
-if(requireNamespace("modelsummary")){
+if (requireNamespace("modelsummary")) {
   library(modelsummary)
-  msummary(list(boot_lm1, boot_lm2), 
-          estimate = "{estimate} ({p.value})", 
-         statistic = "[{conf.low}, {conf.high}]")
+  msummary(list(boot_lm1, boot_lm2),
+    estimate = "{estimate} ({p.value})",
+    statistic = "[{conf.low}, {conf.high}]"
+  )
 }
 ```
 
@@ -246,23 +248,22 @@ syntax for fixed effects, as e.g. varying slopes.
 
 ```{r}
 
-if(requireNamespace("fixest")){
+if (requireNamespace("fixest")) {
   # estimate the regression model via feols
   library(fixest)
   feols_fit <- feols(
-    proposition_vote ~ treatment + ideology1 + log_income | 
-      Q1_immigration , 
+    proposition_vote ~ treatment + ideology1 + log_income |
+      Q1_immigration,
     data = voters
   )
   boot_feols <- boottest(
-    feols_fit, 
-    clustid = "group_id1", 
-    param = "treatment", 
-    B = 9999, 
+    feols_fit,
+    clustid = "group_id1",
+    param = "treatment",
+    B = 9999,
     fe = "Q1_immigration"
   )
 }
-
 ```
 
 
@@ -273,34 +274,34 @@ In the case of few treated clusters, [MacKinnon and Webb (2018)](https://academi
 ```{r}
 boot_min <- boottest(
   lm_fit,
-  clustid = c("group_id1", "group_id2"), 
-  param = "treatment", 
-  B = 9999, 
+  clustid = c("group_id1", "group_id2"),
+  param = "treatment",
+  B = 9999,
   bootcluster = "min"
 )
 boot_var <- boottest(
   lm_fit,
-  clustid = c("group_id1", "group_id2"), 
-  param = "treatment", 
-  B = 9999, 
+  clustid = c("group_id1", "group_id2"),
+  param = "treatment",
+  B = 9999,
   bootcluster = "group_id1"
 )
 boot_2var <- boottest(
   lm_fit,
-  clustid = c("group_id1", "group_id2"), 
-  param = "treatment", 
-  B = 9999, 
+  clustid = c("group_id1", "group_id2"),
+  param = "treatment",
+  B = 9999,
   bootcluster = c("group_id1", "Q1_immigration")
 )
 
-if(requireNamespace("modelsummary")){
+if (requireNamespace("modelsummary")) {
   library(modelsummary)
-  msummary(model = list(boot_min, boot_2var), 
-         estimate = "{estimate} ({p.value})", 
-         statistic = "[{conf.low}, {conf.high}]")
+  msummary(
+    model = list(boot_min, boot_2var),
+    estimate = "{estimate} ({p.value})",
+    statistic = "[{conf.low}, {conf.high}]"
+  )
 }
-
-
 ```
 
 
@@ -317,12 +318,11 @@ lm_w_fit <- lm(
 )
 
 boot_w_lm <- boottest(
-  lm_w_fit, 
-  clustid = "group_id1", 
-  param = "treatment", 
+  lm_w_fit,
+  clustid = "group_id1",
+  param = "treatment",
   B = 9999
 )
-
 ```
 
 ## Parallel Execution 
@@ -333,10 +333,10 @@ The number of threads can be specified via the `nthreads` argument of `boottest(
 
 ```{r, eval = FALSE}
 boot_lm <- boottest(
-  lm_fit, 
-  clustid = "group_id1", 
-  param = "treatment", 
-  B = 9999, 
+  lm_fit,
+  clustid = "group_id1",
+  param = "treatment",
+  B = 9999,
   nthreads = 2
 )
 ```
@@ -351,15 +351,15 @@ You can tell `boottest()` to run `WildBootTests.jl` by using the `engine` functi
 
 ```{r, eval = FALSE, message = FALSE, warning = FALSE}
 boot_lm <- boottest(
-  lm_fit, 
-  clustid = "group_id1", 
-  param = "treatment", 
-  B = 9999, 
+  lm_fit,
+  clustid = "group_id1",
+  param = "treatment",
+  B = 9999,
   engine = "WildBootTests.jl"
 )
 tidy(boot_lm)
 #             term   estimate statistic    p.value   conf.low conf.high
-#1 1*treatment = 0 0.07290769  3.709435 0.00060006 0.03326969 0.1134117
+# 1 1*treatment = 0 0.07290769  3.709435 0.00060006 0.03326969 0.1134117
 ```
 The seed used within Julia is linked to R's global seed, which you can set through the familiar `set.seed()` function.
 
@@ -379,15 +379,16 @@ Through `WildBootTests.jl`, `fwildclusterboot` supports the WRE bootstrap by [Da
 library(ivreg)
 
 data("SchoolingReturns", package = "ivreg")
-      
+
 # drop all NA values from SchoolingReturns
 SchoolingReturns <- na.omit(SchoolingReturns)
 ivreg_fit <- ivreg(
   log(wage) ~ education + age + ethnicity + smsa + south + parents14 |
-              nearcollege + age  + ethnicity + smsa + south + parents14, 
-  data = SchoolingReturns)
+    nearcollege + age + ethnicity + smsa + south + parents14,
+  data = SchoolingReturns
+)
 
-      
+
 boot_ivreg <- boottest(
   object = ivreg_fit,
   B = 999,
@@ -411,13 +412,13 @@ To jointly test the null hypothesis $H_0: treatment = 0 \text{ and } ideology1 =
 ```{r, eval = FALSE, message = FALSE, warning = FALSE}
 library(clubSandwich)
 R <- clubSandwich::constrain_zero(2:3, coef(lm_fit))
-wboottest <- 
-mboottest(
-  object = lm_fit, 
-  clustid = "group_id1", 
-  B = 999, 
-  R = R
-)
+wboottest <-
+  mboottest(
+    object = lm_fit,
+    clustid = "group_id1",
+    B = 999,
+    R = R
+  )
 tidy(wboottest)
 #   teststat p_val
 # 1 8.469086     0
@@ -555,50 +556,53 @@ tidy(wboottest)
 A sanity check to see if `fwildclusterboot::boottest()` works as intended is to look at its `t_stat` return value. For both the WCR and WCU bootstrap, `boottest()` re-calculates the "original" - hence non-bootstrapped - t-statistic from its input regression model. The t-stat computed in `boottest()` and the t-stats reported by either `lm()`, `feols()` and `lfe()` under the same error clustering structure and small-sample adjustments should be *identical*. If you find that they differ, please report a bug [on github](https://github.com/s3alfisc/fwildclusterboot/issues). Note that `fwildclusterboot` explicitly tests for t-stat equality against `fixest::feols()` [here](https://github.com/s3alfisc/fwildclusterboot/blob/master/tests/testthat/test-tstat_equivalence.R).
 
 ```{r}
-data <- 
-fwildclusterboot:::create_data(
-  N = 1000, 
-  N_G1 = 20, 
-  icc1 = 0.81,
-  N_G2 = 10,
-  icc2 = 0.01, 
-  numb_fe1 = 10,
-  numb_fe2 = 10, 
-  seed = 8769
-)
+data <-
+  fwildclusterboot:::create_data(
+    N = 1000,
+    N_G1 = 20,
+    icc1 = 0.81,
+    N_G2 = 10,
+    icc2 = 0.01,
+    numb_fe1 = 10,
+    numb_fe2 = 10,
+    seed = 8769
+  )
 
-# oneway clustering 
+# oneway clustering
 feols_fit <- fixest::feols(
   proposition_vote ~ treatment + ideology1 + log_income,
-  data = data, 
-  cluster = ~group_id1, 
-  ssc = fixest::ssc(adj = TRUE, 
-                    cluster.adj = TRUE, 
-                    cluster.df = 'conventional')
+  data = data,
+  cluster = ~group_id1,
+  ssc = fixest::ssc(
+    adj = TRUE,
+    cluster.adj = TRUE,
+    cluster.df = "conventional"
   )
-        
+)
+
 feols_tstats <- fixest::coeftable(
   feols_fit
-  )[c("treatment", "log_income", "ideology1"), 3]
+)[c("treatment", "log_income", "ideology1"), 3]
 
-boot_tstats <- 
-lapply(c("treatment", "log_income", "ideology1"), function(x){
-  boot1 <- fwildclusterboot::boottest(
-    feols_fit, 
-    clustid = c("group_id1"),
-    B = 999, 
-    param = x, 
-    ssc = fwildclusterboot::boot_ssc(
-      adj = TRUE, 
-      cluster.adj = TRUE, 
-      cluster.df = 'conventional'),  
-      impose_null = TRUE)$t_stat
-})        
+boot_tstats <-
+  lapply(c("treatment", "log_income", "ideology1"), function(x) {
+    boot1 <- fwildclusterboot::boottest(
+      feols_fit,
+      clustid = c("group_id1"),
+      B = 999,
+      param = x,
+      ssc = fwildclusterboot::boot_ssc(
+        adj = TRUE,
+        cluster.adj = TRUE,
+        cluster.df = "conventional"
+      ),
+      impose_null = TRUE
+    )$t_stat
+  })
 
 df <- cbind(feols_tstats, unlist(boot_tstats))
 colnames(df) <- c("feols tstat", "boottest tstat")
 df
-
 ```
 
 
@@ -614,47 +618,49 @@ Because the R-implementation of the fast algorithm is memory-intensive, `fwildcl
 library(bench)
 
 dt <- fwildclusterboot:::create_data(
-  N = 10000, 
-  N_G1 = 250, 
-  icc1 = 0.01, 
-  N_G2 = 10, 
-  icc2 = 0.01, 
-  numb_fe1 = 10, 
-  numb_fe2 = 10, 
+  N = 10000,
+  N_G1 = 250,
+  icc1 = 0.01,
+  N_G2 = 10,
+  icc2 = 0.01,
+  numb_fe1 = 10,
+  numb_fe2 = 10,
   seed = 7645
 )
 
 lm_fit <- lm(
-  proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,
+  proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
   data = dt
 )
 
-res <- 
-bench::mark(
-  "R" = boottest(lm_fit, 
-           clustid = "group_id1", 
-           param = "treatment", 
-           B = 9999, 
-           engine = "R", 
-           nthreads = 4), 
-  "R-lean" = boottest(lm_fit, 
-           clustid = "group_id1", 
-           param = "treatment", 
-           B = 9999, 
-           engine = "R-lean", 
-           nthreads = 4),
-  "WildBootTests.jl" = 
-    boottest(lm_fit, 
-           clustid = "group_id1", 
-           param = "treatment", 
-           B = 9999, 
-           engine = "WildBootTests.jl"), 
-  iterations = 1, 
-  check = FALSE
-)
+res <-
+  bench::mark(
+    "R" = boottest(lm_fit,
+      clustid = "group_id1",
+      param = "treatment",
+      B = 9999,
+      engine = "R",
+      nthreads = 4
+    ),
+    "R-lean" = boottest(lm_fit,
+      clustid = "group_id1",
+      param = "treatment",
+      B = 9999,
+      engine = "R-lean",
+      nthreads = 4
+    ),
+    "WildBootTests.jl" =
+      boottest(lm_fit,
+        clustid = "group_id1",
+        param = "treatment",
+        B = 9999,
+        engine = "WildBootTests.jl"
+      ),
+    iterations = 1,
+    check = FALSE
+  )
 
 res
-
 ```
 
 ## Seeds

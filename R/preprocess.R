@@ -1,3 +1,12 @@
+#' @srrstats {RE1.3} *Regression Software which passes or otherwise
+#' transforms aspects of input data onto output structures should ensure
+#' that those output structures retain all relevant aspects of input data,
+#' notably including row and column names, and potentially information from
+#' other `attributes()`.*
+#' The `preprocess_` set of functions ensures that all relevant information
+#' from the supported model classes is retained and appropriately transformed.
+
+
 preprocess_fixest <-
   function(object,
            clustid,
@@ -25,7 +34,7 @@ preprocess_fixest <-
     #' by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
-    
+
     call <- object$call
     call_env <- object$call_env
     fml <- formula(object)
@@ -39,34 +48,34 @@ preprocess_fixest <-
     if (object$method != "feols") {
       only_ols_for_fixest_error()
     }
-    
+
     is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
     has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
     if (!is_iv) {
       X <-
         model.matrix(object,
-                     type = "rhs",
-                     na.rm = TRUE,
-                     collin.rm = TRUE
+          type = "rhs",
+          na.rm = TRUE,
+          collin.rm = TRUE
         )
     } else {
       X_endog <-
         model.matrix(object,
-                     type = "iv.endo",
-                     na.rm = TRUE,
-                     collin.rm = TRUE
+          type = "iv.endo",
+          na.rm = TRUE,
+          collin.rm = TRUE
         )
       X_exog <-
         model.matrix(object,
-                     type = "iv.exo",
-                     na.rm = TRUE,
-                     collin.rm = TRUE
+          type = "iv.exo",
+          na.rm = TRUE,
+          collin.rm = TRUE
         )
       instruments <-
         model.matrix(object,
-                     type = "iv.inst",
-                     na.rm = TRUE,
-                     collin.rm = TRUE
+          type = "iv.inst",
+          na.rm = TRUE,
+          collin.rm = TRUE
         )
     }
     Y <- model.matrix(object, type = "lhs")
@@ -207,7 +216,7 @@ preprocess_felm <-
     #' see the paper by MacKinnon, Nielsen & Webb (2022)
     #'
     #' @noRd
-    
+
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
@@ -367,7 +376,7 @@ preprocess_lm <-
     #' @importFrom Matrix sparse.model.matrix
     #'
     #' @noRd
-    
+
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
@@ -469,7 +478,7 @@ preprocess_ivreg <-
     #' the bootcluster variables. Alternatively, "min" or "max"
     #'
     #' @noRd
-    
+
     call <- object$call
     call_env <- environment(formula(object))
     fml <- formula(object)
@@ -670,9 +679,8 @@ transform_fe <-
       }
       # project out fe
       if (engine == "R") {
-        
-        if(bootstrap_type != "fnw11"){
-          if(clustid_char != fe){
+        if (bootstrap_type != "fnw11") {
+          if (clustid_char != fe) {
             no_fixef_for_fast_reliable_error()
           }
         }
@@ -680,32 +688,28 @@ transform_fe <-
         prep_fe <- demean_fe(X, Y, fe_df, has_weights, N)
         X <- prep_fe$X
         Y <- prep_fe$Y
-        if(bootstrap_type != "fnw11"){
+        if (bootstrap_type != "fnw11") {
           Y <- Matrix::Matrix(Y)
           X <- Matrix::Matrix(X)
         }
         W <- prep_fe$W
         n_fe <- prep_fe$n_fe
       }
-      
     } else {
       add_fe <- all_fe
       add_fe_names <- names(add_fe)
       fml_fe <- reformulate(add_fe_names, response = NULL)
-      if(engine == "R" && bootstrap_type %in% c("11", "31", "13","33")){
+      if (engine == "R" && bootstrap_type %in% c("11", "31", "13", "33")) {
         add_fe_dummies <-
           Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
-        
       } else {
-        
         add_fe_dummies <-
           model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
       }
-      
+
       X <- cbind(X, add_fe_dummies)
-      
     }
-    
+
     res <- list(
       X = X,
       Y = Y,
@@ -768,23 +772,23 @@ get_cluster <-
     # no essential changes, but slight reorganization of pieces of code
     dreamerr::check_arg(clustid_char, "character scalar|charakter vector")
     dreamerr::check_arg(bootcluster, "character scalar | character vector")
-    
+
     clustid_fml <- reformulate(clustid_char)
     # Step 1: create cluster df
-    
-    
-    manipulate_object <- function(object){
-      if(inherits(object, "fixest")){
-        if(!is.null(object$fixef_vars)){
-          update(object, . ~ + 1 | . + 1)
+
+
+    manipulate_object <- function(object) {
+      if (inherits(object, "fixest")) {
+        if (!is.null(object$fixef_vars)) {
+          update(object, . ~ +1 | . + 1)
         } else {
-          update(object, . ~ + 1 )
+          update(object, . ~ +1)
         }
       } else {
         object
       }
     }
-    
+
     cluster_tmp <-
       if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
@@ -806,7 +810,7 @@ get_cluster <-
           envir = call_env
         )
       }
-    
+
     cluster_df <-
       model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
     # without cluster intersection
@@ -829,7 +833,7 @@ get_cluster <-
     } else {
       bootcluster_char <- bootcluster
     }
-    
+
     # add bootcluster variable to formula of clusters
     cluster_bootcluster_fml <-
       update(
@@ -840,8 +844,8 @@ get_cluster <-
           )
         )
       )
-    
-    
+
+
     cluster_bootcluster_tmp <-
       if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
@@ -863,19 +867,19 @@ get_cluster <-
           envir = call_env
         )
       }
-    
+
     # data.frame as needed for WildBootTests.jl
     cluster_bootcluster_df <- model.frame(
       cluster_bootcluster_fml,
       cluster_bootcluster_tmp,
       na.action = na.pass
     )
-    
+
     # data.frames with clusters, bootcluster
     cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
     bootcluster <-
       cluster_bootcluster_df[, bootcluster_char, drop = FALSE]
-    
+
     if (!any(bootcluster_char %in% clustid_char)) {
       is_subcluster <- TRUE
       if (!(any(names(bootcluster) %in% c(clustid_char, names(coef(
@@ -888,13 +892,13 @@ get_cluster <-
     }
     ## handle omitted or excluded observations (works for lfe, lm)
     if ((N != NROW(cluster)) &&
-        !is.null(object$na.action) &&
-        (class(object$na.action) %in% c("exclude", "omit"))) {
+      !is.null(object$na.action) &&
+      (class(object$na.action) %in% c("exclude", "omit"))) {
       cluster <- cluster[-object$na.action, , drop = FALSE]
     }
     if ((N != NROW(bootcluster)) &&
-        !is.null(object$na.action) &&
-        (class(object$na.action) %in% c("exclude", "omit"))) {
+      !is.null(object$na.action) &&
+      (class(object$na.action) %in% c("exclude", "omit"))) {
       bootcluster <- bootcluster[-object$na.action, , drop = FALSE]
     }
     if (N != nrow(cluster) && inherits(object, "fixest")) {
@@ -942,7 +946,7 @@ get_cluster <-
     }, numeric(1))
     #' @srrstats {G5.8c} *Data with all-`NA` fields or columns or all identical
     #' fields or columns* If all cluster vars are NA, this leads to an error.
-    if(any(N_G == 1)){
+    if (any(N_G == 1)) {
       stop("A clustering variable contains only one group. This is not allowed.")
     }
     # now do all the other bootcluster things
@@ -969,4 +973,4 @@ get_cluster <-
       cluster_bootcluster = cluster_bootcluster_df
     )
     res
-}
+  }

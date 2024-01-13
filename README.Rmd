@@ -48,14 +48,14 @@ df$`boot algo` <- df$type
 ```
 
 ```{r, fig.width=10, fig.height=3, echo = FALSE, warning = FALSE, message = FALSE}
-ggplot(data = df, aes(x = B, y = time, color = `boot algo`)) + 
-  facet_wrap(~N_G, nrow = 1) + 
-  geom_point() + 
-scale_y_continuous(trans='log10') + 
-  labs(title = "Benchmarks", caption = "N = 10_000, k = 20 covariates and one cluster of dimension N_G (3 iterations each, median runtime is plotted).")+
-  #theme_bw() + 
-  xlab("Bootstrap iterations") + 
-  ylab("time in seconds, log scale") + 
+ggplot(data = df, aes(x = B, y = time, color = `boot algo`)) +
+  facet_wrap(~N_G, nrow = 1) +
+  geom_point() +
+  scale_y_continuous(trans = "log10") +
+  labs(title = "Benchmarks", caption = "N = 10_000, k = 20 covariates and one cluster of dimension N_G (3 iterations each, median runtime is plotted).") +
+  # theme_bw() +
+  xlab("Bootstrap iterations") +
+  ylab("time in seconds, log scale") +
   theme_bw()
 ```
 
@@ -86,11 +86,11 @@ Additional features are provided through `WildBootTests.jl`:
 You can install compiled versions of`{fwildclusterboot}` from CRAN (compiled), R-universe (compiled) or github by following one of the steps below:
 
 ```{r, eval = FALSE}
-# from CRAN 
+# from CRAN
 install.packages("fwildclusterboot")
 
 # from r-universe (windows & mac, compiled R > 4.0 required)
-install.packages('fwildclusterboot', repos ='https://s3alfisc.r-universe.dev')
+install.packages("fwildclusterboot", repos = "https://s3alfisc.r-universe.dev")
 # dev version from github
 # note: installation requires Rtools
 library(devtools)
@@ -106,13 +106,13 @@ library(fwildclusterboot)
 
 # set seed via dqset.seed for engine = "R" & Rademacher, Webb & Normal weights
 dqrng::dqset.seed(2352342)
-# set 'familiar' seed for all other algorithms and weight types 
+# set 'familiar' seed for all other algorithms and weight types
 set.seed(23325)
 
 data(voters)
 
 # fit the model via fixest::feols(), lfe::felm() or stats::lm()
-lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigration) + as.factor(Q2_defense), data = voters)
+lm_fit <- lm(proposition_vote ~ treatment + log_income + as.factor(Q1_immigration) + as.factor(Q2_defense), data = voters)
 # bootstrap inference via boottest()
 lm_boot <- boottest(lm_fit, clustid = c("group_id1"), B = 9999, param = "treatment")
 summary(lm_boot)

@@ -76,24 +76,22 @@ boot_algo_textbook_cpp <-
 
 
     v <- NULL
-    if(type == "rademacher"){
-      if(full_enumeration){
-
+    if (type == "rademacher") {
+      if (full_enumeration) {
         # get fully enumerated weights matrix
         v <- get_weights(
-            type = type,
-            full_enumeration = full_enumeration,
-            N_G_bootcluster = N_G_bootcluster,
-            boot_iter = boot_iter,
-            sampling = "standard"
+          type = type,
+          full_enumeration = full_enumeration,
+          N_G_bootcluster = N_G_bootcluster,
+          boot_iter = boot_iter,
+          sampling = "standard"
         )
-
       }
     }
 
     if (type == "rademacher") {
       type <- 0
-    } else if (type == "webb"){
+    } else if (type == "webb") {
       type <- 1
     } else {
       only_webb_rademacher_for_rlean_error()
@@ -107,11 +105,11 @@ boot_algo_textbook_cpp <-
       only_scalar_test_rlean_error()
     }
 
-    if(bootstrap_type == "11"){
+    if (bootstrap_type == "11") {
       bootstrap_type_int <- 1
-    } else if(bootstrap_type == "21"){
+    } else if (bootstrap_type == "21") {
       bootstrap_type_int <- 2
-    } else if(bootstrap_type == "31"){
+    } else if (bootstrap_type == "31") {
       bootstrap_type_int <- 3
     }
 
@@ -129,9 +127,7 @@ boot_algo_textbook_cpp <-
           small_sample_correction = small_sample_correction,
           bootstrap_type = bootstrap_type_int
         )[["t_boot"]]
-
     } else {
-
       bootcluster <- preprocessed_object$bootcluster[, 1]
       # turn bootcluster into sequence of integers, starting
       # at 0, 1, 2, ..., length(unique(bootcluster)) (required for cpp
@@ -174,16 +170,14 @@ boot_algo_textbook_cpp <-
             v = t(v)
           )[["t_boot"]]
       }
-
-
     }
 
 
     # selector <- which(R == 1)
     t_stat <- boot_res[1]
     t_boot <- boot_res[2:(boot_iter + 1)]
-    #t_stat <- boot_res[selector, 1]
-    #t_boot <- boot_res[selector, 2:(boot_iter + 1)]
+    # t_stat <- boot_res[selector, 1]
+    # t_boot <- boot_res[selector, 2:(boot_iter + 1)]
 
     p_val <- get_bootstrap_pvalue(
       p_val_type = p_val_type,
@@ -207,5 +201,4 @@ boot_algo_textbook_cpp <-
     class(res) <- "boot_algo_textbook_cpp"
 
     invisible(res)
-
   }

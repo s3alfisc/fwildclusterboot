@@ -183,6 +183,8 @@
 #' @section Multiple Fixed Effects:
 #' If your feols() model contains fixed effects, boottest() will internally convert all fixed
 #' effects but the one specified via the `fe` argument to dummy variables.
+#' @srrstatsTODO {RE2.0} *Regression Software should document any transformations applied to input data, for example conversion of label-values to `factor`,
+#'   and should provide ways to explicitly avoid any default transformations (with error or warning conditions where appropriate).*
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the
 #' following software packages:
@@ -262,18 +264,18 @@
 #' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income,
-#'  fixef = "Q1_immigration",
-#'  data = voters
+#'   fixef = "Q1_immigration",
+#'   data = voters
 #' )
 #' boot1 <- boottest(feols_fit,
-#'  B = 9999,
-#'  param = "treatment",
-#'  clustid = "group_id1"
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
 #' )
 #' boot2 <- boottest(feols_fit,
-#'  B = 9999,
-#'  param = "treatment",
-#'  clustid = c("group_id1", "group_id2")
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = c("group_id1", "group_id2")
 #' )
 #' boot3 <- boottest(feols_fit,
 #'   B = 9999,
@@ -316,7 +318,7 @@
 #' )
 #'
 #' # WCR 31
-#'boot_WCR31 <- boottest(lm_fit,
+#' boot_WCR31 <- boottest(lm_fit,
 #'   B = 9999,
 #'   param = "treatment",
 #'   clustid = "group_id1",
@@ -324,14 +326,13 @@
 #' )
 #'
 #' # WCU33
-#'boot_WCR31 <- boottest(lm_fit,
+#' boot_WCR31 <- boottest(lm_fit,
 #'   B = 9999,
 #'   param = "treatment",
 #'   clustid = "group_id1",
 #'   bootstrap_type = "33",
 #'   impose_null = FALSE
 #' )
-#'
 #' }
 #'
 #' @srrstats {RE1.0} *Regression Software should enable models to be specified
@@ -404,9 +405,9 @@ boottest.fixest <- function(object,
 
   check_arg(sampling, "charin(dqrng, standard)")
 
-  if(bootstrap_type != "fnw11"){
-    if(engine == "R"){
-      if(conf_int){
+  if (bootstrap_type != "fnw11") {
+    if (engine == "R") {
+      if (conf_int) {
         cis_only_for_fnw11()
       }
     }
@@ -484,6 +485,8 @@ boottest.fixest <- function(object,
   )
 
   # preprocess the data: Y, X, weights, fixed_effect
+  #' @srrstatsTODO {G2.8} *Software should provide appropriate conversion or dispatch routines as part of initial pre-processing to ensure that all other sub-functions of a package receive inputs of a single defined class or type.*
+  #' The preprocess_ functions bring objects of type `lm`, `feols`, `lfe` into a state so that we can run `run_boottest()` on the `preprocess-ed` lists
   preprocess <- preprocess_fixest(
     object = object,
     clustid = clustid,
@@ -559,14 +562,13 @@ boottest.fixest <- function(object,
       R_long = R_long,
       heteroskedastic = heteroskedastic,
       ssc = ssc,
-      floattype = floattype ,
-      bootstrapc = bootstrapc ,
-      getauxweights = getauxweights ,
+      floattype = floattype,
+      bootstrapc = bootstrapc,
+      getauxweights = getauxweights,
       maxmatsize = maxmatsize,
       sampling = sampling,
       bootcluster = bootcluster
-
-  )
+    )
 
   # collect results
   res_final <- list(
@@ -600,4 +602,3 @@ boottest.fixest <- function(object,
   class(res_final) <- "boottest"
   invisible(res_final)
 }
-

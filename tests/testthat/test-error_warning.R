@@ -1,6 +1,4 @@
 test_that("errors and warnings q = 1", {
-
-
   #' @srrstats {G5.2} *Appropriate error and warning behaviour of all functions
   #' should be explicitly demonstrated through tests. In particular,* Tested in
   #' test-warning-error test file.
@@ -13,7 +11,7 @@ test_that("errors and warnings q = 1", {
     find_proglang("julia"),
     message = "skip test as julia installation not found."
   )
-  
+
   set.seed(2351)
   dqrng::dqset.seed(2351)
 
@@ -1386,12 +1384,12 @@ test_that("errors and warnings q = 1", {
           fe = "treatment"
         )
       )
-      
+
       # varying slopes
-      
+
       feols_fit_c <-
         fixest::feols(
-          proposition_vote ~ treatment + ideology1  |
+          proposition_vote ~ treatment + ideology1 |
             Q1_immigration[log_income],
           data = fwildclusterboot:::create_data(
             N = 1000,
@@ -1404,7 +1402,7 @@ test_that("errors and warnings q = 1", {
             seed = 1234
           )
         )
-      
+
       expect_error(
         boottest(
           feols_fit_c,
@@ -1420,14 +1418,12 @@ test_that("errors and warnings q = 1", {
 
 
 test_that("error warning IV/WRE and q > 1", {
-  
-
   skip_on_cran()
   skip_if_not(
     find_proglang("julia"),
     message = "skip test as julia installation not found."
   )
-  
+
   # drop all NA values from SchoolingReturns
   # SchoolingReturns <-
   #  SchoolingReturns[rowMeans(sapply(SchoolingReturns, is.na)) == 0, ]
@@ -1532,7 +1528,6 @@ test_that("error warning IV/WRE and q > 1", {
 })
 
 test_that("error message when character vars in felm and fixest", {
-  
   N <- 1000
   real_1000 <- runif(N, 1, 100)
   Year_cont <- sample(1:10, N, replace = TRUE)
@@ -1806,7 +1801,7 @@ test_that("other misc errors", {
       engine = "R"
     )
   )
-  
+
   expect_error(
     boottest(
       object = feols_fit,
@@ -1818,7 +1813,7 @@ test_that("other misc errors", {
       engine = "R"
     )
   )
-  
+
   expect_error(
     boottest(
       object = feols_fit,
@@ -1826,13 +1821,8 @@ test_that("other misc errors", {
       clustid = ~group_id1,
       B = 999,
       bootstrap_type = "13",
-      bootcluster = ~group_id1 + group_id2,
+      bootcluster = ~ group_id1 + group_id2,
       engine = "R"
     )
   )
-  
-  
-  
-  
-  
 })

@@ -1,6 +1,4 @@
 test_that("algorithm performance test", {
-
-
   #' @srrstats {G5.7} **Algorithm performance tests** *to test that implementation
   #' performs as expected as properties of data change. For instance, a
   #' test may show that parameters approach correct estimates within tolerance

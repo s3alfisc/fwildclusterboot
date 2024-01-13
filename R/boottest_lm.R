@@ -3,7 +3,7 @@
 
 #' `boottest.lm` is a S3 method that allows for fast wild cluster
 #' bootstrap inference for objects of class lm by  implementing
-#'fast wild bootstrap algorithms as developed in Roodman et al., 2019
+#' fast wild bootstrap algorithms as developed in Roodman et al., 2019
 #' and MacKinnon, Nielsen & Webb (2022).
 #'
 #' @param object An object of class lm
@@ -225,9 +225,10 @@
 #' \dontrun{
 #' requireNamespace("fwildclusterboot")
 #' data(voters)
-#' lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +
-#'   Q1_immigration,
-#' data = voters
+#' lm_fit <- lm(
+#'   proposition_vote ~ treatment + ideology1 + log_income +
+#'     Q1_immigration,
+#'   data = voters
 #' )
 #' boot1 <- boottest(lm_fit,
 #'   B = 9999,
@@ -273,7 +274,7 @@
 #' )
 #'
 #' # WCR 31
-#'boot_WCR31 <- boottest(lm_fit,
+#' boot_WCR31 <- boottest(lm_fit,
 #'   B = 9999,
 #'   param = "treatment",
 #'   clustid = "group_id1",
@@ -281,16 +282,15 @@
 #' )
 #'
 #' # WCU33
-#'boot_WCR31 <- boottest(lm_fit,
+#' boot_WCR31 <- boottest(lm_fit,
 #'   B = 9999,
 #'   param = "treatment",
 #'   clustid = "group_id1",
 #'   bootstrap_type = "33",
 #'   impose_null = FALSE
 #' )
-#'
 #' }
-
+#'
 boottest.lm <- function(object,
                         param,
                         B,
@@ -321,7 +321,6 @@ boottest.lm <- function(object,
                         bootstrapc = FALSE,
                         getauxweights = FALSE,
                         ...) {
-
   call <- match.call()
   dreamerr::validate_dots(stop = TRUE)
   type <- tolower(type)
@@ -353,9 +352,9 @@ boottest.lm <- function(object,
 
   check_arg(sampling, "charin(dqrng, standard)")
 
-  if(bootstrap_type != "fnw11"){
-    if(engine == "R"){
-      if(conf_int){
+  if (bootstrap_type != "fnw11") {
+    if (engine == "R") {
+      if (conf_int) {
         cis_only_for_fnw11()
       }
     }
@@ -496,13 +495,12 @@ boottest.lm <- function(object,
       R_long = R_long,
       heteroskedastic = heteroskedastic,
       ssc = ssc,
-      floattype = floattype ,
-      bootstrapc = bootstrapc ,
-      getauxweights = getauxweights ,
+      floattype = floattype,
+      bootstrapc = bootstrapc,
+      getauxweights = getauxweights,
       maxmatsize = maxmatsize,
       sampling = sampling,
       bootcluster = bootcluster
-
     )
 
 

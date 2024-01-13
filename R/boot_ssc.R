@@ -22,7 +22,7 @@ boot_ssc <-
     #' @examples
     #' boot_ssc(adj = TRUE, cluster.adj = TRUE)
     #' boot_ssc(adj = TRUE, cluster.adj = TRUE, cluster.df = "min")
-    #' @return 
+    #' @return
     #' A list with encoded info on how to form small sample corrections
 
     dreamerr::check_arg_plus(adj, "loose logical scalar conv")

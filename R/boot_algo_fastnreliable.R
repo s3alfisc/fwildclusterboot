@@ -35,27 +35,24 @@
 
 
 
-boot_algo_fastnreliable <- function(
-  preprocessed_object,
-  B,
-  bootstrap_type,
-  r = 0,
-  sign_level,
-  param,
-  p_val_type,
-  nthreads,
-  type,
-  full_enumeration,
-  small_sample_correction,
-  object,
-  impose_null,
-  sampling){
+boot_algo_fastnreliable <- function(preprocessed_object,
+                                    B,
+                                    bootstrap_type,
+                                    r = 0,
+                                    sign_level,
+                                    param,
+                                    p_val_type,
+                                    nthreads,
+                                    type,
+                                    full_enumeration,
+                                    small_sample_correction,
+                                    object,
+                                    impose_null,
+                                    sampling) {
+  # here for debugging
+  # preprocessed_object <- preprocess
 
-
-  #here for debugging
-  #preprocessed_object <- preprocess
-  
-  if(substr(bootstrap_type, 2, 2) == 1){
+  if (substr(bootstrap_type, 2, 2) == 1) {
     crv_type <- "crv1"
   } else {
     crv_type <- "crv3"
@@ -63,21 +60,21 @@ boot_algo_fastnreliable <- function(
 
   X <- preprocessed_object$X
   y <- preprocessed_object$Y
-  
+
   R <- preprocessed_object$R0
   cluster_df <- preprocessed_object$clustid
   clustid <- names(cluster_df)
   fe <- preprocessed_object$fe
   #' @srrstats {G2.4d} *explicit conversion to factor via `as.factor()`*
-  cluster <- as.factor(cluster_df[,1])
+  cluster <- as.factor(cluster_df[, 1])
   bootcluster <- preprocessed_object$bootcluster
   G <- N_G_bootcluster <- length(unique(bootcluster[[1]]))
   k <- length(R)
 
-  
-  
+
+
   bootstrap_type_x <- paste0(substr(bootstrap_type, 1, 1), "x")
-  if(impose_null){
+  if (impose_null) {
     # WCR1x or WCR3x
     bootstrap_type <- paste0("WCR", bootstrap_type_x)
   } else {
@@ -108,9 +105,9 @@ boot_algo_fastnreliable <- function(
     function(g) Matrix::t(X_list[[g]]) %*% y_list[[g]]
   )
 
-  
-  tXX <- Matrix::crossprod(X) #Reduce("+", tXgXg) # crossprod(X)
-  tXy <- Matrix::crossprod(X, y) #Reduce("+", tXgyg) # t(X) %*% y
+
+  tXX <- Matrix::crossprod(X) # Reduce("+", tXgXg) # crossprod(X)
+  tXy <- Matrix::crossprod(X, y) # Reduce("+", tXgyg) # t(X) %*% y
   tXXinv <- solve(tXX)
   RtXXinv <- R %*% tXXinv
 
@@ -122,7 +119,7 @@ boot_algo_fastnreliable <- function(
   inv_tXX_tXgXg <- NULL
 
 
-  if(bootstrap_type %in% c("WCR3x", "WCU3x")){
+  if (bootstrap_type %in% c("WCR3x", "WCU3x")) {
     # X1: X without parameter beta for which hypothesis beta = 0 is tested
     X1 <- X[, which(R == 0)]
     X1_list <- matrix_split(X1, cluster, "row")
@@ -142,24 +139,18 @@ boot_algo_fastnreliable <- function(
       function(g) Matrix::t(X_list[[g]]) %*% X1_list[[g]]
     )
 
-    tX1X1 <- Matrix::crossprod(X1) #Reduce("+", tX1gX1g) # crossprod(X1)
-    tX1y <- Matrix::crossprod(X1, y) #Reduce("+", tX1gyg) #t(X1) %*% y
+    tX1X1 <- Matrix::crossprod(X1) # Reduce("+", tX1gX1g) # crossprod(X1)
+    tX1y <- Matrix::crossprod(X1, y) # Reduce("+", tX1gyg) #t(X1) %*% y
     tX1X1inv <- Matrix::solve(tX1X1)
-
   }
 
-  if(bootstrap_type == "WCR1x"){
-
+  if (bootstrap_type == "WCR1x") {
     beta_hat <- tXXinv %*% tXy
     beta_tilde <- beta_hat -
       tXXinv %*% R %*% solve(t(R) %*% tXXinv %*% R) %*% (R %*% beta_hat - 0)
-
-  } else if (bootstrap_type == "WCU1x"){
-
+  } else if (bootstrap_type == "WCU1x") {
     beta_hat <- tXXinv %*% tXy
-
-  } else if (bootstrap_type == "WCR3x"){
-
+  } else if (bootstrap_type == "WCR3x") {
     inv_tXX_tXgXg <- lapply(
       1:G,
       function(x) inv(tXX - tXgXg[[x]], x)
@@ -169,24 +160,19 @@ boot_algo_fastnreliable <- function(
       1:G,
       function(g) solve2(tX1X1 - tX1gX1g[[g]], tX1y - tX1gyg[[g]], g)
     )
-
-  } else if(bootstrap_type == "WCU3x"){
-
+  } else if (bootstrap_type == "WCU3x") {
     beta_g_hat <- lapply(
       1:G,
       function(g) solve2(tXX - tXgXg[[g]], tXy - tXgyg[[g]], g)
     )
-
   }
 
-  if(crv_type == "crv1"){
-
-    if(is.null(beta_hat)){
+  if (crv_type == "crv1") {
+    if (is.null(beta_hat)) {
       beta_hat <- Matrix::solve(tXX, tXy)
     }
-
   } else {
-    if(is.null(inv_tXX_tXgXg)){
+    if (is.null(inv_tXX_tXgXg)) {
       inv_tXX_tXgXg <- lapply(
         1:G,
         function(x) inv((tXX - tXgXg[[x]]), x)
@@ -216,21 +202,27 @@ boot_algo_fastnreliable <- function(
 
   dim(R) <- c(1, k) # turn R into matrix
 
-  Cg <- R %*% tXXinv %*%  Reduce("cbind", scores_list)
+  Cg <- R %*% tXXinv %*% Reduce("cbind", scores_list)
 
   numer <- Cg %*% v
 
-  if(crv_type == "crv1"){
+  if (crv_type == "crv1") {
+    tXgXg <- lapply(tXgXg, function(g) as.matrix(g))
+    scores_list <- lapply(scores_list, function(g) as.matrix(g))
 
-    tXgXg <- lapply(tXgXg,function(g) as.matrix(g))
-    scores_list <- lapply(scores_list,function(g) as.matrix(g))
-    
-    H <- compute_H(G = G, R = matrix(R, 1, k), tXXinv = as.matrix(tXXinv), tXgXg = tXgXg, scores_list = scores_list, cores = nthreads)
+    H <- compute_H(
+      G = G,
+      R = matrix(R, 1, k),
+      tXXinv = as.matrix(tXXinv),
+      tXgXg = tXgXg,
+      scores_list = scores_list,
+      cores = nthreads
+    )
 
     denom <- boot_algo3_crv1_denom(
       B = B,
       G = G,
-      ssc =  small_sample_correction,
+      ssc = small_sample_correction,
       H = as.matrix(H),
       Cg = as.matrix(Cg),
       v = v,
@@ -239,19 +231,16 @@ boot_algo_fastnreliable <- function(
 
 
     t_boot <- c(as.matrix(numer) / sqrt(c(denom)))
-
-  } else if (crv_type == "crv3"){
-
-    for(b in 1:(B + 1)){
-
+  } else if (crv_type == "crv3") {
+    for (b in 1:(B + 1)) {
       # Step 1: get bootstrapped scores
 
-      scores_g_boot <- matrix(NA,G,k)
+      scores_g_boot <- matrix(NA, G, k)
 
-      v_ <- v[,b]
+      v_ <- v[, b]
 
-      for(g in 1:G){
-        scores_g_boot[g,] <- c(as.matrix(scores_list[[g]])) * v_[g] #* v[g, b]
+      for (g in 1:G) {
+        scores_g_boot[g, ] <- c(as.matrix(scores_list[[g]])) * v_[g] #* v[g, b]
       }
 
       # numerator (both for WCR, WCU)
@@ -260,10 +249,9 @@ boot_algo_fastnreliable <- function(
 
       delta_diff <- matrix(NA, G, k)
 
-      for(g in 1:G){
-        score_diff <- scores_boot - scores_g_boot[g,]
-        delta_diff[g,] <-
-
+      for (g in 1:G) {
+        score_diff <- scores_boot - scores_g_boot[g, ]
+        delta_diff[g, ] <-
           as.vector(
             (inv_tXX_tXgXg[[g]] %*% score_diff) - delta_b_star
           )^2
@@ -271,32 +259,28 @@ boot_algo_fastnreliable <- function(
 
       se[b] <-
         sqrt(
-          ((G-1) / G) *
+          ((G - 1) / G) *
             colSums(
               delta_diff
             )
         )[which(R == 1)]
 
       t_boot[b] <- c(as.matrix(delta_b_star))[which(R == 1)] / se[b]
-
     }
-
   }
   # get original t-stat.
 
-  if(crv_type == "crv1"){
-
+  if (crv_type == "crv1") {
     score_all <- lapply(
-      1:G, function(g)
+      1:G, function(g) {
         Matrix::tcrossprod(
           Matrix::crossprod(X_list[[g]], y_list[[g]] - X_list[[g]] %*% beta_hat)
         )
+      }
     )
     meat <- Reduce("+", score_all)
     vcov <- tXXinv %*% meat %*% tXXinv
-
-  } else if(crv_type == "crv3"){
-
+  } else if (crv_type == "crv3") {
     vcov3 <- quote(
       summclust::vcov_CR3J(
         obj = object,
@@ -304,12 +288,11 @@ boot_algo_fastnreliable <- function(
       )
     )
 
-    if(inherits(object, "fixest")){
+    if (inherits(object, "fixest")) {
       vcov3$absorb_cluster_fixef <- FALSE
     }
 
     vcov <- eval(vcov3)
-
   }
 
   se0 <- sqrt(small_sample_correction * R %*% vcov %*% t(R))
@@ -348,38 +331,36 @@ boot_algo_fastnreliable <- function(
   class(res) <- "boot_algo3"
 
   invisible(res)
-
 }
 
 
-inv <- function(x, g){
+inv <- function(x, g) {
   tryCatch(
     {
       Matrix::solve(x)
     },
     error = function(e) {
       message(
-        message = 
+        message =
           paste0(
-            "Matrix inversion error when computing beta(g) for cluster ", 
+            "Matrix inversion error when computing beta(g) for cluster ",
             g, ". Using Pseudo-Inverse instead. Potentially, you can suppress",
-            "this message by specifying a cluster fixed effect in the bootstrap", 
+            "this message by specifying a cluster fixed effect in the bootstrap",
             "via the `fe` argument of `boottest()`."
           )
-        )
+      )
       eigen_pinv(as.matrix(x))
     }
   )
 }
 
-solve2 <- function(x,y, g){
+solve2 <- function(x, y, g) {
   tryCatch(
     {
       Matrix::solve(x, y)
-    }, 
-    error = function(e){
+    },
+    error = function(e) {
       eigen_pinv(as.matrix(x)) %*% y
     }
   )
 }
-

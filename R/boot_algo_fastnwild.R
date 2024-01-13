@@ -13,9 +13,8 @@ boot_algo_fastnwild <-
            small_sample_correction,
            conf_int,
            maxiter,
-           tol, 
+           tol,
            sampling) {
-    
     #' Fast wild cluster bootstrap algorithm
     #'
     #' function that implements the fast bootstrap algorithm as described
@@ -63,11 +62,11 @@ boot_algo_fastnwild <-
     #'  finding procedure to find the confidence interval.
     #'        10 by default.
     #' @param sampling 'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
-    #' used for random number generation (when available). If 'standard', 
-    #' functions from the 'stats' package are used when available. 
-    #' This argument is mostly a convenience to control random number generation in 
-    #' a wrapper package around `fwildclusterboot`, `wildrwolf`. 
-    #' I recommend to use the fast' option. 
+    #' used for random number generation (when available). If 'standard',
+    #' functions from the 'stats' package are used when available.
+    #' This argument is mostly a convenience to control random number generation in
+    #' a wrapper package around `fwildclusterboot`, `wildrwolf`.
+    #' I recommend to use the fast' option.
     #' @return A list of ...
     #' @importFrom collapse fsum GRP
     #' @importFrom stats as.formula coef model.matrix model.response
@@ -99,13 +98,13 @@ boot_algo_fastnwild <-
     N_G_bootcluster <- length(unique(bootcluster[[1]]))
 
     v <- get_weights(
-      type = type, 
-      full_enumeration = full_enumeration, 
-      N_G_bootcluster = N_G_bootcluster, 
-      boot_iter = boot_iter, 
+      type = type,
+      full_enumeration = full_enumeration,
+      N_G_bootcluster = N_G_bootcluster,
+      boot_iter = boot_iter,
       sampling = sampling
     )
-    
+
     # prepare "key" for use with collapse::fsum()
     g <- collapse::GRP(bootcluster[[1]], call = FALSE)
 
@@ -143,17 +142,17 @@ boot_algo_fastnwild <-
     # dim = N_G x k
     Q1 <-
       collapse::fsum(WX * as.vector(Q), g)
-    
+
     P2_bootcluster <- vec2mat(
       x = as.vector(WXARP),
       group_id = g$group.id
     )
-        
+
     Q2_bootcluster <- vec2mat(
       x = as.vector(WXARQ),
       group_id = g$group.id
     )
-    
+
     # P2_bootcluster <- Matrix::t(Matrix.utils::aggregate.Matrix(
     #   # see notes; formerly diag_XinvXXRuS_a
     #   Matrix::Diagonal(
@@ -199,12 +198,12 @@ boot_algo_fastnwild <-
         # P2_bootcluster has been collapsed over "bootcluster",
         # now collapse over cluster c
         P2 <-
-          #Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
+          # Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
           collapse::fsum(P2_bootcluster, clustid[x])
         P_all <- P2 - tcrossprod(SXinvXXRXA, P1) # formerly _a
 
         Q2 <-
-          #Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
+          # Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
           collapse::fsum(Q2_bootcluster, clustid[x])
         Q_all <- Q2 - tcrossprod(SXinvXXRXA, Q1)
 
@@ -243,7 +242,7 @@ boot_algo_fastnwild <-
         # a
         P3 <- t(tcrossprod(P3_2, CT_cfe)) # formerly prod_a
         P2 <-
-          #Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
+          # Matrix.utils::aggregate.Matrix(P2_bootcluster, clustid[x]) # c* x c
           collapse::fsum(P2_bootcluster, clustid[x])
         P_all <- P2 - tcrossprod(SXinvXXRXA, P1) - P3
 
@@ -251,7 +250,7 @@ boot_algo_fastnwild <-
         # D, DD, CD need not be computed, they are always objects of 0's only
         Q3 <- t(tcrossprod(Q3_2, CT_cfe))
         Q2 <-
-          #Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
+          # Matrix.utils::aggregate.Matrix(Q2_bootcluster, clustid[x])
           collapse::fsum(Q2_bootcluster, clustid[x])
         Q_all <- Q2 - tcrossprod(SXinvXXRXA, Q1) - Q3
         C <- eigenMapMatMult(as.matrix(P_all), v, nthreads)

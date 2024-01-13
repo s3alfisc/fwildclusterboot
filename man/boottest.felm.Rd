@@ -269,51 +269,52 @@ following software packages:
 
 \examples{
 \dontrun{
-  requireNamespace("lfe")
-  data(voters)
-  felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income |
+requireNamespace("lfe")
+data(voters)
+felm_fit <- felm(
+  proposition_vote ~ treatment + ideology1 + log_income |
     Q1_immigration,
   data = voters
-  )
-  boot1 <- boottest(felm_fit,
-    B = 9999,
-    param = "treatment",
-    clustid = "group_id1"
-  )
-  boot2 <- boottest(felm_fit,
-    B = 9999,
-    param = "treatment",
-    clustid = c("group_id1", "group_id2")
-  )
-  boot3 <- boottest(felm_fit,
-    B = 9999,
-    param = "treatment",
-    clustid = c("group_id1", "group_id2"),
-    fe = "Q1_immigration"
-  )
-  boot4 <- boottest(felm_fit,
-    B = 999,
-    param = "treatment",
-    clustid = c("group_id1", "group_id2"),
-    fe = "Q1_immigration",
-    sign_level = 0.2,
-    r = 2
-  )
-  # test treatment + ideology1 = 2
-  boot5 <- boottest(felm_fit,
-    B = 9999,
-    clustid = c("group_id1", "group_id2"),
-    param = c("treatment", "ideology1"),
-    R = c(1, 1),
-    r = 2
-  )
-  summary(boot1)
-  print(boot1)
-  plot(boot1)
-  nobs(boot1)
-  pval(boot1)
-  confint(boot1)
-  generics::tidy(boot1)
+)
+boot1 <- boottest(felm_fit,
+  B = 9999,
+  param = "treatment",
+  clustid = "group_id1"
+)
+boot2 <- boottest(felm_fit,
+  B = 9999,
+  param = "treatment",
+  clustid = c("group_id1", "group_id2")
+)
+boot3 <- boottest(felm_fit,
+  B = 9999,
+  param = "treatment",
+  clustid = c("group_id1", "group_id2"),
+  fe = "Q1_immigration"
+)
+boot4 <- boottest(felm_fit,
+  B = 999,
+  param = "treatment",
+  clustid = c("group_id1", "group_id2"),
+  fe = "Q1_immigration",
+  sign_level = 0.2,
+  r = 2
+)
+# test treatment + ideology1 = 2
+boot5 <- boottest(felm_fit,
+  B = 9999,
+  clustid = c("group_id1", "group_id2"),
+  param = c("treatment", "ideology1"),
+  R = c(1, 1),
+  r = 2
+)
+summary(boot1)
+print(boot1)
+plot(boot1)
+nobs(boot1)
+pval(boot1)
+confint(boot1)
+generics::tidy(boot1)
 
 # run different bootstrap types following MacKinnon, Nielsen & Webb (2022):
 

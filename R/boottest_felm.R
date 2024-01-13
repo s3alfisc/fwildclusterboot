@@ -242,51 +242,52 @@
 #' @srrstats {G1.0} *`boottest()` links to multiple published papers.*
 #' @examples
 #' \dontrun{
-#'   requireNamespace("lfe")
-#'   data(voters)
-#'   felm_fit <- felm(proposition_vote ~ treatment + ideology1 + log_income |
+#' requireNamespace("lfe")
+#' data(voters)
+#' felm_fit <- felm(
+#'   proposition_vote ~ treatment + ideology1 + log_income |
 #'     Q1_immigration,
 #'   data = voters
-#'   )
-#'   boot1 <- boottest(felm_fit,
-#'     B = 9999,
-#'     param = "treatment",
-#'     clustid = "group_id1"
-#'   )
-#'   boot2 <- boottest(felm_fit,
-#'     B = 9999,
-#'     param = "treatment",
-#'     clustid = c("group_id1", "group_id2")
-#'   )
-#'   boot3 <- boottest(felm_fit,
-#'     B = 9999,
-#'     param = "treatment",
-#'     clustid = c("group_id1", "group_id2"),
-#'     fe = "Q1_immigration"
-#'   )
-#'   boot4 <- boottest(felm_fit,
-#'     B = 999,
-#'     param = "treatment",
-#'     clustid = c("group_id1", "group_id2"),
-#'     fe = "Q1_immigration",
-#'     sign_level = 0.2,
-#'     r = 2
-#'   )
-#'   # test treatment + ideology1 = 2
-#'   boot5 <- boottest(felm_fit,
-#'     B = 9999,
-#'     clustid = c("group_id1", "group_id2"),
-#'     param = c("treatment", "ideology1"),
-#'     R = c(1, 1),
-#'     r = 2
-#'   )
-#'   summary(boot1)
-#'   print(boot1)
-#'   plot(boot1)
-#'   nobs(boot1)
-#'   pval(boot1)
-#'   confint(boot1)
-#'   generics::tidy(boot1)
+#' )
+#' boot1 <- boottest(felm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = "group_id1"
+#' )
+#' boot2 <- boottest(felm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = c("group_id1", "group_id2")
+#' )
+#' boot3 <- boottest(felm_fit,
+#'   B = 9999,
+#'   param = "treatment",
+#'   clustid = c("group_id1", "group_id2"),
+#'   fe = "Q1_immigration"
+#' )
+#' boot4 <- boottest(felm_fit,
+#'   B = 999,
+#'   param = "treatment",
+#'   clustid = c("group_id1", "group_id2"),
+#'   fe = "Q1_immigration",
+#'   sign_level = 0.2,
+#'   r = 2
+#' )
+#' # test treatment + ideology1 = 2
+#' boot5 <- boottest(felm_fit,
+#'   B = 9999,
+#'   clustid = c("group_id1", "group_id2"),
+#'   param = c("treatment", "ideology1"),
+#'   R = c(1, 1),
+#'   r = 2
+#' )
+#' summary(boot1)
+#' print(boot1)
+#' plot(boot1)
+#' nobs(boot1)
+#' pval(boot1)
+#' confint(boot1)
+#' generics::tidy(boot1)
 #'
 #' # run different bootstrap types following MacKinnon, Nielsen & Webb (2022):
 #'
@@ -299,7 +300,7 @@
 #' )
 #'
 #' # WCR 31
-#'boot_WCR31 <- boottest(lm_fit,
+#' boot_WCR31 <- boottest(lm_fit,
 #'   B = 9999,
 #'   param = "treatment",
 #'   clustid = "group_id1",
@@ -307,7 +308,7 @@
 #' )
 #'
 #' # WCU33
-#'boot_WCR31 <- boottest(lm_fit,
+#' boot_WCR31 <- boottest(lm_fit,
 #'   B = 9999,
 #'   param = "treatment",
 #'   clustid = "group_id1",
@@ -383,13 +384,13 @@ boottest.felm <- function(object,
   check_arg(sampling, "charin(dqrng, standard)")
 
 
-  if(bootstrap_type %in% c("33", "13")){
+  if (bootstrap_type %in% c("33", "13")) {
     no_13_33_for_felm_error()
   }
 
-  if(bootstrap_type != "fnw11"){
-    if(engine == "R"){
-      if(conf_int){
+  if (bootstrap_type != "fnw11") {
+    if (engine == "R") {
+      if (conf_int) {
         cis_only_for_fnw11()
       }
     }
@@ -525,9 +526,9 @@ boottest.felm <- function(object,
       R_long = R_long,
       heteroskedastic = heteroskedastic,
       ssc = ssc,
-      floattype = floattype ,
-      bootstrapc = bootstrapc ,
-      getauxweights = getauxweights ,
+      floattype = floattype,
+      bootstrapc = bootstrapc,
+      getauxweights = getauxweights,
       maxmatsize = maxmatsize,
       sampling = sampling,
       bootcluster = bootcluster

@@ -259,9 +259,10 @@ following software packages:
 \dontrun{
 requireNamespace("fwildclusterboot")
 data(voters)
-lm_fit <- lm(proposition_vote ~ treatment + ideology1 + log_income +
-  Q1_immigration,
-data = voters
+lm_fit <- lm(
+  proposition_vote ~ treatment + ideology1 + log_income +
+    Q1_immigration,
+  data = voters
 )
 boot1 <- boottest(lm_fit,
   B = 9999,
@@ -322,8 +323,8 @@ boot_WCR31 <- boottest(lm_fit,
   bootstrap_type = "33",
   impose_null = FALSE
 )
-
 }
+
 }
 \references{
 Roodman et al., 2019, "Fast and wild: Bootstrap inference in

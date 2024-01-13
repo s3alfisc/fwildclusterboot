@@ -10,7 +10,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-
 ### Wild Cluster Bootstrap 101
 
 We are interested in testing a linear hypothesis $H_0: \beta_{j} = 0$ against $H_1: \beta_{j} \neq 0$
@@ -43,7 +42,7 @@ u_{G}
 
 with $E(u|X) = 0$, where group $g$ contains $N_{g}$ observations so that $N = \sum_{g = 1}^{G} N_{g}$. The regression residuals $u$ are allowed to be correlated within clusters, but are assumed to be uncorrelated across clusters. In consequence, the models' covariance matrix is block diagonal. For each cluster, we denote $E(u_{g} u_{g}') =\Sigma_{g}$ and $E(u u') =\Sigma$.
 
-A generic wild bootstrap test then proceeds in the following steps: 
+A generic wild bootstrap test then proceeds in the following steps:
 
 ::: callout
 * Step 1: Either
@@ -92,9 +91,9 @@ The subscript $x$ for the variance-covariance estimate $\hat{\Sigma}_{jj,x}$ den
 
 ### Multiple Variants of the Wild Cluster Bootstrap
 
-The above algorithm leads to several variants of the wild cluster bootstrap: first, the bootstrap variants may differ in the choice of the variance-covariance estimator $\Sigma_{x}$. Second, they may differ in the functional transformation of the estimated residuals $f(\hat{u})$. Finally, the choice of imposing or not imposing the null on the bootstrap data generating process, as well as the choice of bootstrap weights lead to different bootstrap variants. 
+The above algorithm leads to several variants of the wild cluster bootstrap: first, the bootstrap variants may differ in the choice of the variance-covariance estimator $\Sigma_{x}$. Second, they may differ in the functional transformation of the estimated residuals $f(\hat{u})$. Finally, the choice of imposing or not imposing the null on the bootstrap data generating process, as well as the choice of bootstrap weights lead to different bootstrap variants.
 
-Based on recent work by @mackinnon2022fast, we will put emphasis on the choice of the variance-covariance estimator $\Sigma_{x}$ and how the residuals $f(\hat{u})$ are transformed. 
+Based on recent work by @mackinnon2022fast, we will put emphasis on the choice of the variance-covariance estimator $\Sigma_{x}$ and how the residuals $f(\hat{u})$ are transformed.
 
 For reasons of computational feasibility, @mackinnon2022fast focus on CRV1 and CRV3 covariance matrix estimators.
 
@@ -182,7 +181,7 @@ For Rademacher and Mammen weights, only $2^G$ unique combinations of draws exist
 
 ### Wild Bootstrap Confidence Intervals
 
-In theory, multiple ways to calculate wild (cluster) bootstrapped confidence intervals exists [@mackinnon2022cluster]. 
+In theory, multiple ways to calculate wild (cluster) bootstrapped confidence intervals exists [@mackinnon2022cluster].
 <!-- If the null hypothesis is not imposed on the bootstrap dgp, -->
 <!-- The most straightforward approach is to calculate a standard error $\hat{s}^{*}(\hat{\beta})$ based on the bootstrapped regression coefficients $\hat{\beta}_{b}^{*}$ and a plug-in estimator: -->
 
@@ -202,7 +201,7 @@ In theory, multiple ways to calculate wild (cluster) bootstrapped confidence int
 
 <!-- If the null hypothesis is imposed on the data generating process, the strategy above is now longer feasible.  -->
 
-Based on simulation results in @mackinnon2015wild and higher order asymptotic theory in @djogbenou2019asymptotic, [fwildclusterboot]{.pkg} computes confidence intervals by test inversion. 
+Based on simulation results in @mackinnon2015wild and higher order asymptotic theory in @djogbenou2019asymptotic, [fwildclusterboot]{.pkg} computes confidence intervals by test inversion.
 While inverting bootstrap tests is computationally more demanding, in the case of the wild cluster bootstrap, the procedure can be massively accelerated by pre-computing multiple objects that are constant across all iterations of the inversion algorithm. Details on how this acceleration is achieved in [fwildclusterboot]{.pkg} are presented in the appendix (which is to be added. If you are curious, you can email Alex, and he'll share his notes). In the following section, for illustrative purposes, we will demonstrate how to invert a simple t-test for a regression model (vs a bootstrap test inversion).
 
 <!-- While inverting bootstrap tests is computationally more demanding, it allows to compute confidence intervals for the WCR bootstrap, which is generally be considered to perform better (based on both theoretical and empirical simulation evidence, see e.g. [@mackinnon2022cluster] for a discussion). In addition, the inversion of wild cluster bootstrap tests can be massively accelerated by pre-computing multiple objects that are constant across all iterations of the inversion algorithm. Details on how this acceleration is achieved in [fwildclusterboot]{.pkg} are presented in the appendix (which is to be added. If you are curious, you can email Alex, and he'll share his notes). In the following section, for illustrative purposes, we will demonstrate how to invert a simple t-test for a regression model (vs a bootstrap test inversion). -->
@@ -217,24 +216,24 @@ While inverting bootstrap tests is computationally more demanding, in the case o
 <!--   C = \{\theta \in \Theta: T(\theta)\leq c \}. -->
 <!-- $$ -->
 
-Based on the definition of the p-value, we can define a confidence interval at significance level $\alpha$ as 
+Based on the definition of the p-value, we can define a confidence interval at significance level $\alpha$ as
 
 $$
   C = \{\theta \in \Theta: p(\theta) \geq \alpha \}.
 $$
-In other words: the confidence interval is the set of all values $\theta \in \Theta$ with p-value larger than the chosen significance level $\alpha$. 
+In other words: the confidence interval is the set of all values $\theta \in \Theta$ with p-value larger than the chosen significance level $\alpha$.
 
-All of this implies that if we have a function that calculates p-values for different values of $\theta$, $p(\theta)$, to obtain a confidence interval, we simply have to collect all values $\theta$ for which $p(\theta) > \alpha$. Or, in other words, we need to *invert* $p(\theta)$.  
+All of this implies that if we have a function that calculates p-values for different values of $\theta$, $p(\theta)$, to obtain a confidence interval, we simply have to collect all values $\theta$ for which $p(\theta) > \alpha$. Or, in other words, we need to *invert* $p(\theta)$.
 
-We will illustrate all of this based on a simple linear regression model. 
+We will illustrate all of this based on a simple linear regression model.
 
-The data generating process is 
+The data generating process is
 
-$$ 
+$$
   Y = \beta_0 + \beta_1 X + u
-$$ 
+$$
 
-with $E[u|X] = 0$, and we are interested in testing the null hypothesis 
+with $E[u|X] = 0$, and we are interested in testing the null hypothesis
 
 $$
   H_0: \beta_1 = 0    \textit{ vs } H_1: \beta_1 \neq 0.
@@ -253,7 +252,7 @@ df <- data.frame(X = X, y = y)
 fit <- (lm(y ~ 1 + X, data = df))
 ```
 
-The estimated confidence interval of the regression model is 
+The estimated confidence interval of the regression model is
 
 ```{r}
 confint(fit)
@@ -261,9 +260,9 @@ confint(fit)
 
 Note that this confidence interval is build on *estimated standard errors*.
 
-This means that in order to calculate standard errors, `confint()` computes a standard error and multiplies it with a critical value.  
+This means that in order to calculate standard errors, `confint()` computes a standard error and multiplies it with a critical value.
 
-To compute a confidence without estimating standard errors, we first need to define a function that calculates p-values for different values of $\beta$ given the model and data. To do so, we will simply create a function that will allow us to test hypotheses of the form 
+To compute a confidence without estimating standard errors, we first need to define a function that calculates p-values for different values of $\beta$ given the model and data. To do so, we will simply create a function that will allow us to test hypotheses of the form
 
 $$
   H_0: \beta_1 - r = 0    \textit{ vs } H_1: \beta_1 -r \neq 0.
@@ -275,82 +274,79 @@ $$
     H_0: \beta_1 = r     \textit{ vs } H_1: \beta_1  \neq r.
 $$
 
-Tests of such a form are implemented in the `car` package, via the `linearHypothesis` function, and we create a small wrapper function, `p_val(y, X, r)` around `car::linearHypothesis`: 
+Tests of such a form are implemented in the `car` package, via the `linearHypothesis` function, and we create a small wrapper function, `p_val(y, X, r)` around `car::linearHypothesis`:
 
 ```{r}
-p_val <- function(y, X, r){
+p_val <- function(y, X, r) {
   res <- lm(y ~ 1 + X)
-  p_val <- car::linearHypothesis(model = res, hypothesis.matrix = c(0,1), rhs = r)$`Pr(>F)`[2]
+  p_val <- car::linearHypothesis(model = res, hypothesis.matrix = c(0, 1), rhs = r)$`Pr(>F)`[2]
   p_val
 }
-
 ```
 
-As can be seen in the plot below, for different values of $r$, `p_val()` returns a range of p-values: 
+As can be seen in the plot below, for different values of $r$, `p_val()` returns a range of p-values:
 
 ```{r}
 p_val_r <- unlist(lapply(seq(-0.05, 0.05, 0.005), function(i) p_val(y = y, X = X, r = i)))
 p_val_df <- data.frame(r = seq(-0.05, 0.05, 0.005), p_val_r = p_val_r)
-plot(x = p_val_df$r, y = p_val_df$p_val_r,type = "b", pch = 20, lty = 2, xlab = "r", ylab = "p-value")
+plot(x = p_val_df$r, y = p_val_df$p_val_r, type = "b", pch = 20, lty = 2, xlab = "r", ylab = "p-value")
 lines(p_val_df$r, p_val_df$p_val_r, type = "l", lty = 1)
-abline(h = 0.05, col = "red") 
+abline(h = 0.05, col = "red")
 abline(v = confint(fit)["X", ][1], col = "blue")
-text(x = confint(fit)["X", ][1] - 0.01, y = 0.8, "lower", srt=0.2, col = "blue")
+text(x = confint(fit)["X", ][1] - 0.01, y = 0.8, "lower", srt = 0.2, col = "blue")
 abline(v = confint(fit)["X", ][2], col = "blue")
-text(x = confint(fit)["X", ][2] + 0.01, y = 0.8, "upper", srt=0.2, col = "blue")
+text(x = confint(fit)["X", ][2] + 0.01, y = 0.8, "upper", srt = 0.2, col = "blue")
 abline(v = confint(fit)["X", ][1] - 0.01, col = "green", lty = 2)
 abline(v = confint(fit)["X", ][1] + 0.01, col = "green", lty = 2)
 abline(v = confint(fit)["X", ][2] - 0.01, col = "green", lty = 2)
 abline(v = confint(fit)["X", ][2] + 0.01, col = "green", lty = 2)
 ```
 
-The p-value peaks for the "true" null hypothesis $\beta_1 = r = 0.01$ and decreases when moving further away from the true value. 
+The p-value peaks for the "true" null hypothesis $\beta_1 = r = 0.01$ and decreases when moving further away from the true value.
 
 The two points where the red line crosses with the black line - marked by a blue line - are the confidence interval for our hypothesis test of interest! (Note that this plot is very similar to the output of `plot.boottest()`).
 
-In consequence, our goal is to find the intersection of the blue, red, and black lines. 
+In consequence, our goal is to find the intersection of the blue, red, and black lines.
 
-To do so, we need to find two starting values for the line search. Those are marked as green. In practice, `boottest()` needs to do some work to find them, but here we will skip this step. 
+To do so, we need to find two starting values for the line search. Those are marked as green. In practice, `boottest()` needs to do some work to find them, but here we will skip this step.
 
-We will start from the empirical confidence interval calculated by `confint()`: 
+We will start from the empirical confidence interval calculated by `confint()`:
 
 ```{r}
 confint(fit)
 ```
 
-We create two sets of starting values by adding a value $\epsilon \neq 0$ to the confidence boundaries of the confidence set obtained by `confint()`: 
+We create two sets of starting values by adding a value $\epsilon \neq 0$ to the confidence boundaries of the confidence set obtained by `confint()`:
 
 ```{r}
 epsilon <- 0.01
 
-startset1 <- confint(fit)["X",][1] + c(-epsilon, epsilon)
-startset2 <- confint(fit)["X",][2] + c(-epsilon, epsilon)
+startset1 <- confint(fit)["X", ][1] + c(-epsilon, epsilon)
+startset2 <- confint(fit)["X", ][2] + c(-epsilon, epsilon)
 ```
 
-With these starting values at hand, we can invert $p(.)$ numerically by a root finding procedure - we will run a simple bisection. 
+With these starting values at hand, we can invert $p(.)$ numerically by a root finding procedure - we will run a simple bisection.
 
 
 ```{r}
-invert_p_val <- function(X, y, startset1, startset2, alpha){
-  
-  # p-val - sign_level 
+invert_p_val <- function(X, y, startset1, startset2, alpha) {
+  # p-val - sign_level
   p_val_x_sign_level <- function(r) {
     p_val(X = X, y = y, r) - alpha
   }
-  
-  # bisection for both startset1, startset2
-  res <- lapply(list(startset1, startset2), function(x){ 
-                  
-          tmp <- suppressWarnings(stats::uniroot(f = p_val_x_sign_level,
-                                  lower = min(x),
-                                  upper = max(x),
-                                  tol = 1e-08,
-                                  maxiter = 10)$root)
 
-          })
+  # bisection for both startset1, startset2
+  res <- lapply(list(startset1, startset2), function(x) {
+    tmp <- suppressWarnings(stats::uniroot(
+      f = p_val_x_sign_level,
+      lower = min(x),
+      upper = max(x),
+      tol = 1e-08,
+      maxiter = 10
+    )$root)
+  })
 
   unlist(res)
-  
 }
 ```
 
@@ -360,7 +356,7 @@ Now, which confidence interval do we get from the numerical p-value inversion?
 invert_p_val(X = X, y = y, startset1 = startset1, startset2 = startset2, alpha = 0.05)
 ```
 
-As it turns out, this confidence interval is practically identical with the confidence interval based on estimated standard errors: 
+As it turns out, this confidence interval is practically identical with the confidence interval based on estimated standard errors:
 
 ```{r}
 confint(fit)

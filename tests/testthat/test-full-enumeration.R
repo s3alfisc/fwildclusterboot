@@ -1,26 +1,25 @@
 test_that("test full enumeration cases: r and r-lean", {
-
-#' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms
-#' produce expected results to some fixed test data sets (potentially through
-#' comparisons using binding frameworks such as
-#' [RStata](https://github.com/lbraglia/RStata)).* Several correctness
-#' tests are implemented. First, it is tested if the non-bootstrapped
-#' t-statistics
-#' produced via boottest() *exactly* match those computed by the fixest package
-#' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
-#'  against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R
-#'  implementations of the WCB are tested against each other.
-#' @srrstats {G5.6} **Parameter recovery tests** *to test that the
-#' implementation produce expected results given data with known properties.
-#' For instance, a linear regression algorithm should return expected
-#' coefficient values for a simulated data set generated from a linear model.*
-#' Done. Non-bootstrapped t-stats are tested against t-stats and F-stats
-#' computed by the fixest package (see test_tstat_equivalence.R). Also, tests
-#'  if bootstrapped p-values are deterministic under "full enumeration"
-#'  (test-seed.R).
-#' @srrstats {G5.6a} *Parameter recovery tests should generally be expected
-#' to succeed within a defined tolerance rather than recovering exact values.*
-#'  t-stat equivalence is tested "exactly", r vs Julia is tested with tolerance.
+  #' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms
+  #' produce expected results to some fixed test data sets (potentially through
+  #' comparisons using binding frameworks such as
+  #' [RStata](https://github.com/lbraglia/RStata)).* Several correctness
+  #' tests are implemented. First, it is tested if the non-bootstrapped
+  #' t-statistics
+  #' produced via boottest() *exactly* match those computed by the fixest package
+  #' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
+  #'  against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R
+  #'  implementations of the WCB are tested against each other.
+  #' @srrstats {G5.6} **Parameter recovery tests** *to test that the
+  #' implementation produce expected results given data with known properties.
+  #' For instance, a linear regression algorithm should return expected
+  #' coefficient values for a simulated data set generated from a linear model.*
+  #' Done. Non-bootstrapped t-stats are tested against t-stats and F-stats
+  #' computed by the fixest package (see test_tstat_equivalence.R). Also, tests
+  #'  if bootstrapped p-values are deterministic under "full enumeration"
+  #'  (test-seed.R).
+  #' @srrstats {G5.6a} *Parameter recovery tests should generally be expected
+  #' to succeed within a defined tolerance rather than recovering exact values.*
+  #'  t-stat equivalence is tested "exactly", r vs Julia is tested with tolerance.
 
 
   # note: these tests are deterministic! therefore exact.
