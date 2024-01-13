@@ -270,18 +270,18 @@ requireNamespace("fixest")
 requireNamespace("fwildclusterboot")
 data(voters)
 feols_fit <- feols(proposition_vote ~ treatment + ideology1 + log_income,
- fixef = "Q1_immigration",
- data = voters
+  fixef = "Q1_immigration",
+  data = voters
 )
 boot1 <- boottest(feols_fit,
- B = 9999,
- param = "treatment",
- clustid = "group_id1"
+  B = 9999,
+  param = "treatment",
+  clustid = "group_id1"
 )
 boot2 <- boottest(feols_fit,
- B = 9999,
- param = "treatment",
- clustid = c("group_id1", "group_id2")
+  B = 9999,
+  param = "treatment",
+  clustid = c("group_id1", "group_id2")
 )
 boot3 <- boottest(feols_fit,
   B = 9999,
@@ -339,7 +339,6 @@ boot_WCR31 <- boottest(lm_fit,
   bootstrap_type = "33",
   impose_null = FALSE
 )
-
 }
 
 }

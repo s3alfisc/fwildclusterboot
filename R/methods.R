@@ -98,7 +98,6 @@
 
 boottest <- function(object,
                      ...) {
-
   rlang::warn(
     message = "
     Please note that the seeding behavior for random number
@@ -209,7 +208,7 @@ mboottest <- function(object,
 #' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(
-#' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
 #'   data = voters
 #' )
 #' boot <- boottest(lm_fit,
@@ -309,7 +308,6 @@ confint.boottest <- function(object, ...) {
 #' )
 #' confint(boot)
 #'
-
 pval.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
 
@@ -358,7 +356,7 @@ teststat.boottest <- function(object, ...) {
 #' requireNamespace("fwildclusterboot")
 #' data(voters)
 #' lm_fit <- lm(
-#' proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+#'   proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
 #'   data = voters
 #' )
 #' boot <- boottest(lm_fit,
@@ -367,7 +365,7 @@ teststat.boottest <- function(object, ...) {
 #'   clustid = "group_id1"
 #' )
 #' nobs(boot)
-
+#'
 nobs.boottest <- function(object, ...) {
   stopifnot(inherits(object, "boottest"))
 
@@ -547,7 +545,6 @@ summary.boottest <- function(object, digits = 3, ...) {
 }
 
 plot.boottest <- function(x, ...) {
-
   #' Plots bootstrapped p-values as a function of the hypothesized effect size r for
   #' a hypothesis test of the form R beta = r.The points where the p-values are 0.05
   #' are the boundaries of the bootstrapped confidence interval.
@@ -834,7 +831,6 @@ print.mboottest <- function(x, ..., digits = 4) {
 
 
 tidy.mboottest <- function(x, ...) {
-
   #' S3 method to summarize objects of class mboottest into tidy data.frame
   #' @param x object of type mboottest
   #' @param ... Further arguments passed to or from other methods.

@@ -69,7 +69,7 @@
 #' @srrstats {G2.14} *Where possible, all functions should provide options for users to specify how to handle missing (`NA`) data, with options minimally including:*
 #' This is not applicable. The data is pre-processed in the regression class, there is no need to do so again for `boottest()`.
 #'
-#'@srrstatsTODO {G2.14a} *error on missing data*. *see G2.13*
+#' @srrstatsTODO {G2.14a} *error on missing data*. *see G2.13*
 #'
 #' @srrstats {G2.14b} *see G2.13*
 #'
@@ -96,11 +96,6 @@
 #' and the docs for `boottest()`.In particular, see
 #' [this vignette](https://s3alfisc.github.io/fwildclusterboot/articles/Different-Variants-of-the-Wild-Cluster-Bootstrap.html).
 #'
-#' @srrstatsNA {G4.0} *Statistical Software which enables outputs to be
-#' written to local files should parse parameters specifying file names
-#' to ensure appropriate file suffices are automatically generated where
-#' not provided.* No output can be written to local files.
-#'
 #' @srrstats {G5.2a} *Every message produced within R code by `stop()`,
 #'  `warning()`, `message()`, or equivalent should be unique* Yes.
 #' Though I don't know how to best document this in the codebase.
@@ -122,20 +117,6 @@
 #' The bootstrap weight options are described in a separate vignette article.
 #' In general, the wild bootstrap does not make any distributional assumptions
 #' for estimation beyond the assumption of a linear regression model.
-#'
-#' @srrstatsTODO {RE3.1} *Enable such messages to be optionally suppressed, yet
-#' should ensure that the resultant model object nevertheless includes
-#' sufficient data to identify lack of convergence.* In my experience,
-#' convergence is never a problem, but confidence interval inversion
-#' sometimes fails. I suspect that I can improve the error messageas :)
-#'
-#' @srrstatsTODO {RE4.1} *Regression Software may enable an ability to generate a model
-#' object without actually fitting values. This may be useful for controlling batch
-#'  processing of computationally intensive fitting algorithms.* I don't see how this
-#' would work and be useful for `boottest()`.
-#'
-#' @srrstatsTODO {RE4.2} *Model coefficients (via `coef()` / `coefficients()`)*
-#' Not relevant, provided by the regression package.
 #'
 #' @srrstats {RE4.4} *The specification of the model, generally as a
 #' formula (via `formula()`)* Not applicable.
@@ -171,13 +152,35 @@
 #'  and forecast (extrapolated) values.* No forecasting possible with
 #'  `boottest()`
 #'
-#' @srrstats {RE7.0} *Tests with noiseless, exact relationships between
-#' predictor (independent) data.*
+#' @srrstatsTODO {G5.9a} *Adding trivial noise (for example, at the scale of `.Machine$double.eps`) to data does not meaningfully change results*
 #'
 #' @noRd
+
+
 NULL
 
+
 #' NA_standards
+#'
+#'
+#' @srrstatsNA {RE3.1} *Enable such messages to be optionally suppressed, yet
+#' should ensure that the resultant model object nevertheless includes
+#' sufficient data to identify lack of convergence.* In my experience,
+#' convergence is never a problem, but confidence interval inversion
+#' sometimes fails. I suspect that I can improve the error messageas :)
+#'
+#' @srrstatsNA {RE4.1} *Regression Software may enable an ability to generate a model
+#' object without actually fitting values. This may be useful for controlling batch
+#'  processing of computationally intensive fitting algorithms.* I don't see how this
+#' would work and be useful for `boottest()`.
+#'
+#' @srrstatsNA {RE4.2} *Model coefficients (via `coef()` / `coefficients()`)*
+#' Not relevant, provided by the regression package.
+#'
+#' @srrstatsNA {G4.0} *Statistical Software which enables outputs to be
+#' written to local files should parse parameters specifying file names
+#' to ensure appropriate file suffices are automatically generated where
+#' not provided.* No output can be written to local files.
 #'
 #' Any non-applicable standards can have their tags changed from `@srrstatsTODO`
 #' to `@srrstatsNA`, and placed together in this block, along with explanations
@@ -266,9 +269,6 @@ NULL
 #' @srrstatsNA {G5.9} **Noise susceptibility tests** *Packages should test
 #'  for expected stochastic behaviour, such as through the following
 #'  conditions:* This might not make sense for a bootstrap package?
-#'
-#' @srrstatsNA {G5.9a} *Adding trivial noise (for example, at the scale of
-#' `.Machine$double.eps`) to data does not meaningfully change results*
 #'
 #' @srrstatsNA {RE1.2} *Regression Software should document expected format
 #' (types or classes) for inputting predictor variables, including descriptions
@@ -363,7 +363,7 @@ NULL
 #' for different categorical groups should include the ability to submit new
 #' groups to `predict()` methods.* Done by the regression model.
 #'
-#' @srrstatsTODO {RE7.0} *Tests with noiseless, exact relationships between predictor (independent) data.*
+#' @srrstatsNA {RE7.0} *Tests with noiseless, exact relationships between predictor (independent) data.*
 #'
 #' @srrstatsNA {RE7.0a} In particular, these tests should confirm ability to
 #'  reject perfectly noiseless input data. Done by the regression model.
@@ -385,11 +385,5 @@ NULL
 #' @srrstatsNA {RE7.4} Extending directly from **RE4.15**, where appropriate,
 #' tests should demonstrate and confirm that forecast errors, confidence
 #' intervals, or equivalent values increase with forecast horizons.
-#'
-#'
-#' @srrstatsTODO {G5.8c} *Data with all-`NA` fields or columns or all identical fields or columns*
-#' @srrstatsTODO {G5.9} **Noise susceptibility tests** *Packages should test for expected stochastic behaviour, such as through the following conditions:*
-#' @srrstatsTODO {G5.9a} *Adding trivial noise (for example, at the scale of `.Machine$double.eps`) to data does not meaningfully change results*
-#' @srrstatsTODO {G5.9b} *Running under different random seeds or initial conditions does not meaningfully change results*
 
 NULL

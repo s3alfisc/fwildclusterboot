@@ -37,34 +37,35 @@ data <- fwildclusterboot:::create_data(
 )
 
 lm_fit <- lm(
-  proposition_vote ~ treatment + log_income, 
+  proposition_vote ~ treatment + log_income,
   data = data
 )
 
-wcr_algos <- c("fnw11","11", "13", "31", "33")
+wcr_algos <- c("fnw11", "11", "13", "31", "33")
 
-run_all <- 
-lapply(wcr_algos, function(x){  
-  res <- 
-    boottest(
-      lm_fit, 
-      param = ~treatment, 
-      clustid = ~group_id1,
-      B = 9999, 
-      impose_null = TRUE,
-      bootstrap_type = x
-    )
+run_all <-
+  lapply(wcr_algos, function(x) {
+    res <-
+      boottest(
+        lm_fit,
+        param = ~treatment,
+        clustid = ~group_id1,
+        B = 9999,
+        impose_null = TRUE,
+        bootstrap_type = x
+      )
   })
 
-names(run_all) <- paste("WCR", 
-                        c("11 F&W", "11 F&R", "13 F&R", "31 F&R", "33 F&R"))
-
-msummary(
-  run_all, 
-  estimate = "{estimate} ({p.value})", 
-  statistic = "[{conf.low}, {conf.high}]"
+names(run_all) <- paste(
+  "WCR",
+  c("11 F&W", "11 F&R", "13 F&R", "31 F&R", "33 F&R")
 )
 
+msummary(
+  run_all,
+  estimate = "{estimate} ({p.value})",
+  statistic = "[{conf.low}, {conf.high}]"
+)
 ```
 
 Given the same `seed = 123`, both implementations of the `11` algorithm produce exactly the same p-values. The p-values produced by all other algorithms differ slightly, but are overall very close to each other. Confidence intervals are currently only implemented for the `fnw11` algorithm.

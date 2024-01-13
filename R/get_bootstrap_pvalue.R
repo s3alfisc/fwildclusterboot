@@ -1,5 +1,4 @@
 get_bootstrap_pvalue <- function(p_val_type, t_stat, t_boot) {
-
   #' get bootstrapped p-value based on bootstrapped t-stats
   #' @param p_val_type Character vector of length 1. Type of p-value.
   #'        Options include "two-tailed", "equal-tailed", ">" and "<".

@@ -25,14 +25,14 @@ data(voters)
 ## Variables created via 'i()'
 
 ```{r, warnings = FALSE, message=FALSE}
-feols_fit <- feols(proposition_vote ~ i(treatment, ideology1) ,
-    data = voters
+feols_fit <- feols(proposition_vote ~ i(treatment, ideology1),
+  data = voters
 )
 
 boot1 <- boottest(feols_fit,
-    B = 9999,
-    param = "treatment::0:ideology1",
-    clustid = "group_id1"
+  B = 9999,
+  param = "treatment::0:ideology1",
+  clustid = "group_id1"
 )
 
 boot1
@@ -54,8 +54,9 @@ boot2 <- lapply(
     x,
     B = 999,
     param = "treatment",
-    clustid = "group_id1")
-) 
+    clustid = "group_id1"
+  )
+)
 
 boot2
 ```
@@ -66,20 +67,20 @@ Similarly, it is possible to loop over objects of `fixest_multi` created by `sub
 voters$split <- sample(1:2, nrow(voters), TRUE)
 
 feols_fits <- fixest::feols(
-  proposition_vote ~ treatment, 
-  split = ~split, 
+  proposition_vote ~ treatment,
+  split = ~split,
   data = voters
 )
 
 boot3 <- lapply(
-  feols_fits, 
+  feols_fits,
   \(x) boottest(
     x,
-    B = 999, 
+    B = 999,
     param = "treatment",
     clustid = "group_id1"
-    )
-)  
+  )
+)
 
 boot3
 ```
@@ -88,20 +89,20 @@ And of course it is also possible to combine multiple "syntactic sugar" features
 
 ```{r, warnings = FALSE, message=FALSE}
 feols_fits <- fixest::feols(
-  proposition_vote ~ treatment | sw(Q1_immigration, Q2_defense), 
+  proposition_vote ~ treatment | sw(Q1_immigration, Q2_defense),
   split = ~split,
   data = voters
 )
 
 boot4 <- lapply(
-  feols_fits, 
+  feols_fits,
   \(x) boottest(
-    x, 
+    x,
     B = 999,
-    param = "treatment", 
+    param = "treatment",
     clustid = "group_id1"
-    )
-)  
+  )
+)
 
 boot4
 ```
@@ -114,39 +115,36 @@ Fixed effect interactions via `^` lead to an error. Fixing this is on my backlog
 
 ```{r, warnings = FALSE, message=FALSE, eval = FALSE}
 feols_fit2 <- feols(proposition_vote ~ treatment | Q1_immigration^Q2_defense,
-    data = voters
+  data = voters
 )
 
 # leads to an error
 boot1 <- boottest(feols_fit2,
-    B = 9999,
-    param = "treatment",
-    clustid = "group_id1"
+  B = 9999,
+  param = "treatment",
+  clustid = "group_id1"
 )
 # Error in `check_boottest_args_plus()` at fwildclusterboot/R/boottest_fixest.R:514:2:
 # ! Advanced formula notation in fixest / fixest via ^ to interact
 # fixed effects is currently not supported in boottest().
-
 ```
 
 Relatedly, varying slopes fixed effects syntax is not supported: 
 
 ```{r, warnings = FALSE, message=FALSE, eval = FALSE}
 feols_fit3 <- feols(proposition_vote ~ treatment | Q1_immigration[log_income],
-    data = voters
+  data = voters
 )
 
 # leads to an error
 boot <- boottest(feols_fit3,
-    B = 9999,
-    param = "treatment",
-    clustid = "group_id1"
+  B = 9999,
+  param = "treatment",
+  clustid = "group_id1"
 )
 # Error in `check_boottest_args_plus()` at fwildclusterboot/R/boottest_fixest.R:514:2:
 # ! Varying slopes in fixest / fixest via [] to interact
 # fixed effects is currently not supported in boottest().
-
-
 ```
 
 

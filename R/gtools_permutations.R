@@ -11,13 +11,13 @@ gtools_permutations <-
     #' @param set logical flag for duplicates
     #' @param repeats.allowed logical flag
     #' @noRd
-    
+
     if (mode(n) != "numeric" || length(n) != 1 || n < 1 ||
-        (n %% 1) != 0) {
+      (n %% 1) != 0) {
       stop("bad value of n")
     }
     if (mode(r) != "numeric" || length(r) != 1 || r < 1 ||
-        (r %% 1) != 0) {
+      (r %% 1) != 0) {
       stop("bad value of r")
     }
     if (!is.atomic(v) || length(v) < n) {
@@ -62,7 +62,7 @@ gtools_permutations <-
           X <- NULL
           for (i in 1:n) {
             X <- rbind(X, cbind(v[i], Recall(n -
-                                               1, r - 1, v[-i])))
+              1, r - 1, v[-i])))
           }
           X
         }

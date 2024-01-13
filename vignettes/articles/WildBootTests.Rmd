@@ -55,7 +55,7 @@ You can run the wild cluster bootstrap through `WildBootTests.jl` via the `engin
 data(voters)
 # estimate the regression model via lm
 lm_fit <- lm(
-  proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration ,
+  proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
   data = voters
 )
 ```
@@ -81,12 +81,12 @@ setBoottest_engine("WildBootTests.jl")
 All subsequent calls of `boottest()` will then automatically run `WildBootTests.jl` (unless you explicitly specify `engine = "R"`).
 
 ```{r, eval = FALSE, message = FALSE, warning = FALSE}
-# after setting setBoottest_engine("WildBootTests.jl"), 
+# after setting setBoottest_engine("WildBootTests.jl"),
 # the code below runs WildBootTests.jl without
 # specifying 'engine = "WildBootTests.jl"'
 boottest(
-  lm_fit, 
-  clustid = "group_id1", 
+  lm_fit,
+  clustid = "group_id1",
   param = "treatment",
   B = 9999
 )

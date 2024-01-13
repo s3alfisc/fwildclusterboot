@@ -76,15 +76,13 @@ boot_algo_julia <- function(preprocess,
                             fuller = NULL,
                             kappa = NULL,
                             bootstrap_type = "11") {
-
-
   # pass an internal seed which 'inherits' from global seed
 
   global_seed <- .Random.seed
   # need to pass a rng object to WildBootTests.jl
   JuliaConnectoR::juliaEval("using StableRNGs")
   internal_seed <-
-      JuliaConnectoR::juliaEval(paste0("rng = StableRNG(", get_seed(), ")"))
+    JuliaConnectoR::juliaEval(paste0("rng = StableRNG(", get_seed(), ")"))
   on.exit(set.seed(global_seed))
 
   resp <- as.numeric(preprocess$Y)
@@ -217,7 +215,7 @@ boot_algo_julia <- function(preprocess,
     }
   }
 
-  if(bootstrap_type == "31"){
+  if (bootstrap_type == "31") {
     eval_list[["jk"]] <- TRUE
   }
 

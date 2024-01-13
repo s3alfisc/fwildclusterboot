@@ -1,5 +1,4 @@
 test_that("test sampling", {
-  
   data1 <<- fwildclusterboot:::create_data(
     N = 10000,
     N_G1 = 20,

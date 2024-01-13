@@ -1,5 +1,4 @@
 model_matrix <- function(object, ...) {
-
   #' enhanced model.matrix functionalities
   #' @param object An object of class `lm` or `felm``
   #' @param ... Other arguments

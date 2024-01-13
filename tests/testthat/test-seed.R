@@ -14,7 +14,7 @@ test_that("seed works for OLS", {
   #'  or data sets provided by other widely-used R packages).* All tests are based
   #'  on random data sets.
   #'
-  #' @srrstatsTODO {G5.1} *Data sets created within, and used to test, a package should be exported
+  #' @srrstats {G5.1} *Data sets created within, and used to test, a package should be exported
   #'  (or otherwise made generally available) so that users can confirm tests and run examples.*
 
 

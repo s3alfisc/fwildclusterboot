@@ -1,4 +1,4 @@
-#' @srrstatsNA {RE1.3} *Regression Software which passes or otherwise
+#' @srrstats {RE1.3} *Regression Software which passes or otherwise
 #' transforms aspects of input data onto output structures should ensure
 #' that those output structures retain all relevant aspects of input data,
 #' notably including row and column names, and potentially information from
@@ -54,28 +54,28 @@ preprocess_fixest <-
     if (!is_iv) {
       X <-
         model.matrix(object,
-                     type = "rhs",
-                     na.rm = TRUE,
-                     collin.rm = TRUE
+          type = "rhs",
+          na.rm = TRUE,
+          collin.rm = TRUE
         )
     } else {
       X_endog <-
         model.matrix(object,
-                     type = "iv.endo",
-                     na.rm = TRUE,
-                     collin.rm = TRUE
+          type = "iv.endo",
+          na.rm = TRUE,
+          collin.rm = TRUE
         )
       X_exog <-
         model.matrix(object,
-                     type = "iv.exo",
-                     na.rm = TRUE,
-                     collin.rm = TRUE
+          type = "iv.exo",
+          na.rm = TRUE,
+          collin.rm = TRUE
         )
       instruments <-
         model.matrix(object,
-                     type = "iv.inst",
-                     na.rm = TRUE,
-                     collin.rm = TRUE
+          type = "iv.inst",
+          na.rm = TRUE,
+          collin.rm = TRUE
         )
     }
     Y <- model.matrix(object, type = "lhs")
@@ -679,9 +679,8 @@ transform_fe <-
       }
       # project out fe
       if (engine == "R") {
-
-        if(bootstrap_type != "fnw11"){
-          if(clustid_char != fe){
+        if (bootstrap_type != "fnw11") {
+          if (clustid_char != fe) {
             no_fixef_for_fast_reliable_error()
           }
         }
@@ -689,30 +688,26 @@ transform_fe <-
         prep_fe <- demean_fe(X, Y, fe_df, has_weights, N)
         X <- prep_fe$X
         Y <- prep_fe$Y
-        if(bootstrap_type != "fnw11"){
+        if (bootstrap_type != "fnw11") {
           Y <- Matrix::Matrix(Y)
           X <- Matrix::Matrix(X)
         }
         W <- prep_fe$W
         n_fe <- prep_fe$n_fe
       }
-
     } else {
       add_fe <- all_fe
       add_fe_names <- names(add_fe)
       fml_fe <- reformulate(add_fe_names, response = NULL)
-      if(engine == "R" && bootstrap_type %in% c("11", "31", "13","33")){
+      if (engine == "R" && bootstrap_type %in% c("11", "31", "13", "33")) {
         add_fe_dummies <-
           Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
-
       } else {
-
         add_fe_dummies <-
           model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
       }
 
       X <- cbind(X, add_fe_dummies)
-
     }
 
     res <- list(
@@ -782,12 +777,12 @@ get_cluster <-
     # Step 1: create cluster df
 
 
-    manipulate_object <- function(object){
-      if(inherits(object, "fixest")){
-        if(!is.null(object$fixef_vars)){
-          update(object, . ~ + 1 | . + 1)
+    manipulate_object <- function(object) {
+      if (inherits(object, "fixest")) {
+        if (!is.null(object$fixef_vars)) {
+          update(object, . ~ +1 | . + 1)
         } else {
-          update(object, . ~ + 1 )
+          update(object, . ~ +1)
         }
       } else {
         object
@@ -897,13 +892,13 @@ get_cluster <-
     }
     ## handle omitted or excluded observations (works for lfe, lm)
     if ((N != NROW(cluster)) &&
-        !is.null(object$na.action) &&
-        (class(object$na.action) %in% c("exclude", "omit"))) {
+      !is.null(object$na.action) &&
+      (class(object$na.action) %in% c("exclude", "omit"))) {
       cluster <- cluster[-object$na.action, , drop = FALSE]
     }
     if ((N != NROW(bootcluster)) &&
-        !is.null(object$na.action) &&
-        (class(object$na.action) %in% c("exclude", "omit"))) {
+      !is.null(object$na.action) &&
+      (class(object$na.action) %in% c("exclude", "omit"))) {
       bootcluster <- bootcluster[-object$na.action, , drop = FALSE]
     }
     if (N != nrow(cluster) && inherits(object, "fixest")) {
@@ -951,7 +946,7 @@ get_cluster <-
     }, numeric(1))
     #' @srrstats {G5.8c} *Data with all-`NA` fields or columns or all identical
     #' fields or columns* If all cluster vars are NA, this leads to an error.
-    if(any(N_G == 1)){
+    if (any(N_G == 1)) {
       stop("A clustering variable contains only one group. This is not allowed.")
     }
     # now do all the other bootcluster things
@@ -978,4 +973,4 @@ get_cluster <-
       cluster_bootcluster = cluster_bootcluster_df
     )
     res
-}
+  }

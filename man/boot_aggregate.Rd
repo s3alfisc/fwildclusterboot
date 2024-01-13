@@ -197,39 +197,42 @@ https://cran.r-project.org/web/packages/fixest/index.html
 minor changes by Alexander Fischer
 }
 \examples{
-
 \dontrun{
-if(requireNamespace("fixest")){
-library(fixest)
-data(base_stagg)
-# The DiD estimation
-res_sunab = feols(y ~ x1 + sunab(year_treated, year) | id + year, base_stagg)
-res_sunab_3ref = feols(y ~ x1 + sunab(
- year_treated, year, ref.p = c(.F + 0:2, -1)) |
-                        id + year, 
-                      cluster = "id",
-                      base_stagg, 
-                      ssc = ssc(adj = FALSE, cluster.adj = FALSE))
+if (requireNamespace("fixest")) {
+  library(fixest)
+  data(base_stagg)
+  # The DiD estimation
+  res_sunab <- feols(y ~ x1 + sunab(year_treated, year) | id + year, base_stagg)
+  res_sunab_3ref <- feols(
+    y ~ x1 + sunab(
+      year_treated, year,
+      ref.p = c(.F + 0:2, -1)
+    ) |
+      id + year,
+    cluster = "id",
+    base_stagg,
+    ssc = ssc(adj = FALSE, cluster.adj = FALSE)
+  )
 
-aggregate(res_sunab, agg = "ATT")
-# test ATT equivalence
-boot_att <- 
- boot_aggregate(
-   res_sunab, 
-   B = 9999, 
-   agg = "ATT", 
-   clustid = "id" 
- )
-head(boot_att)
+  aggregate(res_sunab, agg = "ATT")
+  # test ATT equivalence
+  boot_att <-
+    boot_aggregate(
+      res_sunab,
+      B = 9999,
+      agg = "ATT",
+      clustid = "id"
+    )
+  head(boot_att)
 
-#'boot_agg2 <- 
- boot_aggregate(
-   res_sunab, 
-   B = 99999, 
-   agg = TRUE,
-   ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
- )
-
+  #' boot_agg2 <-
+  boot_aggregate(
+    res_sunab,
+    B = 99999,
+    agg = TRUE,
+    ssc = boot_ssc(adj = FALSE, cluster.adj = FALSE)
+  )
 }
 }
+
 }

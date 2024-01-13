@@ -5,7 +5,6 @@
 #' @noRd
 
 check_params_in_model <- function(object, param) {
-
   # for lm and fixest
   if (inherits(object, "lm")) {
     if (mean(param %in% c(names(coef(object)))) != 1) {
@@ -17,7 +16,7 @@ check_params_in_model <- function(object, param) {
   if (inherits(object, "fixest")) {
     if (mean(param %in% c(names(coef(object)))) != 1) {
       param_not_in_model_error(param)
-      }
+    }
   }
 
   # for felm
@@ -46,9 +45,7 @@ check_params_in_model <- function(object, param) {
 #' out in the bootstrap
 #' @noRd
 #'
-check_boottest_args_plus <- function(
-    object, R, param, sign_level, B, fe = NULL) {
-
+check_boottest_args_plus <- function(object, R, param, sign_level, B, fe = NULL) {
   if (inherits(object, "ivreg")) {
     if (object$method != "OLS") {
       only_2SLS_for_IV_error()
@@ -61,7 +58,8 @@ check_boottest_args_plus <- function(
         fe_in_test_error(fe)
       }
       if (!(fe %in% names(object$fe))) {
-        fixef_not_fixef_error(fe)      }
+        fixef_not_fixef_error(fe)
+      }
     }
   }
 
@@ -80,10 +78,10 @@ check_boottest_args_plus <- function(
       #' (and not `paste` or `paste0`)* Done
 
       ("fixef_vars" %in% names(object) &&
-       grepl("^",
-             Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
-             fixed = TRUE
-       ))
+        grepl("^",
+          Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
+          fixed = TRUE
+        ))
       # note: whitespace ~ - for IV
       # grepl("~", deparse_fml, fixed = TRUE)
     ) {
@@ -97,10 +95,10 @@ check_boottest_args_plus <- function(
       #' (and not `paste` or `paste0`)* Done
 
       ("fixef_vars" %in% names(object) &&
-       grepl("[",
-             Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
-             fixed = TRUE
-       ))
+        grepl("[",
+          Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
+          fixed = TRUE
+        ))
       # note: whitespace ~ - for IV
       # grepl("~", deparse_fml, fixed = TRUE)
     ) {
@@ -114,7 +112,8 @@ check_boottest_args_plus <- function(
         fe_in_test_error(fe)
       }
       if (!(fe %in% object$fixef_vars)) {
-        fixef_not_fixef_error(fe)      }
+        fixef_not_fixef_error(fe)
+      }
     }
   }
 
@@ -122,8 +121,8 @@ check_boottest_args_plus <- function(
     message(
       paste(
         "Note: The bootstrap usually performs best when the confidence",
-        "level (here,", 
-        1 - sign_level, 
+        "level (here,",
+        1 - sign_level,
         "%) times the number of replications",
         "plus 1 (", B, "+ 1 = ", B + 1, ") is an integer."
       )
@@ -146,7 +145,8 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
   if (inherits(object, "felm")) {
     if (!is.null(fe)) {
       if (!(fe %in% names(object$fe))) {
-        fixef_not_fixef_error(fe)      }
+        fixef_not_fixef_error(fe)
+      }
     }
   }
 
@@ -162,10 +162,10 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
       # '^' illegal in fixef argument, but legal in main formula -
       # e.g. fml = y ~ x1 + I(x2^2) shold be possible
       ("fixef_vars" %in% names(object) &&
-       grepl("^",
-             Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
-             fixed = TRUE
-       ))
+        grepl("^",
+          Reduce(paste, as.character(as.formula(object$fml_all$fixef))),
+          fixed = TRUE
+        ))
 
     ) {
       advanced_formula_error()
@@ -196,9 +196,8 @@ check_mboottest_args_plus <- function(object, R, r, fe) {
 #' @noRd
 
 
-check_r_lean <- function(weights, clustid, fe, impose_null){
-
-  if(length(clustid) > 1){
+check_r_lean <- function(weights, clustid, fe, impose_null) {
+  if (length(clustid) > 1) {
     no_clustering_for_rlean_error()
   }
 
@@ -206,26 +205,23 @@ check_r_lean <- function(weights, clustid, fe, impose_null){
     no_fixef_for_rlean_error()
   }
 
-  if(!is.null(weights)){
+  if (!is.null(weights)) {
     no_weights_for_rlean_error()
   }
 
-  if(impose_null != TRUE){
+  if (impose_null != TRUE) {
     no_wcu_for_rlean_error()
   }
-
 }
 
 
-check_boot_algo_fastnreliable <- function(
-    weights,
-    clustid,
-    bootcluster,
-    fe,
-    bootstrap_type,
-    R,
-    r){
-
+check_boot_algo_fastnreliable <- function(weights,
+                                          clustid,
+                                          bootcluster,
+                                          fe,
+                                          bootstrap_type,
+                                          R,
+                                          r) {
   #' function to check input arguments passed to `boot_algo3()`
   #' @param weights NULL or numeric vector
   #' @param clustid character vector
@@ -238,19 +234,17 @@ check_boot_algo_fastnreliable <- function(
   #' @noRd
 
 
-  if(R != 1L || r != 0){
-
+  if (R != 1L || r != 0) {
     non_scalar_test_error()
-  
   }
 
-  if(length(clustid) > 1){
+  if (length(clustid) > 1) {
     only_onweway_clustering_for_fast_reliable
   }
 
   if (!is.null(fe)) {
-    if(bootstrap_type %in% c("11", "31")){
-      if(!(fe == clustid)){
+    if (bootstrap_type %in% c("11", "31")) {
+      if (!(fe == clustid)) {
         only_cluster_fixef_for_11_31_error()
       }
     }
@@ -260,24 +254,21 @@ check_boot_algo_fastnreliable <- function(
     }
   }
 
-  if(!is.null(weights)){
+  if (!is.null(weights)) {
     no_weights_for_fast_reliable_error()
   }
 
-  if(length(bootcluster) > 1){
+  if (length(bootcluster) > 1) {
     no_subcluster_bootstrap_fast_reliable()
   }
 
-  if(!(bootcluster %in% c("max", "min", clustid))){
+  if (!(bootcluster %in% c("max", "min", clustid))) {
     bootcluster_not_max_min_clustid()
   }
-
-
-
 }
 
 
-#' check if full enumeration should be employed, provide message when it is. 
+#' check if full enumeration should be employed, provide message when it is.
 #' in this case, overwrite the number of bootstrap iterations to the number of
 #' enumerations.
 #' @param heteroskedastic Logical. Is the heteroskedastic or a wild cluster
@@ -368,36 +359,28 @@ process_R <- function(R, param) {
 }
 
 
-check_engine_btype <- function(
-    engine,
-    bootstrap_type){
-
-  if(engine == "WildBootTests.jl"){
-    if(!(bootstrap_type %in% c("11", "fnw11", "31"))){
+check_engine_btype <- function(engine,
+                               bootstrap_type) {
+  if (engine == "WildBootTests.jl") {
+    if (!(bootstrap_type %in% c("11", "fnw11", "31"))) {
       no_13_33_bootstap_via_julia(bootstrap_type)
     }
-  } else if(engine == "R-lean"){
-    if(bootstrap_type != "fnw11"){
-      if(bootstrap_type == "31"){
+  } else if (engine == "R-lean") {
+    if (bootstrap_type != "fnw11") {
+      if (bootstrap_type == "31") {
         no_bootstrap_type_for_rlean_error()
       } else {
         no_bootstrap_type_for_rlean_error()
       }
-
     }
   }
-
 }
 
 
-check_bootstrap_types <- function(param, bootstrap_type){
-
-  if(length(param) > 1){
-    if(bootstrap_type != "fnw11"){
+check_bootstrap_types <- function(param, bootstrap_type) {
+  if (length(param) > 1) {
+    if (bootstrap_type != "fnw11") {
       non_scalar_test_error()
     }
   }
-
 }
-
-

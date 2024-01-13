@@ -130,7 +130,7 @@ invert_p_val <- function(ABCD,
       if (j > len_inflate) {
         break("Boottest confidence set calculation fails because no p-value <
         sign_level could succesfully be guessed.",
-              call. = FALSE)
+          call. = FALSE)
       }
       # start guesses by taking confidence interval guess times inflation factor
       if (upper == TRUE) {
@@ -228,7 +228,7 @@ invert_p_val <- function(ABCD,
   for (i in 1:26) {
     x_crossings[i] <-
       ifelse(crossings[i] + crossings[i + 1] == 0 ||
-               crossings[i] + crossings[i - 1] == 0, 1, 0)
+        crossings[i] + crossings[i - 1] == 0, 1, 0)
   }
 
   # find starting values: max of grid_vals_higher and min of grid_vals_lower

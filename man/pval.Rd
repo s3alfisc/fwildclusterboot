@@ -23,7 +23,7 @@ of type \code{boottest} and \code{mboottest}
 requireNamespace("fwildclusterboot")
 data(voters)
 lm_fit <- lm(
-proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+  proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
   data = voters
 )
 boot <- boottest(lm_fit,

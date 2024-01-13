@@ -174,11 +174,12 @@ requireNamespace("fwildclusterboot")
 
 # drop all NA values from SchoolingReturns
 SchoolingReturns <- na.omit(SchoolingReturns)
-ivreg_fit <- ivreg(log(wage) ~ education + age +
-  ethnicity + smsa + south + parents14 |
-  nearcollege + age + ethnicity + smsa
-    + south + parents14,
-data = SchoolingReturns
+ivreg_fit <- ivreg(
+  log(wage) ~ education + age +
+    ethnicity + smsa + south + parents14 |
+    nearcollege + age + ethnicity + smsa
+      + south + parents14,
+  data = SchoolingReturns
 )
 
 boot_ivreg <- boottest(

@@ -191,7 +191,6 @@ create_data <-
 #   }
 
 setBoottest_engine <- function(engine) {
-
   #' Sets the default bootstrap algo for the current R session
   #' to be run via `boottest()` and `mboottest()`
   #'
@@ -232,7 +231,6 @@ getBoottest_engine <- function() {
 }
 
 set_engine <- function(engine) {
-
   #' check the bootstrap algo
   #' @param engine character scalar
   #' @noRd
@@ -253,7 +251,6 @@ set_engine <- function(engine) {
 # 2. the default number of threads in check_set_nthreads is set to 1
 
 setBoottest_nthreads <- function(nthreads) {
-
   #' Set the number of threads for use with open mp via options
   #' By default, only one thread is used
   #' @param nthreads Integer. Number of threads to be used
@@ -303,16 +300,16 @@ check_set_nthreads <- function(nthreads) {
   dreamerr::set_up(1)
 
   dreamerr::check_value(nthreads,
-                        "integer scalar GE{0} | numeric scalar GT{0} LT{1}",
-                        .message = paste0(
-                          "The argument 'nthreads' must be an integer
+    "integer scalar GE{0} | numeric scalar GT{0} LT{1}",
+    .message = paste0(
+      "The argument 'nthreads' must be an integer
                           lower or equal to the number of threads available (",
-                          max(cpp_get_nb_threads(), 1), ").
+      max(cpp_get_nb_threads(), 1), ").
                           It can be equal to 0 which means all threads.
                           Alternatively, if equal to a number strictly between
                           0 and 1, it represents the fraction of all
                           threads to be used."
-                        )
+    )
   )
 
   # max_threads <- parallel::detectCores()
@@ -364,7 +361,6 @@ get_seed <- function() {
 }
 
 to_integer <- function(vec) {
-
   #' Transform vectors of all types safely to integer vectors
   #' @param vec A vector
   #' @return An integer vector
@@ -380,12 +376,11 @@ to_integer <- function(vec) {
     int_vec[which(vec == unique_vec[x])] <- x
   }
   as.integer(int_vec)
-
 }
 
 
 # functions taken from 'clubSandwich' package
-matrix_split <- function (x, fac, dim) {
+matrix_split <- function(x, fac, dim) {
   # if (is.vector(x)) {
   #   if (dim != "both")
   #     stop(paste0("Object must be a matrix in order to subset by ",
@@ -394,16 +389,21 @@ matrix_split <- function (x, fac, dim) {
   #   lapply(x_list, function(x) diag(x, nrow = length(x)))
   # }
   # else {
-    lapply(levels(fac), sub_f(x, fac, dim))
-  #}
+  lapply(levels(fac), sub_f(x, fac, dim))
+  # }
 }
 
-sub_f <- function (x, fac, dim){
-  function(f) switch(dim,
-                     row = x[fac == f, , drop = FALSE],
-                     col = x[, fac == f, drop = FALSE],
-                     both = x[fac == f,
-                     fac == f, drop = FALSE])
+sub_f <- function(x, fac, dim) {
+  function(f) {
+    switch(dim,
+      row = x[fac == f, , drop = FALSE],
+      col = x[, fac == f, drop = FALSE],
+      both = x[fac == f,
+        fac == f,
+        drop = FALSE
+      ]
+    )
+  }
 }
 
 
@@ -415,15 +415,14 @@ sub_f <- function (x, fac, dim){
 #' A matrix of dimension N x G, where G the number of obs and
 #' G the number of groups
 #' @examples
-#' if(requireNamespace("collapse")){
-#' N <- 100
-#' cluster <- sample(letters, N, TRUE)
-#' g <- collapse::GRP(cluster, call = FALSE)
-#' vec2mat(x = rnorm(N), group_id = g$group.id)
+#' if (requireNamespace("collapse")) {
+#'   N <- 100
+#'   cluster <- sample(letters, N, TRUE)
+#'   g <- collapse::GRP(cluster, call = FALSE)
+#'   vec2mat(x = rnorm(N), group_id = g$group.id)
 #' }
 #' @noRd
-vec2mat <- function(x, group_id){
-
+vec2mat <- function(x, group_id) {
   N <- length(x)
   G <- length(unique(group_id))
   mat <- matrix(0, N, G)
@@ -431,12 +430,10 @@ vec2mat <- function(x, group_id){
   idx <- index + N * (group_id - 1)
   mat[idx] <- x
   mat
-
 }
 
 
-find_proglang <- function(lang){
-
+find_proglang <- function(lang) {
   #' Check if julia or python are installed /
   #' can be found on the PATH.
   #'
@@ -458,12 +455,10 @@ find_proglang <- function(lang){
   language_found <- nzchar(Sys.which(lang))
 
   language_found
-
 }
 
 
-is_congruent <- function(x, y){
-  
+is_congruent <- function(x, y) {
   #' check if two vectors x and y are congruent
   #' @param x a vector
   #' @param y another vector of length(y) == length(x)
@@ -474,18 +469,16 @@ is_congruent <- function(x, y){
   #' is_congruent(x, y)
   #' @noRd
 
-  dreamerr::check_arg(x,"vector")
+  dreamerr::check_arg(x, "vector")
   dreamerr::check_arg(y, "vector")
-  
+
   u_x <- unique(x)
   u_y <- unique(y)
-  
-  if(length(u_x) < length(u_y)){
+
+  if (length(u_x) < length(u_y)) {
     stop("")
   }
-  
-  tab <- table(x,y)
-  !any(colSums(tab != 0) != 1)
-  
-}
 
+  tab <- table(x, y)
+  !any(colSums(tab != 0) != 1)
+}
