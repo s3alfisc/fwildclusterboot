@@ -8,7 +8,7 @@
 #' @param object An object of type lm, fixest, felm or ivreg
 #' @param ... other arguments
 #'
-#' @seealso 
+#' @seealso
 #' [boottest.lm][fwildclusterboot::boottest.lm],
 #' [boottest.fixest][fwildclusterboot::boottest.fixest],
 #' [boottest.felm][fwildclusterboot::boottest.felm],
@@ -49,11 +49,11 @@
 #' or Normal weights
 #'
 #' @return An object of class `boottest`.
-#' 
-#' @details Technical Details 
+#'
+#' @details Technical Details
 #' For technical details, either take a look at the references below, or check
 #' out the [wild (cluster) bootstrap vignette](https://s3alfisc.github.io/fwildclusterboot/articles/wild_bootstrap.html).
-#' 
+#'
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the
 #' following software packages:
@@ -770,20 +770,23 @@ nobs.mboottest <- function(object, ...) {
 #'   clustid = "group_id1"
 #' )
 #' print(boot)
+#' @srrstats {RE4.17} *Model objects returned by Regression Software should implement or
+#' appropriately extend a default `print` method which provides an on-screen summary
+#' of model (input) parameters and (output) coefficients.*
 #'
 print.boottest <- function(x, ..., digits = 4) {
   stopifnot(inherits(x, "boottest"))
-  
+
   print(x$call)
   cat("", "\n")
-  
+
   vals <- lapply(
     c("p_val", "conf_int", "t_stat"),
     function(y) {
       round(x[[y]], digits = digits)
     }
   )
-  
+
   cat("p value:", vals[[1]], "\n")
   cat("confidence interval:", vals[[2]], "\n")
   cat("test statistic", vals[[3]], "\n")
@@ -814,17 +817,17 @@ print.boottest <- function(x, ..., digits = 4) {
 #'
 print.mboottest <- function(x, ..., digits = 4) {
   stopifnot(inherits(x, "mboottest"))
-  
+
   print(x$call)
   cat("", "\n")
-  
+
   vals <- lapply(
     c("p_val", "teststat"),
     function(y) {
       round(x[[y]], digits = digits)
     }
   )
-  
+
   cat("p value:", vals[[1]], "\n")
   cat("test statistic", vals[[2]], "\n")
 }

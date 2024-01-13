@@ -183,6 +183,8 @@
 #' @section Multiple Fixed Effects:
 #' If your feols() model contains fixed effects, boottest() will internally convert all fixed
 #' effects but the one specified via the `fe` argument to dummy variables.
+#' @srrstatsTODO {RE2.0} *Regression Software should document any transformations applied to input data, for example conversion of label-values to `factor`,
+#'   and should provide ways to explicitly avoid any default transformations (with error or warning conditions where appropriate).*
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the
 #' following software packages:
@@ -484,6 +486,8 @@ boottest.fixest <- function(object,
   )
 
   # preprocess the data: Y, X, weights, fixed_effect
+  #' @srrstatsTODO {G2.8} *Software should provide appropriate conversion or dispatch routines as part of initial pre-processing to ensure that all other sub-functions of a package receive inputs of a single defined class or type.*
+  #' The preprocess_ functions bring objects of type `lm`, `feols`, `lfe` into a state so that we can run `run_boottest()` on the `preprocess-ed` lists
   preprocess <- preprocess_fixest(
     object = object,
     clustid = clustid,
