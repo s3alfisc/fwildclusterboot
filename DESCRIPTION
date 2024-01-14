@@ -50,7 +50,6 @@ Imports:
     dreamerr,
     Formula,
     generics,
-    gtools,
     JuliaConnectoR,
     Matrix,
     Rcpp,

@@ -95,8 +95,7 @@ get_weights <- function(type,
   # full_enumeration only for rademacher weights (set earlier)
   if (full_enumeration) {
       v0 <-
-        # gtools_permutations(
-        permutations(
+        gtools_permutations(
           n = 2,
           r = N_G_bootcluster,
           v = c(1, -1),
