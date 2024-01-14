@@ -100,25 +100,6 @@
 boottest <- function(object,
                      ...) {
 
-  rlang::warn(
-    message = "
-    Please note that the seeding behavior for random number
-    generation for `boottest()` has changed with `fwildclusterboot`
-    version 0.13.
-
-    It will no longer be possible to
-    exactly reproduce results produced by versions lower than 0.13.
-
-    If your prior results were produced under sufficiently many bootstrap
-    iterations, none of your conclusions will change.
-    For more details about this change, please read the notes in
-    [news.md](
-    https://cran.r-project.org/web/packages/fwildclusterboot/news/news.html).",
-    .frequency = "once",
-    .frequency_id = "random-seed-message",
-    use_cli_format = TRUE
-  )
-
   UseMethod("boottest")
 }
 

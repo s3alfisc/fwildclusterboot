@@ -54,7 +54,6 @@ Imports:
     JuliaConnectoR,
     Matrix,
     Rcpp,
-    rlang,
     summclust
 Suggests:
     bench,
