@@ -241,7 +241,7 @@ test_that("errors and warnings q = 1", {
 
     # rademacher enumeration case
     if (engine != "R-lean") {
-      suppressWarnings(expect_warning(
+      suppressWarnings(expect_message(
         boottest(
           object = lm_fit,
           clustid = "group_id1",
@@ -251,7 +251,7 @@ test_that("errors and warnings q = 1", {
           engine = engine
         )
       ))
-      suppressWarnings(expect_warning(
+      suppressWarnings(expect_message(
         boottest(
           object = feols_fit,
           clustid = "group_id1",
@@ -261,7 +261,7 @@ test_that("errors and warnings q = 1", {
           engine = engine
         )
       ))
-      suppressWarnings(expect_warning(
+      suppressWarnings(expect_message(
         boottest(
           object = felm_fit,
           clustid = "group_id1",
@@ -273,7 +273,7 @@ test_that("errors and warnings q = 1", {
       ))
     }
 
-    suppressWarnings(expect_warning(
+    suppressWarnings(expect_message(
       boottest(
         object = lm_fit,
         clustid = "group_id1",
@@ -722,7 +722,7 @@ test_that("errors and warnings q = 1", {
       )
 
     # no confidence intervals calculated: expect warning
-    expect_warning(
+    expect_message(
       boottest(
         object = lm_fit,
         clustid = "group_id1",

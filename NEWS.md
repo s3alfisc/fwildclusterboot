@@ -1,10 +1,13 @@
 # fwildclusterboot 0.15
 
-- Switches from `dqrng::dqsample()` to `dqrng::dqrrademacher()` for sampling of Rademacher weights.
+- Switches from `dqrng::dqsample()` to `dqrng::dqrrademacher()` for sampling of Rademacher weights. In consequence,
+  the same seed might no longer produce identical results between versions. But if you're number of bootstrap iterations
+  has been large enough, this should not impact any of your conclusions =)
   Good performance improvements. See below for benchmarks.
 - Updates ropensci review tags.
 - Bumps lifecycle badge to stable.
-- Error message handling via base R functions. `rlang` dependency will be deprecated going forward.
+- Error message handling via base R functions.
+- The `rlang` and `gtools` dependencies are dropped.
 
 ```r
   > library(bench)
