@@ -75,12 +75,6 @@
 #' formula (via `formula()`)* Not applicable.
 #'
 #'
-#' @srrstats {RE4.17} *Model objects returned by Regression Software should
-#' implement or appropriately extend a default `print` method which provides
-#' an on-screen summary of model (input) parameters and (output) coefficients.*
-#' Done.
-#'
-#'
 #' @srrstats {RE5.0} *Scaling relationships between sizes of input data
 #'  (numbers of observations, with potential extension to numbers of
 #'  variables/columns) and speed of algorithm.* I don't really understand
@@ -264,13 +258,6 @@ NULL
 #' @srrstatsNA {RE1.3a} *Where otherwise relevant information is not
 #' transferred, this should be explicitly documented.*
 #' No relevant info is not retained.
-#'
-#' @srrstatsNA {RE1.4} *Regression Software should document any assumptions made
-#' with regard to input data; for example distributional assumptions, or
-#' assumptions that predictor data have mean values of zero. Implications of
-#' violations of these assumptions should be both documented and tested.*
-#' The wild bootstrap does not make any distributional assumptions
-#' for estimation beyond the assumption of a linear regression model.
 #'
 #' @srrstatsNA {RE2.1} *Regression Software should implement explicit
 #' parameters controlling the processing of missing values, ideally
