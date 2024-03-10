@@ -46,33 +46,25 @@
 #' @srrstats {G2.14c} *see G2.13*
 #'
 #' @srrstats {G3.0} *No floating point numbers (rational numbers) are
-#'  compared with equality.* Yes, checked. Though I don't know where to
-#' document this in the codebase.
+#'  compared with equality.* I have verified this.
 #'
 #' @srrstats {G3.1} *Statistical software which relies on covariance
 #' calculations should enable users to choose between different algorithms
 #' for calculating covariances, and should not rely solely on covariances
-#' from the `stats::cov` function.* The package deals with "clustered"
-#' standard errors, but does not produce covariance matrices. Nevertheless,
-#' multiple options to compute WCB inference based on different covariance
-#' matrices are supported. I don't know where to best document this in the
-#' codebase.
-#' But essentially, the `bootstrap_type` function argument provides this
-#' functionality.
+#' from the `stats::cov` function.*
+#' The `bootstrap_type` function argument provides this
+#' functionality allows users to apply different covariance matrices for the
+#' wild cluster bootstrap.
 #'
 #' @srrstats {G3.1a} *The ability to use arbitrarily specified covariance
 #' methods should be documented (typically in examples or vignettes).*
-#' See above. Nevertheless, different wild cluster bootstrap types are supported
-#' that are based on different vcov matrices, which is documented in vignettes
-#' and the docs for `boottest()`.In particular, see
-#' [this vignette](
+#' Documented in [this vignette](
 #' https://s3alfisc.github.io/fwildclusterboot/articles/
 #' Different-Variants-of-the-Wild-Cluster-Bootstrap.html).
 #'
 #' @srrstats {G5.2a} *Every message produced within R code by `stop()`,
-#'  `warning()`, `message()`, or equivalent should be unique* Yes.
-#' Though I don't know how to best document this in the codebase.
-#'
+#'  `warning()`, `message()`, or equivalent should be unique*. Errors
+#' warnings and messages are unique.
 #'
 #' @srrstats {G5.8} **Edge condition tests** *to test that these conditions
 #' produce expected behaviour such as clear warnings or errors when confronted
@@ -277,8 +269,7 @@ NULL
 #' with regard to input data; for example distributional assumptions, or
 #' assumptions that predictor data have mean values of zero. Implications of
 #' violations of these assumptions should be both documented and tested.*
-#' The bootstrap weight options are described in a separate vignette article.
-#' In general, the wild bootstrap does not make any distributional assumptions
+#' The wild bootstrap does not make any distributional assumptions
 #' for estimation beyond the assumption of a linear regression model.
 #'
 #' @srrstatsNA {RE2.1} *Regression Software should implement explicit
