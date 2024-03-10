@@ -29,7 +29,7 @@ test_that("test r against Julia I: stochastic tests", {
 
 
   skip_on_cran()
-  skip_on_ci()
+  #skip_on_ci()
   skip_if_not(
     find_proglang("julia"),
     message = "skip test as julia installation not found."

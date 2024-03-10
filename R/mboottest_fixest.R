@@ -107,16 +107,9 @@
 #' To guarantee reproducibility, you need to
 #' set a global random seed via`set.seed()`
 #' @section Multiple Fixed Effects:
-#' If your feols() model contains fixed effects, boottest() will internally convert all fixed
-#' effects but the one specified via the `fe` argument to dummy variables.
-#' @section Run `boottest` quietly:
-#' You can suppress all warning and error messages by setting the following global
-#' options:
-#' `options(rlib_warning_verbosity = "quiet")`
-#' `options(rlib_message_verbosity = "quiet")`
-#' Not that this will turn off all warnings (messages) produced via `rlang::warn()` and
-#' `rlang::inform()`, which might not be desirable if you use other software build on
-#' `rlang`, as e.g. the `tidyverse`.
+#' If your feols() model contains fixed effects, boottest() will internally 
+#' convert all fixed effects but the one specified via the `fe` argument to
+#' dummy variables.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
 #' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
@@ -206,11 +199,6 @@ mboottest.fixest <- function(object,
   check_arg(maxmatsize, "scalar integer | NULL")
   check_arg(bootstrapc, "scalar logical")
 
-  inform_seed(
-    frequency_id = "seed-reminder-m-fixest",
-    engine = "WildBootTests.jl"
-  )
-
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
@@ -225,25 +213,11 @@ mboottest.fixest <- function(object,
 
   # fixest specific checks
   if (object$method != "feols") {
-    rlang::abort(
-      c("mboottest() only supports OLS estimation via fixest::feols() - it
-         does not support non-linear models computed via e.g.
-         fixest::fepois() or fixest::feglm."),
-      use_cli_format = TRUE
-    )
+    only_ols_for_fixest_error()
   }
 
   if (!is.null(object$fixef_removed)) {
-    rlang::abort(
-      paste(
-      "feols() removes fixed effects with the following values: ",
-      object$fixef_removed, ". Currently, boottest()'s
-               internal pre-processing does not account for this deletion.
-               Therefore, please exclude such fixed effects prior
-               to estimation with feols(). You can find them listed under
-               '$fixef_removed' of your fixest object."),
-        use_cli_format = TRUE
-    )
+    please_remove_fixest_na_error()
   }
 
   fedfadj <- 0L
@@ -292,10 +266,7 @@ mboottest.fixest <- function(object,
   clustermin <- julia_ssc$clustermin
 
   if (ssc[["fixef.K"]] != "none") {
-    rlang::inform(
-      "Currently, boottest() only supports fixef.K = 'none'.",
-      use_cli_format = TRUE
-    )
+    no_fixef.K_warning()
   }
 
 

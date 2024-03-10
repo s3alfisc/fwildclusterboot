@@ -33,5 +33,4 @@ boot <- boottest(lm_fit,
   clustid = "group_id1"
 )
 print(boot)
-
 }

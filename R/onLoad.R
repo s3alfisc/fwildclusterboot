@@ -16,8 +16,16 @@
 
 .onAttach <- 
 function(libname, pkgname) {
-  packageStartupMessage("\nPlease cite as: \n")
-  packageStartupMessage(" Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.")
-  packageStartupMessage(" Bootstrap Inference for Linear Regression Models.")
-  packageStartupMessage(" Available from https://cran.r-project.org/package=fwildclusterboot/.")
+  packageStartupMessage(
+    "\nPlease cite as: \n", 
+    "Fischer & Roodman. (2021). fwildclusterboot: Fast Wild Cluster.", 
+    "Bootstrap Inference for Linear Regression Models. \n", 
+    "Available from https://cran.r-project.org/package=fwildclusterboot/. \n"
+  )
+  packageStartupMessage(
+    "Too guarantee reproducibility, please don't forget to set a ", 
+    "global random seed **both** via `set.seed()` and `dqrng::dqset.seed()`. ", 
+    "This is required as `boottest()` uses different random number generators", 
+    "for different algorithms."
+  )
 }

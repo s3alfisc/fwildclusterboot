@@ -12,11 +12,11 @@ get_weights <- function(type,
   #' employed
   #' @param N_G_bootcluster Integer. The number of bootstrap clusters
   #' @param boot_iter The number of bootstrap iterations
-  #' @param sampling 'fast' or 'standard'. If 'fast', the 'dqrng' package is used 
-  #' for random number generation. If 'standard', functions from the 'stats' 
-  #' package are used when available. This argument is mostly a convenience for 
-  #' a wrapper package around fwildclusterboot, wildrwolf. I recommend to use the 
-  #' 'fast' option. 
+  #' @param sampling 'fast' or 'standard'. If 'fast', the 'dqrng' package is 
+  #' used for random number generation. If 'standard', functions from the 
+  #' 'stats' package are used when available. This argument is mostly a 
+  #' convenience for a wrapper package around fwildclusterboot, wildrwolf.
+  #' I recommend to use the fast' option. 
   #' @return A matrix of dimension N_G_bootcluster x (boot_iter + 1)
   #' @importFrom gtools permutations
   #' @noRd
@@ -29,11 +29,7 @@ get_weights <- function(type,
                             # (uses less memory
                             # than numeric)
                             rademacher = function(n) {
-                              dqrng::dqsample(
-                                x = c(-1L, 1L),
-                                size = n,
-                                replace = TRUE
-                              )
+                              dqrng::dqrrademacher(n)
                             },
                             mammen = function(n) {
                               sample(
@@ -99,8 +95,7 @@ get_weights <- function(type,
   # full_enumeration only for rademacher weights (set earlier)
   if (full_enumeration) {
       v0 <-
-        # gtools_permutations(
-        permutations(
+        gtools_permutations(
           n = 2,
           r = N_G_bootcluster,
           v = c(1, -1),

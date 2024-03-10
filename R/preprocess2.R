@@ -8,9 +8,11 @@
 #' @importFrom Matrix Diagonal
 #' @return An object of class `preprocess2`.
 #' @srrstats {G2.8} *Software should provide appropriate conversion or dispatch
-#'  routines as part of initial pre-processing to ensure that all other
-#'  sub-functions of a package receive inputs of a single defined class or
-#'  type.* Similar preprocess method + run_bootstrap function.
+#' routines as part of initial pre-processing to ensure that all other
+#' sub-functions of a package receive inputs of a single defined class or
+#' type.* The preprocess2 methods ensure that all information of individually
+#' supported classes - fixest, lfe, ivreg, lm - are processed into the
+#' required format.
 preprocess2 <- function(object, ...) {
   UseMethod("preprocess2")
 }
@@ -54,21 +56,9 @@ preprocess2.fixest <-
     method <- object$family
     # fixest specific checks
     if (object$method != "feols") {
-      rlang::abort(
-        "boottest() only supports OLS estimation via fixest::feols() - it
-        does not support non-linear models computed via e.g. fixest::fepois()
-        or fixest::feglm.",
-        use_cli_format = TRUE
-      )
+      only_ols_for_fixest_error()
     }
-    # if (!is.null(object$is_sunab)) {
-    #   if(object$is_sunab == TRUE){
-    #     rlang::abort(
-    #       "boottest() does not support the Sun-Abrams
-    #       estimator via `sunab()`."
-    #     )
-    #   }
-    # }
+
     is_iv <- ifelse(!is.null(object$fml_all$iv), TRUE, FALSE)
     has_fe <- ifelse(!is.null(object$fml_all$fixef), TRUE, FALSE)
     if (!is_iv) {
@@ -108,11 +98,7 @@ preprocess2.fixest <-
     }
     if (has_weights) {
       if (!is.null(fe)) {
-        rlang::abort(
-          "boottest() unfortunately currently does not support WLS and fixed
-          effects. Please set fe = NULL to run a bootstrap with WLS.",
-          use_cli_format = TRUE
-        )
+        no_weights_when_fe_error()
       }
     }
     fixed_effect <- NULL
@@ -263,12 +249,7 @@ preprocess2.felm <-
           rhs = 3
         )
       ) != "~0") {
-      rlang::abort(
-        "IV regression is currently not supported by boottest() for
-        objects of type 'felm'. You can either use 'fixest::feols()'
-        or 'ivreg::ivreg' for IV-regression.",
-        use_cli_format = TRUE
-      )
+      no_iv_for_felm_error()
       is_iv <- TRUE
     }
     X <- model_matrix(object, type = "rhs", collin.rm = TRUE)
@@ -283,11 +264,7 @@ preprocess2.felm <-
     }
     if (has_weights) {
       if (!is.null(fe)) {
-        rlang::abort(
-          "boottest() unfortunately currently does not support WLS and
-          fixed effects. Please set fe = NULL to run a bootstrap with WLS.",
-          use_cli_format = TRUE
-        )
+        no_weights_when_fe_error()
       }
     }
     if (has_fe) {
@@ -640,12 +617,7 @@ demean_fe <- function(X, Y, fe, has_weights, N) {
     levels(fixed_effect_W) <-
       (1 / table(fe)) # because duplicate levels are forbidden
   } else {
-    rlang::abort(
-      "Currently, boottest() does not jointly support regression weights /
-      WLS and fixed effects. If you want to use
-      boottest() for inference based on WLS, please set fe = NULL.",
-      use_cli_format = TRUE
-    )
+    no_weights_when_fe_error()
     # levels(fixed_effect_W) <- 1 / table(fixed_effect)
   }
   #' @srrstats {G2.4c} *explicit conversion to character via `as.character()`
@@ -720,13 +692,10 @@ transform_fe <-
       }
       # project out fe
       if (engine == "R") {
-        
+
         if(bootstrap_type != "fnw11"){
           if(clustid_char != fe){
-            rlang::abort("No fixed effects are supported for bootstrap_types
-                 '11', '13', '31', '33'.",
-                         use_cli_format = TRUE
-            )
+            no_fixef_for_fast_reliable_error()
           }
         }
         # WildBootTests.jl does demeaning internally
@@ -740,25 +709,41 @@ transform_fe <-
         W <- prep_fe$W
         n_fe <- prep_fe$n_fe
       }
-      
+
     } else {
       add_fe <- all_fe
       add_fe_names <- names(add_fe)
       fml_fe <- reformulate(add_fe_names, response = NULL)
       if(engine == "R" && bootstrap_type %in% c("11", "31", "13","33")){
         add_fe_dummies <-
-          Matrix::sparse.model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
-        
+          Matrix::sparse.model.matrix(
+            fml_fe, 
+            model.frame(
+              fml_fe, 
+              data = as.data.frame(
+                add_fe
+                )
+              )
+            )
+
       } else {
-        
+
         add_fe_dummies <-
-          model.matrix(fml_fe, model.frame(fml_fe, data = as.data.frame(add_fe)))
+          model.matrix(
+            fml_fe, 
+            model.frame(
+              fml_fe, 
+              data = as.data.frame(
+                add_fe
+                )
+              )
+            )
       }
-      
+
       X <- cbind(X, add_fe_dummies)
-      
+
     }
-    
+
     res <- list(
       X = X,
       Y = Y,
@@ -788,9 +773,8 @@ get_cluster <-
     #' @noRd
     #'
     #' @return a list, containing, among other things, a data.frame of the
-    #'  cluster variables,
-    #'         a data.frame of the bootcluster variable(s), and a helper
-    #'         matrix, all_c, used in `engine_julia()`
+    #'  cluster variables, a data.frame of the bootcluster variable(s), 
+    #'  and a helper matrix, all_c, used in `engine_julia()`
     #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between
     #' different data types, potentially including:* All cluster variables
     #' are set to factor internally.
@@ -803,9 +787,10 @@ get_cluster <-
     #' In this case, `boottest()` throws an error.*
     #' @srrstats {G2.15} *Functions should never assume non-missingness,
     #' and should never pass data with potential missing values to any base
-    #'  routines with default `na.rm = FALSE`-type parameters*. NAs are dropped via
-    #' the modeling functions (lm, felm, feols, ivreg). NAs in the cluster variables
-    #' are either dropped here (if dropped in the original model) or throw an error.
+    #'  routines with default `na.rm = FALSE`-type parameters*. NAs are dropped
+    #' via the modeling functions (lm, felm, feols, ivreg). NAs in the cluster
+    #' variables are either dropped here (if dropped in the original model) 
+    #' or throw an error.
     #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between
     #' different
     #' data types, potentially including:* All cluster variables are set to
@@ -821,11 +806,11 @@ get_cluster <-
     # no essential changes, but slight reorganization of pieces of code
     dreamerr::check_arg(clustid_char, "character scalar|charakter vector")
     dreamerr::check_arg(bootcluster, "character scalar | character vector")
-    
+
     clustid_fml <- reformulate(clustid_char)
     # Step 1: create cluster df
-    
-    
+
+
     manipulate_object <- function(object){
       if(inherits(object, "fixest")){
         if(!is.null(object$fixef_vars)){
@@ -837,7 +822,7 @@ get_cluster <-
         object
       }
     }
-    
+
     cluster_tmp <-
       if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
@@ -859,7 +844,7 @@ get_cluster <-
           envir = call_env
         )
       }
-    
+
     cluster_df <-
       model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
     # without cluster intersection
@@ -882,7 +867,7 @@ get_cluster <-
     } else {
       bootcluster_char <- bootcluster
     }
-    
+
     # add bootcluster variable to formula of clusters
     cluster_bootcluster_fml <-
       update(
@@ -893,8 +878,8 @@ get_cluster <-
           )
         )
       )
-    
-    
+
+
     cluster_bootcluster_tmp <-
       if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
@@ -916,29 +901,25 @@ get_cluster <-
           envir = call_env
         )
       }
-    
+
     # data.frame as needed for WildBootTests.jl
     cluster_bootcluster_df <- model.frame(
       cluster_bootcluster_fml,
       cluster_bootcluster_tmp,
       na.action = na.pass
     )
-    
+
     # data.frames with clusters, bootcluster
     cluster <- cluster_bootcluster_df[, clustid_char, drop = FALSE]
     bootcluster <-
       cluster_bootcluster_df[, bootcluster_char, drop = FALSE]
-    
+
     if (!any(bootcluster_char %in% clustid_char)) {
       is_subcluster <- TRUE
       if (!(any(names(bootcluster) %in% c(clustid_char, names(coef(
         object
       )))))) {
-        rlang::abort(
-          "A bootcluster variable is neither contained in the cluster
-          variables nor in the model coefficients.",
-          use_cli_format = TRUE
-        )
+        bootcluster_neither_cluster_nor_params()
       }
     } else {
       is_subcluster <- FALSE
@@ -960,30 +941,16 @@ get_cluster <-
         bootcluster[unlist(object$obs_selection), , drop = FALSE]
     }
     if (NROW(cluster) != N) {
-      rlang::abort(
-        "The number of observations in 'cluster' and 'nobs()' do not match",
-        use_cli_format = TRUE
-      )
+      cluster_nobs_error()
     }
     if (NROW(bootcluster) != N) {
-      rlang::abort(
-        "The number of observations in 'bootcluster' and 'nobs()' do not match",
-        use_cli_format = TRUE
-      )
+      bootcluster_nobs_error()
     }
     if (any(is.na(cluster))) {
-      rlang::abort(
-        "`boottest()` cannot handle NAs in `clustid` variables that are not
-        part of the estimated model object.",
-        use_cli_format = TRUE
-      )
+      nas_in_clustid_error()
     }
     if (any(is.na(bootcluster))) {
-      rlang::abort(
-        "`boottest()` cannot handle NAs in `bootcluster` variables that are
-        not part of the estimated model object.",
-        use_cli_format = TRUE
-      )
+      nas_in_bootclustid_error()
     }
     clustid_dims <- length(clustid_char)
     #' @srrstats {G2.4}
@@ -1014,7 +981,9 @@ get_cluster <-
     #' @srrstats {G5.8c} *Data with all-`NA` fields or columns or all identical
     #' fields or columns* If all cluster vars are NA, this leads to an error.
     if(any(N_G == 1)){
-      stop("A clustering variable contains only one group. This is not allowed.")
+      stop(
+        "A clustering variable contains only one group. This is not allowed."
+        )
     }
     # now do all the other bootcluster things
     c1 <-
