@@ -39,40 +39,6 @@
 #' expectations on lengths of inputs. - I am not sure where to best place
 #' this tag in my codebase.
 #'
-#' @srrstats {G2.6} *Software which accepts one-dimensional input should ensure
-#'  values are appropriately pre-processed regardless of class structures.* -
-#'  I don't really understand this, sorry =D
-#'
-#' @srrstats {G2.7} *Software should accept as input as many of the above
-#' standard tabular forms as possible, including extension to domain-specific
-#' forms.* No tabular data is passed to boottest().
-#'
-#' @srrstats {G2.10} *Software should ensure that extraction or filtering of
-#'  single columns from tabular inputs should not presume any particular
-#'  default behaviour, and should ensure all column-extraction operations
-#'  behave consistently regardless of the class of tabular data used as input.*
-#'  NA, as no tabular data inputs.
-#'
-#' @srrstats {G2.11} *Software should ensure that `data.frame`-like tabular
-#'  objects which have columns which do not themselves have standard class
-#'   attributes (typically, `vector`) are appropriately processed, and do
-#'   not error without reason. This behaviour should be tested. Again, columns
-#'    created by the [`units` package](https://github.com/r-quantities/units/)
-#'    provide a good test case.* NA, as no tabular input data.
-#'
-#' @srrstats {G2.12} *Software should ensure that `data.frame`-like tabular
-#'  objects which have list columns should ensure that those columns are
-#'  appropriately pre-processed either through being removed, converted to
-#'  equivalent vector columns where appropriate, or some other appropriate
-#'  treatment such as an informative error. This behaviour should be tested.*
-#'   Does not happen. NA, as no tabular input data.
-#'
-#'
-#' @srrstats {G2.14} *Where possible, all functions should provide options 
-#' for users to specify how to handle missing (`NA`) data, with options 
-#' minimally including:* This is not applicable. The data is pre-processed 
-#' in the regression class, there is no need to do so again for `boottest()`.
-#'
 #' @srrstatsTODO {G2.14a} *error on missing data*. *see G2.13*
 #'
 #' @srrstats {G2.14b} *see G2.13*
@@ -113,19 +79,6 @@
 #' with data with extreme properties including but not limited to:* Tests for
 #'  non-randomness under full enumeration:
 #'
-#' @srrstats {RE1.1} *Regression Software should document how formula interfaces
-#'  are converted to matrix representations of input data.* Not applicable. 
-#'  Formulas only create one dimensional columns (for cluster variables or
-#'  fixed effect).
-#'
-#' @srrstats {RE1.4} *Regression Software should document any assumptions made
-#' with regard to input data; for example distributional assumptions, or
-#' assumptions that predictor data have mean values of zero. Implications of
-#' violations of these assumptions should be both documented and tested.*
-#' The bootstrap weight options are described in a separate vignette article.
-#' In general, the wild bootstrap does not make any distributional assumptions
-#' for estimation beyond the assumption of a linear regression model.
-#'
 #' @srrstats {RE4.4} *The specification of the model, generally as a
 #' formula (via `formula()`)* Not applicable.
 #'
@@ -141,14 +94,6 @@
 #'  variables/columns) and speed of algorithm.* I don't really understand
 #' this requirement.
 #'
-#'
-#' @srrstats {RE6.1} *Where the default `plot` method is **NOT** a generic
-#'  `plot` method dispatched on the class of return objects (that is,
-#'  through an S3-type `plot.<myclass>` function or equivalent), that
-#'  method dispatch (or equivalent) should nevertheless exist in order
-#'  to explicitly direct users to the appropriate function.*
-#'  I am not sure if I am following this? `plot()` should be a generic.
-#'
 #' @srrstats {RE6.2} *The default `plot` method should produce a plot of
 #' the `fitted` values of the model, with optional visualisation of confidence
 #' intervals or equivalent.* This is not really relevant here, instead
@@ -160,8 +105,8 @@
 #'  and forecast (extrapolated) values.* No forecasting possible with
 #'  `boottest()`
 #'
-#' @srrstatsTODO {G5.9a} *Adding trivial noise (for example, at the 
-#' scale of `.Machine$double.eps`) to data does not meaningfully change 
+#' @srrstatsTODO {G5.9a} *Adding trivial noise (for example, at the
+#' scale of `.Machine$double.eps`) to data does not meaningfully change
 #' results*
 #'
 #' @noRd
@@ -179,8 +124,8 @@ NULL
 #' convergence is never a problem, but confidence interval inversion
 #' sometimes fails. I suspect that I can improve the error messageas :)
 #'
-#' @srrstatsNA {RE4.1} *Regression Software may enable an ability to 
-#' generate a model object without actually fitting values. This may 
+#' @srrstatsNA {RE4.1} *Regression Software may enable an ability to
+#' generate a model object without actually fitting values. This may
 #' be useful for controlling batch processing of computationally intensive
 #' fitting algorithms.* I don't see how this
 #' would work and be useful for `boottest()`.
@@ -215,6 +160,13 @@ NULL
 #'   other routines to ensure inputs follow these expectations.* No input
 #'   assumed to be of type factor.
 #'
+#' @srrstatsNA {G2.6} *Software which accepts one-dimensional input should ensure
+#'  values are appropriately pre-processed regardless of class structures.*
+#'
+#' @srrstatsNA {G2.7} *Software should accept as input as many of the above
+#' standard tabular forms as possible, including extension to domain-specific
+#' forms.* No tabular data is passed to boottest().
+#'
 #' @srrstatsNA {G2.9} *Software should issue diagnostic messages for type
 #' conversion in which information is lost (such as conversion of variables
 #'  from factor to character; standardisation of variable names; or removal
@@ -222,6 +174,31 @@ NULL
 #'   [`sf`-format](https://r-spatial.github.io/sf/) data) or added
 #'   (such as insertion of variable or column names where none were provided).*
 #'    Type conversion with information loss never happens.
+#'
+#' @srrstatsNA {G2.10} *Software should ensure that extraction or filtering of
+#'  single columns from tabular inputs should not presume any particular
+#'  default behaviour, and should ensure all column-extraction operations
+#'  behave consistently regardless of the class of tabular data used as input.*
+#'  NA, as no tabular data inputs.
+#'
+#' @srrstatsNA {G2.11} *Software should ensure that `data.frame`-like tabular
+#'  objects which have columns which do not themselves have standard class
+#'   attributes (typically, `vector`) are appropriately processed, and do
+#'   not error without reason. This behaviour should be tested. Again, columns
+#'    created by the [`units` package](https://github.com/r-quantities/units/)
+#'    provide a good test case.* NA, as no tabular input data.
+#'
+#' @srrstatsNA {G2.12} *Software should ensure that `data.frame`-like tabular
+#'  objects which have list columns should ensure that those columns are
+#'  appropriately pre-processed either through being removed, converted to
+#'  equivalent vector columns where appropriate, or some other appropriate
+#'  treatment such as an informative error. This behaviour should be tested.*
+#'   Does not happen. NA, as no tabular input data.
+#'
+#' @srrstatsNA {G2.14} *Where possible, all functions should provide options
+#' for users to specify how to handle missing (`NA`) data, with options
+#' minimally including:* This is not applicable. The data is pre-processed
+#' in the regression class, there is no need to do so again for `boottest()`.
 #'
 #' @srrstatsNA {G5.3} *For functions which are expected to return objects
 #'  containing no missing (`NA`) or undefined (`NaN`, `Inf`) values, the
@@ -281,15 +258,28 @@ NULL
 #'  for expected stochastic behaviour, such as through the following
 #'  conditions:* This might not make sense for a bootstrap package?
 #'
+#' @srrstatsNA {RE1.1} *Regression Software should document how formula interfaces
+#'  are converted to matrix representations of input data.* Not applicable.
+#'  Formulas only create one dimensional columns (for cluster variables or
+#'  fixed effect).
+#'
 #' @srrstatsNA {RE1.2} *Regression Software should document expected format
 #' (types or classes) for inputting predictor variables, including descriptions
 #'  of types or classes which are not accepted.* This is handled by the
 #'   regression package, unless fixed effects are projected out - then
 #'    boottest() might transform them into factors, if required.
 #'
-#' @srrstatsNA {RE1.3a} *Where otherwise relevant information is not 
-#' transferred, this should be explicitly documented.* 
+#' @srrstatsNA {RE1.3a} *Where otherwise relevant information is not
+#' transferred, this should be explicitly documented.*
 #' No relevant info is not retained.
+#'
+#' @srrstatsNA {RE1.4} *Regression Software should document any assumptions made
+#' with regard to input data; for example distributional assumptions, or
+#' assumptions that predictor data have mean values of zero. Implications of
+#' violations of these assumptions should be both documented and tested.*
+#' The bootstrap weight options are described in a separate vignette article.
+#' In general, the wild bootstrap does not make any distributional assumptions
+#' for estimation beyond the assumption of a linear regression model.
 #'
 #' @srrstatsNA {RE2.1} *Regression Software should implement explicit
 #' parameters controlling the processing of missing values, ideally
@@ -338,7 +328,7 @@ NULL
 #'
 #' @srrstatsNA {RE4.6} *The variance-covariance matrix of the model parameters
 #'  (via `vcov()`)* Inference based on p-values and t-stats, not vcov's. In
-#' fact, `boottest()` is fast because it never explicitly computes a vcov 
+#' fact, `boottest()` is fast because it never explicitly computes a vcov
 #' matrix.
 #'
 #' @srrstatsNA {RE4.7} *Where appropriate, convergence statistics* I think
@@ -360,7 +350,7 @@ NULL
 #' as effect sizes with model coefficients.* Done by the regression model.
 #'
 #' @srrstatsNA {RE4.12} *Where appropriate, functions used to transform input
-#'  data, and associated inverse transform functions.*Done by the regression 
+#'  data, and associated inverse transform functions.*Done by the regression
 #'  model.
 #'
 #' @srrstatsNA {RE4.13} *Predictor variables, and associated "metadata" where
@@ -371,12 +361,31 @@ NULL
 #'
 #' @srrstatsNA {RE4.15} *Sufficient documentation and/or testing should be
 #'  provided to demonstrate that forecast errors, confidence intervals, or
-#'   equivalent values increase with forecast horizons.* Done by the regression 
+#'   equivalent values increase with forecast horizons.* Done by the regression
 #'   model.
 #'
 #' @srrstatsNA {RE4.16} *Regression Software which models distinct responses
 #' for different categorical groups should include the ability to submit new
 #' groups to `predict()` methods.* Done by the regression model.
+#'
+#' @srrstatsNA {RE6.1} *Where the default `plot` method is **NOT** a generic
+#'  `plot` method dispatched on the class of return objects (that is,
+#'  through an S3-type `plot.<myclass>` function or equivalent), that
+#'  method dispatch (or equivalent) should nevertheless exist in order
+#'  to explicitly direct users to the appropriate function.*
+#'  Not applicable, as plot method is a generic, and that standard only
+#'  applies to packages without generic plot methods
+#'
+#' @srrstatsNA {RE6.2} *The default `plot` method should produce a plot of
+#' the `fitted` values of the model, with optional visualisation of confidence
+#' intervals or equivalent.* This is not really relevant here, instead
+#' plot() visualises the bootstrap results.
+#'
+#' @srrstatsNA {RE6.3} *Where a model object is used to generate a forecast
+#' (for example, through a `predict()` method), the default `plot` method
+#' should provide clear visual distinction between modelled (interpolated)
+#'  and forecast (extrapolated) values.* No forecasting possible with
+#'  `boottest()`
 #'
 #' @srrstatsNA {RE7.0} *Tests with noiseless, exact relationships between
 #'  predictor (independent) data.*
@@ -385,7 +394,7 @@ NULL
 #'  reject perfectly noiseless input data. Done by the regression model.
 #'
 #' @srrstatsNA {RE7.1} *Tests with noiseless, exact relationships between
-#'  predictor (independent) and response (dependent) data.* Done by the 
+#'  predictor (independent) and response (dependent) data.* Done by the
 #'  regression model.
 #'
 #' @srrstatsNA {RE7.1a} *In particular, these tests should confirm that model
