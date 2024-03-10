@@ -74,11 +74,10 @@
 #' @srrstats {RE4.4} *The specification of the model, generally as a
 #' formula (via `formula()`)* Not applicable.
 #'
-#'
 #' @srrstats {RE5.0} *Scaling relationships between sizes of input data
-#'  (numbers of observations, with potential extension to numbers of
-#'  variables/columns) and speed of algorithm.* I don't really understand
-#' this requirement.
+#' (numbers of observations, with potential extension to numbers of
+#' variables/columns) and speed of algorithm.*
+#' The asymptotic computational is O(G**2 x B).
 #'
 #' @srrstats {RE6.2} *The default `plot` method should produce a plot of
 #' the `fitted` values of the model, with optional visualisation of confidence
