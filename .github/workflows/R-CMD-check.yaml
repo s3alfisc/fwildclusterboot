@@ -73,7 +73,7 @@ jobs:
         shell: Rscript {0}
         
       # install julia
-      - uses: julia-actions/setup-julia@v1
+      - uses: julia-actions/setup-julia@v2
       # add julia to renviron
       - name: Create and populate .Renviron file
         run: echo JULIA_BINDIR= "${{ env.juliaLocation }}" >> ~/.Renviron
