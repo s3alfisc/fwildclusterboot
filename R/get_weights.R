@@ -18,7 +18,6 @@ get_weights <- function(type,
   #' convenience for a wrapper package around fwildclusterboot, wildrwolf.
   #' I recommend to use the fast' option. 
   #' @return A matrix of dimension N_G_bootcluster x (boot_iter + 1)
-  #' @importFrom gtools permutations
   #' @noRd
   
 

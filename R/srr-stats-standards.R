@@ -79,17 +79,6 @@
 #' variables/columns) and speed of algorithm.*
 #' The asymptotic computational is O(G**2 x B).
 #'
-#' @srrstats {RE6.2} *The default `plot` method should produce a plot of
-#' the `fitted` values of the model, with optional visualisation of confidence
-#' intervals or equivalent.* This is not really relevant here, instead
-#' plot() visualises the bootstrap results.
-#'
-#' @srrstats {RE6.3} *Where a model object is used to generate a forecast
-#' (for example, through a `predict()` method), the default `plot` method
-#' should provide clear visual distinction between modelled (interpolated)
-#'  and forecast (extrapolated) values.* No forecasting possible with
-#'  `boottest()`
-#'
 #' @srrstatsTODO {G5.9a} *Adding trivial noise (for example, at the
 #' scale of `.Machine$double.eps`) to data does not meaningfully change
 #' results*
