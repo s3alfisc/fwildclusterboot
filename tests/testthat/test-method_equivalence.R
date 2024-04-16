@@ -14,7 +14,7 @@ test_that("Do different, but equivalent ways to specify
 
   data1 <<-
     fwildclusterboot:::create_data(
-      N = 15000,
+      N = 14000,
       N_G1 = 20,
       icc1 = 0.01,
       N_G2 = 10,
