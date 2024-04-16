@@ -1468,7 +1468,7 @@ test_that("error warning IV/WRE and q > 1", {
   ))
 
   # enumeration warning
-  expect_warning(suppressMessages(
+  expect_message(
     boottest(
       object = ivreg_fit,
       clustid = "ethnicity",
@@ -1477,7 +1477,7 @@ test_that("error warning IV/WRE and q > 1", {
       type = "rademacher",
       conf_int = FALSE
     )
-  ))
+  )
 
   # drop all NA values from SchoolingReturns
   # SchoolingReturns <-
