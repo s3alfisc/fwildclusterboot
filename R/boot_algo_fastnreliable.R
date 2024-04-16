@@ -225,7 +225,14 @@ boot_algo_fastnreliable <- function(
     tXgXg <- lapply(tXgXg,function(g) as.matrix(g))
     scores_list <- lapply(scores_list,function(g) as.matrix(g))
     
-    H <- compute_H(G = G, R = matrix(R, 1, k), tXXinv = as.matrix(tXXinv), tXgXg = tXgXg, scores_list = scores_list, cores = nthreads)
+    H <- compute_H(
+      G = G,
+      R = matrix(R, 1, k),
+      tXXinv = as.matrix(tXXinv),
+      tXgXg = tXgXg,
+      scores_list = scores_list,
+      cores = nthreads
+    )
 
     denom <- boot_algo3_crv1_denom(
       B = B,
@@ -358,9 +365,16 @@ inv <- function(x, g){
       Matrix::solve(x)
     },
     error = function(e) {
-      rlang::warn(message = paste0(
-        "Matrix inversion error when computing beta(g) for cluster ", g, ". Using Pseudo-Inverse instead. Potentially, you can suppress this message by specifying a cluster fixed effect in the bootstrap via the `fe` argument of `boottest()`."), 
-        use_cli_format = TRUE)
+      message(
+        message = 
+          paste0(
+            "Matrix inversion error when computing beta(g) for cluster ", 
+            g, ". Using Pseudo-Inverse instead. Potentially, you can suppress",
+            "this message by specifying a cluster fixed effect in 
+            the bootstrap", 
+            "via the `fe` argument of `boottest()`."
+          )
+        )
       eigen_pinv(as.matrix(x))
     }
   )

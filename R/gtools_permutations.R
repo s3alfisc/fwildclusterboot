@@ -4,7 +4,7 @@ gtools_permutations <-
            v = 1:n,
            set = TRUE,
            repeats.allowed = FALSE) {
-    #' copied from the permutations package as long as it is orphaned on CRAN
+    #' Copied from the permutations package. Published under GPL-2.
     #' @param n size of source vector
     #' @param r size of target vector
     #' @param v source vector. defaults to 1:n

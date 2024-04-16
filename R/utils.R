@@ -226,12 +226,7 @@ getBoottest_engine <- function() {
 
   x <- getOption("boottest_engine")
   if (!(x %in% c("R", "WildBootTests.jl"))) {
-    rlang::abort(
-      "The value of getOption(\"boottest_engine\") is currently not legal.
-      Please use function setBoottest_engine to set it to an appropriate
-      value. ",
-      use_cli_format = TRUE
-    )
+    boottest_engine_error()
   }
   x
 }
@@ -292,14 +287,8 @@ getBoottest_nthreads <- function() {
 
   x <- getOption("boottest_nthreads")
   if (length(x) != 1 || !is.numeric(x) || is.na(x) || x %% 1 != 0 || x < 0) {
-    rlang::abort("The value of getOption(\"boottest_nthreads\") is currently not legal.
-         Please use function setBoottest_nthreads to set it to an appropriate
-         value. ",
-      use_cli_format = TRUE
-    )
+    boottest_nthreads_error()
   }
-  # cat("getBoottest nr threads \n")
-  # print(x)
   x
 }
 
@@ -452,7 +441,8 @@ find_proglang <- function(lang){
   #' can be found on the PATH.
   #'
   #' Based on Mauro Lepore's great suggestion
-  #' https://github.com/ropensci/software-review/issues/546#issuecomment-1416728843
+  #' https://github.com/ropensci/
+  #' software-review/issues/546#issuecomment-1416728843
   #'
   #' @param lang which language to check. Either 'julia' or 'python'
   #'
@@ -471,60 +461,3 @@ find_proglang <- function(lang){
   language_found
 
 }
-
-
-inform_seed <- function(frequency_id, engine){
-
-  if(engine != "WildBootTests.jl"){
-
-    rlang::inform(
-      "Too guarantee reproducibility, don't forget to set a
-    global random seed **both** via `set.seed()` and `dqrng::dqset.seed()`.",
-      use_cli_format = TRUE,
-      .frequency = "regularly",
-      .frequency_id = frequency_id
-    )
-
-  } else {
-
-    rlang::inform(
-      "Too guarantee reproducibility, don't forget to set a
-    global random seed via `set.seed()`.",
-      use_cli_format = TRUE,
-      .frequency = "regularly",
-      .frequency_id = frequency_id
-    )
-
-  }
-
-
-
-}
-
-is_congruent <- function(x, y){
-  
-  #' check if two vectors x and y are congruent
-  #' @param x a vector
-  #' @param y another vector of length(y) == length(x)
-  #' @return A logical. TRUE if the two vectors are congruent
-  #' @examples
-  #' x <- c(1, 1, 1, 2, 2, 3, 4, 4, 4)
-  #' y <- c("a", "a", "a", "b", "b", "b", "b", "b", "b")
-  #' is_congruent(x, y)
-  #' @noRd
-
-  dreamerr::check_arg(x,"vector")
-  dreamerr::check_arg(y, "vector")
-  
-  u_x <- unique(x)
-  u_y <- unique(y)
-  
-  if(length(u_x) < length(u_y)){
-    rlang::abort("")
-  }
-  
-  tab <- table(x,y)
-  !any(colSums(tab != 0) != 1)
-  
-}
-

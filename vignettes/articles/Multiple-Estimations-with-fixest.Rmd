@@ -123,7 +123,8 @@ boot1 <- boottest(feols_fit2,
     param = "treatment",
     clustid = "group_id1"
 )
-# Error in `check_boottest_args_plus()` at fwildclusterboot/R/boottest_fixest.R:514:2:
+# Error in `check_boottest_args_plus()` at 
+# fwildclusterboot/R/boottest_fixest.R:514:2:
 # ! Advanced formula notation in fixest / fixest via ^ to interact
 # fixed effects is currently not supported in boottest().
 
@@ -142,7 +143,8 @@ boot <- boottest(feols_fit3,
     param = "treatment",
     clustid = "group_id1"
 )
-# Error in `check_boottest_args_plus()` at fwildclusterboot/R/boottest_fixest.R:514:2:
+# Error in `check_boottest_args_plus()` at
+# fwildclusterboot/R/boottest_fixest.R:514:2:
 # ! Varying slopes in fixest / fixest via [] to interact
 # fixed effects is currently not supported in boottest().
 

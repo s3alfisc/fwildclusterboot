@@ -63,11 +63,11 @@ boot_algo_fastnwild <-
     #'  finding procedure to find the confidence interval.
     #'        10 by default.
     #' @param sampling 'dqrng' or 'standard'. If 'dqrng', the 'dqrng' package is
-    #' used for random number generation (when available). If 'standard',
-    #' functions from the 'stats' package are used when available.
-    #' This argument is mostly a convenience to control random number generation in
-    #' a wrapper package around `fwildclusterboot`, `wildrwolf`.
-    #' I recommend to use the fast' option.
+    #' used for random number generation (when available). If 'standard', 
+    #' functions from the 'stats' package are used when available. 
+    #' This argument is mostly a convenience to control random 
+    #' number generation in a wrapper package around `fwildclusterboot`, 
+    #' `wildrwolf`. I recommend to use the fast' option. 
     #' @return A list of ...
     #' @importFrom collapse fsum GRP
     #' @importFrom stats as.formula coef model.matrix model.response

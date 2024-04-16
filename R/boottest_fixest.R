@@ -181,16 +181,13 @@
 #' @section Standard Errors:
 #' `boottest` does not calculate standard errors.
 #' @section Multiple Fixed Effects:
-#' If your feols() model contains fixed effects, boottest() will internally convert all fixed
-#' effects but the one specified via the `fe` argument to dummy variables.
-#' @section Run `boottest` quietly:
-#' You can suppress all warning and error messages by setting the following global
-#' options:
-#' `options(rlib_warning_verbosity = "quiet")`
-#' `options(rlib_message_verbosity = "quiet")`
-#' Note that this will turn off all warnings (messages) produced via `rlang::warn()` and
-#' `rlang::inform()`, which might not be desirable if you use other software build on
-#' `rlang`, as e.g. the `tidyverse`.
+#' If your feols() model contains fixed effects, boottest() will internally
+#' convert all fixed effects but the one specified via the `fe` argument to
+#' dummy variables.
+#' @srrstats {RE2.0} *Regression Software should document any transformations
+#' applied to input data, for example conversion of label-values to `factor`,
+#' and should provide ways to explicitly avoid any default
+#' transformations (with error or warning conditions where appropriate).*
 #' @section Stata, Julia and Python Implementations:
 #' The fast wild cluster bootstrap algorithms are further implemented in the
 #' following software packages:
@@ -344,7 +341,8 @@
 #'
 #' @srrstats {RE1.0} *Regression Software should enable models to be specified
 #' via a formula interface, unless reasons for not doing so are explicitly
-#' documented.* The following function arguments can be formulas: param, clustid, fe.
+#' documented.* The following function arguments can be formulas: param,
+#' clustid, fe.
 
 
 
@@ -412,35 +410,16 @@ boottest.fixest <- function(object,
 
   check_arg(sampling, "charin(dqrng, standard)")
 
-  # remind packages users to set a global seed
-  inform_seed(
-    frequency_id = "seed-reminder-boot-fixest",
-    engine = engine
-  )
-
   if(bootstrap_type != "fnw11"){
     if(engine == "R"){
       if(conf_int){
-        rlang::inform(
-          "Confidence Intervals are currently only supported for
-                the R engine with 'bootstrap_type = 'fnw11' '.",
-          use_cli_format = TRUE,
-          .frequency = "regularly",
-          .frequency_id = "CI only for fnw algo."
-        )
+        cis_only_for_fnw11()
       }
     }
   }
 
   if (!is.null(beta0)) {
-    rlang::abort(
-      c(
-        "The function argument 'beta0' is deprecated.
-         Please use the function argument 'r' instead,
-         by which it is replaced."
-      ),
-      use_cli_format = TRUE
-    )
+    arg_beta0_is_deprecated_error()
   }
 
   if (inherits(clustid, "formula")) {
@@ -461,17 +440,7 @@ boottest.fixest <- function(object,
 
 
   if (!is.null(object$fixef_removed)) {
-    rlang::abort(
-      paste(
-        "feols() removes fixed effects with the following values: ",
-        object$fixef_removed,
-        ". Currently, boottest()'s internal pre-processing does not
-        account for this deletion. Therefore, please exclude such fixed
-        effects prior to estimation with feols(). You can find them listed
-        under '$fixef_removed' of your fixest object."
-      ),
-      use_cli_format = TRUE
-    )
+    please_remove_fixest_na_error()
   }
 
   # --------------------------------------------

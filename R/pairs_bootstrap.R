@@ -26,6 +26,11 @@ boot_algo_pairs <- function(
     small_sample_correction,
     object){
 
+  stop("
+    This function is in development. It is only included because
+    looking at the source code might be useful to some people =)
+  ")
+
 
   X <- preprocessed_object$X
   y <- preprocessed_object$Y

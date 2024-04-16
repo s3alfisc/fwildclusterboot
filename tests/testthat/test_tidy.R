@@ -58,7 +58,7 @@ test_that("test tidiers with q = 1", {
 
 test_that("test tidiers with q > 1", {
   skip_on_cran()
-  skip_on_ci()
+  #skip_on_ci()
   skip_if_not(
     find_proglang("julia"),
     message = "skip test as julia installation not found."

@@ -1,19 +1,21 @@
 test_that("algorithm performance test", {
 
 
-  #' @srrstats {G5.7} **Algorithm performance tests** *to test that implementation
+  #' @srrstats {G5.7} **Algorithm performance tests** *to test that
+  #' implementation
   #' performs as expected as properties of data change. For instance, a
   #' test may show that parameters approach correct estimates within tolerance
   #' as data size increases, or that convergence times decrease for higher
   #' convergence thresholds.* See test-convergence.R, which tests if the
   #' bootstrap converges in probability for B -> infinity.
-  #' @srrstats {G5.9b} *Running under different random seeds or initial conditions
-  #'  does not meaningfully change results* See the convergence tests.
+  #' @srrstats {G5.9b} *Running under different random seeds or initial
+  #' conditions
+  #' does not meaningfully change results* See the convergence tests.
 
 
 
   skip_on_cran()
-  skip_on_ci()
+  #skip_on_ci()
 
   skip_if_not(
     find_proglang("julia"),

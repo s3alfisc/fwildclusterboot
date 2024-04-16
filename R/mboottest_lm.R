@@ -101,14 +101,6 @@
 #' @section Setting Seeds:
 #' To guarantee reproducibility, you need to
 #' set a global random seed via `set.seed()`
-#' @section Run `boottest` quietly:
-#' You can suppress all warning and error messages by setting the following global
-#' options:
-#' `options(rlib_warning_verbosity = "quiet")`
-#' `options(rlib_message_verbosity = "quiet")`
-#' Note that this will turn off all warnings (messages) produced via `rlang::warn()` and
-#' `rlang::inform()`, which might not be desirable if you use other software build on
-#' `rlang`, as e.g. the `tidyverse`.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
 #' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
@@ -194,11 +186,6 @@ mboottest.lm <- function(object,
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(tol, "numeric scalar GT{0}")
 
-  inform_seed(
-    frequency_id = "seed-reminder-m-lm",
-    engine = "WildBootTests.jl"
-  )
-
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
@@ -206,16 +193,6 @@ mboottest.lm <- function(object,
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-
-
-  if (ssc[["fixef.K"]] != "none" ||
-      ssc[["cluster.df"]] != "conventional") {
-    rlang::inform(
-      "Currently, boottest() only supports fixef.K = 'none'.",
-      use_cli_format = TRUE
-    )
-  }
-
 
   check_mboottest_args_plus(
     object = object,
@@ -252,9 +229,7 @@ mboottest.lm <- function(object,
   clustermin <- julia_ssc$clustermin
 
   if (ssc[["fixef.K"]] != "none") {
-    rlang::inform(
-      paste("Currently, boottest() only supports fixef.K = 'none'."),
-      use_cli_format = TRUE)
+    no_fixef.K_warning()
   }
 
 

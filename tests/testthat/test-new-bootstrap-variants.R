@@ -22,7 +22,8 @@ test_that("test r-fnw vs r-, stochastic", {
   #' [RStata](https://github.com/lbraglia/RStata)).* Several correctness
   #' tests are implemented. First, it is tested if the non-bootstrapped
   #' t-statistics
-  #' produced via boottest() *exactly* match those computed by the fixest package
+  #' produced via boottest() *exactly* match those computed by the fixest 
+  #' package
   #' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
   #' against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R
   #' implementations of the WCB are tested against each other.
@@ -520,7 +521,8 @@ test_that("test cluster fixed effects", {
     weights = 1:N / N
   )
   
-  feols_fit <- fixest::feols(proposition_vote ~ treatment + log_income | group_id1  + Q2_defense,
+  feols_fit <- fixest::feols(
+    proposition_vote ~ treatment + log_income | group_id1  + Q2_defense,
                      data = data1
   )
   
