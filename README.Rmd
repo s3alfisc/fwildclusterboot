@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 <!-- [![packageversion](https://img.shields.io/badge/Package%20version-`r version`-orange.svg?style=flat-square)](commits/master) -->
+[![Status at rOpenSci Software Peer Review](https://badges.ropensci.org/546_status.svg)](https://github.com/ropensci/software-review/issues/546)
 [![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![CRAN status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-project.org/package=fwildclusterboot)
 ![runiverse-package](https://s3alfisc.r-universe.dev/badges/fwildclusterboot)
@@ -28,7 +29,6 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
 `r badger::badge_cran_download("fwildclusterboot", "grand-total", "blue")`
 `r badger::badge_cran_download("fwildclusterboot", "last-month", "green")`
-[![pkgcheck](https://github.com/s3alfisc/fwildclusterboot/workflows/pkgcheck/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions?query=workflow%3Apkgcheck)
 
 <!-- badges: end -->
 
@@ -101,7 +101,7 @@ install_github("s3alfisc/fwildclusterboot")
 
 For a longer introduction to `{fwildclusterboot}`, take a look at the [vignette](https://s3alfisc.github.io/fwildclusterboot/articles/fwildclusterboot.html).
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 library(fwildclusterboot)
 
 # set seed via dqset.seed for engine = "R" & Rademacher, Webb & Normal weights

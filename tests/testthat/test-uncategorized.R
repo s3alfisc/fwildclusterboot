@@ -1,16 +1,15 @@
 test_that("uncategorized tests", {
-  
   skip_on_cran()
   skip_if_not(
-    fwildclusterboot:::find_proglang("julia"), 
+    fwildclusterboot:::find_proglang("julia"),
     message = "skip test as julia installation not found."
   )
-  
+
   # see this issue: https://github.com/s3alfisc/fwildclusterboot/issues/26
 
   set.seed(76903)
   dqrng::dqset.seed(98796)
-  
+
   data1 <<-
     fwildclusterboot:::create_data(
       N = 500,
@@ -44,7 +43,7 @@ test_that("uncategorized tests", {
     )
   feols4 <-
     fixest::feols(
-      proposition_vote ~ treatment + ideology1 +log_income + group_id2,
+      proposition_vote ~ treatment + ideology1 + log_income + group_id2,
       data = data1,
       cluster = data1$group_id1
     )
@@ -95,11 +94,11 @@ test_that("uncategorized tests", {
   data(voters)
 
   to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
-  #sapply(voters[, to_char], class)
+  # sapply(voters[, to_char], class)
 
   voters_1 <<- voters
   voters_1$Q1_immigration <- as.numeric(voters_1$Q1_immigration)
-  #sapply(voters_1[, to_char], class)
+  # sapply(voters_1[, to_char], class)
 
   feols_fit <-
     fixest::feols(proposition_vote ~ treatment + log_income |
@@ -158,11 +157,11 @@ test_that("uncategorized tests", {
   data(voters)
 
   to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
-  #sapply(voters[, to_char], class)
+  # sapply(voters[, to_char], class)
 
   voters_1 <<- voters
   voters_1$Q2_defense <- as.numeric(voters_1$Q2_defense)
-  #sapply(voters_1[, to_char], class)
+  # sapply(voters_1[, to_char], class)
 
   feols_fit <-
     fixest::feols(proposition_vote ~ treatment + log_income |
@@ -230,13 +229,13 @@ test_that("uncategorized tests", {
 
   to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
   voters$group_id1 <- as.factor(voters$group_id1)
-  #sapply(voters[, to_char], class)
+  # sapply(voters[, to_char], class)
 
   voters_1 <<- voters
   voters_1$Q1_immigration <- as.numeric(voters_1$Q1_immigration)
   voters_1$Q2_defense <- as.numeric(voters_1$Q2_defense)
 
-  #sapply(voters_1[, to_char], class)
+  # sapply(voters_1[, to_char], class)
 
   feols_fit <-
     fixest::feols(proposition_vote ~ treatment + log_income |
@@ -296,34 +295,38 @@ test_that("uncategorized tests", {
 
   to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
   voters$group_id1 <- as.factor(voters$group_id1)
-  #sapply(voters[, to_char], class)
+  # sapply(voters[, to_char], class)
 
   voters_1 <<- voters
   voters_1$Q1_immigration <- as.numeric(voters_1$Q1_immigration)
   voters_1$Q2_defense <- as.numeric(voters_1$Q2_defense)
 
-  #sapply(voters[, to_char], class)
-  #sapply(voters_1[, to_char], class)
+  # sapply(voters[, to_char], class)
+  # sapply(voters_1[, to_char], class)
 
   feols_fit <-
-    fixest::feols(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters
+    fixest::feols(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters
     )
   feols_fit_2 <-
-    fixest::feols(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters_1
+    fixest::feols(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters_1
     )
   lfe_fit <-
-    lfe::felm(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters
+    lfe::felm(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters
     )
   lfe_fit_2 <-
-    lfe::felm(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters_1
+    lfe::felm(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters_1
     )
 
   boot1 <-
@@ -372,18 +375,19 @@ test_that("uncategorized tests", {
   data(voters)
 
   to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
-  #sapply(voters[, to_char], class)
+  # sapply(voters[, to_char], class)
 
   voters_1 <<- voters
   voters_1$Q1_immigration <- as.character(voters_1$Q1_immigration)
   voters_1$Q2_defense <- as.character(voters_1$Q2_defense)
 
-  #sapply(voters_1[, to_char], class)
+  # sapply(voters_1[, to_char], class)
 
   feols_fit <-
-    fixest::feols(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters
+    fixest::feols(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters
     )
   feols_fit_2 <-
     fixest::feols(
@@ -392,14 +396,16 @@ test_that("uncategorized tests", {
       data = voters_1
     )
   lfe_fit <-
-    lfe::felm(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters
+    lfe::felm(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters
     )
   lfe_fit_2 <-
-    lfe::felm(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters_1
+    lfe::felm(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters_1
     )
 
 
@@ -456,33 +462,37 @@ test_that("uncategorized tests", {
 
   to_char <- c("Q1_immigration", "Q2_defense", "group_id1")
   voters$group_id1 <- as.factor(voters$group_id1)
-  #sapply(voters[, to_char], class)
+  # sapply(voters[, to_char], class)
 
   voters_1 <<- voters
   voters_1$Q1_immigration <- as.numeric(voters_1$Q1_immigration)
   voters_1$Q2_defense <- as.numeric(voters_1$Q2_defense)
 
-  #sapply(voters_1[, to_char], class)
+  # sapply(voters_1[, to_char], class)
 
   feols_fit <-
-    fixest::feols(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters
+    fixest::feols(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters
     )
   feols_fit_2 <-
-    fixest::feols(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters_1
+    fixest::feols(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters_1
     )
   lfe_fit <-
-    lfe::felm(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters
+    lfe::felm(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters
     )
   lfe_fit_2 <-
-    lfe::felm(proposition_vote ~ treatment + log_income |
-      Q1_immigration + Q2_defense,
-    data = voters_1
+    lfe::felm(
+      proposition_vote ~ treatment + log_income |
+        Q1_immigration + Q2_defense,
+      data = voters_1
     )
 
   boot1 <-
@@ -547,24 +557,19 @@ test_that("uncategorized tests", {
 })
 
 test_that("test vec2mat", {
-  
   set.seed(5123)
   N <- 100
   x <- rnorm(N)
   cluster <- sample(letters[1:5], N, TRUE)
   g <- collapse::GRP(cluster, call = FALSE)
   mat1 <- fwildclusterboot:::vec2mat(x = x, group_id = g$group.id)
-  
+
   mat2 <- aggregate(
-    x = diag(x), 
-    by = list(g$group.id), 
-    FUN = "sum", 
+    x = diag(x),
+    by = list(g$group.id),
+    FUN = "sum",
     simplify = TRUE
   )
   mat2 <- t(as.matrix(mat2))
-  expect_equal(mat1, mat2[-1,], ignore_attr = TRUE)
-
-  
-  
-  
+  expect_equal(mat1, mat2[-1, ], ignore_attr = TRUE)
 })

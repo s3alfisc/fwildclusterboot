@@ -1,14 +1,41 @@
 test_that("test r against Julia I: stochastic tests", {
 
+#' @srrstats {G5.4} **Correctness tests** *to test that statistical algorithms
+#'  produce expected results to some fixed test data sets (potentially through
+#' comparisons using binding frameworks such as
+#' [RStata](https://github.com/lbraglia/RStata)).* Several correctness
+#' tests are implemented. First, it is tested if the non-bootstrapped
+#' t-statistics
+#' produced via boottest() *exactly* match those computed by the fixest package
+#' (see test_tstat_equivalence). Second, `fwildclusterboot` is heavily tested
+#'  against `WildBootTests.jl` - see "test-r-vs-julia". Last, multiple R
+#'  implementations of the WCB are tested against each other.
+#' @srrstats {G5.4b} *For new implementations of existing methods, correctness
+#' tests should include tests against previous implementations. Such testing
+#' may explicitly call those implementations in testing, preferably from
+#' fixed-versions of other software, or use stored outputs from those where
+#' that is not possible.* Extensive tests against WildBootTests.jl and
+#' alternative R implementations provided by fwildclusterboot. Also, the
+#' Python package wildboottest tests against fwildclusterboot.
+#' @srrstats {G5.5} *Correctness tests should be run with a fixed random seed*
+#' Done.
+#' @srrstats {G5.6a} *Parameter recovery tests should generally be expected
+#' to succeed within a defined tolerance rather than recovering exact values.*
+#'  t-stat equivalence is tested "exactly", r vs Julia is tested with tolerance.
+#' @srrstats {G5.6b} *Parameter recovery tests should be run with multiple
+#'  random seeds when either data simulation or the algorithm contains a
+#'   random component. (When long-running, such tests may be part of an
+#'   extended, rather than regular, test suite; see G4.10-4.12, below).* Done.
+
 
   skip_on_cran()
   skip_on_ci()
   skip_if_not(
-    find_proglang("julia"), 
+    find_proglang("julia"),
     message = "skip test as julia installation not found."
   )
 
-  if(TRUE){
+  if (TRUE) {
     reltol <- 0.05
 
     N <- 10000
@@ -27,7 +54,7 @@ test_that("test r against Julia I: stochastic tests", {
     )
 
     lm_fit <- lm(proposition_vote ~ treatment + log_income,
-                 data = data1
+      data = data1
     )
 
 
@@ -545,7 +572,7 @@ test_that("test r against Julia I: stochastic tests", {
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
                 expect_equal(boot_r$conf_int, boot_jl1$conf_int,
-                             tolerance = reltol
+                  tolerance = reltol
                 )
               }
 
@@ -582,7 +609,7 @@ test_that("test r against Julia I: stochastic tests", {
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
                 expect_equal(boot_r$conf_int, boot_jl1$conf_int,
-                             tolerance = reltol
+                  tolerance = reltol
                 )
               }
 
@@ -615,7 +642,7 @@ test_that("test r against Julia I: stochastic tests", {
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
                 expect_equal(boot_r$conf_int, boot_jl1$conf_int,
-                             tolerance = reltol
+                  tolerance = reltol
                 )
               }
 
@@ -649,7 +676,7 @@ test_that("test r against Julia I: stochastic tests", {
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
                 expect_equal(boot_r$conf_int, boot_jl1$conf_int,
-                             tolerance = reltol
+                  tolerance = reltol
                 )
               }
 
@@ -684,7 +711,7 @@ test_that("test r against Julia I: stochastic tests", {
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
                 expect_equal(boot_r$conf_int, boot_jl1$conf_int,
-                             tolerance = reltol
+                  tolerance = reltol
                 )
               }
 
@@ -716,7 +743,7 @@ test_that("test r against Julia I: stochastic tests", {
               expect_equal(boot_r$t_stat, boot_jl1$t_stat)
               if (p_val_type %in% c("two-tailed", "equal-tailed")) {
                 expect_equal(boot_r$conf_int, boot_jl1$conf_int,
-                             tolerance = reltol
+                  tolerance = reltol
                 )
               }
             }
@@ -729,5 +756,4 @@ test_that("test r against Julia I: stochastic tests", {
       "test-r-vs-julia.R skipped as JULIA_BINDIR not found."
     )
   }
-
 })

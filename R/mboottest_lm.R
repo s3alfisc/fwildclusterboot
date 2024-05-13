@@ -100,8 +100,15 @@
 #'
 #' @section Setting Seeds:
 #' To guarantee reproducibility, you need to
-#' set a global random seed via `set.seed()` 
-#'
+#' set a global random seed via `set.seed()`
+#' @section Run `boottest` quietly:
+#' You can suppress all warning and error messages by setting the following global
+#' options:
+#' `options(rlib_warning_verbosity = "quiet")`
+#' `options(rlib_message_verbosity = "quiet")`
+#' Note that this will turn off all warnings (messages) produced via `rlang::warn()` and
+#' `rlang::inform()`, which might not be desirable if you use other software build on
+#' `rlang`, as e.g. the `tidyverse`.
 #' @references Roodman et al., 2019, "Fast and wild: Bootstrap inference in
 #' STATA using boottest", The STATA Journal.
 #' (<https://ideas.repec.org/p/qed/wpaper/1406.html>)
@@ -167,14 +174,15 @@ mboottest.lm <- function(object,
                          ),
                          ...) {
   call <- match.call()
+  type <- tolower(type)
   dreamerr::validate_dots(stop = TRUE)
-  
+
   check_arg(object, "MBT class(lm)")
-  
+
   check_arg(clustid, "character scalar | character vector | formula")
   check_arg(B, "MBT scalar integer")
   check_arg(R, "MBT numeric matrix")
-  
+
   check_arg(r, "numeric vector  | NULL")
   check_arg(bootcluster, "character vector | formula")
   check_arg(tol, "numeric scalar")
@@ -185,38 +193,38 @@ mboottest.lm <- function(object,
   check_arg(floattype, "charin(Float32, Float64")
   check_arg(p_val_type, "charin(two-tailed, equal-tailed,>, <)")
   check_arg(tol, "numeric scalar GT{0}")
-  
+
   inform_seed(
-    frequency_id = "seed-reminder-m-lm", 
+    frequency_id = "seed-reminder-m-lm",
     engine = "WildBootTests.jl"
   )
-  
+
   if (inherits(clustid, "formula")) {
     clustid <- attr(terms(clustid), "term.labels")
   }
-  
+
   if (inherits(bootcluster, "formula")) {
     bootcluster <- attr(terms(bootcluster), "term.labels")
   }
-  
-  
+
+
   if (ssc[["fixef.K"]] != "none" ||
       ssc[["cluster.df"]] != "conventional") {
     rlang::inform(
-      "Currently, boottest() only supports fixef.K = 'none'.", 
+      "Currently, boottest() only supports fixef.K = 'none'.",
       use_cli_format = TRUE
     )
   }
-  
-  
+
+
   check_mboottest_args_plus(
     object = object,
     R = R,
     r = r,
     fe = NULL
   )
-  
-  
+
+
   # preprocess data: X, Y, weights, fixed effects
   preprocess <- preprocess2.lm(
     object = object,
@@ -224,10 +232,10 @@ mboottest.lm <- function(object,
     R = R,
     param = NULL,
     bootcluster = bootcluster,
-    engine = "WildBootTests.jl", 
+    engine = "WildBootTests.jl",
     bootstrap_type = NULL
   )
-  
+
   enumerate <-
     check_set_full_enumeration(
       preprocess = preprocess,
@@ -237,18 +245,18 @@ mboottest.lm <- function(object,
     )
   full_enumeration <- enumerate$full_enumeration
   B <- enumerate$B
-  
+
   julia_ssc <- get_ssc_julia(ssc)
   small <- julia_ssc$small
   clusteradj <- julia_ssc$clusteradj
   clustermin <- julia_ssc$clustermin
-  
+
   if (ssc[["fixef.K"]] != "none") {
     rlang::inform(
-      paste("Currently, boottest() only supports fixef.K = 'none'."), 
+      paste("Currently, boottest() only supports fixef.K = 'none'."),
       use_cli_format = TRUE)
   }
-  
+
 
   res <- boot_algo_julia(
     preprocess = preprocess,
@@ -275,7 +283,7 @@ mboottest.lm <- function(object,
     fe = NULL,
     fedfadj = 0L
   )
-  
+
   # collect results
   res_final <- list(
     p_val = res$p_val,
@@ -292,9 +300,9 @@ mboottest.lm <- function(object,
     r = r,
     engine = "WildBootTests.jl"
   )
-  
-  
+
+
   class(res_final) <- "mboottest"
-  
+
   invisible(res_final)
 }

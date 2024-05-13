@@ -1,9 +1,13 @@
 model_matrix <- function(object, ...) {
-  
+
   #' enhanced model.matrix functionalities
   #' @param object An object of class `lm` or `felm``
   #' @param ... Other arguments
   #' @noRd
+  #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between
+  #' different data types:* All fixed effect variables are set to
+  #' type factor internally.
+
 
 
 
@@ -36,6 +40,10 @@ model_matrix.felm <- function(object, type, collin.rm = TRUE, ...) {
   #' @param type 'rhs' for right-hand side variables, 'fixef' for fixed effects
   #' @param ... Other arguments
   #' @noRd
+  #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between
+  #' different data types:* All fixed effect variables are set to
+  #' type factor internally.
+
 
   dreamerr::check_arg(type, "charin(rhs, fixef)")
 
@@ -48,6 +56,8 @@ model_matrix.felm <- function(object, type, collin.rm = TRUE, ...) {
   } else if (type == "fixef") {
     mm <- as.data.frame(object$fe)
     # make sure all fixed effect variables are factors
+    #' @srrstats {G2.4}
+    #' @srrstats {G2.4d} *explicit conversion to factor via `as.factor()`* Yes.
     i <- seq_along(mm)
     mm[, i] <- lapply(i, function(x) {
       factor(mm[, x])
@@ -68,6 +78,10 @@ model_matrix.fixest <-
     #' @param collin.rm Should collinear variables be dropped?
     #' @param ... Other arguments
     #' @noRd
+    #' @srrstats {G2.4} *Provide appropriate mechanisms to convert between
+    #' different data types:* All fixed effect variables are set to
+    #' type factor internally.
+
 
 
     dreamerr::check_arg(type, "charin(rhs, fixef)")
@@ -91,6 +105,7 @@ model_matrix.fixest <-
           as.df = TRUE
         )
       # make sure that all fixef vars are of type factor
+      #' @srrstats {G2.4}
       i <- seq_along(mm)
       mm[, i] <- lapply(i, function(x) {
         factor(mm[, x])

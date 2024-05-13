@@ -8,6 +8,8 @@
 <!-- badges: start -->
 <!-- [![packageversion](https://img.shields.io/badge/Package%20version-x86_64-w64-mingw32, x86_64, mingw32, ucrt, x86_64, mingw32, , 4, 2.1, 2022, 06, 23, 82513, R, R version 4.2.1 (2022-06-23 ucrt), Funny-Looking Kid-orange.svg?style=flat-square)](commits/master) -->
 
+[![Status at rOpenSci Software Peer
+Review](https://badges.ropensci.org/546_status.svg)](https://github.com/ropensci/software-review/issues/546)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html)
 [![CRAN
@@ -18,7 +20,6 @@ status](https://www.r-pkg.org/badges/version/fwildclusterboot)](https://CRAN.R-p
 coverage](https://codecov.io/gh/s3alfisc/fwildclusterboot/branch/master/graph/badge.svg)](https://app.codecov.io/gh/s3alfisc/fwildclusterboot?branch=master)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/fwildclusterboot?color=blue)](https://cran.r-project.org/package=fwildclusterboot)
 [![](http://cranlogs.r-pkg.org/badges/last-month/fwildclusterboot?color=green)](https://cran.r-project.org/package=fwildclusterboot)
-[![pkgcheck](https://github.com/s3alfisc/fwildclusterboot/workflows/pkgcheck/badge.svg)](https://github.com/s3alfisc/fwildclusterboot/actions?query=workflow%3Apkgcheck)
 
 <!-- badges: end -->
 
@@ -109,9 +110,6 @@ data(voters)
 lm_fit <- lm(proposition_vote ~ treatment  + log_income + as.factor(Q1_immigration) + as.factor(Q2_defense), data = voters)
 # bootstrap inference via boottest()
 lm_boot <- boottest(lm_fit, clustid = c("group_id1"), B = 9999, param = "treatment")
-#> Too guarantee reproducibility, don't forget to set a global random seed
-#> **both** via `set.seed()` and `dqrng::dqset.seed()`.
-#> This message is displayed once every 8 hours.
 summary(lm_boot)
 #> boottest.lm(object = lm_fit, param = "treatment", B = 9999, clustid = c("group_id1"))
 #>  
@@ -143,7 +141,7 @@ citation("fwildclusterboot")
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Misc{,
-#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.12.4.3)},
+#>     title = {fwildclusterboot: Fast Wild Cluster Bootstrap Inference for Linear Regression Models (Version 0.14.0)},
 #>     author = {Alexander Fischer and David Roodman},
 #>     year = {2021},
 #>     url = {https://cran.r-project.org/package=fwildclusterboot},

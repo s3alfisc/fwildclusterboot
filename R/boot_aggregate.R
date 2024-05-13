@@ -188,13 +188,13 @@ boot_aggregate <- function(
     use_weights = TRUE,
     clustid = NULL, 
     B,
+    bootstrap_type = "fnw11",
     bootcluster = "max",
     fe = NULL,
     sign_level = 0.05,
     beta0 = NULL,
     type = "rademacher",
     impose_null = TRUE,
-    bootstrap_type = "fnw11",
     p_val_type = "two-tailed",
     nthreads = getBoottest_nthreads(),
     tol = 1e-06, 
@@ -218,9 +218,19 @@ boot_aggregate <- function(
   # therefore, only check for supported subset of features
   
   check_arg(bootstrap_type, "charin(fnw11)")
-  
   check_arg(full, "logical scalar")
   # => later => extend it to more than one set of vars to agg
+  
+  
+  ssc <- quote(
+    boot_ssc(
+    adj = ssc$adj, 
+    fixef.K = ssc$fixef.K, 
+    cluster.adj = ssc$cluster.adj, 
+    cluster.df = ssc$cluster.df
+    )
+  )
+  
   
   # remind packages users to set a global seed
   inform_seed(
@@ -312,15 +322,15 @@ boot_aggregate <- function(
   nk <- nrow(name_df)
   c_all <- vector(mode = "numeric", length = nk)
   se_all <- vector(mode = "numeric", length = nk)
-  pvalues <- c_all 
+  pvalues <- vector(mode = "numeric", length = nk)
+  teststat <- vector(mode = "numeric", length = nk)
   conf_int <- matrix(NA, nk, 2)
   
   pb <- txtProgressBar(min = 0, max = nk, initial = 0, style = 3) 
   
   for(i in 1:nk){
     
-    setTxtProgressBar(pb,i)
-    
+
     r <- name_df[i, 1]
     v <- name_df[i, 2]
     v_names <- cname_select[root == r & val == v]
@@ -361,6 +371,7 @@ boot_aggregate <- function(
         R = shares,
         clustid = clustid,
         B = B,
+        bootstrap_type = bootstrap_type,
         bootcluster = bootcluster,
         fe = fe,
         sign_level = sign_level,
@@ -369,7 +380,6 @@ boot_aggregate <- function(
         beta0 = beta0,
         type = type,
         impose_null = impose_null,
-        bootstrap_type = bootstrap_type,
         p_val_type = p_val_type,
         #tol = tol,
         #maxiter = maxiter,
@@ -379,23 +389,33 @@ boot_aggregate <- function(
         maxmatsize = maxmatsize,
         bootstrapc = bootstrapc,
         getauxweights = getauxweights, 
-        sampling = sampling
+        sampling = sampling,
+        ssc = ssc
       )
     
-    pvalues[i] <- pval(boot_fit)
-    conf_int[i,] <- confint.boottest(boot_fit)
+    setTxtProgressBar(pb,i)
     
+    pvalues[i] <- pval(boot_fit)
+    teststat[i] <- teststat(boot_fit)
+    if(!is.null(clustid)){
+        conf_int[i,] <- confint.boottest(boot_fit)
+    } else {
+      conf_int[i,] <- rep(NA, 2)
+    }
+
   }
   # th z & p values
   zvalue <- c_all/se_all
   
   res <- cbind(
     c_all,
+    teststat, 
     pvalues, 
     conf_int
   )
   colnames(res) <- c(
     "Estimate",
+    "t value",
     "Pr(>|t|)", 
     paste0("[",sign_level / 2, "%"),
     paste0(1 - (sign_level / 2), "%","]")

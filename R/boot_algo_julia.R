@@ -1,6 +1,6 @@
-#' run the wild cluster bootstrap via WildBootTests.jl and the 
+#' run the wild cluster bootstrap via WildBootTests.jl and the
 #' JuliaConnectoR package
-#' 
+#'
 #' @param preprocess A list: output of the preprocess2 function.
 #' @param impose_null A logical - should the null hypothesis be imposed or not?
 #' @param r Shifts the null hypothesis.
@@ -23,9 +23,9 @@
 #'        wild bootstrap factors. "rademacher" by default.
 #' @param floattype Should floating
 #' @param bootstrapc Logical scalar. TRUE  to request
-#' bootstrap-c instead of bootstrap-t. 
+#' bootstrap-c instead of bootstrap-t.
 #' @param getauxweights Logical. Whether to save auxilliary weight matrix (v)
-#' @param fweights Should frequency weight or probability weights be used for 
+#' @param fweights Should frequency weight or probability weights be used for
 #' WLS? Currently, only frequency weights are supported
 #' @param maxmatsize NULL by default = no limit. Else numeric scalar to set
 #' the maximum size of auxilliary weight matrix (v), in gigabytes. Only
@@ -34,17 +34,17 @@
 #' @param clusteradj Logical. Should a ssc G / (G-1) be used?
 #' @param clustermin Logical. Should G be computed as min(G) in case of multi-
 #' way clustering?
-#' @param fe Character string. The fixed effect to be projected out in the 
+#' @param fe Character string. The fixed effect to be projected out in the
 #' bootstrap
-#' @param fedfadj Should fixed effects be included or excluded in k? Currently, 
+#' @param fedfadj Should fixed effects be included or excluded in k? Currently,
 #' they are always excluded
-#' @param liml Logical. Should liml estimation be employed? Currntly always 
+#' @param liml Logical. Should liml estimation be employed? Currntly always
 #' FALSE
 #' @param arubin Shoud the Anderson-Rubin test be performed? Currently always
 #' FALSE
 #' @param fuller numeric - fuller parameter
 #' @param kappa numeric - kappa parameter
-#' @param bootstrap_type Either '11' - the default, or 
+#' @param bootstrap_type Either '11' - the default, or
 #' '31'
 
 #' @importFrom JuliaConnectoR juliaEval juliaImport
@@ -74,19 +74,19 @@ boot_algo_julia <- function(preprocess,
                             liml = NULL,
                             arubin = NULL,
                             fuller = NULL,
-                            kappa = NULL, 
+                            kappa = NULL,
                             bootstrap_type = "11") {
-  
-  
+
+
   # pass an internal seed which 'inherits' from global seed
-  
+
   global_seed <- .Random.seed
   # need to pass a rng object to WildBootTests.jl
   JuliaConnectoR::juliaEval("using StableRNGs")
   internal_seed <-
       JuliaConnectoR::juliaEval(paste0("rng = StableRNG(", get_seed(), ")"))
   on.exit(set.seed(global_seed))
-  
+
   resp <- as.numeric(preprocess$Y)
 
   if (inherits(preprocess, "iv")) {
@@ -103,16 +103,15 @@ boot_algo_julia <- function(preprocess,
     R <- matrix(preprocess$R, 1, length(preprocess$R))
   }
   r <- r
+  #' @srrstats {G2.4a}
   reps <- as.integer(B) # WildBootTests.jl demands integer
 
   all_c <- preprocess$all_c
   clustid_df <-
     preprocess$cluster_bootcluster[, all_c, drop = FALSE]
 
-  # note that c("group_id1", NULL) == "group_id1"
-  # clustid_mat <- data.frame(preprocess$model_frame[, all_c])
-  # names(clustid_mat) <- all_c
   nrow_df <- nrow(clustid_df)
+  #' @srrstats {G2.4a}
   clustid_mat <- vapply(clustid_df, to_integer, integer(nrow_df))
 
   # `nbootclustvar::Integer=1`: number of bootstrap-clustering variables
@@ -169,8 +168,8 @@ boot_algo_julia <- function(preprocess,
     ptype = ptype,
     reps = reps,
     fweights = FALSE,
-    bootstrapc = bootstrapc, 
-    jk = FALSE, 
+    bootstrapc = bootstrapc,
+    jk = FALSE,
     rng = internal_seed
   )
 
@@ -217,7 +216,7 @@ boot_algo_julia <- function(preprocess,
       eval_list[["kappa"]] <- kappa
     }
   }
-  
+
   if(bootstrap_type == "31"){
     eval_list[["jk"]] <- TRUE
   }
@@ -232,7 +231,7 @@ boot_algo_julia <- function(preprocess,
     conf_int <- NA
   }
   t_stat <- WildBootTests$teststat(wildboottest_res)
-  
+
   t_boot <- WildBootTests$dist(wildboottest_res)
 
   if (getauxweights == TRUE) {

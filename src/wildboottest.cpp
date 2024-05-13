@@ -1,11 +1,10 @@
 #include <RcppArmadillo.h>
-#define NDEBUG 
 #include <RcppEigen.h>
 #ifdef _OPENMP
-#include <omp.h>
+  #include <omp.h>
 #else
-#define omp_get_max_threads() 0
-#define EIGEN_DONT_PARALLELIZE
+  #define omp_get_max_threads() 0
+  #define EIGEN_DONT_PARALLELIZE
 #endif
 
 // [[Rcpp::plugins(openmp)]]
@@ -112,27 +111,15 @@ List wildboottestHC(const arma::vec & y,
   arma::vec yhat_r = X * beta_r;
   arma::vec resid_r = y - yhat_r;
   
-  // NumericVector s(2);
-  // NumericVector prob = NumericVector::create();
-  // s[0] = 1;
-  // s[1] = -1;
-  
-  // compute 1/(1-h_ii)'s -> resid_multiplier
   arma::vec resid_multiplier(N);
-  // resid_multiplier.ones();
-  
+
   if(bootstrap_type == 1){
     
     resid_multiplier.ones();
     
   } else {
     
-    arma::mat hatmat = X * XXinv * X.t(); 
-    arma::vec diag_hatmat(N);
-    
-    for(int i = 0; i < N; i++){
-      diag_hatmat(i) = hatmat(i,i);
-    }
+    arma::vec diag_hatmat = arma::sum(X % (X * XXinv.t()),1);
     
     if(bootstrap_type == 2){
       resid_multiplier = 1 / arma::sqrt(1-diag_hatmat);    
@@ -146,6 +133,8 @@ List wildboottestHC(const arma::vec & y,
   
 #pragma omp parallel for num_threads(cores)
   for(int b = 1; b < B + 1; b++){
+    
+    Rcpp::checkUserInterrupt();
     
     // create bootstrap sample
     //arma::vec weights = RcppArmadillo::sample(s, N_G_bootcluster, true, prob);
@@ -232,6 +221,8 @@ List wildboottestCL(const arma::vec & y,
   
 #pragma omp parallel for num_threads(cores)
   for(int b = 1; b < B + 1; b++){
+    
+    Rcpp::checkUserInterrupt();
     
     // create bootstrap sample
     arma::vec y_boot(n);
@@ -353,6 +344,8 @@ List wildboottestCL_enum(const arma::vec & y,
   
 #pragma omp parallel for num_threads(cores)
   for(int b = 1; b < B + 1; b++){
+    
+    Rcpp::checkUserInterrupt();
     
     // create bootstrap sample
     arma::vec y_boot(n);

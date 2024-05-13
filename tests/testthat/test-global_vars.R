@@ -1,68 +1,66 @@
 test_that("global engine", {
-  
   skip_on_cran()
   skip_if_not(
-    find_proglang("julia"), 
+    find_proglang("julia"),
     message = "skip test as julia installation not found."
   )
 
-    data(voters)
-    lm_fit <-
-      lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
-         data = voters
-      )
-    
-    boot1 <-
-      boottest(lm_fit,
-               param = "treatment",
-               B = 999,
-               clustid = "group_id1"
-      )
-    boot2 <-
-      suppressWarnings(
-        boottest(
-          lm_fit,
-          param = "treatment",
-          B = 999,
-          clustid = "group_id1",
-          engine = "WildBootTests.jl"
-        )
-      )
-    
-    expect_equal(boot1$engine, "R")
-    expect_equal(boot2$engine, "WildBootTests.jl")
-    
-    # leave state of global variables clean
-    setBoottest_engine(engine = "WildBootTests.jl")
-    # switch back to "R" as global variable at end of function
-    on.exit(setBoottest_engine(engine = "R"), add = TRUE)
-    boot1 <-
-      suppressWarnings(boottest(
-        lm_fit,
-        param = "treatment",
-        B = 999,
-        clustid = "group_id1"
-      ))
-    boot2 <-
-      suppressWarnings(boottest(
-        lm_fit,
-        param = "treatment",
-        B = 999,
-        clustid = "group_id1"
-      ))
-    boot3 <-
+  data(voters)
+  lm_fit <-
+    lm(proposition_vote ~ treatment + ideology1 + log_income + Q1_immigration,
+      data = voters
+    )
+
+  boot1 <-
+    boottest(lm_fit,
+      param = "treatment",
+      B = 999,
+      clustid = "group_id1"
+    )
+  boot2 <-
+    suppressWarnings(
       boottest(
         lm_fit,
         param = "treatment",
         B = 999,
         clustid = "group_id1",
-        engine = "R"
+        engine = "WildBootTests.jl"
       )
-    
-    expect_equal(boot1$engine, "WildBootTests.jl")
-    expect_equal(boot2$engine, "WildBootTests.jl")
-    expect_equal(boot3$engine, "R")
-  
+    )
+
+  expect_equal(boot1$engine, "R")
+  expect_equal(boot2$engine, "WildBootTests.jl")
+
+  # leave state of global variables clean
+  setBoottest_engine(engine = "WildBootTests.jl")
+  # switch back to "R" as global variable at end of function
+  on.exit(setBoottest_engine(engine = "R"), add = TRUE)
+  boot1 <-
+    suppressWarnings(boottest(
+      lm_fit,
+      param = "treatment",
+      B = 999,
+      clustid = "group_id1"
+    ))
+  boot2 <-
+    suppressWarnings(boottest(
+      lm_fit,
+      param = "treatment",
+      B = 999,
+      clustid = "group_id1"
+    ))
+  boot3 <-
+    boottest(
+      lm_fit,
+      param = "treatment",
+      B = 999,
+      clustid = "group_id1",
+      engine = "R"
+    )
+
+  expect_equal(boot1$engine, "WildBootTests.jl")
+  expect_equal(boot2$engine, "WildBootTests.jl")
+  expect_equal(boot3$engine, "R")
 })
 
 

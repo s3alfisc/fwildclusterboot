@@ -24,7 +24,7 @@ data(voters)
 
 ## Variables created via 'i()'
 
-```{r}
+```{r, warnings = FALSE, message=FALSE}
 feols_fit <- feols(proposition_vote ~ i(treatment, ideology1) ,
     data = voters
 )
@@ -42,7 +42,7 @@ boot1
 
 It is possible to loop through different regression specifications. For example, to run `boottest()` over a `fixest_multi` object created via the `sw()` function:
 
-```{r, warning = FALSE}
+```{r, warnings = FALSE, message=FALSE}
 feols_fits <- fixest::feols(
   proposition_vote ~ treatment | sw(Q1_immigration, Q2_defense),
   data = voters
@@ -62,7 +62,7 @@ boot2
 
 Similarly, it is possible to loop over objects of `fixest_multi` created by `subset` functionality: 
 
-```{r, warning = FALSE}
+```{r, warnings = FALSE, message=FALSE}
 voters$split <- sample(1:2, nrow(voters), TRUE)
 
 feols_fits <- fixest::feols(
@@ -86,14 +86,14 @@ boot3
 
 And of course it is also possible to combine multiple "syntactic sugar" features of `fixest`:
 
-```{r, warning = FALSE}
+```{r, warnings = FALSE, message=FALSE}
 feols_fits <- fixest::feols(
   proposition_vote ~ treatment | sw(Q1_immigration, Q2_defense), 
   split = ~split,
   data = voters
 )
 
-boot_4 <- lapply(
+boot4 <- lapply(
   feols_fits, 
   \(x) boottest(
     x, 
@@ -103,14 +103,16 @@ boot_4 <- lapply(
     )
 )  
 
-boot_4
+boot4
 ```
 
 ## What currently is not supported
 
+As a rule of thumb, every transformation of fixed effects is not supported. This includes interaction via `^` and varying slopes syntax via `var1[var2]`. If you try this, you should receive an error message, and if not, please open an issue on github =) .
+
 Fixed effect interactions via `^` lead to an error. Fixing this is on my backlog but currently not highest priortiy. Send me a message if this causes you large headaches! 
 
-```{r, warning = FALSE, eval = FALSE}
+```{r, warnings = FALSE, message=FALSE, eval = FALSE}
 feols_fit2 <- feols(proposition_vote ~ treatment | Q1_immigration^Q2_defense,
     data = voters
 )
@@ -121,8 +123,30 @@ boot1 <- boottest(feols_fit2,
     param = "treatment",
     clustid = "group_id1"
 )
+# Error in `check_boottest_args_plus()` at fwildclusterboot/R/boottest_fixest.R:514:2:
+# ! Advanced formula notation in fixest / fixest via ^ to interact
+# fixed effects is currently not supported in boottest().
+
 ```
 
+Relatedly, varying slopes fixed effects syntax is not supported: 
 
+```{r, warnings = FALSE, message=FALSE, eval = FALSE}
+feols_fit3 <- feols(proposition_vote ~ treatment | Q1_immigration[log_income],
+    data = voters
+)
+
+# leads to an error
+boot <- boottest(feols_fit3,
+    B = 9999,
+    param = "treatment",
+    clustid = "group_id1"
+)
+# Error in `check_boottest_args_plus()` at fwildclusterboot/R/boottest_fixest.R:514:2:
+# ! Varying slopes in fixest / fixest via [] to interact
+# fixed effects is currently not supported in boottest().
+
+
+```
 
 
