@@ -1,5 +1,7 @@
 #include <RcppArmadillo.h>
 #include <RcppEigen.h>
+#include <algorithm>
+#include <exception>
 #ifdef _OPENMP
   #include <omp.h>
 #else
@@ -56,6 +58,53 @@ arma::mat sample_weights(int G,
   return weights;
   
 }
+
+
+namespace {
+
+constexpr int bootstrap_max_batch = 64;
+
+// Bound staging memory to 8 MiB (or one draw when a draw itself is larger).
+// The batch size is independent of the thread count, as is the RNG sequence.
+int bootstrap_batch_size(int groups) {
+  const std::size_t bytes_per_draw = sizeof(double) *
+    static_cast<std::size_t>(std::max(groups, 1));
+  const std::size_t memory_limit = 8 * 1024 * 1024;
+  return static_cast<int>(std::max<std::size_t>(1,
+    std::min<std::size_t>(bootstrap_max_batch, memory_limit / bytes_per_draw)));
+}
+
+arma::mat bootstrap_weight_batch(int groups, int type, int count) {
+  arma::mat weights(groups, count);
+  for (int j = 0; j < count; ++j) {
+    // Both the R RNG (used by sample_weights) and interrupts stay on the
+    // calling R thread. Draw in the original serial bootstrap/cluster order.
+    Rcpp::checkUserInterrupt();
+    weights.col(j) = sample_weights(groups, type);
+  }
+  return weights;
+}
+
+template <typename Work>
+void bootstrap_parallel_batch(int first, int count, int cores, Work work) {
+  std::exception_ptr error;
+#pragma omp parallel for num_threads(cores)
+  for (int j = 0; j < count; ++j) {
+    try {
+      work(first + j);
+    } catch (...) {
+      // C++ exceptions must not escape an OpenMP worker. Translate them to
+      // R errors only after all workers have joined on the calling thread.
+#pragma omp critical(fwildclusterboot_worker_error)
+      {
+        if (!error) error = std::current_exception();
+      }
+    }
+  }
+  if (error) std::rethrow_exception(error);
+}
+
+} // namespace
 
 
 //' Implementation of the heteroskedastic wild bootstrap. Computes
@@ -131,25 +180,31 @@ List wildboottestHC(const arma::vec & y,
   
   arma::vec t_boot(B + 1);
   
-#pragma omp parallel for num_threads(cores)
-  for(int b = 1; b < B + 1; b++){
-    
+  const int batch_size = bootstrap_batch_size(N_G_bootcluster);
+  for (int completed = 0; completed < B;) {
     Rcpp::checkUserInterrupt();
-    
-    // create bootstrap sample
-    //arma::vec weights = RcppArmadillo::sample(s, N_G_bootcluster, true, prob);
-    arma::vec weights = sample_weights(N_G_bootcluster, type);
-    arma::vec y_boot = yhat_r + resid_multiplier % resid_r % weights;
-    // get bootstrapped coefs and resids
-    arma::vec coef_boot = XXinvX * y_boot ; // k x 1 
-    arma::vec resid_boot = y_boot - X * coef_boot;
-    arma::mat boot_var = RXXinvX_squared * pow(resid_boot, 2);
-    
-    // calculate t-stats
-    t_boot(b) = arma::as_scalar((R.t() * coef_boot - r) / 
-      // arma::sqrt(small_sample_correction * (R.t() * sigma_boot * R)));
-      arma::sqrt(small_sample_correction * boot_var));
+    const int count = std::min(batch_size, B - completed);
+    const int first = completed + 1;
+    const arma::mat batch_weights =
+      bootstrap_weight_batch(N_G_bootcluster, type, count);
+    bootstrap_parallel_batch(first, count, cores, [&](int b) {
+
+      // create bootstrap sample
+      const auto weights = batch_weights.col(b - first);
+      arma::vec y_boot = yhat_r + resid_multiplier % resid_r % weights;
+      // get bootstrapped coefs and resids
+      arma::vec coef_boot = XXinvX * y_boot ; // k x 1
+      arma::vec resid_boot = y_boot - X * coef_boot;
+      arma::mat boot_var = RXXinvX_squared * pow(resid_boot, 2);
+
+      // calculate t-stats
+      t_boot(b) = arma::as_scalar((R.t() * coef_boot - r) /
+        // arma::sqrt(small_sample_correction * (R.t() * sigma_boot * R)));
+        arma::sqrt(small_sample_correction * boot_var));
+    });
+    completed += count;
   }
+  Rcpp::checkUserInterrupt();
   
   // for b = 0 - always HC1
   arma::vec y_boot = yhat_r + resid_r;
@@ -219,39 +274,46 @@ List wildboottestCL(const arma::vec & y,
   
   arma::vec t_boot(B + 1);
   
-#pragma omp parallel for num_threads(cores)
-  for(int b = 1; b < B + 1; b++){
-    
+  const int batch_size = bootstrap_batch_size(N_G_bootcluster);
+  for (int completed = 0; completed < B;) {
     Rcpp::checkUserInterrupt();
-    
-    // create bootstrap sample
-    arma::vec y_boot(n);
-    for(int g = 0; g < N_G_bootcluster; g++){
-      y_boot(find(cluster == g)) = yhat_r(find(cluster == g)) + 
-        resid_r(find(cluster == g)) * sample_weights(1, type);
-    }
-    
-    // get bootstrapped coefs and resids
-    arma::vec coef_boot = XXinv * (X.t() * y_boot) ;
-    arma::vec resid_boot = y_boot - X * coef_boot;
-    
-    // calculate CR vcov
-    arma::mat meat(k, k);
-    
-    // for all g = 1,..., G clusters
-    for(int n_g = 0; n_g < N_G_bootcluster; n_g++){
-      arma::mat X_ng = X.rows(find(cluster == n_g));
-      arma::mat resid_boot_ng = resid_boot(find(cluster == n_g));
-      meat += X_ng.t() * resid_boot_ng * resid_boot_ng.t() * X_ng;
-    }
-    
-    arma::mat sigma_boot =  (XXinv * meat * XXinv);
-    
-    // calculate t-stats
-    t_boot(b) = arma::as_scalar((R.t() * coef_boot - r) / 
-      arma::sqrt(small_sample_correction * (R.t() * sigma_boot * R)));
-    
+    const int count = std::min(batch_size, B - completed);
+    const int first = completed + 1;
+    const arma::mat batch_weights =
+      bootstrap_weight_batch(N_G_bootcluster, type, count);
+    bootstrap_parallel_batch(first, count, cores, [&](int b) {
+
+      // create bootstrap sample
+      arma::vec y_boot(n);
+      for(int g = 0; g < N_G_bootcluster; g++){
+        y_boot(find(cluster == g)) = yhat_r(find(cluster == g)) +
+          resid_r(find(cluster == g)) * batch_weights(g, b - first);
+      }
+
+      // get bootstrapped coefs and resids
+      arma::vec coef_boot = XXinv * (X.t() * y_boot) ;
+      arma::vec resid_boot = y_boot - X * coef_boot;
+
+      // calculate CR vcov
+      arma::mat meat(k, k);
+
+      // for all g = 1,..., G clusters
+      for(int n_g = 0; n_g < N_G_bootcluster; n_g++){
+        arma::mat X_ng = X.rows(find(cluster == n_g));
+        arma::mat resid_boot_ng = resid_boot(find(cluster == n_g));
+        meat += X_ng.t() * resid_boot_ng * resid_boot_ng.t() * X_ng;
+      }
+
+      arma::mat sigma_boot =  (XXinv * meat * XXinv);
+
+      // calculate t-stats
+      t_boot(b) = arma::as_scalar((R.t() * coef_boot - r) /
+        arma::sqrt(small_sample_correction * (R.t() * sigma_boot * R)));
+
+    });
+    completed += count;
   }
+  Rcpp::checkUserInterrupt();
   
   // for b = 0
   // create bootstrap sample
@@ -342,39 +404,44 @@ List wildboottestCL_enum(const arma::vec & y,
   arma::vec t_boot(B + 1);
   
   
-#pragma omp parallel for num_threads(cores)
-  for(int b = 1; b < B + 1; b++){
-    
+  const int batch_size = bootstrap_max_batch;
+  for (int completed = 0; completed < B;) {
     Rcpp::checkUserInterrupt();
-    
-    // create bootstrap sample
-    arma::vec y_boot(n);
-    for(int g = 0; g < N_G_bootcluster; g++){
-      y_boot(find(cluster == g)) = yhat_r(find(cluster == g)) +
-        resid_r(find(cluster == g)) * v(b, g);
-    }
-    
-    // get bootstrapped coefs and resids
-    arma::vec coef_boot = XXinv * (X.t() * y_boot) ;
-    arma::vec resid_boot = y_boot - X * coef_boot;
-    
-    // calculate CR vcov
-    arma::mat meat(k, k);
-    
-    // for all g = 1,..., G clusters
-    for(int n_g = 0; n_g < N_G_bootcluster; n_g++){
-      arma::mat X_ng = X.rows(find(cluster == n_g));
-      arma::mat resid_boot_ng = resid_boot(find(cluster == n_g));
-      meat += X_ng.t() * resid_boot_ng * resid_boot_ng.t() * X_ng;
-    }
-    
-    arma::mat sigma_boot =  (XXinv * meat * XXinv);
-    
-    // calculate t-stats
-    t_boot(b) = arma::as_scalar((R.t() * coef_boot - r) / 
-      arma::sqrt(small_sample_correction * (R.t() * sigma_boot * R)));
-    
+    const int count = std::min(batch_size, B - completed);
+    const int first = completed + 1;
+    bootstrap_parallel_batch(first, count, cores, [&](int b) {
+
+      // create bootstrap sample
+      arma::vec y_boot(n);
+      for(int g = 0; g < N_G_bootcluster; g++){
+        y_boot(find(cluster == g)) = yhat_r(find(cluster == g)) +
+          resid_r(find(cluster == g)) * v(b, g);
+      }
+
+      // get bootstrapped coefs and resids
+      arma::vec coef_boot = XXinv * (X.t() * y_boot) ;
+      arma::vec resid_boot = y_boot - X * coef_boot;
+
+      // calculate CR vcov
+      arma::mat meat(k, k);
+
+      // for all g = 1,..., G clusters
+      for(int n_g = 0; n_g < N_G_bootcluster; n_g++){
+        arma::mat X_ng = X.rows(find(cluster == n_g));
+        arma::mat resid_boot_ng = resid_boot(find(cluster == n_g));
+        meat += X_ng.t() * resid_boot_ng * resid_boot_ng.t() * X_ng;
+      }
+
+      arma::mat sigma_boot =  (XXinv * meat * XXinv);
+
+      // calculate t-stats
+      t_boot(b) = arma::as_scalar((R.t() * coef_boot - r) /
+        arma::sqrt(small_sample_correction * (R.t() * sigma_boot * R)));
+
+    });
+    completed += count;
   }
+  Rcpp::checkUserInterrupt();
   
   
   
