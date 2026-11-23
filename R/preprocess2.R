@@ -687,6 +687,8 @@ transform_fe <-
     #'
     #' @noRd
     all_fe <- model_matrix(object, type = "fixef", collin.rm = TRUE)
+    # the model's own regressors are the first k_x columns of X
+    k_x <- ncol(X)
     # make sure all fixed effects variables are characters
     n_fe <- ncol(all_fe)
     all_fe_names <- names(all_fe)
@@ -731,7 +733,7 @@ transform_fe <-
         }
         # WildBootTests.jl does demeaning internally
         prep_fe <- demean_fe(X, Y, fe_df, has_weights, N)
-        X <- prep_fe$X
+        X <- drop_collinear_dummies(prep_fe$X, k_x)
         Y <- prep_fe$Y
         if(bootstrap_type != "fnw11"){
           Y <- Matrix::Matrix(Y)
@@ -756,7 +758,10 @@ transform_fe <-
       }
       
       X <- cbind(X, add_fe_dummies)
-      
+      if (is.matrix(X)) {
+        X <- drop_collinear_dummies(X, k_x)
+      }
+
     }
     
     res <- list(
@@ -769,6 +774,33 @@ transform_fe <-
     )
     res
   }
+drop_collinear_dummies <- function(X, k_x) {
+  #' drop fixed effect dummies that are linear combinations of other columns
+  #'
+  #' The dummies of the fixed effects added to X drop a single reference
+  #' level, which is not enough when they are nested with the projected-out
+  #' fixed effect (or with each other), e.g. unit fixed effects nested in
+  #' countries with country-by-year fixed effects: crossprod(X) is then
+  #' singular. A QR decomposition with limited pivoting moves each column that
+  #' depends on the columns before it to the end, so the model's own regressors
+  #' (the first k_x columns, kept by the estimation) are never dropped.
+  #' @param X the design matrix, the model's regressors first
+  #' @param k_x the number of the model's regressors in X
+  #' @return X without the linearly dependent dummy columns
+  #' @noRd
+  if (ncol(X) <= k_x) {
+    return(X)
+  }
+  qr_x <- qr(X, tol = 1e-7)
+  keep <- sort(qr_x$pivot[seq_len(qr_x$rank)])
+  if (!all(seq_len(k_x) %in% keep)) {
+    rlang::abort(
+      "The regressors are collinear with the fixed effects.",
+      use_cli_format = TRUE
+    )
+  }
+  X[, keep, drop = FALSE]
+}
 get_cluster <-
   function(object,
            clustid_char,
