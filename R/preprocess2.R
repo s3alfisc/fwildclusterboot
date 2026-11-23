@@ -826,40 +826,39 @@ get_cluster <-
     # Step 1: create cluster df
     
     
-    manipulate_object <- function(object){
-      if(inherits(object, "fixest")){
-        if(!is.null(object$fixef_vars)){
-          update(object, . ~ + 1 | . + 1)
-        } else {
-          update(object, . ~ + 1 )
-        }
-      } else {
-        object
-      }
-    }
-    
-    cluster_tmp <-
-      if ("Formula" %in% loadedNamespaces()) {
+    # A data.frame of the variables in `extras`, one row per observation
+    # of the estimation sample. For fixest models, the rows fixest used
+    # (fixest::obs()) are taken from the estimation data: rebuilding a model
+    # frame from a formula with fixed effects (`y ~ 1 | fe1 + fe2`) makes
+    # stats::model.frame() evaluate `1 | fe1 + fe2` as an expression, which
+    # fails for character fixed effects (#161).
+    cluster_frame <- function(extras) {
+      if (inherits(object, "fixest")) {
+        data <- as.data.frame(eval(object$call$data, envir = call_env))
+        mf <- model.frame(extras, data = data, na.action = na.pass)
+        mf[fixest::obs(object), , drop = FALSE]
+      } else if ("Formula" %in% loadedNamespaces()) {
         ## FIXME to suppress potential warnings due to | in Formula
         suppressWarnings(
           expand.model.frame(
-            model =
-              manipulate_object(object),
-            extras = clustid_fml,
+            model = object,
+            extras = extras,
             na.expand = FALSE,
             envir = call_env
           )
         )
       } else {
         expand.model.frame(
-          model =
-            manipulate_object(object),
-          extras = clustid_fml,
+          model = object,
+          extras = extras,
           na.expand = FALSE,
           envir = call_env
         )
       }
-    
+    }
+
+    cluster_tmp <- cluster_frame(clustid_fml)
+
     cluster_df <-
       model.frame(clustid_fml, cluster_tmp, na.action = na.pass)
     # without cluster intersection
@@ -895,27 +894,7 @@ get_cluster <-
       )
     
     
-    cluster_bootcluster_tmp <-
-      if ("Formula" %in% loadedNamespaces()) {
-        ## FIXME to suppress potential warnings due to | in Formula
-        suppressWarnings(
-          expand.model.frame(
-            model =
-              manipulate_object(object),
-            extras = cluster_bootcluster_fml,
-            na.expand = FALSE,
-            envir = call_env
-          )
-        )
-      } else {
-        expand.model.frame(
-          model =
-            manipulate_object(object),
-          extras = cluster_bootcluster_fml,
-          na.expand = FALSE,
-          envir = call_env
-        )
-      }
+    cluster_bootcluster_tmp <- cluster_frame(cluster_bootcluster_fml)
     
     # data.frame as needed for WildBootTests.jl
     cluster_bootcluster_df <- model.frame(
